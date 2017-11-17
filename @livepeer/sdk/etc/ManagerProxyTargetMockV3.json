@@ -1,0 +1,288 @@
+{
+  "name": "ManagerProxyTargetMockV3",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "uint8"
+        }
+      ],
+      "name": "setUint8",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "uint64Value",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "initValue",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isInitialized",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "targetContractId",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "uint256Value",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "bytes32Value",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "kvMap",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "uint64"
+        }
+      ],
+      "name": "setUint64",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_controller",
+          "type": "address"
+        }
+      ],
+      "name": "setController",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "uint8Value",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setBytes32",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setUint256",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "addressValue",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "address"
+        }
+      ],
+      "name": "setAddress",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_key",
+          "type": "uint256"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setKv",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "controller",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_controller",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "bytecode": "0x60606040526000805460ff19169055341561001957600080fd5b60405160208061059e8339810160405280805160008054600160a060020a039092166101000261010060a860020a0319909216919091179055505061053b806100636000396000f3006060604052600436106100fb5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631774e64681146101005780632bc2cd991461011b5780632fc36f111461014b578063392e53cd1461017057806351720b41146101975780636498db88146101aa5780636baaa2e4146101bd5780636d8097cc146101d0578063822cba69146101e657806392eefe9b14610206578063aaef20ea14610225578063c2b12a731461024e578063d2282dc514610264578063e1d16b831461027a578063e30081a0146102a9578063f06ebc38146102c8578063f77c4791146102e1578063fe4b84df146102f4575b600080fd5b341561010b57600080fd5b61011960ff6004351661030a565b005b341561012657600080fd5b61012e610331565b60405167ffffffffffffffff909116815260200160405180910390f35b341561015657600080fd5b61015e610346565b60405190815260200160405180910390f35b341561017b57600080fd5b61018361034c565b604051901515815260200160405180910390f35b34156101a257600080fd5b61015e610355565b34156101b557600080fd5b61015e61035b565b34156101c857600080fd5b61015e610361565b34156101db57600080fd5b61015e600435610367565b34156101f157600080fd5b61011967ffffffffffffffff60043516610379565b341561021157600080fd5b610183600160a060020a03600435166103b4565b341561023057600080fd5b61023861040c565b60405160ff909116815260200160405180910390f35b341561025957600080fd5b610119600435610415565b341561026f57600080fd5b61011960043561042b565b341561028557600080fd5b61028d610441565b604051600160a060020a03909116815260200160405180910390f35b34156102b457600080fd5b610119600160a060020a0360043516610450565b34156102d357600080fd5b610119600435602435610490565b34156102ec57600080fd5b61028d6104b3565b34156102ff57600080fd5b6101836004356104c7565b60005460ff16151561031b57600080fd5b6003805460ff191660ff92909216919091179055565b600354610100900467ffffffffffffffff1681565b60025481565b60005460ff1690565b60015481565b60045481565b60055481565b60076020526000908152604090205481565b60005460ff16151561038a57600080fd5b6003805467ffffffffffffffff9092166101000268ffffffffffffffff0019909216919091179055565b6000805433600160a060020a0390811661010090920416146103d557600080fd5b5060008054600160a060020a0383166101000274ffffffffffffffffffffffffffffffffffffffff00199091161790556001919050565b60035460ff1681565b60005460ff16151561042657600080fd5b600555565b60005460ff16151561043c57600080fd5b600455565b600654600160a060020a031681565b60005460ff16151561046157600080fd5b6006805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b60005460ff1615156104a157600080fd5b60009182526007602052604090912055565b6000546101009004600160a060020a031681565b6000805460ff16156104d857600080fd5b6104e06104ea565b5060029190915590565b6000805460ff16156104fb57600080fd5b506000805460ff19166001908117909155905600a165627a7a723058209e9693d79d8be1c253ce0a6628b36f1cb8e57f6e96cddbd010a43d7a9399a5ea0029"
+}

@@ -1,0 +1,135 @@
+{
+  "name": "IBondingManager",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "activeTranscoderTotalStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_maxPricePerSegment",
+          "type": "uint256"
+        }
+      ],
+      "name": "electActiveTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "setActiveTranscoders",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "name": "_fees",
+          "type": "uint256"
+        },
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateTranscoderWithFees",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "transcoderTotalStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "name": "_finder",
+          "type": "address"
+        },
+        {
+          "name": "_slashAmount",
+          "type": "uint64"
+        },
+        {
+          "name": "_finderFee",
+          "type": "uint64"
+        }
+      ],
+      "name": "slashTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x"
+}

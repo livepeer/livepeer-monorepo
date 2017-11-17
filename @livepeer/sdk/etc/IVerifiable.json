@@ -1,0 +1,37 @@
+{
+  "name": "IVerifiable",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        },
+        {
+          "name": "_result",
+          "type": "bool"
+        }
+      ],
+      "name": "receiveVerification",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x"
+}

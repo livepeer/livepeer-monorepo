@@ -1,0 +1,37 @@
+{
+  "name": "@livepeer/sdk",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "lib/index.js",
+  "dependencies": {
+    "ethjs": "^0.3.0"
+  },
+  "scripts": {
+    "build": "npm -s run build-module && npm -s run build-main",
+    "build-main": "NODE_ENV=production npx babel src --out-dir dist --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
+    "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "copy-etc": "f(){ rm -rf etc; mkdir etc; printf 'Importing truffle artifacts...'; tput sc; for x in $@/*.json; do tput rc; tput el; echo \"$(basename $x)\"; node -e \"const {contractName,abi,bytecode,networks}=require('$x');const [address]=Object.values(networks).sort((a, b) => b.updated_at - a.updated_at);console.log(JSON.stringify({name:contractName,abi,bytecode,address: (address && address.address) || address}, null, 2));\" > etc/$(basename $x); done; tput rc; tput el; echo 'done! :)'; };f",
+    "deploy": "pushd ../../node_modules/protocol && rm -rf build && yarn && npx truffle version && npx truffle migrate --reset && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
+    "prebuild": "rm -rf lib && rm -rf dist",
+    "prepare": "npm -s run build",
+    "test": "npx ava"
+  },
+  "devDependencies": {
+    "ava": "^0.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "protocol": "https://github.com/jozanza/protocol#8d58bb9b321932c513144bd0aff28e65306e4817",
+    "yup": "^0.23.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "name": "RoundsManagerMock",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "callSetCurrentRewardTokens",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "roundsPerYear",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_rounds",
+          "type": "uint256"
+        }
+      ],
+      "name": "setRoundsPerYear",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "currentRoundInitialized",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "setCurrentRound",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_initialized",
+          "type": "bool"
+        }
+      ],
+      "name": "setCurrentRoundInitialized",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "currentRound",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "currentRoundStartBlock",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_bondingManager",
+          "type": "address"
+        }
+      ],
+      "name": "setBondingManager",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "initializeRound",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_minter",
+          "type": "address"
+        }
+      ],
+      "name": "setMinter",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6060604052341561000f57600080fd5b6103448061001e6000396000f3006060604052600436106100955763ffffffff60e060020a6000350416630805cc39811461009a57806317f60ec7146100af5780631aef8a5f146100d4578063219bc76c146100ea5780633bc91e28146101115780633de2ca61146101275780638a19c8bc1461013f5780638fa148f214610152578063bde8401d14610165578063d4807fb214610184578063fca3b5aa14610197575b600080fd5b34156100a557600080fd5b6100ad6101b6565b005b34156100ba57600080fd5b6100c261021b565b60405190815260200160405180910390f35b34156100df57600080fd5b6100ad600435610221565b34156100f557600080fd5b6100fd610226565b604051901515815260200160405180910390f35b341561011c57600080fd5b6100ad60043561022f565b341561013257600080fd5b6100ad6004351515610234565b341561014a57600080fd5b6100c2610247565b341561015d57600080fd5b6100c261024d565b341561017057600080fd5b6100ad600160a060020a0360043516610253565b341561018f57600080fd5b6100fd610282565b34156101a257600080fd5b6100ad600160a060020a03600435166102e9565b600154600160a060020a031663ece2064c6000604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b15156101fe57600080fd5b6102c65a03f1151561020f57600080fd5b50505060405180515050565b60045490565b600455565b60055460ff1690565b600255565b6005805460ff1916911515919091179055565b60025490565b60035490565b6000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b60008054600160a060020a031663242ed69f82604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b15156102ca57600080fd5b6102c65a03f115156102db57600080fd5b505050604051805191505090565b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03929092169190911790555600a165627a7a72305820eb86c2075e9c310ffb1dce35a1e8fde18dcaa51fc83f343a40fa74c1e143ffa20029"
+}

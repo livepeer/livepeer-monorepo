@@ -1,0 +1,291 @@
+{
+  "name": "BondingManagerMock",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "activeTranscoderTotalStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_maxPricePerSegment",
+          "type": "uint256"
+        }
+      ],
+      "name": "electActiveTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "reward",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "setActiveTranscoders",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "totalActiveStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pricePerSegment",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "name": "_fees",
+          "type": "uint256"
+        },
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateTranscoderWithFees",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "withdraw",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "withdrawAmount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "name": "_pricePerSegment",
+          "type": "uint256"
+        },
+        {
+          "name": "_activeStake",
+          "type": "uint256"
+        },
+        {
+          "name": "_totalActiveStake",
+          "type": "uint256"
+        }
+      ],
+      "name": "setActiveTranscoder",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "callAddToRedistributionPool",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "transcoderTotalStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "activeStake",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "transcoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setWithdrawAmount",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "name": "_finder",
+          "type": "address"
+        },
+        {
+          "name": "_slashAmount",
+          "type": "uint64"
+        },
+        {
+          "name": "_finderFee",
+          "type": "uint64"
+        }
+      ],
+      "name": "slashTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_minter",
+          "type": "address"
+        }
+      ],
+      "name": "setMinter",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6060604052341561000f57600080fd5b6105008061001e6000396000f3006060604052600436106100d65763ffffffff60e060020a600035041662944f3281146100db578063105d772f1461010c578063228cb7331461013e578063242ed69f1461015357806328f731481461017a57806329df41661461018d5780633aeb512c146101a05780633ccfd60b146101c5578063534844a2146101d85780637d481964146101eb5780638e1f191c146102135780639ef9df94146100db578063bd49c35f14610229578063cdc430ea1461023c578063ceb04e291461024f578063fa474e9514610265578063fca3b5aa1461029d575b600080fd5b34156100e657600080fd5b6100fa600160a060020a03600435166102bc565b60405190815260200160405180910390f35b341561011757600080fd5b6101226004356102c3565b604051600160a060020a03909116815260200160405180910390f35b341561014957600080fd5b6101516102d3565b005b341561015e57600080fd5b61016661034f565b604051901515815260200160405180910390f35b341561018557600080fd5b6100fa610354565b341561019857600080fd5b6100fa61035a565b34156101ab57600080fd5b610166600160a060020a0360043516602435604435610360565b34156101d057600080fd5b610151610369565b34156101e357600080fd5b6100fa6103ce565b34156101f657600080fd5b610151600160a060020a03600435166024356044356064356103d4565b341561021e57600080fd5b610151600435610410565b341561023457600080fd5b6100fa610481565b341561024757600080fd5b610122610487565b341561025a57600080fd5b610151600435610496565b341561027057600080fd5b610166600160a060020a036004358116906024351667ffffffffffffffff6044358116906064351661049b565b34156102a857600080fd5b610151600160a060020a03600435166104a5565b5060035490565b50600154600160a060020a031690565b60008054600354600454600160a060020a0390921692637dbedad592906040516020015260405160e060020a63ffffffff851602815260048101929092526024820152604401602060405180830381600087803b151561033257600080fd5b6102c65a03f1151561034357600080fd5b50505060405180515050565b600190565b60045481565b60025481565b60019392505050565b60008054600554600160a060020a039091169163bec3fa179133916040516020015260405160e060020a63ffffffff8516028152600160a060020a0390921660048301526024820152604401602060405180830381600087803b151561033257600080fd5b60055481565b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a039590951694909417909355600291909155600355600455565b60008054600160a060020a03169063fa69f55d9083906040516020015260405160e060020a63ffffffff84160281526004810191909152602401602060405180830381600087803b151561046357600080fd5b6102c65a03f1151561047457600080fd5b5050506040518051505050565b60035481565b600154600160a060020a031681565b600555565b6001949350505050565b6000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03929092169190911790555600a165627a7a72305820134a8d7723808cd4f58e49531a1a95c6a02031912c1c4178ba590d1ccd0a27030029"
+}
