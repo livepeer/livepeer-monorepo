@@ -1,6 +1,7 @@
 export const name = 'jobs'
 
 export const types = {
+  UPDATE_JOB: `@@${name}/UPDATE_JOB`,
   GET_JOBS_BY_CHANNEL_REQUEST: `@@${name}/GET_JOBS_BY_CHANNEL_REQUEST`,
   GET_JOBS_BY_CHANNEL_SUCCESS: `@@${name}/GET_JOBS_BY_CHANNEL_SUCCESS`,
   GET_JOBS_BY_CHANNEL_FAILURE: `@@${name}/GET_JOBS_BY_CHANNEL_FAILURE`,
@@ -29,6 +30,13 @@ export const actions = {
       },
     }
   },
+  updateJob: data => {
+    if (!('jobId' in data)) throw new Error(`Missing required param jobId`)
+    return {
+      type: types.UPDATE_JOB,
+      payload: data,
+    }
+  },
 }
 
 export const initialState = {
@@ -37,9 +45,9 @@ export const initialState = {
     broadcaster: '0xdc7ea0746dc164fa42bfdaecdf24b8070d459b4a',
     channel: '1',
     live: true,
-    snapshots: ['http://placehold.it/1024x576'],
     streamId: 'x36xhzz',
     transcoder: '0xa6663807b5f972ec1459387397554a9384d25b66',
+    poster: '',
     transcodingOptions: [
       {
         name: 'P720p60fps16x9',
@@ -55,9 +63,9 @@ export const initialState = {
     broadcaster: '0xdc7ea0746dc164fa42bfdaecdf24b8070d459b4a',
     channel: '2',
     live: true,
-    snapshots: ['http://placehold.it/1024x576'],
     streamId: 'aaaaaaaaa',
     transcoder: '0xa6663807b5f972ec1459387397554a9384d25b66',
+    poster: '',
     transcodingOptions: [
       {
         name: 'P720p60fps16x9',
@@ -70,8 +78,18 @@ export const initialState = {
   },
 }
 
-export const reducer = (state = initialState, action) => {
-  switch (action.type) {
+export const reducer = (state = initialState, { type, payload }) => {
+  switch (type) {
+    case types.UPDATE_JOB: {
+      const { jobId, ...data } = payload
+      return {
+        ...state,
+        [jobId]: {
+          ...state[jobId],
+          ...data,
+        },
+      }
+    }
     default:
       return state
   }

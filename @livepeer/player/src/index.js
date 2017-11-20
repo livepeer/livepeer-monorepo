@@ -11,11 +11,10 @@ const init = () => {
     * { box-sizing: border-box }
     html, body {
       margin: 0;
-      color: #fff;
-      background: #222;
       font-family: helvetica, arial, sans-serif;
+      background: #f9f9f9;
     }
-    video:focus { outline: none }
+    a { color: #03a678; }
   `
 }
 
