@@ -1,3 +1,5 @@
+import { call, put, takeEvery } from 'redux-saga/effects'
+
 export const name = 'jobs'
 
 export const types = {
@@ -104,6 +106,12 @@ export const selectors = {
     Object.values(state.jobs).filter(
       x => x.live && x.broadcaster === broadcaster,
     ), // Job[]
+}
+
+export function* saga() {
+  yield takeEvery(types.UPDATE_JOB, function*(action) {
+    console.log(action)
+  })
 }
 
 export default reducers => ({ ...reducers, [name]: reducer })

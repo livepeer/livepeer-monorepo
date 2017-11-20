@@ -1,7 +1,13 @@
 import { combineReducers } from 'redux'
-import routing from './routing'
-import jobs from './jobs'
+import { fork } from 'redux-saga/effects'
+import * as routing from './routing'
+import * as jobs from './jobs'
 
-const reducers = [routing, jobs].reduce((a, b) => b(a), {})
+export const rootReducer = combineReducers({
+  routing: routing.reducer,
+  jobs: jobs.reducer,
+})
 
-export default combineReducers(reducers)
+export function* rootSaga() {
+  yield fork(jobs.saga)
+}

@@ -3,7 +3,7 @@ import createSagaMiddleware from 'redux-saga'
 import { routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
 import createHistory from 'history/createBrowserHistory'
-import rootReducer from './services'
+import { rootReducer, rootSaga } from './services'
 
 export const history = createHistory()
 export const sagaMiddleware = createSagaMiddleware()
@@ -20,6 +20,6 @@ if (process.env.NODE_ENV === 'development') {
 const composedEnhancers = compose(applyMiddleware(...middleware), ...enhancers)
 const store = createStore(rootReducer, initialState, composedEnhancers)
 
-// sagaMiddleware.run(loginSaga)
+sagaMiddleware.run(rootSaga)
 
 export default store
