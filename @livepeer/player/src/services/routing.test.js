@@ -1,4 +1,4 @@
-import { reducer } from './routing'
+import { reducer, types } from './routing'
 
 it('should update the routing location properly', () => {
   const state = {
@@ -10,7 +10,7 @@ it('should update the routing location properly', () => {
     },
   }
   const action = {
-    type: '@@router/LOCATION_CHANGE',
+    type: types.LOCATION_CHANGE,
     payload: {
       pathname: '/',
       search: '',
