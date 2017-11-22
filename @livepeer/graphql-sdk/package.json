@@ -1,0 +1,35 @@
+{
+  "name": "@livepeer/graphql-sdk",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "lib/index.js",
+  "dependencies": {
+    "fetch-ponyfill": "^4.1.0",
+    "graphql": "^0.11.7"
+  },
+  "scripts": {
+    "build": "npm -s run build-module && npm -s run build-main",
+    "build-main": "NODE_ENV=production npx babel src --out-dir dist --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
+    "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "prebuild": "rm -rf lib && rm -rf dist",
+    "prepare": "npm -s run build",
+    "test": "npx ava"
+  },
+  "devDependencies": {
+    "@livepeer/sdk": "0.0.0",
+    "ava": "^0.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  }
+}
