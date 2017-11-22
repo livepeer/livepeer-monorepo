@@ -4,6 +4,8 @@ This repo is the home of the following libraries:
 
 * [@livepeer/sdk](./@livepeer/sdk) - A module for interacting with Livepeer's smart contracts. A core dependency of most projects in this repo.
 
+* [@livepeer/graphql-sdk](./@livepeer/graphql-sdk) - A GraphQL API that can be used to simplify protocol exploration. Currently, it exposes queries for getting a job by id or a list of jobs filtered by broadcaster address and/or whether it is currently "live". Can be used directly in the browser or in node.js applications.
+
 * [@livepeer/lpx](./@livepeer/lpx) - A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
 
 * [@livepeer/chroma](./@livepeer/chroma) - A component library that contains some UI building blocks for livestreaming video applications.
