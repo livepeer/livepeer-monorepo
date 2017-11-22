@@ -86,7 +86,7 @@ export default class Snapshot extends Component {
     const nextKey = this.getKey(nextProps)
     if (this.key === nextKey) return
     this.key = nextKey
-    this.updateThumbnail()
+    this.setState({ src: nextProps.defaultSrc }, this.updateThumbnail)
   }
   render() {
     const { as, at, crop, defaultSrc, onSnapshotReady, ...props } = this.props
