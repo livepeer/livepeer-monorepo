@@ -28,6 +28,8 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
   padding-bottom: 33.33vh;
+  background: #03a678;
+  color: #fff;
 `
 
 const Landing = ({ query, changeChannel }) => (
@@ -37,6 +39,7 @@ const Landing = ({ query, changeChannel }) => (
     <br />
     <br />
     <br />
+    <p>(Still working on this landing page...)</p>
     <p>It's easy to view live streams on the Livepeer network</p>
     <button onClick={() => changeChannel(1)}>
       Check out the official Livepeer channel
