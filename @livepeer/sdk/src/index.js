@@ -11,66 +11,72 @@ import BondingManagerArtifact from '../etc/BondingManager'
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const ADDRESS_PAD = '0x000000000000000000000000'
 export const VIDEO_PROFILE_ID_SIZE = 8
-export const VIDEO_PROFILE_OPTIONS = {
-  a7ac137a: {
+export const VIDEO_PROFILES = {
+  P720p60fps16x9: {
+    hash: 'a7ac137a',
     name: 'P720p60fps16x9',
     bitrate: '6000k',
     framerate: 60,
     resolution: '1280x720',
   },
-  '49d54ea9': {
+  P720p30fps16x9: {
+    hash: '49d54ea9',
     name: 'P720p30fps16x9',
     bitrate: '4000k',
     framerate: 30,
     resolution: '1280x720',
   },
-  '79332fe7': {
+  P720p30fps4x3: {
+    hash: '79332fe7',
     name: 'P720p30fps4x3',
     bitrate: '3500k',
     framerate: 30,
     resolution: '960x720',
   },
-  '5ecf4b52': {
+  P576p30fps16x9: {
+    hash: '5ecf4b52',
     name: 'P576p30fps16x9',
     bitrate: '1500k',
     framerate: 30,
     resolution: '1024x576',
   },
-  '93c717e7': {
+  P360p30fps16x9: {
+    hash: '93c717e7',
     name: 'P360p30fps16x9',
     bitrate: '1200k',
     framerate: 30,
     resolution: '640x360',
   },
-  b60382a0: {
+  P360p30fps4x3: {
+    hash: 'b60382a0',
     name: 'P360p30fps4x3',
     bitrate: '1000k',
     framerate: 30,
     resolution: '480x360',
   },
-  c0a6517a: {
+  P240p30fps16x9: {
+    hash: 'c0a6517a',
     name: 'P240p30fps16x9',
     bitrate: '600k',
     framerate: 30,
     resolution: '426x240',
   },
-  d435c53a: {
+  P240p30fps4x3: {
+    hash: 'd435c53a',
     name: 'P240p30fps4x3',
     bitrate: '600k',
     framerate: 30,
     resolution: '320x240',
   },
-  fca40bf9: {
+  P144p30fps16x9: {
+    hash: 'fca40bf9',
     name: 'P144p30fps16x9',
     bitrate: '400k',
     framerate: 30,
     resolution: '256x144',
   },
 }
-export const VIDEO_PROFILES = Object.entries(VIDEO_PROFILE_OPTIONS).reduce(
-  (profiles, [key, { name }]) => ({ ...profiles, [name]: key }),
-  {},
-)
+
 const DELEGATOR_STATUS = ['Pending', 'Bonded', 'Unbonding', 'Unbonded']
 DELEGATOR_STATUS.Pending = DELEGATOR_STATUS[0]
 DELEGATOR_STATUS.Bonded = DELEGATOR_STATUS[1]
@@ -82,6 +88,74 @@ TRANSCODER_STATUS.NotRegistered = TRANSCODER_STATUS[0]
 TRANSCODER_STATUS.Registered = TRANSCODER_STATUS[1]
 TRANSCODER_STATUS.Resigned = TRANSCODER_STATUS[2]
 export { TRANSCODER_STATUS }
+
+// Utils
+export const utils = {
+  /**
+   * Parses an encoded string of transcoding options
+   * @param  {string} opts - transcoding options
+   * @return {Object[]}
+   */
+  parseTranscodingOptions: opts => {
+    const validHashes = new Set(VIDEO_PROFILES.map(x => x.hash))
+    let hashes = []
+    for (let i = 0; i < opts.length; i += VIDEO_PROFILE_ID_SIZE) {
+      const hash = opts.slice(i, i + VIDEO_PROFILE_ID_SIZE)
+      if (!validHashes.has(hash)) continue
+      hashes.push(hash)
+    }
+    return hashes.map(x => VIDEO_PROFILES.find(({ hash }) => x === hash))
+  },
+  /**
+   * Serializes a list of transcoding profiles name into a hash
+   * @param  {string[]} name - transcoding profile name
+   * @return {string}
+   */
+  serializeTranscodingProfiles: profiles =>
+    [
+      ...new Set( // dedupe profiles
+        profiles.map(
+          x =>
+            VIDEO_PROFILES.find(({ hash }) => x === hash) ||
+            VIDEO_PROFILES.P240p30fps4x3,
+        ),
+      ),
+    ].join(''),
+  /**
+   * Pads an address with 0s on the left (for topic encoding)
+   * @param  {string} addr - an ETH address
+   * @return {string}
+   */
+  padAddress: addr => ADDRESS_PAD + addr.substr(2),
+  /**
+   * Encodes an event filter object into a topic list
+   * @param  {Function} event   - a contract event method
+   * @param  {Object}   filters - key/value map of indexed event params
+   * @return {string[]}
+   */
+  encodeEventTopics: (event, filters) => {
+    return event.abi.inputs.reduce(
+      (topics, { indexed, name, type }, i) => {
+        if (!indexed) return topics
+        if (!filters.hasOwnProperty(name)) return [...topics, null]
+        if (type === 'address' && 'string' === typeof filters[name])
+          return [...topics, utils.padAddress(filters[name])]
+        return [...topics, filters[name]]
+      },
+      [event().options.defaultFilterObject.topics[0]],
+    )
+  },
+  /**
+   * Turns a raw event log into a result object
+   * @param  {Function} event  - a contract event method
+   * @param  {string}   data   - bytecode from log
+   * @param  {string[]} topics - list of topics for log query
+   * @return {Object}
+   */
+  decodeEvent: event => ({ data, topics }) => {
+    return decodeEvent(event.abi, data, topics, false)
+  },
+}
 
 // Defaults
 export const DEFAULTS = {
@@ -283,68 +357,6 @@ export default async function initLivepeerSDK(
   // Cache
   const cache = {
     // previous log queries are held here to improve perf
-  }
-  // Utils
-  const utils = {
-    /**
-     * Parses an encoded string of transcoding options
-     * @param  {string} opts - transcoding options
-     * @return {Object[]}
-     */
-    parseTranscodingOptions: opts => {
-      let videoProfiles = []
-      for (let i = 0; i < opts.length; i += VIDEO_PROFILE_ID_SIZE) {
-        videoProfiles.push(opts.slice(i, i + VIDEO_PROFILE_ID_SIZE))
-      }
-      return videoProfiles
-        .filter(profile => profile in VIDEO_PROFILE_OPTIONS)
-        .map(profile => VIDEO_PROFILE_OPTIONS[profile])
-    },
-    /**
-     * Serializes a list of transcoding profiles name into a hash
-     * @param  {string[]} name - transcoding profile name
-     * @return {string}
-     */
-    serializeTranscodingProfiles: profiles =>
-      [
-        ...new Set( // dedupe profiles
-          profiles.map(x => VIDEO_PROFILES[x] || VIDEO_PROFILES.P240p30fps4x3),
-        ),
-      ].join(''),
-    /**
-     * Pads an address with 0s on the left (for topic encoding)
-     * @param  {string} addr - an ETH address
-     * @return {string}
-     */
-    padAddress: addr => ADDRESS_PAD + addr.substr(2),
-    /**
-     * Encodes an event filter object into a topic list
-     * @param  {Function} event   - a contract event method
-     * @param  {Object}   filters - key/value map of indexed event params
-     * @return {string[]}
-     */
-    encodeEventTopics: (event, filters) => {
-      return event.abi.inputs.reduce(
-        (topics, { indexed, name, type }, i) => {
-          if (!indexed) return topics
-          if (!filters.hasOwnProperty(name)) return [...topics, null]
-          if (type === 'address' && 'string' === typeof filters[name])
-            return [...topics, utils.padAddress(filters[name])]
-          return [...topics, filters[name]]
-        },
-        [event().options.defaultFilterObject.topics[0]],
-      )
-    },
-    /**
-     * Turns a raw event log into a result object
-     * @param  {Function} event  - a contract event method
-     * @param  {string}   data   - bytecode from log
-     * @param  {string[]} topics - list of topics for log query
-     * @return {Object}
-     */
-    decodeEvent: event => ({ data, topics }) => {
-      return decodeEvent(event.abi, data, topics, false)
-    },
   }
   // RPC methods
   const rpc = {
@@ -1159,7 +1171,6 @@ export default async function initLivepeerSDK(
       TRANSCODER_STATUS,
       VIDEO_PROFILE_ID_SIZE,
       VIDEO_PROFILES,
-      VIDEO_PROFILE_OPTIONS,
     },
   }
 }
