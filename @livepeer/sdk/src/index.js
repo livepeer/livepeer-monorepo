@@ -89,6 +89,21 @@ TRANSCODER_STATUS.Registered = TRANSCODER_STATUS[1]
 TRANSCODER_STATUS.Resigned = TRANSCODER_STATUS[2]
 export { TRANSCODER_STATUS }
 
+// Defaults
+export const DEFAULTS = {
+  provider: 'http://localhost:8545',
+  account: '',
+  gas: 6700000,
+  artifacts: {
+    LivepeerToken: LivepeerTokenArtifact,
+    LivepeerTokenFaucet: LivepeerTokenFaucetArtifact,
+    Controller: ControllerArtifact,
+    JobsManager: JobsManagerArtifact,
+    RoundsManager: RoundsManagerArtifact,
+    BondingManager: BondingManagerArtifact,
+  },
+}
+
 // Utils
 export const utils = {
   /**
@@ -97,30 +112,33 @@ export const utils = {
    * @return {Object[]}
    */
   parseTranscodingOptions: opts => {
-    const validHashes = new Set(VIDEO_PROFILES.map(x => x.hash))
+    const profiles = Object.values(VIDEO_PROFILES)
+    const validHashes = new Set(profiles.map(x => x.hash))
     let hashes = []
     for (let i = 0; i < opts.length; i += VIDEO_PROFILE_ID_SIZE) {
       const hash = opts.slice(i, i + VIDEO_PROFILE_ID_SIZE)
       if (!validHashes.has(hash)) continue
       hashes.push(hash)
     }
-    return hashes.map(x => VIDEO_PROFILES.find(({ hash }) => x === hash))
+    return hashes.map(x => profiles.find(({ hash }) => x === hash))
   },
   /**
    * Serializes a list of transcoding profiles name into a hash
    * @param  {string[]} name - transcoding profile name
    * @return {string}
    */
-  serializeTranscodingProfiles: profiles =>
-    [
+  serializeTranscodingProfiles: names => {
+    return [
       ...new Set( // dedupe profiles
-        profiles.map(
+        names.map(
           x =>
-            VIDEO_PROFILES.find(({ hash }) => x === hash) ||
-            VIDEO_PROFILES.P240p30fps4x3,
+            VIDEO_PROFILES[x]
+              ? VIDEO_PROFILES[x].hash
+              : VIDEO_PROFILES.P240p30fps4x3.hash,
         ),
       ),
-    ].join(''),
+    ].join('')
+  },
   /**
    * Pads an address with 0s on the left (for topic encoding)
    * @param  {string} addr - an ETH address
@@ -154,21 +172,6 @@ export const utils = {
    */
   decodeEvent: event => ({ data, topics }) => {
     return decodeEvent(event.abi, data, topics, false)
-  },
-}
-
-// Defaults
-export const DEFAULTS = {
-  provider: 'http://localhost:8545',
-  account: '',
-  gas: 6700000,
-  artifacts: {
-    LivepeerToken: LivepeerTokenArtifact,
-    LivepeerTokenFaucet: LivepeerTokenFaucetArtifact,
-    Controller: ControllerArtifact,
-    JobsManager: JobsManagerArtifact,
-    RoundsManager: RoundsManagerArtifact,
-    BondingManager: BondingManagerArtifact,
   },
 }
 

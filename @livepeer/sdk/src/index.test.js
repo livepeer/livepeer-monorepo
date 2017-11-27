@@ -1,6 +1,6 @@
 import test from 'ava'
 import yup from 'yup'
-import Livepeer, { initContracts } from './index'
+import Livepeer, { utils, initContracts } from './index'
 
 // clears console
 console.log('\x1Bc')
@@ -19,6 +19,13 @@ let livepeer
 
 test.before(async t => {
   livepeer = await Livepeer()
+})
+
+test('should serialize profiles', t => {
+  const a = utils.serializeTranscodingProfiles(['P720p60fps16x9'])
+  const b = utils.serializeTranscodingProfiles(['foo'])
+  t.is('a7ac137a', a)
+  t.is('d435c53a', b)
 })
 
 test('should initialize contracts', async t => {

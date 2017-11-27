@@ -25,7 +25,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
-    "protocol": "https://github.com/jozanza/protocol#8d58bb9b321932c513144bd0aff28e65306e4817",
+    "protocol": "https://github.com/livepeer/protocol#502acfcf2b18c26f24ff9db70fbc4bc4e8191a92",
     "yup": "^0.23.0"
   },
   "ava": {
