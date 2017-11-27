@@ -19,7 +19,7 @@ const getSourceType = src => {
     ['.webm', 'video/webm'],
   ]
   for (const [end, type] of types) {
-    if (src.endsWith(end)) return type
+    if (src && src.endsWith(end)) return type
   }
   console.warn(`Could not determine type for src "${src}"`)
   return ''
@@ -51,27 +51,34 @@ export class Source extends Component {
     type: PropTypes.string,
     video: PropTypes.object,
   }
-  hls = new Hls()
   updateSource = () => {
     const { src, type, video, autoPlay } = this.props
+    // remove old listeners
+    if (this.hls) {
+      this.hls.off(Hls.Events.MANIFEST_PARSED, this.onManifestParsed)
+    }
+    this.hls = new Hls()
     // load hls video source base on hls.js
     if (isHLS(type) && Hls.isSupported()) {
       this.hls.loadSource(src)
       this.hls.attachMedia(video)
-      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        if (!autoPlay) return
-        video.play()
-      })
+      this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed)
     }
+  }
+  onManifestParsed = () => {
+    this.hls.off(Hls.Events.MANIFEST_PARSED, this.onManifestParsed)
+    delete this.hls
+    if (!this.props.autoPlay) return
+    this.props.video.play()
   }
   componentDidMount() {
     this.updateSource()
   }
   componentWillReceiveProps(nextProps) {
-    // @TODO - better props diffing algorithm
-    const a = this.props.src //JSON.stringify(this.props)
-    const b = nextProps.src //JSON.stringify(nextProps)
-    if (a === b) return // if props are the same, no update
+    const a = this.props.src
+    const b = nextProps.src
+    if (a === b) return
+    // if the src changed, update the video player
     this.updateSource()
   }
   render() {
