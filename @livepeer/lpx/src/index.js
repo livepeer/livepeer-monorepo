@@ -57,7 +57,7 @@ ${LOGO}
 For available commands, type 'help'.
   `)
   let { rpc, config, constants } = await Livepeer()
-  const { VIDEO_PROFILE_OPTIONS } = constants
+  const { VIDEO_PROFILES } = constants
   const toFunctionCallString = (key, args) =>
     `${key}(${args.map(x => JSON.stringify(x))})`
   const rpcKeyToDashes = x =>
@@ -157,12 +157,7 @@ For available commands, type 'help'.
     .command('video-profiles', 'Lists available video transcoding profiles')
     .alias('profiles')
     .action((_, next) => {
-      console.table(
-        Object.entries(VIDEO_PROFILE_OPTIONS).map(([hash, val]) => ({
-          ...val,
-          hash,
-        })),
-      )
+      console.table(Object.values(VIDEO_PROFILES))
       next()
     })
   /**

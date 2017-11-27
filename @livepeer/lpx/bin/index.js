@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _cliTable = require('cli-table');
 
 var _cliTable2 = _interopRequireDefault(_cliTable);
@@ -75,7 +73,7 @@ ${LOGO}
 For available commands, type 'help'.
   `);
   let { rpc, config, constants } = await (0, _sdk2.default)();
-  const { VIDEO_PROFILE_OPTIONS } = constants;
+  const { VIDEO_PROFILES } = constants;
   const toFunctionCallString = (key, args) => `${key}(${args.map(x => JSON.stringify(x))})`;
   const rpcKeyToDashes = x => x.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`);
   const rpcKeyToCamel = x => x.replace(/-(.)/g, (a, b) => b.toUpperCase());
@@ -152,9 +150,7 @@ For available commands, type 'help'.
    * video-profiles
    */
   vorpal.command('video-profiles', 'Lists available video transcoding profiles').alias('profiles').action((_, next) => {
-    console.table(Object.entries(VIDEO_PROFILE_OPTIONS).map(([hash, val]) => _extends({}, val, {
-      hash
-    })));
+    console.table(Object.values(VIDEO_PROFILES));
     next();
   });
   /**
