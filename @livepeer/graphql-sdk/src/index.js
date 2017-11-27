@@ -259,18 +259,24 @@ export default function createSchema(
         type: new GraphQLNonNull(new GraphQLList(Job)),
         args: {
           dead: {
-            description: 'The id of the job',
+            description:
+              'Whether to include jobs that are not considered "live"',
             type: GraphQLBoolean,
             defaultValue: false,
           },
           streamRootUrl: {
-            description: 'The root url for m3u8 streams',
+            description: 'The root url for hosted .m3u8 streams',
             type: GraphQLString,
             defaultValue: DEFAULT_STREAM_ROOT,
           },
           broadcaster: {
             description: 'The stream broadcaster ETH address',
             type: GraphQLString,
+          },
+          broadcasterWhereJobId: {
+            description:
+              'Looks up the broadcaster of the given job and finds all jobs where the broadcaster address matches',
+            type: GraphQLInt,
           },
         },
         resolve: resolvers.Query.fields.jobs,
@@ -328,11 +334,21 @@ export const createResolvers = ({ livepeer }) => {
         job: async (job, { id }) => {
           return transformJob(await livepeer.rpc.getJob(id))
         },
-        jobs: async (obj, { dead, streamRootUrl, ...filters }) => {
+        jobs: async (
+          obj,
+          { dead, streamRootUrl, broadcasterWhereJobId, ...filters },
+        ) => {
           try {
-            // console.log(dead, streamRootUrl, filters)
-            const results = await livepeer.rpc.getJobs(filters)
-            // console.log(results)
+            const results = broadcasterWhereJobId
+              ? // get broadcaster address from job and filter by it
+                await livepeer.rpc.getJobs({
+                  broadcaster: (await livepeer.rpc.getJob(
+                    broadcasterWhereJobId,
+                  )).broadcaster,
+                  ...filters,
+                })
+              : // get jobs with passed filters directly
+                await livepeer.rpc.getJobs(filters)
             const jobs = await Promise.all(
               results.map(transformJob).map(async job => {
                 const isTest = job.type === 'TestJob'
@@ -349,7 +365,6 @@ export const createResolvers = ({ livepeer }) => {
                 }
               }),
             )
-            // console.log(jobs)
             return dead ? jobs : jobs.filter(x => x.live === true)
           } catch (err) {
             console.log('FAIL', err)
@@ -374,13 +389,7 @@ export const createResolvers = ({ livepeer }) => {
               { stream, url },
               { streamRootUrl },
             )
-            // console.log('fetching', videoUrl)
-            // const res = await throwAfter(
-            //   fetch(videoUrl, { timeout: 3000 }),
-            //   1000,
-            // )
             const res = await fetch(videoUrl, { timeout: 3000 })
-            // console.log('RESPONSE', res)
             return res.status === 200
           } catch (err) {
             console.log('ERROR', err)

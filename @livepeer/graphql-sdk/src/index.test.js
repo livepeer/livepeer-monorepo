@@ -69,67 +69,74 @@ const livepeer = {
 // Livepeer graphql schema
 const LivepeerSchema = createSchema({ livepeer })
 
+// Queries
+const JobQuery = `
+query JobQuery($id: Int!, $streamRootUrl: String) {
+  job(id: $id) {
+    id
+    broadcaster
+    stream
+    transcoder
+    profiles {
+      id
+      name
+      bitrate
+      framerate
+      resolution
+    }
+    ... on VideoJob {
+      live(streamRootUrl: $streamRootUrl)
+      url(streamRootUrl: $streamRootUrl)
+    }
+  }
+}
+`
+
+const JobsQuery = `
+query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $broadcasterWhereJobId: Int) {
+  jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster, broadcasterWhereJobId: $broadcasterWhereJobId) {
+    id
+    broadcaster
+    stream
+    transcoder
+    profiles {
+      id
+      name
+      bitrate
+      framerate
+      resolution
+    }
+    ... on VideoJob {
+      live
+      url
+    }
+  }
+}
+`
+
 // job(...) query
 test.skip('should get a single job by id', async t => {
-  const query = `
-    query JobQuery($id: Int!, $streamRootUrl: String) {
-      job(id: $id) {
-        id
-        broadcaster
-        stream
-        transcoder
-        profiles {
-          id
-          name
-          bitrate
-          framerate
-          resolution
-        }
-        ... on VideoJob {
-          live(streamRootUrl: $streamRootUrl)
-          url(streamRootUrl: $streamRootUrl)
-        }
-      }
-    }
-  `
   const params = {
     id: 0,
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
   }
-  const res = await graphql(LivepeerSchema, query, null, null, params)
+  const res = await graphql(LivepeerSchema, JobQuery, null, null, params)
   // console.log(JSON.stringify(res, null, 2))
   t.pass()
 })
 
 // jobs(...) query
 test('should get many jobs', async t => {
-  const query = `
-    query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String) {
-      jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster) {
-        id
-        broadcaster
-        stream
-        transcoder
-        profiles {
-          id
-          name
-          bitrate
-          framerate
-          resolution
-        }
-        ... on VideoJob {
-          live
-          url
-        }
-      }
-    }
-  `
-  const params = {
+  const res0 = await graphql(LivepeerSchema, JobsQuery, null, null, {
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
-  }
-  const res = await graphql(LivepeerSchema, query, null, null, params)
-  console.log(JSON.stringify(res, null, 2))
+  })
+  // console.log(JSON.stringify(res0, null, 2))
+  const res1 = await graphql(LivepeerSchema, JobsQuery, null, null, {
+    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
+    broadcasterWhereJobId: 2,
+  })
+  // console.log(JSON.stringify(res1, null, 2))
   t.pass()
 })
 
@@ -146,6 +153,6 @@ test('possible types', async t => {
     }
   }`
   const res = await graphql(LivepeerSchema, query, null, null, {})
-  console.log(JSON.stringify(res, null, 2))
+  // console.log(JSON.stringify(res, null, 2))
   t.pass()
 })
