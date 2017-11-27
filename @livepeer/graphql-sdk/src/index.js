@@ -11,7 +11,26 @@ import {
   GraphQLString,
 } from 'graphql'
 import Url from 'url'
-import fetchPonyfill from 'fetch-ponyfill'
+import fetch from 'node-fetch'
+
+export const introspectionQueryResultData = {
+  __schema: {
+    types: [
+      {
+        kind: 'INTERFACE',
+        name: 'Job',
+        possibleTypes: [
+          {
+            name: 'VideoJob',
+          },
+          {
+            name: 'TestJob',
+          },
+        ],
+      },
+    ],
+  },
+}
 
 const DEFAULT_STREAM_ROOT = 'http://streams.livepeer.org'
 
@@ -267,7 +286,6 @@ export default function createSchema(
   })
 }
 
-const { fetch } = fetchPonyfill()
 const transformJob = ({
   jobId,
   streamId,
@@ -287,6 +305,21 @@ const transformJob = ({
     transcoder,
   }
 }
+const throwAfter = (p, ms) =>
+  new Promise((res, rej) => {
+    let ok = false
+    let failed = false
+    setTimeout(() => {
+      if (ok) return
+      failed = true
+      rej(new Error('Took too long'))
+    }, ms)
+    p.then(x => {
+      if (failed) return
+      ok = true
+      res(x)
+    })
+  })
 export const createResolvers = ({ livepeer }) => {
   const DEAD_JOBS = new Set()
   const resolvers = {
@@ -295,25 +328,33 @@ export const createResolvers = ({ livepeer }) => {
         job: async (job, { id }) => {
           return transformJob(await livepeer.rpc.getJob(id))
         },
-        jobs: async (job, { dead, streamRootUrl, ...filters }) => {
-          const results = await livepeer.rpc.getJobs(filters)
-          const jobs = await Promise.all(
-            results.map(transformJob).map(async job => {
-              const isTest = job.type === 'TestJob'
-              return {
-                ...job,
-                live: isTest
-                  ? false
-                  : await resolvers.VideoJob.fields.live(job, {
-                      streamRootUrl,
-                    }),
-                url: await resolvers.VideoJob.fields.url(job, {
-                  streamRootUrl,
-                }),
-              }
-            }),
-          )
-          return dead ? jobs : jobs.filter(x => x.live === true)
+        jobs: async (obj, { dead, streamRootUrl, ...filters }) => {
+          try {
+            // console.log(dead, streamRootUrl, filters)
+            const results = await livepeer.rpc.getJobs(filters)
+            // console.log(results)
+            const jobs = await Promise.all(
+              results.map(transformJob).map(async job => {
+                const isTest = job.type === 'TestJob'
+                return {
+                  ...job,
+                  live: isTest
+                    ? false
+                    : await resolvers.VideoJob.fields.live(job, {
+                        streamRootUrl,
+                      }),
+                  url: await resolvers.VideoJob.fields.url(job, {
+                    streamRootUrl,
+                  }),
+                }
+              }),
+            )
+            // console.log(jobs)
+            return dead ? jobs : jobs.filter(x => x.live === true)
+          } catch (err) {
+            console.log('FAIL', err)
+            return []
+          }
         },
       },
     },
@@ -333,9 +374,16 @@ export const createResolvers = ({ livepeer }) => {
               { stream, url },
               { streamRootUrl },
             )
-            const res = await fetch(videoUrl)
+            // console.log('fetching', videoUrl)
+            // const res = await throwAfter(
+            //   fetch(videoUrl, { timeout: 3000 }),
+            //   1000,
+            // )
+            const res = await fetch(videoUrl, { timeout: 3000 })
+            // console.log('RESPONSE', res)
             return res.status === 200
           } catch (err) {
+            console.log('ERROR', err)
             DEAD_JOBS.add(id) // cache dead job ids
             return false
           }

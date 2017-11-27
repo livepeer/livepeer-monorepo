@@ -132,3 +132,20 @@ test('should get many jobs', async t => {
   console.log(JSON.stringify(res, null, 2))
   t.pass()
 })
+
+test('possible types', async t => {
+  const query = `{
+    __schema {
+      types {
+        kind
+        name
+        possibleTypes {
+          name
+        }
+      }
+    }
+  }`
+  const res = await graphql(LivepeerSchema, query, null, null, {})
+  console.log(JSON.stringify(res, null, 2))
+  t.pass()
+})
