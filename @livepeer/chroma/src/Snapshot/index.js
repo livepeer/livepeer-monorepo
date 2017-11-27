@@ -50,6 +50,7 @@ export default class Snapshot extends Component {
     this.hls.destroy()
   }
   updateThumbnail = () => {
+    if (!this.props.url) return
     if (CACHE[this.key]) {
       return this.setState({ src: CACHE[this.key] }, () => {
         this.props.onSnapshotReady(this.state.src)
