@@ -15,150 +15,71 @@ import {
 import { VideoPlayer, Snapshot } from '@livepeer/chroma'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
-import {
-  actions as routingActions,
-  // selectors as routingSelectors,
-} from '../../services/routing'
-import {
-  actions as jobsActions,
-  selectors as jobsSelectors,
-} from '../../services/jobs'
+import { actions as routingActions } from '../../services/routing'
 
 const { changeChannel } = routingActions
-const { updateJob } = jobsActions
-const { getLiveJobsByChannel, getLiveJobsByBroadcaster } = jobsSelectors
 
-const mapStateToProps = (state, ownProps) => {
-  const { channel } = ownProps.match.params
-  const isAddress = channel.length === 42
-  return {
-    jobs: isAddress
-      ? getLiveJobsByBroadcaster(channel)(state)
-      : getLiveJobsByChannel(channel)(state),
-  }
-}
+const isAddress = x => x.startsWith('0x') && x.length === 42
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       changeChannel,
-      updateJob,
     },
     dispatch,
   )
 
-const connectRedux = connect(mapStateToProps, mapDispatchToProps)
+const connectRedux = connect(null, mapDispatchToProps)
 
-const GetJobQuery = gql`
-  query GetJob($id: Int!, $streamRootUrl: String) {
-    job(id: $id) {
-      id
-      broadcaster
-      stream
-      transcoder
-      profiles {
-        id
-        name
-        bitrate
-        framerate
-        resolution
-      }
-      ... on VideoJob {
-        live(streamRootUrl: $streamRootUrl)
-        url(streamRootUrl: $streamRootUrl)
-      }
-    }
-  }`
 const GetJobsQuery = gql`
-  query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String) {
-    jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster) {
+query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $broadcasterWhereJobId: Int) {
+  jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster, broadcasterWhereJobId: $broadcasterWhereJobId) {
+    id
+    broadcaster
+    stream
+    transcoder
+    profiles {
       id
-      broadcaster
-      stream
-      transcoder
-      profiles {
-        id
-        name
-        bitrate
-        framerate
-        resolution
-      }
-      ... on VideoJob {
-        live(streamRootUrl: $streamRootUrl)
-        url(streamRootUrl: $streamRootUrl)
-      }
+      name
+      bitrate
+      framerate
+      resolution
     }
-  }`
-const connectApollo = composeGraphql(
-  graphql(GetJobsQuery, {
-    pollInterval: 10,
-    skip: ({ match }) => {
-      const { channel } = match.params
-      return channel.length !== 42
-    },
-    props: ({ data, ownProps }) => {
-      // const { channel } = props.match.params
-      // console.log(data, ownProps)
-      return {
-        ...ownProps,
-        loading: data.loading,
-        liveJobs: data.jobs ? [data.jobs[data.jobs.length - 1]] : [],
-      }
-    },
-    options: ({ match }) => {
-      const { channel } = match.params
-      return {
-        variables: {
-          broadcaster: channel,
-          streamRootUrl: 'http://d194z9vj66yekd.cloudfront.net/stream/',
-        },
-      }
-    },
-  }),
-  // graphql(GetJobQuery, {
-  //   skip: ({ match }) => {
-  //     const { channel } = match.params
-  //     return channel.length === 42
-  //   },
-  //   props: (res, props) => {
-  //     return {
-  //       ...props,
-  //       loading: res.data.loading,
-  //       liveJobs: res.data.job ? [res.data.job] : [],
-  //     }
-  //   },
-  //   options: ({ match }) => {
-  //     const { channel } = match.params
-  //     return {
-  //       variables: {
-  //         id: 0,
-  //         streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
-  //       },
-  //     }
-  //   },
-  // }),
-)
+    ... on VideoJob {
+      live(streamRootUrl: $streamRootUrl)
+      url(streamRootUrl: $streamRootUrl)
+    }
+  }
+}`
+const connectApollo = graphql(GetJobsQuery, {
+  // @TODO: figure out why pollInterval seems to do nothing
+  // pollInterval: 10,
+  props: ({ data, ownProps }) => {
+    return {
+      ...ownProps,
+      loading: data.loading,
+      jobs: data.jobs || [],
+    }
+  },
+  options: ({ match }) => {
+    const { channel } = match.params
+    const channelIsAddress = isAddress(channel)
+    return {
+      variables: {
+        broadcaster: channelIsAddress ? channel : undefined,
+        broadcasterWhereJobId: !channelIsAddress ? Number(channel) : undefined,
+        streamRootUrl: 'http://d194z9vj66yekd.cloudfront.net/stream/',
+      },
+    }
+  },
+})
 
 const enhance = compose(connectRedux, connectApollo)
 
-const Channel = ({
-  liveJobs,
-  jobs,
-  loading,
-  match,
-  changeChannel,
-  updateJob,
-}) => {
-  const [mostRecentJob] = liveJobs
-  const {
-    jobId,
-    stream,
-    broadcaster = match.params.channel,
-    live,
-    poster,
-    url = '',
-  } =
-    mostRecentJob || {}
+const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
+  const [latestJob, ...prevJobs] = jobs
+  const { jobId, stream, broadcaster = match.params.channel, live, url = '' } =
+    latestJob || {}
   return loading ? (
     'Loading...'
   ) : (
@@ -183,7 +104,7 @@ const Channel = ({
             />
             <input
               type="search"
-              placeholder="Search by broadcaster address or stream ID"
+              placeholder="Search by broadcaster address"
               style={{
                 width: '100%',
                 height: 32,
@@ -226,10 +147,9 @@ const Channel = ({
             </div>
           )}
           <VideoPlayer
-            preload="auto"
             autoPlay={false}
             poster={!live ? '/wordmark.svg' : ''}
-            src={url}
+            src={live ? url : undefined}
             aspectRatio="16:9"
           />
         </Media>
@@ -253,7 +173,7 @@ const Channel = ({
             </ChannelStatus>
             <p>
               Broadcaster:<br />
-              <span>{broadcaster}</span>
+              <span>{isAddress(broadcaster) ? broadcaster : 'Unknown'}</span>
             </p>
             <p
               style={{
