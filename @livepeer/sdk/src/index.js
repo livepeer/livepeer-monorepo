@@ -977,7 +977,7 @@ export default async function initLivepeerSDK(
           ),
         )
       // cache[key] = results
-      return results
+      return results.reverse()
     },
 
     /**
