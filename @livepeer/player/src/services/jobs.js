@@ -110,7 +110,7 @@ export const selectors = {
 
 export function* saga() {
   yield takeEvery(types.UPDATE_JOB, function*(action) {
-    console.log(action)
+    // console.log(action)
   })
 }
 

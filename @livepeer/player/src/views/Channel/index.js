@@ -1,6 +1,8 @@
 import React from 'react'
-import { bindActionCreators } from 'redux'
+import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
+import { compose as composeGraphql, graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import {
@@ -45,13 +47,121 @@ const mapDispatchToProps = dispatch =>
     dispatch,
   )
 
-const enhance = connect(mapStateToProps, mapDispatchToProps)
+const connectRedux = connect(mapStateToProps, mapDispatchToProps)
 
-const Channel = ({ jobs, match, changeChannel, updateJob }) => {
-  const [mostRecentJob] = jobs
-  const { jobId, streamId, broadcaster = match.params.channel, live, poster } =
+const GetJobQuery = gql`
+  query GetJob($id: Int!, $streamRootUrl: String) {
+    job(id: $id) {
+      id
+      broadcaster
+      stream
+      transcoder
+      profiles {
+        id
+        name
+        bitrate
+        framerate
+        resolution
+      }
+      ... on VideoJob {
+        live(streamRootUrl: $streamRootUrl)
+        url(streamRootUrl: $streamRootUrl)
+      }
+    }
+  }`
+const GetJobsQuery = gql`
+  query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String) {
+    jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster) {
+      id
+      broadcaster
+      stream
+      transcoder
+      profiles {
+        id
+        name
+        bitrate
+        framerate
+        resolution
+      }
+      ... on VideoJob {
+        live(streamRootUrl: $streamRootUrl)
+        url(streamRootUrl: $streamRootUrl)
+      }
+    }
+  }`
+const connectApollo = composeGraphql(
+  graphql(GetJobsQuery, {
+    pollInterval: 10,
+    skip: ({ match }) => {
+      const { channel } = match.params
+      return channel.length !== 42
+    },
+    props: ({ data, ownProps }) => {
+      // const { channel } = props.match.params
+      // console.log(data, ownProps)
+      return {
+        ...ownProps,
+        loading: data.loading,
+        liveJobs: data.jobs ? [data.jobs[data.jobs.length - 1]] : [],
+      }
+    },
+    options: ({ match }) => {
+      const { channel } = match.params
+      return {
+        variables: {
+          broadcaster: channel,
+          streamRootUrl: 'http://d194z9vj66yekd.cloudfront.net/stream/',
+        },
+      }
+    },
+  }),
+  // graphql(GetJobQuery, {
+  //   skip: ({ match }) => {
+  //     const { channel } = match.params
+  //     return channel.length === 42
+  //   },
+  //   props: (res, props) => {
+  //     return {
+  //       ...props,
+  //       loading: res.data.loading,
+  //       liveJobs: res.data.job ? [res.data.job] : [],
+  //     }
+  //   },
+  //   options: ({ match }) => {
+  //     const { channel } = match.params
+  //     return {
+  //       variables: {
+  //         id: 0,
+  //         streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
+  //       },
+  //     }
+  //   },
+  // }),
+)
+
+const enhance = compose(connectRedux, connectApollo)
+
+const Channel = ({
+  liveJobs,
+  jobs,
+  loading,
+  match,
+  changeChannel,
+  updateJob,
+}) => {
+  const [mostRecentJob] = liveJobs
+  const {
+    jobId,
+    stream,
+    broadcaster = match.params.channel,
+    live,
+    poster,
+    url = '',
+  } =
     mostRecentJob || {}
-  return (
+  return loading ? (
+    'Loading...'
+  ) : (
     <div>
       <Navbar>
         <Nav>
@@ -118,33 +228,16 @@ const Channel = ({ jobs, match, changeChannel, updateJob }) => {
           <VideoPlayer
             preload="auto"
             autoPlay={false}
-            poster={poster}
-            src={`http://www.streambox.fr/playlists/x36xhzz/${streamId}.m3u8`}
-            style={{ maxHeight: '100%' }}
+            poster={!live ? '/wordmark.svg' : ''}
+            src={url}
+            aspectRatio="16:9"
           />
-          {live &&
-            !poster && (
-              <Snapshot
-                at={1}
-                defaultSrc="/wordmark.svg"
-                url={`http://www.streambox.fr/playlists/x36xhzz/${streamId}.m3u8`}
-                width={640}
-                height={360}
-                style={{ display: 'none' }}
-                onSnapshotReady={src => {
-                  updateJob({
-                    jobId,
-                    poster: src,
-                  })
-                }}
-              />
-            )}
         </Media>
         <Info>
           <Snapshot
             at={1}
             defaultSrc="/wordmark.svg"
-            url={`http://www.streambox.fr/playlists/x36xhzz/${streamId}.m3u8`}
+            url={url}
             width={72}
             height={72}
             style={{
@@ -153,7 +246,7 @@ const Channel = ({ jobs, match, changeChannel, updateJob }) => {
               boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
             }}
           />
-          <div>
+          <div style={{ width: 'calc(100% - 72px)' }}>
             <ChannelStatus live={live}>
               <span>•</span>
               {live ? 'live' : 'offline'}
@@ -162,9 +255,15 @@ const Channel = ({ jobs, match, changeChannel, updateJob }) => {
               Broadcaster:<br />
               <span>{broadcaster}</span>
             </p>
-            <p>
+            <p
+              style={{
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            >
               Stream ID:<br />
-              <span>{streamId || 'N/A'}</span>
+              <span>{stream || 'N/A'}</span>
             </p>
           </div>
         </Info>

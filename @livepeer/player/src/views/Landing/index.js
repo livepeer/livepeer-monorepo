@@ -41,7 +41,7 @@ const Landing = ({ query, changeChannel }) => (
     <br />
     <p>(Still working on this landing page...)</p>
     <p>It's easy to view live streams on the Livepeer network</p>
-    <button onClick={() => changeChannel(1)}>
+    <button onClick={() => changeChannel('0x86a1405f3aede8e904dbd584971ff685e80418cc')}>
       Check out the official Livepeer channel
     </button>
     <p>or</p>
