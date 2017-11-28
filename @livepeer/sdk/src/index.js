@@ -956,6 +956,7 @@ export default async function initLivepeerSDK(
       const toBlock = to || 'latest'
       const topics = utils.encodeEventTopics(event, filters)
       const params = {
+        address: JobsManager.address,
         fromBlock,
         toBlock,
         topics,

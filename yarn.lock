@@ -6594,14 +6594,7 @@ property-expr@^1.2.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-1.3.1.tgz#53f4af8ecd3c6db00ed98b8e0f6affbe880faa0a"
 
-"protocol@https://github.com/jozanza/protocol#8d58bb9b321932c513144bd0aff28e65306e4817":
-  version "1.0.0"
-  resolved "https://github.com/jozanza/protocol#8d58bb9b321932c513144bd0aff28e65306e4817"
-  dependencies:
-    mkdirp "^0.5.1"
-    truffle "^4.0.0-beta.2"
-
-"protocol@https://github.com/livepeer/protocol":
+"protocol@https://github.com/livepeer/protocol#502acfcf2b18c26f24ff9db70fbc4bc4e8191a92":
   version "1.0.0"
   resolved "https://github.com/livepeer/protocol#502acfcf2b18c26f24ff9db70fbc4bc4e8191a92"
   dependencies:
@@ -8020,7 +8013,7 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-truffle@^4.0.0-beta.2, truffle@^4.0.1:
+truffle@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/truffle/-/truffle-4.0.1.tgz#d8661a4ad7a6ca094b7517d29b199c60e6dde665"
   dependencies:
