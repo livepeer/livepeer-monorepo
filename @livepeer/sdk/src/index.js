@@ -91,7 +91,7 @@ export { TRANSCODER_STATUS }
 
 // Defaults
 export const DEFAULTS = {
-  provider: 'http://localhost:8545',
+  provider: 'http://18.216.240.131:8545',
   account: '',
   gas: 6700000,
   artifacts: {
@@ -385,32 +385,19 @@ export default async function initLivepeerSDK(
     },
 
     /**
-   * Gets a user's token deposit
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
-    async getTokenDeposit(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<number> {
-      return headToNumber(await JobsManager.broadcasterDeposits(addr))
-    },
-
-    /**
    * Gets general information about tokens
    * @param  {string} addr - user's ETH address
-   * @return {{ totalSupply: number, balance: number, deposit: number }}
+   * @return {{ totalSupply: number, balance: number }}
    */
     async getTokenInfo(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<{
       totalSupply: number,
       balance: number,
-      deposit: number,
     }> {
       return {
         totalSupply: await rpc.getTokenTotalSupply(),
         balance: await rpc.getTokenBalance(addr),
-        deposit: await rpc.getTokenDeposit(addr),
       }
     },
 
@@ -477,6 +464,21 @@ export default async function initLivepeerSDK(
         tapRate: await rpc.getFaucetTapRate(),
         tapAt: await rpc.getFaucetTapAt(addr),
         tapIn: await rpc.getFaucetTapIn(addr),
+      }
+    },
+
+    // Broadcaster
+
+    async getBroadcaster(
+      addr: string = invariant('addr', 0, 'string'),
+    ): Promise<{
+      deposit: number,
+      withdrawBlock: number,
+    }> {
+      const b = await JobsManager.broadcasters(addr)
+      return {
+        deposit: toNumber(b.deposit),
+        withdrawBlock: toNumber(b.withdrawBlock) || null,
       }
     },
 
@@ -1115,7 +1117,7 @@ export default async function initLivepeerSDK(
       } else {
         // withdraw specific amount
         const a = toBN(amount)
-        const b = (await JobsManager.broadcasterDeposits(tx.from))[0]
+        const b = (await JobsManager.broadcasters(tx.from)).deposit
         const c = b.sub(a)
         await JobsManager.withdraw()
         await rpc.deposit(c, tx)

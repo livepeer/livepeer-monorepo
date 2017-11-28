@@ -66,10 +66,9 @@ test('should return a number from getTokenDeposit()', async t => {
 
 test('should return object with correct shape from getTokenInfo()', async t => {
   const { from } = livepeer.config.defaultTx
-  const { totalSupply, balance, deposit } = await livepeer.rpc.getTokenInfo(from)
+  const { totalSupply, balance } = await livepeer.rpc.getTokenInfo(from)
   t.true(Number.isInteger(totalSupply))
   t.true(Number.isInteger(balance))
-  t.true(Number.isInteger(deposit))
 })
 
 // Faucet
@@ -85,6 +84,15 @@ test('should return object with correct shape from getFaucetInfo()', async t => 
   const res = await livepeer.rpc.getFaucetInfo(from)
   schema.validateSync(res)
   t.pass()
+})
+
+// Broadcaster
+
+test('should return object with correct shape from getBroadcaster()', async t => {
+  const { from } = livepeer.config.defaultTx
+  const { deposit, withdrawBlock } = await livepeer.rpc.getBroadcaster(from)
+  t.true(Number.isInteger(deposit))
+  t.true(Number.isInteger(withdrawBlock))
 })
 
 // Delgator
