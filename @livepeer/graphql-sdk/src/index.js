@@ -389,7 +389,7 @@ export const createResolvers = ({ livepeer }) => {
               { stream, url },
               { streamRootUrl },
             )
-            const res = await fetch(videoUrl, { timeout: 3000 })
+            const res = await throwAfter(fetch(videoUrl, { timeout: 3000 }), 3000)
             return res.status === 200
           } catch (err) {
             console.log('ERROR', err)
