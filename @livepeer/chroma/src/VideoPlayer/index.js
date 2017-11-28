@@ -34,12 +34,14 @@ export default class VideoPlayer extends Component {
     return (
       <Player playsInline {...props}>
         <BigPlayButton position="center" />
-        <Source
-          isVideoChild
-          autoPlay={props.autoPlay}
-          src={src}
-          type={getSourceType(src)}
-        />
+        {src && (
+          <Source
+            isVideoChild
+            autoPlay={props.autoPlay}
+            src={src}
+            type={getSourceType(src)}
+          />
+        )}
       </Player>
     )
   }
