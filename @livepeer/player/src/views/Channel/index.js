@@ -4,13 +4,14 @@ import { connect } from 'react-redux'
 import { compose as composeGraphql, graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import {
   Facebook,
   Link as LinkIcon,
   Search,
   ThumbsUp,
   Twitter,
+  Video,
 } from 'react-feather'
 import { VideoPlayer, Snapshot } from '@livepeer/chroma'
 import Navbar from '../../components/Navbar'
@@ -80,13 +81,18 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
   const [latestJob, ...prevJobs] = jobs
   const { jobId, stream, broadcaster = match.params.channel, live, url = '' } =
     latestJob || {}
-  return loading ? (
-    'Loading...'
-  ) : (
+  return (
     <div>
       <Navbar>
         <Nav>
-          <Link to="/" style={{ lineHeight: 0, padding: '8px 0' }}>
+          <Link
+            to="#"
+            onClick={e => {
+              e.preventDefault()
+              window.location = 'https://livepeer.org'
+            }}
+            style={{ lineHeight: 0, padding: '8px 0' }}
+          >
             <img src="/wordmark.svg" height="24" />
           </Link>
           <div
@@ -127,8 +133,9 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
       </Navbar>
       <Content>
         <Media>
-          {!live && (
-            <div
+          {(!live || loading) && (
+            <FadeInOut
+              loading={loading}
               style={{
                 display: 'inline-flex',
                 justifyContent: 'center',
@@ -143,12 +150,16 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
                 zIndex: 1,
               }}
             >
-              <p>This broadcaster is currently offline</p>
-            </div>
+              <p>
+                {loading
+                  ? 'L O A D I N G ...'
+                  : 'This broadcaster is currently offline'}
+              </p>
+            </FadeInOut>
           )}
           <VideoPlayer
             autoPlay={false}
-            poster={!live ? '/wordmark.svg' : ''}
+            poster=""
             src={live ? url : undefined}
             aspectRatio="16:9"
           />
@@ -171,7 +182,13 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
               <span>•</span>
               {live ? 'live' : 'offline'}
             </ChannelStatus>
-            <p>
+            <p
+              style={{
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            >
               Broadcaster:<br />
               <span>{isAddress(broadcaster) ? broadcaster : 'Unknown'}</span>
             </p>
@@ -187,6 +204,7 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
             </p>
           </div>
         </Info>
+        {/*
         <div>
           <p
             style={{
@@ -290,7 +308,76 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
             <a href="#">See more</a>
           </p>
         </div>
+        */}
       </Content>
+      <Footer>
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            width: '100vw',
+            background: '#fff',
+            boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
+          }}
+        >
+          <div
+            style={{
+              width: 640,
+              maxWidth: '100%',
+              margin: '0 auto',
+              padding: 16,
+            }}
+          >
+            <div
+              style={{
+                display: 'inline-flex',
+                flexFlow: 'row-wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+              }}
+            >
+              <Video color="#03a678" size={32} />
+              <p
+                style={{
+                  width: '75%',
+                  margin: 0,
+                  paddingLeft: 16,
+                  lineHeight: 1.5,
+                  color: '#555',
+                }}
+              >
+                Livepeer is a decentralized live streaming platform built on
+                Ethereum
+              </p>
+              <p style={{ margin: 0 }}>
+                <button
+                  style={{
+                    background: '#03a678',
+                    color: '#fff',
+                    outline: 0,
+                    border: 'none',
+                    borderRadius: 4,
+                    margin: 0,
+                    padding: '8px 12px',
+                    fontSize: 12,
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    window.location =
+                      'https://medium.com/@petkanics/introducing-livepeer-a-decentralized-live-video-broadcast-platform-and-crypto-token-protocol-7eb4b1de47ed'
+                  }}
+                >
+                  Learn More
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </Footer>
+      {/* Tipping
       <Footer>
         <div
           style={{
@@ -350,7 +437,7 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
                   }}
                   onClick={() => {
                     window.prompt(
-                      'Enter an amount of LPT or ETH. Probably need MetaMask for this feature...',
+                      'Enter an amount of LPT or ETH...',
                     )
                   }}
                 >
@@ -361,6 +448,7 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
           </div>
         </div>
       </Footer>
+      */}
     </div>
   )
 }
@@ -435,6 +523,16 @@ const Info = styled.div`
       color: #aaa;
     }
   }
+`
+
+const fadeInOut = keyframes`
+  from { opacity: 1; }
+  to { opacity: .25; }
+`
+
+const FadeInOut = styled.span`
+  ${({ loading }) =>
+    !loading ? '' : `animation: ${fadeInOut} 2s linear infinite alternate;`};
 `
 
 export default enhance(Channel)

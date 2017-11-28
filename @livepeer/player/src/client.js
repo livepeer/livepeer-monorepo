@@ -13,21 +13,17 @@ import LivepeerSchema, {
 } from '@livepeer/graphql-sdk'
 
 export default async function createClient() {
-  const opts = {
-    provider: 'http://18.216.240.131:8545',
-  }
-  // console.log(opts)
-  const livepeer = await Livepeer(opts)
+  const livepeer = await Livepeer()
   window.livepeer = livepeer
   const livepeerSchema = LivepeerSchema({ livepeer })
   const link = new ApolloLink(
     operation =>
       new Observable(observer => {
         const { query, variables, operationName } = operation
-        console.log(operationName, variables) // @TODO create loggin middleware link
+        // @TODO create loggin middleware link
+        // console.log(operationName, variables)
         graphql(livepeerSchema, print(query), {}, {}, variables, operationName)
           .then(result => {
-            // console.log('result', result)
             observer.next(result)
             observer.complete(result)
           })
