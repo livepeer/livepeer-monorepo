@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@livepeer/graphql-sdk": "0.0.0",
     "@livepeer/sdk": "0.0.0",
     "apollo-cache-inmemory": "^1.1.1",
     "apollo-client": "^2.0.3",
@@ -27,6 +28,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
+    "postbuild": "npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
+    "serve": "npx serve -s build"
+  },
+  "devDependencies": {
+    "serve": "^6.4.1",
+    "uglify-es": "^3.2.0"
   }
 }
