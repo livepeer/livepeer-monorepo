@@ -7,14 +7,18 @@ import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import {
   Facebook,
+  Github as GithubIcon,
   Link as LinkIcon,
+  MessageCircle as MessageCircleIcon,
   Search,
   ThumbsUp,
   Twitter,
+  Twitter as TwitterIcon,
   Video,
 } from 'react-feather'
 import { VideoPlayer, Snapshot } from '@livepeer/chroma'
 import Navbar from '../../components/Navbar'
+import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
 
@@ -68,7 +72,7 @@ const connectApollo = graphql(GetJobsQuery, {
     return {
       variables: {
         broadcaster: channelIsAddress ? channel : undefined,
-        broadcasterWhereJobId: !channelIsAddress ? Number(channel) : undefined,
+        broadcasterWhereJobId: !channelIsAddress ? channel : undefined,
         streamRootUrl: 'http://d194z9vj66yekd.cloudfront.net/stream/',
       },
     }
@@ -83,59 +87,11 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
     latestJob || {}
   return (
     <div>
-      <Navbar>
-        <Nav>
-          <Link
-            to="#"
-            onClick={e => {
-              e.preventDefault()
-              window.location = 'https://livepeer.org'
-            }}
-            style={{ lineHeight: 0, padding: '8px 0' }}
-          >
-            <img src="/wordmark.svg" height="24" />
-          </Link>
-          <div
-            style={{
-              width: '50%',
-              maxWidth: 480,
-              paddingLeft: 40,
-              position: 'relative',
-            }}
-          >
-            <Search
-              color="#fff"
-              size={24}
-              style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
-            />
-            <input
-              type="search"
-              placeholder="Search by broadcaster address"
-              style={{
-                width: '100%',
-                height: 32,
-                margin: 0,
-                padding: '0 16px',
-                background: 'rgba(255,255,255,.2)',
-                color: '#fff',
-                outline: 0,
-                border: 'none',
-                borderRadius: 4,
-              }}
-              onKeyDown={e => {
-                if (e.keyCode !== 13) return
-                changeChannel(e.target.value)
-                e.target.value = ''
-              }}
-            />
-          </div>
-        </Nav>
-      </Navbar>
+      <BasicNavbar onSearch={changeChannel} />
       <Content>
         <Media>
           {(!live || loading) && (
-            <FadeInOut
-              loading={loading}
+            <div
               style={{
                 display: 'inline-flex',
                 justifyContent: 'center',
@@ -146,16 +102,19 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
                 bottom: 0,
                 left: 0,
                 right: 0,
+                margin: 0,
                 color: '#fff',
                 zIndex: 1,
               }}
             >
-              <p>
-                {loading
-                  ? 'L O A D I N G ...'
-                  : 'This broadcaster is currently offline'}
-              </p>
-            </FadeInOut>
+              <FadeInOut loading={loading}>
+                <p>
+                  {loading
+                    ? 'L O A D I N G ...'
+                    : 'This broadcaster is currently offline'}
+                </p>
+              </FadeInOut>
+            </div>
           )}
           <VideoPlayer
             autoPlay={false}
@@ -366,8 +325,9 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
                     cursor: 'pointer',
                   }}
                   onClick={() => {
-                    window.location =
-                      'https://medium.com/@petkanics/introducing-livepeer-a-decentralized-live-video-broadcast-platform-and-crypto-token-protocol-7eb4b1de47ed'
+                    window.open(
+                      'https://medium.com/livepeer-blog/livepeer-for-beginners-3b49945c24a7',
+                    )
                   }}
                 >
                   Learn More
@@ -453,25 +413,6 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
   )
 }
 
-const Nav = styled.nav`
-  display: flex;
-  flex-flow: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 64px;
-  margin-bottom: 24px;
-  padding: 16px 24px;
-  background: #03a678;
-  & *::placeholder {
-    color: #fff;
-  }
-  & > a {
-    text-decoration: none;
-    font-size: 16px;
-    color: #fff;
-  }
-`
-
 const ChannelStatus = styled.span`
   position: absolute;
   right: 8px;
@@ -530,7 +471,7 @@ const fadeInOut = keyframes`
   to { opacity: .25; }
 `
 
-const FadeInOut = styled.span`
+const FadeInOut = styled.div`
   ${({ loading }) =>
     !loading ? '' : `animation: ${fadeInOut} 2s linear infinite alternate;`};
 `

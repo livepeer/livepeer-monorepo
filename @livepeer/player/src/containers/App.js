@@ -6,14 +6,9 @@ import Channel from '../views/Channel'
 const App = ({ location }) => (
   <div>
     <Switch>
-      {/* <Route exact path="/" component={Landing} /> */}
+      <Route exact path="/" component={Landing} />
       <Route exact path="/channels/:channel" component={Channel} />
-      <Route
-        path="*"
-        component={() => {
-          window.location = 'https://livepeer.org'
-        }}
-      />
+      <Redirect to="/" />
     </Switch>
   </div>
 )

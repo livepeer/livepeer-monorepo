@@ -1,1 +1,3 @@
-# Livepeer Player Dapp
+# Livepeer Video Player Dapp
+
+![Screenshot of dapp](./screenshot.png)
