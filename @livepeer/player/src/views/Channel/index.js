@@ -73,7 +73,7 @@ const connectApollo = graphql(GetJobsQuery, {
       variables: {
         broadcaster: channelIsAddress ? channel : undefined,
         broadcasterWhereJobId: !channelIsAddress ? channel : undefined,
-        streamRootUrl: 'http://d194z9vj66yekd.cloudfront.net/stream/',
+        streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
       },
     }
   },
@@ -133,7 +133,7 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
             style={{
               backgroundColor: '#ccc',
               borderRadius: '2px',
-              boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+              boxShadow: '0 0 1px 0 rgba(0,0,0,1)',
             }}
           />
           <div style={{ width: 'calc(100% - 72px)' }}>
