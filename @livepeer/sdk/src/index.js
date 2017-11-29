@@ -91,7 +91,7 @@ export { TRANSCODER_STATUS }
 
 // Defaults
 export const DEFAULTS = {
-  provider: 'http://18.216.240.131:8545',
+  provider: 'https://ethrpc-testnet.livepeer.org',
   account: '',
   gas: 6700000,
   artifacts: {
