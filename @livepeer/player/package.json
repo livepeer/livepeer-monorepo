@@ -29,11 +29,14 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "predeploy": "PUBLIC_URL=https://livepeer.github.io/livepeerjs/ npm run build",
+    "deploy": "npx gh-pages -d build",
     "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
     "postbuild": "npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
     "serve": "npx serve -s build"
   },
   "devDependencies": {
+    "gh-pages": "^1.1.0",
     "serve": "^6.4.1",
     "uglify-es": "^3.2.0"
   }
