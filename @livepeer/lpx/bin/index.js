@@ -67,12 +67,12 @@ if (vPos > -1) process.argv[vPos] = '-V';
 
 _commander2.default.version(_package2.default.version);
 
-_commander2.default.command('console').action(async () => {
+_commander2.default.command('console').description('runs and interactive sdk console').option('-c, --config <json>', 'Options to pass to Livepeer sdk constructor', '{}').action(async ({ config: sdkConfig }) => {
   console.log(`
 ${LOGO}
 For available commands, type 'help'.
   `);
-  let { rpc, config, constants } = await (0, _sdk2.default)();
+  let { rpc, config, constants } = await (0, _sdk2.default)(JSON.parse(sdkConfig));
   const { VIDEO_PROFILES } = constants;
   const toFunctionCallString = (key, args) => `${key}(${args.map(x => JSON.stringify(x))})`;
   const rpcKeyToDashes = x => x.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`);
@@ -84,15 +84,15 @@ For available commands, type 'help'.
   // interactive console
   const vorpal = (0, _vorpal2.default)();
   /**
-   * clear
-   */
+  * clear
+  */
   vorpal.command('clear', 'Clears console').action((_, next) => {
     console.clear();
     next();
   });
   /**
-   * status
-   */
+  * status
+  */
   vorpal.command('status', 'Clears console').action((_, next) => {
     console.table({
       account: config.defaultTx.from,
@@ -102,8 +102,8 @@ For available commands, type 'help'.
     next();
   });
   /**
-   * use
-   */
+  * use
+  */
   vorpal.command('use [address]', 'Switches the current account that sends transactions').parse(command => command.replace(/@/g, config.defaultTx.from)).types({ string: ['_', 'address', 'to', 'from'] }).option('-g, --gas <gas>', 'Default gas to include in transactions').option('-p, --provider <url>', 'The contract HttpProvider url').action(async ({ address, options }, next) => {
     const livepeer = await (0, _sdk2.default)({
       account: 'undefined' === typeof address ? config.defaultTx.from : address,
@@ -120,15 +120,15 @@ For available commands, type 'help'.
     next();
   });
   /**
-   * @
-   */
+  * @
+  */
   vorpal.command('me', 'Displays default transaction account address').alias('@').action((_, next) => {
     console.log(config.defaultTx.from);
     next();
   });
   /**
-   * accounts
-   */
+  * accounts
+  */
   vorpal.command('accounts', 'Shows all available account addresses').alias('ls').action((_, next) => {
     const t = new _cliTable2.default({
       head: [' ', 'address'],
@@ -140,22 +140,22 @@ For available commands, type 'help'.
     next();
   });
   /**
-   * tx
-   */
+  * tx
+  */
   vorpal.command('tx', 'Displays default transaction info').action((_, next) => {
     console.table(config.defaultTx);
     next();
   });
   /**
-   * video-profiles
-   */
+  * video-profiles
+  */
   vorpal.command('video-profiles', 'Lists available video transcoding profiles').alias('profiles').action((_, next) => {
     console.table(Object.values(VIDEO_PROFILES));
     next();
   });
   /**
-   * call
-   */
+  * call
+  */
   vorpal.command('call <method> [args...]', 'Gets values from deployed contracts').parse(command => command.replace(/@/g, config.defaultTx.from)).types({
     string: ['_', 'address', 'to', 'from', 'broadcaster', 'transcoder']
   }).autocomplete(rpcKeys).allowUnknownOptions().action(async ({ method, args = [], options }, next) => {
@@ -191,8 +191,8 @@ For available commands, type 'help'.
     next();
   });
   /**
-   * poll
-   */
+  * poll
+  */
   vorpal.command('poll <method> [args...]', 'Polls for values from deployed contracts').parse(command => command.replace(/@/g, config.defaultTx.from)).types({
     string: ['_', 'address', 'to', 'from', 'broadcaster', 'transcoder']
   }).autocomplete(rpcKeys).allowUnknownOptions().action(async ({ method, args = [], options }, next) => {
@@ -244,8 +244,8 @@ For available commands, type 'help'.
     next();
   });
   /**
-   * stop
-   */
+  * stop
+  */
   vorpal.command('stop', 'Stops active watcher').action((_, next) => {
     if (!WATCHERS.length) return next(console.log('not watching anything!'));
     WATCHERS.forEach(x => x.stopWatching());
