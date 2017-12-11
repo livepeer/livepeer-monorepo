@@ -331,10 +331,11 @@ export default () => {
     transition: all 0.4s
   }
   .video-react .video-react-big-play-button.video-react-big-play-button-center {
-    top: 50%;
-    left: 50%;
-    margin-top: -.75em;
-    margin-left: -1.5em
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
   }
   .video-react .video-react-big-play-button.big-play-button-hide {
     display: none
