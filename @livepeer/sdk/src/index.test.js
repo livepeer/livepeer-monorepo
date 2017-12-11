@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import test from 'ava'
 import yup from 'yup'
 import Livepeer, { utils, initContracts } from './index'
@@ -58,12 +59,6 @@ test('should return a number from getTokenBalance()', async t => {
   t.true(Number.isInteger(x))
 })
 
-test('should return a number from getTokenDeposit()', async t => {
-  const { from } = livepeer.config.defaultTx
-  const x = await livepeer.rpc.getTokenDeposit(from)
-  t.true(Number.isInteger(x))
-})
-
 test('should return object with correct shape from getTokenInfo()', async t => {
   const { from } = livepeer.config.defaultTx
   const { totalSupply, balance } = await livepeer.rpc.getTokenInfo(from)
@@ -89,10 +84,14 @@ test('should return object with correct shape from getFaucetInfo()', async t => 
 // Broadcaster
 
 test('should return object with correct shape from getBroadcaster()', async t => {
+  const schema = yup.object().shape({
+    deposit: int256.required(),
+    withdrawBlock: int256.nullable(),
+  })
   const { from } = livepeer.config.defaultTx
-  const { deposit, withdrawBlock } = await livepeer.rpc.getBroadcaster(from)
-  t.true(Number.isInteger(deposit))
-  t.true(Number.isInteger(withdrawBlock))
+  const res = await livepeer.rpc.getBroadcaster(from)
+  schema.validateSync(res)
+  t.pass()
 })
 
 // Delgator
@@ -104,7 +103,7 @@ test('should return object with correct shape from getDelegator()', async t => {
     delegateAddress: yup.string(),
     bondedAmount: int256.required(),
     unbondedAmount: int256.required(),
-    delegateStake: int256.required(),
+    delegateStake: int256.nullable(),
     lastClaimRound: int256.nullable(),
     startRound: int256.nullable(),
     withdrawRound: int256.nullable(),
@@ -123,7 +122,6 @@ test('should return object with correct shape from getTranscoder()', async t => 
     address: yup.string(),
     status: yup.string().oneOf(livepeer.constants.TRANSCODER_STATUS),
     delegateStake: int256.nullable(),
-    delegatorWithdrawRound: int256.nullable(),
     lastRewardRound: int256.nullable(),
     blockRewardCut: int256.nullable(), // %
     feeShare: int256.nullable(), // %
@@ -163,7 +161,6 @@ test('should return object with correct shape from getJobsInfo()', async t => {
     verificationRate: int256.nullable(),
     verificationPeriod: int256.nullable(),
     slashingPeriod: int256.nullable(),
-    endingPeriod: int256.nullable(),
     finderFee: int256.nullable(),
   })
   const { from } = livepeer.config.defaultTx

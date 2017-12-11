@@ -5,7 +5,10 @@
   "main": "main/index.js",
   "module": "lib/index.js",
   "dependencies": {
-    "ethjs": "^0.3.0"
+    "ethjs": "^0.3.0",
+    "ethjs-provider-signer": "^0.1.4",
+    "ethjs-query": "^0.3.1",
+    "ethjs-signer": "^0.1.1"
   },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",

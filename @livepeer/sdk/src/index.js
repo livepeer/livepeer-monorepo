@@ -1,4 +1,6 @@
 import Eth from 'ethjs'
+import SignerProvider from 'ethjs-provider-signer'
+import { sign } from 'ethjs-signer'
 import { decodeEvent } from 'ethjs-abi'
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
@@ -92,8 +94,9 @@ export { TRANSCODER_STATUS }
 // Defaults
 export const DEFAULTS = {
   provider: 'https://ethrpc-testnet.livepeer.org',
+  privateKeys: {}, // { publicKey: privateKey }
   account: '',
-  gas: 6700000,
+  gas: 0,
   artifacts: {
     LivepeerToken: LivepeerTokenArtifact,
     LivepeerTokenFaucet: LivepeerTokenFaucetArtifact,
@@ -235,18 +238,33 @@ export function getContractAt(
  */
 export async function initRPC({
   account,
+  privateKeys,
   gas,
   provider,
 }): Promise<{
   eth: Eth,
   defaultTx: { from: string, gas: number },
 }> {
-  const ethjsProvider = new Eth.HttpProvider(provider)
+  const usePrivateKeys = 0 < Object.keys(privateKeys).length
+  const ethjsProvider = usePrivateKeys
+    ? // Use provider-signer to locally sign transactions
+      new SignerProvider(provider, {
+        signTransaction: (rawTx, cb) =>
+          cb(null, sign(rawTx, privateKeys[from])),
+        accounts: cb => cb(null, accounts),
+      })
+    : // Use default signer
+      new Eth.HttpProvider(provider)
   const eth = new Eth(ethjsProvider)
-  const accounts = await eth.accounts()
-  const from = new Set(accounts).has(account)
-    ? account
-    : accounts[account] || accounts[0]
+  const accounts = usePrivateKeys
+    ? Object.keys(privateKeys)
+    : await eth.accounts()
+  const from =
+    // select account by address or index
+    // default to EMPTY_ADDRESS (read-only; cannot transact)
+    new Set(accounts).has(account)
+      ? account
+      : accounts[account] || EMPTY_ADDRESS
   return {
     eth,
     provider,
@@ -265,9 +283,17 @@ export async function initRPC({
  */
 export async function initContracts(opts): Promise<Object<string, Contract>> {
   // Merge pass options with defaults
-  const { account, artifacts, gas, provider } = { ...DEFAULTS, ...opts }
+  const { account, artifacts, gas, privateKeys, provider } = {
+    ...DEFAULTS,
+    ...opts,
+  }
   // Instanstiate new ethjs instance with specified provider
-  const { eth, accounts, defaultTx } = await initRPC({ account, gas, provider })
+  const { eth, accounts, defaultTx } = await initRPC({
+    account,
+    gas,
+    privateKeys,
+    provider,
+  })
   // Create a LivepeerToken contract instance
   const LivepeerToken = await getContractAt(eth, {
     ...artifacts.LivepeerToken,
@@ -345,7 +371,7 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
  * Gives back a nice big object with useful methods for interacting with Livepeer contracts
  * @param {Object} args[0] - options passed to `initContracts()`
  */
-export default async function initLivepeerSDK(
+export default async function createLivepeerSDK(
   opts: Object,
 ): Object<string, (...args: Array<any>) => Promise<any>> {
   const { events, ...config } = await initContracts(opts)
@@ -580,7 +606,7 @@ export default async function initLivepeerSDK(
    * @return {number}
    */
     async getTotalActiveTranscoders(): Promise<number> {
-      return headToNumber(await BondingManager.getActivePoolSize())
+      return headToNumber(await BondingManager.getCandidatePoolSize())
     },
 
     /**
@@ -650,7 +676,6 @@ export default async function initLivepeerSDK(
           address: addr,
           status,
           delegateStake: null,
-          delegatorWithdrawRound: null,
           lastRewardRound: null,
           blockRewardCut: null,
           feeShare: null,
@@ -663,7 +688,6 @@ export default async function initLivepeerSDK(
       const active = await rpc.getTranscoderIsActive(addr)
       const { delegateStake } = await rpc.getDelegator(addr)
       const t = await BondingManager.getTranscoder(addr)
-      const delegatorWithdrawRound = toNumber(t.delegatorWithdrawRound)
       const lastRewardRound = toNumber(t.lastRewardRound)
       const blockRewardCut = toNumber(t.blockRewardCut)
       const feeShare = toNumber(t.feeShare)
@@ -676,9 +700,6 @@ export default async function initLivepeerSDK(
         address: addr,
         status,
         delegateStake,
-        delegatorWithdrawRound: delegatorWithdrawRound
-          ? delegatorWithdrawRound
-          : null,
         lastRewardRound: lastRewardRound ? lastRewardRound : null,
         blockRewardCut: blockRewardCut ? blockRewardCut : null,
         feeShare: feeShare ? feeShare : null,
@@ -834,14 +855,6 @@ export default async function initLivepeerSDK(
    * ...
    * @return {number}
    */
-    async getJobEndingPeriod(): Promise<number> {
-      return headToNumber(await JobsManager.jobEndingPeriod())
-    },
-
-    /**
-   * ...
-   * @return {number}
-   */
     async getJobVerificationPeriod(): Promise<number> {
       return headToNumber(await JobsManager.verificationPeriod())
     },
@@ -878,7 +891,6 @@ export default async function initLivepeerSDK(
       verificationRate: ?number,
       verificationPeriod: ?number,
       slashingPeriod: ?number,
-      endingPeriod: ?number,
       finderFee: ?number,
     } {
       const isInitialized = await rpc.getJobsManagerIsInitialized()
@@ -894,8 +906,7 @@ export default async function initLivepeerSDK(
       }
       const totalJobs = await rpc.getTotalJobs()
       const verificationRate = await rpc.getJobVerificationRate()
-      const endingPeriod = await rpc.getJobEndingPeriod()
-      const verificationPeriod = await rpc.getJobEndingPeriod()
+      const verificationPeriod = await rpc.getJobVerificationPeriod()
       const slashingPeriod = await rpc.getJobSlashingPeriod()
       const finderFee = await rpc.getJobFinderFee()
       return {
@@ -903,7 +914,6 @@ export default async function initLivepeerSDK(
         verificationRate,
         verificationPeriod,
         slashingPeriod,
-        endingPeriod,
         finderFee,
       }
     },
@@ -1166,6 +1176,7 @@ export default async function initLivepeerSDK(
   }
 
   return {
+    create: createLivepeerSDK,
     config,
     rpc,
     utils,
