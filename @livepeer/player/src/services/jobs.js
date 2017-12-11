@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects'
+// import { call, put, takeEvery } from 'redux-saga/effects'
 
 export const name = 'jobs'
 
@@ -109,9 +109,9 @@ export const selectors = {
 }
 
 export function* saga() {
-  yield takeEvery(types.UPDATE_JOB, function*(action) {
-    // console.log(action)
-  })
+  // yield takeEvery(types.UPDATE_JOB, function*(action) {
+  //  // do stuff...
+  // })
 }
 
 export default reducers => ({ ...reducers, [name]: reducer })

@@ -1,23 +1,19 @@
 import React from 'react'
 import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
-import { compose as composeGraphql, graphql } from 'react-apollo'
+import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import {
-  Facebook,
-  Github as GithubIcon,
-  Link as LinkIcon,
-  MessageCircle as MessageCircleIcon,
-  Search,
-  ThumbsUp,
-  Twitter,
-  Twitter as TwitterIcon,
-  Video,
+  // Facebook as FacebookIcon,
+  // Github as GithubIcon,
+  // Link as LinkIcon,
+  // Search as SearchIcon,
+  // ThumbsUp as ThumbsUpIcon,
+  // Twitter as TwitterIcon,
+  Video as VideoIcon,
 } from 'react-feather'
 import { VideoPlayer, Snapshot } from '@livepeer/chroma'
-import Navbar from '../../components/Navbar'
 import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
@@ -82,8 +78,14 @@ const connectApollo = graphql(GetJobsQuery, {
 const enhance = compose(connectRedux, connectApollo)
 
 const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
-  const [latestJob, ...prevJobs] = jobs
-  const { jobId, stream, broadcaster = match.params.channel, live, url = '' } =
+  const [latestJob /*...prevJobs*/] = jobs
+  const {
+    /*jobId,*/
+    stream,
+    broadcaster = match.params.channel,
+    live,
+    url = '',
+  } =
     latestJob || {}
   return (
     <div>
@@ -297,7 +299,7 @@ const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
                 width: '100%',
               }}
             >
-              <Video color="#03a678" size={32} />
+              <VideoIcon color="#03a678" size={32} />
               <p
                 style={{
                   width: '75%',
@@ -439,8 +441,7 @@ const Content = styled.div`
 
 const Media = styled.div`
   position: relative;
-  display: inline-flex;
-  align-items: flex-start;
+  display: block;
   width: 100%;
   max-width: 640px;
   background: #000;

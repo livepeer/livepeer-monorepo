@@ -1,12 +1,10 @@
-import { Observable, ApolloLink, execute, makePromise } from 'apollo-link'
+import { Observable, ApolloLink } from 'apollo-link'
 import {
   InMemoryCache,
   IntrospectionFragmentMatcher,
 } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
-import { ApolloProvider } from 'react-apollo'
 import { graphql, print } from 'graphql'
-import gql from 'graphql-tag'
 import Livepeer from '@livepeer/sdk'
 import LivepeerSchema, {
   introspectionQueryResultData,

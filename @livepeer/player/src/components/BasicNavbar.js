@@ -12,7 +12,7 @@ const BasicNavbar = ({ onSearch }) => (
   <Navbar>
     <Nav>
       <a href="/" style={{ lineHeight: 0, padding: '8px 0' }}>
-        <img src="/wordmark.svg" height="24" />
+        <img src="/wordmark.svg" height="24" alt="The Livepeer wordmark" />
       </a>
       <NavSearch onSearch={onSearch} />
       <div
