@@ -110,6 +110,44 @@ export const DEFAULTS = {
 // Utils
 export const utils = {
   /**
+   * Polls for a transaction receipt
+   * @param {string}   txHash - the transaction hash
+   * @param {Eth}      eth    - an instance of Ethjs
+   * @return {Object}
+   */
+  getTxReceipt: async (txHash, eth) => {
+    return await new Promise((resolve, reject) => {
+      setTimeout(async function pollForReceipt() {
+        try {
+          const receipt = await eth.getTransactionReceipt(txHash)
+          if (receipt) {
+            return receipt.status === '0x1'
+              ? // success
+                resolve(receipt)
+              : // fail
+                reject(
+                  new Error(
+                    JSON.stringify(
+                      {
+                        receipt,
+                        transaction: await eth.getTransactionByHash(
+                          receipt.transactionHash,
+                        ),
+                      },
+                      null,
+                      2,
+                    ),
+                  ),
+                )
+          }
+          setTimeout(pollForReceipt, 300)
+        } catch (err) {
+          reject(err)
+        }
+      }, 0)
+    })
+  },
+  /**
    * Parses an encoded string of transcoding options
    * @param  {string} opts - transcoding options
    * @return {Object[]}
@@ -206,8 +244,8 @@ const formatDuration = ms => {
 
 /**
  * Deploys contract and return instance at deployed address
- * @param {*} eth 
- * @param {*} args 
+ * @param {*} eth
+ * @param {*} args
  */
 export async function deployContract(
   eth,
@@ -246,15 +284,18 @@ export async function initRPC({
   defaultTx: { from: string, gas: number },
 }> {
   const usePrivateKeys = 0 < Object.keys(privateKeys).length
-  const ethjsProvider = usePrivateKeys
-    ? // Use provider-signer to locally sign transactions
-      new SignerProvider(provider, {
-        signTransaction: (rawTx, cb) =>
-          cb(null, sign(rawTx, privateKeys[from])),
-        accounts: cb => cb(null, accounts),
-      })
-    : // Use default signer
-      new Eth.HttpProvider(provider)
+  const ethjsProvider =
+    'object' === typeof provider
+      ? provider
+      : usePrivateKeys
+        ? // Use provider-signer to locally sign transactions
+          new SignerProvider(provider, {
+            signTransaction: (rawTx, cb) =>
+              cb(null, sign(rawTx, privateKeys[from])),
+            accounts: cb => cb(null, accounts),
+          })
+        : // Use default signer
+          new Eth.HttpProvider(provider)
   const eth = new Eth(ethjsProvider)
   const accounts = usePrivateKeys
     ? Object.keys(privateKeys)
@@ -389,21 +430,33 @@ export default async function createLivepeerSDK(
   }
   // RPC methods
   const rpc = {
+    // Eth
+
+    /**
+     * Gets the total supply of LPT available in the protocol
+     * @return {number}
+     */
+    async getEthBalance(
+      addr: string = invariant('addr', 0, 'string'),
+    ): Promise<number> {
+      return toNumber(await config.eth.getBalance(addr))
+    },
+
     // Tokens
 
     /**
-   * Gets the total supply of LPT available in the protocol
-   * @return {number}
-   */
+     * Gets the total supply of LPT available in the protocol
+     * @return {number}
+     */
     async getTokenTotalSupply(): Promise<number> {
       return headToNumber(await LivepeerToken.totalSupply())
     },
 
     /**
-   * Gets a user's token balance
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Gets a user's token balance
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getTokenBalance(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
@@ -411,10 +464,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * Gets general information about tokens
-   * @param  {string} addr - user's ETH address
-   * @return {{ totalSupply: number, balance: number }}
-   */
+     * Gets general information about tokens
+     * @param  {string} addr - user's ETH address
+     * @return {{ totalSupply: number, balance: number }}
+     */
     async getTokenInfo(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<{
@@ -430,26 +483,26 @@ export default async function createLivepeerSDK(
     // Faucet
 
     /**
-   * ...
-   * @return {number}
-   */
+     * The amount of LPT the faucet distributes when tapped
+     * @return {number}
+     */
     async getFaucetAmount(): Promise<number> {
       return headToNumber(await LivepeerTokenFaucet.requestAmount())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * How often an address can tap the faucet (in hours)
+     * @return {number}
+     */
     async getFaucetTapRate(): Promise<number> {
       return headToNumber(await LivepeerTokenFaucet.requestWait())
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Next timestamp at which the given address will be allowed to tap the faucet
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getFaucetTapAt(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
@@ -459,10 +512,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Amount of time (in milliseconds) remaining until the given address will be allowed to tap the faucet
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getFaucetTapIn(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
@@ -473,10 +526,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Info about the state of the LPT faucet
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getFaucetInfo(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<{
@@ -511,18 +564,18 @@ export default async function createLivepeerSDK(
     // Delegator
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Whether or not the BondingManager has been initialized
+     * @return {number}
+     */
     async getBondingManagerIsInitialized(): Promise<boolean> {
       return toBool(await BondingManager.isInitialized())
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * The delegator status of the given address
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getDelegatorStatus(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<string> {
@@ -531,10 +584,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * The delegator's stake
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getDelegatorStake(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
@@ -542,10 +595,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * General info about a delegator
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getDelegator(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<{
@@ -555,24 +608,24 @@ export default async function createLivepeerSDK(
       bondedAmount: number,
       unbondedAmount: number,
       delegateStake: number,
-      lastClaimRound: ?number,
-      startRound: ?number,
-      withdrawRound: ?number,
+      lastClaimRound: number,
+      startRound: number,
+      withdrawRound: number,
     }> {
       const isInitialized = await rpc.getBondingManagerIsInitialized()
       const status = await rpc.getDelegatorStatus(addr)
-      if (!isInitialized || status === DELEGATOR_STATUS.Unbonded) {
+      if (!isInitialized) {
         return {
           address: addr,
           status: DELEGATOR_STATUS.Unbonded,
-          stake: null, // bonded amount, but includes past rounds, rewards and fees, etc
+          stake: 0, // bonded amount, but includes past rounds, rewards and fees, etc
           bondedAmount: 0,
           unbondedAmount: 0,
           delegateAddress: '',
-          delegateStake: null,
-          lastClaimRound: null,
-          startRound: null,
-          withdrawRound: null,
+          delegateStake: 0,
+          lastClaimRound: 0,
+          startRound: 0,
+          withdrawRound: 0,
         }
       }
       const stake = await rpc.getDelegatorStake(addr)
@@ -602,34 +655,36 @@ export default async function createLivepeerSDK(
     // Transcoder
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Maximum number of active transcoders
+     * @todo find a better way to get accurate number for active transcoders
+     * @return {number}
+     */
     async getTotalActiveTranscoders(): Promise<number> {
-      return headToNumber(await BondingManager.getCandidatePoolSize())
+      return (await rpc.getActiveTranscoders()).length
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Number of candidate transcoders
+     * @todo find a better way to get accurate number for candidate transcoders
+     * @return {number}
+     */
     async getTotalCandidateTranscoders(): Promise<number> {
-      return headToNumber(await BondingManager.getCandidatePoolSize())
+      return (await rpc.getCandidateTranscoders()).length
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Number of reserve transcoders
+     * @return {number}
+     */
     async getTotalReserveTranscoders(): Promise<number> {
       return headToNumber(await BondingManager.getReservePoolSize())
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Whether or not the transcoder is active
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getTranscoderIsActive(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<boolean> {
@@ -637,10 +692,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Gets the status of a transcoder
+     * @param  {string} addr - user's ETH address
+     * @return {number}
+     */
     async getTranscoderStatus(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<string> {
@@ -649,10 +704,10 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @param  {string} addr - user's ETH address
-   * @return {number}
-   */
+     * Gets info about a transcoder
+     * @param  {string} addr - user's ETH address
+     * @return {Transcoder}
+     */
     async getTranscoder(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<{
@@ -715,81 +770,97 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @return {boolean}
-   */
-    async getActiveTranscoders() {
-      return await Promise.all(
-        Array(await rpc.getTotalActiveTranscoders())
+     * Gets candidate transcoders
+     * @return {Array<Transcoder>}
+     */
+    async getCandidateTranscoders() {
+      return (await Promise.all(
+        Array(headToNumber(await BondingManager.getCandidatePoolSize()))
           .fill(0)
           .map(async (_, i) => {
             const res = await BondingManager.getCandidateTranscoderAtPosition(i)
             const address = res[0]
             return await rpc.getTranscoder(address)
           }),
-      )
+      )).filter(x => !x.active)
     },
 
     /**
-   * ...
-   * @return {boolean}
-   */
+     * Gets currently active transcoders
+     * @return {Array<Transcoder>}
+     */
+    async getActiveTranscoders() {
+      return (await Promise.all(
+        Array(headToNumber(await BondingManager.getCandidatePoolSize()))
+          .fill(0)
+          .map(async (_, i) => {
+            const res = await BondingManager.getCandidateTranscoderAtPosition(i)
+            const address = res[0]
+            return await rpc.getTranscoder(address)
+          }),
+      )).filter(x => x.active)
+    },
+
+    /**
+     * Whether or not the RoundsManager has been initialized
+     * @return {boolean}
+     */
     async getRoundsManagerIsInitialized(): Promise<boolean> {
       return headToBool(await RoundsManager.isInitialized())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Gets the length of a round (in blocks)
+     * @return {number}
+     */
     async getRoundLength(): Promise<number> {
       return headToNumber(await RoundsManager.roundLength())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Gets the estimated number of rounds per year
+     * @return {number}
+     */
     async getRoundsPerYear(): Promise<number> {
       return headToNumber(await RoundsManager.roundsPerYear())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Gets the number of the current round
+     * @return {number}
+     */
     async getCurrentRound(): Promise<number> {
       return headToNumber(await RoundsManager.currentRound())
     },
 
     /**
-   * ...
-   * @return {boolean}
-   */
+     * Whether or not the current round is initalized
+     * @return {boolean}
+     */
     async getCurrentRoundIsInitialized(): Promise<boolean> {
       return headToBool(await RoundsManager.currentRoundInitialized())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * The block at which the current round started
+     * @return {number}
+     */
     async getCurrentRoundStartBlock(): Promise<number> {
       return headToNumber(await RoundsManager.currentRoundStartBlock())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * The previously intiialized round
+     * @return {number}
+     */
     async getLastInitializedRound(): Promise<number> {
       return headToNumber(await RoundsManager.lastInitializedRound())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Gets general information about the rounds in the protocol
+     * @return {number}
+     */
     async getRoundInfo(): {
       currentRound: ?number,
       currentRoundInitialized: boolean,
@@ -828,64 +899,64 @@ export default async function createLivepeerSDK(
     // Jobs
 
     /**
-   * ...
-   * @return {boolean}
-   */
+     * Whether the jobs manager has been initialized
+     * @return {boolean}
+     */
     async getJobsManagerIsInitialized(): Promise<boolean> {
       return headToBool(await JobsManager.isInitialized())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Total jobs that have been created
+     * @return {number}
+     */
     async getTotalJobs(): Promise<number> {
       return headToNumber(await JobsManager.numJobs())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Verification rate for jobs
+     * @return {number}
+     */
     async getJobVerificationRate(): Promise<number> {
       return headToNumber(await JobsManager.verificationRate())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Verification period for jobs
+     * @return {number}
+     */
     async getJobVerificationPeriod(): Promise<number> {
       return headToNumber(await JobsManager.verificationPeriod())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Slashing period for jobs
+     * @return {number}
+     */
     async getJobSlashingPeriod(): Promise<number> {
       return headToNumber(await JobsManager.slashingPeriod())
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Finder fee for jobs
+     * @return {number}
+     */
     async getJobFinderFee(): Promise<number> {
       return headToNumber(await JobsManager.finderFee())
     },
 
     /**
-   * Gets general info about the state of jobs in the protocol
-   * @return {{
-   *   totalJobs: number,
-   *   verificationRate: ?number,
-   *   verificationPeriod: ?number,
-   *   slashingPeriod: ?number,
-   *   endingPeriod: ?number,
-   *   finderFee: ?number
-   * }}
-   */
+     * Gets general info about the state of jobs in the protocol
+     * @return {{
+     *   totalJobs: number,
+     *   verificationRate: ?number,
+     *   verificationPeriod: ?number,
+     *   slashingPeriod: ?number,
+     *   endingPeriod: ?number,
+     *   finderFee: ?number
+     * }}
+     */
     async getJobsInfo(): {
       totalJobs: number,
       verificationRate: ?number,
@@ -919,16 +990,16 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * Gets a job by id
-   * @param  {number} id - the job id
-   * @return {{
-   *   jobId: number,
-   *   streamId: string,
-   *   transcodingOptions: Array<Object>,
-   *   transcoder: string,
-   *   broadcaster: string
-   * }}
-   */
+     * Gets a job by id
+     * @param  {number} id - the job id
+     * @return {{
+     *   jobId: number,
+     *   streamId: string,
+     *   transcodingOptions: Array<Object>,
+     *   transcoder: string,
+     *   broadcaster: string
+     * }}
+     */
     async getJob(id: number = invariant('id', 0, 'number')): Promise<Object> {
       const x = await JobsManager.getJob(id)
       return {
@@ -941,17 +1012,17 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * Gets a list of jobs
-   * @param  {number} opts.from - 
-   * @param  {number} opts.to   - 
-   * @return {{
-   *   jobId: number,
-   *   streamId: string,
-   *   transcodingOptions: Array<Object>,
-   *   transcoder: string,
-   *   broadcaster: string
-   * }}
-   */
+     * Gets a list of jobs
+     * @param  {number} opts.from -
+     * @param  {number} opts.to   -
+     * @return {{
+     *   jobId: number,
+     *   streamId: string,
+     *   transcodingOptions: Array<Object>,
+     *   transcoder: string,
+     *   broadcaster: string
+     * }}
+     */
     async getJobs(
       { to, from, blocksAgo = 100 * 10000, ...filters } = {},
     ): Array<{
@@ -994,9 +1065,9 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Gets LPT from the faucet
+     * @return {number}
+     */
     async tapFaucet(tx = config.defaultTx): Promise<number> {
       const ms = await rpc.getFaucetTapIn(tx.from)
       if (ms > 0)
@@ -1005,25 +1076,55 @@ export default async function createLivepeerSDK(
             ms,
           )}.`,
         )
-      await LivepeerTokenFaucet.request(tx)
+      // tap the faucet
+      await utils.getTxReceipt(
+        await LivepeerTokenFaucet.request(tx),
+        config.eth,
+      )
       // updated balance
       return await rpc.getTokenBalance(tx.from)
     },
 
     /**
-   * ...
-   * @return {number}
-   */
+     * Initializes the round
+     * @return {number}
+     */
     async initializeRound(tx = config.defaultTx): Promise<Object> {
-      await RoundsManager.initializeRound(tx)
+      // initialize round
+      await utils.getTxReceipt(
+        await RoundsManager.initializeRound(tx),
+        config.eth,
+      )
       // updated round info
       return rpc.getRoundInfo()
     },
 
     /**
-   * ...
-   * @return {Object}
-   */
+     * Claims all available token pool shares
+     * @return {Object}
+     */
+    async claimTokenPoolsShares(tx = config.defaultTx): Promise<Object> {
+      const roundsPerClaim = 100
+      const currentRound = await rpc.getCurrentRound()
+      const delegator = await rpc.getDelegator(tx.from)
+      let n = delegator.lastClaimRound || 0
+      // claim tokens for the lastClaimRound to currentRound
+      while (n < currentRound) {
+        const endRound = Math.min(currentRound, n + roundsPerClaim)
+        // claim from lastClaimRound to endRound
+        await utils.getTxReceipt(
+          await BondingManager.claimTokenPoolsShares(toBN(endRound), tx),
+          config.eth,
+        ),
+        n = (await rpc.getDelegator(tx.from)).lastClaimRound
+      }
+      return await rpc.getDelegator(tx.from)
+    },
+
+    /**
+     * Bonds LPT to an address
+     * @return {Object}
+     */
     async bond(
       { to, amount }: { to: string, amount: number } = {},
       tx = config.defaultTx,
@@ -1038,22 +1139,32 @@ export default async function createLivepeerSDK(
         throw new Error(
           `Cannot bond ${toNumber(
             toBN(amount),
-          )} LPT because is it greater than your current balance (${balance} LPT).`,
+          )} LPT because is it greater than your current balance (${
+            balance
+          } LPT).`,
         )
       }
+      // claim token pools shares
+      // if done automatically though bond(), gas may get exhausted
+      await rpc.claimTokenPoolsShares()
       // approve BondingManager address / amount with LivepeerToken...
-      const { address } = BondingManager
-      await LivepeerToken.approve(address, toBN(amount), tx)
+      await utils.getTxReceipt(
+        await LivepeerToken.approve(BondingManager.address, toBN(amount), tx),
+        config.eth,
+      )
       // ...aaaand bond!
-      await BondingManager.bond(toBN(amount), to, tx)
+      await utils.getTxReceipt(
+        await BondingManager.bond(toBN(amount), to, tx),
+        config.eth,
+      )
       // updated delegator info
       return await rpc.getDelegator(tx.from)
     },
 
     /**
-   * ...
-   * @return {Object}
-   */
+     * Unbonds LPT from an address
+     * @return {Object}
+     */
     async unbond(tx = config.defaultTx): Promise<Object> {
       const { status } = await rpc.getDelegator(tx.from)
       // Can only unbond successfully when not already "Unbonding"
@@ -1066,9 +1177,9 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @return {Object}
-   */
+     * Sets transcoder parameters
+     * @return {Object}
+     */
     async setupTranscoder(
       {
         blockRewardCut, // percentage
@@ -1081,20 +1192,24 @@ export default async function createLivepeerSDK(
       } = {},
       tx = config.defaultTx,
     ) {
-      await BondingManager.transcoder(
-        toBN(blockRewardCut),
-        toBN(feeShare),
-        toBN(pricePerSegment),
-        tx,
+      // become a transcoder
+      await utils.getTxReceipt(
+        await BondingManager.transcoder(
+          toBN(blockRewardCut),
+          toBN(feeShare),
+          toBN(pricePerSegment),
+          tx,
+        ),
+        config.eth,
       )
       // updated transcoder info
       return await rpc.getTranscoder(tx.from)
     },
 
     /**
-   * ...
-   * @return {Object}
-   */
+     * Deposits LPT
+     * @return {Object}
+     */
     async deposit(
       amount: number = invariant('amount', 0, 'number'),
       tx = config.defaultTx,
@@ -1105,22 +1220,29 @@ export default async function createLivepeerSDK(
         throw new Error(
           `Cannot deposit ${toNumber(
             toBN(amount),
-          )} LPT because is it greater than your current balance (${balance} LPT).`,
+          )} LPT because is it greater than your current balance (${
+            balance
+          } LPT).`,
         )
       }
       // approve JobsManager address / amount with LivepeerToken...
-      const { address } = JobsManager
-      await LivepeerToken.approve(address, toBN(amount), tx)
+      await utils.getTxReceipt(
+        await LivepeerToken.approve(JobsManager.address, toBN(amount), tx),
+        config.eth,
+      )
       // ...aaaand deposit!
-      await JobsManager.deposit(toBN(amount), tx)
+      await utils.getTxReceipt(
+        await JobsManager.deposit(toBN(amount), tx),
+        config.eth,
+      )
       // updated token info
-      return await rpc.getTokenInfo(tx.from)
+      return await rpc.getBroadcaster(tx.from)
     },
 
     /**
-   * ...
-   * @return {Object}
-   */
+     * Withdraws deposited LPT
+     * @return {Object}
+     */
     async withdraw(amount: ?number, tx = config.defaultTx): Promise<Object> {
       // withdraw all (default)
       if ('undefined' === typeof amount) {
@@ -1138,9 +1260,9 @@ export default async function createLivepeerSDK(
     },
 
     /**
-   * ...
-   * @return {Object}
-   */
+     * Creates a job
+     * @return {Object}
+     */
     async createJob(
       {
         streamId,
@@ -1164,11 +1286,15 @@ export default async function createLivepeerSDK(
           'Cannnot create a job at this time since there are no active transcoders',
         )
       }
-      await JobsManager.job(
-        streamId,
-        utils.serializeTranscodingProfiles(profiles),
-        toBN(maxPricePerSegment),
-        tx,
+      // create job!
+      await utils.getTxReceipt(
+        await JobsManager.job(
+          streamId,
+          utils.serializeTranscodingProfiles(profiles),
+          toBN(maxPricePerSegment),
+          tx,
+        ),
+        config.eth,
       )
       // latest job
       return (await rpc.getJobs({ broadcaster: tx.from, blocksAgo: 0 }))[0]
