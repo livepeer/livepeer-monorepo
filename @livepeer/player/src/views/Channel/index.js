@@ -38,7 +38,6 @@ query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $b
     id
     broadcaster
     stream
-    transcoder
     profiles {
       id
       name
