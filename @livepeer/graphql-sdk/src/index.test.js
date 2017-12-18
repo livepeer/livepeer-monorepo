@@ -17,7 +17,6 @@ const ALL_JOBS = [
     jobId: 0,
     streamId: 'x36xhzz',
     transcodingOptions: [VIDEO_PROFILES.P144p30fps16x9],
-    transcoder: EMPTY_ADDRESS,
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '11'),
   },
   {
@@ -27,7 +26,6 @@ const ALL_JOBS = [
       VIDEO_PROFILES.P144p30fps16x9,
       VIDEO_PROFILES.P240p30fps16x9,
     ],
-    transcoder: EMPTY_ADDRESS,
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
   {
@@ -38,14 +36,12 @@ const ALL_JOBS = [
       VIDEO_PROFILES.P720p30fps4x3,
       VIDEO_PROFILES.P576p30fps16x9,
     ],
-    transcoder: EMPTY_ADDRESS,
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
   {
     jobId: 3,
     streamId: 'baz',
     transcodingOptions: [],
-    transcoder: EMPTY_ADDRESS,
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
 ]
@@ -76,7 +72,6 @@ query JobQuery($id: Int!, $streamRootUrl: String) {
     id
     broadcaster
     stream
-    transcoder
     profiles {
       id
       name
@@ -98,7 +93,6 @@ query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $b
     id
     broadcaster
     stream
-    transcoder
     profiles {
       id
       name

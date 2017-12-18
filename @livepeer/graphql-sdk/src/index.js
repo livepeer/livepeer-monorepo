@@ -83,7 +83,6 @@ export default function createSchema(
    *     broadcaster: String!
    *     profiles: [VideoProfile]
    *     stream: String
-   *     transcoder: String!
    *     type: String!
    *   }
    */
@@ -108,10 +107,6 @@ export default function createSchema(
         type: new GraphQLNonNull(GraphQLString),
         description: 'The stream id of the job',
       },
-      transcoder: {
-        type: new GraphQLNonNull(GraphQLString),
-        description: 'The ETH address of the job transcoder',
-      },
       type: {
         type: new GraphQLNonNull(GraphQLString),
         description: 'The type of job',
@@ -126,7 +121,6 @@ export default function createSchema(
    *     broadcaster: String!
    *     profiles: [VideoProfile]
    *     stream: String
-   *     transcoder: String!
    *     type: String!
    *   }
    */
@@ -150,10 +144,6 @@ export default function createSchema(
         type: new GraphQLNonNull(GraphQLString),
         description: 'The stream id of the job',
       },
-      transcoder: {
-        type: new GraphQLNonNull(GraphQLString),
-        description: 'The ETH address of the job transcoder',
-      },
       type: {
         type: new GraphQLNonNull(GraphQLString),
         description: 'The type of job. Always "TestJob"',
@@ -168,7 +158,6 @@ export default function createSchema(
    *     broadcaster: String!
    *     profiles: [VideoProfile]
    *     stream: String
-   *     transcoder: String!
    *     type: String!
    *     # custom fields
    *     live: Boolean!
@@ -194,10 +183,6 @@ export default function createSchema(
       stream: {
         type: new GraphQLNonNull(GraphQLString),
         description: 'The stream id of the job',
-      },
-      transcoder: {
-        type: new GraphQLNonNull(GraphQLString),
-        description: 'The ETH address of the job transcoder',
       },
       type: {
         type: new GraphQLNonNull(GraphQLString),
@@ -239,7 +224,7 @@ export default function createSchema(
    * This implements the following type system shorthand:
    *   type Query {
    *     job(id: Int!): Job
-   *     # jobs(live: Boolean, to: Int, from: Int, blocksAgo: Int, transcoder: String, broadcaster: String): [Job]!
+   *     # jobs(live: Boolean, to: Int, from: Int, blocksAgo: Int, broadcaster: String): [Job]!
    *   }
    */
   const Query = new GraphQLObjectType({
@@ -296,7 +281,6 @@ const transformJob = ({
   jobId,
   streamId,
   transcodingOptions,
-  transcoder,
   broadcaster,
 }) => {
   return {
@@ -308,7 +292,6 @@ const transformJob = ({
       ...profile,
     })),
     stream: streamId,
-    transcoder,
   }
 }
 const throwAfter = (p, ms) =>
