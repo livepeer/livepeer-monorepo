@@ -51,12 +51,7 @@
         }
       ],
       "name": "transferTokens",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -65,12 +60,7 @@
       "constant": false,
       "inputs": [],
       "name": "setCurrentRewardTokens",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -84,16 +74,39 @@
         }
       ],
       "name": "addToRedistributionPool",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "inflation",
+          "type": "uint256"
+        }
+      ],
+      "name": "NewInflation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "mintableTokens",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "redistributableTokens",
+          "type": "uint256"
+        }
+      ],
+      "name": "SetCurrentRewardTokens",
+      "type": "event"
     }
-  ],
-  "bytecode": "0x6060604052341561000f57600080fd5b61016c8061001e6000396000f30060606040526004361061006c5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663293be45681146100715780637dbedad514610089578063bec3fa17146100b4578063ece2064c146100f7578063fa69f55d1461010a575b600080fd5b341561007c57600080fd5b610087600435610120565b005b341561009457600080fd5b6100a2600435602435610125565b60405190815260200160405180910390f35b34156100bf57600080fd5b6100e373ffffffffffffffffffffffffffffffffffffffff6004351660243561012d565b604051901515815260200160405180910390f35b341561010257600080fd5b6100e3610135565b341561011557600080fd5b6100e360043561013a565b600055565b505060005490565b600192915050565b600190565b506001905600a165627a7a7230582052877fe448ceaa496d06a1514a0859fd5fe393a1f1a2970b3492b2a4426921070029"
+  ]
 }

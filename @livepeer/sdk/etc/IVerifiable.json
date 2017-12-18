@@ -22,16 +22,10 @@
         }
       ],
       "name": "receiveVerification",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }

@@ -37,12 +37,7 @@
         }
       ],
       "name": "transferTokens",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -51,12 +46,7 @@
       "constant": false,
       "inputs": [],
       "name": "setCurrentRewardTokens",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -70,16 +60,39 @@
         }
       ],
       "name": "addToRedistributionPool",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "inflation",
+          "type": "uint256"
+        }
+      ],
+      "name": "NewInflation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "mintableTokens",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "redistributableTokens",
+          "type": "uint256"
+        }
+      ],
+      "name": "SetCurrentRewardTokens",
+      "type": "event"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }

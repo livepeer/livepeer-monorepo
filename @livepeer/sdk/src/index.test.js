@@ -145,7 +145,6 @@ test('should return object with correct shape from getRoundInfo()', async t => {
     currentRoundStartBlock: int256.nullable(),
     lastInitializedRound: int256.nullable(),
     roundLength: int256.nullable(),
-    roundsPerYear: int256.nullable(),
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getRoundInfo(from)
@@ -181,7 +180,6 @@ test('should get many jobs from getJobs()', async t => {
         resolution: yup.string(),
       }),
     ),
-    transcoder: yup.string().required(),
     broadcaster: yup.string().required(),
   })
   const { from } = livepeer.config.defaultTx

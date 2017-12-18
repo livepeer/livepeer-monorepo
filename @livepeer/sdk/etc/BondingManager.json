@@ -5,44 +5,6 @@
       "constant": true,
       "inputs": [
         {
-          "name": "_transcoder",
-          "type": "address"
-        }
-      ],
-      "name": "activeTranscoderTotalStake",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "isActiveTranscoder",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
           "name": "_delegator",
           "type": "address"
         }
@@ -56,44 +18,6 @@
       ],
       "payable": false,
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_position",
-          "type": "uint256"
-        }
-      ],
-      "name": "getCandidateTranscoderAtPosition",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_maxPricePerSegment",
-          "type": "uint256"
-        }
-      ],
-      "name": "electActiveTranscoder",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -119,26 +43,7 @@
       "constant": false,
       "inputs": [],
       "name": "reward",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "setActiveTranscoders",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -147,21 +52,52 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_unbondingPeriod",
-          "type": "uint64"
+          "name": "_transcoder",
+          "type": "address"
         },
         {
-          "name": "_numActiveTranscoders",
+          "name": "_finder",
+          "type": "address"
+        },
+        {
+          "name": "_slashAmount",
+          "type": "uint256"
+        },
+        {
+          "name": "_finderFee",
           "type": "uint256"
         }
       ],
-      "name": "initialize",
+      "name": "slashTranscoder",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "getNextTranscoderInPool",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "address"
         }
       ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "setActiveTranscoders",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -169,7 +105,7 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "getCandidatePoolSize",
+      "name": "getTranscoderPoolSize",
       "outputs": [
         {
           "name": "",
@@ -189,12 +125,7 @@
         }
       ],
       "name": "claimTokenPoolsShares",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -203,47 +134,9 @@
       "constant": false,
       "inputs": [],
       "name": "resignAsTranscoder",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "isInitialized",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_position",
-          "type": "uint256"
-        }
-      ],
-      "name": "getReserveTranscoderAtPosition",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -263,12 +156,7 @@
         }
       ],
       "name": "updateTranscoderWithFees",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -277,14 +165,28 @@
       "constant": false,
       "inputs": [],
       "name": "withdraw",
-      "outputs": [
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
+        }
+      ],
+      "name": "activeTranscoderSet",
+      "outputs": [
+        {
+          "name": "totalStake",
+          "type": "uint256"
         }
       ],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -295,6 +197,20 @@
         {
           "name": "",
           "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getTotalBonded",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -317,11 +233,11 @@
         },
         {
           "name": "blockRewardCut",
-          "type": "uint8"
+          "type": "uint256"
         },
         {
           "name": "feeShare",
-          "type": "uint8"
+          "type": "uint256"
         },
         {
           "name": "pricePerSegment",
@@ -329,11 +245,11 @@
         },
         {
           "name": "pendingBlockRewardCut",
-          "type": "uint8"
+          "type": "uint256"
         },
         {
           "name": "pendingFeeShare",
-          "type": "uint8"
+          "type": "uint256"
         },
         {
           "name": "pendingPricePerSegment",
@@ -348,12 +264,49 @@
       "constant": false,
       "inputs": [],
       "name": "unbond",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_numTranscoders",
+          "type": "uint256"
+        }
+      ],
+      "name": "setNumTranscoders",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "numActiveTranscoders",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_numActiveTranscoders",
+          "type": "uint256"
+        }
+      ],
+      "name": "setNumActiveTranscoders",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -374,12 +327,103 @@
     },
     {
       "constant": true,
-      "inputs": [],
-      "name": "getReservePoolSize",
+      "inputs": [
+        {
+          "name": "_maxPricePerSegment",
+          "type": "uint256"
+        },
+        {
+          "name": "_block",
+          "type": "uint256"
+        },
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "electActiveTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTotalActiveStake",
       "outputs": [
         {
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "isActiveTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_blockRewardCut",
+          "type": "uint256"
+        },
+        {
+          "name": "_feeShare",
+          "type": "uint256"
+        },
+        {
+          "name": "_pricePerSegment",
+          "type": "uint256"
+        }
+      ],
+      "name": "transcoder",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getFirstTranscoderInPool",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
         }
       ],
       "payable": false,
@@ -406,20 +450,6 @@
       "type": "function"
     },
     {
-      "constant": true,
-      "inputs": [],
-      "name": "totalActiveTranscoderStake",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "constant": false,
       "inputs": [
         {
@@ -428,12 +458,7 @@
         }
       ],
       "name": "setController",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -513,12 +538,7 @@
         }
       ],
       "name": "bond",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -581,25 +601,48 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_blockRewardCut",
-          "type": "uint8"
+          "name": "_unbondingPeriod",
+          "type": "uint64"
         },
         {
-          "name": "_feeShare",
-          "type": "uint8"
+          "name": "_numTranscoders",
+          "type": "uint256"
         },
         {
-          "name": "_pricePerSegment",
+          "name": "_numActiveTranscoders",
           "type": "uint256"
         }
       ],
-      "name": "transcoder",
+      "name": "setParameters",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "PERC_DIVISOR",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_unbondingPeriod",
+          "type": "uint64"
+        }
+      ],
+      "name": "setUnbondingPeriod",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -608,11 +651,15 @@
       "constant": true,
       "inputs": [
         {
-          "name": "",
+          "name": "_transcoder",
           "type": "address"
+        },
+        {
+          "name": "_round",
+          "type": "uint256"
         }
       ],
-      "name": "activeTranscoderPositions",
+      "name": "activeTranscoderTotalStake",
       "outputs": [
         {
           "name": "",
@@ -638,37 +685,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_transcoder",
-          "type": "address"
-        },
-        {
-          "name": "_finder",
-          "type": "address"
-        },
-        {
-          "name": "_slashAmount",
-          "type": "uint64"
-        },
-        {
-          "name": "_finderFee",
-          "type": "uint64"
-        }
-      ],
-      "name": "slashTranscoder",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "name": "_controller",
@@ -678,6 +694,161 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "pendingBlockRewardCut",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "pendingFeeShare",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "pendingPricePerSegment",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscoderUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "TranscoderEvicted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "TranscoderResigned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "penalty",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscoderSlashed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Reward",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "Bond",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "Unbond",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "Withdraw",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "controller",
+          "type": "address"
+        }
+      ],
+      "name": "SetController",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "param",
+          "type": "string"
+        }
+      ],
+      "name": "ParameterUpdate",
+      "type": "event"
     }
   ]
 }

@@ -118,6 +118,20 @@
     },
     {
       "constant": true,
+      "inputs": [],
+      "name": "minted",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
       "inputs": [
         {
           "name": "_who",
@@ -160,6 +174,20 @@
     },
     {
       "constant": true,
+      "inputs": [],
+      "name": "mintedTo",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
       "inputs": [
         {
           "name": "_owner",
@@ -179,6 +207,20 @@
       ],
       "payable": false,
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_totalSupply",
+          "type": "uint256"
+        }
+      ],
+      "name": "setTotalSupply",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -225,6 +267,5 @@
       "name": "Transfer",
       "type": "event"
     }
-  ],
-  "bytecode": "0x6060604052341561000f57600080fd5b6102478061001e6000396000f3006060604052600436106100985763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009d57806318160ddd146100e057806319d40b081461010557806323b872dd1461011857806340c10f191461009d57806346d5a5681461014d57806370a0823114610167578063a9059cbb1461009d578063dd62ed3e14610193575b600080fd5b34156100a857600080fd5b6100cc73ffffffffffffffffffffffffffffffffffffffff600435166024356101c5565b604051901515815260200160405180910390f35b34156100eb57600080fd5b6100f36101cd565b60405190815260200160405180910390f35b341561011057600080fd5b6100cc6101d3565b341561012357600080fd5b6100cc73ffffffffffffffffffffffffffffffffffffffff600435811690602435166044356101dc565b341561015857600080fd5b61016560043515156101fa565b005b341561017257600080fd5b6100f373ffffffffffffffffffffffffffffffffffffffff6004351661020d565b341561019e57600080fd5b6100f373ffffffffffffffffffffffffffffffffffffffff60043581169060243516610213565b600192915050565b60005481565b60015460ff1681565b60015460009060ff1615156101f057600080fd5b5060019392505050565b6001805460ff1916911515919091179055565b50600090565b6000929150505600a165627a7a72305820ac2eee9ac6f6958961f20fb03b1188961eb7728cec013247dee516381a9e40f30029"
+  ]
 }

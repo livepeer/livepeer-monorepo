@@ -4,20 +4,6 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "isInitialized",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
       "name": "targetContractId",
       "outputs": [
         {
@@ -38,14 +24,23 @@
         }
       ],
       "name": "setController",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "PERC_DIVISOR",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -81,7 +76,30 @@
       "payable": true,
       "stateMutability": "payable",
       "type": "fallback"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "controller",
+          "type": "address"
+        }
+      ],
+      "name": "SetController",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "param",
+          "type": "string"
+        }
+      ],
+      "name": "ParameterUpdate",
+      "type": "event"
     }
-  ],
-  "bytecode": "0x60606040526000805460ff19169055341561001957600080fd5b6040516040806102f3833981016040528080519190602001805160008054600160a060020a039095166101000261010060a860020a03199095169490941790935550506001556102858061006e6000396000f3006060604052600436106100615763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663392e53cd811461014457806351720b411461016b57806392eefe9b14610190578063f77c4791146101af575b60008060019054906101000a9004600160a060020a0316600160a060020a031663e16c7d986001546000604051602001526040517c010000000000000000000000000000000000000000000000000000000063ffffffff84160281526004810191909152602401602060405180830381600087803b15156100e157600080fd5b6102c65a03f115156100f257600080fd5b50505060405180519150506000600160a060020a0382161161011357600080fd5b60408051368101825236600082376000803683865af482513d810184523d6000823e818015610140573d82f35b3d82fd5b341561014f57600080fd5b6101576101de565b604051901515815260200160405180910390f35b341561017657600080fd5b61017e6101e7565b60405190815260200160405180910390f35b341561019b57600080fd5b610157600160a060020a03600435166101ed565b34156101ba57600080fd5b6101c2610245565b604051600160a060020a03909116815260200160405180910390f35b60005460ff1690565b60015481565b6000805433600160a060020a03908116610100909204161461020e57600080fd5b5060008054600160a060020a0383166101000274ffffffffffffffffffffffffffffffffffffffff00199091161790556001919050565b6000546101009004600160a060020a0316815600a165627a7a723058200bbc0b8927ab9d7ca2748de11c92afc5888113c93555f5ad1864af69c6c41a2b0029"
+  ]
 }

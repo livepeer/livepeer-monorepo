@@ -2,39 +2,27 @@
   "name": "IBondingManager",
   "abi": [
     {
-      "constant": true,
+      "constant": false,
       "inputs": [
         {
           "name": "_transcoder",
           "type": "address"
-        }
-      ],
-      "name": "activeTranscoderTotalStake",
-      "outputs": [
+        },
         {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_maxPricePerSegment",
-          "type": "uint256"
-        }
-      ],
-      "name": "electActiveTranscoder",
-      "outputs": [
-        {
-          "name": "",
+          "name": "_finder",
           "type": "address"
+        },
+        {
+          "name": "_slashAmount",
+          "type": "uint256"
+        },
+        {
+          "name": "_finderFee",
+          "type": "uint256"
         }
       ],
+      "name": "slashTranscoder",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -43,12 +31,7 @@
       "constant": false,
       "inputs": [],
       "name": "setActiveTranscoders",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -70,14 +53,50 @@
         }
       ],
       "name": "updateTranscoderWithFees",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getTotalBonded",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_maxPricePerSegment",
+          "type": "uint256"
+        },
+        {
+          "name": "_block",
+          "type": "uint256"
+        },
+        {
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "electActiveTranscoder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -100,36 +119,158 @@
       "type": "function"
     },
     {
-      "constant": false,
+      "constant": true,
       "inputs": [
         {
           "name": "_transcoder",
           "type": "address"
         },
         {
-          "name": "_finder",
-          "type": "address"
-        },
-        {
-          "name": "_slashAmount",
-          "type": "uint64"
-        },
-        {
-          "name": "_finderFee",
-          "type": "uint64"
+          "name": "_round",
+          "type": "uint256"
         }
       ],
-      "name": "slashTranscoder",
+      "name": "activeTranscoderTotalStake",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "pendingBlockRewardCut",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "pendingFeeShare",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "pendingPricePerSegment",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscoderUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "TranscoderEvicted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        }
+      ],
+      "name": "TranscoderResigned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "penalty",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscoderSlashed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Reward",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "Bond",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "Unbond",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "Withdraw",
+      "type": "event"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }

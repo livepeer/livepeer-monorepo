@@ -1,5 +1,19 @@
 {
   "name": "TokenPools",
-  "abi": [],
-  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a723058201f27991f75f80bef4a0d2a96441bef6e0669bf89fdff222b75a1f3d9801d61b10029"
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "PERC_DIVISOR",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
 }

@@ -79,6 +79,5 @@
       "name": "Transfer",
       "type": "event"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }

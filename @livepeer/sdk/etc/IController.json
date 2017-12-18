@@ -37,12 +37,7 @@
         }
       ],
       "name": "setContract",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -102,12 +97,7 @@
         }
       ],
       "name": "updateController",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -125,6 +115,23 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "contractAddr",
+          "type": "address"
+        }
+      ],
+      "name": "SetContract",
+      "type": "event"
     },
     {
       "anonymous": false,
@@ -155,6 +162,5 @@
       "name": "OwnershipTransferred",
       "type": "event"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }

@@ -10,14 +10,23 @@
         }
       ],
       "name": "setController",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "PERC_DIVISOR",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -44,7 +53,30 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "controller",
+          "type": "address"
+        }
+      ],
+      "name": "SetController",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "param",
+          "type": "string"
+        }
+      ],
+      "name": "ParameterUpdate",
+      "type": "event"
     }
-  ],
-  "bytecode": "0x6060604052341561000f57600080fd5b6040516020806101d08339810160405280805160008054600160a060020a03909216600160a060020a0319909216919091179055505061017c806100546000396000f30060606040526004361061004b5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166392eefe9b8114610050578063f77c479114610090575b600080fd5b341561005b57600080fd5b61007c73ffffffffffffffffffffffffffffffffffffffff600435166100cc565b604051901515815260200160405180910390f35b341561009b57600080fd5b6100a3610134565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b600080543373ffffffffffffffffffffffffffffffffffffffff9081169116146100f557600080fd5b506000805473ffffffffffffffffffffffffffffffffffffffff831673ffffffffffffffffffffffffffffffffffffffff199091161790556001919050565b60005473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a72305820148fea17a2043b6e6fd0b587e0f4b7dc13a291f7ee47eb3b1a083120e21de1420029"
+  ]
 }

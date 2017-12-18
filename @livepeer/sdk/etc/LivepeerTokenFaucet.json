@@ -38,12 +38,7 @@
       "constant": false,
       "inputs": [],
       "name": "request",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -76,12 +71,7 @@
         }
       ],
       "name": "removeFromWhitelist",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -109,12 +99,7 @@
         }
       ],
       "name": "addToWhitelist",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -215,5 +200,5 @@
       "type": "event"
     }
   ],
-  "address": "0xD74422a01Ce587635EF3Dfcc9A4C36635b503d7c"
+  "address": "0xA5233069d4267D27062010D5A286b27CBD8C78eF"
 }

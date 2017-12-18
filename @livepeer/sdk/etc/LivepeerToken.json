@@ -159,7 +159,7 @@
       "name": "decreaseApproval",
       "outputs": [
         {
-          "name": "success",
+          "name": "",
           "type": "bool"
         }
       ],
@@ -266,7 +266,7 @@
       "name": "increaseApproval",
       "outputs": [
         {
-          "name": "success",
+          "name": "",
           "type": "bool"
         }
       ],
@@ -289,7 +289,7 @@
       "name": "allowance",
       "outputs": [
         {
-          "name": "remaining",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -310,17 +310,6 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
-    },
-    {
-      "inputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "fallback"
     },
     {
       "anonymous": false,
@@ -407,5 +396,5 @@
       "type": "event"
     }
   ],
-  "address": "0x1109F7fD6D5bece1f2ba27fe84d3854B20BE7063"
+  "address": "0x765445A97F10242387E052Fa06595AA7D2fdA46b"
 }

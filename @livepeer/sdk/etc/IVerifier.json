@@ -30,12 +30,7 @@
         }
       ],
       "name": "verify",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": true,
       "stateMutability": "payable",
       "type": "function"
@@ -54,6 +49,5 @@
       "stateMutability": "view",
       "type": "function"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "RoundsManager",
+  "name": "AdjustableRoundsManager",
   "abi": [
     {
       "constant": true,
@@ -13,6 +13,20 @@
       ],
       "payable": false,
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_num",
+          "type": "uint256"
+        }
+      ],
+      "name": "setBlockNum",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -208,6 +222,20 @@
       ],
       "payable": false,
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_blocks",
+          "type": "uint256"
+        }
+      ],
+      "name": "mineBlocks",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

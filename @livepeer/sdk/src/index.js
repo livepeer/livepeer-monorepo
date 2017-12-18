@@ -564,14 +564,6 @@ export default async function createLivepeerSDK(
     // Delegator
 
     /**
-     * Whether or not the BondingManager has been initialized
-     * @return {number}
-     */
-    async getBondingManagerIsInitialized(): Promise<boolean> {
-      return toBool(await BondingManager.isInitialized())
-    },
-
-    /**
      * The delegator status of the given address
      * @param  {string} addr - user's ETH address
      * @return {number}
@@ -612,22 +604,7 @@ export default async function createLivepeerSDK(
       startRound: number,
       withdrawRound: number,
     }> {
-      const isInitialized = await rpc.getBondingManagerIsInitialized()
       const status = await rpc.getDelegatorStatus(addr)
-      if (!isInitialized) {
-        return {
-          address: addr,
-          status: DELEGATOR_STATUS.Unbonded,
-          stake: 0, // bonded amount, but includes past rounds, rewards and fees, etc
-          bondedAmount: 0,
-          unbondedAmount: 0,
-          delegateAddress: '',
-          delegateStake: 0,
-          lastClaimRound: 0,
-          startRound: 0,
-          withdrawRound: 0,
-        }
-      }
       const stake = await rpc.getDelegatorStake(addr)
       const d = await BondingManager.getDelegator(addr)
       const delegateAddress =
@@ -802,14 +779,6 @@ export default async function createLivepeerSDK(
     },
 
     /**
-     * Whether or not the RoundsManager has been initialized
-     * @return {boolean}
-     */
-    async getRoundsManagerIsInitialized(): Promise<boolean> {
-      return headToBool(await RoundsManager.isInitialized())
-    },
-
-    /**
      * Gets the length of a round (in blocks)
      * @return {number}
      */
@@ -867,21 +836,8 @@ export default async function createLivepeerSDK(
       currentRoundStartBlock: ?number,
       lastInitializedRound: ?number,
       roundLength: ?number,
-      roundsPerYear: ?number,
     } {
-      const isInitialized = await rpc.getRoundsManagerIsInitialized()
-      if (!isInitialized) {
-        return {
-          currentRound: null,
-          currentRoundInitialized: false,
-          currentRoundStartBlock: null,
-          lastInitializedRound: null,
-          roundLength: null,
-          roundsPerYear: null,
-        }
-      }
       const roundLength = await rpc.getRoundLength()
-      const roundsPerYear = await rpc.getRoundsPerYear()
       const currentRound = await rpc.getCurrentRound()
       const currentRoundInitialized = await rpc.getCurrentRoundIsInitialized()
       const lastInitializedRound = await rpc.getLastInitializedRound()
@@ -892,19 +848,10 @@ export default async function createLivepeerSDK(
         currentRoundStartBlock,
         lastInitializedRound,
         roundLength,
-        roundsPerYear,
       }
     },
 
     // Jobs
-
-    /**
-     * Whether the jobs manager has been initialized
-     * @return {boolean}
-     */
-    async getJobsManagerIsInitialized(): Promise<boolean> {
-      return headToBool(await JobsManager.isInitialized())
-    },
 
     /**
      * Total jobs that have been created
@@ -964,17 +911,6 @@ export default async function createLivepeerSDK(
       slashingPeriod: ?number,
       finderFee: ?number,
     } {
-      const isInitialized = await rpc.getJobsManagerIsInitialized()
-      if (!isInitialized) {
-        return {
-          totalJobs: 0,
-          verificationRate: null,
-          verificationPeriod: null,
-          slashingPeriod: null,
-          endingPeriod: null,
-          finderFee: null,
-        }
-      }
       const totalJobs = await rpc.getTotalJobs()
       const verificationRate = await rpc.getJobVerificationRate()
       const verificationPeriod = await rpc.getJobVerificationPeriod()
@@ -1019,7 +955,6 @@ export default async function createLivepeerSDK(
      *   jobId: number,
      *   streamId: string,
      *   transcodingOptions: Array<Object>,
-     *   transcoder: string,
      *   broadcaster: string
      * }}
      */
@@ -1028,7 +963,6 @@ export default async function createLivepeerSDK(
     ): Array<{
       streamId: string,
       transcodingOptions: Array<Object>,
-      transcoder: string,
       broadcaster: string,
     }> {
       const event = events.NewJob
@@ -1054,7 +988,6 @@ export default async function createLivepeerSDK(
               transcodingOptions: utils.parseTranscodingOptions(
                 x.transcodingOptions,
               ),
-              transcoder: x.transcoder,
               broadcaster: x.broadcaster,
             }),
             utils.decodeEvent(event),

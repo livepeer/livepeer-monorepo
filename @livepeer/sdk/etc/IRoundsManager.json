@@ -4,20 +4,6 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "roundsPerYear",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
       "name": "currentRoundInitialized",
       "outputs": [
         {
@@ -32,7 +18,35 @@
     {
       "constant": true,
       "inputs": [],
+      "name": "currentRoundLocked",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
       "name": "currentRound",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "blockNum",
       "outputs": [
         {
           "name": "",
@@ -61,16 +75,22 @@
       "constant": false,
       "inputs": [],
       "name": "initializeRound",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "round",
+          "type": "uint256"
+        }
+      ],
+      "name": "NewRound",
+      "type": "event"
     }
-  ],
-  "bytecode": "0x"
+  ]
 }
