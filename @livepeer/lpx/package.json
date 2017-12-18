@@ -14,6 +14,7 @@
     "commander": "^2.11.0",
     "console.table": "^0.9.1",
     "inquirer": "^4.0.0",
+    "pretty-error": "^2.1.1",
     "react-blessed": "^0.1.8",
     "tty-table": "^2.5.5",
     "vorpal": "^1.12.0"

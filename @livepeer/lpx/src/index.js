@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'fs'
 import Table from 'cli-table'
 import { Spinner } from 'cli-spinner'
 import program from 'commander'
+import PrettyError from 'pretty-error'
 import Vorpal from 'vorpal'
 import Livepeer from '@livepeer/sdk'
 import pjson from '../package'
@@ -20,6 +22,8 @@ const LOGO = `
       C O N S O L E   M O D E
 ------------------------------------
 `
+
+PrettyError.start()
 
 // console.table shim
 const toTable = x => {
@@ -54,13 +58,22 @@ program.version(pjson.version)
 program
   .command('console')
   .description('runs and interactive sdk console')
-  .option('-c, --config <json>', 'Options to pass to Livepeer sdk constructor', '{}')
+  .option('-c, --config <json>', 'Options to pass to Livepeer sdk constructor')
   .action(async ({ config: sdkConfig }) => {
     console.log(`
 ${LOGO}
 For available commands, type 'help'.
   `)
-    let { rpc, config, constants } = await Livepeer(JSON.parse(sdkConfig))
+    if (!sdkConfig) {
+      try {
+        sdkConfig = readFileSync(`${process.cwd()}/.lpxrc`, 'utf8')
+      } catch (err) {
+        console.error('Could not load config file')
+      }
+    }
+    let { rpc, config, constants } = await Livepeer(
+      JSON.parse(sdkConfig || '{}'),
+    )
     const { VIDEO_PROFILES } = constants
     const toFunctionCallString = (key, args) =>
       `${key}(${args.map(x => JSON.stringify(x))})`
@@ -74,26 +87,36 @@ For available commands, type 'help'.
     // interactive console
     const vorpal = Vorpal()
     /**
-   * clear
-   */
+     * clear
+     */
     vorpal.command('clear', 'Clears console').action((_, next) => {
       console.clear()
       next()
     })
     /**
-   * status
-   */
-    vorpal.command('status', 'Clears console').action((_, next) => {
-      console.table({
-        account: config.defaultTx.from,
-        gas: config.defaultTx.gas,
-        provider: config.eth.currentProvider.host,
+     * status
+     */
+    vorpal
+      .command('status', 'Shows current account info')
+      .action(async (_, next) => {
+        const { currentProvider } = config.eth
+        const isSignerProvider = !!currentProvider.provider
+        // console.log(currentProvider)
+        console.table({
+          account: config.defaultTx.from,
+          gas: config.defaultTx.gas,
+          provider: !isSignerProvider
+            ? currentProvider.host
+            : currentProvider.provider.host,
+          balance: (await config.eth.getBalance(
+            config.defaultTx.from,
+          )).toString(10),
+        })
+        next()
       })
-      next()
-    })
     /**
-   * use
-   */
+     * use
+     */
     vorpal
       .command(
         'use [address]',
@@ -108,20 +131,27 @@ For available commands, type 'help'.
           account:
             'undefined' === typeof address ? config.defaultTx.from : address,
           gas: options.gas || config.defaultTx.gas,
-          provider: options.provider || config.eth.currentProvider.host,
+          provider: options.provider || config.eth.currentProvider,
         })
         rpc = livepeer.rpc
         config = livepeer.config
+        const { currentProvider } = config.eth
+        const isSignerProvider = !!currentProvider.provider
         console.table({
           account: config.defaultTx.from,
           gas: config.defaultTx.gas,
-          provider: config.eth.currentProvider.host,
+          provider: !isSignerProvider
+            ? currentProvider.host
+            : currentProvider.provider.host,
+          balance: (await config.eth.getBalance(
+            config.defaultTx.from,
+          )).toString(10),
         })
         next()
       })
     /**
-   * @
-   */
+     * @
+     */
     vorpal
       .command('me', 'Displays default transaction account address')
       .alias('@')
@@ -130,8 +160,8 @@ For available commands, type 'help'.
         next()
       })
     /**
-   * accounts
-   */
+     * accounts
+     */
     vorpal
       .command('accounts', 'Shows all available account addresses')
       .alias('ls')
@@ -146,8 +176,8 @@ For available commands, type 'help'.
         next()
       })
     /**
-   * tx
-   */
+     * tx
+     */
     vorpal
       .command('tx', 'Displays default transaction info')
       .action((_, next) => {
@@ -155,8 +185,8 @@ For available commands, type 'help'.
         next()
       })
     /**
-   * video-profiles
-   */
+     * video-profiles
+     */
     vorpal
       .command('video-profiles', 'Lists available video transcoding profiles')
       .alias('profiles')
@@ -165,8 +195,8 @@ For available commands, type 'help'.
         next()
       })
     /**
-   * call
-   */
+     * call
+     */
     vorpal
       .command('call <method> [args...]', 'Gets values from deployed contracts')
       .parse(command => command.replace(/@/g, config.defaultTx.from))
@@ -200,20 +230,21 @@ For available commands, type 'help'.
               parsedArgs,
             )} ...\n`,
           })
-          spinner.start()
+          // spinner.start()
           const res = await f(...parsedArgs)
           console.clear()
-          spinner.stop()
+          // spinner.stop()
           console['object' === typeof res ? 'table' : 'log'](res)
         } catch (err) {
-          console.error(`Error [${method}]:`, err.message)
+          // console.log(`Error [${method}]:`)
+          console.error(err)
           if (spinner) spinner.stop()
         }
         next()
       })
     /**
-   * poll
-   */
+     * poll
+     */
     vorpal
       .command(
         'poll <method> [args...]',
@@ -248,7 +279,7 @@ For available commands, type 'help'.
               value = 'object' === typeof res ? toTable(res) : res
             } catch (err) {
               console.clear()
-              console.error(`Error [${method}]:`, err.message)
+              value = err.value ? JSON.stringify(err.value, null, 2) : err.message
             }
           }
           const watcher = filter.watch(printData)
@@ -278,8 +309,8 @@ For available commands, type 'help'.
         next()
       })
     /**
-   * stop
-   */
+     * stop
+     */
     vorpal.command('stop', 'Stops active watcher').action((_, next) => {
       if (!WATCHERS.length) return next(console.log('not watching anything!'))
       WATCHERS.forEach(x => x.stopWatching())
