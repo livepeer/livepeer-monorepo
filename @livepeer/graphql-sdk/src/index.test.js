@@ -2,70 +2,66 @@ import test from 'ava'
 import { graphql } from 'graphql'
 import {
   utils,
+  ADDRESS_PAD,
   EMPTY_ADDRESS,
+  DELEGATOR_STATUS,
+  TRANSCODER_STATUS,
   VIDEO_PROFILE_ID_SIZE,
   VIDEO_PROFILES,
 } from '@livepeer/sdk'
 import createSchema from './index'
+import livepeer from './mock-sdk'
 
 // clears console
 console.log('\x1Bc')
-
-// mock chain
-const ALL_JOBS = [
-  {
-    jobId: 0,
-    streamId: 'x36xhzz',
-    transcodingOptions: [VIDEO_PROFILES.P144p30fps16x9],
-    broadcaster: EMPTY_ADDRESS.replace(/00/g, '11'),
-  },
-  {
-    jobId: 1,
-    streamId: 'x36xhzz',
-    transcodingOptions: [
-      VIDEO_PROFILES.P144p30fps16x9,
-      VIDEO_PROFILES.P240p30fps16x9,
-    ],
-    broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
-  },
-  {
-    jobId: 2,
-    streamId: 'baz',
-    transcodingOptions: [
-      VIDEO_PROFILES.P360p30fps16x9,
-      VIDEO_PROFILES.P720p30fps4x3,
-      VIDEO_PROFILES.P576p30fps16x9,
-    ],
-    broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
-  },
-  {
-    jobId: 3,
-    streamId: 'baz',
-    transcodingOptions: [],
-    broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
-  },
-]
-
-// mock sdk
-const livepeer = {
-  constants: {
-    VIDEO_PROFILE_ID_SIZE,
-    VIDEO_PROFILES,
-  },
-  rpc: {
-    getJob: async id => ALL_JOBS[id],
-    getJobs: async ({ broadcaster } = {}) =>
-      broadcaster
-        ? ALL_JOBS.filter(x => x.broadcaster === broadcaster)
-        : ALL_JOBS,
-  },
-  utils,
-}
 
 // Livepeer graphql schema
 const LivepeerSchema = createSchema({ livepeer })
 
 // Queries
+const BroadcasterQuery = `
+query BroadcasterQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
+  broadcaster(id: $id) {
+    id
+    deposit
+    type
+    withdrawBlock
+    jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
+      id
+      broadcaster
+      stream
+      profiles {
+        id
+        name
+        bitrate
+        framerate
+        resolution
+      }
+      ... on VideoJob {
+        live
+        url
+      }
+    }
+  }
+}
+`
+
+const DelegatorQuery = `
+query DelegatorQuery($id: String!) {
+  delegator(id: $id) {
+    id
+    status
+    delegateAddress
+    bondedAmount
+    unbondedAmount
+    delegatedAmount
+    lastClaimRound
+    startRound
+    withdrawRound
+  }
+}
+`
+
 const JobQuery = `
 query JobQuery($id: Int!, $streamRootUrl: String) {
   job(id: $id) {
@@ -108,15 +104,104 @@ query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $b
 }
 `
 
+const TranscoderQuery = `
+query TranscoderQuery($id: String!) {
+  transcoder(id: $id) {
+    id
+    type
+    active
+    status
+    lastRewardRound
+    blockRewardCut
+    feeShare
+    pricePerSegment
+    pendingBlockRewardCut
+    pendingFeeShare
+    pendingPricePerSegment
+  }
+}
+`
+
+const UserQuery = `
+query UserQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
+  user(id: $id) {
+    id
+    broadcaster {
+      id
+      deposit
+      withdrawBlock
+      jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
+        id
+        broadcaster
+        stream
+        profiles {
+          id
+          name
+          bitrate
+          framerate
+          resolution
+        }
+        ... on VideoJob {
+          live
+          url
+        }
+      }
+    }
+    delegator {
+      status
+      delegateAddress
+      bondedAmount
+      unbondedAmount
+      delegatedAmount
+      lastClaimRound
+      startRound
+      withdrawRound
+    }
+    transcoder {
+      active
+      status
+      lastRewardRound
+      blockRewardCut
+      feeShare
+      pricePerSegment
+      pendingBlockRewardCut
+      pendingFeeShare
+      pendingPricePerSegment
+    }
+  }
+}
+`
+
+// broadcaster(...) query
+test('should get a single broadcaster by id', async t => {
+  const params = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    dead: true,
+    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/'
+  }
+  const res = await graphql(LivepeerSchema, BroadcasterQuery, null, null, params)
+  // console.log(res)
+  // console.log(JSON.stringify(res, null, 2))
+  t.skip.snapshot(res)
+})
+
+// delegator(...) query
+test('should get a single delegator by id', async t => {
+  const params = {
+    id: EMPTY_ADDRESS.replace(/00/g, '11'),
+  }
+  const res = await graphql(LivepeerSchema, DelegatorQuery, null, null, params)
+  t.snapshot(res)
+})
+
 // job(...) query
-test.skip('should get a single job by id', async t => {
+test('should get a single job by id', async t => {
   const params = {
     id: 0,
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
   }
   const res = await graphql(LivepeerSchema, JobQuery, null, null, params)
-  // console.log(JSON.stringify(res, null, 2))
-  t.pass()
+  t.snapshot(res)
 })
 
 // jobs(...) query
@@ -125,13 +210,35 @@ test('should get many jobs', async t => {
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   })
-  // console.log(JSON.stringify(res0, null, 2))
+  t.snapshot(res0)
   const res1 = await graphql(LivepeerSchema, JobsQuery, null, null, {
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
     broadcasterWhereJobId: 2,
   })
-  // console.log(JSON.stringify(res1, null, 2))
-  t.pass()
+  t.snapshot(res1)
+})
+
+// transcoder(...) query
+test('should get a single transcoder by id', async t => {
+  const params = {
+    id: EMPTY_ADDRESS.replace(/00/g, '11'),
+  }
+  const res = await graphql(LivepeerSchema, TranscoderQuery, null, null, params)
+  // console.log(res)
+  t.skip.snapshot(res)
+})
+
+// user(...) query
+test('should get a single user by id', async t => {
+  const params = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    dead: true,
+    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/'
+  }
+  const res = await graphql(LivepeerSchema, UserQuery, null, null, params)
+  // console.log(res)
+  console.log(JSON.stringify(res, null, 2))
+  t.skip.snapshot(res)
 })
 
 test('possible types', async t => {

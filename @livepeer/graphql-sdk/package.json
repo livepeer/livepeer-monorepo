@@ -12,6 +12,7 @@
     "build": "npm -s run build-module && npm -s run build-main",
     "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
     "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepare": "npm -s run build",
     "test": "npx ava"
@@ -24,7 +25,9 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "express": "^4.16.2",
+    "express-graphql": "^0.6.11"
   },
   "ava": {
     "require": [
