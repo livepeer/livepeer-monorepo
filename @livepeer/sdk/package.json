@@ -8,8 +8,7 @@
     "ethjs": "^0.3.0",
     "ethjs-provider-signer": "^0.1.4",
     "ethjs-query": "^0.3.1",
-    "ethjs-signer": "^0.1.1",
-    "protocol": "https://github.com/livepeer/protocol.git#d3edf0c095020b1d991c6ff16d23040b28ce5da5"
+    "ethjs-signer": "^0.1.1"
   },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
@@ -30,7 +29,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
-    "protocol": "https://github.com/livepeer/protocol#502acfcf2b18c26f24ff9db70fbc4bc4e8191a92",
+    "protocol": "https://github.com/livepeer/protocol.git#d3edf0c095020b1d991c6ff16d23040b28ce5da5",
     "yup": "^0.23.0"
   },
   "ava": {

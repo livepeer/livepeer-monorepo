@@ -19,6 +19,7 @@ const int256 = new Int().positive()
 let livepeer
 
 test.before(async t => {
+  // create new sdk instance before each test
   livepeer = await Livepeer()
 })
 
@@ -37,12 +38,13 @@ test('should initialize contracts', async t => {
     c[b].query.rpc.idCounter = 0
     return c
   }, contracts)
+  // @TODO - unskip once contract schema is stable
   t.skip.snapshot(snap)
 })
 
 test('should initialize SDK', async t => {
   const { rpc } = await Livepeer()
-  // @TODO - unskip next line once SDK rpc is fully implemented
+  // @TODO - unskip once sdk rpc is stable
   t.skip.snapshot(rpc)
 })
 
@@ -103,7 +105,7 @@ test('should return object with correct shape from getDelegator()', async t => {
     delegateAddress: yup.string(),
     bondedAmount: int256.required(),
     unbondedAmount: int256.required(),
-    delegateStake: int256.nullable(),
+    delegatedAmount: int256.nullable(),
     lastClaimRound: int256.nullable(),
     startRound: int256.nullable(),
     withdrawRound: int256.nullable(),
@@ -121,7 +123,6 @@ test('should return object with correct shape from getTranscoder()', async t => 
     active: yup.boolean(),
     address: yup.string(),
     status: yup.string().oneOf(livepeer.constants.TRANSCODER_STATUS),
-    delegateStake: int256.nullable(),
     lastRewardRound: int256.nullable(),
     blockRewardCut: int256.nullable(), // %
     feeShare: int256.nullable(), // %

@@ -599,7 +599,7 @@ export default async function createLivepeerSDK(
       delegateAddress: string,
       bondedAmount: number,
       unbondedAmount: number,
-      delegateStake: number,
+      delegatedAmount: number,
       lastClaimRound: number,
       startRound: number,
       withdrawRound: number,
@@ -611,7 +611,7 @@ export default async function createLivepeerSDK(
         d.delegateAddress === EMPTY_ADDRESS ? '' : d.delegateAddress
       const bondedAmount = toNumber(d.bondedAmount)
       const unbondedAmount = toNumber(d.unbondedAmount)
-      const delegateStake = toNumber(d.delegatedAmount)
+      const delegatedAmount = toNumber(d.delegatedAmount)
       const lastClaimRound = toNumber(d.lastClaimTokenPoolsSharesRound)
       const startRound = toNumber(d.startRound)
       const withdrawRound = toNumber(d.withdrawRound)
@@ -622,7 +622,7 @@ export default async function createLivepeerSDK(
         bondedAmount,
         unbondedAmount,
         delegateAddress,
-        delegateStake,
+        delegatedAmount,
         lastClaimRound: lastClaimRound ? lastClaimRound : null,
         startRound: startRound ? startRound : null,
         withdrawRound: withdrawRound ? withdrawRound : null,
@@ -665,7 +665,7 @@ export default async function createLivepeerSDK(
     async getTranscoderIsActive(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<boolean> {
-      return headToBool(await BondingManager.isActiveTranscoder(addr))
+      return headToBool(await BondingManager.isActiveTranscoder(addr, await rpc.getCurrentRound()))
     },
 
     /**
@@ -691,8 +691,6 @@ export default async function createLivepeerSDK(
       active: boolean,
       address: string,
       status: string,
-      delegateStake: ?number,
-      delegatorWithdrawRound: ?number,
       lastRewardRound: ?number,
       blockRewardCut: ?number,
       feeShare: ?number,
@@ -702,23 +700,7 @@ export default async function createLivepeerSDK(
       pendingPricePerSegment: ?number,
     }> {
       const status = await rpc.getTranscoderStatus(addr)
-      if (TRANSCODER_STATUS.NotRegistered === status) {
-        return {
-          active: false,
-          address: addr,
-          status,
-          delegateStake: null,
-          lastRewardRound: null,
-          blockRewardCut: null,
-          feeShare: null,
-          pricePerSegment: null,
-          pendingBlockRewardCut: null,
-          pendingFeeShare: null,
-          pendingPricePerSegment: null,
-        }
-      }
       const active = await rpc.getTranscoderIsActive(addr)
-      const { delegateStake } = await rpc.getDelegator(addr)
       const t = await BondingManager.getTranscoder(addr)
       const lastRewardRound = toNumber(t.lastRewardRound)
       const blockRewardCut = toNumber(t.blockRewardCut)
@@ -731,18 +713,13 @@ export default async function createLivepeerSDK(
         active,
         address: addr,
         status,
-        delegateStake,
-        lastRewardRound: lastRewardRound ? lastRewardRound : null,
-        blockRewardCut: blockRewardCut ? blockRewardCut : null,
-        feeShare: feeShare ? feeShare : null,
-        pricePerSegment: pricePerSegment ? pricePerSegment : null,
-        pendingBlockRewardCut: pendingBlockRewardCut
-          ? pendingBlockRewardCut
-          : null,
-        pendingFeeShare: pendingFeeShare ? pendingFeeShare : null,
-        pendingPricePerSegment: pendingPricePerSegment
-          ? pendingPricePerSegment
-          : null,
+        lastRewardRound,
+        blockRewardCut,
+        feeShare,
+        pricePerSegment,
+        pendingBlockRewardCut,
+        pendingFeeShare,
+        pendingPricePerSegment,
       }
     },
 
