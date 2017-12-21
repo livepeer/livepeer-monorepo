@@ -18,6 +18,15 @@ export const introspectionQueryResultData = {
     types: [
       {
         kind: 'INTERFACE',
+        name: 'Account',
+        possibleTypes: [
+          {
+            name: 'BasicAccount',
+          },
+        ],
+      },
+      {
+        kind: 'INTERFACE',
         name: 'Broadcaster',
         possibleTypes: [
           {
