@@ -666,7 +666,12 @@ export default async function createLivepeerSDK(
     async getTranscoderIsActive(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<boolean> {
-      return headToBool(await BondingManager.isActiveTranscoder(addr, await rpc.getCurrentRound()))
+      return headToBool(
+        await BondingManager.isActiveTranscoder(
+          addr,
+          await rpc.getCurrentRound(),
+        ),
+      )
     },
 
     /**
@@ -936,9 +941,12 @@ export default async function createLivepeerSDK(
      *   broadcaster: string
      * }}
      */
-    async getJobs(
-      { to, from, blocksAgo = 100 * 10000, ...filters } = {},
-    ): Array<{
+    async getJobs({
+      to,
+      from,
+      blocksAgo = 100 * 10000,
+      ...filters
+    } = {}): Array<{
       streamId: string,
       transcodingOptions: Array<Object>,
       broadcaster: string,
@@ -1026,7 +1034,7 @@ export default async function createLivepeerSDK(
         await utils.getTxReceipt(
           await BondingManager.claimTokenPoolsShares(toBN(endRound), tx),
           config.eth,
-        ),
+        )
         n = (await rpc.getDelegator(tx.from)).lastClaimRound
       }
       return await rpc.getDelegator(tx.from)
@@ -1050,9 +1058,7 @@ export default async function createLivepeerSDK(
         throw new Error(
           `Cannot bond ${toString(
             toBN(amount),
-          )} LPT because is it greater than your current balance (${
-            balance
-          } LPT).`,
+          )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
       }
       // claim token pools shares
@@ -1131,9 +1137,7 @@ export default async function createLivepeerSDK(
         throw new Error(
           `Cannot deposit ${toString(
             toBN(amount),
-          )} LPT because is it greater than your current balance (${
-            balance
-          } LPT).`,
+          )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
       }
       // approve JobsManager address / amount with LivepeerToken...
