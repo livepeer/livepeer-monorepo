@@ -225,9 +225,10 @@ const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
 const prop = (k: string | number) => (x): any => x[k]
 const toBool = (x: any): boolean => !!x
 const toString = (x: Eth.BN): string => x.toString(10)
-const toNumber = (x: Eth.BN): number => Number(x.toString(10))
-const headToNumber = compose(toNumber, prop(0))
+const toNumber = (x: Eth.BN): string => Number(x.toString(10))
 const headToBool = compose(toBool, prop(0))
+const headToString = compose(toString, prop(0))
+const headToNumber = compose(toNumber, prop(0))
 const invariant = (name, pos, type) => {
   throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`)
 }
@@ -439,7 +440,7 @@ export default async function createLivepeerSDK(
     async getEthBalance(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
-      return toNumber(await config.eth.getBalance(addr))
+      return toString(await config.eth.getBalance(addr))
     },
 
     // Tokens
@@ -449,7 +450,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getTokenTotalSupply(): Promise<number> {
-      return headToNumber(await LivepeerToken.totalSupply())
+      return headToString(await LivepeerToken.totalSupply())
     },
 
     /**
@@ -460,7 +461,7 @@ export default async function createLivepeerSDK(
     async getTokenBalance(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
-      return headToNumber(await LivepeerToken.balanceOf(addr))
+      return headToString(await LivepeerToken.balanceOf(addr))
     },
 
     /**
@@ -487,7 +488,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getFaucetAmount(): Promise<number> {
-      return headToNumber(await LivepeerTokenFaucet.requestAmount())
+      return headToString(await LivepeerTokenFaucet.requestAmount())
     },
 
     /**
@@ -556,8 +557,8 @@ export default async function createLivepeerSDK(
     }> {
       const b = await JobsManager.broadcasters(addr)
       return {
-        deposit: toNumber(b.deposit),
-        withdrawBlock: toNumber(b.withdrawBlock) || null,
+        deposit: toString(b.deposit),
+        withdrawBlock: toString(b.withdrawBlock) || null,
       }
     },
 
@@ -571,7 +572,7 @@ export default async function createLivepeerSDK(
     async getDelegatorStatus(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<string> {
-      const status = headToNumber(await BondingManager.delegatorStatus(addr))
+      const status = headToString(await BondingManager.delegatorStatus(addr))
       return DELEGATOR_STATUS[status]
     },
 
@@ -583,7 +584,7 @@ export default async function createLivepeerSDK(
     async getDelegatorStake(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<number> {
-      return headToNumber(await BondingManager.delegatorStake(addr))
+      return headToString(await BondingManager.delegatorStake(addr))
     },
 
     /**
@@ -609,12 +610,12 @@ export default async function createLivepeerSDK(
       const d = await BondingManager.getDelegator(addr)
       const delegateAddress =
         d.delegateAddress === EMPTY_ADDRESS ? '' : d.delegateAddress
-      const bondedAmount = toNumber(d.bondedAmount)
-      const unbondedAmount = toNumber(d.unbondedAmount)
-      const delegatedAmount = toNumber(d.delegatedAmount)
-      const lastClaimRound = toNumber(d.lastClaimTokenPoolsSharesRound)
-      const startRound = toNumber(d.startRound)
-      const withdrawRound = toNumber(d.withdrawRound)
+      const bondedAmount = toString(d.bondedAmount)
+      const unbondedAmount = toString(d.unbondedAmount)
+      const delegatedAmount = toString(d.delegatedAmount)
+      const lastClaimRound = toString(d.lastClaimTokenPoolsSharesRound)
+      const startRound = toString(d.startRound)
+      const withdrawRound = toString(d.withdrawRound)
       return {
         address: addr,
         status,
@@ -654,7 +655,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getTotalReserveTranscoders(): Promise<number> {
-      return headToNumber(await BondingManager.getReservePoolSize())
+      return headToString(await BondingManager.getReservePoolSize())
     },
 
     /**
@@ -676,7 +677,7 @@ export default async function createLivepeerSDK(
     async getTranscoderStatus(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<string> {
-      const status = headToNumber(await BondingManager.transcoderStatus(addr))
+      const status = headToString(await BondingManager.transcoderStatus(addr))
       return TRANSCODER_STATUS[status]
     },
 
@@ -702,13 +703,13 @@ export default async function createLivepeerSDK(
       const status = await rpc.getTranscoderStatus(addr)
       const active = await rpc.getTranscoderIsActive(addr)
       const t = await BondingManager.getTranscoder(addr)
-      const lastRewardRound = toNumber(t.lastRewardRound)
-      const blockRewardCut = toNumber(t.blockRewardCut)
-      const feeShare = toNumber(t.feeShare)
-      const pricePerSegment = toNumber(t.pricePerSegment)
-      const pendingBlockRewardCut = toNumber(t.pendingBlockRewardCut)
-      const pendingFeeShare = toNumber(t.pendingFeeShare)
-      const pendingPricePerSegment = toNumber(t.pendingPricePerSegment)
+      const lastRewardRound = toString(t.lastRewardRound)
+      const blockRewardCut = toString(t.blockRewardCut)
+      const feeShare = toString(t.feeShare)
+      const pricePerSegment = toString(t.pricePerSegment)
+      const pendingBlockRewardCut = toString(t.pendingBlockRewardCut)
+      const pendingFeeShare = toString(t.pendingFeeShare)
+      const pendingPricePerSegment = toString(t.pendingPricePerSegment)
       return {
         active,
         address: addr,
@@ -729,7 +730,7 @@ export default async function createLivepeerSDK(
      */
     async getCandidateTranscoders() {
       return (await Promise.all(
-        Array(headToNumber(await BondingManager.getCandidatePoolSize()))
+        Array(headToString(await BondingManager.getCandidatePoolSize()))
           .fill(0)
           .map(async (_, i) => {
             const res = await BondingManager.getCandidateTranscoderAtPosition(i)
@@ -745,7 +746,7 @@ export default async function createLivepeerSDK(
      */
     async getActiveTranscoders() {
       return (await Promise.all(
-        Array(headToNumber(await BondingManager.getCandidatePoolSize()))
+        Array(headToString(await BondingManager.getCandidatePoolSize()))
           .fill(0)
           .map(async (_, i) => {
             const res = await BondingManager.getCandidateTranscoderAtPosition(i)
@@ -760,7 +761,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getRoundLength(): Promise<number> {
-      return headToNumber(await RoundsManager.roundLength())
+      return headToString(await RoundsManager.roundLength())
     },
 
     /**
@@ -768,7 +769,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getRoundsPerYear(): Promise<number> {
-      return headToNumber(await RoundsManager.roundsPerYear())
+      return headToString(await RoundsManager.roundsPerYear())
     },
 
     /**
@@ -776,7 +777,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getCurrentRound(): Promise<number> {
-      return headToNumber(await RoundsManager.currentRound())
+      return headToString(await RoundsManager.currentRound())
     },
 
     /**
@@ -792,7 +793,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getCurrentRoundStartBlock(): Promise<number> {
-      return headToNumber(await RoundsManager.currentRoundStartBlock())
+      return headToString(await RoundsManager.currentRoundStartBlock())
     },
 
     /**
@@ -800,7 +801,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getLastInitializedRound(): Promise<number> {
-      return headToNumber(await RoundsManager.lastInitializedRound())
+      return headToString(await RoundsManager.lastInitializedRound())
     },
 
     /**
@@ -835,7 +836,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getTotalJobs(): Promise<number> {
-      return headToNumber(await JobsManager.numJobs())
+      return headToString(await JobsManager.numJobs())
     },
 
     /**
@@ -843,7 +844,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getJobVerificationRate(): Promise<number> {
-      return headToNumber(await JobsManager.verificationRate())
+      return headToString(await JobsManager.verificationRate())
     },
 
     /**
@@ -851,7 +852,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getJobVerificationPeriod(): Promise<number> {
-      return headToNumber(await JobsManager.verificationPeriod())
+      return headToString(await JobsManager.verificationPeriod())
     },
 
     /**
@@ -859,7 +860,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getJobSlashingPeriod(): Promise<number> {
-      return headToNumber(await JobsManager.slashingPeriod())
+      return headToString(await JobsManager.slashingPeriod())
     },
 
     /**
@@ -867,7 +868,7 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async getJobFinderFee(): Promise<number> {
-      return headToNumber(await JobsManager.finderFee())
+      return headToString(await JobsManager.finderFee())
     },
 
     /**
@@ -960,7 +961,7 @@ export default async function createLivepeerSDK(
         (await config.eth.getLogs(params)).map(
           compose(
             x => ({
-              jobId: toNumber(x.jobId),
+              jobId: toString(x.jobId),
               streamId: x.streamId,
               transcodingOptions: utils.parseTranscodingOptions(
                 x.transcodingOptions,
@@ -1047,7 +1048,7 @@ export default async function createLivepeerSDK(
       const balance = (await LivepeerToken.balanceOf(tx.from))[0]
       if (!balance.gte(toBN(amount))) {
         throw new Error(
-          `Cannot bond ${toNumber(
+          `Cannot bond ${toString(
             toBN(amount),
           )} LPT because is it greater than your current balance (${
             balance
@@ -1128,7 +1129,7 @@ export default async function createLivepeerSDK(
       const balance = (await LivepeerToken.balanceOf(tx.from))[0]
       if (!balance.gte(toBN(amount))) {
         throw new Error(
-          `Cannot deposit ${toNumber(
+          `Cannot deposit ${toString(
             toBN(amount),
           )} LPT because is it greater than your current balance (${
             balance

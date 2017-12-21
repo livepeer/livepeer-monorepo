@@ -6,15 +6,26 @@ import Livepeer, { utils, initContracts } from './index'
 // clears console
 console.log('\x1Bc')
 
-// yup's integer validation is broken
-// see https://github.com/jquense/yup/issues/50
-class Int extends yup.number {
-  _typeCheck(value) {
-    return Number.isInteger(value)
-  }
-}
+/**
+ * Type validators
+ */
 
-const int256 = new Int().positive()
+const boolean = yup.boolean()
+const number = yup
+  .number()
+  .required()
+  .required()
+const string = yup
+  .string()
+  .strict()
+  .required()
+const object = x => yup.object().shape(x)
+const array = x => yup.array().of(x)
+const oneOf = x => yup.mixed().oneOf(x)
+
+/**
+ * Pre-test
+ */
 
 let livepeer
 
@@ -23,12 +34,20 @@ test.before(async t => {
   livepeer = await Livepeer()
 })
 
+/**
+ * Run tests
+ */
+
+// utils
+
 test('should serialize profiles', t => {
   const a = utils.serializeTranscodingProfiles(['P720p60fps16x9'])
   const b = utils.serializeTranscodingProfiles(['foo'])
   t.is('a7ac137a', a)
   t.is('d435c53a', b)
 })
+
+// sdk snapshots
 
 test('should initialize contracts', async t => {
   const { contracts } = await initContracts()
@@ -48,34 +67,46 @@ test('should initialize SDK', async t => {
   t.skip.snapshot(rpc)
 })
 
+// ETH
+
+test('should get ETH balance', async t => {
+  const { from } = livepeer.config.defaultTx
+  const res = await livepeer.rpc.getEthBalance(from)
+  t.true(string.isValidSync(res))
+})
+
 // Token
 
 test('should return a number from getTokenTotalSupply()', async t => {
-  const x = await livepeer.rpc.getTokenTotalSupply()
-  t.true(Number.isInteger(x))
+  const res = await livepeer.rpc.getTokenTotalSupply()
+  t.true(string.isValidSync(res))
 })
 
 test('should return a number from getTokenBalance()', async t => {
   const { from } = livepeer.config.defaultTx
-  const x = await livepeer.rpc.getTokenBalance(from)
-  t.true(Number.isInteger(x))
+  const res = await livepeer.rpc.getTokenBalance(from)
+  t.true(string.isValidSync(res))
 })
 
 test('should return object with correct shape from getTokenInfo()', async t => {
+  const schema = object({
+    totalSupply: string,
+    balance: string,
+  })
   const { from } = livepeer.config.defaultTx
-  const { totalSupply, balance } = await livepeer.rpc.getTokenInfo(from)
-  t.true(Number.isInteger(totalSupply))
-  t.true(Number.isInteger(balance))
+  const res = await livepeer.rpc.getTokenInfo(from)
+  schema.validateSync(res)
+  t.pass()
 })
 
 // Faucet
 
 test('should return object with correct shape from getFaucetInfo()', async t => {
-  const schema = yup.object().shape({
-    amount: int256.required(),
-    tapRate: int256.required(),
-    tapAt: int256.required(),
-    tapIn: int256.required(),
+  const schema = object({
+    amount: string,
+    tapRate: number,
+    tapAt: number,
+    tapIn: number,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getFaucetInfo(from)
@@ -86,9 +117,9 @@ test('should return object with correct shape from getFaucetInfo()', async t => 
 // Broadcaster
 
 test('should return object with correct shape from getBroadcaster()', async t => {
-  const schema = yup.object().shape({
-    deposit: int256.required(),
-    withdrawBlock: int256.nullable(),
+  const schema = object({
+    deposit: string,
+    withdrawBlock: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getBroadcaster(from)
@@ -99,16 +130,16 @@ test('should return object with correct shape from getBroadcaster()', async t =>
 // Delgator
 
 test('should return object with correct shape from getDelegator()', async t => {
-  const schema = yup.object().shape({
-    address: yup.string(),
-    status: yup.string().oneOf(livepeer.constants.DELEGATOR_STATUS),
-    delegateAddress: yup.string(),
-    bondedAmount: int256.required(),
-    unbondedAmount: int256.required(),
-    delegatedAmount: int256.nullable(),
-    lastClaimRound: int256.nullable(),
-    startRound: int256.nullable(),
-    withdrawRound: int256.nullable(),
+  const schema = object({
+    address: string,
+    status: oneOf(livepeer.constants.DELEGATOR_STATUS),
+    delegateAddress: yup.string(), // can be empty ('')
+    bondedAmount: string,
+    unbondedAmount: string,
+    delegatedAmount: string,
+    lastClaimRound: string,
+    startRound: string,
+    withdrawRound: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getDelegator(from)
@@ -119,17 +150,17 @@ test('should return object with correct shape from getDelegator()', async t => {
 // Transcoder
 
 test('should return object with correct shape from getTranscoder()', async t => {
-  const schema = yup.object().shape({
-    active: yup.boolean(),
-    address: yup.string(),
-    status: yup.string().oneOf(livepeer.constants.TRANSCODER_STATUS),
-    lastRewardRound: int256.nullable(),
-    blockRewardCut: int256.nullable(), // %
-    feeShare: int256.nullable(), // %
-    pricePerSegment: int256.nullable(),
-    pendingBlockRewardCut: int256.nullable(), // %
-    pendingFeeShare: int256.nullable(), // %
-    pendingPricePerSegment: int256.nullable(),
+  const schema = object({
+    active: boolean,
+    address: string,
+    status: oneOf(livepeer.constants.TRANSCODER_STATUS),
+    lastRewardRound: string,
+    blockRewardCut: string, // %
+    feeShare: string, // %
+    pricePerSegment: string,
+    pendingBlockRewardCut: string, // %
+    pendingFeeShare: string, // %
+    pendingPricePerSegment: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getTranscoder(from)
@@ -140,12 +171,12 @@ test('should return object with correct shape from getTranscoder()', async t => 
 // Rounds
 
 test('should return object with correct shape from getRoundInfo()', async t => {
-  const schema = yup.object().shape({
-    currentRound: int256.nullable(),
-    currentRoundInitialized: yup.boolean(),
-    currentRoundStartBlock: int256.nullable(),
-    lastInitializedRound: int256.nullable(),
-    roundLength: int256.nullable(),
+  const schema = object({
+    currentRound: string,
+    currentRoundInitialized: boolean,
+    currentRoundStartBlock: string,
+    lastInitializedRound: string,
+    roundLength: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getRoundInfo(from)
@@ -156,12 +187,12 @@ test('should return object with correct shape from getRoundInfo()', async t => {
 // Jobs
 
 test('should return object with correct shape from getJobsInfo()', async t => {
-  const schema = yup.object().shape({
-    totalJobs: int256.required(),
-    verificationRate: int256.nullable(),
-    verificationPeriod: int256.nullable(),
-    slashingPeriod: int256.nullable(),
-    finderFee: int256.nullable(),
+  const schema = object({
+    totalJobs: string,
+    verificationRate: string,
+    verificationPeriod: string,
+    slashingPeriod: string,
+    finderFee: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getJobsInfo(from)
@@ -170,18 +201,21 @@ test('should return object with correct shape from getJobsInfo()', async t => {
 })
 
 test('should get many jobs from getJobs()', async t => {
-  const schema = yup.object().shape({
-    jobId: int256.required(),
-    streamId: yup.string().required(),
-    transcodingOptions: yup.array().of(
-      yup.object().shape({
-        name: yup.string(),
-        bitrate: yup.string(),
-        framerate: int256.positive().required(),
-        resolution: yup.string(),
+  const schema = object({
+    jobId: string,
+    streamId: string,
+    transcodingOptions: array(
+      object({
+        name: string,
+        bitrate: string,
+        framerate: yup
+          .number()
+          .positive()
+          .required(),
+        resolution: string,
       }),
     ),
-    broadcaster: yup.string().required(),
+    broadcaster: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getJobs()
