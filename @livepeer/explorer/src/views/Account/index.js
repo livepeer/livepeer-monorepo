@@ -171,8 +171,6 @@ query TranscoderQuery($id: String!) {
 `
 
 const connectApollo = graphql(AccountQuery, {
-  // @TODO: figure out why pollInterval seems to do nothing
-  // pollInterval: 10,
   props: ({ data, ownProps }) => {
     return {
       ...ownProps,
@@ -183,6 +181,7 @@ const connectApollo = graphql(AccountQuery, {
   options: ({ match }) => {
     const { account } = match.params
     return {
+      pollInterval: 5000,
       variables: {
         id: account,
         dead: true,
