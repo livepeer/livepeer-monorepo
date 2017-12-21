@@ -1,0 +1,31 @@
+import { routerReducer } from 'react-router-redux'
+import { push } from 'react-router-redux'
+import qs from 'query-string'
+
+export const name = 'routing'
+
+export const types = {
+  LOCATION_CHANGE: `@@router/LOCATION_CHANGE`,
+}
+
+export const actions = {
+  viewAccount: id => push(`/accounts/${id}`),
+}
+
+export const initialState = {
+  location: {
+    pathname: '',
+    search: '',
+    hash: '',
+    key: '',
+  },
+}
+
+export const reducer = routerReducer
+
+export const selectors = {
+  getLocation: state => state.routing.location,
+  getParsedQueryString: state => qs.parse(state.routing.location.search),
+}
+
+export default reducers => ({ ...reducers, [name]: reducer })
