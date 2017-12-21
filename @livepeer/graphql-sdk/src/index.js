@@ -61,9 +61,10 @@ export const introspectionQueryResultData = {
 
 const DEFAULT_STREAM_ROOT = 'http://streams.livepeer.org'
 
-export default function createSchema(
-  { livepeer, streamRoot = 'http://www.streambox.fr/playlists/x36xhzz/' } = {},
-) {
+export default function createSchema({
+  livepeer,
+  streamRoot = 'http://www.streambox.fr/playlists/x36xhzz/',
+} = {}) {
   const resolvers = createResolvers({
     livepeer,
   })
@@ -74,10 +75,9 @@ export default function createSchema(
    *   interface Broadcaster {
    *     id: String!
    *     type: String!
-   *     deposit: Int!
-   *     withdrawBlock: Int!
+   *     deposit: String!
+   *     withdrawBlock: String!
    *     jobs: [Job]
-   *     # user: User!
    *   }
    */
   const Broadcaster = new GraphQLInterfaceType({
@@ -94,11 +94,11 @@ export default function createSchema(
         description: 'The type of Broadcaster',
       },
       deposit: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The amount of LPT the broadcaster has deposited',
       },
       withdrawBlock: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The earliest block at which the broadcaster may withdraw deposited LPT',
       },
@@ -127,10 +127,9 @@ export default function createSchema(
    *   type BasicBroadcaster : Broadcaster {
    *     id: String!
    *     type: String!
-   *     deposit: Int!
-   *     withdrawBlock: Int!
+   *     deposit: String!
+   *     withdrawBlock: String!
    *     jobs: [Job]
-   *     # user: User!
    *   }
    */
   const BasicBroadcaster = new GraphQLObjectType({
@@ -148,11 +147,11 @@ export default function createSchema(
         resolve: () => 'BasicBroadcaster',
       },
       deposit: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The amount of LPT the broadcaster has deposited',
       },
       withdrawBlock: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The earliest block at which the broadcaster may withdraw deposited LPT',
       },
@@ -230,22 +229,21 @@ export default function createSchema(
    *     id: String!
    *     type: String!
    *     status: String!
-   *     stake: Int!
-   *     bondedAmount: Int!
-   *     unbondedAmount: Int!
+   *     stake: String!
+   *     bondedAmount: String!
+   *     unbondedAmount: String!
    *     delegateAddress: String!
-   *     delegatedAmount: Int!
-   *     lastClaimRound: Int!
-   *     startRound: Int!
-   *     withdrawRound: Int!
-   *     delegate: Delegator
-   *     # user: User!
+   *     delegatedAmount: String!
+   *     lastClaimRound: String!
+   *     startRound: String!
+   *     withdrawRound: String!
+   *     delegate: Account
    *   }
    */
   const Delegator = new GraphQLInterfaceType({
     name: 'Delegator',
     description:
-      'A user who gains stake in the network by bonding LPT to another user',
+      'A account who gains stake in the network by bonding LPT to another account',
     resolveType: resolvers.Delegator.type,
     fields: () => ({
       id: {
@@ -261,16 +259,16 @@ export default function createSchema(
         description: 'The status of the delegator',
       },
       stake: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The bonded stake for a delegator (adds rewards from the rounds during which the delegator was bonded to a transcoder)',
       },
       bondedAmount: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The amount of LPT the delegator has bonded',
       },
       unbondedAmount: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The total amount of LPT that the delegator has claimed',
       },
       delegateAddress: {
@@ -279,22 +277,26 @@ export default function createSchema(
           'The ETH address of the transcoder the delegator has bonded to',
       },
       delegatedAmount: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The total amount of tokens delegated to the delegator',
       },
       lastClaimRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The last round that the delegator claimed reward and fee pool shares',
       },
       startRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The round the delegator becomes bonded and delegated to its delegate',
       },
       withdrawRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The round the delegator can withdraw their stake',
+      },
+      delegate: {
+        type: new GraphQLNonNull(Account),
+        description: 'The account to which this delegator has bonded',
       },
     }),
   })
@@ -305,22 +307,21 @@ export default function createSchema(
    *     id: String!
    *     type: String!
    *     status: String!
-   *     stake: Int!
-   *     bondedAmount: Int!
-   *     unbondedAmount: Int!
+   *     stake: String!
+   *     bondedAmount: String!
+   *     unbondedAmount: String!
    *     delegateAddress: String!
-   *     delegatedAmount: Int!
-   *     lastClaimRound: Int!
-   *     startRound: Int!
-   *     withdrawRound: Int!
+   *     delegatedAmount: String!
+   *     lastClaimRound: String!
+   *     startRound: String!
+   *     withdrawRound: String!
    *     delegate: Delegator
-   *     # user: User!
    *   }
    */
   const BasicDelegator = new GraphQLObjectType({
     name: 'BasicDelegator',
     description:
-      'A user who gains stake in the network by bonding LPT to another user',
+      'A account who gains stake in the network by bonding LPT to another account',
     interfaces: [Delegator],
     fields: () => ({
       id: {
@@ -337,16 +338,16 @@ export default function createSchema(
         description: 'The status of the delegator',
       },
       stake: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The bonded stake for a delegator (adds rewards from the rounds during which the delegator was bonded to a transcoder)',
       },
       bondedAmount: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The amount of LPT the delegator has bonded',
       },
       unbondedAmount: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The total amount of LPT that the delegator has claimed',
       },
       delegateAddress: {
@@ -355,22 +356,27 @@ export default function createSchema(
           'The ETH address of the transcoder the delegator has bonded to',
       },
       delegatedAmount: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The total amount of tokens delegated to the delegator',
       },
       lastClaimRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The last round that the delegator claimed reward and fee pool shares',
       },
       startRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description:
           'The round the delegator becomes bonded and delegated to its delegate',
       },
       withdrawRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: 'The round the delegator can withdraw their stake',
+      },
+      delegate: {
+        type: new GraphQLNonNull(Account),
+        description: 'The account to which this delegator has bonded',
+        resolve: resolvers.Delegator.fields.delegate,
       },
     }),
   })
@@ -379,12 +385,12 @@ export default function createSchema(
    * @todo
    * This implements the following type system shorthand:
    *   interface RoundsInfo {
-   *     id: Int!
-   *     currentRound: Int!
+   *     id: String!
+   *     currentRound: String!
    *     currentRoundInitialized: Boolean!
-   *     currentRoundStartBlock: Int!
-   *     lastInitializedRound: Int!
-   *     roundLength: Int!
+   *     currentRoundStartBlock: String!
+   *     lastInitializedRound: String!
+   *     roundLength: String!
    *   }
    */
   // const RoundsInfo = new GraphQLInterfaceType({
@@ -400,10 +406,10 @@ export default function createSchema(
    * This implements the following type system shorthand:
    *   interface TokenPool {
    *     id: String! # addr + roundNumber ?
-   *     rewardPool: Int!
-   *     feePool: Int!
-   *     totalStake: Int!
-   *     usedStake: Int!
+   *     rewardPool: String!
+   *     feePool: String!
+   *     totalStake: String!
+   *     usedStake: String!
    *   }
    */
   // const TokenPool = new GraphQLInterfaceType({
@@ -445,16 +451,15 @@ export default function createSchema(
    *     type: String!
    *     active: Boolean!
    *     status: TranscoderStatus!
-   *     lastRewardRound: Int!
-   *     blockRewardCut: Int!
-   *     feeShare: Int!
-   *     pricePerSegment: Int!
-   *     pendingBlockRewardCut: Int!
-   *     pendingFeeShare: Int!
-   *     pendingPricePerSegment: Int!
+   *     lastRewardRound: String!
+   *     blockRewardCut: String!
+   *     feeShare: String!
+   *     pricePerSegment: String!
+   *     pendingBlockRewardCut: String!
+   *     pendingFeeShare: String!
+   *     pendingPricePerSegment: String!
    *     # tokenPoolsPerRound: [TokenPool]
    *     # delegators: [Delegator]
-   *     # user: User!
    *   }
    */
   const Transcoder = new GraphQLInterfaceType({
@@ -480,31 +485,31 @@ export default function createSchema(
         description: '...',
       },
       lastRewardRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       blockRewardCut: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       feeShare: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pricePerSegment: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pendingBlockRewardCut: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pendingFeeShare: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pendingPricePerSegment: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
     }),
@@ -518,16 +523,15 @@ export default function createSchema(
    *     type: String!
    *     active: Boolean!
    *     status: TranscoderStatus!
-   *     lastRewardRound: Int!
-   *     blockRewardCut: Int!
-   *     feeShare: Int!
-   *     pricePerSegment: Int!
-   *     pendingBlockRewardCut: Int!
-   *     pendingFeeShare: Int!
-   *     pendingPricePerSegment: Int!
+   *     lastRewardRound: String!
+   *     blockRewardCut: String!
+   *     feeShare: String!
+   *     pricePerSegment: String!
+   *     pendingBlockRewardCut: String!
+   *     pendingFeeShare: String!
+   *     pendingPricePerSegment: String!
    *     # tokenPoolsPerRound: [TokenPool]
    *     # delegators: [Delegator]
-   *     # user: User!
    *   }
    */
   const BasicTranscoder = new GraphQLObjectType({
@@ -554,31 +558,31 @@ export default function createSchema(
         description: '...',
       },
       lastRewardRound: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       blockRewardCut: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       feeShare: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pricePerSegment: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pendingBlockRewardCut: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pendingFeeShare: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
       pendingPricePerSegment: {
-        type: new GraphQLNonNull(GraphQLInt),
+        type: new GraphQLNonNull(GraphQLString),
         description: '...',
       },
     }),
@@ -587,27 +591,37 @@ export default function createSchema(
   /**
    * @todo
    * This implements the following type system shorthand:
-   *   interface User {
+   *   interface Account {
    *     id: string!
-   *     # ethBalance: Int!
-   *     # lptBalance: Int!
+   *     ethBalance: String!
+   *     tokenBalance: String!
    *     broadcaster: Broadcaster!
    *     delegator: Delegator!
    *     transcoder: Transcoder!
    *   }
    */
-  const User = new GraphQLInterfaceType({
-    name: 'User',
-    description: 'A Livepeer User',
-    resolveType: resolvers.User.type,
+  const Account = new GraphQLInterfaceType({
+    name: 'Account',
+    description: 'A Livepeer Account',
+    resolveType: resolvers.Account.type,
     fields: () => ({
       id: {
         type: new GraphQLNonNull(GraphQLString),
-        description: 'The User id (ETH account address)',
+        description: 'The Account id (ETH account address)',
       },
       type: {
         type: new GraphQLNonNull(GraphQLString),
         description: '...',
+      },
+      ethBalance: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: '...',
+        resolve: resolvers.Account.fields.ethBalance,
+      },
+      tokenBalance: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: '...',
+        resolve: resolvers.Account.fields.tokenBalance,
       },
       broadcaster: {
         type: new GraphQLNonNull(Broadcaster),
@@ -627,43 +641,53 @@ export default function createSchema(
   /**
    * @todo
    * This implements the following type system shorthand:
-   *   type BasicUser : User {
+   *   type BasicAccount : Account {
    *     id: string!
-   *     # ethBalance: Int!
-   *     # lptBalance: Int!
+   *     ethBalance: String!
+   *     tokenBalance: String!
    *     broadcaster: Broadcaster!
    *     delegator: Delegator!
    *     transcoder: Transcoder!
    *   }
    */
-  const BasicUser = new GraphQLObjectType({
-    name: 'BasicUser',
-    description: 'A Livepeer User',
-    interfaces: [User],
+  const BasicAccount = new GraphQLObjectType({
+    name: 'BasicAccount',
+    description: 'A Livepeer Account',
+    interfaces: [Account],
     fields: () => ({
       id: {
         type: new GraphQLNonNull(GraphQLString),
-        description: 'The User id (ETH account address)',
+        description: 'The Account id (ETH account address)',
       },
       type: {
         type: new GraphQLNonNull(GraphQLString),
         description: '...',
-        resolve: () => 'BasicUser',
+        resolve: () => 'BasicAccount',
+      },
+      ethBalance: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: '...',
+        resolve: resolvers.Account.fields.ethBalance,
+      },
+      tokenBalance: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: '...',
+        resolve: resolvers.Account.fields.tokenBalance,
       },
       broadcaster: {
         type: new GraphQLNonNull(Broadcaster),
         description: '...',
-        resolve: resolvers.User.fields.broadcaster,
+        resolve: resolvers.Account.fields.broadcaster,
       },
       delegator: {
         type: new GraphQLNonNull(Delegator),
         description: '...',
-        resolve: resolvers.User.fields.delegator,
+        resolve: resolvers.Account.fields.delegator,
       },
       transcoder: {
         type: new GraphQLNonNull(Transcoder),
         description: '...',
-        resolve: resolvers.User.fields.transcoder,
+        resolve: resolvers.Account.fields.transcoder,
       },
     }),
   })
@@ -825,26 +849,12 @@ export default function createSchema(
       live: {
         type: new GraphQLNonNull(GraphQLBoolean),
         description: 'Whether the job is currently available to stream',
-        args: {
-          streamRootUrl: {
-            description: 'The root url of the job .m3u8 stream',
-            type: GraphQLString,
-            defaultValue: DEFAULT_STREAM_ROOT,
-          },
-        },
         resolve: resolvers.VideoJob.fields.live,
       },
       url: {
         type: new GraphQLNonNull(GraphQLString),
         description:
           'The url the transcoded .m3u8 stream can be requested from',
-        args: {
-          streamRootUrl: {
-            description: 'The root url of the job .m3u8 stream',
-            type: GraphQLString,
-            defaultValue: DEFAULT_STREAM_ROOT,
-          },
-        },
         resolve: resolvers.VideoJob.fields.url,
       },
     }),
@@ -892,6 +902,11 @@ export default function createSchema(
             description: 'The id of the Job',
             type: new GraphQLNonNull(GraphQLInt),
           },
+          streamRootUrl: {
+            description: 'The root url for hosted .m3u8 streams',
+            type: GraphQLString,
+            defaultValue: DEFAULT_STREAM_ROOT,
+          },
         },
         resolve: resolvers.Query.fields.job,
       },
@@ -932,17 +947,17 @@ export default function createSchema(
         resolve: resolvers.Query.fields.transcoder,
       },
       // @TODO - transcoders(...)
-      user: {
-        type: User,
+      account: {
+        type: Account,
         args: {
           id: {
-            description: 'The ETH address of the User',
+            description: 'The ETH address of the Account',
             type: new GraphQLNonNull(GraphQLString),
           },
         },
-        resolve: resolvers.Query.fields.user,
+        resolve: resolvers.Query.fields.account,
       },
-      // @TODO - users(...)
+      // @TODO - accounts(...)
     }),
   })
 
@@ -955,7 +970,7 @@ export default function createSchema(
       BasicBroadcaster,
       BasicDelegator,
       BasicTranscoder,
-      BasicUser,
+      BasicAccount,
       DelegatorStatus,
       VideoProfile,
       VideoJob,
@@ -1013,8 +1028,18 @@ export const createResolvers = ({ livepeer }) => {
             id,
           }
         },
-        job: async (job, { id }) => {
-          return transformJob(await livepeer.rpc.getJob(id))
+        job: async (_, { id, dead, streamRootUrl }) => {
+          const job = transformJob(await livepeer.rpc.getJob(id))
+          const url = resolvers.VideoJob.fields.url(job, { streamRootUrl })
+          const live = resolvers.VideoJob.fields.live(
+            { ...job, url },
+            { streamRootUrl },
+          )
+          return {
+            ...job,
+            live,
+            url,
+          }
         },
         jobs: async (
           obj,
@@ -1061,7 +1086,7 @@ export const createResolvers = ({ livepeer }) => {
             id,
           }
         },
-        user: async (user, params) => params,
+        account: async (account, params) => params,
       },
     },
     Broadcaster: {
@@ -1080,6 +1105,14 @@ export const createResolvers = ({ livepeer }) => {
     },
     Delegator: {
       type: x => 'BasicDelegator',
+      fields: {
+        delegate: ({ delegateAddress }, params) => {
+          return resolvers.Query.fields.account(null, {
+            id: delegateAddress,
+            ...params,
+          })
+        },
+      },
     },
     Job: {
       type: x => x.type,
@@ -1087,9 +1120,15 @@ export const createResolvers = ({ livepeer }) => {
     Transcoder: {
       type: x => 'BasicTranscoder',
     },
-    User: {
-      type: x => 'BasicUser',
+    Account: {
+      type: x => 'BasicAccount',
       fields: {
+        ethBalance: ({ id }) => {
+          return livepeer.rpc.getEthBalance(id)
+        },
+        tokenBalance: ({ id }) => {
+          return livepeer.rpc.getTokenBalance(id)
+        },
         broadcaster: ({ id }, params) => {
           return resolvers.Query.fields.broadcaster(null, { id, ...params })
         },

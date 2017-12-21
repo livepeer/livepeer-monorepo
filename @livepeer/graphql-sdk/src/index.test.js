@@ -16,173 +16,221 @@ import livepeer from './mock-sdk'
 console.log('\x1Bc')
 
 // Livepeer graphql schema
+
 const LivepeerSchema = createSchema({ livepeer })
 
-// Queries
-const BroadcasterQuery = `
-query BroadcasterQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
-  broadcaster(id: $id) {
-    id
-    deposit
-    type
-    withdrawBlock
+// Fragments
+
+const AccountFragment = `
+fragment AccountFragment on Account {
+  id
+  ethBalance
+  tokenBalance
+  broadcaster {
+    ...BroadcasterFragment
     jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
+      ...JobFragment
+    }
+  }
+  delegator {
+    ...DelegatorFragment
+    delegate {
+      # GraphQL disallows recursive fragments
+      # so, we have to inline an AccountFragment manually
       id
-      broadcaster
-      stream
-      profiles {
-        id
-        name
-        bitrate
-        framerate
-        resolution
+      broadcaster {
+        ...BroadcasterFragment
+        jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
+          ...JobFragment
+        }
       }
-      ... on VideoJob {
-        live
-        url
+      delegator {
+        ...DelegatorFragment
       }
+      transcoder {
+      	...TranscoderFragment
+      }
+    }
+  }
+  transcoder {
+    ...TranscoderFragment
+  }
+}
+`
+
+const BroadcasterFragment = `
+fragment BroadcasterFragment on Broadcaster {
+  id
+  deposit
+  withdrawBlock
+}
+`
+
+const DelegatorFragment = `
+fragment DelegatorFragment on Delegator {
+  status
+  delegateAddress
+  bondedAmount
+  unbondedAmount
+  delegatedAmount
+  lastClaimRound
+  startRound
+  withdrawRound
+}
+`
+
+const JobFragment = `
+fragment JobFragment on Job {
+  id
+  broadcaster
+  stream
+  profiles {
+    id
+    name
+    bitrate
+    framerate
+    resolution
+  }
+  ... on VideoJob {
+    live
+    url
+  }
+}
+`
+
+const TranscoderFragment = `
+fragment TranscoderFragment on Transcoder {
+  active
+  status
+  lastRewardRound
+  blockRewardCut
+  feeShare
+  pricePerSegment
+  pendingBlockRewardCut
+  pendingFeeShare
+  pendingPricePerSegment
+}
+`
+
+// Queries
+
+const AccountQuery = `
+${AccountFragment}
+${BroadcasterFragment}
+${DelegatorFragment}
+${JobFragment}
+${TranscoderFragment}
+query AccountQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
+  account(id: $id) {
+    ...AccountFragment
+  }
+}
+`
+
+const BroadcasterQuery = `
+${BroadcasterFragment}
+query BroadcasterQuery($id: String!) {
+  broadcaster(id: $id) {
+    ...BroadcasterFragment
+  }
+}
+`
+
+const BroadcasterWithJobsQuery = `
+${BroadcasterFragment}
+${JobFragment}
+query BroadcasterWithJobsQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
+  broadcaster(id: $id) {
+    ...BroadcasterFragment
+    jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
+      ...JobFragment
     }
   }
 }
 `
 
 const DelegatorQuery = `
+${DelegatorFragment}
 query DelegatorQuery($id: String!) {
   delegator(id: $id) {
-    id
-    status
-    delegateAddress
-    bondedAmount
-    unbondedAmount
-    delegatedAmount
-    lastClaimRound
-    startRound
-    withdrawRound
+    ...DelegatorFragment
   }
 }
 `
 
 const JobQuery = `
+${JobFragment}
 query JobQuery($id: Int!, $streamRootUrl: String) {
-  job(id: $id) {
-    id
-    broadcaster
-    stream
-    profiles {
-      id
-      name
-      bitrate
-      framerate
-      resolution
-    }
-    ... on VideoJob {
-      live(streamRootUrl: $streamRootUrl)
-      url(streamRootUrl: $streamRootUrl)
-    }
+  job(id: $id, streamRootUrl: $streamRootUrl) {
+    ...JobFragment
   }
 }
 `
 
 const JobsQuery = `
+${JobFragment}
 query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $broadcasterWhereJobId: Int) {
   jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster, broadcasterWhereJobId: $broadcasterWhereJobId) {
-    id
-    broadcaster
-    stream
-    profiles {
-      id
-      name
-      bitrate
-      framerate
-      resolution
-    }
-    ... on VideoJob {
-      live
-      url
-    }
+    ...JobFragment
   }
 }
 `
 
 const TranscoderQuery = `
+${TranscoderFragment}
 query TranscoderQuery($id: String!) {
   transcoder(id: $id) {
-    id
-    type
-    active
-    status
-    lastRewardRound
-    blockRewardCut
-    feeShare
-    pricePerSegment
-    pendingBlockRewardCut
-    pendingFeeShare
-    pendingPricePerSegment
+    ...TranscoderFragment
   }
 }
 `
 
-const UserQuery = `
-query UserQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
-  user(id: $id) {
-    id
-    broadcaster {
-      id
-      deposit
-      withdrawBlock
-      jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
-        id
-        broadcaster
-        stream
-        profiles {
-          id
-          name
-          bitrate
-          framerate
-          resolution
-        }
-        ... on VideoJob {
-          live
-          url
-        }
-      }
-    }
-    delegator {
-      status
-      delegateAddress
-      bondedAmount
-      unbondedAmount
-      delegatedAmount
-      lastClaimRound
-      startRound
-      withdrawRound
-    }
-    transcoder {
-      active
-      status
-      lastRewardRound
-      blockRewardCut
-      feeShare
-      pricePerSegment
-      pendingBlockRewardCut
-      pendingFeeShare
-      pendingPricePerSegment
-    }
+// account(...) query
+test('should get a single account by id', async t => {
+  const params = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    dead: true,
+    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
   }
-}
-`
+  const res = await graphql(LivepeerSchema, AccountQuery, null, null, params)
+  // console.log(res)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
 
 // broadcaster(...) query
 test('should get a single broadcaster by id', async t => {
   const params = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
-    dead: true,
-    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/'
   }
-  const res = await graphql(LivepeerSchema, BroadcasterQuery, null, null, params)
+  const res = await graphql(
+    LivepeerSchema,
+    BroadcasterQuery,
+    null,
+    null,
+    params,
+  )
   // console.log(res)
   // console.log(JSON.stringify(res, null, 2))
-  t.skip.snapshot(res)
+  t.snapshot(res)
+})
+
+test('should get a single broadcaster and their jobs by id', async t => {
+  const params = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    dead: true,
+    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
+  }
+  const res = await graphql(
+    LivepeerSchema,
+    BroadcasterWithJobsQuery,
+    null,
+    null,
+    params,
+  )
+  // console.log(res)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
 })
 
 // delegator(...) query
@@ -191,6 +239,8 @@ test('should get a single delegator by id', async t => {
     id: EMPTY_ADDRESS.replace(/00/g, '11'),
   }
   const res = await graphql(LivepeerSchema, DelegatorQuery, null, null, params)
+  // console.log(res)
+  // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })
 
@@ -201,6 +251,8 @@ test('should get a single job by id', async t => {
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
   }
   const res = await graphql(LivepeerSchema, JobQuery, null, null, params)
+  // console.log(res)
+  // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })
 
@@ -210,11 +262,15 @@ test('should get many jobs', async t => {
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   })
+  // console.log(res0)
+  // console.log(JSON.stringify(res0, null, 2))
   t.snapshot(res0)
   const res1 = await graphql(LivepeerSchema, JobsQuery, null, null, {
     streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/',
     broadcasterWhereJobId: 2,
   })
+  // console.log(res1)
+  // console.log(JSON.stringify(res1, null, 2))
   t.snapshot(res1)
 })
 
@@ -225,20 +281,8 @@ test('should get a single transcoder by id', async t => {
   }
   const res = await graphql(LivepeerSchema, TranscoderQuery, null, null, params)
   // console.log(res)
-  t.skip.snapshot(res)
-})
-
-// user(...) query
-test('should get a single user by id', async t => {
-  const params = {
-    id: EMPTY_ADDRESS.replace(/00/g, '22'),
-    dead: true,
-    streamRootUrl: 'http://www.streambox.fr/playlists/x36xhzz/'
-  }
-  const res = await graphql(LivepeerSchema, UserQuery, null, null, params)
-  // console.log(res)
-  console.log(JSON.stringify(res, null, 2))
-  t.skip.snapshot(res)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
 })
 
 test('possible types', async t => {

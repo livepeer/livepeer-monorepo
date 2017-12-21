@@ -22,6 +22,8 @@ const livepeer = {
     VIDEO_PROFILES,
   },
   rpc: {
+    getEthBalance: async id => ALL_ETH_BALANCES[id],
+    getTokenBalance: async id => ALL_TOKEN_BALANCES[id],
     getBroadcaster: async id => ALL_BROADCASTERS[id],
     getDelegator: async id => ALL_DELEGATORS[id],
     getJob: async id => ALL_JOBS[id],
@@ -38,16 +40,26 @@ const livepeer = {
  * Mock Contract Data
  */
 
+const ALL_ETH_BALANCES = {
+  [EMPTY_ADDRESS.replace(/00/g, '11')]: '0',
+  [EMPTY_ADDRESS.replace(/00/g, '22')]: '1000000000',
+}
+
+const ALL_TOKEN_BALANCES = {
+  [EMPTY_ADDRESS.replace(/00/g, '11')]: '0',
+  [EMPTY_ADDRESS.replace(/00/g, '22')]: '9999999999',
+}
+
 const ALL_BROADCASTERS = {
   [EMPTY_ADDRESS.replace(/00/g, '11')]: {
     address: EMPTY_ADDRESS.replace(/00/g, '11'),
-    deposit: 0,
-    withdrawBlock: 0,
+    deposit: '0',
+    withdrawBlock: '0',
   },
   [EMPTY_ADDRESS.replace(/00/g, '22')]: {
     address: EMPTY_ADDRESS.replace(/00/g, '22'),
-    deposit: 1000,
-    withdrawBlock: 50,
+    deposit: '1000',
+    withdrawBlock: '50',
   },
 }
 
@@ -56,35 +68,35 @@ const ALL_DELEGATORS = {
     address: EMPTY_ADDRESS.replace(/00/g, '11'),
     status: DELEGATOR_STATUS.Unbonded,
     delegateAddress: EMPTY_ADDRESS.replace(/00/g, '22'),
-    bondedAmount: 0,
-    unbondedAmount: 0,
-    delegatedAmount: 0,
-    lastClaimRound: 0,
-    startRound: 0,
-    withdrawRound: 0,
+    bondedAmount: '0',
+    unbondedAmount: '0',
+    delegatedAmount: '0',
+    lastClaimRound: '0',
+    startRound: '0',
+    withdrawRound: '0',
   },
   [EMPTY_ADDRESS.replace(/00/g, '22')]: {
     address: EMPTY_ADDRESS.replace(/00/g, '22'),
     status: DELEGATOR_STATUS.Unbonded,
     delegateAddress: EMPTY_ADDRESS.replace(/00/g, '11'),
-    bondedAmount: 0,
-    unbondedAmount: 0,
-    delegatedAmount: 0,
-    lastClaimRound: 0,
-    startRound: 0,
-    withdrawRound: 0,
+    bondedAmount: '0',
+    unbondedAmount: '0',
+    delegatedAmount: '0',
+    lastClaimRound: '0',
+    startRound: '0',
+    withdrawRound: '0',
   },
 }
 
 const ALL_JOBS = [
   {
-    jobId: 0,
+    jobId: '0',
     streamId: 'x36xhzz',
     transcodingOptions: [VIDEO_PROFILES.P144p30fps16x9],
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '11'),
   },
   {
-    jobId: 1,
+    jobId: '1',
     streamId: 'x36xhzz',
     transcodingOptions: [
       VIDEO_PROFILES.P144p30fps16x9,
@@ -93,7 +105,7 @@ const ALL_JOBS = [
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
   {
-    jobId: 2,
+    jobId: '2',
     streamId: 'baz',
     transcodingOptions: [
       VIDEO_PROFILES.P360p30fps16x9,
@@ -103,7 +115,7 @@ const ALL_JOBS = [
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
   {
-    jobId: 3,
+    jobId: '3',
     streamId: 'baz',
     transcodingOptions: [],
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
@@ -115,25 +127,25 @@ const ALL_TRANSCODERS = {
     address: EMPTY_ADDRESS.replace(/00/g, '11'),
     active: false,
     status: TRANSCODER_STATUS.NotRegistered,
-    lastRewardRound: 0,
-    blockRewardCut: 0,
-    feeShare: 0,
-    pricePerSegment: 0,
-    pendingBlockRewardCut: 0,
-    pendingFeeShare: 0,
-    pendingPricePerSegment: 0,
+    lastRewardRound: '0',
+    blockRewardCut: '0',
+    feeShare: '0',
+    pricePerSegment: '0',
+    pendingBlockRewardCut: '0',
+    pendingFeeShare: '0',
+    pendingPricePerSegment: '0',
   },
   [EMPTY_ADDRESS.replace(/00/g, '22')]: {
     address: EMPTY_ADDRESS.replace(/00/g, '22'),
     active: true,
     status: TRANSCODER_STATUS.Registered,
-    lastRewardRound: 0,
-    blockRewardCut: 0,
-    feeShare: 0,
-    pricePerSegment: 0,
-    pendingBlockRewardCut: 0,
-    pendingFeeShare: 0,
-    pendingPricePerSegment: 0,
+    lastRewardRound: '0',
+    blockRewardCut: '0',
+    feeShare: '0',
+    pricePerSegment: '0',
+    pendingBlockRewardCut: '0',
+    pendingFeeShare: '0',
+    pendingPricePerSegment: '0',
   },
 }
 
