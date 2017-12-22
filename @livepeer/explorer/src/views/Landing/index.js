@@ -65,7 +65,7 @@ const Container = styled.div`
   height: 100vh;
   padding: 0 32px;
   padding-bottom: 33.33vh;
-  background: #03a678;
+  background: #283845;
   color: #fff;
 `
 

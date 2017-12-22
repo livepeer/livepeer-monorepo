@@ -196,6 +196,7 @@ const enhance = compose(connectRedux, connectApollo)
 const AccountView = ({ account, loading, match, viewAccount }) => {
   return (
     <Content>
+      <BasicNavbar onSearch={viewAccount} />
       <h1 style={{ marginBottom: 0 }}>Livepeer Account</h1>
       <h3>{match.params.account}</h3>
       <pre>

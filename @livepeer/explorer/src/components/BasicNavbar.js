@@ -49,7 +49,7 @@ const Nav = styled.nav`
   height: 64px;
   margin-bottom: 24px;
   padding: 16px 24px;
-  background: #03a678;
+  background: #283845;
   & *::placeholder {
     color: #fff;
   }
@@ -95,7 +95,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
 */}
     <input
       type="search"
-      placeholder="Enter a broadcaster address"
+      placeholder="Enter an ETH account address"
       style={{
         width: '100%',
         height: 32,
@@ -110,11 +110,8 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
       onKeyDown={e => {
         const { value } = e.target
         if (e.keyCode !== 13) return
-        const val = 'string' === typeof value && value.startsWith('0x')
-          ? value
-          : Number(value)
-        if (Number.isNaN(val)) return
-        onSearch(val)
+        if (!value.startsWith('0x')) return
+        onSearch(value)
         e.target.value = ''
       }}
     />
