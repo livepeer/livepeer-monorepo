@@ -294,6 +294,7 @@ export async function initRPC({
             signTransaction: (rawTx, cb) =>
               cb(null, sign(rawTx, privateKeys[from])),
             accounts: cb => cb(null, accounts),
+            timeout: 10 * 1000,
           })
         : // Use default signer
           new Eth.HttpProvider(provider)
@@ -1009,13 +1010,18 @@ export default async function createLivepeerSDK(
      * @return {number}
      */
     async initializeRound(tx = config.defaultTx): Promise<Object> {
-      // initialize round
-      await utils.getTxReceipt(
-        await RoundsManager.initializeRound(tx),
-        config.eth,
-      )
-      // updated round info
-      return rpc.getRoundInfo()
+      try {
+        // initialize round
+        await utils.getTxReceipt(
+          await RoundsManager.initializeRound(tx),
+          config.eth,
+        )
+        // updated round info
+        return rpc.getRoundInfo()
+      } catch (err) {
+        err.message = 'Error: initializeRound\n' + err.message
+        throw err
+      }
     },
 
     /**
@@ -1023,21 +1029,28 @@ export default async function createLivepeerSDK(
      * @return {Object}
      */
     async claimTokenPoolsShares(tx = config.defaultTx): Promise<Object> {
-      const roundsPerClaim = 100
-      const currentRound = await rpc.getCurrentRound()
-      const delegator = await rpc.getDelegator(tx.from)
-      let n = delegator.lastClaimRound || 0
-      // claim tokens for the lastClaimRound to currentRound
-      while (n < currentRound) {
-        const endRound = Math.min(currentRound, n + roundsPerClaim)
-        // claim from lastClaimRound to endRound
-        await utils.getTxReceipt(
-          await BondingManager.claimTokenPoolsShares(toBN(endRound), tx),
-          config.eth,
-        )
-        n = (await rpc.getDelegator(tx.from)).lastClaimRound
+      try {
+        const roundsPerClaim = toBN(100)
+        const currentRound = toBN(await rpc.getCurrentRound())
+        const delegator = await rpc.getDelegator(tx.from)
+        let n = toBN(delegator.lastClaimRound || 0)
+        // claim tokens for the lastClaimRound to currentRound
+        while (n.lt(currentRound)) {
+          const endRound = currentRound.lt(n.add(roundsPerClaim))
+            ? currentRound
+            : n.add(roundsPerClaim)
+          // claim from lastClaimRound to endRound
+          await utils.getTxReceipt(
+            await BondingManager.claimTokenPoolsShares(endRound, tx),
+            config.eth,
+          )
+          n = toBN((await rpc.getDelegator(tx.from)).lastClaimRound)
+        }
+        return await rpc.getDelegator(tx.from)
+      } catch (err) {
+        err.message = 'Error: claimTokenPoolsShares\n' + err.message
+        throw err
       }
-      return await rpc.getDelegator(tx.from)
     },
 
     /**
