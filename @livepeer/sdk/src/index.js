@@ -220,7 +220,7 @@ export const utils = {
 // ethjs returns a Result type from rpc requests
 // these functions help with formatting those values
 const { BN } = Eth
-const toBN = n => (BN.isBN(n) ? n : new BN(n))
+const toBN = n => (BN.isBN(n) ? n : new BN(n.toString(10), 10))
 const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
 const prop = (k: string | number) => (x): any => x[k]
 const toBool = (x: any): boolean => !!x
