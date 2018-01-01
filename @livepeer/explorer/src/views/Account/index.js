@@ -208,7 +208,7 @@ const connectApollo = graphql(AccountQuery, {
 const enhance = compose(connectRedux, connectApollo)
 
 const AccountView = ({ account, loading, match, me, viewAccount }) => {
-  const { bond, tapFaucet } = window.livepeer.rpc
+  const { bond, deposit, tapFaucet } = window.livepeer.rpc
   return (
     <Content>
       <BasicNavbar onSearch={viewAccount} />
@@ -315,6 +315,18 @@ const AccountView = ({ account, loading, match, me, viewAccount }) => {
             }}
           >
             bond
+          </button>
+          <button
+            onClick={async e => {
+              e.preventDefault()
+              try {
+                await deposit(window.prompt('How Much LPT would you like to deposit?'))
+              } catch (err) {
+                console.log(err)
+              }
+            }}
+          >
+            deposit
           </button>
         </div>
       )}
