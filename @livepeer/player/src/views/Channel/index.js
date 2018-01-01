@@ -32,26 +32,44 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const GetJobsQuery = gql`
-query JobsQuery($dead: Boolean, $streamRootUrl: String, $broadcaster: String, $broadcasterWhereJobId: Int) {
-  jobs(dead: $dead, streamRootUrl: $streamRootUrl, broadcaster: $broadcaster, broadcasterWhereJobId: $broadcasterWhereJobId) {
+const JobFragment = gql`
+fragment JobFragment on Job {
+  id
+  broadcaster
+  stream
+  profiles {
     id
-    broadcaster
-    stream
-    profiles {
-      id
-      name
-      bitrate
-      framerate
-      resolution
-    }
-    ... on VideoJob {
-      live(streamRootUrl: $streamRootUrl)
-      url(streamRootUrl: $streamRootUrl)
-    }
+    name
+    bitrate
+    framerate
+    resolution
   }
-}`
-const connectApollo = graphql(GetJobsQuery, {
+  ... on VideoJob {
+    live
+    url
+  }
+}
+`
+
+const JobsQuery = gql`
+${JobFragment}
+query JobsQuery(
+  $dead: Boolean
+  $streamRootUrl: String
+  $broadcaster: String
+  $broadcasterWhereJobId: Int
+) {
+  jobs(
+    dead: $dead
+    streamRootUrl: $streamRootUrl
+    broadcaster: $broadcaster
+    broadcasterWhereJobId: $broadcasterWhereJobId
+  ) {
+    ...JobFragment
+  }
+}
+`
+const connectApollo = graphql(JobsQuery, {
   // @TODO: figure out why pollInterval seems to do nothing
   // pollInterval: 10,
   props: ({ data, ownProps }) => {
@@ -63,11 +81,10 @@ const connectApollo = graphql(GetJobsQuery, {
   },
   options: ({ match }) => {
     const { channel } = match.params
-    const channelIsAddress = isAddress(channel)
     return {
+      pollInterval: 5000,
       variables: {
-        broadcaster: channelIsAddress ? channel : undefined,
-        broadcasterWhereJobId: !channelIsAddress ? channel : undefined,
+        broadcaster: channel,
         streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
       },
     }
