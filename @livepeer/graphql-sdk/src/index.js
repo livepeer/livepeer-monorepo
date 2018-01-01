@@ -1175,7 +1175,14 @@ export const createResolvers = ({ livepeer }) => {
         },
         url: ({ stream, url }, { streamRootUrl }) => {
           if ('string' === typeof url) return url // already defined
-          return Url.resolve(streamRootUrl || '', `${stream}.m3u8`)
+          // @TODO - Get manifest id from status endpoint
+          // (Currently, response does not seem to populate any manifest IDs)
+          // const { Manifests} = await fetch(`${streamRootUrl || ''}/status?nodeID=${stream.substr(0, 68)}`)
+          // ---
+          // For now, use nodeId + randomBytes
+          // Drop the transcoding profiles from the streamId
+          const manifestId = stream.substr(0, 68 + 64)
+          return Url.resolve(streamRootUrl || '', `${manifestId}.m3u8`)
         },
       },
     },
