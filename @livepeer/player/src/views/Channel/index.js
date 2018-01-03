@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
   // Facebook as FacebookIcon,
@@ -33,46 +34,47 @@ const mapDispatchToProps = dispatch =>
 const connectRedux = connect(null, mapDispatchToProps)
 
 const JobFragment = gql`
-fragment JobFragment on Job {
-  id
-  broadcaster
-  stream
-  profiles {
+  fragment JobFragment on Job {
     id
-    name
-    bitrate
-    framerate
-    resolution
+    broadcaster
+    stream
+    profiles {
+      id
+      name
+      bitrate
+      framerate
+      resolution
+    }
+    ... on VideoJob {
+      # live
+      url
+    }
   }
-  ... on VideoJob {
-    live
-    url
-  }
-}
 `
 
 const JobsQuery = gql`
-${JobFragment}
-query JobsQuery(
-  $dead: Boolean
-  $streamRootUrl: String
-  $broadcaster: String
-  $broadcasterWhereJobId: Int
-) {
-  jobs(
-    dead: $dead
-    streamRootUrl: $streamRootUrl
-    broadcaster: $broadcaster
-    broadcasterWhereJobId: $broadcasterWhereJobId
+  ${JobFragment}
+  query JobsQuery(
+    $dead: Boolean
+    $streamRootUrl: String
+    $broadcaster: String
+    $broadcasterWhereJobId: Int
   ) {
-    ...JobFragment
+    jobs(
+      dead: $dead
+      streamRootUrl: $streamRootUrl
+      broadcaster: $broadcaster
+      broadcasterWhereJobId: $broadcasterWhereJobId
+    ) {
+      ...JobFragment
+    }
   }
-}
 `
 const connectApollo = graphql(JobsQuery, {
   // @TODO: figure out why pollInterval seems to do nothing
   // pollInterval: 10,
   props: ({ data, ownProps }) => {
+    console.log(data)
     return {
       ...ownProps,
       loading: data.loading,
@@ -85,350 +87,381 @@ const connectApollo = graphql(JobsQuery, {
       pollInterval: 5000,
       variables: {
         broadcaster: channel,
+        dead: true,
         streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
       },
     }
   },
 })
 
-const enhance = compose(connectRedux, connectApollo)
+const refreshForNewStream = lifecycle({
+  componentWillReceiveProps(nextProps) {
+    const { props } = this
+    const [oldJob] = props.jobs
+    const [newJob] = nextProps.jobs
+    console.log(this.state)
+    this.setState({ latestJob: newJob })
+    if (!oldJob || !newJob) return
+    if (oldJob.url === newJob.url) return
+    // for now, hard refresh when a new stream is detected
+    // hls.js does not make it easy to seamlessly switch between live streams
+    // further research is needed
+    // window.location.reload();
+  },
+})
 
-const Channel = ({ jobs, loading, match, changeChannel, updateJob }) => {
-  const [latestJob /*...prevJobs*/] = jobs
-  const {
-    /*jobId,*/
-    stream,
-    broadcaster = match.params.channel,
-    live,
-    url = '',
-  } =
-    latestJob || {}
-  return (
-    <div>
-      <BasicNavbar onSearch={changeChannel} />
-      <Content>
-        <Media>
-          {(!live || loading) && (
+const enhance = compose(connectRedux, connectApollo /* refreshForNewStream*/)
+
+class Channel extends Component {
+  state = {
+    url: '',
+    live: null,
+  }
+  async componentWillReceiveProps(nextProps) {
+    const [newJob] = nextProps.jobs
+    if (!newJob) return
+    const manifestId = newJob.stream.substr(0, 68 + 64)
+    const url = `https://d194z9vj66yekd.cloudfront.net/stream/${manifestId}.m3u8`
+    this.setState({ url })
+  }
+  render() {
+    const { jobs, loading, match, changeChannel, updateJob } = this.props
+    const { live, url } = this.state
+    const [latestJob] = jobs
+    const { stream, broadcaster = match.params.channel } = latestJob || {}
+    return (
+      <div>
+        <BasicNavbar onSearch={changeChannel} />
+        <Content>
+          <Media>
+            {(!live || loading) && (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  background: '#000',
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  margin: 0,
+                  color: '#fff',
+                  zIndex: 1,
+                }}
+              >
+                <FadeInOut loading={loading || live === null}>
+                  <p>
+                    {loading || live === null
+                      ? 'L O A D I N G ...'
+                      : 'This broadcaster is currently offline'}
+                  </p>
+                </FadeInOut>
+              </div>
+            )}
+            <VideoPlayer
+              autoPlay={false}
+              poster=""
+              src={url}
+              aspectRatio="16:9"
+              onLive={() => {
+                this.setState({ live: true })
+              }}
+              onDead={() => {
+                this.setState({ live: false })
+              }}
+            />
+          </Media>
+          <Info>
+            <Snapshot
+              at={1}
+              defaultSrc="/wordmark.svg"
+              url={live ? url : ''}
+              width={72}
+              height={72}
+              style={{
+                backgroundColor: '#ccc',
+                borderRadius: '2px',
+                boxShadow: '0 0 1px 0 rgba(0,0,0,1)',
+              }}
+            />
+            <div style={{ width: 'calc(100% - 72px)' }}>
+              <ChannelStatus live={live}>
+                <span>•</span>
+                {live ? 'live' : 'offline'}
+              </ChannelStatus>
+              <p
+                style={{
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                }}
+              >
+                Broadcaster:<br />
+                <span>{isAddress(broadcaster) ? broadcaster : 'Unknown'}</span>
+              </p>
+              <p
+                style={{
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                }}
+              >
+                Stream ID:<br />
+                <span title={url}>{stream || 'N/A'}</span>
+              </p>
+            </div>
+          </Info>
+          {/*
+          <div>
+            <p
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                paddingRight: 8,
+                width: '100%',
+                fontSize: 12,
+                color: '#888',
+              }}
+            >
+              Share: &nbsp;
+              <Facebook
+                color="#03a678"
+                size={18}
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  window.confirm('Share on Facebook...')
+                }}
+              />
+              &nbsp;&nbsp;
+              <Twitter
+                color="#03a678"
+                size={18}
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  window.confirm('Share on Twitter...')
+                }}
+              />
+              &nbsp;&nbsp;
+              <LinkIcon
+                color="#03a678"
+                size={18}
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  window.confirm(
+                    `Here's your shareable url:\n\n${window.location}`,
+                  )
+                }}
+              />
+            </p>
+          </div>
+          <br />
+          <br />
+          <div>
+            <h3 style={{ color: '#555' }}>Streaming Now</h3>
+            <hr style={{ border: 0, borderTop: '1px solid #eee' }} />
             <div
               style={{
                 display: 'inline-flex',
-                justifyContent: 'center',
+                width: '100%',
+                marginTop: -16,
                 alignItems: 'center',
-                background: '#000',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                margin: 0,
-                color: '#fff',
-                zIndex: 1,
+                justifyContent: 'space-between',
               }}
             >
-              <FadeInOut loading={loading}>
-                <p>
-                  {loading
-                    ? 'L O A D I N G ...'
-                    : 'This broadcaster is currently offline'}
-                </p>
-              </FadeInOut>
-            </div>
-          )}
-          <VideoPlayer
-            autoPlay={false}
-            poster=""
-            src={live ? url : undefined}
-            aspectRatio="16:9"
-          />
-        </Media>
-        <Info>
-          <Snapshot
-            at={1}
-            defaultSrc="/wordmark.svg"
-            url={url}
-            width={72}
-            height={72}
-            style={{
-              backgroundColor: '#ccc',
-              borderRadius: '2px',
-              boxShadow: '0 0 1px 0 rgba(0,0,0,1)',
-            }}
-          />
-          <div style={{ width: 'calc(100% - 72px)' }}>
-            <ChannelStatus live={live}>
-              <span>•</span>
-              {live ? 'live' : 'offline'}
-            </ChannelStatus>
-            <p
-              style={{
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              }}
-            >
-              Broadcaster:<br />
-              <span>{isAddress(broadcaster) ? broadcaster : 'Unknown'}</span>
-            </p>
-            <p
-              style={{
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              }}
-            >
-              Stream ID:<br />
-              <span>{stream || 'N/A'}</span>
-            </p>
-          </div>
-        </Info>
-        {/*
-        <div>
-          <p
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              paddingRight: 8,
-              width: '100%',
-              fontSize: 12,
-              color: '#888',
-            }}
-          >
-            Share: &nbsp;
-            <Facebook
-              color="#03a678"
-              size={18}
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                window.confirm('Share on Facebook...')
-              }}
-            />
-            &nbsp;&nbsp;
-            <Twitter
-              color="#03a678"
-              size={18}
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                window.confirm('Share on Twitter...')
-              }}
-            />
-            &nbsp;&nbsp;
-            <LinkIcon
-              color="#03a678"
-              size={18}
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                window.confirm(
-                  `Here's your shareable url:\n\n${window.location}`,
-                )
-              }}
-            />
-          </p>
-        </div>
-        <br />
-        <br />
-        <div>
-          <h3 style={{ color: '#555' }}>Streaming Now</h3>
-          <hr style={{ border: 0, borderTop: '1px solid #eee' }} />
-          <div
-            style={{
-              display: 'inline-flex',
-              width: '100%',
-              marginTop: -16,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            {[
-              'http://static.filehorse.com/screenshots-web/online-games/minecraft-screenshot-02.jpg',
-              'http://catbordhi.com/wp-content/uploads/015.jpg',
-              'https://i.ytimg.com/vi/sUStdzuKKL8/hqdefault.jpg',
-              'https://ak3.picdn.net/shutterstock/videos/3818060/thumb/1.jpg',
-              'http://www.iac.lu.se/wp-content/uploads/2015/06/video_studio.jpg',
-              'https://i.ytimg.com/vi/hGE2EUiE7Oo/maxresdefault.jpg',
-              'https://www.geek.com/wp-content/uploads/2016/03/video-game-streaming-625x350.jpg',
-            ].map((url, i) => (
-              <span
-                key={i}
-                style={{
-                  position: 'relative',
-                  display: 'inline-block',
-                  width: 'calc(100% / 7)',
-                  paddingBottom: 'calc(100% / 7)',
-                }}
-              >
+              {[
+                'http://static.filehorse.com/screenshots-web/online-games/minecraft-screenshot-02.jpg',
+                'http://catbordhi.com/wp-content/uploads/015.jpg',
+                'https://i.ytimg.com/vi/sUStdzuKKL8/hqdefault.jpg',
+                'https://ak3.picdn.net/shutterstock/videos/3818060/thumb/1.jpg',
+                'http://www.iac.lu.se/wp-content/uploads/2015/06/video_studio.jpg',
+                'https://i.ytimg.com/vi/hGE2EUiE7Oo/maxresdefault.jpg',
+                'https://www.geek.com/wp-content/uploads/2016/03/video-game-streaming-625x350.jpg',
+              ].map((url, i) => (
                 <span
+                  key={i}
                   style={{
-                    position: 'absolute',
-                    top: 0,
-                    bottom: 16,
-                    left: 8,
-                    right: 8,
-                    margin: 'auto',
-                    backgroundColor: '#ccc',
-                    backgroundImage: `url(${url})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    borderRadius: 4,
-                    cursor: 'pointer',
+                    position: 'relative',
+                    display: 'inline-block',
+                    width: 'calc(100% / 7)',
+                    paddingBottom: 'calc(100% / 7)',
                   }}
-                  onClick={() => {
-                    window.confirm(
-                      'Probably link to some hard-coded 24/7 streams here',
-                    )
-                  }}
-                />
-              </span>
-            ))}
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      bottom: 16,
+                      left: 8,
+                      right: 8,
+                      margin: 'auto',
+                      backgroundColor: '#ccc',
+                      backgroundImage: `url(${url})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      window.confirm(
+                        'Probably link to some hard-coded 24/7 streams here',
+                      )
+                    }}
+                  />
+                </span>
+              ))}
+            </div>
+            <p style={{ textAlign: 'right', padding: '0 8px', fontSize: 12 }}>
+              <a href="#">See more</a>
+            </p>
           </div>
-          <p style={{ textAlign: 'right', padding: '0 8px', fontSize: 12 }}>
-            <a href="#">See more</a>
-          </p>
-        </div>
+          */}
+        </Content>
+        <Footer>
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              width: '100vw',
+              background: '#fff',
+              boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
+            }}
+          >
+            <div
+              style={{
+                width: 640,
+                maxWidth: '100%',
+                margin: '0 auto',
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  display: 'inline-flex',
+                  flexFlow: 'row-wrap',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+              >
+                <VideoIcon color="#03a678" size={32} />
+                <p
+                  style={{
+                    width: '75%',
+                    margin: 0,
+                    paddingLeft: 16,
+                    lineHeight: 1.5,
+                    color: '#555',
+                  }}
+                >
+                  Livepeer is a decentralized live streaming platform built on
+                  Ethereum
+                </p>
+                <p style={{ margin: 0 }}>
+                  <button
+                    style={{
+                      background: '#03a678',
+                      color: '#fff',
+                      outline: 0,
+                      border: 'none',
+                      borderRadius: 4,
+                      margin: 0,
+                      padding: '8px 12px',
+                      fontSize: 12,
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      window.open(
+                        'https://medium.com/livepeer-blog/livepeer-for-beginners-3b49945c24a7',
+                      )
+                    }}
+                  >
+                    Learn More
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </Footer>
+        {/* Tipping
+        <Footer>
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              width: '100vw',
+              background: '#fff',
+              boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
+            }}
+          >
+            <div
+              style={{
+                width: 640,
+                maxWidth: '100%',
+                margin: '0 auto',
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  display: 'inline-flex',
+                  flexFlow: 'row-wrap',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+              >
+                <ThumbsUp color="#03a678" size={32} />
+                <p
+                  style={{
+                    width: '75%',
+                    margin: 0,
+                    paddingLeft: 16,
+                    lineHeight: 1.5,
+                    color: '#555',
+                  }}
+                >
+                  Enjoying the show? Show your appreciation.<br />
+                  <a href="#" style={{ fontSize: 12 }}>
+                    Learn more
+                  </a>
+                </p>
+                <p style={{ margin: 0 }}>
+                  <button
+                    style={{
+                      background: '#03a678',
+                      color: '#fff',
+                      outline: 0,
+                      border: 'none',
+                      borderRadius: 4,
+                      margin: 0,
+                      padding: '8px 12px',
+                      fontSize: 12,
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      window.prompt(
+                        'Enter an amount of LPT or ETH...',
+                      )
+                    }}
+                  >
+                    ♥ &nbsp;&nbsp;Leave a tip
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </Footer>
         */}
-      </Content>
-      <Footer>
-        <div
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            width: '100vw',
-            background: '#fff',
-            boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
-          }}
-        >
-          <div
-            style={{
-              width: 640,
-              maxWidth: '100%',
-              margin: '0 auto',
-              padding: 16,
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-flex',
-                flexFlow: 'row-wrap',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-              }}
-            >
-              <VideoIcon color="#03a678" size={32} />
-              <p
-                style={{
-                  width: '75%',
-                  margin: 0,
-                  paddingLeft: 16,
-                  lineHeight: 1.5,
-                  color: '#555',
-                }}
-              >
-                Livepeer is a decentralized live streaming platform built on
-                Ethereum
-              </p>
-              <p style={{ margin: 0 }}>
-                <button
-                  style={{
-                    background: '#03a678',
-                    color: '#fff',
-                    outline: 0,
-                    border: 'none',
-                    borderRadius: 4,
-                    margin: 0,
-                    padding: '8px 12px',
-                    fontSize: 12,
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => {
-                    window.open(
-                      'https://medium.com/livepeer-blog/livepeer-for-beginners-3b49945c24a7',
-                    )
-                  }}
-                >
-                  Learn More
-                </button>
-              </p>
-            </div>
-          </div>
-        </div>
-      </Footer>
-      {/* Tipping
-      <Footer>
-        <div
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            width: '100vw',
-            background: '#fff',
-            boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
-          }}
-        >
-          <div
-            style={{
-              width: 640,
-              maxWidth: '100%',
-              margin: '0 auto',
-              padding: 16,
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-flex',
-                flexFlow: 'row-wrap',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-              }}
-            >
-              <ThumbsUp color="#03a678" size={32} />
-              <p
-                style={{
-                  width: '75%',
-                  margin: 0,
-                  paddingLeft: 16,
-                  lineHeight: 1.5,
-                  color: '#555',
-                }}
-              >
-                Enjoying the show? Show your appreciation.<br />
-                <a href="#" style={{ fontSize: 12 }}>
-                  Learn more
-                </a>
-              </p>
-              <p style={{ margin: 0 }}>
-                <button
-                  style={{
-                    background: '#03a678',
-                    color: '#fff',
-                    outline: 0,
-                    border: 'none',
-                    borderRadius: 4,
-                    margin: 0,
-                    padding: '8px 12px',
-                    fontSize: 12,
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => {
-                    window.prompt(
-                      'Enter an amount of LPT or ETH...',
-                    )
-                  }}
-                >
-                  ♥ &nbsp;&nbsp;Leave a tip
-                </button>
-              </p>
-            </div>
-          </div>
-        </div>
-      </Footer>
-      */}
-    </div>
-  )
+      </div>
+    )
+  }
 }
 
 const ChannelStatus = styled.span`

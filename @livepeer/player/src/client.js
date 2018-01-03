@@ -22,7 +22,7 @@ export default async function createClient() {
         // console.log(operationName, variables)
         graphql(livepeerSchema, print(query), {}, {}, variables, operationName)
           .then(result => {
-            console.log(operationName, variables, result.data)
+            // console.log(operationName, variables, result.data)
             observer.next(result)
             observer.complete(result)
           })
