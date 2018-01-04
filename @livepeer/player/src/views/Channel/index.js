@@ -161,7 +161,7 @@ class Channel extends Component {
               </div>
             )}
             <VideoPlayer
-              autoPlay={false}
+              autoPlay={true}
               poster=""
               src={url}
               aspectRatio="16:9"
