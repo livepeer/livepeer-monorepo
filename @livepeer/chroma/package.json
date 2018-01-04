@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "@livepeer/sdk": "0.0.0",
-    "hls.js": "0.8.8",
+    "hls.js": "^0.8.9",
     "prop-types": "^15.6.0",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",

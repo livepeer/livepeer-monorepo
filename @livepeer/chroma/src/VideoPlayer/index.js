@@ -17,6 +17,12 @@ const pLoader = function(config) {
   }
 }
 
+const HlsConfig = {
+  pLoader,
+  // liveDurationInfinity: true,
+  // debug: true,
+}
+
 const getSourceType = src => {
   const types = [
     ['.m3u8', 'application/x-mpegURL'],
@@ -39,15 +45,15 @@ const isHLS = x => x === 'application/x-mpegURL'
 export default class VideoPlayer extends Component {
   componentDidMount = injectStyles
   render() {
-    const { src, onLive, onDead, ...props } = this.props
+    const { src, onLive, onDead, autoPlay, ...props } = this.props
     return (
-      <Player playsInline {...props}>
+      <Player playsInline muted={true} {...props}>
         <BigPlayButton position="center" />
         <Source
           isVideoChild
           onLive={onLive}
           onDead={onDead}
-          autoPlay={props.autoPlay}
+          autoPlay={autoPlay}
           src={src}
           type={getSourceType(src)}
         />
@@ -66,9 +72,9 @@ export class Source extends Component {
     onLive: () => {},
     onDead: () => {},
   }
-  hls = new Hls({ pLoader })
+  hls = new Hls(HlsConfig)
   // resumes play if the video player is already playing when a stream dies
-  resumePlay
+  autoPlay = this.props.autoPlay
   // latest sequence (.ts) id
   endSNs = []
   // if frag level endSN is the same n times in a row, the stream will be considered "dead"
@@ -78,10 +84,10 @@ export class Source extends Component {
     // remove old listeners
     if (this.hls) {
       this.hls.destroy()
-      this.hls = new Hls({ pLoader })
+      this.hls = new Hls(HlsConfig)
     }
     // load hls video source base on hls.js
-    if (isHLS(type) && Hls.isSupported()) {
+    if (src && isHLS(type)) {
       this.hls.loadSource(src)
       this.hls.on(Hls.Events.LEVEL_LOADED, (event, data) => {
         console.log('end segment:', data.details.endSN)
@@ -93,15 +99,24 @@ export class Source extends Component {
             ***************
             STREAM IS LIVE!
             ***************
-            Attaching media
           `)
-          this.hls.attachMedia(video)
+          if (Hls.isSupported()) {
+            // Desktop
+            console.log('Attaching media')
+            this.hls.attachMedia(video)
+          } else {
+            // iOS
+            console.log('setting src attr')
+            video.src = src
+            this.hls.media = video
+          }
           this.props.onLive()
-          if (this.props.autoPlay || this.resumePlay) {
-            delete this.resumePlay
-            video.play().then(() => {
-              actions.handlePlay()
-            })
+          if (this.autoPlay) {
+            delete this.autoPlay
+            video
+              .play()
+              .catch(console.error)
+              .then(actions.handlePlay)
           }
         }
         if (this.endSNs.length >= this.endSNThreshold && END_SNS.size <= 1) {
@@ -109,18 +124,39 @@ export class Source extends Component {
             ***************
             STREAM IS DEAD!
             ***************
-            Detaching media
           `)
-          this.resumePlay = !video.paused
+          this.autoPlay = !video.paused
           this.hls.stopLoad()
-          this.hls.detachMedia()
+          if (Hls.isSupported()) {
+            // Desktop
+            console.log('Detaching media')
+            this.hls.detachMedia()
+          } else {
+            // iOS
+            console.log('unsetting src attr')
+            video.src = ''
+            this.hls.media = null
+          }
           this.props.onDead()
         }
       })
       this.hls.on(Hls.Events.ERROR, (event, data) => {
+        // Log errors to console to help with debugging
         console.log(event, data)
+        switch (data.details) {
+          case Hls.ErrorDetails.LEVEL_LOAD_TIMEOUT:
+          case Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT: {
+            this.props.onDead()
+          }
+        }
       })
     }
+    // else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    //   video.src = src
+    //   video.addEventListener('canplay', () => {
+    //     video.play()
+    //   })
+    // }
   }
   componentDidMount() {
     this.updateSource()
@@ -129,9 +165,9 @@ export class Source extends Component {
     const a = this.props.src
     const b = nextProps.src
     if (a === b) return
-    console.log('Will resume play?', this.resumePlay)
-    if (this.resumePlay === undefined) {
-      this.resumePlay = !nextProps.video.paused
+    console.log('Will resume play?', this.autoPlay)
+    if (this.autoPlay === undefined) {
+      this.autoPlay = !nextProps.video.paused
     }
     // if the src changed, update the video player
     setTimeout(() => this.updateSource())

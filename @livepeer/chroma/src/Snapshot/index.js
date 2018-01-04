@@ -46,8 +46,12 @@ export default class Snapshot extends Component {
     this.setState({ src: CACHE[key] }, () => {
       this.props.onSnapshotReady(this.state.src)
     })
-    this.video.removeEventListener('canplay', this.setThumbnailDataURL)
+    video.removeEventListener('canplay', this.setThumbnailDataURL)
     this.hls.destroy()
+    if (!Hls.isSupported()) {
+      video.src = ''
+      document.body.removeChild(video)
+    }
   }
   updateThumbnail = () => {
     if (!this.props.url) return
@@ -57,15 +61,32 @@ export default class Snapshot extends Component {
       })
     }
     const { canvas, video, props } = this
+    video.muted = true
+    video.preload = 'auto'
+    video.playsInline = true
+    video.autoplay = true
+    video.crossOrigin = 'anonymous'
+    video.type = 'application/x-mpegURL'
+    video.style.position = 'fixed'
+    video.style.top = '-100vh'
     const parent = document.createElement('div')
     parent.appendChild(canvas)
     parent.appendChild(video)
     this.hls = new Hls()
     this.ctx = canvas.getContext('2d')
     this.hls.loadSource(props.url)
-    this.hls.attachMedia(video)
-    video.currentTime = props.at
-    this.video.addEventListener('canplay', this.setThumbnailDataURL)
+    video.addEventListener('canplay', this.setThumbnailDataURL)
+    if (Hls.isSupported()) {
+      // Desktop
+      video.currentTime = props.at
+      this.hls.attachMedia(video)
+    } else {
+      // iOS
+      video.currentTime = props.at
+      video.src = props.url
+      this.hls.media = video
+      document.body.appendChild(video)
+    }
   }
   getKey = props => {
     return JSON.stringify({
