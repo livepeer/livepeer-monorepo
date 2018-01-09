@@ -2,15 +2,15 @@ import 'babel-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
 import { injectGlobal } from 'styled-components'
-import createClient from './client'
+import createApolloClient from '@livepeer/apollo'
 import store, { history } from './store'
 import Root from './containers/Root'
 import App from './containers/App'
 import registerServiceWorker from './registerServiceWorker'
+;(async function() {
+  // should use hot module reloading if available
+  const hot = module.hot && process.env.NODE_ENV === 'development'
 
-let client
-
-const init = async () => {
   // dump global styles
   injectGlobal`
     * {
@@ -24,24 +24,28 @@ const init = async () => {
     }
     a { color: #03a678; }
   `
+
   // bootstrap the apollo client
-  client = await createClient()
-}
+  const client = await createApolloClient({
+    // If user account changes while on /me, this will hard refresh the page
+    onAccountChange: (currentAccount: string, nextAccount: string): void => {
+      const path = window.location.pathname.toLowerCase()
+      const onMyAccountPage = path === '/me' || nextAccount
+      if (onMyAccountPage) return window.location.reload()
+    },
+  })
 
-const update = () =>
-  render(
-    <Root store={store} history={history} client={client}>
-      <App />
-    </Root>,
-    document.getElementById('main-root'),
-  )
+  const update = () =>
+    render(
+      <Root store={store} history={history} client={client}>
+        <App />
+      </Root>,
+      document.getElementById('main-root'),
+    )
 
-const run = async () => {
-  await init()
   update()
-  registerServiceWorker()
-  if (module.hot && process.env.NODE_ENV === 'development')
-    module.hot.accept(update)
-}
 
-run()
+  if (hot) module.hot.accept(update)
+})()
+
+registerServiceWorker()

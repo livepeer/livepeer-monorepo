@@ -3,6 +3,7 @@ import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { queries } from '@livepeer/graphql-sdk'
 import styled, { keyframes } from 'styled-components'
 import { Video as VideoIcon } from 'react-feather'
 import BasicNavbar from '../../components/BasicNavbar'
@@ -10,8 +11,6 @@ import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
 
 const { viewAccount } = routingActions
-
-const isAddress = x => x.startsWith('0x') && x.length === 42
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -23,168 +22,7 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const AccountFragment = gql`
-  fragment AccountFragment on Account {
-    id
-    ethBalance
-    tokenBalance
-    broadcaster {
-      ...BroadcasterFragment
-      jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
-        ...JobFragment
-      }
-    }
-    delegator {
-      ...DelegatorFragment
-    }
-    transcoder {
-      ...TranscoderFragment
-    }
-  }
-`
-
-const BroadcasterFragment = gql`
-  fragment BroadcasterFragment on Broadcaster {
-    id
-    deposit
-    withdrawBlock
-  }
-`
-
-const DelegatorFragment = gql`
-  fragment DelegatorFragment on Delegator {
-    status
-    delegateAddress
-    bondedAmount
-    unbondedAmount
-    delegatedAmount
-    lastClaimRound
-    startRound
-    withdrawRound
-  }
-`
-
-const JobFragment = gql`
-  fragment JobFragment on Job {
-    id
-    broadcaster
-    stream
-    profiles {
-      id
-      name
-      bitrate
-      framerate
-      resolution
-    }
-    ... on VideoJob {
-      live
-      url
-    }
-  }
-`
-
-const TranscoderFragment = gql`
-  fragment TranscoderFragment on Transcoder {
-    active
-    status
-    lastRewardRound
-    blockRewardCut
-    feeShare
-    pricePerSegment
-    pendingBlockRewardCut
-    pendingFeeShare
-    pendingPricePerSegment
-  }
-`
-
-// Queries
-
-const AccountQuery = gql`
-  ${AccountFragment}
-  ${BroadcasterFragment}
-  ${DelegatorFragment}
-  ${JobFragment}
-  ${TranscoderFragment}
-  query AccountQuery($id: String!, $dead: Boolean, $streamRootUrl: String) {
-    account(id: $id) {
-      ...AccountFragment
-    }
-  }
-`
-
-const BroadcasterQuery = gql`
-  ${BroadcasterFragment}
-  query BroadcasterQuery($id: String!) {
-    broadcaster(id: $id) {
-      ...BroadcasterFragment
-    }
-  }
-`
-
-const BroadcasterWithJobsQuery = gql`
-  ${BroadcasterFragment}
-  ${JobFragment}
-  query BroadcasterWithJobsQuery(
-    $id: String!
-    $dead: Boolean
-    $streamRootUrl: String
-  ) {
-    broadcaster(id: $id) {
-      ...BroadcasterFragment
-      jobs(dead: $dead, streamRootUrl: $streamRootUrl) {
-        ...JobFragment
-      }
-    }
-  }
-`
-
-const DelegatorQuery = gql`
-  ${DelegatorFragment}
-  query DelegatorQuery($id: String!) {
-    delegator(id: $id) {
-      ...DelegatorFragment
-    }
-  }
-`
-
-const JobQuery = gql`
-  ${JobFragment}
-  query JobQuery($id: Int!, $streamRootUrl: String) {
-    job(id: $id, streamRootUrl: $streamRootUrl) {
-      ...JobFragment
-    }
-  }
-`
-
-const JobsQuery = gql`
-  ${JobFragment}
-  query JobsQuery(
-    $dead: Boolean
-    $streamRootUrl: String
-    $broadcaster: String
-    $broadcasterWhereJobId: Int
-  ) {
-    jobs(
-      dead: $dead
-      streamRootUrl: $streamRootUrl
-      broadcaster: $broadcaster
-      broadcasterWhereJobId: $broadcasterWhereJobId
-    ) {
-      ...JobFragment
-    }
-  }
-`
-
-const TranscoderQuery = gql`
-  ${TranscoderFragment}
-  query TranscoderQuery($id: String!) {
-    transcoder(id: $id) {
-      ...TranscoderFragment
-    }
-  }
-`
-
-const connectApollo = graphql(AccountQuery, {
+const connectApollo = graphql(gql(queries.AccountQuery), {
   props: ({ data, ownProps }) => {
     return {
       ...ownProps,
@@ -198,8 +36,6 @@ const connectApollo = graphql(AccountQuery, {
       pollInterval: 5000,
       variables: {
         id: account,
-        dead: true,
-        streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
       },
     }
   },
@@ -320,7 +156,9 @@ const AccountView = ({ account, loading, match, me, viewAccount }) => {
             onClick={async e => {
               e.preventDefault()
               try {
-                await deposit(window.prompt('How Much LPT would you like to deposit?'))
+                await deposit(
+                  window.prompt('How Much LPT would you like to deposit?'),
+                )
               } catch (err) {
                 console.log(err)
               }

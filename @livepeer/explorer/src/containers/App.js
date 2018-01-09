@@ -4,6 +4,17 @@ import Landing from '../views/Landing'
 import Account from '../views/Account'
 import { history } from '../store'
 
+/**
+ * Gets the currently selected Eth account in the window.web3 instance
+ * @todo - add prop `account` to redux state
+ */
+const getEthAccount = () =>
+  window.web3 &&
+  window.web3.eth &&
+  window.web3.eth.accounts &&
+  window.web3.eth.accounts[0] &&
+  window.web3.eth.accounts[0].toLowerCase()
+
 const App = ({ location }) => (
   <div>
     <Switch>
@@ -12,13 +23,15 @@ const App = ({ location }) => (
         exact
         path="/accounts/:account"
         component={props => {
-          const onMyAccountPage =
-            window.web3 &&
-            props.match.params.account.toLowerCase() ===
-              window.web3.eth.accounts[0].toLowerCase()
-          // redirect to '/me'
-          if (onMyAccountPage) history.replace('/me')
-          return <Account {...props} />
+          const account = getEthAccount()
+          const onMyAccountPage = account
+            ? props.match.params.account.toLowerCase() === account
+            : false
+          return onMyAccountPage ? (
+            <Redirect to="/me" />
+          ) : (
+            <Account {...props} />
+          )
         }}
       />
       <Route
