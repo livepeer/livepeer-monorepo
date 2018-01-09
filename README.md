@@ -1,6 +1,11 @@
 # LivepeerJS [![Join the chat at https://gitter.im/livepeer/dev](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/livepeer/dev?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Project Layout
+## Table of Contents
+
+* [Projects](#projects)
+* [Resources](#resources)
+
+## Projects
 
 This repo is the home of the following projects and libraries:
 
@@ -31,7 +36,6 @@ This repo is the home of the following projects and libraries:
 * ### [@livepeer/sdk](./@livepeer/sdk)
   > A module for interacting with Livepeer's smart contracts. A core dependency of most projects in this repo.
 
----
 ## Resources
 
 To get a full idea of what Livepeer is about, be sure to take a look at these other resources:
