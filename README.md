@@ -1,11 +1,31 @@
-# LivepeerJS [![Join the chat at https://gitter.im/livepeer/dev](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/livepeer/dev?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# LivepeerJS [![Join the chat at https://gitter.im/livepeer/dev](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/livepeer/dev)
 
 ## Table of Contents
 
-* [Projects](#projects)
+* [Getting Started](#getting-started)
+* [Projects](#projects-overview)
 * [Resources](#resources)
 
-## Projects
+## Getting Started
+
+First, clone this repo
+
+```bash
+git clone https://github.com/livepeer/livepeerjs.git
+```
+
+Next, cd into the cloned repo and install project dependencies
+
+```bash
+cd livepeerjs
+# this project uses yarn, so if you don't have it,
+# install it by running `npm i -g yarn`
+yarn
+```
+
+For next steps, take a look at documentation for the individual project(s) you want to run and/or develop. Just follow the links in the next section.
+
+## Projects Overview
 
 This repo is the home of the following projects and libraries:
 
@@ -23,7 +43,7 @@ This repo is the home of the following projects and libraries:
 
 * ### [@livepeer/graphql-sdk](./@livepeer/graphql-sdk)
 
-  > A GraphQL API that can be used to simplify protocol exploration. Currently, it exposes queries for getting a job by id or a list of jobs filtered by broadcaster address and/or whether it is currently "live". Can be used directly in the browser or in node.js applications.
+  > A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
 
 * ### [@livepeer/lpx](./@livepeer/lpx)
 

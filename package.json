@@ -2,5 +2,8 @@
   "private": true,
   "workspaces": [
     "@livepeer/*"
-  ]
+  ],
+  "scripts": {
+    "postinstall": "./bin/postinstall.sh"
+  }
 }
