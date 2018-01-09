@@ -76,9 +76,9 @@ export class Source extends Component {
   // resumes play if the video player is already playing when a stream dies
   autoPlay = this.props.autoPlay
   // latest sequence (.ts) id
-  endSNs = []
+  endSegmentNumbers = []
   // if frag level endSN is the same n times in a row, the stream will be considered "dead"
-  endSNThreshold = 4
+  endSegmentThreshold = this.props.endSegmentThreshold || 4
   updateSource = () => {
     const { actions, src, type, video } = this.props
     // remove old listeners
@@ -91,9 +91,10 @@ export class Source extends Component {
       this.hls.loadSource(src)
       this.hls.on(Hls.Events.LEVEL_LOADED, (event, data) => {
         console.log('end segment:', data.details.endSN)
-        if (this.endSNs.length >= this.endSNThreshold) this.endSNs.shift()
-        this.endSNs.push(data.details.endSN)
-        const END_SNS = new Set(this.endSNs)
+        if (this.endSegmentNumbers.length >= this.endSegmentThreshold)
+          this.endSegmentNumbers.shift()
+        this.endSegmentNumbers.push(data.details.endSN)
+        const END_SNS = new Set(this.endSegmentNumbers)
         if (END_SNS.size > 1 && !this.hls.media) {
           console.log(`
             ***************
@@ -119,7 +120,10 @@ export class Source extends Component {
               .then(actions.handlePlay)
           }
         }
-        if (this.endSNs.length >= this.endSNThreshold && END_SNS.size <= 1) {
+        if (
+          this.endSegmentNumbers.length >= this.endSegmentThreshold &&
+          END_SNS.size <= 1
+        ) {
           console.log(`
             ***************
             STREAM IS DEAD!
@@ -145,18 +149,13 @@ export class Source extends Component {
         console.log(event, data)
         switch (data.details) {
           case Hls.ErrorDetails.LEVEL_LOAD_TIMEOUT:
-          case Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT: {
+          case Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT:
+          case Hls.ErrorDetails.MANIFEST_LOAD_ERROR: {
             this.props.onDead()
           }
         }
       })
     }
-    // else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    //   video.src = src
-    //   video.addEventListener('canplay', () => {
-    //     video.play()
-    //   })
-    // }
   }
   componentDidMount() {
     this.updateSource()
