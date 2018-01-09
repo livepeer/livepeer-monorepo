@@ -3,6 +3,7 @@ import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { queries } from '@livepeer/graphql-sdk'
 import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
@@ -33,48 +34,11 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const JobFragment = gql`
-  fragment JobFragment on Job {
-    id
-    broadcaster
-    stream
-    profiles {
-      id
-      name
-      bitrate
-      framerate
-      resolution
-    }
-    ... on VideoJob {
-      # live
-      url
-    }
-  }
-`
-
-const JobsQuery = gql`
-  ${JobFragment}
-  query JobsQuery(
-    $dead: Boolean
-    $streamRootUrl: String
-    $broadcaster: String
-    $broadcasterWhereJobId: Int
-  ) {
-    jobs(
-      dead: $dead
-      streamRootUrl: $streamRootUrl
-      broadcaster: $broadcaster
-      broadcasterWhereJobId: $broadcasterWhereJobId
-    ) {
-      ...JobFragment
-    }
-  }
-`
-const connectApollo = graphql(JobsQuery, {
+const connectApollo = graphql(gql(queries.JobsQuery), {
   // @TODO: figure out why pollInterval seems to do nothing
   // pollInterval: 10,
   props: ({ data, ownProps }) => {
-    console.log(data)
+    // console.log(data)
     return {
       ...ownProps,
       loading: data.loading,
@@ -87,8 +51,6 @@ const connectApollo = graphql(JobsQuery, {
       pollInterval: 5000,
       variables: {
         broadcaster: channel,
-        dead: true,
-        streamRootUrl: 'https://d194z9vj66yekd.cloudfront.net/stream/',
       },
     }
   },
@@ -99,7 +61,6 @@ const refreshForNewStream = lifecycle({
     const { props } = this
     const [oldJob] = props.jobs
     const [newJob] = nextProps.jobs
-    console.log(this.state)
     this.setState({ latestJob: newJob })
     if (!oldJob || !newJob) return
     if (oldJob.url === newJob.url) return
@@ -120,7 +81,7 @@ class Channel extends Component {
   async componentWillReceiveProps(nextProps) {
     const [newJob] = nextProps.jobs
     if (!newJob) return
-    const manifestId = newJob.stream.substr(0, 68 + 64)
+    const manifestId = newJob.streamId.substr(0, 68 + 64)
     const url = `https://d194z9vj66yekd.cloudfront.net/stream/${manifestId}.m3u8`
     this.setState({ url })
   }
@@ -128,7 +89,7 @@ class Channel extends Component {
     const { jobs, loading, match, changeChannel, updateJob } = this.props
     const { live, url } = this.state
     const [latestJob] = jobs
-    const { stream, broadcaster = match.params.channel } = latestJob || {}
+    const { streamId, broadcaster = match.params.channel } = latestJob || {}
     return (
       <div>
         <BasicNavbar onSearch={changeChannel} />
@@ -209,7 +170,7 @@ class Channel extends Component {
                 }}
               >
                 Stream ID:<br />
-                <span title={url}>{stream || 'N/A'}</span>
+                <span title={url}>{streamId || 'N/A'}</span>
               </p>
             </div>
           </Info>
