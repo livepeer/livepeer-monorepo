@@ -29,8 +29,8 @@ const livepeer = {
     getJob: async id => ALL_JOBS[id],
     getJobs: async ({ broadcaster } = {}) =>
       broadcaster
-        ? ALL_JOBS.filter(x => x.broadcaster === broadcaster)
-        : ALL_JOBS,
+        ? ALL_JOBS.filter(x => x.broadcaster === broadcaster).reverse()
+        : ALL_JOBS.slice().reverse(),
     getTranscoder: async id => ALL_TRANSCODERS[id],
   },
   utils,

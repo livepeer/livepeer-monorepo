@@ -5,8 +5,7 @@
   "main": "main/index.js",
   "module": "lib/index.js",
   "dependencies": {
-    "graphql": "^0.11.7",
-    "node-fetch": "^1.7.3"
+    "graphql": "^0.11.7"
   },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
