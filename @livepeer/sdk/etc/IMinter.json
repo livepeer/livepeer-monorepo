@@ -5,6 +5,38 @@
       "constant": false,
       "inputs": [
         {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawETH",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "burnTokens",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
           "name": "_fracNum",
           "type": "uint256"
         },
@@ -53,16 +85,16 @@
     },
     {
       "constant": false,
-      "inputs": [
+      "inputs": [],
+      "name": "depositETH",
+      "outputs": [
         {
-          "name": "_amount",
-          "type": "uint256"
+          "name": "",
+          "type": "bool"
         }
       ],
-      "name": "addToRedistributionPool",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
+      "payable": true,
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -83,11 +115,6 @@
         {
           "indexed": false,
           "name": "mintableTokens",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "name": "redistributableTokens",
           "type": "uint256"
         }
       ],

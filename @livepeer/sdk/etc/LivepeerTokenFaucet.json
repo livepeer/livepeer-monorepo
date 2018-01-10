@@ -199,6 +199,5 @@
       "name": "OwnershipTransferred",
       "type": "event"
     }
-  ],
-  "address": "0xA5233069d4267D27062010D5A286b27CBD8C78eF"
+  ]
 }

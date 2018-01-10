@@ -29,7 +29,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
-    "protocol": "https://github.com/livepeer/protocol.git#d3edf0c095020b1d991c6ff16d23040b28ce5da5",
+    "protocol": "https://github.com/livepeer/protocol.git#a313fa61369b0e103ec747a923a5424f828e8547",
     "yup": "^0.23.0"
   },
   "ava": {

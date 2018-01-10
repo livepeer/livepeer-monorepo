@@ -337,50 +337,36 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
     privateKeys,
     provider,
   })
-  // Create a LivepeerToken contract instance
-  const LivepeerToken = await getContractAt(eth, {
-    ...artifacts.LivepeerToken,
-    defaultTx,
-  })
-  // Create a LivepeerTokenFaucet contract instance
-  const LivepeerTokenFaucet = await getContractAt(eth, {
-    ...artifacts.LivepeerTokenFaucet,
-    defaultTx,
-  })
+  const contracts = {
+    LivepeerToken: null,
+    LivepeerTokenFaucet: null,
+    BondingManager: null,
+    JobsManager: null,
+    RoundsManager: null,
+  }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
     ...artifacts.Controller,
     defaultTx,
   })
-  // Create a BondingManager contract instance
-  const BondingManager = await getContractAt(eth, {
-    ...artifacts.BondingManager,
-    defaultTx,
-    address: (await Controller.getContract(Eth.keccak256('BondingManager')))[0],
-  })
-  // Create a JobsManager contract instance
-  const JobsManager = await getContractAt(eth, {
-    ...artifacts.JobsManager,
-    defaultTx,
-    address: (await Controller.getContract(Eth.keccak256('JobsManager')))[0],
-  })
-  // Create a RoundsManager contract instance
-  const RoundsManager = await getContractAt(eth, {
-    ...artifacts.RoundsManager,
-    defaultTx,
-    address: (await Controller.getContract(Eth.keccak256('RoundsManager')))[0],
-  })
-  const contracts = {
-    BondingManager,
-    Controller,
-    JobsManager,
-    LivepeerToken,
-    LivepeerTokenFaucet,
-    RoundsManager,
+  for (const name of Object.keys(contracts)) {
+    // Get contract address from Controller
+    const hash = Eth.keccak256(name)
+    const address = (await Controller.getContract(hash))[0]
+    // Create contract instance
+    contracts[name] = await getContractAt(eth, {
+      ...artifacts[name],
+      defaultTx,
+      address,
+    })
   }
+  // Add the Controller contract to the contracts object
+  contracts.Controller = Controller
+  // Key ABIs by contract name
   const abis = Object.entries(artifacts)
     .map(([k, v]) => ({ [k]: v.abi }))
     .reduce((a, b) => ({ ...a, ...b }), {})
+  // Create a list of events in each contract
   const events = Object.entries(abis)
     .map(([contract, abi]) => {
       return abi.filter(x => x.type === 'event').map(abi => ({
@@ -597,36 +583,35 @@ export default async function createLivepeerSDK(
       addr: string = invariant('addr', 0, 'string'),
     ): Promise<{
       address: string,
-      status: string,
-      delegateAddress: string,
       bondedAmount: number,
-      unbondedAmount: number,
+      delegateAddress: string,
       delegatedAmount: number,
+      fees: number,
       lastClaimRound: number,
       startRound: number,
+      status: string,
       withdrawRound: number,
     }> {
       const status = await rpc.getDelegatorStatus(addr)
-      const stake = await rpc.getDelegatorStake(addr)
+      // const pendingStake = await rpc.pendingStake(addr)
       const d = await BondingManager.getDelegator(addr)
+      const bondedAmount = toString(d.bondedAmount)
       const delegateAddress =
         d.delegateAddress === EMPTY_ADDRESS ? '' : d.delegateAddress
-      const bondedAmount = toString(d.bondedAmount)
-      const unbondedAmount = toString(d.unbondedAmount)
       const delegatedAmount = toString(d.delegatedAmount)
+      const fees = toString(d.fees)
       const lastClaimRound = toString(d.lastClaimTokenPoolsSharesRound)
       const startRound = toString(d.startRound)
       const withdrawRound = toString(d.withdrawRound)
       return {
         address: addr,
-        status,
-        stake,
         bondedAmount,
-        unbondedAmount,
         delegateAddress,
         delegatedAmount,
+        fees,
         lastClaimRound: lastClaimRound ? lastClaimRound : null,
         startRound: startRound ? startRound : null,
+        status,
         withdrawRound: withdrawRound ? withdrawRound : null,
       }
     },

@@ -269,7 +269,19 @@
           "type": "address"
         }
       ],
-      "name": "Withdraw",
+      "name": "WithdrawStake",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "delegator",
+          "type": "address"
+        }
+      ],
+      "name": "WithdrawFees",
       "type": "event"
     }
   ]
