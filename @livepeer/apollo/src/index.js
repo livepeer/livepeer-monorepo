@@ -116,7 +116,7 @@ export default async function createApolloClient(
   function getAccountFromWeb3(web3: Web3, accountIndex: number): string {
     const hasCurrentAccount = web3 && web3.eth && web3.eth.accounts
     return (hasCurrentAccount
-      ? web3.eth.accounts[accountIndex]
+      ? web3.eth.accounts[accountIndex] || ''
       : ''
     ).toLowerCase()
   }
