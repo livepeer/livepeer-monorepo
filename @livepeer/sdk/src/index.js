@@ -286,7 +286,7 @@ export async function initRPC({
 }> {
   const usePrivateKeys = 0 < Object.keys(privateKeys).length
   const ethjsProvider =
-    'object' === typeof provider
+    'object' === typeof provider && provider
       ? provider
       : usePrivateKeys
         ? // Use provider-signer to locally sign transactions
@@ -297,7 +297,7 @@ export async function initRPC({
             timeout: 10 * 1000,
           })
         : // Use default signer
-          new Eth.HttpProvider(provider)
+          new Eth.HttpProvider(provider || DEFAULTS.provider)
   const eth = new Eth(ethjsProvider)
   const accounts = usePrivateKeys
     ? Object.keys(privateKeys)
@@ -1125,10 +1125,7 @@ export default async function createLivepeerSDK(
      * Deposits LPT
      * @return {Object}
      */
-    async deposit(
-      amount: number = invariant('amount', 0, 'number'),
-      tx = config.defaultTx,
-    ): Promise<Object> {
+    async deposit(tx = config.defaultTx): Promise<Object> {
       // make sure balance is higher than deposit
       const balance = (await LivepeerToken.balanceOf(tx.from))[0]
       if (!balance.gte(toBN(amount))) {
