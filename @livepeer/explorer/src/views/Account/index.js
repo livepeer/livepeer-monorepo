@@ -44,7 +44,7 @@ const connectApollo = graphql(gql(queries.AccountQuery), {
 const enhance = compose(connectRedux, connectApollo)
 
 const AccountView = ({ account, loading, match, me, viewAccount }) => {
-  const { bond, deposit, tapFaucet } = window.livepeer.rpc
+  const { bond, deposit, tapFaucet, transferToken } = window.livepeer.rpc
   return (
     <Content>
       <BasicNavbar onSearch={viewAccount} />
@@ -128,7 +128,7 @@ const AccountView = ({ account, loading, match, me, viewAccount }) => {
               e.preventDefault()
               try {
                 const res = await tapFaucet()
-                window.alert('Got LPT!\n' + JSON.stringify(res, null, 2))
+                window.alert('Got LPT!')
               } catch (err) {
                 console.error(err)
                 window.alert(err.message)
@@ -141,30 +141,56 @@ const AccountView = ({ account, loading, match, me, viewAccount }) => {
             onClick={async e => {
               e.preventDefault()
               try {
-                await bond({
-                  to: window.prompt('Who would you like to bond to?'),
-                  amount: window.prompt('How Much LPT would you like to bond?'),
-                })
+                await bond(
+                  window.prompt('Who would you like to bond to?'),
+                  window.prompt('How Much LPT would you like to bond?'),
+                )
+                window.alert('Bonded!')
               } catch (err) {
                 console.log(err)
+                window.alert(err.message)
               }
             }}
           >
-            bond
+            bond LPT
           </button>
           <button
             onClick={async e => {
               e.preventDefault()
               try {
+                // @todo - update tx loading state
                 await deposit(
                   window.prompt('How Much LPT would you like to deposit?'),
                 )
+                window.alert('Deposit complete!')
               } catch (err) {
                 console.log(err)
+                window.alert(err.message)
+              } finally {
+                // @todo - update tx loading state
               }
             }}
           >
-            deposit
+            deposit LPT
+          </button>
+          <button
+            onClick={async e => {
+              e.preventDefault()
+              try {
+                // @todo - update tx loading state
+                await transferToken(
+                  window.prompt('Who would you like to transfer LPT to?'),
+                  window.prompt('How Much LPT would you like to transfer?'),
+                )
+                window.alert('Transfer complete!')
+              } catch (err) {
+                console.log(err)
+                window.alert(err.message)
+              } finally {
+                // @todo - update tx loading state
+              }
+            }}>
+            transfer LPT
           </button>
         </div>
       )}
