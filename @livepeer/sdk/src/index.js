@@ -468,6 +468,35 @@ export default async function createLivepeerSDK(
       }
     },
 
+    async transferToken(
+      to: string,
+      amount: string,
+      tx = config.defaultTx,
+    ): Promise<Object> {
+      const value = toBN(amount)
+      // make sure balance is higher than bond
+      const balance = (await LivepeerToken.balanceOf(tx.from))[0]
+      if (!balance.gte(value)) {
+        throw new Error(
+          `Cannot bond ${toString(
+            value,
+          )} LPT because is it greater than your current balance (${balance} LPT).`,
+        )
+      }
+      // approve address / amount with LivepeerToken...
+      await utils.getTxReceipt(
+        await LivepeerToken.approve(to, value, tx),
+        config.eth,
+      )
+      // ...aaaand transfer!
+      await utils.getTxReceipt(
+        await LivepeerToken.transfer(to, value, tx),
+        config.eth,
+      )
+      // updated token balance
+      return await rpc.getTokenBalance(tx.from)
+    },
+
     // Faucet
 
     /**
@@ -1015,23 +1044,31 @@ export default async function createLivepeerSDK(
      */
     async claimTokenPoolsShares(tx = config.defaultTx): Promise<Object> {
       try {
-        const roundsPerClaim = toBN(100)
+        const roundsPerClaim = toBN('100')
         const currentRound = toBN(await rpc.getCurrentRound())
-        const delegator = await rpc.getDelegator(tx.from)
-        let n = toBN(delegator.lastClaimRound || 0)
+        let delegator = await rpc.getDelegator(tx.from)
         // claim tokens for the lastClaimRound to currentRound
-        while (n.lt(currentRound)) {
-          const endRound = currentRound.lt(n.add(roundsPerClaim))
+        let lastClaimRound = toBN(delegator.lastClaimRound || '0')
+        while (lastClaimRound.lt(currentRound)) {
+          const endRound = currentRound.lt(lastClaimRound.add(roundsPerClaim))
             ? currentRound
-            : n.add(roundsPerClaim)
+            : lastClaimRound.add(roundsPerClaim)
+          console.log('claiming token pool shares...', {
+            currentRound: currentRound.toString(10),
+            lastClaimRound: lastClaimRound.toString(10),
+            endRound: endRound.toString(10),
+          })
           // claim from lastClaimRound to endRound
-          await utils.getTxReceipt(
+          const receipt = await utils.getTxReceipt(
             await BondingManager.claimTokenPoolsShares(endRound, tx),
             config.eth,
           )
-          n = toBN((await rpc.getDelegator(tx.from)).lastClaimRound)
+          console.log('CLAIMED', receipt)
+          // lastClaimRound = toBN(delegator.lastClaimRound || '0')
+          lastClaimRound = endRound
         }
-        return await rpc.getDelegator(tx.from)
+        delegator = await rpc.getDelegator(tx.from)
+        return delegator
       } catch (err) {
         err.message = 'Error: claimTokenPoolsShares\n' + err.message
         throw err
@@ -1043,19 +1080,21 @@ export default async function createLivepeerSDK(
      * @return {Object}
      */
     async bond(
-      { to, amount }: { to: string, amount: number } = {},
+      to: string,
+      amount: string,
       tx = config.defaultTx,
     ): Promise<Object> {
+      const value = toBN(amount)
       // make sure current round is initialized
       if (!await rpc.getCurrentRoundIsInitialized()) {
         await rpc.initializeRound(tx)
       }
       // make sure balance is higher than bond
       const balance = (await LivepeerToken.balanceOf(tx.from))[0]
-      if (!balance.gte(toBN(amount))) {
+      if (!balance.gte(value)) {
         throw new Error(
           `Cannot bond ${toString(
-            toBN(amount),
+            value,
           )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
       }
@@ -1064,12 +1103,12 @@ export default async function createLivepeerSDK(
       await rpc.claimTokenPoolsShares()
       // approve BondingManager address / amount with LivepeerToken...
       await utils.getTxReceipt(
-        await LivepeerToken.approve(BondingManager.address, toBN(amount), tx),
+        await LivepeerToken.approve(BondingManager.address, value, tx),
         config.eth,
       )
       // ...aaaand bond!
       await utils.getTxReceipt(
-        await BondingManager.bond(toBN(amount), to, tx),
+        await BondingManager.bond(value, to, tx),
         config.eth,
       )
       // updated delegator info
@@ -1125,24 +1164,26 @@ export default async function createLivepeerSDK(
      * Deposits LPT
      * @return {Object}
      */
-    async deposit(tx = config.defaultTx): Promise<Object> {
+    async deposit(
+      amount = invariant('amount', 0, 'string'),
+      tx = config.defaultTx,
+    ): Promise<Object> {
       // make sure balance is higher than deposit
-      const balance = (await LivepeerToken.balanceOf(tx.from))[0]
-      if (!balance.gte(toBN(amount))) {
+      const balance = toBN(await rpc.getEthBalance(tx.from))
+      const value = toBN(amount)
+      if (!balance.gte(value)) {
         throw new Error(
           `Cannot deposit ${toString(
-            toBN(amount),
+            toBN(value.toString(10)),
           )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
       }
-      // approve JobsManager address / amount with LivepeerToken...
-      await utils.getTxReceipt(
-        await LivepeerToken.approve(JobsManager.address, toBN(amount), tx),
-        config.eth,
-      )
       // ...aaaand deposit!
       await utils.getTxReceipt(
-        await JobsManager.deposit(toBN(amount), tx),
+        await JobsManager.deposit({
+          ...tx,
+          value,
+        }),
         config.eth,
       )
       // updated token info
