@@ -170,7 +170,7 @@ export default async function createApolloClient(
           const { query, variables, operationName } = operation
           graphql(schema, print(query), null, ctx, variables, operationName)
             .then(result => {
-              console.log(operationName, variables, result.data)
+              // console.log(operationName, variables, result.data)
               const value = result
               observer.next(value)
               observer.complete(value)
