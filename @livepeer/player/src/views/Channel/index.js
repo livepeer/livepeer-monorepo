@@ -37,8 +37,8 @@ const connectRedux = connect(null, mapDispatchToProps)
 const connectApollo = graphql(gql(queries.JobsQuery), {
   // @TODO: figure out why pollInterval seems to do nothing
   // pollInterval: 10,
-  props: ({ data, ownProps }) => {
-    // console.log(data)
+  props: ({ data, ownProps }, state) => {
+    console.log(data)
     return {
       ...ownProps,
       loading: data.loading,
@@ -56,22 +56,7 @@ const connectApollo = graphql(gql(queries.JobsQuery), {
   },
 })
 
-const refreshForNewStream = lifecycle({
-  componentWillReceiveProps(nextProps) {
-    const { props } = this
-    const [oldJob] = props.jobs
-    const [newJob] = nextProps.jobs
-    this.setState({ latestJob: newJob })
-    if (!oldJob || !newJob) return
-    if (oldJob.url === newJob.url) return
-    // for now, hard refresh when a new stream is detected
-    // hls.js does not make it easy to seamlessly switch between live streams
-    // further research is needed
-    // window.location.reload();
-  },
-})
-
-const enhance = compose(connectRedux, connectApollo /* refreshForNewStream*/)
+const enhance = compose(connectRedux, connectApollo)
 
 class Channel extends Component {
   state = {
@@ -80,7 +65,10 @@ class Channel extends Component {
   }
   async componentWillReceiveProps(nextProps) {
     const [newJob] = nextProps.jobs
-    if (!newJob) return
+    if (!newJob) {
+      if (nextProps.loading === false) this.setState({ live: false })
+      return
+    }
     const manifestId = newJob.streamId.substr(0, 68 + 64)
     const url = `https://d194z9vj66yekd.cloudfront.net/stream/${manifestId}.m3u8`
     this.setState({ url })
