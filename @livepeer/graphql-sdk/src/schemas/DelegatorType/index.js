@@ -42,21 +42,15 @@ export default new GraphQLObjectType({
       description: 'The status of the delegator',
       resolve: resolvers.status,
     },
-    stake: {
-      type: new GraphQLNonNull(GraphQLString),
-      description:
-        'The bonded stake for a delegator (adds rewards from the rounds during which the delegator was bonded to a transcoder)',
-      resolve: resolvers.stake,
-    },
     bondedAmount: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The amount of LPT the delegator has bonded',
       resolve: resolvers.bondedAmount,
     },
-    unbondedAmount: {
+    fees: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The total amount of LPT that the delegator has claimed',
-      resolve: resolvers.unbondedAmount,
+      resolve: resolvers.fees,
     },
     delegateAddress: {
       type: new GraphQLNonNull(GraphQLString),

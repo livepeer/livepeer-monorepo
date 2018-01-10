@@ -4,7 +4,7 @@ fragment DelegatorFragment on Delegator {
   status
   delegateAddress
   bondedAmount
-  unbondedAmount
+  fees
   delegatedAmount
   lastClaimRound
   startRound

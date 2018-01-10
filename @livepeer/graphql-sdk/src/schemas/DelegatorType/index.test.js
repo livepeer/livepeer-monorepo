@@ -6,9 +6,8 @@ test('DelegatorType resolves fields', async t => {
   const obj = {
     id: EMPTY_ADDRESS.replace(/00/g, '11'),
     status: DELEGATOR_STATUS.Unbonded,
-    stake: '0',
     bondedAmount: '0',
-    unbondedAmount: '0',
+    fees: '0',
     delegateAddress: EMPTY_ADDRESS.replace(/00/g, '22'),
     delegatedAmount: '0',
     lastClaimRound: '0',

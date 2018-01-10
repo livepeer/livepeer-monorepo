@@ -34,16 +34,6 @@ export function status(obj: DelegatorObj): DelegatorStatus {
 }
 
 /**
- * Gets the stake for a Delegator
- * @param {Object} obj
- * @param {string} obj.stake - The stake of the delegator
- * @return {string}
- */
-export function stake(obj: DelegatorObj): string {
-  return obj.stake
-}
-
-/**
  * Gets the bondedAmount for a Delegator
  * @param {Object} obj
  * @param {string} obj.bondedAmount - The bondedAmount of the delegator
@@ -54,13 +44,13 @@ export function bondedAmount(obj: DelegatorObj): string {
 }
 
 /**
- * Gets the unbondedAmount for a Delegator
+ * Gets the fees for a Delegator
  * @param {Object} obj
- * @param {string} obj.unbondedAmount - The unbondedAmount of the delegator
+ * @param {string} obj.fees - The fees of the delegator
  * @return {string}
  */
-export function unbondedAmount(obj: DelegatorObj): string {
-  return obj.unbondedAmount
+export function fees(obj: DelegatorObj): string {
+  return obj.fees
 }
 
 /**
