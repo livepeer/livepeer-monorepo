@@ -4,13 +4,28 @@ import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { queries } from '@livepeer/graphql-sdk'
-import BN from 'bn.js'
+import Big from 'big.js'
 import styled, { keyframes } from 'styled-components'
-import { Video as VideoIcon } from 'react-feather'
+import * as Icons from 'react-feather'
+import {
+  DownloadCloud as DownloadCloudIcon,
+  Plus as PlusIcon,
+  Video as VideoIcon,
+  Send as SendIcon,
+} from 'react-feather'
 import QRCode from 'qrcode-react'
 import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
+
+const formatBalance = (x, decimals = 6) => {
+  if (!x) return ''
+  return Big(x)
+    .div('1000000000000000000')
+    .toFixed(decimals)
+    .replace(/0+$/, '')
+    .replace(/\.$/, '')
+}
 
 const { viewAccount } = routingActions
 
@@ -51,6 +66,20 @@ const AccountTopSection = styled.div`
   height: 240px;
   margin: 0 auto;
   padding: 32px;
+`
+
+const Button = styled.button`
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 8px;
+  background-image: none !important;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  // box-shadow: 0 0 0 1px inset;
+  background: none;
+  cursor: pointer;
 `
 
 const AccountBasicInfo = ({ account, color, me }) => {
@@ -112,15 +141,35 @@ const AccountView = ({ account, colors, loading, match, me, viewAccount }) => {
       <Content>
         <BasicNavbar onSearch={viewAccount} />
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div style={{ margin: 16, textAlign: 'center' }}>
-            <div>
-              {new BN(account.ethBalance)
-                .div(new BN('1000000000000000000'))
-                .toString(10)}{' '}
+          <div
+            style={{
+              width: '50%',
+              margin: '16px 8px',
+              textAlign: 'center',
+              background: '#fff',
+              borderRadius: 4,
+              boxShadow: '0 2px 2px 0px rgba(0,0,0,.15)',
+            }}
+          >
+            <h3
+              style={{
+                borderBottom: '1px solid #eee',
+                margin: 0,
+                padding: '24px 8px',
+              }}
+            >
+              <strong style={{ fontWeight: 400 }}>
+                {formatBalance(account.ethBalance)}
+              </strong>{' '}
               ETH
-            </div>
+              <div>
+                <span style={{ fontSize: 12 }}>
+                  {formatBalance(account.ethBalance, 18)}
+                </span>
+              </div>
+            </h3>
             <div>
-              <button
+              <Button
                 onClick={() => {
                   const ws = new WebSocket('ws://52.14.204.154/api')
                   ws.onopen = () => {
@@ -178,9 +227,10 @@ const AccountView = ({ account, colors, loading, match, me, viewAccount }) => {
                   }
                 }}
               >
-                request
-              </button>
-              <button
+                <DownloadCloudIcon size={12} />
+                <span style={{ marginLeft: 8 }}>request</span>
+              </Button>
+              <Button
                 onClick={async e => {
                   e.preventDefault()
                   try {
@@ -197,19 +247,40 @@ const AccountView = ({ account, colors, loading, match, me, viewAccount }) => {
                   }
                 }}
               >
-                deposit
-              </button>
+                <PlusIcon size={12} />
+                <span style={{ marginLeft: 8 }}>deposit</span>
+              </Button>
             </div>
           </div>
-          <div style={{ margin: 16, textAlign: 'center' }}>
-            <div>
-              {new BN(account.tokenBalance)
-                .div(new BN('1000000000000000000'))
-                .toString(10)}{' '}
+          <div
+            style={{
+              width: '50%',
+              margin: '16px 8px',
+              textAlign: 'center',
+              background: '#fff',
+              borderRadius: 4,
+              boxShadow: '0 2px 2px 0px rgba(0,0,0,.15)',
+            }}
+          >
+            <h3
+              style={{
+                borderBottom: '1px solid #eee',
+                margin: 0,
+                padding: '24px 8px',
+              }}
+            >
+              <strong style={{ fontWeight: 400 }}>
+                {formatBalance(account.tokenBalance)}
+              </strong>{' '}
               LPT
-            </div>
+              <div>
+                <span style={{ fontSize: 12 }}>
+                  {formatBalance(account.tokenBalance, 18)}
+                </span>
+              </div>
+            </h3>
             <div>
-              <button
+              <Button
                 onClick={async e => {
                   e.preventDefault()
                   try {
@@ -221,9 +292,10 @@ const AccountView = ({ account, colors, loading, match, me, viewAccount }) => {
                   }
                 }}
               >
-                request
-              </button>
-              <button
+                <DownloadCloudIcon size={12} />
+                <span style={{ marginLeft: 8 }}>request</span>
+              </Button>
+              <Button
                 onClick={async e => {
                   e.preventDefault()
                   try {
@@ -241,8 +313,9 @@ const AccountView = ({ account, colors, loading, match, me, viewAccount }) => {
                   }
                 }}
               >
-                transfer
-              </button>
+                <SendIcon size={12} />
+                <span style={{ marginLeft: 8 }}>transfer</span>
+              </Button>
             </div>
           </div>
         </div>
