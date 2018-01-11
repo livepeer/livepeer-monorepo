@@ -47,7 +47,7 @@ const Nav = styled.nav`
   // justify-content: space-between;
   align-items: center;
   height: 64px;
-  margin-bottom: 24px;
+  // margin-bottom: 24px;
   padding: 16px 24px;
   background: #283845;
   & *::placeholder {

@@ -7,7 +7,7 @@ import store, { history } from './store'
 import Root from './containers/Root'
 import App from './containers/App'
 import registerServiceWorker from './registerServiceWorker'
-;(async function() {
+;(async () => {
   // should use hot module reloading if available
   const hot = module.hot && process.env.NODE_ENV === 'development'
 
