@@ -38,7 +38,10 @@ const App = ({ location }) => (
         exact
         path="/me"
         component={(props, ctx) => {
-          return (
+          const account = getEthAccount()
+          return !account ? (
+            <Redirect to="/" />
+          ) : (
             <Account
               {...props}
               me={true}
@@ -46,7 +49,7 @@ const App = ({ location }) => (
                 ...props.match,
                 params: {
                   ...props.match.params,
-                  account: window.web3.eth.accounts[0],
+                  account,
                 },
               }}
             />
