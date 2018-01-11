@@ -1,9 +1,8 @@
 {
   "private": true,
-  "workspaces": [
-    "@livepeer/*"
-  ],
+  "workspaces": ["@livepeer/*"],
   "scripts": {
-    "postinstall": "./bin/postinstall.sh"
+    "build": "./bin/build.sh",
+    "postinstall": "yarn build"
   }
 }
