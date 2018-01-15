@@ -55,6 +55,19 @@ query JobsQuery($broadcaster: String, $skip: Int, $limit: Int) {
   }
 }
 `
+
+export const MeQuery = `
+${AccountFragment}
+${BroadcasterFragment}
+${DelegatorFragment}
+${TranscoderFragment}
+query MeQuery {
+  me {
+    ...AccountFragment
+  }
+}
+`
+
 export const TranscoderQuery = `
 ${TranscoderFragment}
 query TranscoderQuery($id: String!) {

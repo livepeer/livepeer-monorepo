@@ -4,9 +4,7 @@ import { transformJob } from '../../utils'
 
 type GQLContext = {
   livepeer: Object,
-  resolvers: {
-    // ...
-  },
+  account?: string,
 }
 
 type QueryObj = {
@@ -128,10 +126,21 @@ export async function jobs(
 ): Array<Job> {
   const { skip = 0, limit = 100 } = args
   const result = await ctx.livepeer.rpc.getJobs(args)
-  const jobs = result
-    .slice(skip, skip + limit)
-    .map(transformJob)
+  const jobs = result.slice(skip, skip + limit).map(transformJob)
   return jobs
+}
+
+/**
+ * Gets an Account by ID (ETH address). Uses ctx.accounts
+ * @param {QueryObj} obj
+ * @param {QueryAccountArgs} args
+ * @param {string} args.id - ETH address
+ * @param {GQLContext} ctx
+ * @return {Account}
+ */
+export async function me(obj, args, ctx) {
+  // Account field resolvers will fill in the rest
+  return { id: ctx.account }
 }
 
 /**

@@ -106,6 +106,10 @@ export default new GraphQLObjectType({
       },
       resolve: resolvers.jobs,
     },
+    me: {
+      type: Account,
+      resolve: resolvers.me,
+    },
     transcoder: {
       type: Transcoder,
       args: {

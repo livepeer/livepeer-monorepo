@@ -177,6 +177,21 @@ test('Query resolves `jobs` field', async t => {
   }
 })
 
+test('Query resolves `me` field', async t => {
+  const obj = {
+    id: 'foo',
+  }
+  const args = {
+    id: obj.id,
+  }
+  const ctx = {
+    account: obj.id,
+  }
+  const fields = Query._typeConfig.fields()
+  const result = await fields.me.resolve(obj, args, ctx)
+  t.deepEqual(obj, result)
+})
+
 test('Query resolves `transcoder` field', async t => {
   const obj = {
     id: EMPTY_ADDRESS.replace(/00/g, '11'),
