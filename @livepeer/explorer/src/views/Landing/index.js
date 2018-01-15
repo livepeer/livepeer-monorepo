@@ -58,7 +58,7 @@ const Landing = ({ query, viewAccount }) => (
         <h2>ABI Contract Addresses</h2>
         {Object.entries(window.livepeer.config.contracts).map(
           ([name, { address }]) => (
-            <div>
+            <div key={name}>
               <p>{name}</p>
               <p>
                 <code>{address}</code>

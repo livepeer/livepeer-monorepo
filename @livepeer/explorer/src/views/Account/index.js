@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link, NavLink, Redirect, Route, Switch } from 'react-router-dom'
 import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
@@ -6,7 +7,6 @@ import gql from 'graphql-tag'
 import { queries } from '@livepeer/graphql-sdk'
 import Big from 'big.js'
 import styled, { keyframes } from 'styled-components'
-import * as Icons from 'react-feather'
 import {
   DownloadCloud as DownloadCloudIcon,
   Plus as PlusIcon,
@@ -16,16 +16,8 @@ import {
 import QRCode from 'qrcode-react'
 import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
+import AccountOverview from '../AccountOverview'
 import { actions as routingActions } from '../../services/routing'
-
-const formatBalance = (x, decimals = 6) => {
-  if (!x) return ''
-  return Big(x)
-    .div('1000000000000000000')
-    .toFixed(decimals)
-    .replace(/0+$/, '')
-    .replace(/\.$/, '')
-}
 
 const { viewAccount } = routingActions
 
@@ -39,13 +31,40 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const connectApollo = graphql(gql(queries.AccountQuery), {
+const query = gql(`
+fragment AccountFragment on Account {
+  id
+  ethBalance
+  tokenBalance
+}
+query MeOrAccountQuery(
+  $id: String!,
+  $me: Boolean!
+) {
+  me @include(if: $me) {
+    ...AccountFragment
+  }
+  account(id: $id) @skip(if: $me) {
+    ...AccountFragment
+  }
+}
+`)
+
+const connectApollo = graphql(query, {
   props: ({ data, ownProps }) => {
+    const account = {
+      id: '',
+      ...data.me,
+      ...data.account,
+    }
     return {
       ...ownProps,
+      account,
+      color: `#${account.id.substr(2, 6)}aa`,
+      error: data.error,
+      fetchMore: data.fetchMore,
+      refetch: data.refetch,
       loading: data.loading,
-      account: data.account || {},
-      colors: [`#${ownProps.match.params.account.substr(2, 6)}aa`],
     }
   },
   options: ({ match }) => {
@@ -53,7 +72,8 @@ const connectApollo = graphql(gql(queries.AccountQuery), {
     return {
       pollInterval: 5000,
       variables: {
-        id: account,
+        id: match.params.account || '',
+        me: !match.params.account,
       },
     }
   },
@@ -62,7 +82,7 @@ const connectApollo = graphql(gql(queries.AccountQuery), {
 const enhance = compose(connectRedux, connectApollo)
 
 const AccountTopSection = styled.div`
-  background: linear-gradient(#283845, #283845cc);
+  background: radial-gradient(circle at 500px 550px, #177E89cc, #283845 75%);
   height: 240px;
   margin: 0 auto;
   padding: 32px;
@@ -82,7 +102,7 @@ const Button = styled.button`
   cursor: pointer;
 `
 
-const AccountBasicInfo = ({ account, color, me }) => {
+const AccountBasicInfo = ({ account, color, host, me, protocol }) => {
   return (
     <div style={{ textAlign: 'center', color: '#fff' }}>
       <div
@@ -111,7 +131,7 @@ const AccountBasicInfo = ({ account, color, me }) => {
           }}
         >
           <QRCode
-            value={`${window.location.host}/accounts/${account}`}
+            value={`${protocol}//${host}/accounts/${account}`}
             fgColor={color}
             bgColor="#283845aa"
           />
@@ -125,199 +145,87 @@ const AccountBasicInfo = ({ account, color, me }) => {
   )
 }
 
-const AccountView = ({ account, colors, loading, match, me, viewAccount }) => {
-  const { bond, deposit, tapFaucet, transferToken } = window.livepeer.rpc
+const TabLink = ({ children, to }) => {
+  return (
+    <div
+      style={{
+        display: 'inline-flex',
+        margin: '0 8px',
+      }}
+    >
+      <NavLink
+        to={to}
+        style={{
+          display: 'inline-block',
+          fontWeight: 400,
+          textDecoration: 'none',
+          textTransform: 'capitalize',
+          color: '#888',
+          paddingBottom: 12
+        }}
+        activeStyle={{
+          color: '#177E89',
+          backgroundImage:
+            'linear-gradient(to top,rgba(0,0,0,0),rgba(0,0,0,0) 0px,#177E89 0px,#177E89 2px,rgba(0,0,0,0) 2px)',
+        }}
+      >
+        {children}
+      </NavLink>
+    </div>
+  )
+}
+
+const Tabs = styled.div`
+  padding: 8px 8px 0 8px;
+  border-bottom: 1px solid #ddd;
+`
+
+const AccountView = ({ account, color, loading, match, viewAccount }) => {
+  const me = !match.params.account
   return (
     <React.Fragment>
       <AccountTopSection>
         <Content>
           <AccountBasicInfo
+            account={account.id}
+            color={color}
+            host={window.location.host}
             me={me}
-            account={match.params.account.toLowerCase()}
-            color={colors[0]}
+            protocol={window.location.protocol}
           />
         </Content>
       </AccountTopSection>
       <Content>
         <BasicNavbar onSearch={viewAccount} />
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div
-            style={{
-              width: '50%',
-              margin: '16px 8px',
-              textAlign: 'center',
-              background: '#fff',
-              borderRadius: 4,
-              boxShadow: '0 2px 2px 0px rgba(0,0,0,.15)',
-            }}
-          >
-            <h3
-              style={{
-                borderBottom: '1px solid #eee',
-                margin: 0,
-                padding: '24px 8px',
+        <div>
+          <Tabs url={match.url}>
+            <TabLink to={`${match.url}/overview`}>overview</TabLink>
+            <TabLink to={`${match.url}/broadcaster`}>broadcasting</TabLink>
+            <TabLink to={`${match.url}/delegator`}>delegating</TabLink>
+            <TabLink to={`${match.url}/transcoder`}>transcoding</TabLink>
+          </Tabs>
+          <Switch>
+            <Route path={`${match.url}/overview`} component={AccountOverview} />
+            <Route
+              path={`${match.url}/broadcaster`}
+              render={() => {
+                return 'BROADCASTER!'
               }}
-            >
-              <strong style={{ fontWeight: 400 }}>
-                {formatBalance(account.ethBalance)}
-              </strong>{' '}
-              ETH
-              <div>
-                <span style={{ fontSize: 12 }}>
-                  {formatBalance(account.ethBalance, 18)}
-                </span>
-              </div>
-            </h3>
-            <div>
-              <Button
-                onClick={() => {
-                  const ws = new WebSocket('ws://52.14.204.154/api')
-                  ws.onopen = () => {
-                    ws.onerror = e => {
-                      console.error(e)
-                    }
-                    ws.onmessage = e => {
-                      const data = JSON.parse(e.data)
-                      console.log(account, data)
-                      if (data.requests) {
-                        data.requests.forEach(({ account: addr, time }) => {
-                          if (addr.toLowerCase() !== account.id.toLowerCase())
-                            return
-                          const t1 = Date.now()
-                          const t2 = +new Date(time)
-                          const t = t1 - t2
-                          const waitTime = 270 * 60 * 1000
-                          const timeRemaining = waitTime - t
-                          if (timeRemaining > 0) {
-                            window.alert(
-                              `You may tap the ETH faucet again in ${msToTime(
-                                waitTime - t,
-                              )}`,
-                            )
-                          } else {
-                            window.alert('Got some ETH from the faucet! :)')
-                          }
-                          // console.log(
-                          //   t1,
-                          //   t2,
-                          //   t,
-                          //   waitTime - t,
-                          //   msToTime(waitTime - t),
-                          //   msToTime(t),
-                          // )
-                        })
-                      }
-                      ws.close()
-                      function msToTime(duration) {
-                        let milliseconds = parseInt((duration % 1000) / 100),
-                          seconds = parseInt((duration / 1000) % 60),
-                          minutes = parseInt((duration / (1000 * 60)) % 60),
-                          hours = parseInt((duration / (1000 * 60 * 60)) % 24)
-
-                        hours = hours < 10 ? '0' + hours : hours
-                        minutes = minutes < 10 ? '0' + minutes : minutes
-                        seconds = seconds < 10 ? '0' + seconds : seconds
-
-                        return hours + 'h ' + minutes + 'min ' + seconds + 's'
-                      }
-                    }
-                    const payload = `{"url":"${account.id}","tier":2}`
-                    console.log('SENDING', payload)
-                    ws.send(payload)
-                  }
-                }}
-              >
-                <DownloadCloudIcon size={12} />
-                <span style={{ marginLeft: 8 }}>request</span>
-              </Button>
-              <Button
-                onClick={async e => {
-                  e.preventDefault()
-                  try {
-                    // @todo - update tx loading state
-                    await deposit(
-                      window.prompt('How Much LPT would you like to deposit?'),
-                    )
-                    window.alert('Deposit complete!')
-                  } catch (err) {
-                    console.log(err)
-                    window.alert(err.message)
-                  } finally {
-                    // @todo - update tx loading state
-                  }
-                }}
-              >
-                <PlusIcon size={12} />
-                <span style={{ marginLeft: 8 }}>deposit</span>
-              </Button>
-            </div>
-          </div>
-          <div
-            style={{
-              width: '50%',
-              margin: '16px 8px',
-              textAlign: 'center',
-              background: '#fff',
-              borderRadius: 4,
-              boxShadow: '0 2px 2px 0px rgba(0,0,0,.15)',
-            }}
-          >
-            <h3
-              style={{
-                borderBottom: '1px solid #eee',
-                margin: 0,
-                padding: '24px 8px',
+            />
+            <Route
+              path={`${match.url}/delegator`}
+              render={() => {
+                return 'DELEGATOR!'
               }}
-            >
-              <strong style={{ fontWeight: 400 }}>
-                {formatBalance(account.tokenBalance)}
-              </strong>{' '}
-              LPT
-              <div>
-                <span style={{ fontSize: 12 }}>
-                  {formatBalance(account.tokenBalance, 18)}
-                </span>
-              </div>
-            </h3>
-            <div>
-              <Button
-                onClick={async e => {
-                  e.preventDefault()
-                  try {
-                    const res = await tapFaucet()
-                    window.alert('Got LPT!')
-                  } catch (err) {
-                    console.error(err)
-                    window.alert(err.message)
-                  }
-                }}
-              >
-                <DownloadCloudIcon size={12} />
-                <span style={{ marginLeft: 8 }}>request</span>
-              </Button>
-              <Button
-                onClick={async e => {
-                  e.preventDefault()
-                  try {
-                    // @todo - update tx loading state
-                    await transferToken(
-                      window.prompt('Who would you like to transfer LPT to?'),
-                      window.prompt('How Much LPT would you like to transfer?'),
-                    )
-                    window.alert('Transfer complete!')
-                  } catch (err) {
-                    console.log(err)
-                    window.alert(err.message)
-                  } finally {
-                    // @todo - update tx loading state
-                  }
-                }}
-              >
-                <SendIcon size={12} />
-                <span style={{ marginLeft: 8 }}>transfer</span>
-              </Button>
-            </div>
-          </div>
+            />
+            <Route
+              path={`${match.url}/transcoder`}
+              render={() => {
+                return 'TRANSCODER!'
+              }}
+            />
+            <Redirect to={`${match.url}/overview`} />
+          </Switch>
         </div>
         <pre>
           <code>

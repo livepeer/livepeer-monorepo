@@ -27,11 +27,14 @@ import registerServiceWorker from './registerServiceWorker'
 
   // bootstrap the apollo client
   const client = await createApolloClient({
+    // Default gas to send with transactions
+    defaultGas: 80 * 1000,
     // If user account changes while on /me, this will hard refresh the page
     onAccountChange: (currentAccount: string, nextAccount: string): void => {
       const path = window.location.pathname.toLowerCase()
-      const onMyAccountPage = path === '/me' || nextAccount
-      if (onMyAccountPage) return window.location.reload()
+      const onMyAccountPage = path === '/me'
+      const accountChanged = nextAccount && currentAccount
+      if (onMyAccountPage && accountChanged) return window.location.reload()
     },
   })
 
