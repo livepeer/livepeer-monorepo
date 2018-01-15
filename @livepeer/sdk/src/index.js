@@ -474,11 +474,11 @@ export default async function createLivepeerSDK(
       tx = config.defaultTx,
     ): Promise<Object> {
       const value = toBN(amount)
-      // make sure balance is higher than bond
+      // make sure balance is higher than transfer
       const balance = (await LivepeerToken.balanceOf(tx.from))[0]
       if (!balance.gte(value)) {
         throw new Error(
-          `Cannot bond ${toString(
+          `Cannot transfer ${toString(
             value,
           )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
