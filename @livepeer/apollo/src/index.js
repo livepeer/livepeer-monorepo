@@ -19,6 +19,7 @@ type OnProviderChangeCallback = (
 ) => void
 
 type ApolloClientOptions = {
+  defaultGas?: number,
   onAccountChange?: OnAccountChangeCallback,
   onProviderChange?: OnProviderChangeCallback,
   // @todo - middleware option
@@ -139,7 +140,8 @@ export default async function createApolloClient(
   function initLivepeer(web3: Web3, accountIndex: number): Livepeer {
     const account = getAccountFromWeb3(web3, accountIndex) || state.account
     const provider = getProviderFromWeb3(web3) || state.provider
-    return Livepeer({ account, provider })
+    const gas = opts.defaultGas || 0
+    return Livepeer({ account, gas, provider })
   }
 
   /**
