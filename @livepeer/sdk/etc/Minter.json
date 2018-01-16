@@ -5,6 +5,20 @@
       "constant": false,
       "inputs": [
         {
+          "name": "_inflationChange",
+          "type": "uint256"
+        }
+      ],
+      "name": "setInflationChange",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
           "name": "_newOwner",
           "type": "address"
         }

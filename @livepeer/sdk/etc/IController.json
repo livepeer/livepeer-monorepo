@@ -26,24 +26,6 @@
     },
     {
       "constant": false,
-      "inputs": [
-        {
-          "name": "_id",
-          "type": "bytes32"
-        },
-        {
-          "name": "_contract",
-          "type": "address"
-        }
-      ],
-      "name": "setContract",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
       "inputs": [],
       "name": "pause",
       "outputs": [],
@@ -63,6 +45,28 @@
       ],
       "payable": false,
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_id",
+          "type": "bytes32"
+        },
+        {
+          "name": "_contractAddress",
+          "type": "address"
+        },
+        {
+          "name": "_gitCommitHash",
+          "type": "bytes20"
+        }
+      ],
+      "name": "setContractInfo",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -126,11 +130,16 @@
         },
         {
           "indexed": false,
-          "name": "contractAddr",
+          "name": "contractAddress",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "gitCommitHash",
+          "type": "bytes20"
         }
       ],
-      "name": "SetContract",
+      "name": "SetContractInfo",
       "type": "event"
     },
     {
