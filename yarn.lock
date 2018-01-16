@@ -3815,6 +3815,16 @@ fs-extra@^4.0.2:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
+fs-extra@~0.26.2:
+  version "0.26.7"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-0.26.7.tgz#9ae1fdd94897798edab76d0918cf42d0c3184fa9"
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^2.1.0"
+    klaw "^1.0.0"
+    path-is-absolute "^1.0.0"
+    rimraf "^2.2.8"
+
 fs-readdir-recursive@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fs-readdir-recursive/-/fs-readdir-recursive-1.1.0.tgz#e32fc030a2ccee44a6b5371308da54be0b397d27"
@@ -6139,7 +6149,7 @@ mute-stream@0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
-nan@^2.0.5, nan@^2.2.1, nan@^2.3.0:
+nan@^2.0.5, nan@^2.2.0, nan@^2.2.1, nan@^2.3.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.8.0.tgz#ed715f3fe9de02b57a5e6252d90a96675e1f085a"
 
@@ -6181,6 +6191,24 @@ node-fetch@^1.0.1:
 node-forge@0.6.33:
   version "0.6.33"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.6.33.tgz#463811879f573d45155ad6a9f43dc296e8e85ebc"
+
+node-gyp@^3.5.0:
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-3.6.2.tgz#9bfbe54562286284838e750eac05295853fa1c60"
+  dependencies:
+    fstream "^1.0.0"
+    glob "^7.0.3"
+    graceful-fs "^4.1.2"
+    minimatch "^3.0.2"
+    mkdirp "^0.5.0"
+    nopt "2 || 3"
+    npmlog "0 || 1 || 2 || 3 || 4"
+    osenv "0"
+    request "2"
+    rimraf "2"
+    semver "~5.3.0"
+    tar "^2.0.0"
+    which "1"
 
 node-int64@^0.4.0:
   version "0.4.0"
@@ -6227,7 +6255,7 @@ node-notifier@^5.0.2:
     shellwords "^0.1.0"
     which "^1.2.12"
 
-node-pre-gyp@^0.6.36, node-pre-gyp@^0.6.39:
+node-pre-gyp@^0.6.36, node-pre-gyp@^0.6.39, node-pre-gyp@~0.6.32:
   version "0.6.39"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.6.39.tgz#c00e96860b23c0e1420ac7befc5044e1d78d8649"
   dependencies:
@@ -6251,12 +6279,35 @@ node-version@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/node-version/-/node-version-1.1.0.tgz#f437d7ba407e65e2c4eaef8887b1718ba523d4f0"
 
+nodegit-promise@~4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/nodegit-promise/-/nodegit-promise-4.0.0.tgz#5722b184f2df7327161064a791d2e842c9167b34"
+  dependencies:
+    asap "~2.0.3"
+
+nodegit@^0.20.3:
+  version "0.20.3"
+  resolved "https://registry.yarnpkg.com/nodegit/-/nodegit-0.20.3.tgz#a44172db08c833cdcb1ab9bbc2c832ce05898815"
+  dependencies:
+    fs-extra "~0.26.2"
+    lodash "^4.13.1"
+    nan "^2.2.0"
+    node-gyp "^3.5.0"
+    node-pre-gyp "~0.6.32"
+    promisify-node "~0.3.0"
+
 nomnom@~1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/nomnom/-/nomnom-1.6.2.tgz#84a66a260174408fc5b77a18f888eccc44fb6971"
   dependencies:
     colors "0.5.x"
     underscore "~1.4.4"
+
+"nopt@2 || 3":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/nopt/-/nopt-3.0.6.tgz#c6465dbf08abcd4db359317f79ac68a646b28ff9"
+  dependencies:
+    abbrev "1"
 
 nopt@^4.0.1:
   version "4.0.1"
@@ -6299,7 +6350,7 @@ npm-run-path@^2.0.0:
   dependencies:
     path-key "^2.0.0"
 
-npmlog@^4.0.2:
+"npmlog@0 || 1 || 2 || 3 || 4", npmlog@^4.0.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/npmlog/-/npmlog-4.1.2.tgz#08a7f2a8bf734604779a9efa4ad5cc717abb954b"
   dependencies:
@@ -6504,7 +6555,7 @@ os-tmpdir@^1.0.0, os-tmpdir@^1.0.1, os-tmpdir@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
 
-osenv@^0.1.0, osenv@^0.1.4:
+osenv@0, osenv@^0.1.0, osenv@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/osenv/-/osenv-0.1.4.tgz#42fe6d5953df06c8064be6f176c3d05aaaa34644"
   dependencies:
@@ -7165,6 +7216,12 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
+promisify-node@~0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/promisify-node/-/promisify-node-0.3.0.tgz#b4b55acf90faa7d2b8b90ca396899086c03060cf"
+  dependencies:
+    nodegit-promise "~4.0.0"
+
 prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
@@ -7176,6 +7233,26 @@ prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0:
 property-expr@^1.2.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-1.4.0.tgz#e28cfe4e7a5a231fb14c8ad687a93a5342e05a8c"
+
+"protocol@https://github.com/livepeer/protocol.git#52e2919ec2eb57c7888938919403dba5e5c714f7":
+  version "1.0.0"
+  resolved "https://github.com/livepeer/protocol.git#52e2919ec2eb57c7888938919403dba5e5c714f7"
+  dependencies:
+    babel-polyfill "^6.23.0"
+    babel-preset-es2015 "^6.24.1"
+    babel-preset-stage-2 "^6.24.1"
+    babel-preset-stage-3 "^6.24.1"
+    babel-register "^6.24.1"
+    bignumber.js "^4.0.1"
+    eslint "^4.3.0"
+    eslint-config-google "^0.9.1"
+    ethereumjs-abi "^0.6.4"
+    ethereumjs-util "^5.1.2"
+    mkdirp "^0.5.1"
+    nodegit "^0.20.3"
+    solium "github:AugurProject/Solium"
+    truffle "^4.0.1"
+    zeppelin-solidity "^1.3.0"
 
 "protocol@https://github.com/livepeer/protocol.git#a313fa61369b0e103ec747a923a5424f828e8547":
   version "1.0.0"
@@ -7745,6 +7822,33 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
+request@2, request@^2.79.0:
+  version "2.83.0"
+  resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
+  dependencies:
+    aws-sign2 "~0.7.0"
+    aws4 "^1.6.0"
+    caseless "~0.12.0"
+    combined-stream "~1.0.5"
+    extend "~3.0.1"
+    forever-agent "~0.6.1"
+    form-data "~2.3.1"
+    har-validator "~5.0.3"
+    hawk "~6.0.2"
+    http-signature "~1.2.0"
+    is-typedarray "~1.0.0"
+    isstream "~0.1.2"
+    json-stringify-safe "~5.0.1"
+    mime-types "~2.1.17"
+    oauth-sign "~0.8.2"
+    performance-now "^2.1.0"
+    qs "~6.5.1"
+    safe-buffer "^5.1.1"
+    stringstream "~0.0.5"
+    tough-cookie "~2.3.3"
+    tunnel-agent "^0.6.0"
+    uuid "^3.1.0"
+
 request@2.81.0:
   version "2.81.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
@@ -7771,33 +7875,6 @@ request@2.81.0:
     tough-cookie "~2.3.0"
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
-
-request@^2.79.0:
-  version "2.83.0"
-  resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
-  dependencies:
-    aws-sign2 "~0.7.0"
-    aws4 "^1.6.0"
-    caseless "~0.12.0"
-    combined-stream "~1.0.5"
-    extend "~3.0.1"
-    forever-agent "~0.6.1"
-    form-data "~2.3.1"
-    har-validator "~5.0.3"
-    hawk "~6.0.2"
-    http-signature "~1.2.0"
-    is-typedarray "~1.0.0"
-    isstream "~0.1.2"
-    json-stringify-safe "~5.0.1"
-    mime-types "~2.1.17"
-    oauth-sign "~0.8.2"
-    performance-now "^2.1.0"
-    qs "~6.5.1"
-    safe-buffer "^5.1.1"
-    stringstream "~0.0.5"
-    tough-cookie "~2.3.3"
-    tunnel-agent "^0.6.0"
-    uuid "^3.1.0"
 
 require-directory@^2.1.1:
   version "2.1.1"
@@ -8007,6 +8084,10 @@ semver-diff@^2.0.0:
 "semver@2 || 3 || 4 || 5", semver@^5.0.3, semver@^5.1.0, semver@^5.3.0:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.4.1.tgz#e059c09d8571f0540823733433505d3a2f00b18e"
+
+semver@~5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
 send@0.16.1:
   version "0.16.1"
@@ -8602,7 +8683,7 @@ tar-pack@^3.4.0:
     tar "^2.2.1"
     uid-number "^0.0.6"
 
-tar@^2.2.1:
+tar@^2.0.0, tar@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/tar/-/tar-2.2.1.tgz#8e4d2a256c0e2185c6b18ad694aec968b83cb1d1"
   dependencies:
@@ -9239,7 +9320,7 @@ which-module@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
 
-which@^1.2.12, which@^1.2.14, which@^1.2.9:
+which@1, which@^1.2.12, which@^1.2.14, which@^1.2.9:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/which/-/which-1.3.0.tgz#ff04bdfc010ee547d780bec38e1ac1c2777d253a"
   dependencies:
