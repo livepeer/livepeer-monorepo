@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react'
+import { matchPath } from 'react-router'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -264,15 +265,16 @@ type Props = {
 
 const AccountOverview: React.Component<Props> = ({
   account,
+  history,
   loading,
   match,
   onDepositETH,
   onRequestETH,
   onRequestLPT,
   onTransferLPT,
-}: AccountOverviewProps): ReactElement => {
+}: Props): ReactElement => {
   const { ethBalance, tokenBalance } = account
-  const me = !match.params.account
+  const me = matchPath(history.location.pathname, { path: '/me' })
   return (
     <Wrapper>
       {/** ETH */}

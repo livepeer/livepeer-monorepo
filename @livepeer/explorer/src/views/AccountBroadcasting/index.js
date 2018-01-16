@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react'
+import { matchPath } from 'react-router'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -209,22 +210,18 @@ const MetricBox = ({ balance, title, suffix, prefix, erc20, children }) => {
 }
 
 type Props = {
-  account: {
-    id?: string,
-    deposit?: string,
-    withdrawBlock?: string,
+  broadcaster: {
+    // @todo
   },
   loading: boolean,
-  me: boolean,
 }
-
 const AccountOverview: React.Component<Props> = ({
   broadcaster,
   loading,
-  match,
+  history,
 }: AccountOverviewProps): ReactElement => {
   const { deposit, jobs, withdrawBlock } = broadcaster
-  const me = !match.params.account
+  const me = matchPath(history.location.pathname, { path: '/me' })
   return (
     <Wrapper>
       {/** ETH Deposit */}
@@ -233,6 +230,7 @@ const AccountOverview: React.Component<Props> = ({
       <MetricBox title="Withdraw Block" balance={withdrawBlock} />
       <Content>
         <h3>Job History</h3>
+        {!jobs.length && <div>There are no jobs for this account</div>}
         <div>
           {jobs.map(({ id, broadcaster, profiles, streamId }) => {
             return (

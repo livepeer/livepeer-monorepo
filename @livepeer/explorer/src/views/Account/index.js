@@ -1,4 +1,5 @@
 import React from 'react'
+import { matchPath } from 'react-router'
 import { Link, NavLink, Redirect, Route, Switch } from 'react-router-dom'
 import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
@@ -18,6 +19,8 @@ import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import AccountOverview from '../AccountOverview'
 import AccountBroadcasting from '../AccountBroadcasting'
+import AccountDelegating from '../AccountDelegating'
+import AccountTranscoding from '../AccountTranscoding'
 import { actions as routingActions } from '../../services/routing'
 
 const { viewAccount } = routingActions
@@ -181,8 +184,19 @@ const Tabs = styled.div`
   border-bottom: 1px solid #ddd;
 `
 
-const AccountView = ({ account, color, loading, match, viewAccount }) => {
-  const me = !match.params.account
+type Props = {
+  // @todo
+}
+
+const AccountView: React.Component<Props> = ({
+  account,
+  color,
+  history,
+  loading,
+  match,
+  viewAccount,
+}: Props): ReactElement => {
+  const me = matchPath(history.location.pathname, { path: '/me' })
   return (
     <React.Fragment>
       <AccountTopSection>
@@ -213,15 +227,11 @@ const AccountView = ({ account, color, loading, match, viewAccount }) => {
             />
             <Route
               path={`${match.url}/delegating`}
-              render={() => {
-                return 'DELEGATOR INFO!'
-              }}
+              component={AccountDelegating}
             />
             <Route
               path={`${match.url}/transcoding`}
-              render={() => {
-                return 'TRANSCODER INFO!'
-              }}
+              component={AccountTranscoding}
             />
             <Redirect to={`${match.url}/overview`} />
           </Switch>

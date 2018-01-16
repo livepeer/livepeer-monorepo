@@ -9,7 +9,6 @@ const App = ({ location }) => (
     <Switch>
       <Route exact path="/" component={Landing} />
       <Route
-        exact
         path="/accounts/:account"
         render={props => {
           const account = window.livepeer.config.defaultTx.from
