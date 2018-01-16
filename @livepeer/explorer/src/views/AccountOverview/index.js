@@ -129,7 +129,7 @@ fragment AccountFragment on Account {
   ethBalance
   tokenBalance
 }
-query MeOrAccountQuery(
+query AccountQuery(
   $id: String!,
   $me: Boolean!
 ) {
@@ -211,27 +211,43 @@ const InnerBox = styled.div`
   box-shadow: 0 2px 2px 0px rgba(0, 0, 0, 0.15);
 `
 
-const TokenBox = ({ balance, type, children }) => {
+const MetricBox = ({ balance, title, suffix, prefix, erc20, children }) => {
   return (
     <Box width="50%">
+      <h2
+        style={{
+          margin: 0,
+          padding: 16,
+          fontSize: 14,
+          textTransform: 'uppercase',
+          borderBottom: '1px solid #eee',
+          color: '#666',
+        }}
+      >
+        {title}
+      </h2>
       <h3
         style={{
           borderBottom: children ? '1px solid #eee' : '',
           margin: 0,
-          padding: '24px 8px',
+          padding: `${24 + (!erc20 ? 12 : 0)}px 8px`,
         }}
       >
-        <strong style={{ fontWeight: 400 }}>{formatBalance(balance)}</strong>{' '}
-        {type}
+        {prefix}
+        <strong style={{ fontWeight: 400 }}>
+          {formatBalance(balance)}
+        </strong>{' '}
+        {suffix}
         <div>
-          <span style={{ fontSize: 12 }}>{formatBalance(balance, 18)}</span>
+          {erc20 && (
+            <span style={{ fontSize: 12 }}>{formatBalance(balance, 18)}</span>
+          )}
         </div>
       </h3>
       <div>{children}</div>
     </Box>
   )
 }
-
 type Props = {
   account: {
     id?: string,
@@ -260,7 +276,7 @@ const AccountOverview: React.Component<Props> = ({
   return (
     <Wrapper>
       {/** ETH */}
-      <TokenBox type="ETH" balance={ethBalance}>
+      <MetricBox erc20 title="ETH Balance" type="ETH" balance={ethBalance}>
         {me && (
           <React.Fragment>
             {/** request */}
@@ -275,9 +291,9 @@ const AccountOverview: React.Component<Props> = ({
             </Button>
           </React.Fragment>
         )}
-      </TokenBox>
+      </MetricBox>
       {/** LPT */}
-      <TokenBox type="LPT" balance={tokenBalance}>
+      <MetricBox erc20 title="Token Balance" type="LPT" balance={tokenBalance}>
         {me && (
           <React.Fragment>
             {/** request */}
@@ -292,7 +308,7 @@ const AccountOverview: React.Component<Props> = ({
             </Button>
           </React.Fragment>
         )}
-      </TokenBox>
+      </MetricBox>
     </Wrapper>
   )
 }

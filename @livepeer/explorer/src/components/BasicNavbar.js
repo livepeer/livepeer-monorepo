@@ -49,7 +49,7 @@ const Nav = styled.nav`
   height: 64px;
   // margin-bottom: 24px;
   padding: 16px 24px;
-  background: #283845;
+  background: #000;
   & *::placeholder {
     color: #fff;
   }

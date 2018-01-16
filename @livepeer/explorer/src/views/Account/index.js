@@ -17,6 +17,7 @@ import QRCode from 'qrcode-react'
 import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import AccountOverview from '../AccountOverview'
+import AccountBroadcasting from '../AccountBroadcasting'
 import { actions as routingActions } from '../../services/routing'
 
 const { viewAccount } = routingActions
@@ -37,7 +38,7 @@ fragment AccountFragment on Account {
   ethBalance
   tokenBalance
 }
-query MeOrAccountQuery(
+query AccountQuery(
   $id: String!,
   $me: Boolean!
 ) {
@@ -82,7 +83,7 @@ const connectApollo = graphql(query, {
 const enhance = compose(connectRedux, connectApollo)
 
 const AccountTopSection = styled.div`
-  background: radial-gradient(circle at 500px 550px, #177E89cc, #283845 75%);
+  background: radial-gradient(circle at 500px 550px, #177e89cc, #000 75%);
   height: 240px;
   margin: 0 auto;
   padding: 32px;
@@ -157,16 +158,16 @@ const TabLink = ({ children, to }) => {
         to={to}
         style={{
           display: 'inline-block',
-          fontWeight: 400,
           textDecoration: 'none',
           textTransform: 'capitalize',
           color: '#888',
-          paddingBottom: 12
+          paddingBottom: 20,
+          paddingTop: 12,
         }}
         activeStyle={{
           color: '#177E89',
           backgroundImage:
-            'linear-gradient(to top,rgba(0,0,0,0),rgba(0,0,0,0) 0px,#177E89 0px,#177E89 2px,rgba(0,0,0,0) 2px)',
+            'linear-gradient(to top,rgba(0,0,0,0),rgba(0,0,0,0) 0px,#00eb88 0px,#00eb88 2px,rgba(0,0,0,0) 2px)',
         }}
       >
         {children}
@@ -200,38 +201,31 @@ const AccountView = ({ account, color, loading, match, viewAccount }) => {
         <div>
           <Tabs url={match.url}>
             <TabLink to={`${match.url}/overview`}>overview</TabLink>
-            <TabLink to={`${match.url}/broadcaster`}>broadcasting</TabLink>
-            <TabLink to={`${match.url}/delegator`}>delegating</TabLink>
-            <TabLink to={`${match.url}/transcoder`}>transcoding</TabLink>
+            <TabLink to={`${match.url}/broadcasting`}>broadcasting</TabLink>
+            <TabLink to={`${match.url}/delegating`}>delegating</TabLink>
+            <TabLink to={`${match.url}/transcoding`}>transcoding</TabLink>
           </Tabs>
           <Switch>
             <Route path={`${match.url}/overview`} component={AccountOverview} />
             <Route
-              path={`${match.url}/broadcaster`}
+              path={`${match.url}/broadcasting`}
+              component={AccountBroadcasting}
+            />
+            <Route
+              path={`${match.url}/delegating`}
               render={() => {
-                return 'BROADCASTER!'
+                return 'DELEGATOR INFO!'
               }}
             />
             <Route
-              path={`${match.url}/delegator`}
+              path={`${match.url}/transcoding`}
               render={() => {
-                return 'DELEGATOR!'
-              }}
-            />
-            <Route
-              path={`${match.url}/transcoder`}
-              render={() => {
-                return 'TRANSCODER!'
+                return 'TRANSCODER INFO!'
               }}
             />
             <Redirect to={`${match.url}/overview`} />
           </Switch>
         </div>
-        <pre>
-          <code>
-            {loading ? 'loading...' : JSON.stringify(account, null, 2)}
-          </code>
-        </pre>
       </Content>
     </React.Fragment>
   )
