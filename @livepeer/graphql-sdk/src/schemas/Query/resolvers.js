@@ -124,8 +124,11 @@ export async function jobs(
   args: QueryJobsArgs,
   ctx: GQLContext,
 ): Array<Job> {
-  const { skip = 0, limit = 100 } = args
-  const result = await ctx.livepeer.rpc.getJobs(args)
+  const { skip = 0, limit = 100, broadcaster = ctx.account, ..._args } = args
+  const result = await ctx.livepeer.rpc.getJobs({
+    broadcaster,
+    ..._args,
+  })
   const jobs = result.slice(skip, skip + limit).map(transformJob)
   return jobs
 }
