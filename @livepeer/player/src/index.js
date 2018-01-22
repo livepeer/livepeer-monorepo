@@ -23,9 +23,7 @@ import App from './containers/App'
   `
   // Bootstrap the apollo client
   const client = await createApolloClient({
-    onAccountChange: (currentAccount: string, nextAccount: string): void => {
-      console.log('account changed:', currentAccount, '->', nextAccount)
-    },
+    provider: 'https://ethrpc-testnet.livepeer.org',
   })
 
   // Main UI rendering function

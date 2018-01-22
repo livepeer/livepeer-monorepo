@@ -38,7 +38,7 @@ const connectApollo = graphql(gql(queries.JobsQuery), {
   // @TODO: figure out why pollInterval seems to do nothing
   // pollInterval: 10,
   props: ({ data, ownProps }, state) => {
-    console.log(data)
+    // console.log(data)
     return {
       ...ownProps,
       loading: data.loading,
@@ -70,7 +70,7 @@ class Channel extends Component {
       return
     }
     const manifestId = newJob.streamId.substr(0, 68 + 64)
-    const url = `https://d194z9vj66yekd.cloudfront.net/stream/${manifestId}.m3u8`
+    const url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
     this.setState({ url })
   }
   render() {
@@ -97,7 +97,7 @@ class Channel extends Component {
                   right: 0,
                   margin: 0,
                   color: '#fff',
-                  zIndex: 1,
+                  zIndex: 2,
                 }}
               >
                 <FadeInOut loading={loading || live === null}>
