@@ -19,6 +19,7 @@ type OnProviderChangeCallback = (
 ) => void
 
 type ApolloClientOptions = {
+  provider?: string,
   defaultGas?: number,
   onAccountChange?: OnAccountChangeCallback,
   onProviderChange?: OnProviderChangeCallback,
@@ -85,6 +86,7 @@ export default async function createApolloClient(
    * @return {boolean}
    */
   function shouldUpdateProvider(web3: Web3): boolean {
+    if (opts.provider) return false
     if (!web3 || state.updating) return false
     return state.provider !== getProviderFromWeb3(web3)
   }
@@ -98,7 +100,7 @@ export default async function createApolloClient(
     try {
       state.updating = true
       state.account = getAccountFromWeb3(web3, accountIndex)
-      state.provider = getProviderFromWeb3(web3)
+      state.provider = opts.provider || getProviderFromWeb3(web3)
       state.livepeer = window.livepeer = await initLivepeer(state)
     } catch (err) {
       console.warn('updateConfig() failed with the following error:')
@@ -139,7 +141,8 @@ export default async function createApolloClient(
    */
   function initLivepeer(web3: Web3, accountIndex: number): Livepeer {
     const account = getAccountFromWeb3(web3, accountIndex) || state.account
-    const provider = getProviderFromWeb3(web3) || state.provider
+    const provider =
+      opts.provider || getProviderFromWeb3(web3) || state.provider
     const gas = opts.defaultGas || 0
     return Livepeer({ account, gas, provider })
   }
@@ -178,7 +181,7 @@ export default async function createApolloClient(
               observer.complete(value)
             })
             .catch(e => {
-              console.log(e)
+              console.error(e)
               observer.error(e)
             })
         }),
