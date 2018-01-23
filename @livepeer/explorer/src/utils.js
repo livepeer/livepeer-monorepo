@@ -1,6 +1,16 @@
 import { matchPath } from 'react-router'
 import Big from 'big.js'
 
+export function formatPercentage(x: string, decimals = 2): string {
+  return !x
+    ? ''
+    : Big(x)
+        .div('10000')
+        .toFixed(decimals)
+        .replace(/0+$/, '')
+        .replace(/\.$/, '')
+}
+
 export function formatBalance(x: string, decimals: number = 6): string {
   if (!x) return ''
   return Big(x)

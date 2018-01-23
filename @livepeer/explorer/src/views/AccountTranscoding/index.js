@@ -13,6 +13,7 @@ import {
 } from 'react-feather'
 import {
   formatBalance,
+  formatPercentage,
   openSocket,
   pathInfo,
   promptForArgs,
@@ -225,18 +226,24 @@ const AccountdTranscoding: React.Component<Props> = ({
       <MetricBox title="Active" value={active ? 'True' : 'False'} />
       <MetricBox
         title="Block Reward Cut"
-        suffix="LPT"
-        value={formatBalance(blockRewardCut)}
-        subvalue={formatBalance(blockRewardCut, 18)}
+        suffix="%"
+        value={formatPercentage(blockRewardCut)}
       />
       <MetricBox
         title="Pending Block Reward Cut"
-        suffix="LPT"
-        value={formatBalance(pendingBlockRewardCut)}
-        subvalue={formatBalance(pendingBlockRewardCut, 18)}
+        suffix="%"
+        value={formatPercentage(pendingBlockRewardCut)}
       />
-      <MetricBox title="Fee Share" suffix="%" value={feeShare} />
-      <MetricBox title="Pending Fee Share" suffix="%" value={pendingFeeShare} />
+      <MetricBox
+        title="Fee Share"
+        suffix="%"
+        value={formatPercentage(feeShare)}
+      />
+      <MetricBox
+        title="Pending Fee Share"
+        suffix="%"
+        value={formatPercentage(pendingFeeShare)}
+      />
       <MetricBox
         title="Price Per Segment"
         suffix="ETH"
