@@ -41,6 +41,6 @@
 <!--- Delete this section if not relevant -->
 ```
 Paste related logs and/or error messages from the console here.
-Network issues, such as the cURL output from failing requests, can also be pasted here
+Network issues, such as the cURL output from failing requests, can also be pasted here.
 ```
 
