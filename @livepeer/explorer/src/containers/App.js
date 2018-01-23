@@ -4,6 +4,11 @@ import Landing from '../views/Landing'
 import Account from '../views/Account'
 import { history } from '../store'
 
+const onMyAccountPage = (
+  match: { params: { account: string } },
+  account: ?string,
+): boolean => (account ? match.params.account.toLowerCase() === account : false)
+
 const App = ({ location }) => (
   <div>
     <Switch>
@@ -11,11 +16,10 @@ const App = ({ location }) => (
       <Route
         path="/accounts/:account"
         render={props => {
-          const account = window.livepeer.config.defaultTx.from
-          const onMyAccountPage = account
-            ? props.match.params.account.toLowerCase() === account
-            : false
-          return onMyAccountPage ? (
+          return onMyAccountPage(
+            props.match,
+            window.livepeer.config.defaultTx.from,
+          ) ? (
             <Redirect to="/me" />
           ) : (
             <Account {...props} />
@@ -26,11 +30,7 @@ const App = ({ location }) => (
         path="/me"
         render={(props, ctx) => {
           const account = window.livepeer.config.defaultTx.from
-          return !account ? (
-            <Redirect to="/" />
-          ) : (
-            <Account {...props} />
-          )
+          return !account ? <Redirect to="/" /> : <Account {...props} />
         }}
       />
       <Redirect to="/" />

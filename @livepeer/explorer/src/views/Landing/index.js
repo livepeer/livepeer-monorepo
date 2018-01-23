@@ -1,6 +1,7 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+// import { withApollo } from 'react-apollo'
 import styled from 'styled-components'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
@@ -21,7 +22,7 @@ const mapDispatchToProps = dispatch =>
 
 const enhance = connect(mapStateToProps, mapDispatchToProps)
 
-const Landing = ({ query, viewAccount }) => (
+const Landing = ({ query, viewAccount, ...props }) => (
   <Container>
     <Navbar />
     <img src="/wordmark.svg" width="240" alt="The glorious Livepeer wordmark" />
@@ -55,6 +56,12 @@ const Landing = ({ query, viewAccount }) => (
       <br />
       <br />
       <div style={{ borderRadius: 8, border: '1px solid #fff', padding: 32 }}>
+        {/*
+          <h2>ETH RPC Provider</h2>
+          <div>
+            <p>{window.livepeer.config.provider}</p>
+          </div>
+        */}
         <h2>ABI Contract Addresses</h2>
         {Object.entries(window.livepeer.config.contracts).map(
           ([name, { address }]) => (
@@ -79,7 +86,7 @@ const Container = styled.div`
   justify-content: top;
   min-height: 100vh;
   padding: 80px 32px;
-  background: #283845;
+  background: #000;
   color: #fff;
 `
 

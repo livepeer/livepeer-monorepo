@@ -1,3 +1,4 @@
+import { matchPath } from 'react-router'
 import Big from 'big.js'
 
 export function formatBalance(x: string, decimals: number = 6): string {
@@ -36,4 +37,18 @@ export function openSocket(url: string): WebSocket {
       resolve(ws)
     }
   })
+}
+
+export function isMe(url: string): boolean {
+  return !!matchPath(url, { path: '/me' })
+}
+
+export function getAccountParam(url: string): string {
+  const match = matchPath(url, { path: '/accounts/:account' })
+  return match ? match.params.account : ''
+}
+
+export const pathInfo = {
+  isMe,
+  getAccountParam,
 }

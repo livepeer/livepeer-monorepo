@@ -13,9 +13,10 @@ import {
 } from 'react-feather'
 import {
   formatBalance,
-  toBaseUnit,
-  promptForArgs,
   openSocket,
+  pathInfo,
+  promptForArgs,
+  toBaseUnit,
 } from '../../utils'
 
 /**
@@ -61,7 +62,7 @@ fragment JobFragment on Job {
     resolution
   }
 }
-query BroadcasterAndJobsQuery(
+query AccountBroadcasterAndJobsQuery(
   $id: String!,
   $me: Boolean!
 ) {
@@ -108,8 +109,8 @@ const connectApollo = graphql(query, {
     return {
       pollInterval: 5000,
       variables: {
-        id: match.params.account || '',
-        me: !match.params.account,
+        id: pathInfo.getAccountParam(match.path),
+        me: pathInfo.isMe(match.path),
       },
     }
   },
@@ -215,13 +216,14 @@ type Props = {
   },
   loading: boolean,
 }
-const AccountOverview: React.Component<Props> = ({
+const AccountBroadcasting: React.Component<Props> = ({
   broadcaster,
-  loading,
   history,
-}: AccountOverviewProps): ReactElement => {
+  loading,
+  match,
+}: AccountBroadcastingProps): ReactElement => {
   const { deposit, jobs, withdrawBlock } = broadcaster
-  const me = matchPath(history.location.pathname, { path: '/me' })
+  const me = pathInfo.isMe(match.path)
   return (
     <Wrapper>
       {/** ETH Deposit */}
@@ -258,6 +260,7 @@ const AccountOverview: React.Component<Props> = ({
                     Manifest ID
                   </strong>
                   <input
+                    readOnly
                     value={streamId.substr(0, 68 + 64)}
                     onFocus={e => e.target.select()}
                     style={{
@@ -316,4 +319,4 @@ const AccountOverview: React.Component<Props> = ({
   )
 }
 
-export default enhance(AccountOverview)
+export default enhance(AccountBroadcasting)

@@ -13,13 +13,14 @@ import {
 } from 'react-feather'
 import {
   formatBalance,
-  toBaseUnit,
-  promptForArgs,
   openSocket,
+  pathInfo,
+  promptForArgs,
+  toBaseUnit,
 } from '../../utils'
 
 /**
- * Components
+ * ENhancers
  */
 
 const withTransactionHandlers = withHandlers({
@@ -56,7 +57,7 @@ fragment TranscoderFragment on Transcoder {
   pendingFeeShare
   pendingPricePerSegment
 }
-query DelegatorQuery(
+query AccountTranscoderQuery(
   $id: String!,
   $me: Boolean!
 ) {
@@ -97,8 +98,8 @@ const connectApollo = graphql(query, {
     return {
       pollInterval: 5000,
       variables: {
-        id: match.params.account || '',
-        me: !match.params.account,
+        id: pathInfo.getAccountParam(match.path),
+        me: pathInfo.isMe(match.path),
       },
     }
   },
@@ -200,7 +201,7 @@ type Props = {
   loading: boolean,
 }
 
-const AccountOverview: React.Component<Props> = ({
+const AccountdTranscoding: React.Component<Props> = ({
   history,
   transcoder,
   loading,
@@ -217,7 +218,7 @@ const AccountOverview: React.Component<Props> = ({
     pendingFeeShare,
     pendingPricePerSegment,
   } = transcoder
-  const me = matchPath(history.location.pathname, { path: '/me' })
+  const me = pathInfo.isMe(match.path)
   return (
     <Wrapper>
       <MetricBox title="Status" value={status} />
@@ -253,4 +254,4 @@ const AccountOverview: React.Component<Props> = ({
   )
 }
 
-export default enhance(AccountOverview)
+export default enhance(AccountdTranscoding)

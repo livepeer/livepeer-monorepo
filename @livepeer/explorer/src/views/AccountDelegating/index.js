@@ -13,9 +13,10 @@ import {
 } from 'react-feather'
 import {
   formatBalance,
-  toBaseUnit,
-  promptForArgs,
   openSocket,
+  pathInfo,
+  promptForArgs,
+  toBaseUnit,
 } from '../../utils'
 
 /**
@@ -55,7 +56,7 @@ fragment DelegatorFragment on Delegator {
   startRound
   withdrawRound
 }
-query DelegatorQuery(
+query AccountDelegatorQuery(
   $id: String!,
   $me: Boolean!
 ) {
@@ -96,8 +97,8 @@ const connectApollo = graphql(query, {
     return {
       pollInterval: 5000,
       variables: {
-        id: match.params.account || '',
-        me: !match.params.account,
+        id: pathInfo.getAccountParam(match.path),
+        me: pathInfo.isMe(match.path),
       },
     }
   },
@@ -199,7 +200,7 @@ type Props = {
   loading: boolean,
 }
 
-const AccountOverview: React.Component<Props> = ({
+const AccountDelegating: React.Component<Props> = ({
   delegator,
   history,
   loading,
@@ -215,7 +216,7 @@ const AccountOverview: React.Component<Props> = ({
     startRound,
     withdrawRound,
   } = delegator
-  const me = matchPath(history.location.pathname, { path: '/me' })
+  const me = pathInfo.isMe(match.path)
   return (
     <Wrapper>
       <MetricBox title="Status" value={status} />
@@ -248,4 +249,4 @@ const AccountOverview: React.Component<Props> = ({
   )
 }
 
-export default enhance(AccountOverview)
+export default enhance(AccountDelegating)

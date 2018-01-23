@@ -12,9 +12,10 @@ import {
 } from 'react-feather'
 import {
   formatBalance,
-  toBaseUnit,
-  promptForArgs,
   openSocket,
+  pathInfo,
+  promptForArgs,
+  toBaseUnit,
 } from '../../utils'
 
 /**
@@ -130,7 +131,7 @@ fragment AccountFragment on Account {
   ethBalance
   tokenBalance
 }
-query AccountQuery(
+query AccountOverviewQuery(
   $id: String!,
   $me: Boolean!
 ) {
@@ -159,8 +160,8 @@ const connectApollo = graphql(query, {
     return {
       pollInterval: 5000,
       variables: {
-        id: match.params.account || '',
-        me: !match.params.account,
+        id: pathInfo.getAccountParam(match.path),
+        me: pathInfo.isMe(match.path),
       },
     }
   },
@@ -274,7 +275,7 @@ const AccountOverview: React.Component<Props> = ({
   onTransferLPT,
 }: Props): ReactElement => {
   const { ethBalance, tokenBalance } = account
-  const me = matchPath(history.location.pathname, { path: '/me' })
+  const me = pathInfo.isMe(match.path)
   return (
     <Wrapper>
       {/** ETH */}
