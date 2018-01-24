@@ -638,10 +638,10 @@ export default async function createLivepeerSDK(
         delegateAddress,
         delegatedAmount,
         fees,
-        lastClaimRound: lastClaimRound ? lastClaimRound : null,
-        startRound: startRound ? startRound : null,
+        lastClaimRound,
+        startRound,
         status,
-        withdrawRound: withdrawRound ? withdrawRound : null,
+        withdrawRound,
       }
     },
 
