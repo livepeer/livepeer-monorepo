@@ -4,3 +4,4 @@ node_modules
 **/*/main
 **/*/dist
 yarn-error.log
+.env*.local
