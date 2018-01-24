@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react'
 import { matchPath } from 'react-router'
+import { Link } from 'react-router-dom'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -78,8 +79,6 @@ query AccountDelegatorQuery(
 const connectApollo = graphql(query, {
   props: ({ data, ownProps }) => {
     const delegator = {
-      deposit: '',
-      withdrawBlock: '',
       jobs: [],
       ...(data.account || {}).delegator,
       ...(data.me || {}).delegator,
@@ -183,8 +182,24 @@ const MetricBox = ({ value, subvalue, title, suffix, prefix, children }) => {
         }}
       >
         {prefix}
-        <strong style={{ fontWeight: 400 }}>{value}</strong> {suffix}
-        <div>
+        <strong
+          style={{
+            fontWeight: 400,
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {value}
+        </strong>{' '}
+        {suffix}
+        <div
+          style={{
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {subvalue && <span style={{ fontSize: 12 }}>{subvalue}</span>}
         </div>
       </h3>
@@ -220,7 +235,13 @@ const AccountDelegating: React.Component<Props> = ({
   return (
     <Wrapper>
       <MetricBox title="Status" value={status} />
-      <MetricBox title="Delegate Address" value={delegateAddress || 'N/A'} />
+      <MetricBox
+        title="Delegate Address"
+        value={
+          <Link to={`/accounts/${delegateAddress}`}>View Account</Link> || 'N/A'
+        }
+        subvalue={delegateAddress}
+      />
       <MetricBox
         title="Bonded Amount"
         suffix="LPT"
@@ -239,12 +260,9 @@ const AccountDelegating: React.Component<Props> = ({
         value={formatBalance(delegatedAmount)}
         subvalue={formatBalance(delegatedAmount, 18)}
       />
-      <MetricBox
-        title="Last Claim Round"
-        value={formatBalance(lastClaimRound)}
-      />
-      <MetricBox title="Start Round" value={formatBalance(startRound)} />
-      <MetricBox title="Withdraw Round" value={formatBalance(withdrawRound)} />
+      <MetricBox title="Last Claim Round" value={lastClaimRound} />
+      <MetricBox title="Start Round" value={startRound} />
+      <MetricBox title="Withdraw Round" value={withdrawRound} />
     </Wrapper>
   )
 }

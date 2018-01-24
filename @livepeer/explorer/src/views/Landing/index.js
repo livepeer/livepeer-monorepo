@@ -13,6 +13,23 @@ import {
 const { viewAccount } = routingActions
 const { getParsedQueryString } = routingSelectors
 
+const NETWORKS = {
+  1: 'Ethereum Main Network',
+  2: 'Morden, Expanse Mainnet',
+  3: 'Ropsten Test Network',
+  4: 'Rinkeby Test Network',
+  30: 'Rootstock Main Network',
+  31: 'Rootstock Test Network',
+  42: 'Kovan Test Network',
+  61: 'Ethereum Classic Main Network',
+  62: 'Ethereum Classic Test Network',
+  858585: 'Livepeer Test Network',
+}
+const getNetwork = web3 => {
+  return web3 && web3.version
+    ? NETWORKS[web3.version.network] || 'Unknown'
+    : NETWORKS['858585']
+}
 const mapStateToProps = state => ({
   query: getParsedQueryString(state),
 })
@@ -56,13 +73,11 @@ const Landing = ({ query, viewAccount, ...props }) => (
       <br />
       <br />
       <div style={{ borderRadius: 8, border: '1px solid #fff', padding: 32 }}>
-        {/*
-          <h2>ETH RPC Provider</h2>
-          <div>
-            <p>{window.livepeer.config.provider}</p>
-          </div>
-        */}
-        <h2>ABI Contract Addresses</h2>
+        <h2 style={{ textDecoration: 'underline' }}>Current Network</h2>
+        <div>
+          <p>{getNetwork(window.web3)}</p>
+        </div>
+        <h2 style={{ textDecoration: 'underline' }}>ABI Contract Addresses</h2>
         {Object.entries(window.livepeer.config.contracts).map(
           ([name, { address }]) => (
             <div key={name}>
