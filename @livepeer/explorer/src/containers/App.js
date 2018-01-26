@@ -1,6 +1,7 @@
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import Landing from '../views/Landing'
+import Transcoders from '../views/Transcoders'
 import Account from '../views/Account'
 import { history } from '../store'
 
@@ -13,6 +14,7 @@ const App = ({ location }) => (
   <div>
     <Switch>
       <Route exact path="/" component={Landing} />
+      <Route exact path="/transcoders" component={Transcoders} />
       <Route
         path="/accounts/:account"
         render={props => {

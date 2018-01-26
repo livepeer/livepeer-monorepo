@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 import {
   Github as GithubIcon,
   MessageCircle as MessageCircleIcon,
@@ -15,6 +16,7 @@ const BasicNavbar = ({ onSearch }) => (
         <img src="/wordmark.svg" height="24" alt="The Livepeer wordmark" />
       </a>
       <NavSearch onSearch={onSearch} />
+      <Link to="/transcoders">transcoders</Link>
       <div
         style={{
           display: 'inline-flex',
