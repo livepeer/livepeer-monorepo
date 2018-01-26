@@ -2,59 +2,43 @@
 
 ## Table of Contents
 
+* [Requirements](#requirements)
 * [Getting Started](#getting-started)
-* [Projects](#projects-overview)
+* [Packages](#packages)
 * [Resources](#resources)
+
+## Requirements
+
+This project requires `node >=8.0.0` and `yarn >=1.0.0`.
+
+- [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
+- [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
 
 ## Getting Started
 
-First, clone this repo
+To get started, clone the repo and install its dependencies
 
 ```bash
 git clone https://github.com/livepeer/livepeerjs.git
-```
-
-Next, cd into the cloned repo and install project dependencies
-
-```bash
 cd livepeerjs
-# this project uses yarn, so if you don't have it,
-# install it by running `npm i -g yarn`
 yarn
 ```
 
-For next steps, take a look at documentation for the individual project(s) you want to run and/or develop. Just follow the links in the next section.
+For next steps, take a look at documentation for the individual package(s) you want to run and/or develop. Just follow the links in the next section.
 
-## Projects Overview
+## Packages
 
-This repo is the home of the following projects and libraries:
+This repo is the home of the following packages:
 
-* ### [@livepeer/apollo](./@livepeer/apollo)
-
-  > A project that integrates with [@livepeer/graphql-sdk](./@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).
-
-* ### [@livepeer/chroma](./@livepeer/chroma)
-
-  > A component library that contains some UI building blocks for livestreaming video applications.
-
-* ### [@livepeer/explorer](./@livepeer/explorer)
-
-  > A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol.
-
-* ### [@livepeer/graphql-sdk](./@livepeer/graphql-sdk)
-
-  > A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
-
-* ### [@livepeer/lpx](./@livepeer/lpx)
-
-  > A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
-
-* ### [@livepeer/player](./@livepeer/player)
-
-  > A video player for the web. Lets you see what's live streaming on the network. Our hosted media player ([media.livepeer.org](https://media.livepeer.org)) runs off of this project.
-
-* ### [@livepeer/sdk](./@livepeer/sdk)
-  > A module for interacting with Livepeer's smart contracts. A core dependency of most projects in this repo.
+Name                                             | Description
+-------------------------------------------------|-------------
+[@livepeer/apollo](./@livepeer/apollo)           | Integrates with [@livepeer/graphql-sdk](./@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).
+[@livepeer/chroma](./@livepeer/chroma)           | A component library that contains some UI building blocks for livestreaming video applications.
+[@livepeer/explorer](./@livepeer/explorer)       | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org)
+[@livepeer/graphql-sdk](./@livepeer/graphql-sdk) | A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
+[@livepeer/lpx](./@livepeer/lpx)                 | A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
+[@livepeer/player](./@livepeer/player)           | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)
+[@livepeer/sdk](./@livepeer/sdk)                 | A module for interacting with Livepeer's smart contracts. A core dependency of most LivepeerJS projects.
 
 ## Resources
 
