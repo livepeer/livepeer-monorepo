@@ -1,7 +1,8 @@
 import test from 'ava'
 import { graphql } from 'graphql'
 import { EMPTY_ADDRESS } from '@livepeer/sdk'
-import { schema } from './index'
+// import { schema } from './index'
+import schema from './schema'
 import {
   AccountQuery,
   BroadcasterQuery,
@@ -9,6 +10,7 @@ import {
   JobQuery,
   JobsQuery,
   TranscoderQuery,
+  TranscodersQuery,
 } from './queries'
 import livepeer from './mock-sdk'
 
@@ -144,6 +146,13 @@ test('TranscoderQuery', async t => {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
   }
   const res = await graphql(schema, TranscoderQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('TranscodersQuery', async t => {
+  const args = {}
+  const res = await graphql(schema, TranscodersQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })

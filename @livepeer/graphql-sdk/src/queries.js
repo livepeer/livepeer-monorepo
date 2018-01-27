@@ -76,3 +76,12 @@ query TranscoderQuery($id: String!) {
   }
 }
 `
+
+export const TranscodersQuery = `
+${TranscoderFragment}
+query TranscodersQuery($skip: Int, $limit: Int) {
+  transcoders(skip: $skip, limit: $limit) {
+    ...TranscoderFragment
+  }
+}
+`

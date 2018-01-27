@@ -1,7 +1,7 @@
 import { GraphQLSchema } from 'graphql'
 import * as queries from './queries'
 
-export { default as schema } from './schemas'
+export { default as schema } from './schema'
 export { queries }
 export const introspectionQueryResultData = {
   __schema: {
