@@ -9,7 +9,7 @@
     "apollo-cache-inmemory": "^1.1.5",
     "apollo-client": "^2.2.0",
     "apollo-link": "^1.0.7",
-    "graphql": "^0.11.7"
+    "graphql": "^0.12.0"
   },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
