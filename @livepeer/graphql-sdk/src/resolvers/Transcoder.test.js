@@ -1,6 +1,6 @@
 import test from 'ava'
 import { EMPTY_ADDRESS, TRANSCODER_STATUS } from '@livepeer/sdk'
-import Transcoder from './index'
+import * as resolvers from './Transcoder'
 
 test('Transcoder resolves fields', async t => {
   const obj = {
@@ -17,10 +17,9 @@ test('Transcoder resolves fields', async t => {
   }
   const args = null
   const ctx = {}
-  const fields = Transcoder._typeConfig.fields()
   const entries = Object.entries(obj)
   for (const [key, val] of entries) {
-    const result = await fields[key].resolve(obj, args, ctx)
+    const result = await resolvers[key](obj, args, ctx)
     t.deepEqual(val, result)
   }
 })

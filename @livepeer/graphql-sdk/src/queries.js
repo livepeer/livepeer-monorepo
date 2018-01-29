@@ -1,8 +1,8 @@
-import { default as AccountFragment } from './schemas/Account/fragments'
-import { default as BroadcasterFragment } from './schemas/Broadcaster/fragments'
-import { default as DelegatorFragment } from './schemas/Delegator/fragments'
-import { default as JobFragment } from './schemas/Job/fragments'
-import { default as TranscoderFragment } from './schemas/Transcoder/fragments'
+import { default as AccountFragment } from './fragments/Account'
+import { default as BroadcasterFragment } from './fragments/Broadcaster'
+import { default as DelegatorFragment } from './fragments/Delegator'
+import { default as JobFragment } from './fragments/Job'
+import { default as TranscoderFragment } from './fragments/Transcoder'
 
 export const AccountQuery = `
 ${AccountFragment}

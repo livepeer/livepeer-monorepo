@@ -1,6 +1,6 @@
 import test from 'ava'
 import { EMPTY_ADDRESS, DELEGATOR_STATUS } from '@livepeer/sdk'
-import Delegator from './index'
+import * as resolvers from './Delegator'
 
 test('Delegator resolves fields', async t => {
   const obj = {
@@ -16,10 +16,9 @@ test('Delegator resolves fields', async t => {
   }
   const args = null
   const ctx = {}
-  const fields = Delegator._typeConfig.fields()
   const entries = Object.entries(obj)
   for (const [key, val] of entries) {
-    const result = await fields[key].resolve(obj, args, ctx)
+    const result = await resolvers[key](obj, args, ctx)
     t.deepEqual(val, result)
   }
 })

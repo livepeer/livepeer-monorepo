@@ -1,14 +1,38 @@
-export const Query = `
-type Query {
-  account(id: String!): Account
-  broadcaster(id: String!): Broadcaster
-  delegator(id: String!): Delegator
-  job(id: String!): Job
-  jobs(broadcaster: String, skip: Int, limit: Int): [Job!]!
-  me: Account
-  transcoder(id: String!): Transcoder
-  transcoders(skip: Int, limit: Int): [Transcoder!]!
-}
-`
+import Account from './Account'
+import Broadcaster from './Broadcaster'
+import Delegator from './Delegator'
+import Job from './Job'
+import Transcoder from './Transcoder'
 
-export default () => [Query]
+const Query = `
+
+"Contains all protocol data-fetching queries"
+type Query {
+
+  "An Account by ETH address"
+  account(id: String!): Account
+
+  "A Broadcaster by ETH address"
+  broadcaster(id: String!): Broadcaster
+
+  "A Delegator by ETH address"
+  delegator(id: String!): Delegator
+
+  "A Job by id"
+  job(id: String!): Job
+
+  "A list of Jobs"
+  jobs(broadcaster: String, skip: Int, limit: Int): [Job!]!
+
+  "The currently selected account (usually set by something like MetaMask)"
+  me: Account
+
+  "A Transcoder by ETH address"
+  transcoder(id: String!): Transcoder
+
+  "A list of Transcoders"
+  transcoders(skip: Int, limit: Int): [Transcoder!]!
+
+}`
+
+export default () => [Query, Account, Broadcaster, Delegator, Job, Transcoder]

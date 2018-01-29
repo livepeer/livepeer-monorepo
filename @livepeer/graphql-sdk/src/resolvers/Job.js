@@ -11,15 +11,6 @@ type JobObj = {
 
 /** Resolvers */
 
-// /**
-//  * Resolves types for the Job interface
-//  * @param {Object} obj
-//  * @param {string} obj.type - The type of the Job
-//  */
-// export function __resolveType(obj: JobObj): Boolean {
-//   return obj.type || 'JobType'
-// }
-
 /**
  * Gets the id for a Job
  * @param {Object} obj

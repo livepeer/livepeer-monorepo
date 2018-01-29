@@ -9,5 +9,4 @@ fragment DelegatorFragment on Delegator {
   lastClaimRound
   startRound
   withdrawRound
-}
-`
+}`

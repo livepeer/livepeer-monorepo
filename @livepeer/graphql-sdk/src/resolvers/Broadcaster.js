@@ -18,15 +18,6 @@ type BroadcasterJobsArgs = {
 
 /** Resolvers */
 
-// /**
-//  * Resolves types for the Broadcaster interface
-//  * @param {Object} obj
-//  * @param {string} obj.type - The type of the Broadcaster
-//  */
-// export function __resolveType(obj: BroadcasterObj): Boolean {
-//   return obj.type || 'BroadcasterType'
-// }
-
 /**
  * Gets the id for a Broadcaster
  * @param {Object} obj

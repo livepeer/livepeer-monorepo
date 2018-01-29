@@ -11,15 +11,6 @@ type TranscoderObj = {
 
 /** Resolvers */
 
-// /**
-//  * Resolves types for the Transcoder interface
-//  * @param {Object} obj
-//  * @param {string} obj.type - The type of the Transcoder
-//  */
-// export function __resolveType(obj: TranscoderObj): Boolean {
-//   return obj.type || 'TranscoderType'
-// }
-
 /**
  * Gets the id for a Transcoder
  * @param {Object} obj

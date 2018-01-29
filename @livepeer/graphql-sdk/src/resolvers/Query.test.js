@@ -5,8 +5,8 @@ import {
   TRANSCODER_STATUS,
   VIDEO_PROFILES,
 } from '@livepeer/sdk'
-import Query from './index'
-import { transformJob } from '../../utils'
+import * as resolvers from './Query'
+import { transformJob } from '../utils'
 
 test('Query resolves `account` field', async t => {
   const obj = {
@@ -16,8 +16,7 @@ test('Query resolves `account` field', async t => {
     id: obj.id,
   }
   const ctx = {}
-  const fields = Query._typeConfig.fields()
-  const result = await fields.account.resolve(obj, args, ctx)
+  const result = await resolvers.account(obj, args, ctx)
   t.deepEqual(obj, result)
 })
 
@@ -37,8 +36,7 @@ test('Query resolves `broadcaster` field', async t => {
       },
     },
   }
-  const fields = Query._typeConfig.fields()
-  const result = await fields.broadcaster.resolve(obj, args, ctx)
+  const result = await resolvers.broadcaster(obj, args, ctx)
   t.deepEqual(obj, result)
 })
 
@@ -66,8 +64,7 @@ test('Query resolves `delegator` field', async t => {
       },
     },
   }
-  const fields = Query._typeConfig.fields()
-  const result = await fields.delegator.resolve(obj, args, ctx)
+  const result = await resolvers.delegator(obj, args, ctx)
   t.deepEqual(obj, result)
 })
 
@@ -91,8 +88,7 @@ test('Query resolves `job` field', async t => {
       },
     },
   }
-  const fields = Query._typeConfig.fields()
-  const result = await fields.job.resolve(obj, args, ctx)
+  const result = await resolvers.job(obj, args, ctx)
   t.deepEqual(transformJob(job), result)
 })
 
@@ -125,8 +121,7 @@ test('Query resolves `jobs` field', async t => {
   {
     const obj = {}
     const args = {}
-    const fields = Query._typeConfig.fields()
-    const result = await fields.jobs.resolve(obj, args, ctx)
+    const result = await resolvers.jobs(obj, args, ctx)
     const expected = jobs.map(transformJob)
     t.deepEqual(expected, result)
   }
@@ -136,8 +131,7 @@ test('Query resolves `jobs` field', async t => {
     const args = {
       broadcaster: EMPTY_ADDRESS.replace(/00/g, '33'),
     }
-    const fields = Query._typeConfig.fields()
-    const result = await fields.jobs.resolve(obj, args, ctx)
+    const result = await resolvers.jobs(obj, args, ctx)
     const expected = [jobs[0]].map(transformJob)
     t.deepEqual(expected, result)
   }
@@ -147,8 +141,7 @@ test('Query resolves `jobs` field', async t => {
     const args = {
       skip: 1,
     }
-    const fields = Query._typeConfig.fields()
-    const result = await fields.jobs.resolve(obj, args, ctx)
+    const result = await resolvers.jobs(obj, args, ctx)
     const expected = [jobs[1], jobs[2]].map(transformJob)
     t.deepEqual(expected, result)
   }
@@ -158,8 +151,7 @@ test('Query resolves `jobs` field', async t => {
     const args = {
       limit: 1,
     }
-    const fields = Query._typeConfig.fields()
-    const result = await fields.jobs.resolve(obj, args, ctx)
+    const result = await resolvers.jobs(obj, args, ctx)
     const expected = [jobs[0]].map(transformJob)
     t.deepEqual(expected, result)
   }
@@ -170,8 +162,7 @@ test('Query resolves `jobs` field', async t => {
       skip: 1,
       limit: 1,
     }
-    const fields = Query._typeConfig.fields()
-    const result = await fields.jobs.resolve(obj, args, ctx)
+    const result = await resolvers.jobs(obj, args, ctx)
     const expected = [jobs[1]].map(transformJob)
     t.deepEqual(expected, result)
   }
@@ -187,8 +178,7 @@ test('Query resolves `me` field', async t => {
   const ctx = {
     account: obj.id,
   }
-  const fields = Query._typeConfig.fields()
-  const result = await fields.me.resolve(obj, args, ctx)
+  const result = await resolvers.me(obj, args, ctx)
   t.deepEqual(obj, result)
 })
 
@@ -215,7 +205,8 @@ test('Query resolves `transcoder` field', async t => {
       },
     },
   }
-  const fields = Query._typeConfig.fields()
-  const result = await fields.transcoder.resolve(obj, args, ctx)
+  const result = await resolvers.transcoder(obj, args, ctx)
   t.deepEqual(obj, result)
 })
+
+test.todo('Query resolves `transcoders` field')

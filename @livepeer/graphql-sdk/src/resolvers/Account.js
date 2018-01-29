@@ -17,15 +17,6 @@ type AccountObj = {
 
 /** Resolvers */
 
-// /**
-//  * Resolves types for the Account interface
-//  * @param {Object} obj
-//  * @param {string} obj.type - The type of the Account
-//  */
-// export function __resolveType(obj: AccountObj): Boolean {
-//   return obj.type || 'AccountType'
-// }
-
 /**
  * Gets the id for an Account
  * @param {Object} obj

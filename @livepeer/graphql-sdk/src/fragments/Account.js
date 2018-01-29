@@ -12,5 +12,4 @@ fragment AccountFragment on Account {
   transcoder {
     ...TranscoderFragment
   }
-}
-`
+}`

@@ -11,15 +11,6 @@ type DelegatorObj = {
 
 /** Resolvers */
 
-// /**
-//  * Resolves types for the Delegator interface
-//  * @param {Object} obj
-//  * @param {string} obj.type - The type of the Delegator
-//  */
-// export function __resolveType(obj: DelegatorObj): Boolean {
-//   return obj.type || 'DelegatorType'
-// }
-
 /**
  * Gets the id for a Delegator
  * @param {Object} obj

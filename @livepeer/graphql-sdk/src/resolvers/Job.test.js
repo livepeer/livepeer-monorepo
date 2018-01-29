@@ -1,8 +1,8 @@
 import test from 'ava'
 import { EMPTY_ADDRESS, VIDEO_PROFILES } from '@livepeer/sdk'
-import JobType from './index'
+import * as resolvers from './Job'
 
-test('JobType resolves fields', async t => {
+test('Job resolves fields', async t => {
   const obj = {
     id: '0',
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '11'),
@@ -11,10 +11,9 @@ test('JobType resolves fields', async t => {
   }
   const args = null
   const ctx = {}
-  const fields = JobType._typeConfig.fields()
   const entries = Object.entries(obj)
   for (const [key, val] of entries) {
-    const result = await fields[key].resolve(obj, args, ctx)
+    const result = await resolvers[key](obj, args, ctx)
     t.deepEqual(val, result)
   }
 })

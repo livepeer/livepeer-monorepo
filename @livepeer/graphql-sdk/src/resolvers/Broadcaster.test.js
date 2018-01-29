@@ -1,5 +1,5 @@
 import test from 'ava'
-import Broadcaster from './index'
+import * as resolvers from './Broadcaster'
 
 test('Broadcaster resolves fields', async t => {
   const obj = {
@@ -9,10 +9,9 @@ test('Broadcaster resolves fields', async t => {
   }
   const args = null
   const ctx = {}
-  const fields = Broadcaster._typeConfig.fields()
   const entries = Object.entries(obj)
   for (const [key, val] of entries) {
-    const result = await fields[key].resolve(obj, args, ctx)
+    const result = await resolvers[key](obj, args, ctx)
     t.deepEqual(val, result)
   }
 })

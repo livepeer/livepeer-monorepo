@@ -1,7 +1,9 @@
 const Mutation = `
-  type Mutation {
-    foo: Boolean
-  }
-`
+
+"Contains all protocol transaction queries"
+type Mutation {
+  # @todo
+  foo: Boolean
+}`
 
 export default () => [Mutation]

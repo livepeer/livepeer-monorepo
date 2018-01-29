@@ -10,5 +10,4 @@ fragment JobFragment on Job {
     framerate
     resolution
   }
-}
-`
+}`

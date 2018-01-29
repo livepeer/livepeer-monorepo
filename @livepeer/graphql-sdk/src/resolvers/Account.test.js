@@ -1,5 +1,5 @@
 import test from 'ava'
-import Account from './index'
+import * as resolvers from './Account'
 
 test('Account resolves fields', async t => {
   const obj = {
@@ -34,10 +34,9 @@ test('Account resolves fields', async t => {
       },
     },
   }
-  const fields = Account._typeConfig.fields()
   const entries = Object.entries(obj)
   for (const [key, val] of entries) {
-    const result = await fields[key].resolve(obj, args, ctx)
+    const result = await resolvers[key](obj, args, ctx)
     t.deepEqual(val, result)
   }
 })
