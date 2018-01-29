@@ -1,11 +1,7 @@
-dirs=(
-  $(find ./@livepeer -maxdepth 1 -type d | xargs -0)
-)
-
-for dir in "${dirs[@]:1}"; do
-  if [[ "${dir:2}" == '@livepeer/explorer' ]]; then continue; fi
-  if [[ "${dir:2}" == '@livepeer/player' ]]; then continue; fi
-  echo "🛠 Building project -> ${dir:2}"
+for dir in @livepeer/*; do
+  if [[ $dir == '@livepeer/explorer' ]]; then continue; fi
+  if [[ $dir == '@livepeer/player' ]]; then continue; fi
+  echo "🛠 Building project -> ${dir}"
   echo '------------------'
   pushd $dir
   yarn build
