@@ -70,8 +70,8 @@ Directory                      | Description
 
 You can build this app as a website or as a desktop app (via `electron`).
 
-- **Website:** `yarn build:web` (or just plain `yarn build` works as well)
-- **Desktop:** `yarn build:desktop`
+- **Website:** `yarn build:web` (outputs to `./build`)
+- **Desktop:** `yarn build:desktop` (outputs to `./dist`)
 
 **Note:** Only the OSX desktop build has been configured. If you would like to add a configuration for linux or windows, please modify the config accordingly in [package.json](https://github.com/livepeer/livepeerjs/blob/master/%40livepeer/explorer/package.json#L45), and [file a PR](https://github.com/livepeer/livepeerjs/pulls) 🍻
 ### Customizing A Build
