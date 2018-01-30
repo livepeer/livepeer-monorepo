@@ -82,7 +82,7 @@ Variable                      | Default       | Description
 ------------------------------|---------------|----
 `NODE_ENV`                    | `development` | `yarn start` always sets this to `development` and `yarn build` will always set this to `production`. **You should not have to modify this variable**
 `PUBLIC_URL`                  | `/`           | The root url of the site (only applies to production builds)
-`REACT_APP_HTTP_PROVIDER`     |               | By default, the app will use the Livepeer testnet provider (`https://ethrpc-testnet.livepeer.org`), but this option allows you to specify a custom Ethereum http provider. You may want to use one of the following: <br />**[infura.io](https://infura.io)**  - `https://mainnet.infura.io/<your-token>`<br />**local geth/testrpc** - `http://localhost:8545`<br />
+`REACT_APP_HTTP_PROVIDER`     |               | By default, the app will use the Livepeer testnet provider (`https://ethrpc-testnet.livepeer.org`), but this option allows you to specify a custom Ethereum http provider. You may want to use one of the following: <br />**[infura.io](https://infura.io)**  - `https://<network>.infura.io/<your-token>`<br />**local geth/testrpc** - `http://localhost:8545`<br />
 
 Need a new variable? Create a PR or [file an issue](https://github.com/livepeer/livepeerjs/issues) 🍻
 
