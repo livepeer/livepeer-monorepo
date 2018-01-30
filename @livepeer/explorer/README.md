@@ -14,7 +14,7 @@ A protocol explorer for the web. It allows users to see general information abou
 
 Once you've done that, you're all set! ✨
 
-**Note:** If you modify any dependencies of this project (@livepeer/chroma, @livepeer/graphql-sdk, etc), you will need to rebuild those projects for those updates propagate to this one.
+**Note:** If you modify any dependencies of this project (`@livepeer/apollo`, `@livepeer/graphql-sdk`, etc), you will need to rebuild those projects for those updates propagate to this one.
 ## Developing
 
 If you want to hack on this app, just run:
