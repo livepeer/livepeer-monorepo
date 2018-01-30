@@ -68,7 +68,7 @@ Directory                      | Description
 
 ## Building
 
-You can build this app as a website or as an `electron` app.
+You can build this app as a website or as a desktop app (via `electron`).
 
 - **Website:** `yarn build:web` (or just plain `yarn build` works as well)
 - **Desktop:** `yarn build:desktop`
