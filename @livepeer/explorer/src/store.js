@@ -2,12 +2,16 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
-import createHistory from 'history/createBrowserHistory'
+import createBrowserHistory from 'history/createBrowserHistory'
+import createMemoryHistory from 'history/createMemoryHistory'
 import { rootReducer, rootSaga } from './services'
 
-export const history = createHistory()
+export const history =
+  // trailing slash gets removed
+  process.env.PUBLIC_URL === '.'
+    ? createMemoryHistory()
+    : createBrowserHistory()
 export const sagaMiddleware = createSagaMiddleware()
-
 const initialState = {}
 const enhancers = []
 const middleware = [thunk, routerMiddleware(history), sagaMiddleware]

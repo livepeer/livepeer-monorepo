@@ -94,7 +94,7 @@ const AccountView: React.Component<Props> = ({
 }
 
 const AccountTopSection = styled.div`
-  background: radial-gradient(circle at 500px 550px, #177e89cc, #000 75%);
+  background: radial-gradient(at 50% 150%, rgba(23, 126, 137, 0.8), #000 75%);
   height: 240px;
   margin: 0 auto;
   padding: 32px;
@@ -105,7 +105,7 @@ const AccountBasicInfo = ({ account, color, host, me, protocol }) => {
     <div style={{ textAlign: 'center', color: '#fff' }}>
       <div
         style={{
-          boxShadow: '0 0 0 1px #fff',
+          // boxShadow: '0 0 0 1px #fff',
           borderRadius: '50%',
           width: 64,
           height: 64,
@@ -129,9 +129,9 @@ const AccountBasicInfo = ({ account, color, host, me, protocol }) => {
           }}
         >
           <QRCode
-            value={`${protocol}//${host}/accounts/${account}`}
+            value={`${account}`}
             fgColor={color}
-            bgColor="#283845aa"
+            bgColor="rgba(45,56,69,.67)"
           />
         </div>
       </div>

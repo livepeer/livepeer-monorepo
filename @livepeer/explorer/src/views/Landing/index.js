@@ -42,7 +42,11 @@ const enhance = connect(mapStateToProps, mapDispatchToProps)
 const Landing = ({ query, viewAccount, ...props }) => (
   <Container>
     <Navbar />
-    <img src="/wordmark.svg" width="240" alt="The glorious Livepeer wordmark" />
+    <img
+      src={`${process.env.PUBLIC_URL}/wordmark.svg`}
+      width="240"
+      alt="The glorious Livepeer wordmark"
+    />
     <br />
     <br />
     <p>Enter an ETH account address to view its Livepeer info</p>

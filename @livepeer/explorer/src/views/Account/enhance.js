@@ -1,7 +1,7 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { pathInfo } from '../../utils'
+import { pathInfo, toRGBA } from '../../utils'
 import { withTransactionHandlers } from '../../enhancers'
 
 const query = `
@@ -28,10 +28,11 @@ const setProps = ({ data, ownProps }) => {
     ...data.me,
     ...data.account,
   }
+  const hex = account.id.substr(2, 6)
   return {
     ...ownProps,
     account,
-    color: `#${account.id.substr(2, 6)}aa`,
+    color: toRGBA(hex),
     error: data.error,
     fetchMore: data.fetchMore,
     refetch: data.refetch,

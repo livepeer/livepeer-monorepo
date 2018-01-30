@@ -24,9 +24,10 @@ import { unregister } from './registerServiceWorker'
     }
     a { color: #03a678; }
   `
-
   // bootstrap the apollo client
   const client = await createApolloClient({
+    // Allow builds to configure the http provider
+    provider: process.env.REACT_APP_HTTP_PROVIDER,
     // Default gas to send with transactions
     defaultGas: 80 * 1000,
     // If user account changes while on /me, this will hard refresh the page

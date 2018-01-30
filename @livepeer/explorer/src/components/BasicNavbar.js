@@ -12,9 +12,13 @@ import Navbar from './Navbar'
 const BasicNavbar = ({ onSearch }) => (
   <Navbar>
     <Nav>
-      <a href="/" style={{ lineHeight: 0, padding: '8px 0' }}>
-        <img src="/wordmark.svg" height="24" alt="The Livepeer wordmark" />
-      </a>
+      <Link to="/" style={{ lineHeight: 0, padding: '8px 0' }}>
+        <img
+          src={`${process.env.PUBLIC_URL}/wordmark.svg`}
+          height="24"
+          alt="The Livepeer wordmark"
+        />
+      </Link>
       <NavSearch onSearch={onSearch} />
       <Link to="/transcoders">transcoders</Link>
       <div

@@ -2,6 +2,7 @@
   "name": "@livepeer/explorer",
   "version": "0.0.0",
   "private": true,
+  "main": "src/electron/main.js",
   "dependencies": {
     "@livepeer/apollo": "0.0.0",
     "@livepeer/graphql-sdk": "0.0.0",
@@ -10,7 +11,7 @@
     "apollo-client": "^2.0.3",
     "apollo-link": "^1.0.3",
     "big.js": "^5.0.3",
-    "graphql": "^0.12.0",
+    "graphql": "git://github.com/graphql/graphql-js.git#npm",
     "graphql-tag": "^2.5.0",
     "qrcode-react": "^0.1.16",
     "query-string": "^5.0.1",
@@ -28,17 +29,32 @@
     "styled-components": "^2.2.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "predeploy": "PUBLIC_URL=https://livepeer.github.io/livepeerjs/ npm run build",
+    "build": "npm run -s build:web",
+    "build:desktop": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 npx build",
+    "build:web": "react-scripts build",
     "deploy": "npx gh-pages -d build",
-    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
+    "dist": "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:desktop",
+    "eject": "react-scripts eject",
     "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
-    "serve": "npx serve -s build"
+    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
+    "predeploy": "PUBLIC_URL=https://livepeer.github.io/livepeerjs/ npm run build",
+    "serve": "npx serve -s build",
+    "start": "react-scripts start",
+    "test": "react-scripts test --env=jsdom"
+  },
+  "build": {
+    "appId": "org.livepeer.livepeer-protocol-explorer",
+    "productName": "Livepeer Protocol Explorer",
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    }
   },
   "devDependencies": {
+    "electron": "^1.7.11",
+    "electron-builder": "^19.55.3",
     "gh-pages": "^1.1.0",
     "serve": "^6.4.1",
     "uglify-es": "^3.2.0"

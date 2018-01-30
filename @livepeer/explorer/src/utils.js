@@ -73,3 +73,13 @@ export function msToTime(duration: number): string {
   seconds = seconds < 10 ? '0' + seconds : seconds
   return hours + 'h ' + minutes + 'min ' + seconds + 's'
 }
+
+export function toRGBA(hex, opacity = 1) {
+  const x = hex.replace('#', '')
+  const len = x.length
+  const r = parseInt(x.substring(0, len / 3), 16)
+  const g = parseInt(x.substring(len / 3, 2 * len / 3), 16)
+  const b = parseInt(x.substring(2 * len / 3, 3 * len / 3), 16)
+  const a = Math.min(1, Math.max(0, opacity))
+  return `rgba(${[r, g, b, a]})`
+}
