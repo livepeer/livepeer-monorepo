@@ -745,35 +745,18 @@ export default async function createLivepeerSDK(
     },
 
     /**
-     * Gets candidate transcoders
+     * Gets transcoders
      * @return {Array<Transcoder>}
      */
-    async getCandidateTranscoders() {
-      return (await Promise.all(
-        Array(headToString(await BondingManager.getCandidatePoolSize()))
-          .fill(0)
-          .map(async (_, i) => {
-            const res = await BondingManager.getCandidateTranscoderAtPosition(i)
-            const address = res[0]
-            return await rpc.getTranscoder(address)
-          }),
-      )).filter(x => !x.active)
-    },
-
-    /**
-     * Gets currently active transcoders
-     * @return {Array<Transcoder>}
-     */
-    async getActiveTranscoders() {
-      return (await Promise.all(
-        Array(headToString(await BondingManager.getCandidatePoolSize()))
-          .fill(0)
-          .map(async (_, i) => {
-            const res = await BondingManager.getCandidateTranscoderAtPosition(i)
-            const address = res[0]
-            return await rpc.getTranscoder(address)
-          }),
-      )).filter(x => x.active)
+    async getTranscoders(): Promise<Array<Transcoder>> {
+      const transcoders = []
+      let addr = headToString(await BondingManager.getFirstTranscoderInPool())
+      while (addr !== EMPTY_ADDRESS) {
+        const transcoder = await rpc.getTranscoder(addr)
+        transcoders.push(transcoder)
+        addr = headToString(await BondingManager.getNextTranscoderInPool(addr))
+      }
+      return transcoders
     },
 
     /**
