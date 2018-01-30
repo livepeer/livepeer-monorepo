@@ -183,7 +183,7 @@ export async function transcoders(
   ctx: GQLContext,
 ): Array<Transcoder> {
   const { skip = 0, limit = 100, ..._args } = args
-  const result = await ctx.livepeer.rpc.getActiveTranscoders()
+  const result = await ctx.livepeer.rpc.getTranscoders()
   const transcoders = result
     .slice(skip, skip + limit)
     .map(({ address: id, ...x }) => ({ ...x, id }))
