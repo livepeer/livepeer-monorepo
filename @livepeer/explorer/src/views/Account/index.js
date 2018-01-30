@@ -19,7 +19,7 @@ import AccountOverview from '../AccountOverview'
 import AccountBroadcasting from '../AccountBroadcasting'
 import AccountDelegating from '../AccountDelegating'
 import AccountTranscoding from '../AccountTranscoding'
-import { Button, Content, TabLink, Tabs } from '../../components'
+import { Banner, Button, Content, TabLink, Tabs } from '../../components'
 import { pathInfo } from '../../utils'
 import enhance from './enhance'
 
@@ -51,7 +51,7 @@ const AccountView: React.Component<Props> = ({
   const me = pathInfo.isMe(match.path)
   return (
     <React.Fragment>
-      <AccountTopSection>
+      <Banner>
         <Content>
           <AccountBasicInfo
             account={account.id}
@@ -61,7 +61,7 @@ const AccountView: React.Component<Props> = ({
             protocol={window.location.protocol}
           />
         </Content>
-      </AccountTopSection>
+      </Banner>
       <Content width="800px">
         <BasicNavbar onSearch={x => history.push(`/accounts/${x}`)} />
         <div>
@@ -92,13 +92,6 @@ const AccountView: React.Component<Props> = ({
     </React.Fragment>
   )
 }
-
-const AccountTopSection = styled.div`
-  background: radial-gradient(at 50% 150%, rgba(23, 126, 137, 0.8), #000 75%);
-  height: 240px;
-  margin: 0 auto;
-  padding: 32px;
-`
 
 const AccountBasicInfo = ({ account, color, host, me, protocol }) => {
   return (

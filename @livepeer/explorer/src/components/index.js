@@ -1,3 +1,4 @@
+export { default as Banner } from './Banner'
 export { default as BasicNavbar } from './BasicNavbar'
 export { default as Box } from './Box'
 export { default as Button } from './Button'

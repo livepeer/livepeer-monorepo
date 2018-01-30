@@ -20,7 +20,6 @@ const BasicNavbar = ({ onSearch }) => (
         />
       </Link>
       <NavSearch onSearch={onSearch} />
-      <Link to="/transcoders">transcoders</Link>
       <div
         style={{
           display: 'inline-flex',
