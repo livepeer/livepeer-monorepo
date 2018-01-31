@@ -6,7 +6,7 @@
     "@livepeer/apollo": "0.0.0",
     "@livepeer/graphql-sdk": "0.0.0",
     "@livepeer/sdk": "0.0.0",
-    "apollo-cache-inmemory": "^1.1.1",
+    "apollo-cache-inmemory": "^1.1.5",
     "apollo-client": "^2.0.3",
     "apollo-link": "^1.0.3",
     "graphql": "git://github.com/graphql/graphql-js.git#npm",
