@@ -110,3 +110,13 @@ export function pendingFeeShare(obj: TranscoderObj): string {
 export function pendingPricePerSegment(obj: TranscoderObj): string {
   return obj.pendingPricePerSegment
 }
+
+/**
+ * Gets the totalStake for a Transcoder
+ * @param {Object} obj
+ * @param {string} obj.totalStake - The totalStake of the transcoder
+ * @return {string}
+ */
+export function totalStake(obj: TranscoderObj): string {
+  return obj.totalStake
+}

@@ -10,4 +10,5 @@ fragment TranscoderFragment on Transcoder {
   pendingBlockRewardCut
   pendingFeeShare
   pendingPricePerSegment
+  totalStake
 }`

@@ -14,6 +14,7 @@ test('Transcoder resolves fields', async t => {
     pendingBlockRewardCut: '0',
     pendingFeeShare: '0',
     pendingPricePerSegment: '0',
+    totalStake: '0',
   }
   const args = null
   const ctx = {}

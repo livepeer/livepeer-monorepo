@@ -35,6 +35,9 @@ type Transcoder {
   "Pending price per segment for next round if the transcoder is active"
   pendingPricePerSegment: String!
 
+  "Total tokens delegated toward a transcoder (including their own)"
+  totalStake: String!
+
   # "Token pools for each round"
   # tokenPoolsPerRound: [TokenPool]
 
