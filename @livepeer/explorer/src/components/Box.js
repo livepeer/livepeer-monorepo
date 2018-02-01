@@ -17,8 +17,8 @@ const OuterBox = styled.div`
 
 const InnerBox = styled.div`
   background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 2px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.15);
 `
 
 export default Box

@@ -16,6 +16,7 @@ fragment TranscoderFragment on Transcoder {
   pendingBlockRewardCut
   pendingFeeShare
   pendingPricePerSegment
+  totalStake
 }
 query TranscodersQuery(
   $skip: Int,
@@ -39,7 +40,7 @@ const setProps = ({ data, ownProps }) => {
 
 const setOptions = ({ match }) => {
   return {
-    // pollInterval: 5000,
+    pollInterval: 60 * 1000,
     variables: {
       skip: 0,
       limit: 100,

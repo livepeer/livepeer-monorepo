@@ -74,8 +74,9 @@ const JobCard = ({ id, broadcaster, profiles, streamId }) => {
       style={{
         background: '#fff',
         marginBottom: 16,
-        borderRadius: 8,
+        borderRadius: 2,
         padding: 16,
+        boxShadow: '0 1px 2px 0px rgba(0, 0, 0, 0.15)',
       }}
     >
       <div style={{ display: 'inline-flex', alignItems: 'center' }}>

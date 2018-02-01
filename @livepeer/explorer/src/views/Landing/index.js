@@ -3,8 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 // import { withApollo } from 'react-apollo'
 import styled from 'styled-components'
-import Navbar from '../../components/Navbar'
-import Footer from '../../components/Footer'
+import { Footer, Navbar, ScrollToTopOnMount } from '../../components'
 import {
   actions as routingActions,
   selectors as routingSelectors,
@@ -41,6 +40,7 @@ const enhance = connect(mapStateToProps, mapDispatchToProps)
 
 const Landing = ({ query, viewAccount, ...props }) => (
   <Container>
+    <ScrollToTopOnMount />
     <Navbar />
     <img
       src={`${process.env.PUBLIC_URL}/wordmark.svg`}

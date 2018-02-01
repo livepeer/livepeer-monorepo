@@ -19,7 +19,15 @@ import AccountOverview from '../AccountOverview'
 import AccountBroadcasting from '../AccountBroadcasting'
 import AccountDelegating from '../AccountDelegating'
 import AccountTranscoding from '../AccountTranscoding'
-import { Banner, Button, Content, TabLink, Tabs } from '../../components'
+import {
+  Avatar,
+  Banner,
+  Button,
+  Content,
+  ScrollToTopOnMount,
+  TabLink,
+  Tabs,
+} from '../../components'
 import { pathInfo } from '../../utils'
 import enhance from './enhance'
 
@@ -51,6 +59,7 @@ const AccountView: React.Component<Props> = ({
   const me = pathInfo.isMe(match.path)
   return (
     <React.Fragment>
+      <ScrollToTopOnMount />
       <Banner>
         <Content>
           <AccountBasicInfo
@@ -96,38 +105,7 @@ const AccountView: React.Component<Props> = ({
 const AccountBasicInfo = ({ account, color, host, me, protocol }) => {
   return (
     <div style={{ textAlign: 'center', color: '#fff' }}>
-      <div
-        style={{
-          // boxShadow: '0 0 0 1px #fff',
-          borderRadius: '50%',
-          width: 64,
-          height: 64,
-          margin: '0 auto',
-          overflow: 'hidden',
-          position: 'relative',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: -1280,
-            right: -1280,
-            bottom: -1280,
-            left: -1280,
-            width: 128,
-            height: 128,
-            margin: 'auto',
-            transform: 'scale(2)',
-            imageRendering: 'pixelated',
-          }}
-        >
-          <QRCode
-            value={`${account}`}
-            fgColor={color}
-            bgColor="rgba(45,56,69,.67)"
-          />
-        </div>
-      </div>
+      <Avatar id={account} size={64} />
       <h1 style={{ marginBottom: 0 }}>
         {me ? 'My Account' : 'Livepeer Account'}
       </h1>
