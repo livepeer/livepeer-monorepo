@@ -702,6 +702,17 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets a transcoder's total stake
+     * @param  {string} addr - user's ETH address
+     * @return {string}
+     */
+    async getTranscoderTotalStake(
+      addr: string = invariant('addr', 0, 'string'),
+    ): Promise<boolean> {
+      return headToString(await BondingManager.transcoderTotalStake(addr))
+    },
+
+    /**
      * Gets info about a transcoder
      * @param  {string} addr - user's ETH address
      * @return {Transcoder}
@@ -722,6 +733,7 @@ export default async function createLivepeerSDK(
     }> {
       const status = await rpc.getTranscoderStatus(addr)
       const active = await rpc.getTranscoderIsActive(addr)
+      const totalStake = await rpc.getTranscoderTotalStake(addr)
       const t = await BondingManager.getTranscoder(addr)
       const lastRewardRound = toString(t.lastRewardRound)
       const blockRewardCut = toString(t.blockRewardCut)
@@ -741,6 +753,7 @@ export default async function createLivepeerSDK(
         pendingBlockRewardCut,
         pendingFeeShare,
         pendingPricePerSegment,
+        totalStake,
       }
     },
 
