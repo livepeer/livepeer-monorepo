@@ -1,10 +1,12 @@
+#!/bin/bash
+
 for dir in @livepeer/*; do
-  if [[ $dir == '@livepeer/explorer' ]]; then continue; fi
-  if [[ $dir == '@livepeer/player' ]]; then continue; fi
-  echo "🛠 Building project -> ${dir}"
+  if [ $dir = '@livepeer/explorer' ]; then continue; fi
+  if [ $dir = '@livepeer/player' ]; then continue; fi
+  echo "🛠 Building package -> ${dir}"
   echo '------------------'
-  pushd $dir
+  cd $dir
   yarn build
-  popd
-  echo '\n'
+  cd ../../
+  echo
 done
