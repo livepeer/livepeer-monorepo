@@ -1,12 +1,8 @@
 import React from 'react'
+import { EMPTY_ADDRESS } from '@livepeer/sdk'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import {
-  Github as GithubIcon,
-  MessageCircle as MessageCircleIcon,
-  // Search,
-  Twitter as TwitterIcon,
-} from 'react-feather'
+import { NavLink, Link } from 'react-router-dom'
+import { Cpu as CpuIcon, User as UserIcon } from 'react-feather'
 import Navbar from './Navbar'
 
 const BasicNavbar = ({ onSearch }) => (
@@ -19,7 +15,7 @@ const BasicNavbar = ({ onSearch }) => (
           alt="The Livepeer wordmark"
         />
       </Link>
-      <NavSearch onSearch={onSearch} />
+      {onSearch && <NavSearch onSearch={onSearch} />}
       <div
         style={{
           display: 'inline-flex',
@@ -29,18 +25,16 @@ const BasicNavbar = ({ onSearch }) => (
           width: '100%',
         }}
       >
-        <NavSocialLink href="https://github.com/livepeer" target="_blank">
-          <GithubIcon color="#fff" size={16} />
-          <span>&nbsp;Code</span>
-        </NavSocialLink>
-        <NavSocialLink href="https://gitter.im/livepeer/dev" target="_blank">
-          <MessageCircleIcon color="#fff" size={16} />
-          <span>&nbsp;Gitter</span>
-        </NavSocialLink>
-        <NavSocialLink href="https://twitter.com/LivepeerOrg" target="_blank">
-          <TwitterIcon color="#fff" size={16} />
-          <span>&nbsp;Follow</span>
-        </NavSocialLink>
+        <NavbarLink to="/transcoders">
+          <CpuIcon size={16} />
+          <span>&nbsp;Transcoders</span>
+        </NavbarLink>
+        {window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS && (
+          <NavbarLink to="/me">
+            <UserIcon size={16} />
+            <span>&nbsp;My Account</span>
+          </NavbarLink>
+        )}
       </div>
     </Nav>
   </Navbar>
@@ -65,7 +59,9 @@ const Nav = styled.nav`
   }
 `
 
-const NavSocialLink = styled.a`
+const NavbarLink = styled(NavLink).attrs({
+  activeStyle: props => ({ color: '#00eb88' }),
+})`
   display: inline-flex;
   align-items: center;
   color: #fff;

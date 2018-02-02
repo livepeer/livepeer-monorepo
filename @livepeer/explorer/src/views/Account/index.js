@@ -24,6 +24,7 @@ import {
   Banner,
   Button,
   Content,
+  PageHeading,
   ScrollToTopOnMount,
   TabLink,
   Tabs,
@@ -39,7 +40,6 @@ type Account = {
 
 type Props = {
   account: Account,
-  color: string,
   history: {
     push: (url: string) => void,
   },
@@ -51,7 +51,6 @@ type Props = {
 
 const AccountView: React.Component<Props> = ({
   account,
-  color,
   history,
   loading,
   match,
@@ -61,25 +60,29 @@ const AccountView: React.Component<Props> = ({
     <React.Fragment>
       <ScrollToTopOnMount />
       <Banner>
-        <Content>
-          <AccountBasicInfo
-            account={account.id}
-            color={color}
-            host={window.location.host}
-            me={me}
-            protocol={window.location.protocol}
-          />
-        </Content>
-      </Banner>
-      <Content width="800px">
-        <BasicNavbar onSearch={x => history.push(`/accounts/${x}`)} />
-        <div>
+        <PageHeading>
+          <Avatar id={account.id} size={32} bg="#000" />&nbsp;{me ? (
+            'My Account'
+          ) : (
+            <span>
+              Account&nbsp;<span style={{ fontSize: 16 }}>
+                {account.id.substr(0, 10)}...
+              </span>
+            </span>
+          )}
+        </PageHeading>
+        <div style={{ marginBottom: -32, paddingTop: 32 }}>
           <Tabs url={match.url}>
             <TabLink to={`${match.url}/overview`}>overview</TabLink>
             <TabLink to={`${match.url}/broadcasting`}>broadcasting</TabLink>
             <TabLink to={`${match.url}/delegating`}>delegating</TabLink>
             <TabLink to={`${match.url}/transcoding`}>transcoding</TabLink>
           </Tabs>
+        </div>
+      </Banner>
+      <Content width="800px">
+        <BasicNavbar onSearch={x => history.push(`/accounts/${x}`)} />
+        <div>
           <Switch>
             <Route path={`${match.url}/overview`} component={AccountOverview} />
             <Route
@@ -99,18 +102,6 @@ const AccountView: React.Component<Props> = ({
         </div>
       </Content>
     </React.Fragment>
-  )
-}
-
-const AccountBasicInfo = ({ account, color, host, me, protocol }) => {
-  return (
-    <div style={{ textAlign: 'center', color: '#fff' }}>
-      <Avatar id={account} size={64} />
-      <h1 style={{ marginBottom: 0 }}>
-        {me ? 'My Account' : 'Livepeer Account'}
-      </h1>
-      <h5>{account}</h5>
-    </div>
   )
 }
 

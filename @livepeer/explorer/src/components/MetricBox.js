@@ -1,9 +1,17 @@
 import React from 'react'
 import Box from './Box'
 
-const MetricBox = ({ value, subvalue, title, suffix, prefix, children }) => {
+const MetricBox = ({
+  value,
+  subvalue,
+  title,
+  suffix,
+  prefix,
+  width,
+  children,
+}) => {
   return (
-    <Box width="50%">
+    <Box width={width || '50%'}>
       <h2
         style={{
           margin: 0,

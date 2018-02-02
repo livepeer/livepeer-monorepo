@@ -6,7 +6,7 @@ const Content = styled.div`
   flex-flow: column;
   width: ${({ width }) => (typeof width === 'undefined' ? '100%' : width)};
   max-width: 100%;
-  margin: 0 auto 120px auto;
+  margin: 16px auto 120px auto;
   padding: 0 16px;
 `
 

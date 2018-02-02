@@ -90,4 +90,24 @@ export default withHandlers({
         window.alert(err.message)
       }
     },
+  onBondLPT: props =>
+    async function bondLPT(address: string): void {
+      window.open(
+        'https://livepeer.readthedocs.io/en/latest/bonding_and_delegation.html',
+      )
+      // try {
+      //   const { bond } = window.livepeer.rpc
+      //   const args = promptForArgs([
+      //     {
+      //       ask: 'How Much LPT would you like to bond?',
+      //       format: toBaseUnit,
+      //     },
+      //   ])
+      //   if (args.length < 1) return console.warn('Aborting transaction...')
+      //   await bond(address, ...args)
+      //   window.alert('Bond complete!')
+      // } catch (err) {
+      //   window.alert(err.message)
+      // }
+    },
 })

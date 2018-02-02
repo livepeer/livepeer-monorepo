@@ -28,11 +28,9 @@ const setProps = ({ data, ownProps }) => {
     ...data.me,
     ...data.account,
   }
-  const hex = account.id.substr(2, 6)
   return {
     ...ownProps,
     account,
-    color: toRGBA(hex),
     error: data.error,
     fetchMore: data.fetchMore,
     refetch: data.refetch,

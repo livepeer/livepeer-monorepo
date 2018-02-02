@@ -44,52 +44,61 @@ const AccountOverview: React.Component<Props> = ({
   const { ethBalance, tokenBalance } = account
   const me = pathInfo.isMe(match.path)
   return (
-    <Wrapper>
-      {/** ETH */}
-      <MetricBox
-        title="ETH Balance"
-        suffix="ETH"
-        value={formatBalance(ethBalance)}
-        subvalue={formatBalance(ethBalance, 18)}
-      >
-        {me && (
-          <React.Fragment>
-            {/** request */}
-            <Button onClick={onRequestETH}>
-              <DownloadCloudIcon size={12} />
-              <span style={{ marginLeft: 8 }}>request</span>
-            </Button>
-            {/** deposit */}
-            <Button onClick={onDepositETH}>
-              <PlusIcon size={12} />
-              <span style={{ marginLeft: 8 }}>deposit</span>
-            </Button>
-          </React.Fragment>
-        )}
-      </MetricBox>
-      {/** LPT */}
-      <MetricBox
-        title="Token Balance"
-        suffix="LPT"
-        value={formatBalance(tokenBalance)}
-        subvalue={formatBalance(tokenBalance, 18)}
-      >
-        {me && (
-          <React.Fragment>
-            {/** request */}
-            <Button onClick={onRequestLPT}>
-              <DownloadCloudIcon size={12} />
-              <span style={{ marginLeft: 8 }}>request</span>
-            </Button>
-            {/** transfer */}
-            <Button onClick={onTransferLPT}>
-              <SendIcon size={12} />
-              <span style={{ marginLeft: 8 }}>transfer</span>
-            </Button>
-          </React.Fragment>
-        )}
-      </MetricBox>
-    </Wrapper>
+    <React.Fragment>
+      <Wrapper>
+        <MetricBox
+          title="ETH Address"
+          width="100%"
+          subvalue={<code style={{ fontSize: 16 }}>{account.id}</code>}
+        />
+      </Wrapper>
+      <Wrapper>
+        {/** ETH */}
+        <MetricBox
+          title="ETH Balance"
+          suffix="ETH"
+          value={formatBalance(ethBalance)}
+          subvalue={formatBalance(ethBalance, 18)}
+        >
+          {me && (
+            <React.Fragment>
+              {/** request */}
+              <Button onClick={onRequestETH}>
+                <DownloadCloudIcon size={12} />
+                <span style={{ marginLeft: 8 }}>request</span>
+              </Button>
+              {/** deposit */}
+              <Button onClick={onDepositETH}>
+                <PlusIcon size={12} />
+                <span style={{ marginLeft: 8 }}>deposit</span>
+              </Button>
+            </React.Fragment>
+          )}
+        </MetricBox>
+        {/** LPT */}
+        <MetricBox
+          title="Token Balance"
+          suffix="LPT"
+          value={formatBalance(tokenBalance)}
+          subvalue={formatBalance(tokenBalance, 18)}
+        >
+          {me && (
+            <React.Fragment>
+              {/** request */}
+              <Button onClick={onRequestLPT}>
+                <DownloadCloudIcon size={12} />
+                <span style={{ marginLeft: 8 }}>request</span>
+              </Button>
+              {/** transfer */}
+              <Button onClick={onTransferLPT}>
+                <SendIcon size={12} />
+                <span style={{ marginLeft: 8 }}>transfer</span>
+              </Button>
+            </React.Fragment>
+          )}
+        </MetricBox>
+      </Wrapper>
+    </React.Fragment>
   )
 }
 

@@ -1,4 +1,5 @@
 import 'babel-polyfill'
+import 'url-search-params-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
 import { injectGlobal } from 'styled-components'
@@ -13,9 +14,20 @@ import { unregister } from './registerServiceWorker'
 
   // dump global styles
   injectGlobal`
+    @font-face {
+      font-family: 'AkkuratMonoPro';
+      src: url('/static/fonts/lineto-akkuratmono-pro-regular.eot');
+      src: url('/static/fonts/lineto-akkuratmono-pro-regular.eot?#iefix')
+          format('embedded-opentype'),
+        url('/static/fonts/lineto-akkuratmono-pro-regular.woff2') format('woff2'),
+        url('/static/fonts/lineto-akkuratmono-pro-regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
     * {
       box-sizing: border-box;
       font-weight: 300;
+      // font-family: 'AkkuratMonoPro';
     }
     html, body {
       margin: 0;

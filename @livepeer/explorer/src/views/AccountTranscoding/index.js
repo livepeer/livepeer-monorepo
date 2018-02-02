@@ -76,15 +76,15 @@ const AccountdTranscoding: React.Component<Props> = ({
       />
       <MetricBox
         title="Price Per Segment"
-        suffix="ETH"
-        value={formatBalance(pricePerSegment)}
-        subvalue={formatBalance(pricePerSegment, 18)}
+        suffix="WEI"
+        value={pricePerSegment}
+        subvalue={`${formatBalance(pricePerSegment, 18)} ETH`}
       />
       <MetricBox
         title="Pending Price Per Segment"
-        suffix="ETH"
-        value={formatBalance(pendingPricePerSegment)}
-        subvalue={formatBalance(pendingPricePerSegment, 18)}
+        suffix="WEI"
+        value={pendingPricePerSegment}
+        subvalue={`${formatBalance(pendingPricePerSegment, 18)} ETH`}
       />
       <MetricBox title="Last Reward Round" value={lastRewardRound} />
     </Wrapper>

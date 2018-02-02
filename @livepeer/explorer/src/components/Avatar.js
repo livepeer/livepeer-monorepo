@@ -1,7 +1,7 @@
 import React from 'react'
 import QRCode from 'qrcode-react'
 
-const Avatar = ({ size, id }) => {
+const Avatar = ({ size, id, bg }) => {
   return (
     <div
       style={{
@@ -32,7 +32,7 @@ const Avatar = ({ size, id }) => {
           size={size}
           value={id}
           fgColor={`#${id.substr(2, 6)}`}
-          bgColor="#fff"
+          bgColor={bg || '#fff'}
         />
       </div>
     </div>

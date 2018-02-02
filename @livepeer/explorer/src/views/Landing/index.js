@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 // import { withApollo } from 'react-apollo'
 import styled from 'styled-components'
-import { Footer, Navbar, ScrollToTopOnMount } from '../../components'
+import { BasicNavbar, Footer, ScrollToTopOnMount } from '../../components'
 import {
   actions as routingActions,
   selectors as routingSelectors,
@@ -41,12 +41,13 @@ const enhance = connect(mapStateToProps, mapDispatchToProps)
 const Landing = ({ query, viewAccount, ...props }) => (
   <Container>
     <ScrollToTopOnMount />
-    <Navbar />
+    <BasicNavbar />
     <img
       src={`${process.env.PUBLIC_URL}/wordmark.svg`}
       width="240"
       alt="The glorious Livepeer wordmark"
     />
+    <h3 style={{ letterSpacing: 8 }}>Protocol Explorer</h3>
     <br />
     <br />
     <p>Enter an ETH account address to view its Livepeer info</p>
@@ -105,7 +106,7 @@ const Container = styled.div`
   justify-content: top;
   min-height: 100vh;
   padding: 80px 32px;
-  background: #000;
+  background: radial-gradient(at 200% 200%, rgba(0, 235, 136, 0.5), #000 75%);
   color: #fff;
 `
 

@@ -59,7 +59,11 @@ const AccountDelegating: React.Component<Props> = ({
       <MetricBox
         title="Delegate Address"
         value={
-          <Link to={`/accounts/${delegateAddress}`}>View Account</Link> || 'N/A'
+          !delegateAddress ? (
+            'N/A'
+          ) : (
+            <Link to={`/accounts/${delegateAddress}`}>View Account</Link>
+          )
         }
         subvalue={delegateAddress}
       />
