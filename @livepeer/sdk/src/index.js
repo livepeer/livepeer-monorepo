@@ -1269,7 +1269,6 @@ export default async function createLivepeerSDK(
 
   /**
    * Mostly "`truffle`-style" ABI artifacts but no bytecode/network properties required
-   * @global
    * @typedef {Object} ContractArtifact
    * @prop {string} name - name of the contract
    * @prop {Array<ABIPropDescriptor>} abi - lists info about contract properties
@@ -1278,7 +1277,6 @@ export default async function createLivepeerSDK(
 
   /**
    * SDK configuration options
-   * @static
    * @typedef {Object} LivepeerSDKOptions
    * @prop {string} [provider = 'https://ethrpc-testnet.livepeer.org'] - The ETH http provider for rpc methods
    * @prop {number} [gas = 0] - the amount of gas to include with transactions by default

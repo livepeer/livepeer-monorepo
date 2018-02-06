@@ -92,6 +92,7 @@ The following section details the rpc API's function signatures and typedefs.
     -   [withdraw](#withdraw)
     -   [createJob](#createjob)
 -   [ABIPropDescriptor](#abipropdescriptor)
+-   [ContractArtifact](#contractartifact)
 -   [LivepeerSDKOptions](#livepeersdkoptions)
 -   [LivepeerSDK](#livepeersdk)
 -   [TokenInfo](#tokeninfo)
@@ -116,7 +117,7 @@ Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an obj
 
 **Parameters**
 
--   `opts` **LivepeerSDKOptions** SDK configuration options
+-   `opts` **[LivepeerSDKOptions](#livepeersdkoptions)** SDK configuration options
 
 Returns **Proimse&lt;[LivepeerSDK](#livepeersdk)>** 
 
@@ -578,6 +579,18 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `stateMutability` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of state mutability
 -   `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of contract property
 
+### ContractArtifact
+
+Mostly "`truffle`-style" ABI artifacts but no bytecode/network properties required
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+**Properties**
+
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the contract
+-   `abi` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[ABIPropDescriptor](#abipropdescriptor)>** lists info about contract properties
+-   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** deployed contract address. **Only required for Controller contract**
+
 ### LivepeerSDKOptions
 
 SDK configuration options
@@ -588,7 +601,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 -   `provider` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The ETH http provider for rpc methods
 -   `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** the amount of gas to include with transactions by default
--   `artifacts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), ContractArtifact>** an object containing contract name -> ContractArtifact mappings
+-   `artifacts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [ContractArtifact](#contractartifact)>** an object containing contract name -> ContractArtifact mappings
 -   `privateKeys` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** an object containing public -> private key mappings. Should be specified if using the SDK for transactions without MetaMask (via CLI, etc)
 -   `account` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** the account that will be used for transacting and data-fetching. Can be one of the publicKeys specified in the `privateKeys` option or an index of an account available via MetaMask
 
