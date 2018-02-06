@@ -527,24 +527,24 @@ export default async function createLivepeerSDK(
      *
      * await livepeer.rpc.transferToken('0xf00...', '10')
      * // => TxReceipt {
-     *   transactionHash: string,
-     *   transactionIndex": BN,
-     *   blockHash: string,
-     *   blockNumber: BN,
-     *   cumulativeGasUsed: BN,
-     *   gasUsed: BN,
-     *   contractAddress: string,
-     *   logs: Array<Log {
-     *     logIndex: BN,
-     *     blockNumber: BN,
-     *     blockHash: string,
-     *     transactionHash: string,
-     *     transactionIndex: string,
-     *     address: string,
-     *     data: string,
-     *     topics: Array<string>
-     *   }>
-     * }
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
      */
     async transferToken(
       to: string,
