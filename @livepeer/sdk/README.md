@@ -10,6 +10,8 @@ A module for interacting with Livepeer's smart contracts. A core dependency of m
 
 ## Installation
 
+This module is not yet published to npm, but once it is...
+
 ```bash
 yarn add @livepeer/sdk
 ```
