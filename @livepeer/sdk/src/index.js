@@ -111,6 +111,7 @@ export const DEFAULTS = {
 export const utils = {
   /**
    * Polls for a transaction receipt
+   * @ignore
    * @param {string}   txHash - the transaction hash
    * @param {Eth}      eth    - an instance of Ethjs
    * @return {Object}
@@ -149,6 +150,7 @@ export const utils = {
   },
   /**
    * Parses an encoded string of transcoding options
+   * @ignore
    * @param  {string} opts - transcoding options
    * @return {Object[]}
    */
@@ -165,6 +167,7 @@ export const utils = {
   },
   /**
    * Serializes a list of transcoding profiles name into a hash
+   * @ignore
    * @param  {string[]} name - transcoding profile name
    * @return {string}
    */
@@ -182,12 +185,14 @@ export const utils = {
   },
   /**
    * Pads an address with 0s on the left (for topic encoding)
+   * @ignore
    * @param  {string} addr - an ETH address
    * @return {string}
    */
   padAddress: addr => ADDRESS_PAD + addr.substr(2),
   /**
    * Encodes an event filter object into a topic list
+   * @ignore
    * @param  {Function} event   - a contract event method
    * @param  {Object}   filters - key/value map of indexed event params
    * @return {string[]}
@@ -206,6 +211,7 @@ export const utils = {
   },
   /**
    * Turns a raw event log into a result object
+   * @ignore
    * @param  {Function} event  - a contract event method
    * @param  {string}   data   - bytecode from log
    * @param  {string[]} topics - list of topics for log query
@@ -245,6 +251,7 @@ const formatDuration = ms => {
 
 /**
  * Deploys contract and return instance at deployed address
+ * @ignore
  * @param {*} eth
  * @param {*} args
  */
@@ -260,6 +267,7 @@ export async function deployContract(
 
 /**
  * Creates a contract instance from a specific address
+ * @ignore
  * @param {Eth}    eth     - ethjs instance
  * @param {string} address -
  * @param {Object} args[0] - an object containing all relevant Livepeer Artifacts
@@ -273,7 +281,8 @@ export function getContractAt(
 
 /**
  * Creates an instance of Eth and a default transaction object
- * @return {{ et, gash: Eth, defaultTx: { from: string, gas: number } }}
+ * @ignore
+ * @return {{ et, gas: Eth, defaultTx: { from: string, gas: number } }}
  */
 export async function initRPC({
   account,
@@ -321,6 +330,7 @@ export async function initRPC({
 
 /**
  * Creates instances of all main Livepeer contracts
+ * @ignore
  * @param {string} opts.provider  - the httpProvider for contract RPC
  * @param {Object} opts.artifacts - ...
  */
@@ -397,12 +407,20 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
 }
 
 /**
- * Gives back a nice big object with useful methods for interacting with Livepeer contracts
- * @param {Object} args[0] - options passed to `initContracts()`
+ * Livepeer SDK main module exports
+ * @namespace module#exports
+ */
+
+/**
+ * Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
+ * @memberof module#exports
+ * @name default
+ * @param {LivepeerSDKOptions} opts - SDK configuration options
+ * @return {LivepeerSDK}
  */
 export default async function createLivepeerSDK(
-  opts: Object,
-): Object<string, (...args: Array<any>) => Promise<any>> {
+  opts: LivepeerSDKOptions,
+): Promise<LivepeerSDK> {
   const { events, ...config } = await initContracts(opts)
   const {
     BondingManager,
@@ -416,63 +434,123 @@ export default async function createLivepeerSDK(
   const cache = {
     // previous log queries are held here to improve perf
   }
-  // RPC methods
+  /**
+   * "rpc" namespace of a Livepeer SDK instance
+   * @namespace livepeer#rpc
+   *
+   * @example
+   *
+   * import createLivepeerSDK from '@livepeer/sdk'
+   * ;(async () => {
+   *   // You can do something like this to grab only the rpc namespace from an SDK instance
+   *   const { rpc } = await createLivepeerSDK()
+   * })()
+   *
+   */
   const rpc = {
     // Eth
 
     /**
-     * Gets the total supply of LPT available in the protocol
-     * @return {number}
+     * Gets the ETH balance for an account
+     * @memberof livepeer#rpc
+     * @param {string} addr - ETH account address
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await livepeer.rpc.getEthBalance('0xf00...')
+     * // => string "..."
+     *
      */
-    async getEthBalance(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<number> {
+    async getEthBalance(addr: string): Promise<string> {
       return toString(await config.eth.getBalance(addr))
     },
 
     // Tokens
 
     /**
-     * Gets the total supply of LPT available in the protocol
-     * @return {number}
+     * Gets the total supply of token (LTPU) available in the protocol
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await livepeer.rpc.getTokenTotalSupply()
+     * // => string "..."
      */
-    async getTokenTotalSupply(): Promise<number> {
+    async getTokenTotalSupply(): Promise<string> {
       return headToString(await LivepeerToken.totalSupply())
     },
 
     /**
-     * Gets a user's token balance
+     * Gets a user's token balance (LPTU)
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await livepeer.rpc.getTokenBalance('0xf00...')
+     * // => string "..."
      */
-    async getTokenBalance(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<number> {
+    async getTokenBalance(addr: string): Promise<string> {
       return headToString(await LivepeerToken.balanceOf(addr))
     },
 
     /**
      * Gets general information about tokens
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {{ totalSupply: number, balance: number }}
+     * @return {Promise<TokenInfo>}
+     *
+     * @example
+     *
+     * await livepeer.rpc.getTokenInfo()
+     * // => TokenInfo { totalSupply: string, balance: string }
      */
-    async getTokenInfo(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<{
-      totalSupply: number,
-      balance: number,
-    }> {
+    async getTokenInfo(addr: string): Promise<TokenInfo> {
       return {
         totalSupply: await rpc.getTokenTotalSupply(),
         balance: await rpc.getTokenBalance(addr),
       }
     },
 
+    /**
+     * Transfers tokens (LPTU) from one account to another
+     * @memberof livepeer#rpc
+     * @param {string} to - the account ETH address to send tokens to
+     * @param {string} amount - the amount of token to send (LPTU)
+     * @param {TxConfig} tx - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await livepeer.rpc.transferToken('0xf00...', '10')
+     * // => TxReceipt {
+     *   transactionHash: string,
+     *   transactionIndex": BN,
+     *   blockHash: string,
+     *   blockNumber: BN,
+     *   cumulativeGasUsed: BN,
+     *   gasUsed: BN,
+     *   contractAddress: string,
+     *   logs: Array<Log {
+     *     logIndex: BN,
+     *     blockNumber: BN,
+     *     blockHash: string,
+     *     transactionHash: string,
+     *     transactionIndex: string,
+     *     address: string,
+     *     data: string,
+     *     topics: Array<string>
+     *   }>
+     * }
+     */
     async transferToken(
       to: string,
       amount: string,
       tx = config.defaultTx,
-    ): Promise<Object> {
+    ): Promise<TxReceipt> {
       const value = toBN(amount)
       // make sure balance is higher than transfer
       const balance = (await LivepeerToken.balanceOf(tx.from))[0]
@@ -489,92 +567,70 @@ export default async function createLivepeerSDK(
         config.eth,
       )
       // ...aaaand transfer!
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await LivepeerToken.transfer(to, value, tx),
         config.eth,
       )
-      // updated token balance
-      return await rpc.getTokenBalance(tx.from)
     },
 
     // Faucet
 
     /**
      * The amount of LPT the faucet distributes when tapped
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getFaucetAmount(): Promise<number> {
+    async getFaucetAmount(): Promise<string> {
       return headToString(await LivepeerTokenFaucet.requestAmount())
     },
 
     /**
      * How often an address can tap the faucet (in hours)
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getFaucetTapRate(): Promise<number> {
-      return headToNumber(await LivepeerTokenFaucet.requestWait())
+    async getFaucetTapWait(): Promise<string> {
+      return headToString(await LivepeerTokenFaucet.requestWait())
     },
 
     /**
      * Next timestamp at which the given address will be allowed to tap the faucet
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<string>}
      */
-    async getFaucetTapAt(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<number> {
-      return (
-        headToNumber(await LivepeerTokenFaucet.nextValidRequest(addr)) * 1000
-      )
-    },
-
-    /**
-     * Amount of time (in milliseconds) remaining until the given address will be allowed to tap the faucet
-     * @param  {string} addr - user's ETH address
-     * @return {number}
-     */
-    async getFaucetTapIn(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<number> {
-      const now = Date.now()
-      const then = await rpc.getFaucetTapAt(addr)
-      const t = then - now
-      return t > 0 ? t : 0
+    async getFaucetTapNext(addr: string): Promise<string> {
+      return headToString(await LivepeerTokenFaucet.nextValidRequest(addr))
     },
 
     /**
      * Info about the state of the LPT faucet
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<FaucetInfo>}
      */
-    async getFaucetInfo(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<{
-      amount: number,
-      tapRate: number,
-      tapAt: number,
-      tapIn: number,
-    }> {
+    async getFaucetInfo(addr: string): Promise<FaucetInfo> {
       return {
         amount: await rpc.getFaucetAmount(),
-        tapRate: await rpc.getFaucetTapRate(),
-        tapAt: await rpc.getFaucetTapAt(addr),
-        tapIn: await rpc.getFaucetTapIn(addr),
+        wait: await rpc.getFaucetTapWait(),
+        next: await rpc.getFaucetTapNext(addr),
       }
     },
 
     // Broadcaster
 
-    async getBroadcaster(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<{
-      deposit: number,
-      withdrawBlock: number,
-    }> {
+    /**
+     * Info about a broadcaster
+     * @memberof livepeer#rpc
+     * @param  {string} addr - user's ETH address
+     * @return {Promise<Broadcaster>}
+     */
+    async getBroadcaster(addr: string): Promise<Broadcaster> {
       const b = await JobsManager.broadcasters(addr)
       return {
+        address: addr,
         deposit: toString(b.deposit),
-        withdrawBlock: toString(b.withdrawBlock) || null,
+        withdrawBlock: toString(b.withdrawBlock),
       }
     },
 
@@ -582,45 +638,32 @@ export default async function createLivepeerSDK(
 
     /**
      * The delegator status of the given address
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<string>}
      */
-    async getDelegatorStatus(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<string> {
+    async getDelegatorStatus(addr: string): Promise<string> {
       const status = headToString(await BondingManager.delegatorStatus(addr))
       return DELEGATOR_STATUS[status]
     },
 
     /**
      * The delegator's stake
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<string>}
      */
-    async getDelegatorStake(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<number> {
+    async getDelegatorStake(addr: string): Promise<string> {
       return headToString(await BondingManager.delegatorStake(addr))
     },
 
     /**
      * General info about a delegator
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<Delegator>}
      */
-    async getDelegator(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<{
-      address: string,
-      bondedAmount: number,
-      delegateAddress: string,
-      delegatedAmount: number,
-      fees: number,
-      lastClaimRound: number,
-      startRound: number,
-      status: string,
-      withdrawRound: number,
-    }> {
+    async getDelegator(addr: string): Promise<Delegator> {
       const status = await rpc.getDelegatorStatus(addr)
       // const pendingStake = await rpc.pendingStake(addr)
       const d = await BondingManager.getDelegator(addr)
@@ -648,26 +691,9 @@ export default async function createLivepeerSDK(
     // Transcoder
 
     /**
-     * Maximum number of active transcoders
-     * @todo find a better way to get accurate number for active transcoders
-     * @return {number}
-     */
-    async getTotalActiveTranscoders(): Promise<number> {
-      return (await rpc.getActiveTranscoders()).length
-    },
-
-    /**
-     * Number of candidate transcoders
-     * @todo find a better way to get accurate number for candidate transcoders
-     * @return {number}
-     */
-    async getTotalCandidateTranscoders(): Promise<number> {
-      return (await rpc.getCandidateTranscoders()).length
-    },
-
-    /**
      * Number of reserve transcoders
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
     async getTotalReserveTranscoders(): Promise<number> {
       return headToString(await BondingManager.getReservePoolSize())
@@ -675,12 +701,11 @@ export default async function createLivepeerSDK(
 
     /**
      * Whether or not the transcoder is active
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<boolean>}
      */
-    async getTranscoderIsActive(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<boolean> {
+    async getTranscoderIsActive(addr: string): Promise<boolean> {
       return headToBool(
         await BondingManager.isActiveTranscoder(
           addr,
@@ -691,46 +716,32 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the status of a transcoder
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {number}
+     * @return {Promise<string>}
      */
-    async getTranscoderStatus(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<string> {
+    async getTranscoderStatus(addr: string): Promise<string> {
       const status = headToString(await BondingManager.transcoderStatus(addr))
       return TRANSCODER_STATUS[status]
     },
 
     /**
      * Gets a transcoder's total stake
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {string}
+     * @return {Promise<string>}
      */
-    async getTranscoderTotalStake(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<boolean> {
+    async getTranscoderTotalStake(addr: string): Promise<string> {
       return headToString(await BondingManager.transcoderTotalStake(addr))
     },
 
     /**
      * Gets info about a transcoder
+     * @memberof livepeer#rpc
      * @param  {string} addr - user's ETH address
-     * @return {Transcoder}
+     * @return {Promise<Transcoder>}
      */
-    async getTranscoder(
-      addr: string = invariant('addr', 0, 'string'),
-    ): Promise<{
-      active: boolean,
-      address: string,
-      status: string,
-      lastRewardRound: ?number,
-      blockRewardCut: ?number,
-      feeShare: ?number,
-      pricePerSegment: ?number,
-      pendingBlockRewardCut: ?number,
-      pendingFeeShare: ?number,
-      pendingPricePerSegment: ?number,
-    }> {
+    async getTranscoder(addr: string): Promise<Transcoder> {
       const status = await rpc.getTranscoderStatus(addr)
       const active = await rpc.getTranscoderIsActive(addr)
       const totalStake = await rpc.getTranscoderTotalStake(addr)
@@ -759,6 +770,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets transcoders
+     * @memberof livepeer#rpc
      * @return {Array<Transcoder>}
      */
     async getTranscoders(): Promise<Array<Transcoder>> {
@@ -774,31 +786,35 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the length of a round (in blocks)
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getRoundLength(): Promise<number> {
+    async getRoundLength(): Promise<string> {
       return headToString(await RoundsManager.roundLength())
     },
 
     /**
      * Gets the estimated number of rounds per year
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getRoundsPerYear(): Promise<number> {
+    async getRoundsPerYear(): Promise<string> {
       return headToString(await RoundsManager.roundsPerYear())
     },
 
     /**
      * Gets the number of the current round
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getCurrentRound(): Promise<number> {
+    async getCurrentRound(): Promise<string> {
       return headToString(await RoundsManager.currentRound())
     },
 
     /**
      * Whether or not the current round is initalized
-     * @return {boolean}
+     * @memberof livepeer#rpc
+     * @return {Promise<boolean>}
      */
     async getCurrentRoundIsInitialized(): Promise<boolean> {
       return headToBool(await RoundsManager.currentRoundInitialized())
@@ -806,42 +822,39 @@ export default async function createLivepeerSDK(
 
     /**
      * The block at which the current round started
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getCurrentRoundStartBlock(): Promise<number> {
+    async getCurrentRoundStartBlock(): Promise<string> {
       return headToString(await RoundsManager.currentRoundStartBlock())
     },
 
     /**
-     * The previously intiialized round
-     * @return {number}
+     * The previously intitialized round
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getLastInitializedRound(): Promise<number> {
+    async getLastInitializedRound(): Promise<string> {
       return headToString(await RoundsManager.lastInitializedRound())
     },
 
     /**
      * Gets general information about the rounds in the protocol
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<RoundInfo>}
      */
-    async getRoundInfo(): {
-      currentRound: ?number,
-      currentRoundInitialized: boolean,
-      currentRoundStartBlock: ?number,
-      lastInitializedRound: ?number,
-      roundLength: ?number,
-    } {
-      const roundLength = await rpc.getRoundLength()
-      const currentRound = await rpc.getCurrentRound()
-      const currentRoundInitialized = await rpc.getCurrentRoundIsInitialized()
+    async getRoundInfo(): Promise<RoundInfo> {
+      const length = await rpc.getRoundLength()
+      const number = await rpc.getCurrentRound()
+      const initialized = await rpc.getCurrentRoundIsInitialized()
       const lastInitializedRound = await rpc.getLastInitializedRound()
-      const currentRoundStartBlock = await rpc.getCurrentRoundStartBlock()
+      const startBlock = await rpc.getCurrentRoundStartBlock()
       return {
-        currentRound,
-        currentRoundInitialized,
-        currentRoundStartBlock,
+        number,
+        initialized,
+        startBlock,
         lastInitializedRound,
-        roundLength,
+        length,
       }
     },
 
@@ -849,69 +862,62 @@ export default async function createLivepeerSDK(
 
     /**
      * Total jobs that have been created
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getTotalJobs(): Promise<number> {
+    async getTotalJobs(): Promise<string> {
       return headToString(await JobsManager.numJobs())
     },
 
     /**
      * Verification rate for jobs
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getJobVerificationRate(): Promise<number> {
+    async getJobVerificationRate(): Promise<string> {
       return headToString(await JobsManager.verificationRate())
     },
 
     /**
      * Verification period for jobs
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getJobVerificationPeriod(): Promise<number> {
+    async getJobVerificationPeriod(): Promise<string> {
       return headToString(await JobsManager.verificationPeriod())
     },
 
     /**
      * Slashing period for jobs
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getJobSlashingPeriod(): Promise<number> {
+    async getJobSlashingPeriod(): Promise<string> {
       return headToString(await JobsManager.slashingPeriod())
     },
 
     /**
      * Finder fee for jobs
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<string>}
      */
-    async getJobFinderFee(): Promise<number> {
+    async getJobFinderFee(): Promise<string> {
       return headToString(await JobsManager.finderFee())
     },
 
     /**
      * Gets general info about the state of jobs in the protocol
-     * @return {{
-     *   totalJobs: number,
-     *   verificationRate: ?number,
-     *   verificationPeriod: ?number,
-     *   slashingPeriod: ?number,
-     *   endingPeriod: ?number,
-     *   finderFee: ?number
-     * }}
+     * @memberof livepeer#rpc
+     * @return {Promise<JobsInfo>}
      */
-    async getJobsInfo(): {
-      totalJobs: number,
-      verificationRate: ?number,
-      verificationPeriod: ?number,
-      slashingPeriod: ?number,
-      finderFee: ?number,
-    } {
-      const totalJobs = await rpc.getTotalJobs()
+    async getJobsInfo(): Promise<JobsInfo> {
+      const total = await rpc.getTotalJobs()
       const verificationRate = await rpc.getJobVerificationRate()
       const verificationPeriod = await rpc.getJobVerificationPeriod()
       const slashingPeriod = await rpc.getJobSlashingPeriod()
       const finderFee = await rpc.getJobFinderFee()
       return {
-        totalJobs,
+        total,
         verificationRate,
         verificationPeriod,
         slashingPeriod,
@@ -921,16 +927,11 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets a job by id
-     * @param  {number} id - the job id
-     * @return {{
-     *   jobId: number,
-     *   streamId: string,
-     *   transcodingOptions: Array<Object>,
-     *   transcoder: string,
-     *   broadcaster: string
-     * }}
+     * @memberof livepeer#rpc
+     * @param  {string} id - the job id
+     * @return {Promise<Job>}
      */
-    async getJob(id: number = invariant('id', 0, 'number')): Promise<Object> {
+    async getJob(id: string): Promise<Job> {
       const x = await JobsManager.getJob(id)
       return {
         jobId: Number(id),
@@ -943,25 +944,19 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets a list of jobs
-     * @param  {number} opts.from -
-     * @param  {number} opts.to   -
-     * @return {{
-     *   jobId: number,
-     *   streamId: string,
-     *   transcodingOptions: Array<Object>,
-     *   broadcaster: string
-     * }}
+     * @memberof livepeer#rpc
+     * @param {string} opts.from - block to search from
+     * @param {string} opts.to - block to search to
+     * @param {number} opts.blocksAgo - helps determine default from block
+     * @param {string} opts.broadcaster - filter to only jobs created by this broadcaster
+     * @return {Array<Job>}
      */
     async getJobs({
       to,
       from,
       blocksAgo = 100 * 10000,
       ...filters
-    } = {}): Array<{
-      streamId: string,
-      transcodingOptions: Array<Object>,
-      broadcaster: string,
-    }> {
+    } = {}): Array<Job> {
       const event = events.NewJob
       const head = await config.eth.blockNumber()
       const fromBlock = from || Math.max(0, head - blocksAgo)
@@ -996,38 +991,36 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets LPT from the faucet
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<TxReceipt>}
      */
-    async tapFaucet(tx = config.defaultTx): Promise<number> {
-      const ms = await rpc.getFaucetTapIn(tx.from)
-      if (ms > 0)
-        throw new Error(
-          `Can't tap the faucet right now. Your next tap is in ${formatDuration(
-            ms,
-          )}.`,
-        )
+    async tapFaucet(tx = config.defaultTx): Promise<TxReceipt> {
+      // const ms = await rpc.getFaucetTapIn(tx.from)
+      // if (ms > 0)
+      //   throw new Error(
+      //     `Can't tap the faucet right now. Your next tap is in ${formatDuration(
+      //       ms,
+      //     )}.`,
+      //   )
       // tap the faucet
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await LivepeerTokenFaucet.request(tx),
         config.eth,
       )
-      // updated balance
-      return await rpc.getTokenBalance(tx.from)
     },
 
     /**
      * Initializes the round
-     * @return {number}
+     * @memberof livepeer#rpc
+     * @return {Promise<TxReceipt>}
      */
-    async initializeRound(tx = config.defaultTx): Promise<Object> {
+    async initializeRound(tx = config.defaultTx): Promise<TxReceipt> {
       try {
         // initialize round
-        await utils.getTxReceipt(
+        return await utils.getTxReceipt(
           await RoundsManager.initializeRound(tx),
           config.eth,
         )
-        // updated round info
-        return rpc.getRoundInfo()
       } catch (err) {
         err.message = 'Error: initializeRound\n' + err.message
         throw err
@@ -1036,6 +1029,8 @@ export default async function createLivepeerSDK(
 
     /**
      * Claims all available token pool shares
+     * @memberof livepeer#rpc
+     * @todo add param to specify an exacty number of claims to make
      * @return {Object}
      */
     async claimTokenPoolsShares(tx = config.defaultTx): Promise<Object> {
@@ -1073,7 +1068,10 @@ export default async function createLivepeerSDK(
 
     /**
      * Bonds LPT to an address
-     * @return {Object}
+     * @memberof livepeer#rpc
+     * @param {string} to - the delegate to bond to
+     * @param {string} amount - the amount of LPTU to bond tot he delegate
+     * @return {Promise<TxReceipt>}
      */
     async bond(
       to: string,
@@ -1103,47 +1101,43 @@ export default async function createLivepeerSDK(
         config.eth,
       )
       // ...aaaand bond!
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await BondingManager.bond(value, to, tx),
         config.eth,
       )
-      // updated delegator info
-      return await rpc.getDelegator(tx.from)
     },
 
     /**
      * Unbonds LPT from an address
-     * @return {Object}
+     * @memberof livepeer#rpc
+     * @return {Promise<TxReceipt>}
      */
-    async unbond(tx = config.defaultTx): Promise<Object> {
+    async unbond(tx = config.defaultTx): Promise<TxReceipt> {
       const { status } = await rpc.getDelegator(tx.from)
       // Can only unbond successfully when not already "Unbonding"
       if (status === DELEGATOR_STATUS.Unbonding) {
-        console.warn('This account is already unbonding.')
+        throw new Error('This account is already unbonding.')
       } else {
-        await BondingManager.unbond()
+        return await BondingManager.unbond()
       }
-      return await rpc.getDelegator(tx.from)
     },
 
     /**
      * Sets transcoder parameters
-     * @return {Object}
+     * @memberof livepeer#rpc
+     * @param {string} blockRewardCut - the block reward cut you wish to set
+     * @param {string} feeShare - the fee share you wish to set
+     * @param {string} pricePerSegment - the price per segment you wish to set
+     * @return {Promise<TxReceipt>}
      */
     async setupTranscoder(
-      {
-        blockRewardCut, // percentage
-        feeShare, // percentage
-        pricePerSegment, // lpt
-      }: {
-        blockRewardCut: number,
-        feeShare: number,
-        pricePerSegment: number,
-      } = {},
+      blockRewardCut: string, // percentage
+      feeShare: string, // percentage
+      pricePerSegment: string, // lpt
       tx = config.defaultTx,
-    ) {
+    ): Promise<TxReceipt> {
       // become a transcoder
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await BondingManager.transcoder(
           toBN(blockRewardCut),
           toBN(feeShare),
@@ -1152,18 +1146,15 @@ export default async function createLivepeerSDK(
         ),
         config.eth,
       )
-      // updated transcoder info
-      return await rpc.getTranscoder(tx.from)
     },
 
     /**
-     * Deposits LPT
-     * @return {Object}
+     * Deposits ETH for broadcasting
+     * @memberof livepeer#rpc
+     * @param {string} amount - amount of ETH to deposit
+     * @return {Promise<TxReceipt>}
      */
-    async deposit(
-      amount = invariant('amount', 0, 'string'),
-      tx = config.defaultTx,
-    ): Promise<Object> {
+    async deposit(amount, tx = config.defaultTx): Promise<TxReceipt> {
       // make sure balance is higher than deposit
       const balance = toBN(await rpc.getEthBalance(tx.from))
       const value = toBN(amount)
@@ -1175,66 +1166,65 @@ export default async function createLivepeerSDK(
         )
       }
       // ...aaaand deposit!
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await JobsManager.deposit({
           ...tx,
           value,
         }),
         config.eth,
       )
-      // updated token info
-      return await rpc.getBroadcaster(tx.from)
     },
 
     /**
      * Withdraws deposited LPT
-     * @return {Object}
+     * @memberof livepeer#rpc
+     * @return {Promise<TxReceipt>}
      */
-    async withdraw(amount: ?number, tx = config.defaultTx): Promise<Object> {
+    async withdraw(amount: ?number, tx = config.defaultTx): Promise<TxReceipt> {
+      return await utils.getTxReceipt(
+        await JobsManager.withdraw(tx),
+        config.eth,
+      )
       // withdraw all (default)
-      if ('undefined' === typeof amount) {
-        await JobsManager.withdraw()
-      } else {
-        // withdraw specific amount
-        const a = toBN(amount)
-        const b = (await JobsManager.broadcasters(tx.from)).deposit
-        const c = b.sub(a)
-        await JobsManager.withdraw()
-        await rpc.deposit(c, tx)
-      }
-      // updated token info
-      return await rpc.getTokenInfo(tx.from)
+      // if ('undefined' === typeof amount) {
+      //   await JobsManager.withdraw()
+      // } else {
+      //   // withdraw specific amount
+      //   const a = toBN(amount)
+      //   const b = (await JobsManager.broadcasters(tx.from)).deposit
+      //   const c = b.sub(a)
+      //   await JobsManager.withdraw()
+      //   await rpc.deposit(c, tx)
+      // }
+      // // updated token info
+      // return await rpc.getTokenInfo(tx.from)
     },
 
     /**
      * Creates a job
-     * @return {Object}
+     * @memberof livepeer#rpc
+     * @param {Object} options
+     * @return {Promise<TxReceipt>}
      */
     async createJob(
-      {
-        streamId,
-        profiles = [
-          // default profiles
-          'P240p30fps4x3',
-          'P360p30fps16x9',
-        ],
-        maxPricePerSegment,
-      }: {
-        streamId: string,
-        profiles: Array<string>,
-        maxPricePerSegment: number,
-      },
+      streamId: string,
+      profiles: Array<string> = [
+        // default profiles
+        'P240p30fps4x3',
+        'P360p30fps16x9',
+      ],
+      maxPricePerSegment: string,
       tx = config.defaultTx,
-    ): Promise<Object> {
+    ): Promise<TxReceipt> {
       // ensure there are active transcoders
       // ...maybe we should also throw if deposit is below some theshold?
-      if ((await rpc.getTotalActiveTranscoders()) < 1) {
-        throw Error(
-          'Cannnot create a job at this time since there are no active transcoders',
-        )
-      }
+      // if ((await rpc.getTotalActiveTranscoders()) < 1) {
+      //   throw Error(
+      //     'Cannnot create a job at this time since there are no active transcoders',
+      //   )
+      // }
       // create job!
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await JobsManager.job(
           streamId,
           utils.serializeTranscodingProfiles(profiles),
@@ -1244,7 +1234,7 @@ export default async function createLivepeerSDK(
         config.eth,
       )
       // latest job
-      return (await rpc.getJobs({ broadcaster: tx.from, blocksAgo: 0 }))[0]
+      // return (await rpc.getJobs({ broadcaster: tx.from, blocksAgo: 0 }))[0]
     },
   }
 
@@ -1263,4 +1253,164 @@ export default async function createLivepeerSDK(
       VIDEO_PROFILES,
     },
   }
+
+  // Keeping typedefs down here so they show up last in the generated API table of contents
+
+  /**
+   * ABI property descriptor
+   * @typedef {Object} ABIPropDescriptor
+   * @prop {boolean} constants - is the method constant?
+   * @prop {Array<{ name: string, type: string }>} inputs - the method params
+   * @prop {Array<{ name: string, type: string }>} outputs - method return values
+   * @prop {boolean} payable - is the method payable?
+   * @prop {string} stateMutability - type of state mutability
+   * @prop {string} type - type of contract property
+   */
+
+  /**
+   * Mostly "`truffle`-style" ABI artifacts but no bytecode/network properties required
+   * @global
+   * @typedef {Object} ContractArtifact
+   * @prop {string} name - name of the contract
+   * @prop {Array<ABIPropDescriptor>} abi - lists info about contract properties
+   * @prop {string} [address] - deployed contract address. **Only required for Controller contract**
+   */
+
+  /**
+   * SDK configuration options
+   * @static
+   * @typedef {Object} LivepeerSDKOptions
+   * @prop {string} [provider = 'https://ethrpc-testnet.livepeer.org'] - The ETH http provider for rpc methods
+   * @prop {number} [gas = 0] - the amount of gas to include with transactions by default
+   * @prop {Object<string, ContractArtifact>} artifacts - an object containing contract name -> ContractArtifact mappings
+   * @prop {Object<string, string>} privateKeys - an object containing public -> private key mappings. Should be specified if using the SDK for transactions without MetaMask (via CLI, etc)
+   * @prop {string|number} account - the account that will be used for transacting and data-fetching. Can be one of the publicKeys specified in the `privateKeys` option or an index of an account available via MetaMask
+   */
+
+  /**
+   * An object containing contract info and utility methods for interacting with the Livepeer protocol's smart contracts
+   * @typedef {Object} LivepeerSDK
+   * @prop {Object<string, any>} config - this prop is mostly for debugging purposes and could change a lot in the future. Currently, it contains the following props: `abis`, `accounts`, `contracts`, `defaultTx`, `eth`
+   * @prop {Object<string, any>} constants - Exposes some constant values. Currently, it contains the following props: `ADDRESS_PAD`, `DELEGATOR_STATUS`, `EMPTY_ADDRESS`, `TRANSCODER_STATUS`, `VIDEO_PROFILES`, `VIDEO_PROFILE_ID_SIZE`
+   * @prop {Function} create - same as the `createLivepeerSDK` function
+   * @prop {Object<string, Object>} events - Object mapping an event name -> contract event descriptor object
+   * @prop {Object<string, Function>} rpc - contains all of the rpc methods available for interacting with the Livepeer protocol
+   * @prop {Object<string, Function>} utils - contains utility methods. Mostly here just because. Could possibly be removed or moved into its own module in the future
+   */
+
+  /**
+   * An object containing the total token supply and a user's account balance.
+   * @typedef {Object} TokenInfo
+   * @prop {string} totalSupply - total supply of token available in the protocol (LPTU)
+   * @prop {string} balance - user's token balance (LPTU)
+   */
+
+  /**
+   * Transaction config object
+   * @typedef {Object} TxConfig
+   * @prop {string} from - the ETH account address to sign the transaction from
+   * @prop {number} gas - the amount of gas to include in the transaction
+   */
+
+  /**
+   * Transaction receipt
+   * @typedef {Object} TxReceipt
+   * @prop {string} transactionHash - the transaction hash
+   * @prop {BN} transactionIndex - the transaction index
+   * @prop {string} blockHash - the transaction block hash
+   * @prop {BN} blockNumber - the transaction block number
+   * @prop {BN} cumulativeGasUsed - the cumulative gas used in the transaction
+   * @prop {BN} gasUsed - the gas used in the transaction
+   * @prop {string} contractAddress - the contract address of the transaction method
+   * @prop {Array<Log>} logs - an object containing logs that were fired during the transaction
+   */
+
+  /**
+   * An object representing a contract log
+   * @typedef {Object} Log
+   * @prop {BN} logIndex - the log index
+   * @prop {BN} blockNumber - the log block number
+   * @prop {string} blockHash - the log block hash
+   * @prop {string} transactionHash - the log's transaction hash
+   * @prop {BN} transactionIndex - the log's transaction index
+   * @prop {string} address - the log's address
+   * @prop {string} data - the log's data
+   * @prop {Array<string>} topics - the log's topics
+   */
+
+  /**
+   * Information about the status of the LPT faucet
+   * @typedef {Object} FaucetInfo
+   * @prop {string} amount - the amount distributed by the faucet
+   * @prop {string} wait - the faucet request cooldown time
+   * @prop {string} next - the next time a valid faucet request may be made
+   */
+
+  /**
+   * A Broadcaster struct
+   * @typedef {Object} Broadcaster
+   * @prop {string} address - ...
+   * @prop {string} deposit - the amount of LPT the broadcaster has deposited
+   * @prop {string} withdrawBlock - the next block at which a broadcaster may withdraw their deposit
+   */
+
+  /**
+   * A Delegator struct
+   * @typedef {Object} Delegator
+   * @prop {string} address - the delegator's ETH address
+   * @prop {string} bondedAmount - The amount of LPTU a delegator has bonded
+   * @prop {string} delegateAddress - the ETH address of the delegator's delegate
+   * @prop {string} delegatedAmount - the amount of LPTU the delegator has delegated
+   * @prop {string} fees - the amount of LPTU a delegator has collected
+   * @prop {string} lastClaimRound - the last round that the delegator claimed reward and fee pool shares
+   * @prop {string} startRound - the round the delegator becomes bonded and delegated to its delegate
+   * @prop {string} status - the delegator's status
+   * @prop {string} withdrawRound - the round the delegator can withdraw its stake
+   */
+
+  /**
+   * A Transcoder struct
+   * @typedef {Object} Transcoder
+   * @prop {boolean} active - whether or not the transcoder is active
+   * @prop {string} address - the transcoder's ETH address
+   * @prop {string} blockRewardCut - % of block reward cut paid to transcoder by a delegator
+   * @prop {string} feeShare - % of fees paid to delegators by transcoder
+   * @prop {string} lastRewardRound - last round that the transcoder called reward
+   * @prop {string} pendingBlockRewardCut - pending block reward cut for next round if the transcoder is active
+   * @prop {string} pendingFeeShare - pending fee share for next round if the transcoder is active
+   * @prop {string} pendingPricePerSegment - pending price per segment for next round if the transcoder is active
+   * @prop {string} pricePerSegment - price per segment for a stream (LPTU)
+   * @prop {string} status - the transcoder's status
+   * @prop {string} totalStake - total tokens delegated toward a transcoder (including their own)
+   */
+
+  /**
+   * An object containing information about the current round
+   * @typedef {Object} RoundInfo
+   * @prop {string} number - the number of the current round
+   * @prop {boolean} initialized - whether or not the current round is initialized
+   * @prop {string} startBlock - the start block of the current round
+   * @prop {string} lastInitializedRound - the last round that was initialized prior to the current
+   * @prop {string} length - the length of rounds
+   */
+
+  /**
+   * An object containing overview information about the jobs in the protocol
+   * @typedef {Object} JobsInfo
+   * @prop {string} total - the total number of jobs created
+   * @prop {boolean} verificationRate - the verification rate for jobs
+   * @prop {string} verificationPeriod - the verification period for jobs
+   * @prop {string} slashingPeriod - the slashing period for jobs
+   * @prop {string} finderFee - the finder fee for jobs
+   */
+
+  /**
+   * A Job struct
+   * @typedef {Object} Job
+   * @prop {string} jobId - the id of the job
+   * @prop {string} streamId - the job's stream id
+   * @prop {Array<TranscodingProfile>} transcodingOptions - transcoding profiles
+   * @prop {string} [transcoder] - the ETH address of the assigned transcoder
+   * @prop {string} broadcaster - the ETH address of the broadcaster who created the job
+   */
 }
