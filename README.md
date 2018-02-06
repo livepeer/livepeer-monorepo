@@ -36,13 +36,13 @@ This repo is the home of the following packages:
 
 Name                                             | Description
 -------------------------------------------------|-------------
-[@livepeer/apollo](./@livepeer/apollo)           | Integrates with [@livepeer/graphql-sdk](./@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).
-[@livepeer/chroma](./@livepeer/chroma)           | A component library that contains some UI building blocks for livestreaming video applications.
-[@livepeer/explorer](./@livepeer/explorer)       | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org)
-[@livepeer/graphql-sdk](./@livepeer/graphql-sdk) | A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
-[@livepeer/lpx](./@livepeer/lpx)                 | A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
-[@livepeer/player](./@livepeer/player)           | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)
-[@livepeer/sdk](./@livepeer/sdk)                 | A module for interacting with Livepeer's smart contracts. A core dependency of most LivepeerJS projects.
+[@livepeer/apollo](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/apollo)           | Integrates with [@livepeer/graphql-sdk](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).
+[@livepeer/chroma](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/chroma)           | A component library that contains some UI building blocks for livestreaming video applications.
+[@livepeer/explorer](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/explorer)       | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org)
+[@livepeer/graphql-sdk](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/graphql-sdk) | A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
+[@livepeer/lpx](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/lpx)                 | A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
+[@livepeer/player](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/player)           | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)
+[@livepeer/sdk](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/sdk)                 | A module for interacting with Livepeer's smart contracts. A core dependency of most LivepeerJS projects.
 
 ## Resources
 
