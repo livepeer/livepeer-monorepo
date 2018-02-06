@@ -55,14 +55,13 @@ The following section details the rpc API's function signatures and typedefs.
     -   [getTokenInfo](#gettokeninfo)
     -   [transferToken](#transfertoken)
     -   [getFaucetAmount](#getfaucetamount)
-    -   [getFaucetTapWait](#getfaucettapwait)
-    -   [getFaucetTapNext](#getfaucettapnext)
+    -   [getFaucetWait](#getfaucetwait)
+    -   [getFaucetNext](#getfaucetnext)
     -   [getFaucetInfo](#getfaucetinfo)
     -   [getBroadcaster](#getbroadcaster)
     -   [getDelegatorStatus](#getdelegatorstatus)
     -   [getDelegatorStake](#getdelegatorstake)
     -   [getDelegator](#getdelegator)
-    -   [getTotalReserveTranscoders](#gettotalreservetranscoders)
     -   [getTranscoderIsActive](#gettranscoderisactive)
     -   [getTranscoderStatus](#gettranscoderstatus)
     -   [getTranscoderTotalStake](#gettranscodertotalstake)
@@ -74,7 +73,7 @@ The following section details the rpc API's function signatures and typedefs.
     -   [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
     -   [getCurrentRoundStartBlock](#getcurrentroundstartblock)
     -   [getLastInitializedRound](#getlastinitializedround)
-    -   [getRoundInfo](#getroundinfo)
+    -   [getCurrentRoundInfo](#getcurrentroundinfo)
     -   [getTotalJobs](#gettotaljobs)
     -   [getJobVerificationRate](#getjobverificationrate)
     -   [getJobVerificationPeriod](#getjobverificationperiod)
@@ -92,21 +91,21 @@ The following section details the rpc API's function signatures and typedefs.
     -   [deposit](#deposit)
     -   [withdraw](#withdraw)
     -   [createJob](#createjob)
--   [ABIPropDescriptor](#abipropdescriptor)
+-   [Job](#job)
 -   [ContractArtifact](#contractartifact)
 -   [LivepeerSDKOptions](#livepeersdkoptions)
 -   [LivepeerSDK](#livepeersdk)
 -   [TokenInfo](#tokeninfo)
 -   [TxConfig](#txconfig)
--   [Job](#job)
--   [Log](#log)
+-   [TxReceipt](#txreceipt)
+-   [ABIPropDescriptor](#abipropdescriptor)
 -   [FaucetInfo](#faucetinfo)
 -   [Broadcaster](#broadcaster)
 -   [Delegator](#delegator)
 -   [Transcoder](#transcoder)
 -   [RoundInfo](#roundinfo)
 -   [JobsInfo](#jobsinfo)
--   [TxReceipt](#txreceipt)
+-   [Log](#log)
 
 ### module~exports
 
@@ -161,8 +160,8 @@ Gets the ETH balance for an account
 **Examples**
 
 ```javascript
-await livepeer.rpc.getEthBalance('0xf00...')
-// => string "..."
+await rpc.getEthBalance('0xf00...')
+// => string
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
@@ -174,8 +173,8 @@ Gets the total supply of token (LTPU) available in the protocol
 **Examples**
 
 ```javascript
-await livepeer.rpc.getTokenTotalSupply()
-// => string "..."
+await rpc.getTokenTotalSupply()
+// => string
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
@@ -191,8 +190,8 @@ Gets a user's token balance (LPTU)
 **Examples**
 
 ```javascript
-await livepeer.rpc.getTokenBalance('0xf00...')
-// => string "..."
+await rpc.getTokenBalance('0xf00...')
+// => string
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
@@ -208,7 +207,7 @@ Gets general information about tokens
 **Examples**
 
 ```javascript
-await livepeer.rpc.getTokenInfo()
+await rpc.getTokenInfo()
 // => TokenInfo { totalSupply: string, balance: string }
 ```
 
@@ -227,7 +226,7 @@ Transfers tokens (LPTU) from one account to another
 **Examples**
 
 ```javascript
-await livepeer.rpc.transferToken('0xf00...', '10')
+await rpc.transferToken('0xf00...', '10')
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -255,21 +254,42 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 The amount of LPT the faucet distributes when tapped
 
+**Examples**
+
+```javascript
+await rpc.getFaucetAmount()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
-#### getFaucetTapWait
+#### getFaucetWait
 
 How often an address can tap the faucet (in hours)
 
+**Examples**
+
+```javascript
+await rpc.getFaucetWait()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
-#### getFaucetTapNext
+#### getFaucetNext
 
 Next timestamp at which the given address will be allowed to tap the faucet
 
 **Parameters**
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+
+**Examples**
+
+```javascript
+await rpc.getFaucetNext()
+// => string
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
@@ -281,6 +301,17 @@ Info about the state of the LPT faucet
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
+**Examples**
+
+```javascript
+await rpc.getFaucetInfo('0xf00...')
+// => FaucetInfo {
+//   amount: string,
+//   wait: string,
+//   next: string,
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[FaucetInfo](#faucetinfo)>** 
 
 #### getBroadcaster
@@ -290,6 +321,17 @@ Info about a broadcaster
 **Parameters**
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+
+**Examples**
+
+```javascript
+await rpc.getBroadcaster('0xf00...')
+// => Broadcaster {
+//   address: string,
+//   deposit: string,
+//   withdrawBlock: string,
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Broadcaster](#broadcaster)>** 
 
@@ -301,6 +343,13 @@ The delegator status of the given address
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
+**Examples**
+
+```javascript
+await rpc.getDelegatorStatus('0xf00...')
+// => 'Pending' | 'Bonded' | 'Unbonding' | 'Unbonded'
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getDelegatorStake
@@ -310,6 +359,13 @@ The delegator's stake
 **Parameters**
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+
+**Examples**
+
+```javascript
+await rpc.getDelegatorStake('0xf00...')
+// => string
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
@@ -321,13 +377,24 @@ General info about a delegator
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
+**Examples**
+
+```javascript
+await rpc.getDelegator('0xf00...')
+// => Delegator {
+//   address: string,
+//   bondedAmount: string,
+//   delegateAddress: string,
+//   delegateAmount: string,
+//   fees: string,
+//   lastClaimRound: string,
+//   startRound: string,
+//   status: 'Pending' | 'Bonded' | 'Unbonding' | 'Unbonded',
+//   withdrawRound: string,
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Delegator](#delegator)>** 
-
-#### getTotalReserveTranscoders
-
-Number of reserve transcoders
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getTranscoderIsActive
 
@@ -336,6 +403,13 @@ Whether or not the transcoder is active
 **Parameters**
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+
+**Examples**
+
+```javascript
+await rpc.getTranscoderIsActive('0xf00...')
+// => boolean
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
 
@@ -347,6 +421,13 @@ Gets the status of a transcoder
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
+**Examples**
+
+```javascript
+await rpc.getTranscoderStatus('0xf00...')
+// => 'NotRegistered' | 'Registered' | 'Resigned'
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getTranscoderTotalStake
@@ -356,6 +437,13 @@ Gets a transcoder's total stake
 **Parameters**
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+
+**Examples**
+
+```javascript
+await rpc.getTranscoderTotalStake('0xf00...')
+// => string
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
@@ -367,11 +455,37 @@ Gets info about a transcoder
 
 -   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
+**Examples**
+
+```javascript
+await rpc.getTranscoder('0xf00...')
+// => Transcoder {
+//   active: boolean,
+//   address: string,
+//   blockRewardCut: string,
+//   feeShare: string,
+//   lastRewardRound: string,
+//   pendingBlockRewardCut string,
+//   pendingFeeShare: string,
+//   pendingPricePerSegment: string,
+//   pricePerSegment: string,
+//   status: 'NotRegistered' | 'Registered' | 'Resigned',
+//   totalStake: string,
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Transcoder](#transcoder)>** 
 
 #### getTranscoders
 
 Gets transcoders
+
+**Examples**
+
+```javascript
+await rpc.getTranscoders()
+// => Array<Transcoder>
+```
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Transcoder](#transcoder)>** 
 
@@ -379,11 +493,25 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 Gets the length of a round (in blocks)
 
+**Examples**
+
+```javascript
+await rpc.getRoundLength()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getRoundsPerYear
 
 Gets the estimated number of rounds per year
+
+**Examples**
+
+```javascript
+await rpc.getRoundsPerYear()
+// => string
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
@@ -391,11 +519,25 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Gets the number of the current round
 
+**Examples**
+
+```javascript
+await rpc.getCurrentRound()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getCurrentRoundIsInitialized
 
 Whether or not the current round is initalized
+
+**Examples**
+
+```javascript
+await rpc.getCurrentRoundIsInitialized()
+// => boolean
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
 
@@ -403,17 +545,44 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 The block at which the current round started
 
+**Examples**
+
+```javascript
+await rpc.getCurrentRoundStartBlock()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getLastInitializedRound
 
 The previously intitialized round
 
+**Examples**
+
+```javascript
+await rpc.getLastInitializedRound()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
-#### getRoundInfo
+#### getCurrentRoundInfo
 
 Gets general information about the rounds in the protocol
+
+**Examples**
+
+```javascript
+await rpc.getCurrentRoundInfo()
+// => RoundInfo {
+//   number: string,
+//   initialized: boolean,
+//   startBlock: string,
+//   lastInitializedRound: string,
+//   length: string,
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[RoundInfo](#roundinfo)>** 
 
@@ -421,11 +590,25 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Total jobs that have been created
 
+**Examples**
+
+```javascript
+await rpc.getTotalJobs()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getJobVerificationRate
 
 Verification rate for jobs
+
+**Examples**
+
+```javascript
+await rpc.getJobVerificationRate()
+// => string
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
@@ -433,11 +616,25 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Verification period for jobs
 
+**Examples**
+
+```javascript
+await rpc.getJobVerificationPeriod()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getJobSlashingPeriod
 
 Slashing period for jobs
+
+**Examples**
+
+```javascript
+await rpc.getJobSlashingPeriod()
+// => string
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
@@ -445,11 +642,31 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Finder fee for jobs
 
+**Examples**
+
+```javascript
+await rpc.getJobFinderFee()
+// => string
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getJobsInfo
 
 Gets general info about the state of jobs in the protocol
+
+**Examples**
+
+```javascript
+await rpc.getJobsInfo()
+// => JobsInfo {
+//   total: string,
+//   verificationRate: string,
+//   verificationPeriod: string,
+//   slashingPeriod: string,
+//   finderFee: string,
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[JobsInfo](#jobsinfo)>** 
 
@@ -460,6 +677,19 @@ Gets a job by id
 **Parameters**
 
 -   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job id
+
+**Examples**
+
+```javascript
+await rpc.getJob('1337')
+// => Job {
+//   id: string,
+//   streamId: string,
+//   transcodingOptions: Array<JobProfile>
+//   transcoder: string,
+//   broadcaster: string,
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Job](#job)>** 
 
@@ -475,6 +705,13 @@ Gets a list of jobs
     -   `$0.blocksAgo`   (optional, default `100*10000`)
     -   `$0.filters` **...any** 
 
+**Examples**
+
+```javascript
+await rpc.getJobs()
+// => Array<Job>
+```
+
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Job](#job)>** 
 
 #### tapFaucet
@@ -484,6 +721,31 @@ Gets LPT from the faucet
 **Parameters**
 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+**Examples**
+
+```javascript
+await rpc.tapFaucet('1337')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -495,6 +757,31 @@ Initializes the round
 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
+**Examples**
+
+```javascript
+await rpc.initializeRound()
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
 #### claimTokenPoolsShares
@@ -505,7 +792,32 @@ Claims all available token pool shares
 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+**Examples**
+
+```javascript
+await rpc.claimTokenPoolsShare()
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[TxReceipt](#txreceipt)** 
 
 #### bond
 
@@ -517,6 +829,31 @@ Bonds LPT to an address
 -   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU to bond tot he delegate
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
+**Examples**
+
+```javascript
+await rpc.bond('0xf00...', '100')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
 #### unbond
@@ -526,6 +863,31 @@ Unbonds LPT from an address
 **Parameters**
 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+**Examples**
+
+```javascript
+await rpc.unbond()
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -540,6 +902,31 @@ Sets transcoder parameters
 -   `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the price per segment you wish to set
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
+**Examples**
+
+```javascript
+await rpc.setupTranscoder('10', '10', '5')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
 #### deposit
@@ -551,6 +938,31 @@ Deposits ETH for broadcasting
 -   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** amount of ETH to deposit
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
+**Examples**
+
+```javascript
+await rpc.deposit('100')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
 #### withdraw
@@ -560,6 +972,31 @@ Withdraws deposited LPT
 **Parameters**
 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+**Examples**
+
+```javascript
+await rpc.withdraw()
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -575,22 +1012,46 @@ Creates a job
 -   `maxPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the maximum LPTU price the broadcaster is willing to pay per segment
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
+**Examples**
+
+```javascript
+await rpc.createJob('foo', [P240p30fps4x3', 'P360p30fps16x9'], '5')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
-### ABIPropDescriptor
+### Job
 
-ABI property descriptor
+A Job struct
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 **Properties**
 
--   `constants` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method constant?
--   `inputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** the method params
--   `outputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** method return values
--   `payable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method payable?
--   `stateMutability` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of state mutability
--   `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of contract property
+-   `jobId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the id of the job
+-   `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job's stream id
+-   `transcodingOptions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;TranscodingProfile>** transcoding profiles
+-   `transcoder` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** the ETH address of the assigned transcoder
+-   `broadcaster` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster who created the job
 
 ### ContractArtifact
 
@@ -655,36 +1116,37 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `from` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH account address to sign the transaction from
 -   `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** the amount of gas to include in the transaction
 
-### Job
+### TxReceipt
 
-A Job struct
-
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
-
-**Properties**
-
--   `jobId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the id of the job
--   `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job's stream id
--   `transcodingOptions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;TranscodingProfile>** transcoding profiles
--   `transcoder` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** the ETH address of the assigned transcoder
--   `broadcaster` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster who created the job
-
-### Log
-
-An object representing a contract log
+Transaction receipt
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 **Properties**
 
--   `logIndex` **BN** the log index
--   `blockNumber` **BN** the log block number
--   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log block hash
--   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's transaction hash
--   `transactionIndex` **BN** the log's transaction index
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's address
--   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's data
--   `topics` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the log's topics
+-   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
+-   `transactionIndex` **BN** the transaction index
+-   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
+-   `blockNumber` **BN** the transaction block number
+-   `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
+-   `gasUsed` **BN** the gas used in the transaction
+-   `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
+-   `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
+
+### ABIPropDescriptor
+
+ABI property descriptor
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+**Properties**
+
+-   `constants` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method constant?
+-   `inputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** the method params
+-   `outputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** method return values
+-   `payable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method payable?
+-   `stateMutability` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of state mutability
+-   `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of contract property
 
 ### FaucetInfo
 
@@ -776,19 +1238,19 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `slashingPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the slashing period for jobs
 -   `finderFee` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the finder fee for jobs
 
-### TxReceipt
+### Log
 
-Transaction receipt
+An object representing a contract log
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 **Properties**
 
--   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
--   `transactionIndex` **BN** the transaction index
--   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
--   `blockNumber` **BN** the transaction block number
--   `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
--   `gasUsed` **BN** the gas used in the transaction
--   `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
--   `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
+-   `logIndex` **BN** the log index
+-   `blockNumber` **BN** the log block number
+-   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log block hash
+-   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's transaction hash
+-   `transactionIndex` **BN** the log's transaction index
+-   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's address
+-   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's data
+-   `topics` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the log's topics
