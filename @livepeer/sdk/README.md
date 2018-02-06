@@ -119,7 +119,7 @@ Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an obj
 
 -   `opts` **[LivepeerSDKOptions](#livepeersdkoptions)** SDK configuration options
 
-Returns **Proimse&lt;[LivepeerSDK](#livepeersdk)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[LivepeerSDK](#livepeersdk)>** 
 
 ### livepeer#rpc
 
@@ -468,7 +468,7 @@ Gets LPT from the faucet
 
 **Parameters**
 
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -478,7 +478,7 @@ Initializes the round
 
 **Parameters**
 
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -488,7 +488,7 @@ Claims all available token pool shares
 
 **Parameters**
 
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
@@ -500,7 +500,7 @@ Bonds LPT to an address
 
 -   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegate to bond to
 -   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU to bond tot he delegate
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -510,7 +510,7 @@ Unbonds LPT from an address
 
 **Parameters**
 
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -523,7 +523,7 @@ Sets transcoder parameters
 -   `blockRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the block reward cut you wish to set
 -   `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the fee share you wish to set
 -   `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the price per segment you wish to set
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -534,7 +534,7 @@ Deposits ETH for broadcasting
 **Parameters**
 
 -   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** amount of ETH to deposit
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -544,8 +544,7 @@ Withdraws deposited LPT
 
 **Parameters**
 
--   `amount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
--   `tx`   (optional, default `config.defaultTx`)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -555,12 +554,11 @@ Creates a job
 
 **Parameters**
 
--   `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `profiles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `[// default profiles
+-   `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the stream id for the job
+-   `profiles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** a list of profiles to transcode the job into (optional, default `[// default profiles
     'P240p30fps4x3','P360p30fps16x9']`)
--   `maxPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `tx`   (optional, default `config.defaultTx`)
--   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `maxPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the maximum LPTU price the broadcaster is willing to pay per segment
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
@@ -693,7 +691,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ...
+-   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster
 -   `deposit` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPT the broadcaster has deposited
 -   `withdrawBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next block at which a broadcaster may withdraw their deposit
 
