@@ -19,17 +19,20 @@ yarn add @livepeer/sdk
 ## Usage
 
 ```js
-import createLivepeer from '@livepeer/sdk'
-;(async () => {
-  const livepeer = await createLivepeerSDK()
-  // Now you can access the methods under livepeer.rpc
+import LivepeerSDK from '@livepeer/sdk'
+
+// Call the SDK factory function and pass it any configuration options
+LivepeerSDK({ ... }).then(async (sdk) => {
+  // Once initialized, you can access the methods under the `rpc` namespace
+  const { rpc } = sdk
   // For example, you can get your total supply of Livepeer Tokens like so
-  console.log(await livepeer.rpc.getTokenTotalSupply())
-  // result string ... maybe "9999999999999999999999" or something like that :)
-})()
+  const tokens = await rpc.getTokenTotalSupply()
+  console.log(tokens)
+  // => string representation of some absurdly high number, maybe "9999999999999999999999" or something like that :)
+})
 ```
 
-Once you have created an instance of the Livepeer SDK, many rpc methods are available for use. These methods are all available under the `rpc` property of a Livepeer SDK instance. The following section details the API's function signatures and typedefs.
+The following section details the rpc API's function signatures and typedefs.
 
 ## API
 
