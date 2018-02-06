@@ -29,6 +29,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "copy-docs": "echo 'No copy-docs script specified'",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "PUBLIC_URL=https://livepeer.github.io/livepeerjs/ npm run build",

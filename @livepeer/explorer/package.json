@@ -34,6 +34,7 @@
     "build:desktop": "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:electron",
     "build:electron": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 npx build",
     "build:web": "react-scripts build",
+    "copy-docs": "rm -rf ../../docs/explorer && mkdir ../../docs/explorer && cp docs/index.html ../../docs/explorer && cp README.md ../../docs/explorer",
     "deploy": "npx gh-pages -d build",
     "eject": "react-scripts eject",
     "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
@@ -54,6 +55,7 @@
     }
   },
   "devDependencies": {
+    "documentation": "^5.3.5",
     "electron": "^1.7.11",
     "electron-builder": "^19.55.3",
     "gh-pages": "^1.1.0",

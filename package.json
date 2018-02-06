@@ -3,6 +3,7 @@
   "workspaces": ["@livepeer/*"],
   "scripts": {
     "build": "./bin/build.sh",
+    "docs": "./bin/docs.sh",
     "postinstall": "yarn build"
   }
 }

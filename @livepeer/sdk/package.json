@@ -18,6 +18,7 @@
     "compile": "pushd ../../node_modules/protocol && rm -rf build && yarn && npx truffle version && yarn compile && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
     "deploy": "pushd ../../node_modules/protocol && rm -rf build && yarn && npx truffle version && npx truffle migrate --reset && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
     "docs": "npx documentation readme src/index.js --section=API",
+    "copy-docs": "rm -rf ../../docs/sdk && mkdir ../../docs/sdk && cp docs/index.html ../../docs/sdk && cp README.md ../../docs/sdk",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepare": "npm -s run build",
     "test": "npx ava"

@@ -408,15 +408,26 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
 
 /**
  * Livepeer SDK main module exports
- * @namespace module#exports
+ * @namespace module~exports
  */
 
 /**
  * Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
- * @memberof module#exports
+ * @memberof module~exports
  * @name default
  * @param {LivepeerSDKOptions} opts - SDK configuration options
  * @return {Promise<LivepeerSDK>}
+ *
+ * @example
+ *
+ * // Here we're naming the default export "LivepeerSDK"
+ * import LivepeerSDK from '@livepeer/sdk'
+ *
+ * // Call the factory function and await its Promise
+ * LivepeerSDK().then(sdk => {
+ *   // Your Livepeer SDK instance is now ready to use
+ * })
+ *
  */
 export default async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
@@ -436,15 +447,17 @@ export default async function createLivepeerSDK(
   }
   /**
    * "rpc" namespace of a Livepeer SDK instance
-   * @namespace livepeer#rpc
+   * @namespace livepeer~rpc
    *
    * @example
    *
-   * import createLivepeerSDK from '@livepeer/sdk'
-   * ;(async () => {
-   *   // You can do something like this to grab only the rpc namespace from an SDK instance
-   *   const { rpc } = await createLivepeerSDK()
-   * })()
+   * import LivepeerSDK from '@livepeer/sdk'
+   *
+   * LivepeerSDK().then(({ rpc }) => {
+   *   // Here, we're destructuring the sdk to expose only its rpc namespace
+   *   // Now, you you are able call rpc.<method-name>()
+   *   // All rpc method yield Promises. Their usage is further explained below.
+   * })
    *
    */
   const rpc = {
@@ -452,7 +465,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the ETH balance for an account
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} addr - ETH account address
      * @return {Promise<string>}
      *
@@ -470,7 +483,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the total supply of token (LTPU) available in the protocol
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      *
      * @example
@@ -484,7 +497,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets a user's token balance (LPTU)
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<string>}
      *
@@ -499,7 +512,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets general information about tokens
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<TokenInfo>}
      *
@@ -517,7 +530,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Transfers tokens (LPTU) from one account to another
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} to - the account ETH address to send tokens to
      * @param {string} amount - the amount of token to send (LPTU)
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -577,7 +590,7 @@ export default async function createLivepeerSDK(
 
     /**
      * The amount of LPT the faucet distributes when tapped
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getFaucetAmount(): Promise<string> {
@@ -586,7 +599,7 @@ export default async function createLivepeerSDK(
 
     /**
      * How often an address can tap the faucet (in hours)
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getFaucetTapWait(): Promise<string> {
@@ -595,7 +608,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Next timestamp at which the given address will be allowed to tap the faucet
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<string>}
      */
@@ -605,7 +618,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Info about the state of the LPT faucet
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<FaucetInfo>}
      */
@@ -621,7 +634,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Info about a broadcaster
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<Broadcaster>}
      */
@@ -638,7 +651,7 @@ export default async function createLivepeerSDK(
 
     /**
      * The delegator status of the given address
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<string>}
      */
@@ -649,7 +662,7 @@ export default async function createLivepeerSDK(
 
     /**
      * The delegator's stake
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<string>}
      */
@@ -659,7 +672,7 @@ export default async function createLivepeerSDK(
 
     /**
      * General info about a delegator
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<Delegator>}
      */
@@ -692,7 +705,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Number of reserve transcoders
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getTotalReserveTranscoders(): Promise<number> {
@@ -701,7 +714,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Whether or not the transcoder is active
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<boolean>}
      */
@@ -716,7 +729,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the status of a transcoder
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<string>}
      */
@@ -727,7 +740,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets a transcoder's total stake
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<string>}
      */
@@ -737,7 +750,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets info about a transcoder
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @return {Promise<Transcoder>}
      */
@@ -770,7 +783,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets transcoders
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Array<Transcoder>}
      */
     async getTranscoders(): Promise<Array<Transcoder>> {
@@ -786,7 +799,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the length of a round (in blocks)
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getRoundLength(): Promise<string> {
@@ -795,7 +808,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the estimated number of rounds per year
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getRoundsPerYear(): Promise<string> {
@@ -804,7 +817,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the number of the current round
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getCurrentRound(): Promise<string> {
@@ -813,7 +826,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Whether or not the current round is initalized
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<boolean>}
      */
     async getCurrentRoundIsInitialized(): Promise<boolean> {
@@ -822,7 +835,7 @@ export default async function createLivepeerSDK(
 
     /**
      * The block at which the current round started
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getCurrentRoundStartBlock(): Promise<string> {
@@ -831,7 +844,7 @@ export default async function createLivepeerSDK(
 
     /**
      * The previously intitialized round
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getLastInitializedRound(): Promise<string> {
@@ -840,7 +853,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets general information about the rounds in the protocol
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<RoundInfo>}
      */
     async getRoundInfo(): Promise<RoundInfo> {
@@ -862,7 +875,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Total jobs that have been created
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getTotalJobs(): Promise<string> {
@@ -871,7 +884,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Verification rate for jobs
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getJobVerificationRate(): Promise<string> {
@@ -880,7 +893,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Verification period for jobs
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getJobVerificationPeriod(): Promise<string> {
@@ -889,7 +902,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Slashing period for jobs
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getJobSlashingPeriod(): Promise<string> {
@@ -898,7 +911,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Finder fee for jobs
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<string>}
      */
     async getJobFinderFee(): Promise<string> {
@@ -907,7 +920,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets general info about the state of jobs in the protocol
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @return {Promise<JobsInfo>}
      */
     async getJobsInfo(): Promise<JobsInfo> {
@@ -927,7 +940,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets a job by id
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param  {string} id - the job id
      * @return {Promise<Job>}
      */
@@ -944,7 +957,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets a list of jobs
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} opts.from - block to search from
      * @param {string} opts.to - block to search to
      * @param {number} opts.blocksAgo - helps determine default from block
@@ -991,7 +1004,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets LPT from the faucet
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
@@ -1012,7 +1025,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Initializes the round
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
@@ -1031,7 +1044,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Claims all available token pool shares
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @todo add param to specify an exacty number of claims to make
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Object}
@@ -1071,7 +1084,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Bonds LPT to an address
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} to - the delegate to bond to
      * @param {string} amount - the amount of LPTU to bond tot he delegate
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1113,7 +1126,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Unbonds LPT from an address
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
@@ -1129,7 +1142,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Sets transcoder parameters
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} blockRewardCut - the block reward cut you wish to set
      * @param {string} feeShare - the fee share you wish to set
      * @param {string} pricePerSegment - the price per segment you wish to set
@@ -1156,7 +1169,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Deposits ETH for broadcasting
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} amount - amount of ETH to deposit
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
@@ -1184,7 +1197,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Withdraws deposited LPT
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
@@ -1210,7 +1223,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Creates a job
-     * @memberof livepeer#rpc
+     * @memberof livepeer~rpc
      * @param {string} streamId - the stream id for the job
      * @param {Array<string>} profiles - a list of profiles to transcode the job into
      * @param {string} maxPricePerSegment - the maximum LPTU price the broadcaster is willing to pay per segment

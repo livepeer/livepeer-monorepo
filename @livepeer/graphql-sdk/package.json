@@ -12,6 +12,7 @@
     "build": "npm -s run build-module && npm -s run build-main",
     "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
     "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "copy-docs": "echo 'No copy-docs script specified'",
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepare": "npm -s run build",
