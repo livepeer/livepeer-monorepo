@@ -412,11 +412,11 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
  */
 
 /**
- * Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
+ * Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
  * @memberof module#exports
  * @name default
  * @param {LivepeerSDKOptions} opts - SDK configuration options
- * @return {LivepeerSDK}
+ * @return {Proimse<LivepeerSDK>}
  */
 export default async function createLivepeerSDK(
   opts: LivepeerSDKOptions,

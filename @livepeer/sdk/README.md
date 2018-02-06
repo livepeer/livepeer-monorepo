@@ -18,14 +18,19 @@ yarn add @livepeer/sdk
 
 ## Usage
 
+Here's a code snippet showing instantiation and basic usage of the Livepeer SDK.
+
 ```js
 import LivepeerSDK from '@livepeer/sdk'
 
-// Call the SDK factory function and pass it any configuration options
+// First, call the SDK factory function
+// pass it any configuration options
 LivepeerSDK({ ... }).then(async (sdk) => {
+
   // Once initialized, you can access the methods under the `rpc` namespace
   const { rpc } = sdk
-  // For example, you can get your total supply of Livepeer Tokens like so
+
+  // For example, you can get the total supply of Livepeer Tokens like so
   const tokens = await rpc.getTokenTotalSupply()
   console.log(tokens)
   // => string representation of some absurdly high number, maybe "9999999999999999999999" or something like that :)
@@ -107,13 +112,13 @@ Livepeer SDK main module exports
 
 #### default
 
-Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
+Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
 
 **Parameters**
 
 -   `opts` **LivepeerSDKOptions** SDK configuration options
 
-Returns **[LivepeerSDK](#livepeersdk)** 
+Returns **Proimse&lt;[LivepeerSDK](#livepeersdk)>** 
 
 ### livepeer#rpc
 
