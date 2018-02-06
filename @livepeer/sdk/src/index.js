@@ -416,7 +416,7 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
  * @memberof module#exports
  * @name default
  * @param {LivepeerSDKOptions} opts - SDK configuration options
- * @return {Proimse<LivepeerSDK>}
+ * @return {Promise<LivepeerSDK>}
  */
 export default async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
@@ -520,7 +520,7 @@ export default async function createLivepeerSDK(
      * @memberof livepeer#rpc
      * @param {string} to - the account ETH address to send tokens to
      * @param {string} amount - the amount of token to send (LPTU)
-     * @param {TxConfig} tx - an object specifying the `from` and `gas` values of the transaction
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      *
      * @example
@@ -992,6 +992,7 @@ export default async function createLivepeerSDK(
     /**
      * Gets LPT from the faucet
      * @memberof livepeer#rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async tapFaucet(tx = config.defaultTx): Promise<TxReceipt> {
@@ -1012,6 +1013,7 @@ export default async function createLivepeerSDK(
     /**
      * Initializes the round
      * @memberof livepeer#rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async initializeRound(tx = config.defaultTx): Promise<TxReceipt> {
@@ -1031,6 +1033,7 @@ export default async function createLivepeerSDK(
      * Claims all available token pool shares
      * @memberof livepeer#rpc
      * @todo add param to specify an exacty number of claims to make
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Object}
      */
     async claimTokenPoolsShares(tx = config.defaultTx): Promise<Object> {
@@ -1071,6 +1074,7 @@ export default async function createLivepeerSDK(
      * @memberof livepeer#rpc
      * @param {string} to - the delegate to bond to
      * @param {string} amount - the amount of LPTU to bond tot he delegate
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async bond(
@@ -1110,6 +1114,7 @@ export default async function createLivepeerSDK(
     /**
      * Unbonds LPT from an address
      * @memberof livepeer#rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async unbond(tx = config.defaultTx): Promise<TxReceipt> {
@@ -1128,6 +1133,7 @@ export default async function createLivepeerSDK(
      * @param {string} blockRewardCut - the block reward cut you wish to set
      * @param {string} feeShare - the fee share you wish to set
      * @param {string} pricePerSegment - the price per segment you wish to set
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async setupTranscoder(
@@ -1152,6 +1158,7 @@ export default async function createLivepeerSDK(
      * Deposits ETH for broadcasting
      * @memberof livepeer#rpc
      * @param {string} amount - amount of ETH to deposit
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async deposit(amount, tx = config.defaultTx): Promise<TxReceipt> {
@@ -1178,9 +1185,10 @@ export default async function createLivepeerSDK(
     /**
      * Withdraws deposited LPT
      * @memberof livepeer#rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
-    async withdraw(amount: ?number, tx = config.defaultTx): Promise<TxReceipt> {
+    async withdraw(tx = config.defaultTx): Promise<TxReceipt> {
       return await utils.getTxReceipt(
         await JobsManager.withdraw(tx),
         config.eth,
@@ -1203,7 +1211,10 @@ export default async function createLivepeerSDK(
     /**
      * Creates a job
      * @memberof livepeer#rpc
-     * @param {Object} options
+     * @param {string} streamId - the stream id for the job
+     * @param {Array<string>} profiles - a list of profiles to transcode the job into
+     * @param {string} maxPricePerSegment - the maximum LPTU price the broadcaster is willing to pay per segment
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      */
     async createJob(
