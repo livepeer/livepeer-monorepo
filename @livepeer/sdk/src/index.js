@@ -1347,7 +1347,7 @@ export default async function createLivepeerSDK(
   /**
    * A Broadcaster struct
    * @typedef {Object} Broadcaster
-   * @prop {string} address - ...
+   * @prop {string} address - the ETH address of the broadcaster
    * @prop {string} deposit - the amount of LPT the broadcaster has deposited
    * @prop {string} withdrawBlock - the next block at which a broadcaster may withdraw their deposit
    */
