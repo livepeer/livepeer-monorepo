@@ -40,8 +40,8 @@ import { unregister } from './registerServiceWorker'
   const client = await createApolloClient({
     // Allow builds to configure the http provider
     provider: process.env.REACT_APP_HTTP_PROVIDER,
-    // Default gas to send with transactions
-    defaultGas: 80 * 1000,
+    // Default gas limit to send with transactions (2.1m wei)
+    defaultGas: 2.1 * 1000000,
     // If user account changes while on /me, this will hard refresh the page
     onAccountChange: (currentAccount: string, nextAccount: string): void => {
       const path = window.location.pathname.toLowerCase()

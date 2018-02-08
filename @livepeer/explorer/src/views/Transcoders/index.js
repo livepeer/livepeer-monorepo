@@ -17,7 +17,13 @@ import {
   Star as StarIcon,
   Zap as VideoIcon,
 } from 'react-feather'
-import { formatBalance, formatPercentage, pathInfo } from '../../utils'
+import {
+  formatBalance,
+  formatPercentage,
+  pathInfo,
+  promptForArgs,
+  toBaseUnit,
+} from '../../utils'
 import {
   Avatar,
   Banner,
@@ -63,8 +69,9 @@ const TranscodersView = ({
   history,
   loading,
   match,
-  onBondLPT,
   transcoders,
+  approve,
+  bondToken,
 }) => {
   const canBond = window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS
   const searchParams = new URLSearchParams(history.location.search)
@@ -162,9 +169,50 @@ const TranscodersView = ({
           <TranscoderCard
             key={props.id}
             {...props}
-            onBond={e => {
-              e.preventDefault()
-              onBondLPT(props.id)
+            onBond={async e => {
+              try {
+                e.preventDefault()
+                const args = promptForArgs([
+                  {
+                    ask: 'How Much LPT would you like to bond?',
+                    format: toBaseUnit,
+                  },
+                ])
+                if (args.length < 1)
+                  return console.warn('Aborting transaction...')
+                const [amount] = args
+                if (
+                  !window.confirm(
+                    `# Bonding Confirmation\n\nYou are about to bond ${formatBalance(
+                      amount,
+                      18,
+                    )} LPT to ${
+                      props.id
+                    }.\n\nDo you wish to continue?\n\n__Info__: By clicking "OK", MetaMask will prompt you twice -- first for an approval transaction, and then for the actual bonding transaction. You will be required to submit both in order to complete the bonding process.`,
+                  )
+                ) {
+                  return console.warn('Aborting transaction...')
+                }
+                window.alert('Please approve the bond amount with MetaMask')
+                await approve({ type: 'bond', amount })
+                window.alert(
+                  'Please confirm the bond transaction with MetaMask',
+                )
+                await bondToken({ to: props.id, amount })
+                window.alert(
+                  `# Congratulations\n\nYou have successfully bonded ${formatBalance(
+                    amount,
+                    18,
+                  )} LPT to ${props.id}`,
+                )
+              } catch (err) {
+                console.error(err)
+                window.alert(
+                  `# Unable to Bond\n\nLooks like there was a problem with the transaction:\n\n${
+                    err.message
+                  }`,
+                )
+              }
             }}
           />
         ))}

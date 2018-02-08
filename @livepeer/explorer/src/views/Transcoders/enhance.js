@@ -1,7 +1,8 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { pathInfo } from '../../utils'
+import unit from 'ethjs-unit'
+import { pathInfo, promptForArgs, toBaseUnit } from '../../utils'
 import { withTransactionHandlers } from '../../enhancers'
 
 const query = `
@@ -48,9 +49,46 @@ const setOptions = ({ match }) => {
   }
 }
 
-const connectApollo = graphql(gql(query), {
+const connectTranscodersQuery = graphql(gql(query), {
   props: setProps,
   options: setOptions,
 })
 
-export default compose(connectApollo, withTransactionHandlers)
+const connectApproveMutation = graphql(
+  gql`
+    mutation approve($type: String!, $amount: String!) {
+      approve(type: $type, amount: $amount)
+    }
+  `,
+  {
+    props: ({ mutate }) => ({
+      approve: async variables => {
+        console.log('approve', variables)
+        await mutate({ variables })
+      },
+    }),
+  },
+)
+
+const connectBondTokenMutation = graphql(
+  gql`
+    mutation bondToken($to: String!, $amount: String!) {
+      bondToken(to: $to, amount: $amount)
+    }
+  `,
+  {
+    props: ({ mutate }) => ({
+      bondToken: async variables => {
+        console.log('bondToken', variables)
+        await mutate({ variables })
+      },
+    }),
+  },
+)
+
+export default compose(
+  connectTranscodersQuery,
+  connectApproveMutation,
+  connectBondTokenMutation,
+  withTransactionHandlers,
+)

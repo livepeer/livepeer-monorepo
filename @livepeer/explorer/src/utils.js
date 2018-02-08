@@ -1,5 +1,6 @@
 import { matchPath } from 'react-router'
 import Big from 'big.js'
+import unit from 'ethjs-unit'
 
 export function formatPercentage(x: string, decimals = 2): string {
   return !x
@@ -21,9 +22,7 @@ export function formatBalance(x: string, decimals: number = 6): string {
 }
 
 export function toBaseUnit(x: string) {
-  return Big(x)
-    .mul('1000000000000000000')
-    .toString()
+  return !x ? '' : unit.toWei(x, 'ether').toString(10)
 }
 
 export function promptForArgs(
