@@ -32,7 +32,7 @@ const livepeer = {
         ? ALL_JOBS.filter(x => x.broadcaster === broadcaster).reverse()
         : ALL_JOBS.slice().reverse(),
     getTranscoder: async id => ALL_TRANSCODERS[id],
-    getActiveTranscoders: async () => Object.values(ALL_TRANSCODERS),
+    getTranscoders: async () => Object.values(ALL_TRANSCODERS),
   },
   utils,
 }
@@ -135,6 +135,7 @@ const ALL_TRANSCODERS = {
     pendingBlockRewardCut: '0',
     pendingFeeShare: '0',
     pendingPricePerSegment: '0',
+    totalStake: '0',
   },
   [EMPTY_ADDRESS.replace(/00/g, '22')]: {
     address: EMPTY_ADDRESS.replace(/00/g, '22'),
@@ -147,6 +148,7 @@ const ALL_TRANSCODERS = {
     pendingBlockRewardCut: '0',
     pendingFeeShare: '0',
     pendingPricePerSegment: '0',
+    totalStake: '0',
   },
 }
 

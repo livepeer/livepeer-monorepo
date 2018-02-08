@@ -1,12 +1,12 @@
 export function transformJob({
-  jobId,
+  id,
   streamId,
   transcodingOptions,
   broadcaster,
 }) {
   return {
     type: 'JobType',
-    id: jobId,
+    id,
     broadcaster,
     profiles: transcodingOptions.map(({ hash, ...profile }) => ({
       id: hash,
