@@ -1322,6 +1322,7 @@ export default async function createLivepeerSDK(
     /**
      * Bonds LPT to an address
      * @memberof livepeer~rpc
+     * @deprecated
      * @param {string} to - the delegate to bond to
      * @param {string} amount - the amount of LPTU to bond tot he delegate
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1380,6 +1381,31 @@ export default async function createLivepeerSDK(
       // ...aaaand bond!
       return await utils.getTxReceipt(
         await BondingManager.bond(value, to, tx),
+        config.eth,
+      )
+    },
+
+    async approveTokenBondAmount(
+      amount: string,
+      tx = config.eth.defaultTx,
+    ): Promise<TxReceipt> {
+      const token = toBN(amount)
+      // @todo - check token balance
+      await utils.getTxReceipt(
+        await LivepeerToken.approve(BondingManager.address, token),
+        config.eth,
+      )
+    },
+
+    async bondApprovedTokenAmount(
+      to: string,
+      amount: string,
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      const token = toBN(amount)
+      // @todo - check for existing approval / round initialization / token balance
+      return await utils.getTxReceipt(
+        await BondingManager.bond(token, to),
         config.eth,
       )
     },
