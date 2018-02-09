@@ -28,6 +28,7 @@ import {
   Avatar,
   Banner,
   BasicNavbar,
+  BasicModal,
   Button,
   Content,
   MetricBox,
@@ -72,6 +73,12 @@ const TranscodersView = ({
   transcoders,
   approve,
   bondToken,
+  modal,
+  modalType,
+  showModal,
+  bonding,
+  updateBonding,
+  ...props
 }) => {
   const canBond = window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS
   const searchParams = new URLSearchParams(history.location.search)
@@ -85,6 +92,7 @@ const TranscodersView = ({
     const mul = asc ? 1 : -1
     return _a.cmp(_b) * mul
   }
+  // console.log(props)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -170,6 +178,13 @@ const TranscodersView = ({
             key={props.id}
             {...props}
             onBond={async e => {
+              updateBonding(bonding => {
+                return {
+                  ...bonding,
+                  values: { to: props.id },
+                }
+              })
+              return showModal(true)
               try {
                 e.preventDefault()
                 const args = promptForArgs([
@@ -217,6 +232,63 @@ const TranscodersView = ({
           />
         ))}
       </Content>
+      {modal &&
+        {
+          bondApprove: (
+            <BasicModal
+              title="Bond to Transcoder"
+              onClose={() => showModal(false)}
+            >
+              <p>{bonding.values.to}</p>
+              <p>Enter an Amount</p>
+              <input
+                id="bondApproveAmount"
+                type="text"
+                style={{
+                  width: '90%',
+                  height: 48,
+                  padding: 8,
+                  fontSize: 16,
+                }}
+              />{' '}
+              LPT
+              <p style={{ fontSize: 14, lineHeight: 1.5 }}>
+                <strong style={{ fontWeight: 'normal' }}>Note</strong>: By
+                clicking "Submit", MetaMask will prompt you twice — first for an
+                approval transaction, and then for a bonding transaction. You
+                must submit both in order to complete the bonding process.
+              </p>
+              <div style={{ textAlign: 'right', paddingTop: 24 }}>
+                <Button onClick={() => showModal(false)}>Cancel</Button>
+                <Button
+                  onClick={async e => {
+                    try {
+                      const { value } = document.getElementById(
+                        'bondApproveAmount',
+                      )
+                      const amount = toBaseUnit(value)
+                      const { to } = bonding.values
+                      await approve({ type: 'bond', amount })
+                      await bondToken({ to, amount })
+                    } catch (err) {
+                      console.error(err)
+                      window.alert(
+                        `# Unable to Bond\n\nLooks like there was a problem with the transaction:\n\n${
+                          err.message
+                        }`,
+                      )
+                    }
+                  }}
+                >
+                  Submit
+                </Button>
+              </div>
+            </BasicModal>
+          ),
+          bondConfirm: <BasicModal title="Confirm Bond" />,
+          bondSuccess: <BasicModal title="Bond Success!" />,
+          bondError: <BasicModal title="Bond Fail" />,
+        }[modalType]}
     </React.Fragment>
   )
 }

@@ -1,4 +1,4 @@
-import { compose } from 'recompose'
+import { compose, withStateHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import unit from 'ethjs-unit'
@@ -86,7 +86,56 @@ const connectBondTokenMutation = graphql(
   },
 )
 
+const withModal = withStateHandlers(
+  props => ({
+    modal: false,
+    // bondApprove | bondConfirm | bondSuccess | bondError
+    modalType: 'bondApprove',
+    approval: {
+      values: {
+        amount: 0,
+      },
+      done: false,
+      loading: false,
+      errors: [],
+    },
+    bonding: {
+      values: {
+        to: '',
+      },
+      done: false,
+      loading: false,
+      errors: [],
+    },
+  }),
+  {
+    setModalType: (state, props) => modalType => ({
+      ...state,
+      modalType,
+    }),
+    showModal: (state, props) => modal => ({
+      ...state,
+      modal,
+    }),
+    updateApproval: (state, props) => f => ({
+      ...state,
+      approval: {
+        ...state.approval,
+        ...f(state.approval),
+      },
+    }),
+    updateBonding: (state, props) => f => ({
+      ...state,
+      bonding: {
+        ...state.bonding,
+        ...f(state.bonding),
+      },
+    }),
+  },
+)
+
 export default compose(
+  withModal,
   connectTranscodersQuery,
   connectApproveMutation,
   connectBondTokenMutation,
