@@ -116,7 +116,9 @@ const connectBondTokenMutation = graphql(
           try {
             console.log('bondToken', to, amount)
             bondLoading()
-            await approve({ type: 'bond', amount })
+            // skip approve when amount === 0
+            if (amount !== '0') await approve({ type: 'bond', amount })
+            // submit the bond with the approved  amount
             await mutate({ variables: { to, amount } })
             bondSuccess()
           } catch (error) {

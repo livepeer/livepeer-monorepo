@@ -234,14 +234,8 @@ const TranscodersView = ({
             onClose={() => showBondModal(false)}
           >
             <p>
-              Congratulations, delegator! You successfully bonded<br />
-              <br />
-              <span style={{ fontWeight: 400 }}>
-                {formatBalance(me.delegator.bondedAmount, 18)} LPT
-              </span>
-              <br />
-              <br />
-              to the following transcoder:
+              Congratulations, delegator! You successfully bonded to the
+              following transcoder:
             </p>
             <div
               style={{
@@ -253,7 +247,13 @@ const TranscodersView = ({
               <Avatar id={bondData.to} size={32} />
               <span style={{ marginLeft: 8 }}>{bondData.to}</span>
             </div>
-
+            <p>
+              Please view the{' '}
+              <Link to="/me/delegating">
+                "delegating" section of your account
+              </Link>{' '}
+              to see your bonded amount.
+            </p>
             <div style={{ textAlign: 'right', paddingTop: 24 }}>
               <Button onClick={() => showBondModal(false)}>OK</Button>
             </div>
@@ -281,9 +281,10 @@ const TranscodersView = ({
             <p>Amount to Bond</p>
             {me.delegator.delegateAddress === bondData.to && (
               <p style={{ fontSize: 12 }}>
-                You have already bonded{' '}
-                {formatBalance(me.delegator.bondedAmount, 18)} LPT to this
-                transcoder. Any additional bond will be added to this amount.
+                You already have a bonded amount of{' '}
+                {formatBalance(me.delegator.bondedAmount, 18)} LPT. Any
+                additional bond will be added to this amount. By entering 0, you
+                will transfer your bonded amount to the selected transcoder.
               </p>
             )}
             <p style={{ fontSize: 12 }}>
