@@ -10,7 +10,8 @@ const Button = styled.button`
   letter-spacing: 2px;
   font-size: 12px;
   // box-shadow: 0 0 0 1px inset;
-  background: none;
+  background: #fff;
+  border: 1px solid #ccc;
   cursor: pointer;
 `
 

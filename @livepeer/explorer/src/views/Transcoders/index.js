@@ -71,16 +71,18 @@ const TranscodersView = ({
   loading,
   match,
   transcoders,
-  approve,
+  me,
   bondToken,
-  modal,
-  modalType,
-  showModal,
+  bondData,
+  bondStatus,
+  bondModalVisible,
+  showBondModal,
+  setBondData,
   bonding,
-  updateBonding,
+  unbond,
   ...props
 }) => {
-  const canBond = window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS
+  const { delegateAddress } = me ? me.delegator : {}
   const searchParams = new URLSearchParams(history.location.search)
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
@@ -133,6 +135,7 @@ const TranscodersView = ({
                   sort by: &nbsp;
                 </span>
                 <select
+                  defaultValue={sort}
                   onChange={e => {
                     const { value } = e.target
                     searchParams.set('sort', value)
@@ -158,6 +161,7 @@ const TranscodersView = ({
                   order by: &nbsp;
                 </span>
                 <select
+                  defaultValue={order}
                   onChange={e => {
                     const { value } = e.target
                     searchParams.set('order', value)
@@ -177,129 +181,177 @@ const TranscodersView = ({
           <TranscoderCard
             key={props.id}
             {...props}
-            onBond={async e => {
-              updateBonding(bonding => {
-                return {
-                  ...bonding,
-                  values: { to: props.id },
+            bonded={props.id === delegateAddress}
+            onBond={
+              me &&
+              (!delegateAddress || props.id === delegateAddress) &&
+              (async e => {
+                setBondData({ to: props.id })
+                showBondModal(true)
+              })
+            }
+            onUnbond={
+              me &&
+              props.id === delegateAddress &&
+              (async e => {
+                try {
+                  await unbond()
+                } catch (err) {
+                  window.alert(err.message)
                 }
               })
-              return showModal(true)
-              try {
-                e.preventDefault()
-                const args = promptForArgs([
-                  {
-                    ask: 'How Much LPT would you like to bond?',
-                    format: toBaseUnit,
-                  },
-                ])
-                if (args.length < 1)
-                  return console.warn('Aborting transaction...')
-                const [amount] = args
-                if (
-                  !window.confirm(
-                    `# Bonding Confirmation\n\nYou are about to bond ${formatBalance(
-                      amount,
-                      18,
-                    )} LPT to ${
-                      props.id
-                    }.\n\nDo you wish to continue?\n\n__Info__: By clicking "OK", MetaMask will prompt you twice -- first for an approval transaction, and then for the actual bonding transaction. You will be required to submit both in order to complete the bonding process.`,
-                  )
-                ) {
-                  return console.warn('Aborting transaction...')
-                }
-                window.alert('Please approve the bond amount with MetaMask')
-                await approve({ type: 'bond', amount })
-                window.alert(
-                  'Please confirm the bond transaction with MetaMask',
-                )
-                await bondToken({ to: props.id, amount })
-                window.alert(
-                  `# Congratulations\n\nYou have successfully bonded ${formatBalance(
-                    amount,
-                    18,
-                  )} LPT to ${props.id}`,
-                )
-              } catch (err) {
-                console.error(err)
-                window.alert(
-                  `# Unable to Bond\n\nLooks like there was a problem with the transaction:\n\n${
-                    err.message
-                  }`,
-                )
-              }
-            }}
+            }
           />
         ))}
       </Content>
-      {modal &&
-        {
-          bondApprove: (
-            <BasicModal
-              title="Bond to Transcoder"
-              onClose={() => showModal(false)}
+      {/* Bond Error State */}
+      {bondModalVisible &&
+        bondStatus.error && (
+          <BasicModal title="Bond Failed" onClose={() => showBondModal(false)}>
+            <p>
+              Sorry, it looks like there was a problem with the transaction.
+              Here's the error message:
+            </p>
+            <pre
+              style={{
+                whiteSpace: 'initial',
+                overflow: 'auto',
+                maxHeight: 300,
+              }}
             >
-              <p>{bonding.values.to}</p>
-              <p>Enter an Amount</p>
-              <input
-                id="bondApproveAmount"
-                type="text"
-                style={{
-                  width: '90%',
-                  height: 48,
-                  padding: 8,
-                  fontSize: 16,
-                }}
-              />{' '}
-              LPT
-              <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-                <strong style={{ fontWeight: 'normal' }}>Note</strong>: By
-                clicking "Submit", MetaMask will prompt you twice — first for an
-                approval transaction, and then for a bonding transaction. You
-                must submit both in order to complete the bonding process.
+              <code>{bondStatus.error.message}</code>
+            </pre>
+            <div style={{ textAlign: 'right', paddingTop: 24 }}>
+              <Button onClick={() => showBondModal(false)}>OK</Button>
+            </div>
+          </BasicModal>
+        )}
+      {/* Bond Success State */}
+      {bondModalVisible &&
+        bondStatus.success && (
+          <BasicModal
+            title="Bond Complete"
+            onClose={() => showBondModal(false)}
+          >
+            <p>
+              Congratulations, delegator! You successfully bonded<br />
+              <br />
+              <span style={{ fontWeight: 400 }}>
+                {formatBalance(me.delegator.bondedAmount, 18)} LPT
+              </span>
+              <br />
+              <br />
+              to the following transcoder:
+            </p>
+            <div
+              style={{
+                fontSize: 14,
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              <Avatar id={bondData.to} size={32} />
+              <span style={{ marginLeft: 8 }}>{bondData.to}</span>
+            </div>
+
+            <div style={{ textAlign: 'right', paddingTop: 24 }}>
+              <Button onClick={() => showBondModal(false)}>OK</Button>
+            </div>
+          </BasicModal>
+        )}
+      {/* Bond Form + Loading State */}
+      {bondModalVisible &&
+        !bondStatus.error &&
+        !bondStatus.success && (
+          <BasicModal
+            title="Bond to Transcoder"
+            onClose={() => (bondStatus.loading ? null : showBondModal(false))}
+          >
+            <p>Transcoder Address</p>
+            <div
+              style={{
+                fontSize: 14,
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              <Avatar id={bondData.to} size={32} />
+              <span style={{ marginLeft: 8 }}>{bondData.to}</span>
+            </div>
+            <p>Amount to Bond</p>
+            {me.delegator.delegateAddress === bondData.to && (
+              <p style={{ fontSize: 12 }}>
+                You have already bonded{' '}
+                {formatBalance(me.delegator.bondedAmount, 18)} LPT to this
+                transcoder. Any additional bond will be added to this amount.
               </p>
-              <div style={{ textAlign: 'right', paddingTop: 24 }}>
-                <Button onClick={() => showModal(false)}>Cancel</Button>
-                <Button
-                  onClick={async e => {
-                    try {
-                      const { value } = document.getElementById(
-                        'bondApproveAmount',
-                      )
-                      const amount = toBaseUnit(value)
-                      const { to } = bonding.values
-                      await approve({ type: 'bond', amount })
-                      await bondToken({ to, amount })
-                    } catch (err) {
-                      console.error(err)
-                      window.alert(
-                        `# Unable to Bond\n\nLooks like there was a problem with the transaction:\n\n${
-                          err.message
-                        }`,
-                      )
-                    }
-                  }}
-                >
-                  Submit
-                </Button>
-              </div>
-            </BasicModal>
-          ),
-          bondConfirm: <BasicModal title="Confirm Bond" />,
-          bondSuccess: <BasicModal title="Bond Success!" />,
-          bondError: <BasicModal title="Bond Fail" />,
-        }[modalType]}
+            )}
+            <p style={{ fontSize: 12 }}>
+              The maximum amount you may bond is&nbsp;
+              <span style={{ fontWeight: 400 }}>
+                {formatBalance(me.tokenBalance, 18)} LPT.
+              </span>
+            </p>
+            <input
+              id="bondApproveAmount"
+              disabled={bondStatus.loading}
+              type="text"
+              style={{
+                width: '90%',
+                height: 48,
+                padding: 8,
+                fontSize: 16,
+              }}
+            />{' '}
+            LPT
+            <p style={{ fontSize: 14, lineHeight: 1.5 }}>
+              <strong style={{ fontWeight: 'normal' }}>Note</strong>: By
+              clicking "Submit", MetaMask will prompt you twice — first for an
+              approval transaction, and then for a bonding transaction. You must
+              submit both in order to complete the bonding process.
+            </p>
+            <div style={{ textAlign: 'right', paddingTop: 24 }}>
+              <Button
+                disabled={bondStatus.loading}
+                onClick={() => showBondModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={bondStatus.loading}
+                onClick={async e => {
+                  const { value } = document.getElementById('bondApproveAmount')
+                  const amount = toBaseUnit(value)
+                  const { to } = bondData
+                  await bondToken({ to, amount })
+                }}
+              >
+                {bondStatus.loading ? 'Submitting...' : 'Submit'}
+              </Button>
+            </div>
+          </BasicModal>
+        )}
     </React.Fragment>
   )
 }
 
-const TranscoderCard = ({ active, id, status, onBond, ...stats }) => {
+const TranscoderCard = ({
+  active,
+  bonded,
+  id,
+  status,
+  onBond,
+  onUnbond,
+  ...stats
+}) => {
   return (
-    <TranscoderCardContainer>
+    <TranscoderCardContainer bonded={bonded}>
       <TranscoderCardBasicInfo id={id} status={status} active={active} />
       <TranscoderStats {...stats} />
-      {onBond && <TranscoderActionsPlaceholder />}
-      {onBond && <TranscoderActions onBond={onBond} />}
+      {(onBond || onUnbond) && <TranscoderActionsPlaceholder />}
+      {(onBond || onUnbond) && (
+        <TranscoderActions onBond={onBond} onUnbond={onUnbond} />
+      )}
     </TranscoderCardContainer>
   )
 }
@@ -383,20 +435,28 @@ const TranscoderStats = ({
   )
 }
 
-const TranscoderActions = styled(({ className, onBond }) => {
+const TranscoderActions = styled(({ className, onBond, onUnbond }) => {
   return (
     <div className={className}>
-      <Button onClick={onBond} style={{ margin: 0 }}>
-        <StarIcon size={12} />
-        <span style={{ marginLeft: 8 }}>Bond</span>
-      </Button>
+      {onBond && (
+        <Button onClick={onBond} style={{ margin: 0 }}>
+          {/* <StarIcon size={12} /> &nbsp; */}
+          <span>Bond</span>
+        </Button>
+      )}
+      {onUnbond && (
+        <Button onClick={onUnbond} style={{ margin: 0, marginLeft: 8 }}>
+          {/* <StarIcon size={12} /> &nbsp; */}
+          <span>Unbond</span>
+        </Button>
+      )}
     </div>
   )
 })`
   display: inline-block;
   flex-grow: 1;
   text-align: right;
-  background: #fff;
+  background: inherit;
 `
 
 const TranscoderActionsPlaceholder = styled(({ className }) => {
@@ -420,7 +480,7 @@ const TranscoderCardContainer = styled.div`
   position: relative;
   display: inline-flex;
   flex-flow: row wrap;
-  background: #fff;
+  background: ${({ bonded }) => (bonded ? 'cornsilk' : 'white')};
   margin-bottom: 16px;
   border-radius: 2px;
   padding: 16px;
