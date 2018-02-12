@@ -1445,7 +1445,10 @@ export default async function createLivepeerSDK(
       if (status === DELEGATOR_STATUS.Unbonding) {
         throw new Error('This account is already unbonding.')
       } else {
-        return await BondingManager.unbond()
+        return await utils.getTxReceipt(
+          await BondingManager.unbond(),
+          config.eth,
+        )
       }
     },
 
