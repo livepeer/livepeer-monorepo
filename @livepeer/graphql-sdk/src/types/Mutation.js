@@ -9,6 +9,9 @@ type Mutation {
   "Submits a bond transaction for a previously approved amount"
   bondToken(to: String!, amount: String!): Boolean
 
+  "Submits a bond transaction for a previously approved amount"
+  unbond: Boolean
+
 }`
 
 export default () => [Mutation]

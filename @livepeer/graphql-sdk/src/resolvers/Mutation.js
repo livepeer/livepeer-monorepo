@@ -46,3 +46,16 @@ export async function bondToken(
   const { to, amount } = args
   return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount)
 }
+
+/**
+ * Submits an unbond transaction
+ * @param {MutationObj} obj
+ * @return {Promise<TxReceipt>}
+ */
+export async function unbond(
+  obj: MutationObj,
+  args,
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  return await ctx.livepeer.rpc.unbond()
+}

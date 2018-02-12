@@ -1,3 +1,5 @@
 import test from 'ava'
 
-test.todo('Mutation resolves fields')
+test.todo('approve()')
+test.todo('bondToken()')
+test.todo('unbond()')

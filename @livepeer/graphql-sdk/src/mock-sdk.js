@@ -91,13 +91,13 @@ const ALL_DELEGATORS = {
 
 const ALL_JOBS = [
   {
-    jobId: '0',
+    id: '0',
     streamId: 'x36xhzz',
     transcodingOptions: [VIDEO_PROFILES.P144p30fps16x9],
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '11'),
   },
   {
-    jobId: '1',
+    id: '1',
     streamId: 'x36xhzz',
     transcodingOptions: [
       VIDEO_PROFILES.P144p30fps16x9,
@@ -106,7 +106,7 @@ const ALL_JOBS = [
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
   {
-    jobId: '2',
+    id: '2',
     streamId: 'baz',
     transcodingOptions: [
       VIDEO_PROFILES.P360p30fps16x9,
@@ -116,7 +116,7 @@ const ALL_JOBS = [
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
   {
-    jobId: '3',
+    id: '3',
     streamId: 'baz',
     transcodingOptions: [],
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
