@@ -279,7 +279,7 @@ const TranscodersView = ({
               <span style={{ marginLeft: 8 }}>{bondData.to}</span>
             </div>
             <p>Amount to Bond</p>
-            {me.delegator.delegateAddress === bondData.to && (
+            {me.delegator.bondedAmount !== '0' && (
               <p style={{ fontSize: 12 }}>
                 You already have a bonded amount of{' '}
                 {formatBalance(me.delegator.bondedAmount, 18)} LPT. Any
