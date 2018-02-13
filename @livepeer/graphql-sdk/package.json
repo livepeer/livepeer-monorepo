@@ -4,10 +4,6 @@
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
-  "dependencies": {
-    "graphql": "git://github.com/graphql/graphql-js.git#npm",
-    "graphql-tools": "^2.19.0"
-  },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
     "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
@@ -18,9 +14,13 @@
     "prepare": "npm -s run build",
     "test": "npx ava"
   },
+  "dependencies": {
+    "graphql": "^0.13.0",
+    "graphql-tools": "^2.19.0"
+  },
   "devDependencies": {
     "@livepeer/sdk": "0.0.0",
-    "ava": "^0.23.0",
+    "ava": "0.25.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",

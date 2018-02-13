@@ -12,7 +12,7 @@
     "react-dom": "^16.1.0",
     "redux": "^3.7.2",
     "styled-components": "^3.0.0",
-    "video-react": "^0.8.10"
+    "video-react": "0.9.4"
   },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
@@ -30,7 +30,6 @@
     "enzyme": "^3.1.1",
     "enzyme-adapter-react-16": "^1.1.0",
     "enzyme-to-json": "^3.2.2",
-    "jest": "^21.2.1",
     "raf": "^3.4.0",
     "react-addons-test-utils": "^15.6.2",
     "react-test-renderer": "^16.1.0"

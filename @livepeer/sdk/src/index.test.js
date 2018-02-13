@@ -4,7 +4,7 @@ import yup from 'yup'
 import Livepeer, { utils, initContracts } from './index'
 
 // clears console
-console.log('\x1Bc')
+// console.log('\x1Bc')
 
 /**
  * Type validators
@@ -104,9 +104,8 @@ test('should return object with correct shape from getTokenInfo()', async t => {
 test('should return object with correct shape from getFaucetInfo()', async t => {
   const schema = object({
     amount: string,
-    tapRate: number,
-    tapAt: number,
-    tapIn: number,
+    wait: string,
+    next: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getFaucetInfo(from)
@@ -170,16 +169,16 @@ test('should return object with correct shape from getTranscoder()', async t => 
 
 // Rounds
 
-test('should return object with correct shape from getRoundInfo()', async t => {
+test('should return object with correct shape from getCurrentRoundInfo()', async t => {
   const schema = object({
-    currentRound: string,
-    currentRoundInitialized: boolean,
-    currentRoundStartBlock: string,
+    number: string,
+    initialized: boolean,
+    startBlock: string,
     lastInitializedRound: string,
-    roundLength: string,
+    length: string,
   })
   const { from } = livepeer.config.defaultTx
-  const res = await livepeer.rpc.getRoundInfo(from)
+  const res = await livepeer.rpc.getCurrentRoundInfo(from)
   schema.validateSync(res)
   t.pass()
 })
@@ -188,7 +187,7 @@ test('should return object with correct shape from getRoundInfo()', async t => {
 
 test('should return object with correct shape from getJobsInfo()', async t => {
   const schema = object({
-    totalJobs: string,
+    total: string,
     verificationRate: string,
     verificationPeriod: string,
     slashingPeriod: string,
@@ -202,7 +201,7 @@ test('should return object with correct shape from getJobsInfo()', async t => {
 
 test('should get many jobs from getJobs()', async t => {
   const schema = object({
-    jobId: string,
+    id: string,
     streamId: string,
     transcodingOptions: array(
       object({

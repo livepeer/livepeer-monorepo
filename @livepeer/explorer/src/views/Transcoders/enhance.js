@@ -10,6 +10,7 @@ fragment AccountFragment on Account {
   ethBalance
   tokenBalance
   delegator {
+    id
     delegateAddress
     bondedAmount
   }

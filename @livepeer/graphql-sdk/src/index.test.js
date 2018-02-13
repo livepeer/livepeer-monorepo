@@ -15,7 +15,7 @@ import {
 import livepeer from './mock-sdk'
 
 // clears console
-console.log('\x1Bc')
+// console.log('\x1Bc')
 
 /**
  * Account

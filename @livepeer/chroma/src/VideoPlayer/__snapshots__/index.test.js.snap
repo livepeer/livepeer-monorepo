@@ -2,7 +2,7 @@
 
 exports[`should render as expected 1`] = `
 <div
-  class="video-react-controls-enabled video-react-paused video-react-waiting video-react-fluid video-react-user-active video-react-workinghover video-react"
+  class="video-react-controls-enabled video-react-paused video-react-fluid video-react-user-active video-react-workinghover video-react"
   style="padding-top:56.25%"
   tabindex="-1"
 >
@@ -10,10 +10,12 @@ exports[`should render as expected 1`] = `
     class="video-react-video"
     playsinline=""
     preload="auto"
-  />
+  >
+    
+  </video>
   <button
     aria-live="polite"
-    class="video-react-big-play-button video-react-big-play-button-left big-play-button-hide"
+    class="video-react-big-play-button video-react-big-play-button-center big-play-button-hide"
     tabindex="0"
     type="button"
   >
@@ -62,7 +64,9 @@ exports[`should render as expected 1`] = `
             >
               <span
                 class="video-react-control-text"
-              />
+              >
+                
+              </span>
             </div>
           </div>
         </div>

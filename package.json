@@ -1,9 +1,19 @@
 {
   "private": true,
-  "workspaces": ["@livepeer/*"],
+  "workspaces": [
+    "@livepeer/*"
+  ],
   "scripts": {
     "build": "./bin/build.sh",
+    "clean": "npx oao clean",
     "docs": "./bin/docs.sh",
-    "postinstall": "yarn build"
+    "latest": "yarn upgrade-interactive -E --latest",
+    "oao": "npx oao",
+    "prepare": "npx oao run-script prepare --tree",
+    "status": "npx oao status",
+    "test": "CI=true npx oao run-script test --tree"
+  },
+  "devDependencies": {
+    "oao": "^1.3.1"
   }
 }
