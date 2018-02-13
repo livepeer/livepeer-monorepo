@@ -17,6 +17,7 @@
     "oao": "npx oao",
     "prepublish": "npx oao prepublish",
     "prepare": "npx oao run-script prepare --tree",
+    "release": "npx oao publish --no-npm-publish --no-git-commit",
     "status": "npx oao status",
     "test": "CI=true npx oao run-script test --tree"
   },
