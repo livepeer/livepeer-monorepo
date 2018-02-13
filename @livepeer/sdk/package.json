@@ -40,5 +40,10 @@
       "babel-register"
     ],
     "babel": "inherit"
+  },
+  "homepage": "https://livepeer.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeerjs.git"
   }
 }
