@@ -20,7 +20,7 @@
     "docs": "npx documentation readme src/index.js --section=API",
     "copy-docs": "rm -rf ../../docs/sdk && mkdir ../../docs/sdk && cp docs/index.html ../../docs/sdk && cp README.md ../../docs/sdk",
     "prebuild": "rm -rf lib && rm -rf main",
-    "prepare": "npm -s run build",
+    "bootstrap": "npm -s run build",
     "test": "npx ava"
   },
   "devDependencies": {

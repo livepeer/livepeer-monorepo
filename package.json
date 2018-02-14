@@ -15,7 +15,7 @@
     "clean": "npx oao clean",
     "docs": "./bin/docs.sh",
     "latest": "yarn upgrade-interactive -E --latest",
-    "prepare": "npx oao run-script prepare --tree",
+    "prepare": "npx oao run-script bootstrap --tree",
     "release": "npx oao publish && git reset --hard HEAD",
     "status": "npx oao status",
     "test": "CI=true npx oao run-script test --tree"

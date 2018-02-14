@@ -6,6 +6,13 @@
     "lpx": "bin/index.js"
   },
   "module": "src/index.js",
+  "scripts": {
+    "build": "rm -rf bin && npx babel src --out-dir bin --ignore spec.js,test.js",
+    "cmd": "f() { npm -s run build && node ./bin/index $@; };f",
+    "copy-docs": "echo 'No copy-docs script specified'",
+    "bootstrap": "npm -s run build",
+    "test": "npx ava"
+  },
   "dependencies": {
     "@livepeer/sdk": "0.0.0",
     "as-table": "^1.0.31",
@@ -18,13 +25,6 @@
     "react-blessed": "0.2.1",
     "tty-table": "^2.5.5",
     "vorpal": "^1.12.0"
-  },
-  "scripts": {
-    "build": "rm -rf bin && npx babel src --out-dir bin --ignore spec.js,test.js",
-    "cmd": "f() { npm -s run build && node ./bin/index $@; };f",
-    "copy-docs": "echo 'No copy-docs script specified'",
-    "prepare": "npm -s run build",
-    "test": "npx ava"
   },
   "devDependencies": {
     "ava": "0.25.0",

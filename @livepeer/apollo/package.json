@@ -12,7 +12,7 @@
     "copy-docs": "echo 'No copy-docs script specified'",
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
-    "prepare": "npm -s run build",
+    "bootstrap": "npm -s run build",
     "test": "npx ava"
   },
   "dependencies": {
