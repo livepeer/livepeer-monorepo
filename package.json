@@ -11,12 +11,12 @@
   ],
   "scripts": {
     "build": "./bin/build.sh",
-    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md && git commit -m 'docs: Updated changelog'",
+    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "clean": "npx oao clean",
     "docs": "./bin/docs.sh",
     "latest": "yarn upgrade-interactive -E --latest",
     "prepare": "npx oao run-script prepare --tree",
-    "release": "npm -s run changelog && npx oao publish --no-changelog && git reset --hard HEAD",
+    "release": "npx oao publish --no-changelog && git reset --hard HEAD",
     "status": "npx oao status",
     "test": "CI=true npx oao run-script test --tree"
   },
