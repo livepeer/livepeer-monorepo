@@ -7,5 +7,5 @@
       }
     }]
   ],
-  "plugins": ["transform-flow-strip-types", "transform-object-rest-spread"]
+  "plugins": ["transform-runtime", "transform-flow-strip-types", "transform-object-rest-spread"]
 }

@@ -4,13 +4,6 @@
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "ethjs": "^0.3.0",
-    "ethjs-provider-signer": "^0.1.4",
-    "ethjs-query": "^0.3.1",
-    "ethjs-signer": "^0.1.1"
-  },
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
     "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
@@ -23,6 +16,13 @@
     "prebuild": "rm -rf lib && rm -rf main",
     "bootstrap": "npm -s run build",
     "test": "npx ava"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "ethjs": "^0.3.0",
+    "ethjs-provider-signer": "^0.1.4",
+    "ethjs-query": "^0.3.1",
+    "ethjs-signer": "^0.1.1"
   },
   "devDependencies": {
     "ava": "0.25.0",
