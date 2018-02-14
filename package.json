@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "./bin/build.sh",
-    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
+    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "clean": "npx oao clean",
     "docs": "./bin/docs.sh",
     "latest": "yarn upgrade-interactive -E --latest",
