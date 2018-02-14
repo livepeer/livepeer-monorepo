@@ -1,5 +1,10 @@
+<a name="1.0.0-alpha.2"></a>
+# [1.0.0-alpha.2](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2018-02-14)
+
+
+
 <a name="1.0.0-alpha.1"></a>
-# 1.0.0-alpha.1 (2018-02-14)
+# [1.0.0-alpha.1](https://github.com/livepeer/livepeerjs/compare/65e46ad...v1.0.0-alpha.1) (2018-02-14)
 
 
 ### Bug Fixes
