@@ -3,5 +3,7 @@ node_modules
 **/*/lib
 **/*/main
 **/*/dist
+**/*/bin
+**/*/build
 yarn-error.log
 .env*.local
