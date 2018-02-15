@@ -14,7 +14,9 @@ A module for interacting with Livepeer's smart contracts. The SDK is a core depe
 
 ## Installation
 
-> **Warning**: This module is not yet published to npm.
+```bash
+yarn add @livepeer/sdk
+```
 
 ## Usage
 

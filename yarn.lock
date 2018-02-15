@@ -5092,8 +5092,8 @@ hoek@2.x.x:
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
 
 hoek@4.x.x:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.0.tgz#72d9d0754f7fe25ca2d01ad8f8f9a9449a89526d"
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.1.tgz#9634502aa12c445dd5a7c5734b572bb8738aacbb"
 
 hoist-non-react-statics@^1.2.0:
   version "1.2.0"
@@ -7220,9 +7220,9 @@ number-to-bn@1.7.0:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/nwmatcher/-/nwmatcher-1.4.3.tgz#64348e3b3d80f035b40ac11563d278f8b72db89c"
 
-oao@^1.3.1:
+"oao@https://github.com/jozanza/oao.git#bb996aefd1f13b983c4ef84de5681af616887130":
   version "1.3.1"
-  resolved "https://registry.yarnpkg.com/oao/-/oao-1.3.1.tgz#64108bf5fe915b95b40b86825c3f94ab2720f58b"
+  resolved "https://github.com/jozanza/oao.git#bb996aefd1f13b983c4ef84de5681af616887130"
   dependencies:
     babel-polyfill "6.26.0"
     commander "2.11.0"

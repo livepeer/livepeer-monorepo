@@ -10,10 +10,9 @@
     "@livepeer/*"
   ],
   "scripts": {
-    "build": "./bin/build.sh",
     "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "clean": "npx oao clean",
-    "docs": "./bin/docs.sh",
+    "docs": "npx oao run-script copy-docs --tree",
     "latest": "yarn upgrade-interactive -E --latest",
     "prepare": "npx oao run-script bootstrap --tree",
     "release": "npx oao publish && git reset --hard HEAD",
@@ -24,7 +23,7 @@
     "conventional-changelog-cli": "^1.3.13",
     "cz-conventional-changelog": "^2.1.0",
     "edit-json-file": "^1.0.8",
-    "oao": "^1.3.1"
+    "oao": "https://github.com/jozanza/oao.git#bb996aefd1f13b983c4ef84de5681af616887130"
   },
   "config": {
     "commitizen": {
