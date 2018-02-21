@@ -144,7 +144,8 @@ export default async function createApolloClient(
     const provider =
       opts.provider || getProviderFromWeb3(web3) || state.provider
     const gas = opts.defaultGas || 0
-    return Livepeer({ account, gas, provider })
+    const { controllerAddress } = opts
+    return Livepeer({ account, gas, provider, controllerAddress })
   }
 
   /**
