@@ -24,7 +24,7 @@ import App from './containers/App'
   `
   // Bootstrap the apollo client
   const client = await createApolloClient({
-    provider: 'https://ethrpc-testnet.livepeer.org',
+    provider: 'https://rinkeby.infura.io/srFaWg0SlljdJAoClX3B',
   })
 
   // Main UI rendering function
