@@ -18,7 +18,7 @@ type Transcoder {
   lastRewardRound: String!
 
   "% of block reward cut paid to transcoder by a delegator"
-  blockRewardCut: String!
+  rewardCut: String!
 
   "% of fees paid to delegators by transcoder"
   feeShare: String!
@@ -27,7 +27,7 @@ type Transcoder {
   pricePerSegment: String!
 
   "Pending block reward cut for next round if the transcoder is active"
-  pendingBlockRewardCut: String!
+  pendingRewardCut: String!
 
   "Pending fee share for next round if the transcoder is active"
   pendingFeeShare: String!

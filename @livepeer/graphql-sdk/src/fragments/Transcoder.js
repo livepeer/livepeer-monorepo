@@ -4,11 +4,11 @@ fragment TranscoderFragment on Transcoder {
   active
   status
   lastRewardRound
-  blockRewardCut
+  rewardCut
   feeShare
   pricePerSegment
-  pendingBlockRewardCut
   pendingFeeShare
   pendingPricePerSegment
+  pendingRewardCut
   totalStake
 }`

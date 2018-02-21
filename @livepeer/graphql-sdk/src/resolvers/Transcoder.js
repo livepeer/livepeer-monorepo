@@ -52,13 +52,13 @@ export function lastRewardRound(obj: TranscoderObj): string {
 }
 
 /**
- * Gets the blockRewardCut for a Transcoder
+ * Gets the rewardCut for a Transcoder
  * @param {Object} obj
- * @param {string} obj.blockRewardCut - The blockRewardCut of the transcoder
+ * @param {string} obj.rewardCut - The rewardCut of the transcoder
  * @return {string}
  */
-export function blockRewardCut(obj: TranscoderObj): string {
-  return obj.blockRewardCut
+export function rewardCut(obj: TranscoderObj): string {
+  return obj.rewardCut
 }
 
 /**
@@ -82,13 +82,13 @@ export function pricePerSegment(obj: TranscoderObj): string {
 }
 
 /**
- * Gets the pendingBlockRewardCut for a Transcoder
+ * Gets the pendingRewardCut for a Transcoder
  * @param {Object} obj
- * @param {string} obj.pendingBlockRewardCut - The pendingBlockRewardCut of the transcoder
+ * @param {string} obj.pendingRewardCut - The pendingRewardCut of the transcoder
  * @return {string}
  */
-export function pendingBlockRewardCut(obj: TranscoderObj): string {
-  return obj.pendingBlockRewardCut
+export function pendingRewardCut(obj: TranscoderObj): string {
+  return obj.pendingRewardCut
 }
 
 /**

@@ -141,7 +141,8 @@ export async function jobs(
  */
 export async function me(obj, args, ctx) {
   // Account field resolvers will fill in the rest
-  return { id: ctx.account }
+  const id = ctx.account || ctx.livepeer.constants.EMPTY_ADDRESS
+  return { id }
 }
 
 /**
