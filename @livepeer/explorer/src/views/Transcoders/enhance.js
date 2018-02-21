@@ -47,10 +47,10 @@ fragment TranscoderFragment on Transcoder {
   active
   status
   lastRewardRound
-  blockRewardCut
+  rewardCut
   feeShare
   pricePerSegment
-  pendingBlockRewardCut
+  pendingRewardCut
   pendingFeeShare
   pendingPricePerSegment
   totalStake
@@ -109,40 +109,37 @@ const connectBondTokenMutation = graphql(
     }
   `,
   {
-    props: ({ mutate, ownProps }) => (
-      console.log('>', ownProps),
-      {
-        bondToken: async ({ to, amount }) => {
-          const { approve, bondLoading, bondError, bondSuccess } = ownProps
-          try {
-            console.log('bondToken', to, amount)
-            bondLoading()
-            // skip approve when amount === 0
-            if (amount !== '0') await approve({ type: 'bond', amount })
-            // submit the bond with the approved  amount
-            await mutate({ variables: { to, amount } })
-            bondSuccess()
-          } catch (error) {
-            if (error.graphQLErrors) {
-              try {
-                // try to parse the error message
-                const [err] = error.graphQLErrors
-                const rpcErr = JSON.parse(
-                  `{"code":${err.message.split('"code":')[1]}`,
-                )
-                console.log(rpcErr)
-                bondError(new Error(rpcErr.message))
-              } catch (err) {
-                // if the message can't be parsed, just use gql error
-                bondError(error)
-              }
-            } else {
+    props: ({ mutate, ownProps }) => ({
+      bondToken: async ({ to, amount }) => {
+        const { approve, bondLoading, bondError, bondSuccess } = ownProps
+        try {
+          console.log('bondToken', to, amount)
+          bondLoading()
+          // skip approve when amount === 0
+          if (amount !== '0') await approve({ type: 'bond', amount })
+          // submit the bond with the approved  amount
+          await mutate({ variables: { to, amount } })
+          bondSuccess()
+        } catch (error) {
+          if (error.graphQLErrors) {
+            try {
+              // try to parse the error message
+              const [err] = error.graphQLErrors
+              const rpcErr = JSON.parse(
+                `{"code":${err.message.split('"code":')[1]}`,
+              )
+              console.log(rpcErr)
+              bondError(new Error(rpcErr.message))
+            } catch (err) {
+              // if the message can't be parsed, just use gql error
               bondError(error)
             }
+          } else {
+            bondError(error)
           }
-        },
-      }
-    ),
+        }
+      },
+    }),
   },
 )
 

@@ -43,10 +43,10 @@ type Transcoder = {
   active: boolean,
   status: string,
   lastRewardRound: string,
-  blockRewardCut: string,
+  rewardCut: string,
   feeShare: string,
   pricePerSegment: string,
-  pendingBlockRewardCut: string,
+  pendingRewardCut: string,
   pendingFeeShare: string,
   pendingPricePerSegment: string,
   totalStake: string,
@@ -145,7 +145,7 @@ const TranscodersView = ({
                   }}
                 >
                   <option value="totalStake">Total Stake</option>
-                  <option value="blockRewardCut">Reward Cut</option>
+                  <option value="rewardCut">Reward Cut</option>
                   <option value="feeShare">Fee Share</option>
                   <option value="pricePerSegment">Price</option>
                 </select>
@@ -407,7 +407,7 @@ const TranscoderCardBasicInfo = ({ active, id, status }) => {
 }
 
 const TranscoderStats = ({
-  blockRewardCut,
+  rewardCut,
   feeShare,
   pricePerSegment,
   totalStake,
@@ -417,7 +417,7 @@ const TranscoderStats = ({
       <div style={{ display: 'inline-block', margin: '0 16px', width: 64 }}>
         <div style={{ marginBottom: 4, fontSize: 11 }}>Reward Cut</div>
         <div style={{ fontSize: 14 }}>
-          {formatPercentage(blockRewardCut, 2)}%
+          {formatPercentage(rewardCut, 2)}%
         </div>
       </div>
       <div style={{ display: 'inline-block', margin: '0 16px', width: 64 }}>

@@ -19,10 +19,10 @@ type Transcoder = {
   active: boolean,
   status: string,
   lastRewardRound: string,
-  blockRewardCut: string,
+  rewardCut: string,
   feeShare: string,
   pricePerSegment: string,
-  pendingBlockRewardCut: string,
+  pendingRewardCut: string,
   pendingFeeShare: string,
   pendingPricePerSegment: string,
 }
@@ -42,10 +42,10 @@ const AccountdTranscoding: React.Component<Props> = ({
     active,
     status,
     lastRewardRound,
-    blockRewardCut,
+    rewardCut,
     feeShare,
     pricePerSegment,
-    pendingBlockRewardCut,
+    pendingRewardCut,
     pendingFeeShare,
     pendingPricePerSegment,
   } = transcoder
@@ -57,12 +57,12 @@ const AccountdTranscoding: React.Component<Props> = ({
       <MetricBox
         title="Block Reward Cut"
         suffix="%"
-        value={formatPercentage(blockRewardCut)}
+        value={formatPercentage(rewardCut)}
       />
       <MetricBox
         title="Pending Block Reward Cut"
         suffix="%"
-        value={formatPercentage(pendingBlockRewardCut)}
+        value={formatPercentage(pendingRewardCut)}
       />
       <MetricBox
         title="Fee Share"
