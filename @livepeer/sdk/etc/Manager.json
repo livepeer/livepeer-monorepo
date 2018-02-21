@@ -2,20 +2,6 @@
   "name": "Manager",
   "abi": [
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_controller",
-          "type": "address"
-        }
-      ],
-      "name": "setController",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "controller",
@@ -63,6 +49,20 @@
       ],
       "name": "ParameterUpdate",
       "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_controller",
+          "type": "address"
+        }
+      ],
+      "name": "setController",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
   ]
 }

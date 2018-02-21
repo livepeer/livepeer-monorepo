@@ -2,20 +2,6 @@
   "name": "IManager",
   "abi": [
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_controller",
-          "type": "address"
-        }
-      ],
-      "name": "setController",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {
@@ -38,6 +24,20 @@
       ],
       "name": "ParameterUpdate",
       "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_controller",
+          "type": "address"
+        }
+      ],
+      "name": "setController",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
   ]
 }

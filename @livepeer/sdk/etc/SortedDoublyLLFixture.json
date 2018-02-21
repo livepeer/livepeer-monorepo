@@ -2,17 +2,43 @@
   "name": "SortedDoublyLLFixture",
   "abi": [
     {
-      "constant": true,
-      "inputs": [],
-      "name": "getFirst",
-      "outputs": [
+      "constant": false,
+      "inputs": [
         {
-          "name": "",
+          "name": "_size",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMaxSize",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_id",
+          "type": "address"
+        },
+        {
+          "name": "_key",
+          "type": "uint256"
+        },
+        {
+          "name": "_prevId",
+          "type": "address"
+        },
+        {
+          "name": "_nextId",
           "type": "address"
         }
       ],
+      "name": "insert",
+      "outputs": [],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -56,46 +82,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_id",
-          "type": "address"
-        },
-        {
-          "name": "_key",
-          "type": "uint256"
-        },
-        {
-          "name": "_prevId",
-          "type": "address"
-        },
-        {
-          "name": "_nextId",
-          "type": "address"
-        }
-      ],
-      "name": "insert",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getLast",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [
         {
@@ -108,6 +94,20 @@
         {
           "name": "",
           "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getSize",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -136,7 +136,21 @@
           "type": "address"
         }
       ],
-      "name": "getNext",
+      "name": "getKey",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getFirst",
       "outputs": [
         {
           "name": "",
@@ -148,17 +162,17 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
+      "constant": true,
+      "inputs": [],
+      "name": "getLast",
+      "outputs": [
         {
-          "name": "_size",
-          "type": "uint256"
+          "name": "",
+          "type": "address"
         }
       ],
-      "name": "setMaxSize",
-      "outputs": [],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -169,11 +183,11 @@
           "type": "address"
         }
       ],
-      "name": "getKey",
+      "name": "getNext",
       "outputs": [
         {
           "name": "",
-          "type": "uint256"
+          "type": "address"
         }
       ],
       "payable": false,
@@ -193,20 +207,6 @@
         {
           "name": "",
           "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getSize",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
         }
       ],
       "payable": false,

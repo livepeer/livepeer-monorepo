@@ -2,6 +2,11 @@
   "name": "RevertProxy",
   "abi": [
     {
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "fallback"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -19,11 +24,6 @@
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
-    },
-    {
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "fallback"
     }
   ]
 }

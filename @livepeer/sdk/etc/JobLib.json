@@ -5,23 +5,15 @@
       "constant": true,
       "inputs": [
         {
-          "name": "_streamId",
+          "name": "_transcodingOptions",
           "type": "string"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        },
-        {
-          "name": "_dataHash",
-          "type": "bytes32"
         }
       ],
-      "name": "segmentHash",
+      "name": "validTranscodingOptions",
       "outputs": [
         {
           "name": "",
-          "type": "bytes32"
+          "type": "bool"
         }
       ],
       "payable": false,
@@ -32,31 +24,23 @@
       "constant": true,
       "inputs": [
         {
-          "name": "_streamId",
-          "type": "string"
-        },
-        {
-          "name": "_segmentNumber",
+          "name": "_totalSegments",
           "type": "uint256"
         },
         {
-          "name": "_dataHash",
-          "type": "bytes32"
+          "name": "_transcodingOptions",
+          "type": "string"
         },
         {
-          "name": "_transcodedDataHash",
-          "type": "bytes32"
-        },
-        {
-          "name": "_broadcasterSig",
-          "type": "bytes"
+          "name": "_pricePerSegment",
+          "type": "uint256"
         }
       ],
-      "name": "transcodeReceiptHash",
+      "name": "calcFees",
       "outputs": [
         {
           "name": "",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -75,8 +59,12 @@
           "type": "uint256[2]"
         },
         {
-          "name": "_claimBlock",
+          "name": "_challengeBlock",
           "type": "uint256"
+        },
+        {
+          "name": "_challengeBlockHash",
+          "type": "bytes32"
         },
         {
           "name": "_verificationRate",
@@ -91,7 +79,42 @@
         }
       ],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_streamId",
+          "type": "string"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        },
+        {
+          "name": "_dataHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "_broadcasterSig",
+          "type": "bytes"
+        },
+        {
+          "name": "_broadcaster",
+          "type": "address"
+        }
+      ],
+      "name": "validateBroadcasterSig",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -134,7 +157,7 @@
         }
       ],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -151,52 +174,17 @@
         {
           "name": "_dataHash",
           "type": "bytes32"
-        },
-        {
-          "name": "_broadcasterSig",
-          "type": "bytes"
-        },
-        {
-          "name": "_broadcaster",
-          "type": "address"
         }
       ],
-      "name": "validateBroadcasterSig",
+      "name": "segmentHash",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "bytes32"
         }
       ],
       "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_totalSegments",
-          "type": "uint256"
-        },
-        {
-          "name": "_transcodingOptions",
-          "type": "string"
-        },
-        {
-          "name": "_pricePerSegment",
-          "type": "uint256"
-        }
-      ],
-      "name": "calcFees",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -216,6 +204,41 @@
         }
       ],
       "name": "personalSegmentHash",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_streamId",
+          "type": "string"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        },
+        {
+          "name": "_dataHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "_transcodedDataHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "_broadcasterSig",
+          "type": "bytes"
+        }
+      ],
+      "name": "transcodeReceiptHash",
       "outputs": [
         {
           "name": "",

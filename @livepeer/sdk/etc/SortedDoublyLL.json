@@ -2,25 +2,6 @@
   "name": "SortedDoublyLL",
   "abi": [
     {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "self",
-          "type": "SortedDoublyLL.Data storage"
-        }
-      ],
-      "name": "getFirst",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "constant": false,
       "inputs": [
         {
@@ -28,76 +9,14 @@
           "type": "SortedDoublyLL.Data storage"
         },
         {
-          "name": "_id",
-          "type": "address"
-        },
-        {
-          "name": "_newKey",
+          "name": "_size",
           "type": "uint256"
-        },
-        {
-          "name": "_prevId",
-          "type": "address"
-        },
-        {
-          "name": "_nextId",
-          "type": "address"
         }
       ],
-      "name": "updateKey",
+      "name": "setMaxSize",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "self",
-          "type": "SortedDoublyLL.Data storage"
-        },
-        {
-          "name": "_key",
-          "type": "uint256"
-        },
-        {
-          "name": "_prevId",
-          "type": "address"
-        },
-        {
-          "name": "_nextId",
-          "type": "address"
-        }
-      ],
-      "name": "validInsertPosition",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "self",
-          "type": "SortedDoublyLL.Data storage"
-        }
-      ],
-      "name": "isFull",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -149,44 +68,6 @@
       "type": "function"
     },
     {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "self",
-          "type": "SortedDoublyLL.Data storage"
-        }
-      ],
-      "name": "getLast",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "self",
-          "type": "SortedDoublyLL.Data storage"
-        }
-      ],
-      "name": "getMaxSize",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "constant": false,
       "inputs": [
         {
@@ -194,11 +75,23 @@
           "type": "SortedDoublyLL.Data storage"
         },
         {
-          "name": "_size",
+          "name": "_id",
+          "type": "address"
+        },
+        {
+          "name": "_newKey",
           "type": "uint256"
+        },
+        {
+          "name": "_prevId",
+          "type": "address"
+        },
+        {
+          "name": "_nextId",
+          "type": "address"
         }
       ],
-      "name": "setMaxSize",
+      "name": "updateKey",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -217,6 +110,44 @@
         }
       ],
       "name": "contains",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "self",
+          "type": "SortedDoublyLL.Data storage"
+        }
+      ],
+      "name": "isFull",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "self",
+          "type": "SortedDoublyLL.Data storage"
+        }
+      ],
+      "name": "isEmpty",
       "outputs": [
         {
           "name": "",
@@ -254,11 +185,11 @@
           "type": "SortedDoublyLL.Data storage"
         }
       ],
-      "name": "isEmpty",
+      "name": "getMaxSize",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -282,6 +213,44 @@
         {
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "self",
+          "type": "SortedDoublyLL.Data storage"
+        }
+      ],
+      "name": "getFirst",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "self",
+          "type": "SortedDoublyLL.Data storage"
+        }
+      ],
+      "name": "getLast",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
         }
       ],
       "payable": false,
@@ -328,6 +297,37 @@
         {
           "name": "",
           "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "self",
+          "type": "SortedDoublyLL.Data storage"
+        },
+        {
+          "name": "_key",
+          "type": "uint256"
+        },
+        {
+          "name": "_prevId",
+          "type": "address"
+        },
+        {
+          "name": "_nextId",
+          "type": "address"
+        }
+      ],
+      "name": "validInsertPosition",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
         }
       ],
       "payable": false,

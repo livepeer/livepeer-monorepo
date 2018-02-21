@@ -1,52 +1,14 @@
 {
-  "name": "LivepeerTokenFaucet",
+  "name": "TokenDistributionMock",
   "abi": [
     {
       "constant": true,
       "inputs": [],
-      "name": "requestWait",
+      "name": "owner",
       "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
         {
           "name": "",
           "type": "address"
-        }
-      ],
-      "name": "nextValidRequest",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "isWhitelisted",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
         }
       ],
       "payable": false,
@@ -56,7 +18,7 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "owner",
+      "name": "faucet",
       "outputs": [
         {
           "name": "",
@@ -84,20 +46,6 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "requestAmount",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
       "name": "token",
       "outputs": [
         {
@@ -116,34 +64,17 @@
           "type": "address"
         },
         {
-          "name": "_requestAmount",
-          "type": "uint256"
+          "name": "_faucet",
+          "type": "address"
         },
         {
-          "name": "_requestWait",
+          "name": "_endTime",
           "type": "uint256"
         }
       ],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "Request",
-      "type": "event"
     },
     {
       "anonymous": false,
@@ -164,39 +95,39 @@
     },
     {
       "constant": false,
-      "inputs": [
-        {
-          "name": "_addr",
-          "type": "address"
-        }
-      ],
-      "name": "addToWhitelist",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_addr",
-          "type": "address"
-        }
-      ],
-      "name": "removeFromWhitelist",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
       "inputs": [],
-      "name": "request",
+      "name": "finalize",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isOver",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEndTime",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     }
   ]

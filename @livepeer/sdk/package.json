@@ -35,7 +35,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
     "documentation": "^5.3.5",
-    "protocol": "https://github.com/livepeer/protocol.git#e3426ccf323668f04a2f357756e8525dcc2dcfd8",
+    "protocol": "https://github.com/livepeer/protocol.git#65d6eaaa7875ee4f66029eee519f8c3fa9af89da",
     "yup": "0.24.1"
   },
   "ava": {

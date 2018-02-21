@@ -2,48 +2,6 @@
   "name": "JobsManager",
   "abi": [
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_verificationPeriod",
-          "type": "uint256"
-        }
-      ],
-      "name": "setVerificationPeriod",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_missedVerificationSlashAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "setMissedVerificationSlashAmount",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_verificationRate",
-          "type": "uint64"
-        }
-      ],
-      "name": "setVerificationRate",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [
         {
@@ -99,32 +57,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        },
-        {
-          "name": "_result",
-          "type": "bool"
-        }
-      ],
-      "name": "receiveVerification",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "finderFee",
@@ -139,32 +71,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_streamId",
-          "type": "string"
-        },
-        {
-          "name": "_transcodingOptions",
-          "type": "string"
-        },
-        {
-          "name": "_maxPricePerSegment",
-          "type": "uint256"
-        },
-        {
-          "name": "_endBlock",
-          "type": "uint256"
-        }
-      ],
-      "name": "job",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "missedVerificationSlashAmount",
@@ -172,80 +78,6 @@
         {
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "withdraw",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentRange",
-          "type": "uint256[2]"
-        },
-        {
-          "name": "_claimRoot",
-          "type": "bytes32"
-        }
-      ],
-      "name": "claimWork",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getClaim",
-      "outputs": [
-        {
-          "name": "segmentRange",
-          "type": "uint256[2]"
-        },
-        {
-          "name": "claimRoot",
-          "type": "bytes32"
-        },
-        {
-          "name": "claimBlock",
-          "type": "uint256"
-        },
-        {
-          "name": "endVerificationBlock",
-          "type": "uint256"
-        },
-        {
-          "name": "endSlashingBlock",
-          "type": "uint256"
-        },
-        {
-          "name": "status",
-          "type": "uint8"
         }
       ],
       "payable": false,
@@ -267,70 +99,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        },
-        {
-          "name": "_dataStorageHash",
-          "type": "string"
-        },
-        {
-          "name": "_dataHashes",
-          "type": "bytes32[2]"
-        },
-        {
-          "name": "_broadcasterSig",
-          "type": "bytes"
-        },
-        {
-          "name": "_proof",
-          "type": "bytes"
-        }
-      ],
-      "name": "verify",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId1",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId2",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        }
-      ],
-      "name": "doubleClaimSegmentSlash",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "doubleClaimSegmentSlashAmount",
@@ -345,85 +113,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_failedVerificationSlashAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "setFailedVerificationSlashAmount",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        }
-      ],
-      "name": "isClaimSegmentVerified",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_verificationRate",
-          "type": "uint64"
-        },
-        {
-          "name": "_verificationPeriod",
-          "type": "uint256"
-        },
-        {
-          "name": "_slashingPeriod",
-          "type": "uint256"
-        },
-        {
-          "name": "_failedVerificationSlashAmount",
-          "type": "uint256"
-        },
-        {
-          "name": "_missedVerificationSlashAmount",
-          "type": "uint256"
-        },
-        {
-          "name": "_doubleClaimSegmentSlashAmount",
-          "type": "uint256"
-        },
-        {
-          "name": "_finderFee",
-          "type": "uint256"
-        }
-      ],
-      "name": "setParameters",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "verificationRate",
@@ -435,38 +124,6 @@
       ],
       "payable": false,
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_doubleClaimSegmentSlashAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "setDoubleClaimSegmentSlashAmount",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        }
-      ],
-      "name": "distributeFees",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -490,24 +147,6 @@
       ],
       "payable": false,
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimIds",
-          "type": "uint256[]"
-        }
-      ],
-      "name": "batchDistributeFees",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -540,17 +179,12 @@
     },
     {
       "constant": true,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        }
-      ],
-      "name": "jobStatus",
+      "inputs": [],
+      "name": "verificationSlashingPeriod",
       "outputs": [
         {
           "name": "",
-          "type": "uint8"
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -572,137 +206,9 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_finderFee",
-          "type": "uint256"
-        }
-      ],
-      "name": "setFinderFee",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "failedVerificationSlashAmount",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getJob",
-      "outputs": [
-        {
-          "name": "streamId",
-          "type": "string"
-        },
-        {
-          "name": "transcodingOptions",
-          "type": "string"
-        },
-        {
-          "name": "maxPricePerSegment",
-          "type": "uint256"
-        },
-        {
-          "name": "broadcasterAddress",
-          "type": "address"
-        },
-        {
-          "name": "transcoderAddress",
-          "type": "address"
-        },
-        {
-          "name": "creationRound",
-          "type": "uint256"
-        },
-        {
-          "name": "creationBlock",
-          "type": "uint256"
-        },
-        {
-          "name": "endBlock",
-          "type": "uint256"
-        },
-        {
-          "name": "escrow",
-          "type": "uint256"
-        },
-        {
-          "name": "totalClaims",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        }
-      ],
-      "name": "missedVerificationSlash",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "deposit",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_slashingPeriod",
-          "type": "uint256"
-        }
-      ],
-      "name": "setSlashingPeriod",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "slashingPeriod",
       "outputs": [
         {
           "name": "",
@@ -957,6 +463,462 @@
       ],
       "name": "ParameterUpdate",
       "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_verificationRate",
+          "type": "uint64"
+        }
+      ],
+      "name": "setVerificationRate",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_verificationPeriod",
+          "type": "uint256"
+        }
+      ],
+      "name": "setVerificationPeriod",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_verificationSlashingPeriod",
+          "type": "uint256"
+        }
+      ],
+      "name": "setVerificationSlashingPeriod",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_failedVerificationSlashAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setFailedVerificationSlashAmount",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_missedVerificationSlashAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMissedVerificationSlashAmount",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_doubleClaimSegmentSlashAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDoubleClaimSegmentSlashAmount",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_finderFee",
+          "type": "uint256"
+        }
+      ],
+      "name": "setFinderFee",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "deposit",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "withdraw",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_streamId",
+          "type": "string"
+        },
+        {
+          "name": "_transcodingOptions",
+          "type": "string"
+        },
+        {
+          "name": "_maxPricePerSegment",
+          "type": "uint256"
+        },
+        {
+          "name": "_endBlock",
+          "type": "uint256"
+        }
+      ],
+      "name": "job",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentRange",
+          "type": "uint256[2]"
+        },
+        {
+          "name": "_claimRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "claimWork",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        },
+        {
+          "name": "_dataStorageHash",
+          "type": "string"
+        },
+        {
+          "name": "_dataHashes",
+          "type": "bytes32[2]"
+        },
+        {
+          "name": "_broadcasterSig",
+          "type": "bytes"
+        },
+        {
+          "name": "_proof",
+          "type": "bytes"
+        }
+      ],
+      "name": "verify",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        },
+        {
+          "name": "_result",
+          "type": "bool"
+        }
+      ],
+      "name": "receiveVerification",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimIds",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "batchDistributeFees",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "missedVerificationSlash",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId1",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId2",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "doubleClaimSegmentSlash",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        }
+      ],
+      "name": "distributeFees",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "jobStatus",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJob",
+      "outputs": [
+        {
+          "name": "streamId",
+          "type": "string"
+        },
+        {
+          "name": "transcodingOptions",
+          "type": "string"
+        },
+        {
+          "name": "maxPricePerSegment",
+          "type": "uint256"
+        },
+        {
+          "name": "broadcasterAddress",
+          "type": "address"
+        },
+        {
+          "name": "transcoderAddress",
+          "type": "address"
+        },
+        {
+          "name": "creationRound",
+          "type": "uint256"
+        },
+        {
+          "name": "creationBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "endBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "escrow",
+          "type": "uint256"
+        },
+        {
+          "name": "totalClaims",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getClaim",
+      "outputs": [
+        {
+          "name": "segmentRange",
+          "type": "uint256[2]"
+        },
+        {
+          "name": "claimRoot",
+          "type": "bytes32"
+        },
+        {
+          "name": "claimBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "endVerificationBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "endVerificationSlashingBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "isClaimSegmentVerified",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     }
   ]
 }

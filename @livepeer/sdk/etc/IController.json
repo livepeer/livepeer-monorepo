@@ -51,65 +51,6 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_id",
-          "type": "bytes32"
-        },
-        {
-          "name": "_contractAddress",
-          "type": "address"
-        },
-        {
-          "name": "_gitCommitHash",
-          "type": "bytes20"
-        }
-      ],
-      "name": "setContractInfo",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_id",
-          "type": "bytes32"
-        }
-      ],
-      "name": "getContract",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_id",
-          "type": "bytes32"
-        },
-        {
-          "name": "_controller",
-          "type": "address"
-        }
-      ],
-      "name": "updateController",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
           "name": "newOwner",
           "type": "address"
         }
@@ -170,6 +111,65 @@
       ],
       "name": "OwnershipTransferred",
       "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_id",
+          "type": "bytes32"
+        },
+        {
+          "name": "_contractAddress",
+          "type": "address"
+        },
+        {
+          "name": "_gitCommitHash",
+          "type": "bytes20"
+        }
+      ],
+      "name": "setContractInfo",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_id",
+          "type": "bytes32"
+        },
+        {
+          "name": "_controller",
+          "type": "address"
+        }
+      ],
+      "name": "updateController",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getContract",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     }
   ]
 }

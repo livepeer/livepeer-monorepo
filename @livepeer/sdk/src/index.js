@@ -93,8 +93,9 @@ export { TRANSCODER_STATUS }
 
 // Defaults
 export const DEFAULTS = {
-  provider: 'https://ethrpc-testnet.livepeer.org',
-  privateKeys: {}, // { publicKey: privateKey }
+  controllerAddress: '0x37dC71366Ec655093b9930bc816E16e6b587F968',
+  provider: 'https://rinkeby.infura.io/srFaWg0SlljdJAoClX3B',
+  privateKeys: {}, // { publicKey: string]: privateKey }
   account: '',
   gas: 0,
   artifacts: {
@@ -336,10 +337,14 @@ export async function initRPC({
  */
 export async function initContracts(opts): Promise<Object<string, Contract>> {
   // Merge pass options with defaults
-  const { account, artifacts, gas, privateKeys, provider } = {
-    ...DEFAULTS,
-    ...opts,
-  }
+  const {
+    account = DEFAULTS.account,
+    artifacts = DEFAULTS.artifacts,
+    controllerAddress = DEFAULTS.controllerAddress,
+    gas = DEFAULTS.gas,
+    privateKeys = DEFAULTS.privateKeys,
+    provider = DEFAULTS.provider,
+  } = opts
   // Instanstiate new ethjs instance with specified provider
   const { eth, accounts, defaultTx } = await initRPC({
     account,
@@ -358,6 +363,7 @@ export async function initContracts(opts): Promise<Object<string, Contract>> {
   const Controller = await getContractAt(eth, {
     ...artifacts.Controller,
     defaultTx,
+    address: controllerAddress,
   })
   for (const name of Object.keys(contracts)) {
     // Get contract address from Controller
@@ -729,11 +735,11 @@ export default async function createLivepeerSDK(
       // const pendingStake = await rpc.pendingStake(addr)
       const d = await BondingManager.getDelegator(addr)
       const bondedAmount = toString(d.bondedAmount)
+      const fees = toString(d.fees)
       const delegateAddress =
         d.delegateAddress === EMPTY_ADDRESS ? '' : d.delegateAddress
       const delegatedAmount = toString(d.delegatedAmount)
-      const fees = toString(d.fees)
-      const lastClaimRound = toString(d.lastClaimTokenPoolsSharesRound)
+      const lastClaimRound = toString(d.lastClaimRound)
       const startRound = toString(d.startRound)
       const withdrawRound = toString(d.withdrawRound)
       return {
@@ -812,10 +818,10 @@ export default async function createLivepeerSDK(
      * // => Transcoder {
      * //   active: boolean,
      * //   address: string,
-     * //   blockRewardCut: string,
+     * //   rewardCut: string,
      * //   feeShare: string,
      * //   lastRewardRound: string,
-     * //   pendingBlockRewardCut string,
+     * //   pendingRewardCut string,
      * //   pendingFeeShare: string,
      * //   pendingPricePerSegment: string,
      * //   pricePerSegment: string,
@@ -828,21 +834,21 @@ export default async function createLivepeerSDK(
       const active = await rpc.getTranscoderIsActive(addr)
       const totalStake = await rpc.getTranscoderTotalStake(addr)
       const t = await BondingManager.getTranscoder(addr)
-      const lastRewardRound = toString(t.lastRewardRound)
-      const blockRewardCut = toString(t.blockRewardCut)
       const feeShare = toString(t.feeShare)
-      const pricePerSegment = toString(t.pricePerSegment)
-      const pendingBlockRewardCut = toString(t.pendingBlockRewardCut)
+      const lastRewardRound = toString(t.lastRewardRound)
       const pendingFeeShare = toString(t.pendingFeeShare)
       const pendingPricePerSegment = toString(t.pendingPricePerSegment)
+      const pendingRewardCut = toString(t.pendingRewardCut)
+      const pricePerSegment = toString(t.pricePerSegment)
+      const rewardCut = toString(t.rewardCut)
       return {
         active,
         address: addr,
-        blockRewardCut,
+        rewardCut,
         feeShare,
         lastRewardRound,
         pricePerSegment,
-        pendingBlockRewardCut,
+        pendingRewardCut,
         pendingFeeShare,
         pendingPricePerSegment,
         status,
@@ -1455,7 +1461,7 @@ export default async function createLivepeerSDK(
     /**
      * Sets transcoder parameters
      * @memberof livepeer~rpc
-     * @param {string} blockRewardCut - the block reward cut you wish to set
+     * @param {string} rewardCut - the block reward cut you wish to set
      * @param {string} feeShare - the fee share you wish to set
      * @param {string} pricePerSegment - the price per segment you wish to set
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1485,7 +1491,7 @@ export default async function createLivepeerSDK(
      * // }
      */
     async setupTranscoder(
-      blockRewardCut: string, // percentage
+      rewardCut: string, // percentage
       feeShare: string, // percentage
       pricePerSegment: string, // lpt
       tx = config.defaultTx,
@@ -1493,7 +1499,7 @@ export default async function createLivepeerSDK(
       // become a transcoder
       return await utils.getTxReceipt(
         await BondingManager.transcoder(
-          toBN(blockRewardCut),
+          toBN(rewardCut),
           toBN(feeShare),
           toBN(pricePerSegment),
           tx,
@@ -1700,7 +1706,6 @@ export default async function createLivepeerSDK(
    * @typedef {Object} ContractArtifact
    * @prop {string} name - name of the contract
    * @prop {Array<ABIPropDescriptor>} abi - lists info about contract properties
-   * @prop {string} [address] - deployed contract address. **Only required for Controller contract**
    */
 
   /**
@@ -1799,10 +1804,10 @@ export default async function createLivepeerSDK(
    * @typedef {Object} Transcoder
    * @prop {boolean} active - whether or not the transcoder is active
    * @prop {string} address - the transcoder's ETH address
-   * @prop {string} blockRewardCut - % of block reward cut paid to transcoder by a delegator
+   * @prop {string} rewardCut - % of block reward cut paid to transcoder by a delegator
    * @prop {string} feeShare - % of fees paid to delegators by transcoder
    * @prop {string} lastRewardRound - last round that the transcoder called reward
-   * @prop {string} pendingBlockRewardCut - pending block reward cut for next round if the transcoder is active
+   * @prop {string} pendingRewardCut - pending block reward cut for next round if the transcoder is active
    * @prop {string} pendingFeeShare - pending fee share for next round if the transcoder is active
    * @prop {string} pendingPricePerSegment - pending price per segment for next round if the transcoder is active
    * @prop {string} pricePerSegment - price per segment for a stream (LPTU)

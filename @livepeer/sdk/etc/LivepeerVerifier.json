@@ -35,20 +35,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_verificationCodeHash",
-          "type": "string"
-        }
-      ],
-      "name": "setVerificationCodeHash",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "requestCount",
@@ -94,40 +80,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        },
-        {
-          "name": "_transcodingOptions",
-          "type": "string"
-        },
-        {
-          "name": "_dataStorageHash",
-          "type": "string"
-        },
-        {
-          "name": "_dataHashes",
-          "type": "bytes32[2]"
-        }
-      ],
-      "name": "verify",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [
         {
@@ -155,52 +107,6 @@
         }
       ],
       "name": "setController",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_requestId",
-          "type": "uint256"
-        },
-        {
-          "name": "_result",
-          "type": "bytes32"
-        }
-      ],
-      "name": "__callback",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getPrice",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_solver",
-          "type": "address"
-        }
-      ],
-      "name": "addSolver",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -341,6 +247,100 @@
       ],
       "name": "ParameterUpdate",
       "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_verificationCodeHash",
+          "type": "string"
+        }
+      ],
+      "name": "setVerificationCodeHash",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_solver",
+          "type": "address"
+        }
+      ],
+      "name": "addSolver",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_jobId",
+          "type": "uint256"
+        },
+        {
+          "name": "_claimId",
+          "type": "uint256"
+        },
+        {
+          "name": "_segmentNumber",
+          "type": "uint256"
+        },
+        {
+          "name": "_transcodingOptions",
+          "type": "string"
+        },
+        {
+          "name": "_dataStorageHash",
+          "type": "string"
+        },
+        {
+          "name": "_dataHashes",
+          "type": "bytes32[2]"
+        }
+      ],
+      "name": "verify",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_requestId",
+          "type": "uint256"
+        },
+        {
+          "name": "_result",
+          "type": "bytes32"
+        }
+      ],
+      "name": "__callback",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     }
   ]
 }
