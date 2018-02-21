@@ -464,10 +464,10 @@ await rpc.getTranscoder('0xf00...')
 // => Transcoder {
 //   active: boolean,
 //   address: string,
-//   blockRewardCut: string,
+//   rewardCut: string,
 //   feeShare: string,
 //   lastRewardRound: string,
-//   pendingBlockRewardCut string,
+//   pendingRewardCut string,
 //   pendingFeeShare: string,
 //   pendingPricePerSegment: string,
 //   pricePerSegment: string,
@@ -858,6 +858,11 @@ await rpc.bond('0xf00...', '100')
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
+**Meta**
+
+-   **deprecated**: This is deprecated.
+
+
 #### unbond
 
 Unbonds LPT from an address
@@ -899,7 +904,7 @@ Sets transcoder parameters
 
 **Parameters**
 
--   `blockRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the block reward cut you wish to set
+-   `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the block reward cut you wish to set
 -   `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the fee share you wish to set
 -   `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the price per segment you wish to set
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
@@ -1065,7 +1070,6 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 -   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the contract
 -   `abi` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[ABIPropDescriptor](#abipropdescriptor)>** lists info about contract properties
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** deployed contract address. **Only required for Controller contract**
 
 ### LivepeerSDKOptions
 
@@ -1202,10 +1206,10 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 -   `active` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the transcoder is active
 -   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's ETH address
--   `blockRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of block reward cut paid to transcoder by a delegator
+-   `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of block reward cut paid to transcoder by a delegator
 -   `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of fees paid to delegators by transcoder
 -   `lastRewardRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** last round that the transcoder called reward
--   `pendingBlockRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending block reward cut for next round if the transcoder is active
+-   `pendingRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending block reward cut for next round if the transcoder is active
 -   `pendingFeeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending fee share for next round if the transcoder is active
 -   `pendingPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending price per segment for next round if the transcoder is active
 -   `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** price per segment for a stream (LPTU)
