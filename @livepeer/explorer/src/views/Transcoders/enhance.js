@@ -1,3 +1,5 @@
+// TODO: map apollo enhancer props to a namespace + flatten in camelcase via composed enhancer
+
 import { compose, withStateHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -23,10 +25,20 @@ query MeQuery {
 
 const connectMeQuery = graphql(gql(meQuery), {
   props: ({ data, ownProps }) => {
-    // console.log(data.me, data.error)
+    const me = {
+      id: '',
+      ethBalance: '',
+      tokenBalance: '',
+      delegator: {
+        id: '',
+        bondedAmount: '',
+        delegateAddress: '',
+      },
+      ...data.me,
+    }
     return {
       ...ownProps,
-      me: data.me,
+      me,
       error: data.error,
       fetchMore: data.fetchMore,
       refetch: data.refetch,

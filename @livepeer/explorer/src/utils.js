@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router'
 import Big from 'big.js'
-import unit from 'ethjs-unit'
+import unit, { unitMap } from 'ethjs-unit'
 
 export function formatPercentage(x: string, decimals = 2): string {
   return !x
@@ -12,13 +12,17 @@ export function formatPercentage(x: string, decimals = 2): string {
         .replace(/\.$/, '')
 }
 
-export function formatBalance(x: string, decimals: number = 6): string {
-  if (!x) return ''
-  return Big(x)
-    .div('1000000000000000000')
-    .toFixed(decimals)
-    .replace(/0+$/, '')
-    .replace(/\.$/, '')
+export function formatBalance(
+  x: string,
+  decimals: number = 6,
+  unit: string = 'ether',
+): string {
+  return !x
+    ? ''
+    : Big(x)
+        .div(unitMap[unit])
+        .toFixed(decimals)
+        .replace(/\.0+$/, '')
 }
 
 export function toBaseUnit(x: string) {
@@ -34,7 +38,7 @@ export function promptForArgs(
   const args = []
   for (const prompt of prompts) {
     const val = window.prompt(prompt.ask)
-    args.push(prompt.format(val))
+    args.push(prompt.format ? prompt.format(val) : val)
   }
   return args
 }

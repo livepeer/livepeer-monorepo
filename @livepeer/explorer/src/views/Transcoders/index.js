@@ -1,39 +1,19 @@
-import React, { ReactElement } from 'react'
-import { matchPath } from 'react-router'
-import { Link } from 'react-router-dom'
-import { compose } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { EMPTY_ADDRESS } from '@livepeer/sdk'
-import { queries } from '@livepeer/graphql-sdk'
+// @flow
+import * as React from 'react'
+import { matchPath } from 'react-router-dom'
 import BN from 'bn.js'
-import styled from 'styled-components'
-import {
-  Cpu as CpuIcon,
-  DownloadCloud as DownloadCloudIcon,
-  MoreHorizontal as MoreHorizontalIcon,
-  Plus as PlusIcon,
-  Send as SendIcon,
-  Star as StarIcon,
-  Zap as VideoIcon,
-} from 'react-feather'
-import {
-  formatBalance,
-  formatPercentage,
-  pathInfo,
-  promptForArgs,
-  toBaseUnit,
-} from '../../utils'
+import { Cpu as CpuIcon } from 'react-feather'
 import {
   Avatar,
   Banner,
   BasicNavbar,
-  BasicModal,
-  Button,
+  BondErrorModal,
+  BondSuccessModal,
+  BondTransactionModal,
   Content,
-  MetricBox,
   PageHeading,
   ScrollToTopOnMount,
+  TranscoderCard,
   Wrapper,
 } from '../../components'
 import enhance from './enhance'
@@ -52,20 +32,52 @@ type Transcoder = {
   totalStake: string,
 }
 
-type Props = {
+type Delegator = {
+  status: string,
+  delegateAddress: string,
+  bondedAmount: string,
+  fees: string,
+  delegatedAmount: string,
+  lastClaimRound: string,
+  startRound: string,
+  withdrawRound: string,
+}
+
+type Account = {
+  id: string,
+  ethBalance: string,
+  tokenBalance: string,
+  delegator: Delegator,
+}
+
+type TranscodersViewProps = {
+  bondData: { to: '', amount: '' },
+  bondModalVisible: false,
+  bondStatus: {
+    loading: false,
+    error: null,
+    success: false,
+  },
+  bondToken: any => void,
   history: {
-    push: (url: string) => void,
     location: {
       search: string,
     },
+    push: (url: string) => void,
+    replace: (url: string) => void,
   },
   loading: boolean,
+  me: Account,
   match: { path: string },
   onBondLPT: (url: string) => Promise<void>,
+  setBondData: Object => Object,
+  showBondModal: boolean => Object,
   transcoders: Array<Transcoder>,
+  unbond: any => void,
 }
 
-const TranscodersView = ({
+/** Displays a list of transcoders and allows authenticated users to sort and bond/unbond from them */
+const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   error,
   history,
   loading,
@@ -82,19 +94,14 @@ const TranscodersView = ({
   unbond,
   ...props
 }) => {
-  const { delegateAddress } = me ? me.delegator : {}
+  const { delegator: { bondedAmount, delegateAddress }, tokenBalance } = me
   const searchParams = new URLSearchParams(history.location.search)
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
   const asc = order === 'asc'
   const total = transcoders.length
-  const compareFn = (a, b) => {
-    const _a = new BN(a[sort], 10)
-    const _b = new BN(b[sort], 10)
-    const mul = asc ? 1 : -1
-    return _a.cmp(_b) * mul
-  }
-  // console.log(props)
+  const compareFn = createCompareFunction(asc, sort)
+  const closeModal = () => showBondModal(false)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -204,308 +211,42 @@ const TranscodersView = ({
           />
         ))}
       </Content>
-      {/* Bond Error State */}
-      {bondModalVisible &&
-        bondStatus.error && (
-          <BasicModal title="Bond Failed" onClose={() => showBondModal(false)}>
-            <p>
-              Sorry, it looks like there was a problem with the transaction.
-              Here's the error message:
-            </p>
-            <pre
-              style={{
-                whiteSpace: 'initial',
-                overflow: 'auto',
-                maxHeight: 300,
-              }}
-            >
-              <code>{bondStatus.error.message}</code>
-            </pre>
-            <div style={{ textAlign: 'right', paddingTop: 24 }}>
-              <Button onClick={() => showBondModal(false)}>OK</Button>
-            </div>
-          </BasicModal>
-        )}
-      {/* Bond Success State */}
-      {bondModalVisible &&
-        bondStatus.success && (
-          <BasicModal
-            title="Bond Complete"
-            onClose={() => showBondModal(false)}
-          >
-            <p>
-              Congratulations, delegator! You successfully bonded to the
-              following transcoder:
-            </p>
-            <div
-              style={{
-                fontSize: 14,
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              <Avatar id={bondData.to} size={32} />
-              <span style={{ marginLeft: 8 }}>{bondData.to}</span>
-            </div>
-            <p>
-              Please view the{' '}
-              <Link to="/me/delegating">
-                "delegating" section of your account
-              </Link>{' '}
-              to see your bonded amount.
-            </p>
-            <div style={{ textAlign: 'right', paddingTop: 24 }}>
-              <Button onClick={() => showBondModal(false)}>OK</Button>
-            </div>
-          </BasicModal>
-        )}
-      {/* Bond Form + Loading State */}
-      {bondModalVisible &&
-        !bondStatus.error &&
-        !bondStatus.success && (
-          <BasicModal
-            title="Bond to Transcoder"
-            onClose={() => (bondStatus.loading ? null : showBondModal(false))}
-          >
-            <p>Transcoder Address</p>
-            <div
-              style={{
-                fontSize: 14,
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              <Avatar id={bondData.to} size={32} />
-              <span style={{ marginLeft: 8 }}>{bondData.to}</span>
-            </div>
-            <p>Amount to Bond</p>
-            {me.delegator.bondedAmount !== '0' && (
-              <p style={{ fontSize: 12 }}>
-                You already have a bonded amount of{' '}
-                {formatBalance(me.delegator.bondedAmount, 18)} LPT. Any
-                additional bond will be added to this amount. By entering 0, you
-                will transfer your bonded amount to the selected transcoder.
-              </p>
-            )}
-            <p style={{ fontSize: 12 }}>
-              The maximum amount you may bond is&nbsp;
-              <span style={{ fontWeight: 400 }}>
-                {formatBalance(me.tokenBalance, 18)} LPT.
-              </span>
-            </p>
-            <input
-              id="bondApproveAmount"
-              disabled={bondStatus.loading}
-              type="text"
-              style={{
-                width: '90%',
-                height: 48,
-                padding: 8,
-                fontSize: 16,
-              }}
-            />{' '}
-            LPT
-            <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-              <strong style={{ fontWeight: 'normal' }}>Note</strong>: By
-              clicking "Submit", MetaMask will prompt you twice — first for an
-              approval transaction, and then for a bonding transaction. You must
-              submit both in order to complete the bonding process.
-            </p>
-            <div style={{ textAlign: 'right', paddingTop: 24 }}>
-              <Button
-                disabled={bondStatus.loading}
-                onClick={() => showBondModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={bondStatus.loading}
-                onClick={async e => {
-                  const { value } = document.getElementById('bondApproveAmount')
-                  const amount = toBaseUnit(value)
-                  const { to } = bondData
-                  await bondToken({ to, amount })
-                }}
-              >
-                {bondStatus.loading ? 'Submitting...' : 'Submit'}
-              </Button>
-            </div>
-          </BasicModal>
-        )}
+      {/* Modals */}
+      <BondErrorModal
+        action="bond"
+        error={bondStatus.error}
+        onClose={closeModal}
+        test={bondModalVisible && bondStatus.error}
+        title="Bond Failed"
+        status={bondStatus}
+      />
+      <BondSuccessModal
+        delegateAddress={bondData.to}
+        onClose={closeModal}
+        test={bondModalVisible && bondStatus.success}
+        title="Bonding Complete"
+      />
+      <BondTransactionModal
+        bondedAmount={bondedAmount}
+        delegateAddress={bondData.to}
+        loading={bondStatus.loading}
+        onBond={bondToken}
+        onClose={closeModal}
+        test={bondModalVisible && !bondStatus.success && !bondStatus.error}
+        tokenBalance={tokenBalance}
+      />
     </React.Fragment>
   )
 }
 
-const TranscoderCard = ({
-  active,
-  bonded,
-  id,
-  status,
-  onBond,
-  onUnbond,
-  ...stats
-}) => {
-  return (
-    <TranscoderCardContainer bonded={bonded}>
-      <TranscoderCardBasicInfo id={id} status={status} active={active} />
-      <TranscoderStats {...stats} />
-      {(onBond || onUnbond) && <TranscoderActionsPlaceholder />}
-      {(onBond || onUnbond) && (
-        <TranscoderActions onBond={onBond} onUnbond={onUnbond} />
-      )}
-    </TranscoderCardContainer>
-  )
+const createCompareFunction = (asc: boolean, sort: string) => (
+  a: Transcoder,
+  b: Transcoder,
+): number => {
+  const _a = new BN(a[sort], 10)
+  const _b = new BN(b[sort], 10)
+  const mul = asc ? 1 : -1
+  return _a.cmp(_b) * mul
 }
-
-const TranscoderCardBasicInfo = ({ active, id, status }) => {
-  return (
-    <div
-      style={{
-        display: 'inline-block',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        width: 240,
-      }}
-    >
-      <Link to={`/accounts/${id}/transcoding`}>
-        <Avatar id={id} size={32} />
-      </Link>
-      <div
-        style={{
-          display: 'inline-block',
-          width: 128,
-          padding: 7,
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-          fontSize: 14,
-        }}
-      >
-        <Link
-          to={`/accounts/${id}/transcoding`}
-          style={{ color: '#000', textDecoration: 'none' }}
-        >
-          {id.substr(0, 10)}...
-        </Link>
-      </div>
-      <div
-        style={{
-          padding: 7,
-          display: 'inline-block',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-          fontSize: 14,
-          color: active ? 'darkseagreen' : 'orange',
-        }}
-      >
-        {active ? 'active' : 'inactive'}
-      </div>
-    </div>
-  )
-}
-
-const TranscoderStats = ({
-  rewardCut,
-  feeShare,
-  pricePerSegment,
-  totalStake,
-}) => {
-  return (
-    <div style={{ display: 'inline-block', minWidth: 320 }}>
-      <div style={{ display: 'inline-block', margin: '0 16px', width: 64 }}>
-        <div style={{ marginBottom: 4, fontSize: 11 }}>Reward Cut</div>
-        <div style={{ fontSize: 14 }}>
-          {formatPercentage(rewardCut, 2)}%
-        </div>
-      </div>
-      <div style={{ display: 'inline-block', margin: '0 16px', width: 64 }}>
-        <div style={{ marginBottom: 4, fontSize: 11 }}>Fee Share</div>
-        <div style={{ fontSize: 14 }}>{formatPercentage(feeShare, 2)}%</div>
-      </div>
-      <div style={{ display: 'inline-block', margin: '0 16px', width: 80 }}>
-        <div style={{ marginBottom: 4, fontSize: 11 }}>Price</div>
-        <div style={{ fontSize: 14 }}>{pricePerSegment} WEI</div>
-      </div>
-      <div style={{ display: 'inline-block', margin: '0 16px', width: 128 }}>
-        <div style={{ marginBottom: 4, fontSize: 11 }}>Total Stake</div>
-        <div style={{ fontSize: 14 }}>{formatBalance(totalStake, 2)} LPT</div>
-      </div>
-    </div>
-  )
-}
-
-const TranscoderActions = styled(({ className, onBond, onUnbond }) => {
-  return (
-    <div className={className}>
-      {onBond && (
-        <Button onClick={onBond} style={{ margin: 0 }}>
-          {/* <StarIcon size={12} /> &nbsp; */}
-          <span>Bond</span>
-        </Button>
-      )}
-      {onUnbond && (
-        <Button onClick={onUnbond} style={{ margin: 0, marginLeft: 8 }}>
-          {/* <StarIcon size={12} /> &nbsp; */}
-          <span>Unbond</span>
-        </Button>
-      )}
-    </div>
-  )
-})`
-  display: inline-block;
-  flex-grow: 1;
-  text-align: right;
-  background: inherit;
-`
-
-const TranscoderActionsPlaceholder = styled(({ className }) => {
-  return (
-    <div className={className}>
-      <MoreHorizontalIcon size={32} color="rgba(0, 0, 0, .25)" />
-    </div>
-  )
-})`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 32px;
-  margin: auto;
-  display: block;
-  height: 32px;
-  pointer-events: none;
-`
-
-const TranscoderCardContainer = styled.div`
-  position: relative;
-  display: inline-flex;
-  flex-flow: row wrap;
-  background: ${({ bonded }) => (bonded ? 'cornsilk' : 'white')};
-  margin-bottom: 16px;
-  border-radius: 2px;
-  padding: 16px;
-  overflow: auto;
-  box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.15);
-  a:hover {
-    text-decoration: underline !important;
-  }
-  ${TranscoderActions} {
-    opacity: 0;
-    transition: all 0.2s linear;
-  }
-  ${TranscoderActionsPlaceholder} {
-    opacity: 1;
-    transition: all 0.2s linear;
-  }
-  :hover {
-    ${TranscoderActions} {
-      opacity: 1;
-    }
-    ${TranscoderActionsPlaceholder} {
-      opacity: 0;
-    }
-  }
-`
 
 export default enhance(TranscodersView)
