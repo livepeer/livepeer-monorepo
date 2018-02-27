@@ -95,7 +95,7 @@ export { TRANSCODER_STATUS }
 export const DEFAULTS = {
   controllerAddress: '0x37dC71366Ec655093b9930bc816E16e6b587F968',
   provider: 'https://rinkeby.infura.io/srFaWg0SlljdJAoClX3B',
-  privateKeys: {}, // { publicKey: string]: privateKey }
+  privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
   gas: 0,
   artifacts: {
@@ -1711,7 +1711,8 @@ export default async function createLivepeerSDK(
   /**
    * SDK configuration options
    * @typedef {Object} LivepeerSDKOptions
-   * @prop {string} [provider = 'https://ethrpc-testnet.livepeer.org'] - The ETH http provider for rpc methods
+   * @prop {string} [controllerAddress = '0x37dC71366Ec655093b9930bc816E16e6b587F968'] - The address of the delpoyed Controller contract
+   * @prop {string} [provider = 'https://rinkeby.infura.io/srFaWg0SlljdJAoClX3B'] - The ETH http provider for rpc methods
    * @prop {number} [gas = 0] - the amount of gas to include with transactions by default
    * @prop {Object<string, ContractArtifact>} artifacts - an object containing contract name -> ContractArtifact mappings
    * @prop {Object<string, string>} privateKeys - an object containing public -> private key mappings. Should be specified if using the SDK for transactions without MetaMask (via CLI, etc)
