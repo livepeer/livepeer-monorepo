@@ -4,6 +4,7 @@ import { compose, withStateHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import unit from 'ethjs-unit'
+import { connectTransactions } from '../../enhancers'
 import { pathInfo, promptForArgs, toBaseUnit } from '../../utils'
 
 const meQuery = `
@@ -123,6 +124,7 @@ const connectBondTokenMutation = graphql(
   {
     props: ({ mutate, ownProps }) => ({
       bondToken: async ({ to, amount }) => {
+        // TODO: replace these callbacks with TransactionContainer methods
         const { approve, bondLoading, bondError, bondSuccess } = ownProps
         try {
           console.log('bondToken', to, amount)
@@ -281,4 +283,5 @@ export default compose(
   connectApproveMutation,
   connectBondTokenMutation,
   connectUnbondMutation,
+  connectTransactions,
 )

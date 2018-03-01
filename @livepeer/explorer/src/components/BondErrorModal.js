@@ -6,7 +6,9 @@ import ErrorModal from './ErrorModal'
 
 export type BondErrorModalProps = ErrorModalProps
 
-/** Error modal shown when approve() or bond() transaction fails */
+/**
+ * Error modal shown when approve() or bond() transaction fails
+ */
 const BondErrorModal: React.ComponentType<BondErrorModalProps> = ({
   action,
   onClose,

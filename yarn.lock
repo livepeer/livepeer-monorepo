@@ -2715,6 +2715,10 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+create-react-context@^0.1.5:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.1.6.tgz#0f425931d907741127acc6e31acb4f9015dd9fdc"
+
 cross-spawn@5.1.0, cross-spawn@^5.0.1, cross-spawn@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-5.1.0.tgz#e8bd0efee58fcff6f8f94510a0a554bbfa235449"
@@ -4396,6 +4400,10 @@ fill-range@^4.0.0:
     is-number "^3.0.0"
     repeat-string "^1.6.1"
     to-regex-range "^2.1.0"
+
+final-form@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/final-form/-/final-form-4.2.1.tgz#f3ec1d871b4b89115bf03c1fcb89455efe7a347d"
 
 finalhandler@1.1.0:
   version "1.1.0"
@@ -8461,6 +8469,10 @@ react-feather@^1.0.7, react-feather@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/react-feather/-/react-feather-1.0.8.tgz#69b13d5c729949f194d33201dee91bab67fa31a2"
 
+react-final-form@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/react-final-form/-/react-final-form-3.1.2.tgz#94eae1c8ed8ef0cef48144f88f1f669dd21e5181"
+
 react-motion@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/react-motion/-/react-motion-0.5.2.tgz#0dd3a69e411316567927917c6626551ba0607316"
@@ -10496,6 +10508,12 @@ unset-value@^1.0.0:
   dependencies:
     has-value "^0.3.1"
     isobject "^3.0.0"
+
+unstated@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/unstated/-/unstated-1.0.3.tgz#fd1719686051acd1c0bda1a6e2fa6162a50ff604"
+  dependencies:
+    create-react-context "^0.1.5"
 
 unzip-response@^2.0.1:
   version "2.0.1"

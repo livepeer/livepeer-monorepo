@@ -72,6 +72,7 @@ type TranscodersViewProps = {
   onBondLPT: (url: string) => Promise<void>,
   setBondData: Object => Object,
   showBondModal: boolean => Object,
+  transactions: any,
   transcoders: Array<Transcoder>,
   unbond: any => void,
 }
@@ -91,6 +92,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   showBondModal,
   setBondData,
   bonding,
+  transactions: tx,
   unbond,
   ...props
 }) => {
@@ -101,7 +103,34 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const asc = order === 'asc'
   const total = transcoders.length
   const compareFn = createCompareFunction(asc, sort)
-  const closeModal = () => showBondModal(false)
+  const bondTx = tx.find(x => x.active && x.type === 'bond') || {
+    type: 'bond',
+    key: '',
+    active: false,
+    input: {},
+    meta: {},
+    done: false,
+    pending: false,
+    error: null,
+  }
+  const deactivateTransaction = () => {
+    const { key, type } = bondTx
+    tx.deactivate(type, key)
+  }
+  const activateTransaction = delegateAddress => () => {
+    // find any existing transaction for this delegate
+    const bondTx = tx.find(
+      x => x.meta.delegateAddress === delegateAddress && !x.done,
+    )
+    // use existing transaction if not completed
+    const { key = Date.now() } = bondTx || {}
+    // activate transaction
+    tx.activate('bond', key, {
+      meta: {
+        delegateAddress,
+      },
+    })
+  }
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -192,10 +221,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             onBond={
               me &&
               (!delegateAddress || props.id === delegateAddress) &&
-              (async e => {
-                setBondData({ to: props.id })
-                showBondModal(true)
-              })
+              activateTransaction(props.id)
             }
             onUnbond={
               me &&
@@ -214,25 +240,24 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       {/* Modals */}
       <BondErrorModal
         action="bond"
-        error={bondStatus.error}
-        onClose={closeModal}
-        test={bondModalVisible && bondStatus.error}
+        error={bondTx.error}
+        onClose={deactivateTransaction}
+        test={bondTx.active && bondTx.error}
         title="Bond Failed"
-        status={bondStatus}
       />
       <BondSuccessModal
-        delegateAddress={bondData.to}
-        onClose={closeModal}
-        test={bondModalVisible && bondStatus.success}
+        delegateAddress={bondTx.meta.delegateAddress}
+        onClose={deactivateTransaction}
+        test={bondTx.active && bondTx.done && !bondTx.error}
         title="Bonding Complete"
       />
       <BondTransactionModal
         bondedAmount={bondedAmount}
-        delegateAddress={bondData.to}
-        loading={bondStatus.loading}
+        delegateAddress={bondTx.meta.delegateAddress}
+        loading={bondTx.pending}
         onBond={bondToken}
-        onClose={closeModal}
-        test={bondModalVisible && !bondStatus.success && !bondStatus.error}
+        onClose={deactivateTransaction}
+        test={bondTx.active && !bondTx.done}
         tokenBalance={tokenBalance}
       />
     </React.Fragment>

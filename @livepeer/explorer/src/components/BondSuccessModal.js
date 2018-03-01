@@ -12,7 +12,9 @@ type BondSuccessModalProps = {|
   delegateAddress: string,
 |}
 
-/** Shown when a bond transaction is successfully completed */
+/**
+ * Shown when a bond transaction is successfully completed
+ */
 const BondSuccessModal: React.ComponentType<BondSuccessModalProps> = ({
   title,
   onClose,

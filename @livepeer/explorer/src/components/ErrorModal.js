@@ -11,7 +11,9 @@ export type ErrorModalProps = {|
   title: string,
 |}
 
-/** Displays an error message in a modal */
+/**
+ * Displays an error message in a modal
+ */
 const ErrorModal: React.ComponentType<ErrorModalProps> = ({
   title,
   action,
