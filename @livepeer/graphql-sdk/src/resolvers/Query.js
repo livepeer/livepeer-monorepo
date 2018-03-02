@@ -141,7 +141,8 @@ export async function jobs(
  */
 export async function me(obj, args, ctx) {
   // Account field resolvers will fill in the rest
-  const id = ctx.account || ctx.livepeer.constants.EMPTY_ADDRESS
+  const id = ctx.account
+  if (!id) throw new Error(`No unlocked account is available`)
   return { id }
 }
 

@@ -21,7 +21,7 @@ import livepeer from './mock-sdk'
  * Account
  */
 
-test('AccountQuery', async t => {
+test.only('AccountQuery', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
   }
