@@ -1,57 +1,44 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { pathInfo, toRGBA } from '../../utils'
-import { withTransactionHandlers } from '../../enhancers'
+import { mockAccount } from '../../utils'
+import { withPathMatches, withTransactionHandlers } from '../../enhancers'
 
-const query = `
-fragment AccountFragment on Account {
-  id
-  ethBalance
-  tokenBalance
-}
-query AccountQuery(
-  $id: String!,
-  $me: Boolean!
-) {
-  me @include(if: $me) {
-    ...AccountFragment
+const accountQuery = gql`
+  fragment AccountFragment on Account {
+    id
+    ethBalance
+    tokenBalance
   }
-  account(id: $id) @skip(if: $me) {
-    ...AccountFragment
-  }
-}`
 
-const setProps = ({ data, ownProps }) => {
-  const account = {
-    id: '',
-    ...data.me,
-    ...data.account,
+  query AccountOverviewQuery($id: String!, $me: Boolean!) {
+    me @include(if: $me) {
+      ...AccountFragment
+    }
+    account(id: $id) @skip(if: $me) {
+      ...AccountFragment
+    }
   }
-  return {
-    ...ownProps,
-    account,
-    error: data.error,
-    fetchMore: data.fetchMore,
-    refetch: data.refetch,
-    loading: data.loading,
-  }
-}
+`
 
-const setOptions = ({ match }) => {
-  const { account } = match.params
-  return {
-    pollInterval: 5000,
+const connectAccountQuery = graphql(accountQuery, {
+  props: ({ data, ownProps }) => {
+    const { account, me, ...accountData } = data
+    return {
+      ...ownProps,
+      account: {
+        ...accountData,
+        data: mockAccount(me || account),
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 5 * 1000,
     variables: {
-      id: match.params.account || '',
-      me: !match.params.account,
+      id: match.params.accountId || '',
+      me: !match.params.accountId,
     },
-  }
-}
-
-const connectApollo = graphql(gql(query), {
-  props: setProps,
-  options: setOptions,
+  }),
 })
 
-export default compose(connectApollo, withTransactionHandlers)
+export default compose(connectAccountQuery, withTransactionHandlers)

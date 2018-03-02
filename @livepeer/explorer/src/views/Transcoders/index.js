@@ -18,33 +18,29 @@ import enhance from './enhance'
 type TranscodersViewProps = {
   bondTo: string => void,
   history: History,
-  loading: boolean,
   match: Match,
-  me: Account,
-  onBondLPT: (url: string) => Promise<void>,
+  me: GraphQLProps<Account>,
   unbondFrom: string => void,
-  transcoders: Array<Transcoder>,
+  transcoders: GraphQLProps<Array<Transcoder>>,
 }
 
 /**
  * Displays a list of transcoders and allows authenticated users to sort and bond/unbond from them
  */
 const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
-  error,
   history,
-  loading,
   match,
   transcoders,
   me,
   unbondFrom,
   bondTo,
 }) => {
-  const { delegator: { bondedAmount, delegateAddress }, tokenBalance } = me
+  const { delegator: { bondedAmount, delegateAddress }, tokenBalance } = me.data
   const searchParams = new URLSearchParams(history.location.search)
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
   const asc = order === 'asc'
-  const total = transcoders.length
+  const total = transcoders.data.length
   const compareFn = createCompareFunction(asc, sort)
   return (
     <React.Fragment>
@@ -58,8 +54,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       <Content>
         {/** Empty State */ !total && (
           <p style={{ textAlign: 'center' }}>
-            {loading && 'Loading transcoder data...'}
-            {!loading && 'There are no transcoders'}
+            {transcoders.loading && 'Loading transcoder data...'}
+            {!transcoders.loading && 'There are no transcoders'}
           </p>
         )}
         {/** Toolbar */ !total ? null : (
@@ -128,19 +124,21 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             </div>
           </div>
         )}
-        {/* Results */ [...transcoders].sort(compareFn).map(props => {
-          const canBond =
-            me.id && (!delegateAddress || props.id === delegateAddress)
-          const canUnbond = me.id && props.id === delegateAddress
-          const onBond = (canBond && bondTo(props.id)) || undefined
-          const onUnbond = (canUnbond && unbondFrom(props.id)) || undefined
+        {/* Results */ [...transcoders.data].sort(compareFn).map(props => {
+          const myId = me.data.id
+          const { id } = props
+          const bonded = id === delegateAddress
+          const canBond = myId && (!delegateAddress || id === delegateAddress)
+          const canUnbond = myId && id === delegateAddress
+          const onBond = (canBond && bondTo(id)) || undefined
+          const onUnbond = (canUnbond && unbondFrom(id)) || undefined
           return (
             <TranscoderCard
-              key={props.id}
+              key={id}
               {...props}
-              bonded={props.id === delegateAddress}
-              onBond={onBond || undefined}
-              onUnbond={onUnbond || undefined}
+              bonded={bonded}
+              onBond={onBond}
+              onUnbond={onUnbond}
             />
           )
         })}

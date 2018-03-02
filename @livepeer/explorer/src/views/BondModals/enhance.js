@@ -6,55 +6,42 @@ import {
   connectBondMutation,
   connectTransactions,
 } from '../../enhancers'
-import { sleep, wireTransactionToStatus } from '../../utils'
+import { mockAccount, sleep, wireTransactionToStatus } from '../../utils'
 
-const meQuery = `
-fragment AccountFragment on Account {
-  id
-  ethBalance
-  tokenBalance
-  delegator {
+const MeDelegatorQuery = gql`
+  fragment AccountFragment on Account {
     id
-    delegateAddress
-    bondedAmount
-  }
-}
-query MeQuery {
-  me {
-    ...AccountFragment
-  }
-}`
-
-const connectMeQuery = graphql(gql(meQuery), {
-  props: ({ data, ownProps }) => {
-    const me = {
-      id: '',
-      ethBalance: '',
-      tokenBalance: '',
-      delegator: {
-        id: '',
-        bondedAmount: '',
-        delegateAddress: '',
-      },
-      ...data.me,
+    ethBalance
+    tokenBalance
+    delegator {
+      id
+      delegateAddress
+      bondedAmount
     }
+  }
+
+  query MeDelegatorQuery {
+    me {
+      ...AccountFragment
+    }
+  }
+`
+
+const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
+  props: ({ data, ownProps }) => {
+    const { me, ...queryData } = data
     return {
       ...ownProps,
       me: {
-        data: me,
-        error: data.error,
-        fetchMore: data.fetchMore,
-        refetch: data.refetch,
-        loading: data.loading,
+        ...queryData,
+        data: mockAccount(me),
       },
     }
   },
-  options: ({ match }) => {
-    return {
-      pollInterval: 5000,
-      variables: {},
-    }
-  },
+  options: ({ match }) => ({
+    pollInterval: 5 * 1000,
+    variables: {},
+  }),
 })
 
 export const mapTransactionsToProps = mapProps(props => {
@@ -67,14 +54,13 @@ export const mapTransactionsToProps = mapProps(props => {
     bondStatus,
     onClose: () => tx.delete(bondStatus),
     onBond: wireTransactionToStatus(tx, bondStatus, async ({ to, amount }) => {
-      // TODO: uncomment
-      // await approve({ variables: { type: 'bond', amount } })
-      // return await bond({ variables: { to, amount } })
-      return await sleep(1000, {
-        transaction: {
-          hash: '0xf00',
-        },
-      })
+      await approve({ variables: { type: 'bond', amount } })
+      return await bond({ variables: { to, amount } })
+      // return await sleep(1000, {
+      //   transaction: {
+      //     hash: '0xf00',
+      //   },
+      // })
     }),
   }
 })
@@ -82,7 +68,7 @@ export const mapTransactionsToProps = mapProps(props => {
 export default compose(
   connectApproveMutation,
   connectBondMutation,
-  connectMeQuery,
+  connectMeDelegatorQuery,
   connectTransactions,
   mapTransactionsToProps,
 )

@@ -133,12 +133,12 @@ export class TransactionStatusContainer extends Container<
     const { type, id } = status
     // console.log('commit', status)
     this.setState({
-      [`${type}/${id}`]: status,
+      [`${type}:${id}`]: status,
     })
   }
   delete = (status: TransactionStatus) => {
     const { type, id } = status
-    delete this.state[`${type}/${id}`]
+    delete this.state[`${type}:${id}`]
     this.setState(this.state)
   }
   empty = TransactionStatus.create

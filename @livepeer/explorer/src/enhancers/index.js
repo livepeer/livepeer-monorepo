@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import { matchPath } from 'react-router-dom'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
@@ -57,6 +58,22 @@ export const withProp = (key: string, value: any) => (
 }
 
 /**
+ * Adds a `paths` object to props
+ */
+export const withPathMatches = (matches: { [key: string]: string }) =>
+  mapProps(props => {
+    return {
+      ...props,
+      paths: Object.entries(matches).reduce((paths, [key, path]) => {
+        return {
+          ...paths,
+          [key]: matchPath(props.match.path, { path }),
+        }
+      }, {}),
+    }
+  })
+
+/**
  * Subscribes a component to the TransactionContainer's state
  */
 export const connectTransactions = (Consumer: React.ComponentType<any>) => {
@@ -84,8 +101,8 @@ export const connectApproveMutation = graphql(
 
 export const connectBondMutation = graphql(
   gql`
-    mutation bondToken($to: String!, $amount: String!) {
-      bond(to: $to, amount: $amount)
+    mutation bond($to: String!, $amount: String!) {
+      bondToken(to: $to, amount: $amount)
     }
   `,
   {

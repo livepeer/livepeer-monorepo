@@ -1,23 +1,16 @@
-import React, { ReactElement } from 'react'
-import { matchPath } from 'react-router'
-import { compose, withHandlers } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { queries } from '@livepeer/graphql-sdk'
-import styled, { keyframes } from 'styled-components'
+// @flow
+import * as React from 'react'
 import {
   DownloadCloud as DownloadCloudIcon,
   Plus as PlusIcon,
   Send as SendIcon,
 } from 'react-feather'
-import { formatBalance, pathInfo } from '../../utils'
+import { formatBalance } from '../../utils'
 import { Button, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
 type AccountOverviewProps = {
-  account: Account,
-  history: History,
-  loading: boolean,
+  account: GraphQLProps<Account>,
   match: Match,
   onDepositETH: (e: Event) => void,
   onRequestETH: (e: Event) => void,
@@ -27,23 +20,20 @@ type AccountOverviewProps = {
 
 const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   account,
-  history,
-  loading,
   match,
   onDepositETH,
   onRequestETH,
   onRequestLPT,
   onTransferLPT,
 }) => {
-  const { ethBalance, tokenBalance } = account
-  const me = pathInfo.isMe(match.path)
+  const { ethBalance, id, tokenBalance } = account.data
   return (
     <React.Fragment>
       <Wrapper>
         <MetricBox
           title="ETH Address"
           width="100%"
-          subvalue={<code style={{ fontSize: 16 }}>{account.id}</code>}
+          subvalue={<code style={{ fontSize: 16 }}>{id}</code>}
         />
       </Wrapper>
       <Wrapper>
@@ -54,7 +44,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           value={formatBalance(ethBalance)}
           subvalue={formatBalance(ethBalance, 18)}
         >
-          {me && (
+          {!match.params.accountId && (
             <React.Fragment>
               {/** request */}
               <Button onClick={onRequestETH}>
@@ -76,7 +66,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           value={formatBalance(tokenBalance)}
           subvalue={formatBalance(tokenBalance, 18)}
         >
-          {me && (
+          {!match.params.accountId && (
             <React.Fragment>
               {/** request */}
               <Button onClick={onRequestLPT}>

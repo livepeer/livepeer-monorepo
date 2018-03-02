@@ -1,26 +1,28 @@
+declare type Account = {
+  broadcaster: Broadcaster,
+  delegator: Delegator,
+  ethBalance: string,
+  id: string,
+  tokenBalance: string,
+  transcoder: Transcoder,
+}
+
+declare type Broadcaster = {
+  deposit: string,
+  jobs: Array<Job>,
+  withdrawBlock: string,
+}
+
 declare type Delegator = {
-  status: string,
-  delegateAddress: string,
   bondedAmount: string,
-  fees: string,
+  id: string,
+  delegateAddress: string,
   delegatedAmount: string,
+  fees: string,
   lastClaimRound: string,
   startRound: string,
+  status: string,
   withdrawRound: string,
-}
-
-declare type Account = {
-  id: string,
-  ethBalance: string,
-  tokenBalance: string,
-  delegator: Delegator,
-}
-
-declare type JobProfile = {
-  name: string,
-  bitrate: number,
-  framerate: number,
-  resolution: string,
 }
 
 declare type Job = {
@@ -30,23 +32,24 @@ declare type Job = {
   streamId: string,
 }
 
-declare type Broadcaster = {
-  deposit: string,
-  jobs: Array<Job>,
-  withdrawBlock: string,
+declare type JobProfile = {
+  name: string,
+  bitrate: number,
+  framerate: number,
+  resolution: string,
 }
 
 declare type Transcoder = {
-  id: string,
   active: boolean,
-  status: string,
-  lastRewardRound: string,
-  rewardCut: string,
   feeShare: string,
+  id: string,
+  lastRewardRound: string,
   pricePerSegment: string,
   pendingRewardCut: string,
   pendingFeeShare: string,
   pendingPricePerSegment: string,
+  rewardCut: string,
+  status: string,
   totalStake: string,
 }
 
@@ -99,7 +102,22 @@ declare type History = {
 }
 
 declare type Match = {
+  isExact: boolean,
+  params: Object,
   path: string,
+  url: string,
+}
+
+declare type MatchMap = {
+  [key: string]: Match,
+}
+
+declare type Location = {
+  hash: string,
+  key: string,
+  pathname: string,
+  search: string,
+  state: Object | void,
 }
 
 declare class TransactionStatus {

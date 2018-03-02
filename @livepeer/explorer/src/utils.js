@@ -108,6 +108,7 @@ export function wireTransactionToStatus(tx, query, send) {
       status = status.merge({ done: true })
       tx.commit(status)
     } catch (error) {
+      console.error(error)
       let status = tx.findWhere({
         id: query.id,
         type: query.type,
@@ -137,3 +138,58 @@ export function wireTransactionToStatus(tx, query, send) {
     }
   }
 }
+
+export const mockAccount = ({ id = '', ...account } = {}) => ({
+  id,
+  ethBalance: '0',
+  tokenBalance: '0',
+  ...account,
+  broadcaster: mockBroadcaster({
+    id,
+    ...account.broadcaster,
+  }),
+  delegator: mockDelegator({
+    id,
+    ...account.delegator,
+  }),
+  transcoder: mockTranscoder({
+    id,
+    ...account.transcoder,
+  }),
+})
+
+export const mockBroadcaster = ({ id = '', ...broadcaster } = {}) => ({
+  deposit: '0',
+  id,
+  jobs: [],
+  withdrawBlock: '0',
+  ...broadcaster,
+})
+
+export const mockDelegator = ({ id = '', ...delegator } = {}) => ({
+  bondedAmount: '0',
+  id,
+  delegateAddress: '',
+  delegatedAmount: '0',
+  fees: '0',
+  lastClaimRound: '0',
+  startRound: '0',
+  status: '',
+  withdrawRound: '0',
+  ...delegator,
+})
+
+export const mockTranscoder = ({ id = '', ...transcoder } = {}) => ({
+  active: false,
+  feeShare: '0',
+  id,
+  lastRewardRound: '0',
+  pricePerSegment: '0',
+  pendingRewardCut: '0',
+  pendingFeeShare: '0',
+  pendingPricePerSegment: '0',
+  rewardCut: '0',
+  status: '',
+  totalStake: '0',
+  ...transcoder,
+})

@@ -1,31 +1,17 @@
-import React, { ReactElement } from 'react'
-import { matchPath } from 'react-router'
-import { compose, withHandlers } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { queries } from '@livepeer/graphql-sdk'
-import styled, { keyframes } from 'styled-components'
-import {
-  DownloadCloud as DownloadCloudIcon,
-  Plus as PlusIcon,
-  Send as SendIcon,
-  Zap as VideoIcon,
-} from 'react-feather'
-import { formatBalance, formatPercentage, pathInfo } from '../../utils'
+// @flow
+import * as React from 'react'
+import { formatBalance, formatPercentage } from '../../utils'
 import { Button, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
-type AccountTranscodingProps = {
-  transcoder: Transcoder,
-  loading: boolean,
+type AccountTranscodingViewProps = {
+  transcoder: GraphQLProps<Transcoder>,
   match: Match,
 }
 
-const AccountTranscoding: React.ComponentType<AccountTranscodingProps> = ({
-  transcoder,
-  loading,
-  match,
-}) => {
+const AccountTranscodingView: React.ComponentType<
+  AccountTranscodingViewProps,
+> = ({ transcoder, match }) => {
   const {
     active,
     status,
@@ -36,8 +22,8 @@ const AccountTranscoding: React.ComponentType<AccountTranscodingProps> = ({
     pendingRewardCut,
     pendingFeeShare,
     pendingPricePerSegment,
-  } = transcoder
-  const me = pathInfo.isMe(match.path)
+  } = transcoder.data
+  const { accountId } = match.params
   return (
     <Wrapper>
       <MetricBox title="Status" value={status} />
@@ -79,4 +65,4 @@ const AccountTranscoding: React.ComponentType<AccountTranscodingProps> = ({
   )
 }
 
-export default enhance(AccountTranscoding)
+export default enhance(AccountTranscodingView)

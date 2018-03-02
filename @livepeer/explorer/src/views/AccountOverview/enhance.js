@@ -1,51 +1,44 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { pathInfo } from '../../utils'
-import { withTransactionHandlers } from '../../enhancers'
+import { mockAccount } from '../../utils'
+import { withPathMatches, withTransactionHandlers } from '../../enhancers'
 
-const query = `
-fragment AccountFragment on Account {
-  id
-  ethBalance
-  tokenBalance
-}
-query AccountOverviewQuery(
-  $id: String!,
-  $me: Boolean!
-) {
-  me @include(if: $me) {
-    ...AccountFragment
+const accountQuery = gql`
+  fragment AccountFragment on Account {
+    id
+    ethBalance
+    tokenBalance
   }
-  account(id: $id) @skip(if: $me) {
-    ...AccountFragment
-  }
-}`
 
-const setProps = ({ data, ownProps }) => {
-  return {
-    ...ownProps,
-    error: data.error,
-    refetch: data.refetch,
-    fetchMore: data.fetchMore,
-    loading: data.loading,
-    account: data.me || data.account || {},
+  query AccountOverviewQuery($id: String!, $me: Boolean!) {
+    me @include(if: $me) {
+      ...AccountFragment
+    }
+    account(id: $id) @skip(if: $me) {
+      ...AccountFragment
+    }
   }
-}
+`
 
-const setOptions = ({ match }) => {
-  return {
-    pollInterval: 5000,
+const connectAccountQuery = graphql(accountQuery, {
+  props: ({ data, ownProps }) => {
+    const { account, me, ...accountData } = data
+    return {
+      ...ownProps,
+      account: {
+        ...accountData,
+        data: mockAccount(me || account),
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 5 * 1000,
     variables: {
-      id: pathInfo.getAccountParam(match.path),
-      me: pathInfo.isMe(match.path),
+      id: match.params.accountId || '',
+      me: !match.params.accountId,
     },
-  }
-}
-
-const connectApollo = graphql(gql(query), {
-  props: setProps,
-  options: setOptions,
+  }),
 })
 
-export default compose(connectApollo, withTransactionHandlers)
+export default compose(connectAccountQuery, withTransactionHandlers)

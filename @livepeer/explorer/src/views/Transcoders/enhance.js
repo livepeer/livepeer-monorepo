@@ -3,100 +3,85 @@
 import { compose, mapProps } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import unit from 'ethjs-unit'
 import { connectTransactions } from '../../enhancers'
-import { pathInfo, promptForArgs, sleep, toBaseUnit } from '../../utils'
+import { mockAccount, sleep } from '../../utils'
 
-const meQuery = `
-fragment AccountFragment on Account {
-  id
-  ethBalance
-  tokenBalance
-  delegator {
+const MeDelegatorQuery = gql`
+  fragment AccountFragment on Account {
     id
-    delegateAddress
-    bondedAmount
-  }
-}
-query MeQuery {
-  me {
-    ...AccountFragment
-  }
-}`
-
-const connectMeQuery = graphql(gql(meQuery), {
-  props: ({ data, ownProps }) => {
-    const me = {
-      id: '',
-      ethBalance: '',
-      tokenBalance: '',
-      delegator: {
-        id: '',
-        bondedAmount: '',
-        delegateAddress: '',
-      },
-      ...data.me,
+    ethBalance
+    tokenBalance
+    delegator {
+      id
+      delegateAddress
+      bondedAmount
     }
+  }
+
+  query MeDelegatorQuery {
+    me {
+      ...AccountFragment
+    }
+  }
+`
+
+const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
+  props: ({ data, ownProps }) => {
+    const { me, ...queryData } = data
     return {
       ...ownProps,
-      me,
-      error: data.error,
-      fetchMore: data.fetchMore,
-      refetch: data.refetch,
-      loading: data.loading,
+      me: {
+        ...queryData,
+        data: mockAccount(me),
+      },
     }
   },
-  options: ({ match }) => {
-    return {
-      pollInterval: 5000,
-      variables: {},
-    }
-  },
+  options: ({ match }) => ({
+    pollInterval: 5 * 1000,
+    variables: {},
+  }),
 })
 
-const transcodersQuery = `
-fragment TranscoderFragment on Transcoder {
-  id
-  active
-  status
-  lastRewardRound
-  rewardCut
-  feeShare
-  pricePerSegment
-  pendingRewardCut
-  pendingFeeShare
-  pendingPricePerSegment
-  totalStake
-}
-query TranscodersQuery(
-  $skip: Int,
-  $limit: Int
-) {
-  transcoders(skip: $skip, limit: $limit) {
-    ...TranscoderFragment
+const TranscodersQuery = gql`
+  fragment TranscoderFragment on Transcoder {
+    id
+    active
+    status
+    lastRewardRound
+    rewardCut
+    feeShare
+    pricePerSegment
+    pendingRewardCut
+    pendingFeeShare
+    pendingPricePerSegment
+    totalStake
   }
-}`
 
-const connectTranscodersQuery = graphql(gql(transcodersQuery), {
+  query TranscodersQuery($skip: Int, $limit: Int) {
+    transcoders(skip: $skip, limit: $limit) {
+      ...TranscoderFragment
+    }
+  }
+`
+
+const connectTranscodersQuery = graphql(TranscodersQuery, {
   props: ({ data, ownProps }) => {
+    const { transcoders, ...queryData } = data
     return {
       ...ownProps,
-      error: data.error,
-      refetch: data.refetch,
-      fetchMore: data.fetchMore,
-      loading: data.loading,
-      transcoders: data.transcoders || [],
-    }
-  },
-  options: ({ match }) => {
-    return {
-      pollInterval: 30 * 1000, // every 30s
-      variables: {
-        skip: 0,
-        limit: 100,
+      transcoders: {
+        ...queryData,
+        data: transcoders || [],
       },
     }
   },
+  options: ({ match }) => ({
+    pollInterval: 30 * 1000,
+    variables: {
+      skip: 0,
+      limit: 100,
+    },
+  }),
 })
 
 export const mapTransactionsToProps = mapProps(props => {
@@ -117,7 +102,7 @@ export const mapTransactionsToProps = mapProps(props => {
 })
 
 export default compose(
-  connectMeQuery,
+  connectMeDelegatorQuery,
   connectTranscodersQuery,
   connectTransactions,
   mapTransactionsToProps,

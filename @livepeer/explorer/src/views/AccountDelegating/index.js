@@ -1,17 +1,6 @@
-import React, { ReactElement } from 'react'
-import { matchPath } from 'react-router'
+// @flow
+import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { compose, withHandlers } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { queries } from '@livepeer/graphql-sdk'
-import styled, { keyframes } from 'styled-components'
-import {
-  DownloadCloud as DownloadCloudIcon,
-  Plus as PlusIcon,
-  Send as SendIcon,
-  Zap as VideoIcon,
-} from 'react-feather'
 import {
   formatBalance,
   openSocket,
@@ -23,14 +12,12 @@ import { Button, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
 type AccountDelegatingProps = {
-  delegtor: Delegator,
-  loading: boolean,
+  delegator: GraphQLProps<Delegator>,
   match: Match,
 }
 
 const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   delegator,
-  loading,
   match,
 }) => {
   const {
@@ -42,8 +29,8 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     lastClaimRound,
     startRound,
     withdrawRound,
-  } = delegator
-  const me = pathInfo.isMe(match.path)
+  } = delegator.data
+  const { accountId } = match.params
   return (
     <Wrapper>
       <MetricBox title="Status" value={status} />

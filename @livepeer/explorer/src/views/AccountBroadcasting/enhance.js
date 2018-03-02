@@ -1,82 +1,76 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { pathInfo } from '../../utils'
+import { mockBroadcaster } from '../../utils'
 import { withTransactionHandlers } from '../../enhancers'
 
-const query = `
-fragment BroadcasterFragment on Broadcaster {
-  id
-  deposit
-  withdrawBlock
-}
-fragment JobFragment on Job {
-  id
-  broadcaster
-  streamId
-  profiles {
+const AccountBroadcasterAndJobsQuery = gql`
+  fragment BroadcasterFragment on Broadcaster {
     id
-    name
-    bitrate
-    framerate
-    resolution
+    deposit
+    withdrawBlock
   }
-}
-query AccountBroadcasterAndJobsQuery(
-  $id: String!,
-  $me: Boolean!
-) {
-  me @include(if: $me) {
+
+  fragment JobFragment on Job {
     id
-    broadcaster {
-      ...BroadcasterFragment
-      jobs {
-        ...JobFragment
+    broadcaster
+    streamId
+    profiles {
+      id
+      name
+      bitrate
+      framerate
+      resolution
+    }
+  }
+
+  query AccountBroadcasterAndJobsQuery($id: String!, $me: Boolean!) {
+    me @include(if: $me) {
+      id
+      broadcaster {
+        ...BroadcasterFragment
+        jobs {
+          ...JobFragment
+        }
+      }
+    }
+    account(id: $id) @skip(if: $me) {
+      id
+      broadcaster {
+        ...BroadcasterFragment
+        jobs {
+          ...JobFragment
+        }
       }
     }
   }
-  account(id: $id) @skip(if: $me) {
-    id
-    broadcaster {
-      ...BroadcasterFragment
-      jobs {
-        ...JobFragment
+`
+
+const connectAccountBroadcasterAndJobsQuery = graphql(
+  AccountBroadcasterAndJobsQuery,
+  {
+    props: ({ data, ownProps }) => {
+      const { account, me, ...queryProps } = data
+      const { broadcaster } = me || account || {}
+      return {
+        ...ownProps,
+        broadcaster: {
+          ...queryProps,
+          data: mockBroadcaster(broadcaster),
+        },
       }
-    }
-  }
-}`
-
-const setProps = ({ data, ownProps }) => {
-  const broadcaster = {
-    deposit: '',
-    withdrawBlock: '',
-    jobs: [],
-    ...(data.account || {}).broadcaster,
-    ...(data.me || {}).broadcaster,
-  }
-  return {
-    ...ownProps,
-    error: data.error,
-    refetch: data.refetch,
-    fetchMore: data.fetchMore,
-    loading: data.loading,
-    broadcaster,
-  }
-}
-
-const setOptions = ({ match }) => {
-  return {
-    pollInterval: 5000,
-    variables: {
-      id: pathInfo.getAccountParam(match.path),
-      me: pathInfo.isMe(match.path),
     },
-  }
-}
+    options: ({ match }) => ({
+      pollInterval: 5 * 1000,
+      variables: {
+        id: match.params.accountId || '',
+        me: !match.params.accountId,
+      },
+    }),
+  },
+)
 
-const connectApollo = graphql(gql(query), {
-  props: setProps,
-  options: setOptions,
-})
-
-export default compose(connectApollo, withTransactionHandlers)
+export default compose(
+  connectAccountBroadcasterAndJobsQuery,
+  withTransactionHandlers,
+)

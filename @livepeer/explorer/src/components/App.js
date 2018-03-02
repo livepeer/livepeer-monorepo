@@ -7,9 +7,10 @@ import Transcoders from '../views/Transcoders'
 import { history } from '../store'
 
 const onMyAccountPage = (
-  match: { params: { account: string } },
-  account: ?string,
-): boolean => (account ? match.params.account.toLowerCase() === account : false)
+  match: { params: { accountId: string } },
+  accountId: ?string,
+): boolean =>
+  accountId ? match.params.accountId.toLowerCase() === accountId : false
 
 const App = ({ location }) => (
   <div>
@@ -17,7 +18,7 @@ const App = ({ location }) => (
       <Route exact path="/" component={Landing} />
       <Route exact path="/transcoders" component={Transcoders} />
       <Route
-        path="/accounts/:account"
+        path="/accounts/:accountId"
         render={props => {
           return onMyAccountPage(
             props.match,

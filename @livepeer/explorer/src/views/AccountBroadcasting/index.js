@@ -1,35 +1,19 @@
-import React, { ReactElement } from 'react'
-import { matchPath } from 'react-router'
-import { compose } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { queries } from '@livepeer/graphql-sdk'
+// @flow
+import * as React from 'react'
 import styled, { keyframes } from 'styled-components'
-import {
-  DownloadCloud as DownloadCloudIcon,
-  Plus as PlusIcon,
-  Send as SendIcon,
-  Zap as VideoIcon,
-} from 'react-feather'
-import { formatBalance, pathInfo } from '../../utils'
+import { Zap as VideoIcon } from 'react-feather'
+import { formatBalance } from '../../utils'
 import { Button, Content, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
 type AccountBroadcastingProps = {
-  broadcaster: Broadcaster,
-  history: History,
-  loading: boolean,
-  match: Match,
+  broadcaster: GraphQLProps<Broadcaster>,
 }
 
 const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   broadcaster,
-  history,
-  loading,
-  match,
 }) => {
-  const { deposit, jobs, withdrawBlock } = broadcaster
-  const me = pathInfo.isMe(match.path)
+  const { deposit, jobs, withdrawBlock } = broadcaster.data
   return (
     <Wrapper>
       {/** ETH Deposit */}
