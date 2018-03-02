@@ -7,9 +7,6 @@ import {
   Avatar,
   Banner,
   BasicNavbar,
-  BondErrorModal,
-  BondSuccessModal,
-  BondTransactionModal,
   Content,
   PageHeading,
   ScrollToTopOnMount,
@@ -85,15 +82,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   match,
   transcoders,
   me,
-  bondToken,
-  bondData,
-  bondStatus,
-  bondModalVisible,
-  showBondModal,
-  setBondData,
-  bonding,
   transactions: tx,
-  unbond,
   ...props
 }) => {
   const { delegator: { bondedAmount, delegateAddress }, tokenBalance } = me
@@ -103,34 +92,12 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const asc = order === 'asc'
   const total = transcoders.length
   const compareFn = createCompareFunction(asc, sort)
-  const bondTx = tx.find(x => x.active && x.type === 'bond') || {
-    type: 'bond',
-    key: '',
-    active: false,
-    input: {},
-    meta: {},
-    done: false,
-    pending: false,
-    error: null,
-  }
-  const deactivateTransaction = () => {
-    const { key, type } = bondTx
-    tx.deactivate(type, key)
-  }
-  const activateTransaction = delegateAddress => () => {
-    // find any existing transaction for this delegate
-    const bondTx = tx.find(
-      x => x.meta.delegateAddress === delegateAddress && !x.done,
-    )
-    // use existing transaction if not completed
-    const { key = Date.now() } = bondTx || {}
-    // activate transaction
-    tx.activate('bond', key, {
-      meta: {
-        delegateAddress,
-      },
-    })
-  }
+  const bondStatus =
+    tx.findWhere({
+      active: true,
+      type: 'BondStatus',
+    }) || tx.empty('BondStatus')
+  // console.log(bondStatus)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -213,53 +180,35 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             </div>
           </div>
         )}
-        {/* Results */ [...transcoders].sort(compareFn).map(props => (
-          <TranscoderCard
-            key={props.id}
-            {...props}
-            bonded={props.id === delegateAddress}
-            onBond={
-              me &&
-              (!delegateAddress || props.id === delegateAddress) &&
-              activateTransaction(props.id)
-            }
-            onUnbond={
-              me &&
-              props.id === delegateAddress &&
-              (async e => {
-                try {
-                  await unbond()
-                } catch (err) {
-                  window.alert(err.message)
-                }
-              })
-            }
-          />
-        ))}
+        {/* Results */ [...transcoders].sort(compareFn).map(props => {
+          const canBond =
+            me.id && (!delegateAddress || props.id === delegateAddress)
+          const canUnbond = me.id && props.id === delegateAddress
+          const onBond =
+            canBond &&
+            (() =>
+              tx.activate({
+                ...bondStatus,
+                id: props.id,
+              }))
+          const onUnbond =
+            canUnbond &&
+            (() =>
+              tx.activate({
+                ...bondStatus,
+                type: 'UnBondStatus',
+              }))
+          return (
+            <TranscoderCard
+              key={props.id}
+              {...props}
+              bonded={props.id === delegateAddress}
+              onBond={onBond || undefined}
+              onUnbond={onUnbond || undefined}
+            />
+          )
+        })}
       </Content>
-      {/* Modals */}
-      <BondErrorModal
-        action="bond"
-        error={bondTx.error}
-        onClose={deactivateTransaction}
-        test={bondTx.active && bondTx.error}
-        title="Bond Failed"
-      />
-      <BondSuccessModal
-        delegateAddress={bondTx.meta.delegateAddress}
-        onClose={deactivateTransaction}
-        test={bondTx.active && bondTx.done && !bondTx.error}
-        title="Bonding Complete"
-      />
-      <BondTransactionModal
-        bondedAmount={bondedAmount}
-        delegateAddress={bondTx.meta.delegateAddress}
-        loading={bondTx.pending}
-        onBond={bondToken}
-        onClose={deactivateTransaction}
-        test={bondTx.active && !bondTx.done}
-        tokenBalance={tokenBalance}
-      />
     </React.Fragment>
   )
 }

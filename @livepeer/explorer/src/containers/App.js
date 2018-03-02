@@ -1,8 +1,9 @@
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
+import Account from '../views/Account'
+import BondModals from '../views/BondModals'
 import Landing from '../views/Landing'
 import Transcoders from '../views/Transcoders'
-import Account from '../views/Account'
 import { history } from '../store'
 
 const onMyAccountPage = (
@@ -37,6 +38,7 @@ const App = ({ location }) => (
       />
       <Redirect to="/" />
     </Switch>
+    <BondModals />
   </div>
 )
 

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ApolloProvider } from 'react-apollo'
 import { Provider as ReduxProvider } from 'react-redux'
 import { ConnectedRouter } from 'react-router-redux'
-import { Provider, Container } from 'unstated'
+import { Provider as UnstatedProvider, Container } from 'unstated'
 
 type TxReceipt = {
   blockHash: string,
@@ -36,18 +36,123 @@ type TxObject = {
   s: string,
 }
 
-type TransactionStatus = {
-  done: boolean,
-  id: string,
-  pending: boolean,
-  /** if void, not submitted */
-  tx: TxObject | void,
-  type: string,
-  /** if void, not done */
-  receipt: TxReceipt | void,
-  error: Error | void,
-  input: any,
-  meta: any,
+class TransactionStatus {
+  /** info about the contract and method */
+  abi: Object
+  /** is the transaction currently being created */
+  active: boolean
+  /** transaction receipt is available */
+  done: boolean
+  /** any errors that result from submitting the transaction */
+  error: Error | void
+  /** hash of the actual transaction object */
+  hash: string | void
+  /** identifier for this transaction */
+  id: string
+  /** any meta information related to the transaction */
+  meta: any
+  /** has the transaction been submitted */
+  submitted: boolean
+  /** type of TransactionStatus (could be useful for serialization) */
+  type: string
+  /** class constructor */
+  constructor(props = {}) {
+    const defaults = {
+      abi: {},
+      active: false,
+      done: false,
+      error: null,
+      hash: '',
+      id: '',
+      meta: {},
+      submitted: false,
+      type: '',
+    }
+    Object.entries(defaults).forEach(([key, value]) => {
+      this[key] = value
+    })
+    Object.entries(props).forEach(([key, value]) => {
+      this[key] = value
+    })
+  }
+  merge(obj: Object) {
+    return new this.constructor({
+      ...this,
+      ...obj,
+    })
+  }
+  set(key: string, value: any) {
+    return new this.constructor({
+      ...this,
+      [key]: value,
+    })
+  }
+  static create(type, props) {
+    switch (type) {
+      case 'BondStatus':
+        return new BondStatus(props)
+      case 'null':
+        return new TransactionStatus(props)
+      default:
+        throw new Error(`'${type}' is not a valid type of TransactionStatus`)
+    }
+  }
+}
+
+class BondStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [
+      {
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        name: '_to',
+        type: 'address',
+      },
+    ],
+    name: 'bond',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = BondStatus.abi
+  type = 'BondStatus'
+}
+
+// const a = new BondStatus({ id: 'foo' })
+// const b = a.set('meta', { foo: 'bar' })
+
+// console.log(a, b)
+
+class ApproveStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [
+      {
+        name: '_spender',
+        type: 'address',
+      },
+      {
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'approve',
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = ApproveStatus.abi
+  type = 'ApproveStatus'
 }
 
 type TransactionsState = {
@@ -56,77 +161,39 @@ type TransactionsState = {
 
 export class TransactionsContainer extends Container<TransactionsState> {
   state = {}
+  commit = (nextStatus: TransactionStatus) => {
+    const { type, id } = nextStatus
+    console.log('commit', nextStatus)
+    this.setState({
+      [`${type}/${id}`]: nextStatus,
+    })
+  }
+  delete = (nextStatus: TransactionStatus) => {
+    const { type, id } = nextStatus
+    delete this.state[`${type}/${id}`]
+    this.setState(this.state)
+  }
+  empty = TransactionStatus.create
   find = f => Object.values(this.state).find(f)
-  get = (type: string, key: string) => {
-    const id = `${type}/${key}`
-    return this.state[id]
+  findWhere = (obj: Object) => {
+    const keys = Object.keys(obj)
+    const txs = Object.values(this.state)
+    for (const tx of txs) {
+      const found = keys.every(k => {
+        return JSON.stringify(obj[k]) === JSON.stringify(tx[k])
+      })
+      if (found) return tx
+    }
   }
-  set = (type: string, key: string, status: TransactionStatus) => {
-    const id = `${type}/${key}`
-    this.setState({
-      [id]: {
-        active: false,
-        done: false,
-        pending: false,
-        tx: null,
-        receipt: null,
-        error: null,
-        input: {},
-        meta: {},
-        ...status,
-        key,
-        type,
-      },
-    })
+  activate = (query: Object): void => {
+    const tx =
+      this.findWhere(query) || TransactionStatus.create(query.type, query)
+    this.commit(tx.merge({ active: true }))
   }
-  activate = (type: string, key: string, status?: Object) => {
-    const id = `${type}/${key}`
-    this.setState({
-      [id]: {
-        done: false,
-        pending: false,
-        tx: null,
-        receipt: null,
-        error: null,
-        input: {},
-        meta: {},
-        ...this.state[id],
-        ...status,
-        active: true,
-        key: `${key}`,
-        type,
-      },
-    })
-  }
-  deactivate = (type: string, key: string, status?: Object) => {
-    const id = `${type}/${key}`
-    if (!this.state[id]) return
-    this.setState({
-      [id]: {
-        done: false,
-        pending: false,
-        tx: null,
-        receipt: null,
-        error: null,
-        input: {},
-        meta: {},
-        ...this.state[id],
-        ...status,
-        active: false,
-        key: `${key}`,
-        type,
-      },
-    })
-  }
-  update = (
-    type: string,
-    key: string,
-    reduce: TransactionsStatus => TransactionsStatus,
-  ) => {
-    const id = `${type}/${key}`
-    this.setState({
-      [id]: reduce(this.state[id]),
-    })
+  deactivate = (query: Object): void => {
+    const tx = this.findWhere(query)
+    if (!tx) return
+    this.commit(tx.merge({ active: false }))
   }
 }
 
@@ -135,9 +202,9 @@ const transactions = new TransactionsContainer()
 const Root = ({ client, history, store, children }) => (
   <ApolloProvider client={client}>
     <ReduxProvider store={store}>
-      <Provider inject={[transactions]}>
+      <UnstatedProvider inject={[transactions]}>
         <ConnectedRouter history={history}>{children}</ConnectedRouter>
-      </Provider>
+      </UnstatedProvider>
     </ReduxProvider>
   </ApolloProvider>
 )

@@ -2,6 +2,8 @@ import { matchPath } from 'react-router'
 import Big from 'big.js'
 import unit, { unitMap } from 'ethjs-unit'
 
+export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 export function formatPercentage(x: string, decimals = 2): string {
   return !x
     ? ''
