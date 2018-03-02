@@ -4,8 +4,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
-import { TransactionsContainer } from '../containers/Root'
-import { sleep } from '../utils'
+import { TransactionStatusContainer } from '../containers'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
 
@@ -64,8 +63,8 @@ export const connectTransactions = (Consumer: React.ComponentType<any>) => {
   return (
     props: React.ElementProps<typeof Consumer>,
   ): React.Element<typeof Consumer> => (
-    <Subscribe to={[TransactionsContainer]}>
-      {(transactions: TransactionsContainer) => (
+    <Subscribe to={[TransactionStatusContainer]}>
+      {(transactions: TransactionStatusContainer) => (
         <Consumer {...props} transactions={transactions} />
       )}
     </Subscribe>
@@ -104,54 +103,3 @@ export const connectUnbondMutation = graphql(
     name: 'unbond',
   },
 )
-
-export const withBindToStatus = mapProps(props => ({
-  ...props,
-  bindToStatus: (submit, query) => async (...args) => {
-    try {
-      const { transactions: tx } = props
-      let status = tx.findWhere(query)
-      // 1. Submit transaction (signals loading state)
-      status = status.merge({ submitted: true })
-      tx.commit(status)
-      const { transaction } = await submit(...args)
-      // 2. Update transaction hash (signals transaction is pending)
-      status = status.merge({
-        hash: transaction.hash,
-      })
-      tx.commit(status)
-      // 3. Update transaction completion
-      // TODO: subscribe to transactions and update this status elsewhere. (Errors as well)
-      status = status.merge({ done: true })
-      tx.commit(status)
-    } catch (error) {
-      const { transactions: tx } = props
-      let status = tx.findWhere({
-        id: query.id,
-        type: query.type,
-      })
-      if (error.graphQLErrors) {
-        const [gqlError] = error.graphQLErrors
-        try {
-          // try to parse the error message
-          const rpcErr = JSON.parse(
-            `{"code":${gqlError.message.split('"code":')[1]}`,
-          )
-          console.log(rpcErr)
-          const nextError = new Error(rpcErr.message)
-          // use a custom error with the rpc error message
-          status = status.merge({ done: true, error: nextError })
-          tx.commit(status)
-        } catch (err) {
-          // if the message can't be parsed, just use the gql error
-          status = status.merge({ done: true, error: gqlError })
-          tx.commit(status)
-        }
-      } else {
-        // if something else went wrong, use the original error
-        status = status.merge({ done: true, error })
-        tx.commit(status)
-      }
-    }
-  },
-}))

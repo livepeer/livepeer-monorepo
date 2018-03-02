@@ -22,26 +22,17 @@ import {
 import { Button, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
-type Props = {
-  delegtor: {
-    status: string,
-    delegateAddress: string,
-    bondedAmount: string,
-    fees: string,
-    delegatedAmount: string,
-    lastClaimRound: string,
-    startRound: string,
-    withdrawRound: string,
-  },
+type AccountDelegatingProps = {
+  delegtor: Delegator,
   loading: boolean,
-  match: Function,
+  match: Match,
 }
 
-const AccountDelegating: React.Component<Props> = ({
+const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   delegator,
   loading,
   match,
-}: Props): ReactElement => {
+}) => {
   const {
     status,
     delegateAddress,

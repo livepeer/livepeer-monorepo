@@ -40,7 +40,7 @@ const BondTransactionModal: React.ComponentType<BondTransactionModalProps> = ({
 )
 
 const handleSubmitBond = submit => ({ to, amount }) => {
-  console.log(to, amount)
+  // console.log(to, amount)
   submit({
     to,
     amount: toBaseUnit(amount),

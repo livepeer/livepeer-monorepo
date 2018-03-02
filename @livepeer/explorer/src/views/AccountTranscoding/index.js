@@ -15,29 +15,17 @@ import { formatBalance, formatPercentage, pathInfo } from '../../utils'
 import { Button, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
-type Transcoder = {
-  active: boolean,
-  status: string,
-  lastRewardRound: string,
-  rewardCut: string,
-  feeShare: string,
-  pricePerSegment: string,
-  pendingRewardCut: string,
-  pendingFeeShare: string,
-  pendingPricePerSegment: string,
-}
-
-type Props = {
+type AccountTranscodingProps = {
   transcoder: Transcoder,
   loading: boolean,
-  match: { path: string },
+  match: Match,
 }
 
-const AccountdTranscoding: React.Component<Props> = ({
+const AccountTranscoding: React.ComponentType<AccountTranscodingProps> = ({
   transcoder,
   loading,
   match,
-}: Props): ReactElement => {
+}) => {
   const {
     active,
     status,
@@ -91,4 +79,4 @@ const AccountdTranscoding: React.Component<Props> = ({
   )
 }
 
-export default enhance(AccountdTranscoding)
+export default enhance(AccountTranscoding)

@@ -32,29 +32,19 @@ import {
 import { pathInfo } from '../../utils'
 import enhance from './enhance'
 
-type Account = {
-  id: string,
-  ethBalance: string,
-  tokenBalance: string,
-}
-
-type Props = {
+type AccountViewProps = {
   account: Account,
-  history: {
-    push: (url: string) => void,
-  },
-  loading: Boolean,
-  match: {
-    path: string,
-  },
+  history: History,
+  loading: boolean,
+  match: Match,
 }
 
-const AccountView: React.Component<Props> = ({
+const AccountView: React.Component<AccountViewProps> = ({
   account,
   history,
   loading,
   match,
-}: Props): ReactElement => {
+}) => {
   const me = pathInfo.isMe(match.path)
   return (
     <React.Fragment>

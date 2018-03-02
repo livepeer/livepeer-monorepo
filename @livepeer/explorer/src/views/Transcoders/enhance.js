@@ -1,6 +1,6 @@
 // TODO: map apollo enhancer props to a namespace + flatten in camelcase via composed enhancer
 
-import { compose, withStateHandlers } from 'recompose'
+import { compose, mapProps } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import unit from 'ethjs-unit'
@@ -99,8 +99,26 @@ const connectTranscodersQuery = graphql(gql(transcodersQuery), {
   },
 })
 
+export const mapTransactionsToProps = mapProps(props => {
+  const { transactions: tx, ...nextProps } = props
+  return {
+    ...nextProps,
+    unbondFrom: id => () =>
+      tx.activate({
+        id,
+        type: 'UnbondStatus',
+      }),
+    bondTo: id => () =>
+      tx.activate({
+        id,
+        type: 'BondStatus',
+      }),
+  }
+})
+
 export default compose(
-  connectTransactions,
   connectMeQuery,
   connectTranscodersQuery,
+  connectTransactions,
+  mapTransactionsToProps,
 )

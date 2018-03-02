@@ -15,66 +15,20 @@ import {
 } from '../../components'
 import enhance from './enhance'
 
-type Transcoder = {
-  id: string,
-  active: boolean,
-  status: string,
-  lastRewardRound: string,
-  rewardCut: string,
-  feeShare: string,
-  pricePerSegment: string,
-  pendingRewardCut: string,
-  pendingFeeShare: string,
-  pendingPricePerSegment: string,
-  totalStake: string,
-}
-
-type Delegator = {
-  status: string,
-  delegateAddress: string,
-  bondedAmount: string,
-  fees: string,
-  delegatedAmount: string,
-  lastClaimRound: string,
-  startRound: string,
-  withdrawRound: string,
-}
-
-type Account = {
-  id: string,
-  ethBalance: string,
-  tokenBalance: string,
-  delegator: Delegator,
-}
-
 type TranscodersViewProps = {
-  bondData: { to: '', amount: '' },
-  bondModalVisible: false,
-  bondStatus: {
-    loading: false,
-    error: null,
-    success: false,
-  },
-  bondToken: any => void,
-  history: {
-    location: {
-      search: string,
-    },
-    push: (url: string) => void,
-    replace: (url: string) => void,
-  },
+  bondTo: string => void,
+  history: History,
   loading: boolean,
+  match: Match,
   me: Account,
-  match: { path: string },
   onBondLPT: (url: string) => Promise<void>,
-  setBondData: Object => Object,
-  showBondModal: boolean => Object,
-  transactions: any,
+  unbondFrom: string => void,
   transcoders: Array<Transcoder>,
-  unbond: any => void,
 }
 
-/** Displays a list of transcoders and allows authenticated users to sort and bond/unbond from them */
+/**
+ * Displays a list of transcoders and allows authenticated users to sort and bond/unbond from them
+ */
 const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   error,
   history,
@@ -82,8 +36,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   match,
   transcoders,
   me,
-  transactions: tx,
-  ...props
+  unbondFrom,
+  bondTo,
 }) => {
   const { delegator: { bondedAmount, delegateAddress }, tokenBalance } = me
   const searchParams = new URLSearchParams(history.location.search)
@@ -92,12 +46,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const asc = order === 'asc'
   const total = transcoders.length
   const compareFn = createCompareFunction(asc, sort)
-  const bondStatus =
-    tx.findWhere({
-      active: true,
-      type: 'BondStatus',
-    }) || tx.empty('BondStatus')
-  // console.log(bondStatus)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -184,20 +132,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           const canBond =
             me.id && (!delegateAddress || props.id === delegateAddress)
           const canUnbond = me.id && props.id === delegateAddress
-          const onBond =
-            canBond &&
-            (() =>
-              tx.activate({
-                ...bondStatus,
-                id: props.id,
-              }))
-          const onUnbond =
-            canUnbond &&
-            (() =>
-              tx.activate({
-                ...bondStatus,
-                type: 'UnBondStatus',
-              }))
+          const onBond = (canBond && bondTo(props.id)) || undefined
+          const onUnbond = (canUnbond && unbondFrom(props.id)) || undefined
           return (
             <TranscoderCard
               key={props.id}

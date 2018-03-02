@@ -15,37 +15,19 @@ import { formatBalance, pathInfo } from '../../utils'
 import { Button, Content, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
-type JobProfile = {
-  name: string,
-  bitrate: number,
-  framerate: number,
-  resolution: string,
-}
-
-type Job = {
-  id: string,
-  broadcaster: string,
-  profiles: Array<JobProfile>,
-  streamId: string,
-}
-
-type Broadcaster = {
-  deposit: string,
-  jobs: Array<Job>,
-  withdrawBlock: string,
-}
-
-type Props = {
+type AccountBroadcastingProps = {
   broadcaster: Broadcaster,
+  history: History,
   loading: boolean,
+  match: Match,
 }
 
-const AccountBroadcasting: React.Component<Props> = ({
+const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   broadcaster,
   history,
   loading,
   match,
-}: AccountBroadcastingProps): ReactElement => {
+}) => {
   const { deposit, jobs, withdrawBlock } = broadcaster
   const me = pathInfo.isMe(match.path)
   return (

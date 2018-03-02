@@ -14,24 +14,18 @@ import { formatBalance, pathInfo } from '../../utils'
 import { Button, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
-type Account = {
-  id: string,
-  ethBalance: string,
-  tokenBalance: string,
-}
-
-type Props = {
+type AccountOverviewProps = {
   account: Account,
+  history: History,
   loading: boolean,
-  me: boolean,
-  match: { path: string },
+  match: Match,
   onDepositETH: (e: Event) => void,
   onRequestETH: (e: Event) => void,
   onRequestLPT: (e: Event) => void,
   onTransferLPT: (e: Event) => void,
 }
 
-const AccountOverview: React.Component<Props> = ({
+const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   account,
   history,
   loading,
@@ -40,7 +34,7 @@ const AccountOverview: React.Component<Props> = ({
   onRequestETH,
   onRequestLPT,
   onTransferLPT,
-}: Props): ReactElement => {
+}) => {
   const { ethBalance, tokenBalance } = account
   const me = pathInfo.isMe(match.path)
   return (
