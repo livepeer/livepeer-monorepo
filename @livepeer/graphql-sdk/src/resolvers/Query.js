@@ -31,6 +31,8 @@ type QueryJobsArgs = {
   limit?: number,
 }
 
+type QueryRoundArgs = {}
+
 type QueryTranscoderArgs = {
   id?: string,
 }
@@ -144,6 +146,22 @@ export async function me(obj, args, ctx) {
   const id = ctx.account
   if (!id) throw new Error(`No unlocked account is available`)
   return { id }
+}
+
+/**
+ * Gets a the current round
+ * @param {QueryObj} obj
+ * @param {QueryRoundArgs} args
+ * @param {GQLContext} ctx
+ * @return {Round}
+ */
+export async function currentRound(
+  obj: QueryObj,
+  args: QueryRoundArgs,
+  ctx: GQLContext,
+): Round {
+  const result = await ctx.livepeer.rpc.getCurrentRoundInfo()
+  return result
 }
 
 /**

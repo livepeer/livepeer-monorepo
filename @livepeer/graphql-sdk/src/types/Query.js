@@ -2,6 +2,7 @@ import Account from './Account'
 import Broadcaster from './Broadcaster'
 import Delegator from './Delegator'
 import Job from './Job'
+import Round from './Round'
 import Transcoder from './Transcoder'
 
 const Query = `
@@ -27,6 +28,9 @@ type Query {
   "The currently selected account (usually set by something like MetaMask)"
   me: Account
 
+  "Gets the current round"
+  currentRound: Round
+
   "A Transcoder by ETH address"
   transcoder(id: String!): Transcoder
 
@@ -35,4 +39,4 @@ type Query {
 
 }`
 
-export default () => [Query, Account, Broadcaster, Delegator, Job, Transcoder]
+export default () => [Query, Account, Broadcaster, Delegator, Job, Round, Transcoder]
