@@ -39,6 +39,14 @@ declare type JobProfile = {
   resolution: string,
 }
 
+declare type Round = {
+  id: string,
+  initialized: boolean,
+  lastInitializedRound: string,
+  length: string,
+  startBlock: string,
+}
+
 declare type Transcoder = {
   active: boolean,
   feeShare: string,

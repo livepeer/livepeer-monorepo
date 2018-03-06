@@ -34,8 +34,10 @@ const BondSuccessModal: React.ComponentType<BondSuccessModalProps> = ({
     </div>
     <p>
       Please view the{' '}
-      <Link to="/me/delegating">"delegating" section of your account</Link> to
-      see your bonded amount.
+      <Link onClick={onClose} to="/me/delegating">
+        "delegating" section of your account
+      </Link>{' '}
+      to see your bonded amount.
     </p>
     <div style={{ textAlign: 'right', paddingTop: 24 }}>
       <Button onClick={onClose}>OK</Button>

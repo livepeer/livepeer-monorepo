@@ -1,10 +1,10 @@
-import { compose } from 'recompose'
+import { compose, mapProps } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockDelegator } from '../../utils'
-// import { withTransactionHandlers } from '../../enhancers'
+import { connectTransactions, connectCurrentRoundQuery } from '../../enhancers'
 
-const accountDelegatorQuery = gql`
+const AccountDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {
     id
     status
@@ -33,7 +33,7 @@ const accountDelegatorQuery = gql`
   }
 `
 
-const connectAccountDelegatorQuery = graphql(accountDelegatorQuery, {
+const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
   props: ({ data, ownProps }) => {
     const { account, me, ...queryProps } = data
     const { delegator } = me || account || {}
@@ -54,4 +54,31 @@ const connectAccountDelegatorQuery = graphql(accountDelegatorQuery, {
   }),
 })
 
-export default compose(connectAccountDelegatorQuery)
+export const mapTransactionsToProps = mapProps(props => {
+  const { transactions: tx, ...nextProps } = props
+  return {
+    ...nextProps,
+    onWithdrawFees: id => () =>
+      tx.activate({
+        id,
+        type: 'WithdrawFeesStatus',
+      }),
+    onWithdrawStake: id => () =>
+      tx.activate({
+        id,
+        type: 'WithdrawStakeStatus',
+      }),
+    onClaimEarnings: id => () =>
+      tx.activate({
+        id,
+        type: 'ClaimEarningsStatus',
+      }),
+  }
+})
+
+export default compose(
+  connectCurrentRoundQuery,
+  connectAccountDelegatorQuery,
+  connectTransactions,
+  mapTransactionsToProps,
+)

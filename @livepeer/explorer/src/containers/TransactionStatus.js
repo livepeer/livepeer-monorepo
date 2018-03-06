@@ -60,37 +60,24 @@ export class TransactionStatus {
   }
   static create(type: string, props: Object): TransactionStatus {
     switch (type) {
+      case 'ApproveStatus':
+        return new ApproveStatus(props)
       case 'BondStatus':
         return new BondStatus(props)
+      case 'ClaimEarningsStatus':
+        return new ClaimEarningsStatus(props)
+      case 'WithdrawFeesStatus':
+        return new WithdrawFeesStatus(props)
+      case 'WithdrawStakeStatus':
+        return new WithdrawStakeStatus(props)
+      case 'UnbondStatus':
+        return new UnbondStatus(props)
       case 'null':
         return new TransactionStatus(props)
       default:
         throw new Error(`'${type}' is not a valid type of TransactionStatus`)
     }
   }
-}
-
-export class BondStatus extends TransactionStatus {
-  static abi = {
-    constant: false,
-    inputs: [
-      {
-        name: '_amount',
-        type: 'uint256',
-      },
-      {
-        name: '_to',
-        type: 'address',
-      },
-    ],
-    name: 'bond',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  }
-  abi = BondStatus.abi
-  type = 'BondStatus'
 }
 
 export class ApproveStatus extends TransactionStatus {
@@ -121,6 +108,90 @@ export class ApproveStatus extends TransactionStatus {
   type = 'ApproveStatus'
 }
 
+export class BondStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [
+      {
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        name: '_to',
+        type: 'address',
+      },
+    ],
+    name: 'bond',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = BondStatus.abi
+  type = 'BondStatus'
+}
+
+export class ClaimEarningsStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [
+      {
+        name: '_endRound',
+        type: 'uint256',
+      },
+    ],
+    name: 'claimEarnings',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = ClaimEarningsStatus.abi
+  type = 'ClaimEarningsStatus'
+}
+
+export class UnbondStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [],
+    name: 'unbond',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = UnbondStatus.abi
+  type = 'UnbondStatus'
+}
+
+export class WithdrawFeesStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [],
+    name: 'withdrawFees',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = WithdrawFeesStatus.abi
+  type = 'WithdrawFeesStatus'
+}
+
+export class WithdrawStakeStatus extends TransactionStatus {
+  static abi = {
+    constant: false,
+    inputs: [],
+    name: 'withdrawStake',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+  abi = WithdrawStakeStatus.abi
+  type = 'WithdrawStakeStatus'
+}
+
 export type TransactionStatusMap = {
   [id: string]: TransactionStatus,
 }
@@ -131,7 +202,7 @@ export class TransactionStatusContainer extends Container<
   state: TransactionStatusMap = {}
   commit = (status: TransactionStatus) => {
     const { type, id } = status
-    // console.log('commit', status)
+    console.log('commit', status)
     this.setState({
       [`${type}:${id}`]: status,
     })
@@ -139,6 +210,7 @@ export class TransactionStatusContainer extends Container<
   delete = (status: TransactionStatus) => {
     const { type, id } = status
     delete this.state[`${type}:${id}`]
+    console.log('delete', status)
     this.setState(this.state)
   }
   empty = TransactionStatus.create

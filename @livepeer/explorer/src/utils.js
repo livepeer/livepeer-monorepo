@@ -97,10 +97,11 @@ export function wireTransactionToStatus(tx, query, send) {
       // 1. Submit transaction (signals loading state)
       status = status.merge({ submitted: true })
       tx.commit(status)
-      const { transaction } = await send(...args)
+      // TODO: In the future, this call should return the tx rather than the receipt
+      const receipt = await send(...args)
       // 2. Update transaction hash (signals transaction is pending)
       status = status.merge({
-        hash: transaction.hash,
+        hash: receipt.transactionHash,
       })
       tx.commit(status)
       // 3. Update transaction completion
@@ -177,6 +178,15 @@ export const mockDelegator = ({ id = '', ...delegator } = {}) => ({
   status: '',
   withdrawRound: '0',
   ...delegator,
+})
+
+export const mockRound = ({ id = '', ...round } = {}) => ({
+  id,
+  initialized: false,
+  lastInitializedRound: '0',
+  length: '0',
+  startBlock: '0',
+  ...round,
 })
 
 export const mockTranscoder = ({ id = '', ...transcoder } = {}) => ({

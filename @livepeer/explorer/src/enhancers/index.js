@@ -6,6 +6,7 @@ import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
 import { TransactionStatusContainer } from '../containers'
+import { mockRound } from '../utils'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
 
@@ -120,3 +121,36 @@ export const connectUnbondMutation = graphql(
     name: 'unbond',
   },
 )
+
+const CurrentRoundQuery = gql`
+  fragment RoundFragment on Round {
+    id
+    initialized
+    lastInitializedRound
+    length
+    startBlock
+  }
+
+  query CurrentRoundQuery {
+    currentRound {
+      ...RoundFragment
+    }
+  }
+`
+
+export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
+  props: ({ data, ownProps }) => {
+    const { currentRound, ...queryData } = data
+    return {
+      ...ownProps,
+      currentRound: {
+        ...queryData,
+        data: mockRound(currentRound),
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 30 * 1000,
+    variables: {},
+  }),
+})
