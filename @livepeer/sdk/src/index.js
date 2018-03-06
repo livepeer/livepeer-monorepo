@@ -970,7 +970,7 @@ export default async function createLivepeerSDK(
      *
      * await rpc.getCurrentRoundInfo()
      * // => RoundInfo {
-     * //   number: string,
+     * //   id: string,
      * //   initialized: boolean,
      * //   startBlock: string,
      * //   lastInitializedRound: string,
@@ -979,16 +979,16 @@ export default async function createLivepeerSDK(
      */
     async getCurrentRoundInfo(): Promise<RoundInfo> {
       const length = await rpc.getRoundLength()
-      const number = await rpc.getCurrentRound()
+      const id = await rpc.getCurrentRound()
       const initialized = await rpc.getCurrentRoundIsInitialized()
       const lastInitializedRound = await rpc.getLastInitializedRound()
       const startBlock = await rpc.getCurrentRoundStartBlock()
       return {
-        number,
+        id,
         initialized,
-        startBlock,
         lastInitializedRound,
         length,
+        startBlock,
       }
     },
 
@@ -1819,7 +1819,7 @@ export default async function createLivepeerSDK(
   /**
    * An object containing information about the current round
    * @typedef {Object} RoundInfo
-   * @prop {string} number - the number of the current round
+   * @prop {string} id - the number of the current round
    * @prop {boolean} initialized - whether or not the current round is initialized
    * @prop {string} startBlock - the start block of the current round
    * @prop {string} lastInitializedRound - the last round that was initialized prior to the current
