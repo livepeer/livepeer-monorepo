@@ -18,7 +18,7 @@ export type ClaimEarningsFormProps = {
   to: string,
   valid: boolean,
   values: {
-    // TODO: add value types
+    numRounds: string,
   },
 }
 
