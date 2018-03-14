@@ -1,20 +1,32 @@
-// TODO: map apollo enhancer props to a namespace + flatten in camelcase via composed enhancer
-
 import { compose, mapProps } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { connectTransactions } from '../../enhancers'
+import {
+  connectCurrentRoundQuery,
+  connectToasts,
+  connectTransactions,
+} from '../../enhancers'
 import { mockAccount, sleep } from '../../utils'
 
 const MeDelegatorQuery = gql`
+  fragment DelegatorFragment on Delegator {
+    id
+    status
+    delegateAddress
+    bondedAmount
+    fees
+    delegatedAmount
+    lastClaimRound
+    startRound
+    withdrawRound
+  }
+
   fragment AccountFragment on Account {
     id
     ethBalance
     tokenBalance
     delegator {
-      id
-      delegateAddress
-      bondedAmount
+      ...DelegatorFragment
     }
   }
 
@@ -85,25 +97,90 @@ const connectTranscodersQuery = graphql(TranscodersQuery, {
 })
 
 export const mapTransactionsToProps = mapProps(props => {
-  const { transactions: tx, ...nextProps } = props
+  const { currentRound, toasts, transactions: tx, ...nextProps } = props
+  const currentRoundNum = currentRound.data.id
+  const { status, lastClaimRound } = nextProps.me.data.delegator
+  const hasUnclaimedRounds =
+    status !== 'Unbonded' && currentRoundNum !== lastClaimRound
   return {
     ...nextProps,
-    unbondFrom: id => () =>
-      tx.activate({
-        id,
-        type: 'UnbondStatus',
-      }),
-    bondTo: id => () =>
+    unbondFrom: id => async () => {
+      if (!currentRound.data.initialized) {
+        return toasts.push({
+          id: 'unbond',
+          type: 'warn',
+          title: 'Unable to unbond',
+          body: 'The current round is not initialized.',
+        })
+      }
+      if (hasUnclaimedRounds) {
+        return toasts.push({
+          id: 'unbond',
+          type: 'warn',
+          title: 'Unable to unbond',
+          body: 'You have unclaimed earnings from previous rounds.',
+        })
+      }
+      try {
+        toasts.push({
+          id: 'unbond',
+          title: 'Unbonding',
+          body: 'Unbonding in progress.',
+        })
+        await window.livepeer.rpc.unbond()
+        toasts.push({
+          id: 'unbond',
+          type: 'success',
+          title: 'Unbonding Complete',
+          body: 'Now, you must wait through the unbonding period.',
+        })
+      } catch (err) {
+        toasts.push({
+          id: 'unbond',
+          type: 'warn',
+          title: 'Unbond Failed',
+          body: err.message,
+        })
+      }
+    },
+    bondTo: id => () => {
+      if (!currentRound.data.initialized) {
+        return toasts.push({
+          id: 'bond',
+          type: 'warn',
+          title: 'Unable to bond',
+          body: 'The current round is not initialized.',
+        })
+      }
+      if (hasUnclaimedRounds) {
+        return toasts.push({
+          id: 'bond',
+          type: 'warn',
+          title: 'Unable to bond',
+          body: 'You have unclaimed earnings from previous rounds.',
+        })
+      }
+      if (status === 'Unbonding') {
+        return toasts.push({
+          id: 'bond',
+          type: 'warn',
+          title: 'Unable to bond',
+          body: 'You are currently unbonding',
+        })
+      }
       tx.activate({
         id,
         type: 'BondStatus',
-      }),
+      })
+    },
   }
 })
 
 export default compose(
+  connectCurrentRoundQuery,
   connectMeDelegatorQuery,
   connectTranscodersQuery,
+  connectToasts,
   connectTransactions,
   mapTransactionsToProps,
 )

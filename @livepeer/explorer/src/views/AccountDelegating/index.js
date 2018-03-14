@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import BN from 'bn.js'
 import {
   formatBalance,
+  MathBN,
   openSocket,
   pathInfo,
   promptForArgs,
@@ -12,7 +13,7 @@ import {
 import { Button, InlineAccount, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
-type AccountDelegatingProps = {
+export type AccountDelegatingProps = {
   currentRound: GraphQLProps<Round>,
   delegator: GraphQLProps<Delegator>,
   match: Match,
@@ -43,11 +44,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     withdrawRound,
   } = delegator.data
   const { lastInitializedRound } = currentRound.data
-  const lastClaimRoundBN = new BN(lastClaimRound)
-  const lastInitializedRoundBN = new BN(lastInitializedRound || '0')
+  // const from = MathBN.add(lastClaimRound, '1')
   const unclaimedRounds =
     !delegator.loading && !currentRound.loading
-      ? lastInitializedRoundBN.sub(lastClaimRoundBN).toString(10)
+      ? MathBN.sub(lastInitializedRound, lastClaimRound)
       : '0'
   const hasUnclaimedRounds = unclaimedRounds !== '0'
   const hasStake = bondedAmount !== '0'
@@ -81,17 +81,15 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         value={formatBalance(bondedAmount)}
         subvalue={formatBalance(bondedAmount, 18)}
       >
-        {isMyAccount && (
-          <React.Fragment>
-            {/** request */}
-            <Button
-              onClick={onWithdrawStake(delegator.data.id)}
-              disabled={!hasStake || !isUnbonded}
-            >
-              withdraw
-            </Button>
-          </React.Fragment>
-        )}
+        {isMyAccount &&
+          hasStake && (
+            <React.Fragment>
+              {/** request */}
+              <Button onClick={onWithdrawStake(delegator.data.id)}>
+                withdraw
+              </Button>
+            </React.Fragment>
+          )}
       </MetricBox>
       <MetricBox
         title="Fees"
@@ -99,17 +97,15 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         value={formatBalance(fees)}
         subvalue={formatBalance(fees, 18)}
       >
-        {isMyAccount && (
-          <React.Fragment>
-            {/** request */}
-            <Button
-              onClick={onWithdrawFees(delegator.data.id)}
-              disabled={!hasFees}
-            >
-              withdraw
-            </Button>
-          </React.Fragment>
-        )}
+        {isMyAccount &&
+          hasFees && (
+            <React.Fragment>
+              {/** request */}
+              <Button onClick={onWithdrawFees(delegator.data.id)}>
+                withdraw
+              </Button>
+            </React.Fragment>
+          )}
       </MetricBox>
       <MetricBox
         title="Delegated Amount"

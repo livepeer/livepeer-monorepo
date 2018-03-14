@@ -1,6 +1,40 @@
 import { matchPath } from 'react-router'
 import Big from 'big.js'
+import BN from 'bn.js'
 import unit, { unitMap } from 'ethjs-unit'
+
+export const MathBN = {
+  sub: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.sub(bBN).toString(10)
+  },
+  add: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.add(bBN).toString(10)
+  },
+  mul: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.mul(bBN).toString(10)
+  },
+  div: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.div(bBN).toString(10)
+  },
+  min: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return (aBN.lt(bBN) ? a : b).toString(10)
+  },
+  max: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return (aBN.gt(bBN) ? a : b).toString(10)
+  },
+}
 
 export const sleep = (ms, val) =>
   new Promise(resolve => setTimeout(() => resolve(val), ms))

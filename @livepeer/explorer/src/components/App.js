@@ -4,6 +4,7 @@ import Account from '../views/Account'
 import BondModals from '../views/BondModals'
 import ClaimEarningsModals from '../views/ClaimEarningsModals'
 import Landing from '../views/Landing'
+import ToastNotifications from '../views/ToastNotifications'
 import Transcoders from '../views/Transcoders'
 import { history } from '../store'
 
@@ -44,6 +45,7 @@ const App = ({ location }) => (
     </Switch>
     <BondModals />
     <ClaimEarningsModals />
+    <ToastNotifications />
   </div>
 )
 

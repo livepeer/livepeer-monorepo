@@ -213,6 +213,17 @@ export class TransactionStatusContainer extends Container<
     console.log('delete', status)
     this.setState(this.state)
   }
+  reset = (status: TransactionStatus) => {
+    this.commit(
+      status.merge({
+        done: false,
+        error: null,
+        hash: '',
+        loading: false,
+        submitted: false,
+      }),
+    )
+  }
   empty = TransactionStatus.create
   findWhere = (obj: Object) => {
     const keys = Object.keys(obj)

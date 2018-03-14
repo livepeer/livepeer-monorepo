@@ -1,28 +1,32 @@
 import { compose, mapProps } from 'recompose'
-import { graphql } from 'react-apollo'
+import { graphql, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import {
-  connectApproveMutation,
+  connectCurrentRoundQuery,
   connectClaimEarningsMutation,
   connectTransactions,
 } from '../../enhancers'
 import { mockAccount, sleep, wireTransactionToStatus } from '../../utils'
 
 const MeDelegatorQuery = gql`
-  fragment AccountFragment on Account {
+  fragment DelegatorFragment on Delegator {
     id
-    ethBalance
-    tokenBalance
-    delegator {
-      id
-      delegateAddress
-      bondedAmount
-    }
+    status
+    delegateAddress
+    bondedAmount
+    fees
+    delegatedAmount
+    lastClaimRound
+    startRound
+    withdrawRound
   }
 
   query MeDelegatorQuery {
     me {
-      ...AccountFragment
+      id
+      delegator {
+        ...DelegatorFragment
+      }
     }
   }
 `
@@ -39,8 +43,10 @@ const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 5 * 1000,
+    pollInterval: 30 * 1000,
     variables: {},
+    // ssr: false,
+    fetchPolicy: 'network-only',
   }),
 })
 
@@ -54,24 +60,27 @@ export const mapTransactionsToProps = mapProps(props => {
     ...nextProps,
     claimEarningsStatus,
     onClose: () => tx.delete(claimEarningsStatus),
+    onClaimMore: () => tx.reset(claimEarningsStatus),
     onClaimEarnings: wireTransactionToStatus(
       tx,
       claimEarningsStatus,
-      async ({ to, amount }) => {
-        // return await claimEarnings({ variables: { to, amount } })
-        return await sleep(1000, {
-          transaction: {
-            hash: '0xf00',
+      async ({ endRound }) =>
+        await claimEarnings({
+          variables: { endRound },
+          update: store => {
+            const data = store.readQuery({ query: MeDelegatorQuery })
+            data.me.delegator.lastClaimRound = endRound
+            store.writeQuery({ query: MeDelegatorQuery, data })
           },
-        })
-      },
+        }),
     ),
   }
 })
 
 export default compose(
-  connectApproveMutation,
-  // connectClaimEarningsMutation,
+  withApollo,
+  connectCurrentRoundQuery,
+  connectClaimEarningsMutation,
   connectMeDelegatorQuery,
   connectTransactions,
   mapTransactionsToProps,
