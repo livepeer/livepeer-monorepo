@@ -7,7 +7,10 @@ type Mutation {
   approve(type: String!, amount: String!): Boolean
 
   "Submits a bond transaction for a previously approved amount"
-  bondToken(to: String!, amount: String!): Boolean
+  bond(to: String!, amount: String!): Boolean
+
+  "Claims earnings from your last claim round through specified round"
+  claimEarnings(endRound: String!): Boolean
 
   "Submits a bond transaction for a previously approved amount"
   unbond: Boolean

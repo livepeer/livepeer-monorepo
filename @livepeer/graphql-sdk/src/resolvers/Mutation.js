@@ -38,13 +38,28 @@ export async function approve(
  * @param {string} amount - The approval amount
  * @return {Promise<TxReceipt>}
  */
-export async function bondToken(
+export async function bond(
   obj: MutationObj,
   args: { to: string, amount: string },
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { to, amount } = args
   return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount)
+}
+
+/**
+ * Submits a claimEarnings transaction
+ * @param {MutationObj} obj
+ * @param {string} endRound - The round to claim earnings until
+ * @return {Promise<TxReceipt>}
+ */
+export async function claimEarnings(
+  obj: MutationObj,
+  args: { endRound: string },
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const { endRound } = args
+  return await ctx.livepeer.rpc.claimEarnings(endRound)
 }
 
 /**
