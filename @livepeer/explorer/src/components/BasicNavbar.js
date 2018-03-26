@@ -1,45 +1,117 @@
 import React from 'react'
+import { compose } from 'recompose'
 import { EMPTY_ADDRESS } from '@livepeer/sdk'
 import styled from 'styled-components'
 import { NavLink, Link } from 'react-router-dom'
-import { Cpu as CpuIcon, User as UserIcon } from 'react-feather'
+import {
+  MoreHorizontal as MoreHorizontalIcon,
+  MoreVertical as MoreVerticalIcon,
+  Play as PlayIcon,
+  Pause as PauseIcon,
+  Cpu as CpuIcon,
+  User as UserIcon,
+} from 'react-feather'
 import Navbar from './Navbar'
+import { connectCurrentRoundQuery, connectToasts } from '../enhancers'
 
-const BasicNavbar = ({ onSearch }) => (
-  <Navbar>
-    <Nav>
-      <Link to="/" style={{ lineHeight: 0, padding: '8px 0' }}>
-        <img
-          src={`${process.env.PUBLIC_URL}/wordmark.svg`}
-          height="24"
-          alt="The Livepeer wordmark"
-        />
-      </Link>
-      {onSearch && <NavSearch onSearch={onSearch} />}
-      <div
-        style={{
-          display: 'inline-flex',
-          flexFlow: 'row wrap',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          width: '100%',
-        }}
-      >
-        <NavbarLink to="/transcoders">
-          <CpuIcon size={16} />
-          <span>&nbsp;Transcoders</span>
-        </NavbarLink>
-        {window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS && (
-          <NavbarLink to="/me">
-            <UserIcon size={16} />
-            <span>&nbsp;My Account</span>
+const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
+  const notAuthenticated =
+    window.livepeer.config.defaultTx.from ===
+    '0x0000000000000000000000000000000000000000'
+  return (
+    <Navbar>
+      <Nav>
+        <Link to="/" style={{ lineHeight: 0, padding: '8px 0' }}>
+          <img
+            src={`${process.env.PUBLIC_URL}/wordmark.svg`}
+            height="24"
+            alt="The Livepeer wordmark"
+          />
+        </Link>
+        {onSearch && <NavSearch onSearch={onSearch} />}
+        {
+          <span
+            onClick={async () => {
+              try {
+                if (notAuthenticated) return
+                if (currentRound.data.initialized) return
+                toasts.push({
+                  id: 'initialize-round',
+                  title: 'Initializing round...',
+                  body: 'The current round is being initialized.',
+                })
+                await window.livepeer.rpc.initializeRound()
+                toasts.push({
+                  id: 'initialize-round',
+                  type: 'success',
+                  title: 'Initialization complete',
+                  body: 'The current round is now initialized.',
+                })
+              } catch (err) {
+                toasts.push({
+                  id: 'initialize-round',
+                  type: 'error',
+                  title: 'Initialization failed',
+                  body: err.message,
+                })
+              }
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              paddingRight: 24,
+              padding: 8,
+              background: currentRound.loading
+                ? '#aaa'
+                : currentRound.data.initialized ? '#00eb88' : 'orange',
+              cursor:
+                currentRound.loading || currentRound.data.initialized
+                  ? 'default'
+                  : 'pointer',
+              color: '#000',
+              width: 116,
+              marginLeft: 16,
+              whiteSpace: 'nowrap',
+              borderRadius: 4,
+            }}
+          >
+            {currentRound.loading ? (
+              <MoreHorizontalIcon size={16} />
+            ) : currentRound.data.initialized ? (
+              <PlayIcon size={16} />
+            ) : (
+              <PauseIcon size={16} />
+            )}
+            <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
+              &nbsp;Round Status
+            </span>
+          </span>
+        }
+        <div
+          style={{
+            display: 'inline-flex',
+            flexFlow: 'row wrap',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            width: '100%',
+            color: '#fff',
+          }}
+        >
+          <NavbarLink to="/transcoders">
+            <CpuIcon size={16} />
+            <span>&nbsp;Transcoders</span>
           </NavbarLink>
-        )}
-      </div>
-    </Nav>
-  </Navbar>
-)
-
+          {window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS && (
+            <NavbarLink to="/me">
+              <UserIcon size={16} />
+              <span>&nbsp;My Account</span>
+            </NavbarLink>
+          )}
+        </div>
+      </Nav>
+    </Navbar>
+  )
+}
 const Nav = styled.nav`
   display: flex;
   flex-flow: row;
@@ -107,6 +179,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
         outline: 0,
         border: 'none',
         borderRadius: 4,
+        WebkitAppearance: 'textfield',
       }}
       onKeyDown={e => {
         const { value } = e.target
@@ -119,4 +192,4 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
   </NavSearchContainer>
 )
 
-export default BasicNavbar
+export default compose(connectToasts, connectCurrentRoundQuery)(BasicNavbar)

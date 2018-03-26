@@ -90,6 +90,33 @@ export default withHandlers({
         window.alert(err.message)
       }
     },
+  onClaimEarnings: props =>
+    async function claimEarnings(e: Event): void {
+      try {
+        const { claimEarnings } = window.livepeer.rpc
+        await claimEarnings()
+      } catch (err) {
+        // ...
+      }
+    },
+  onWithdrawStake: props =>
+    async function withdrawStake(e: Event): void {
+      try {
+        const { withdrawStake } = window.livepeer.rpc
+        await withdrawStake()
+      } catch (err) {
+        // ...
+      }
+    },
+  onWithdrawFees: props =>
+    async function withdrawFees(e: Event): void {
+      try {
+        const { withdrawFees } = window.livepeer.rpc
+        await withdrawFees()
+      } catch (err) {
+        // ...
+      }
+    },
   onBondLPT: props =>
     async function bondLPT(address: string): void {
       window.open(

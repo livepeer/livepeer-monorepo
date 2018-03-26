@@ -75,7 +75,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
               path={`${match.path}/transcoding`}
               component={AccountTranscoding}
             />
-            <Redirect to={`${match.path}/overview`} />
+            <Redirect to={`${match.url}/overview`} />
           </Switch>
         </div>
       </Content>

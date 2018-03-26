@@ -5,7 +5,11 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
-import { TransactionStatusContainer } from '../containers'
+import {
+  ToastNotificationContainer,
+  TransactionStatusContainer,
+} from '../containers'
+import { mockRound } from '../utils'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
 
@@ -88,6 +92,21 @@ export const connectTransactions = (Consumer: React.ComponentType<any>) => {
   )
 }
 
+/**
+ * Subscribes a component to the ToastNofiticationContainer's state
+ */
+export const connectToasts = (Consumer: React.ComponentType<any>) => {
+  return (
+    props: React.ElementProps<typeof Consumer>,
+  ): React.Element<typeof Consumer> => (
+    <Subscribe to={[ToastNotificationContainer]}>
+      {(toasts: ToastNotificationContainer) => (
+        <Consumer {...props} toasts={toasts} />
+      )}
+    </Subscribe>
+  )
+}
+
 export const connectApproveMutation = graphql(
   gql`
     mutation approve($type: String!, $amount: String!) {
@@ -102,11 +121,22 @@ export const connectApproveMutation = graphql(
 export const connectBondMutation = graphql(
   gql`
     mutation bond($to: String!, $amount: String!) {
-      bondToken(to: $to, amount: $amount)
+      bond(to: $to, amount: $amount)
     }
   `,
   {
     name: 'bond',
+  },
+)
+
+export const connectClaimEarningsMutation = graphql(
+  gql`
+    mutation claimEarnings($endRound: String!) {
+      claimEarnings(endRound: $endRound)
+    }
+  `,
+  {
+    name: 'claimEarnings',
   },
 )
 
@@ -120,3 +150,36 @@ export const connectUnbondMutation = graphql(
     name: 'unbond',
   },
 )
+
+const CurrentRoundQuery = gql`
+  fragment RoundFragment on Round {
+    id
+    initialized
+    lastInitializedRound
+    length
+    startBlock
+  }
+
+  query CurrentRoundQuery {
+    currentRound {
+      ...RoundFragment
+    }
+  }
+`
+
+export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
+  props: ({ data, ownProps }) => {
+    const { currentRound, ...queryData } = data
+    return {
+      ...ownProps,
+      currentRound: {
+        ...queryData,
+        data: mockRound(currentRound),
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 10 * 1000,
+    variables: {},
+  }),
+})

@@ -25,6 +25,7 @@ const livepeer = {
     getEthBalance: async id => ALL_ETH_BALANCES[id],
     getTokenBalance: async id => ALL_TOKEN_BALANCES[id],
     getBroadcaster: async id => ALL_BROADCASTERS[id],
+    getCurrentRoundInfo: async () => ALL_ROUNDS[100],
     getDelegator: async id => ALL_DELEGATORS[id],
     getJob: async id => ALL_JOBS[id],
     getJobs: async ({ broadcaster } = {}) =>
@@ -122,6 +123,16 @@ const ALL_JOBS = [
     broadcaster: EMPTY_ADDRESS.replace(/00/g, '22'),
   },
 ]
+
+const ALL_ROUNDS = {
+  100: {
+    id: '100',
+    initialized: false,
+    lastInitializedRound: '99',
+    length: '50',
+    startBlock: '12345',
+  },
+}
 
 const ALL_TRANSCODERS = {
   [EMPTY_ADDRESS.replace(/00/g, '11')]: {

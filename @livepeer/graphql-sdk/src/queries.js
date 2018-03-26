@@ -2,6 +2,7 @@ import { default as AccountFragment } from './fragments/Account'
 import { default as BroadcasterFragment } from './fragments/Broadcaster'
 import { default as DelegatorFragment } from './fragments/Delegator'
 import { default as JobFragment } from './fragments/Job'
+import { default as RoundFragment } from './fragments/Round'
 import { default as TranscoderFragment } from './fragments/Transcoder'
 
 export const AccountQuery = `
@@ -25,6 +26,15 @@ query BroadcasterQuery($id: String!, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit
     jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
       ...JobFragment
     }
+  }
+}
+`
+
+export const CurrentRoundQuery = `
+${RoundFragment}
+query CurrentRoundQuery {
+  currentRound {
+    ...RoundFragment
   }
 }
 `

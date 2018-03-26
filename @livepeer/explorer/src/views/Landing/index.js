@@ -119,6 +119,7 @@ const SearchBar = styled.input`
   border: none;
   font-size: 16px;
   outline: 0;
+  -webkit-appearance: textfield;
 `
 
 const SearchButton = styled.button`

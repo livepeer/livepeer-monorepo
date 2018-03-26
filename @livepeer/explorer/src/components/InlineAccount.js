@@ -5,21 +5,30 @@ import Avatar from './Avatar'
 
 type InlineAccountProps = {
   address: string,
+  truncate: number,
 }
 
 const InlineAccount: React.ComponentType<InlineAccountProps> = styled(
-  ({ address, className }) => (
+  ({ address, border, className, truncate }) => (
     <div className={className}>
       <Avatar id={address} size={32} />
-      <span className="address">{address}</span>
+      <span className="address">
+        {!truncate ? address : `${address.substr(0, truncate)}...`}
+      </span>
     </div>
   ),
 )`
   font-size: 14px;
   display: inline-flex;
   align-items: center;
+  box-shadow: ${({ border }) =>
+    border ? '0 0 0 1px rgba(0, 0, 0, .15)' : 'none'};
+  padding: 8px;
+  border-radius: 4px;
   > .address {
     margin-left: 8px;
+    text-decoration: none;
+    color: #000;
   }
 `
 

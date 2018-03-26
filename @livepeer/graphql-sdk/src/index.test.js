@@ -6,6 +6,7 @@ import schema from './schema'
 import {
   AccountQuery,
   BroadcasterQuery,
+  CurrentRoundQuery,
   DelegatorQuery,
   JobQuery,
   JobsQuery,
@@ -20,8 +21,7 @@ import livepeer from './mock-sdk'
 /**
  * Account
  */
-
-test.only('AccountQuery', async t => {
+test('AccountQuery', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
   }
@@ -92,7 +92,6 @@ test('JobQuery', async t => {
 /**
  * Jobs
  */
-
 test('JobsQuery', async t => {
   const args = {}
   const res = await graphql(schema, JobsQuery, null, { livepeer }, args)
@@ -138,9 +137,18 @@ test('JobsQuery (skip / limit args)', async t => {
 })
 
 /**
+ * Round
+ */
+test.only('CurrentRoundQuery', async t => {
+  const args = {}
+  const res = await graphql(schema, CurrentRoundQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+/**
  * Transcoder
  */
-
 test('TranscoderQuery', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),

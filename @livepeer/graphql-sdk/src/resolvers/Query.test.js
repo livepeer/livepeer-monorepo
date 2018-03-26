@@ -182,6 +182,25 @@ test('Query resolves `me` field', async t => {
   t.deepEqual(obj, result)
 })
 
+test('Query resolves `currentRound` field', async t => {
+  const obj = {
+    id: '100',
+    initialized: false,
+    lastInitializedRound: '99',
+    length: '50',
+  }
+  const args = {}
+  const ctx = {
+    livepeer: {
+      rpc: {
+        getCurrentRoundInfo: () => obj,
+      },
+    },
+  }
+  const result = await resolvers.currentRound(obj, args, ctx)
+  t.deepEqual(obj, result)
+})
+
 test('Query resolves `transcoder` field', async t => {
   const obj = {
     id: EMPTY_ADDRESS.replace(/00/g, '11'),

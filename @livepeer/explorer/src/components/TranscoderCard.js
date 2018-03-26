@@ -108,12 +108,15 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
   display: inline-flex;
   align-items: center;
   flex-flow: row wrap;
-  background: ${({ bonded }) => (bonded ? 'cornsilk' : 'white')};
+  background: #fff;
   margin-bottom: 16px;
   border-radius: 2px;
   padding: 16px;
   overflow: auto;
-  box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: ${({ bonded }) =>
+    bonded
+      ? '0 0px 1px 1px darkseagreen'
+      : '0 1px 2px 0px rgba(0, 0, 0, 0.15)'};
   > a:hover {
     text-decoration: underline !important;
   }
@@ -164,6 +167,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     opacity: 0;
     transition: all 0.2s linear;
     & > ${Button} {
+      margin: 0;
       margin-left: 8px;
       &:first-child: {
         margin-left: 0;

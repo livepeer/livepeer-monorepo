@@ -13,6 +13,9 @@ const Button = styled.button`
   background: #fff;
   border: 1px solid #ccc;
   cursor: pointer;
+  :disabled {
+    cursor: not-allowed;
+  }
 `
 
 export default Button

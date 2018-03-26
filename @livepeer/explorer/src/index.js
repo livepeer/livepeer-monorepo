@@ -32,7 +32,7 @@ import { unregister } from './registerServiceWorker'
     html, body {
       margin: 0;
       font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
-      background: #f9f9f9;
+      background: #fafafa;
     }
     a { color: #03a678; }
   `

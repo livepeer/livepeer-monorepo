@@ -17,25 +17,33 @@ import enhance from './enhance'
 
 type TranscodersViewProps = {
   bondTo: string => void,
+  currentRound: GraphQLProps<Array<Round>>,
   history: History,
   match: Match,
   me: GraphQLProps<Account>,
   unbondFrom: string => void,
   transcoders: GraphQLProps<Array<Transcoder>>,
+  toasts: any,
 }
 
 /**
  * Displays a list of transcoders and allows authenticated users to sort and bond/unbond from them
  */
 const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
+  bondTo,
   history,
   match,
-  transcoders,
   me,
+  toasts,
+  transcoders,
   unbondFrom,
-  bondTo,
 }) => {
-  const { delegator: { bondedAmount, delegateAddress }, tokenBalance } = me.data
+  const {
+    delegator: { bondedAmount, delegateAddress, status },
+    tokenBalance,
+  } = me.data
+  const isBonded =
+    status === 'Pending' || status === 'Bonded' || status === 'Unbonding'
   const searchParams = new URLSearchParams(history.location.search)
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
@@ -127,9 +135,9 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
         {/* Results */ [...transcoders.data].sort(compareFn).map(props => {
           const myId = me.data.id
           const { id } = props
-          const bonded = id === delegateAddress
+          const bonded = isBonded && id === delegateAddress
           const canBond = myId && (!delegateAddress || id === delegateAddress)
-          const canUnbond = myId && id === delegateAddress
+          const canUnbond = isBonded && myId && id === delegateAddress
           const onBond = (canBond && bondTo(id)) || undefined
           const onUnbond = (canUnbond && unbondFrom(id)) || undefined
           return (

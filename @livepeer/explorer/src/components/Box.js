@@ -10,12 +10,16 @@ const Box = ({ children, width }) => {
 }
 
 const OuterBox = styled.div`
-  width: ${({ width }) => width || '100%'};
-  padding: 16px 8px;
+  // width: ${({ width }) => width || '100%'};
+  padding: 0 8px 16px 8px;
   text-align: center;
+  flex: ${({ width }) => width || '100%'};;
+  flex-direction: row;
+  display: inline-flex;
 `
 
 const InnerBox = styled.div`
+  width: 100%;
   background: #fff;
   border-radius: 2px;
   box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.15);

@@ -970,7 +970,7 @@ export default async function createLivepeerSDK(
      *
      * await rpc.getCurrentRoundInfo()
      * // => RoundInfo {
-     * //   number: string,
+     * //   id: string,
      * //   initialized: boolean,
      * //   startBlock: string,
      * //   lastInitializedRound: string,
@@ -979,16 +979,16 @@ export default async function createLivepeerSDK(
      */
     async getCurrentRoundInfo(): Promise<RoundInfo> {
       const length = await rpc.getRoundLength()
-      const number = await rpc.getCurrentRound()
+      const id = await rpc.getCurrentRound()
       const initialized = await rpc.getCurrentRoundIsInitialized()
       const lastInitializedRound = await rpc.getLastInitializedRound()
       const startBlock = await rpc.getCurrentRoundStartBlock()
       return {
-        number,
+        id,
         initialized,
-        startBlock,
         lastInitializedRound,
         length,
+        startBlock,
       }
     },
 
@@ -1262,15 +1262,15 @@ export default async function createLivepeerSDK(
     },
 
     /**
-     * Claims all available token pool shares
+     * Claims token and eth earnings from the sender's `lastClaimRound + 1` through a given `endRound`
      * @memberof livepeer~rpc
-     * @todo add param to specify an exacty number of claims to make
+     * @param {string} endRound - the round to claim earnings until
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {TxReceipt}
      *
      * @example
      *
-     * await rpc.claimTokenPoolsShare()
+     * await rpc.claimEarnings()
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1291,102 +1291,12 @@ export default async function createLivepeerSDK(
      * //   }>
      * // }
      */
-    async claimTokenPoolsShares(tx = config.defaultTx): Promise<TxReceipt> {
-      try {
-        const roundsPerClaim = toBN('100')
-        const currentRound = toBN(await rpc.getCurrentRound())
-        let delegator = await rpc.getDelegator(tx.from)
-        let receipt
-        // claim tokens for the lastClaimRound to currentRound
-        let lastClaimRound = toBN(delegator.lastClaimRound || '0')
-        while (lastClaimRound.lt(currentRound)) {
-          const endRound = currentRound.lt(lastClaimRound.add(roundsPerClaim))
-            ? currentRound
-            : lastClaimRound.add(roundsPerClaim)
-          console.log('claiming token pool shares...', {
-            currentRound: currentRound.toString(10),
-            lastClaimRound: lastClaimRound.toString(10),
-            endRound: endRound.toString(10),
-          })
-          // claim from lastClaimRound to endRound
-          receipt = await utils.getTxReceipt(
-            await BondingManager.claimTokenPoolsShares(endRound, tx),
-            config.eth,
-          )
-          console.log('CLAIMED', receipt)
-          // lastClaimRound = toBN(delegator.lastClaimRound || '0')
-          lastClaimRound = endRound
-        }
-        // delegator = await rpc.getDelegator(tx.from)
-        return receipt
-      } catch (err) {
-        err.message = 'Error: claimTokenPoolsShares\n' + err.message
-        throw err
-      }
-    },
-
-    /**
-     * Bonds LPT to an address
-     * @memberof livepeer~rpc
-     * @deprecated
-     * @param {string} to - the delegate to bond to
-     * @param {string} amount - the amount of LPTU to bond tot he delegate
-     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
-     * @return {Promise<TxReceipt>}
-     *
-     * @example
-     *
-     * await rpc.bond('0xf00...', '100')
-     * // => TxReceipt {
-     * //   transactionHash: string,
-     * //   transactionIndex": BN,
-     * //   blockHash: string,
-     * //   blockNumber: BN,
-     * //   cumulativeGasUsed: BN,
-     * //   gasUsed: BN,
-     * //   contractAddress: string,
-     * //   logs: Array<Log {
-     * //     logIndex: BN,
-     * //     blockNumber: BN,
-     * //     blockHash: string,
-     * //     transactionHash: string,
-     * //     transactionIndex: string,
-     * //     address: string,
-     * //     data: string,
-     * //     topics: Array<string>
-     * //   }>
-     * // }
-     */
-    async bond(
-      to: string,
-      amount: string,
+    async claimEarnings(
+      endRound: string,
       tx = config.defaultTx,
-    ): Promise<Object> {
-      const value = toBN(amount)
-      // make sure current round is initialized
-      if (!await rpc.getCurrentRoundIsInitialized()) {
-        await rpc.initializeRound(tx)
-      }
-      // make sure balance is higher than bond
-      const balance = (await LivepeerToken.balanceOf(tx.from))[0]
-      if (!balance.gte(value)) {
-        throw new Error(
-          `Cannot bond ${toString(
-            value,
-          )} LPT because is it greater than your current balance (${balance} LPT).`,
-        )
-      }
-      // claim token pools shares
-      // if done automatically though bond(), gas may get exhausted
-      await rpc.claimTokenPoolsShares()
-      // approve BondingManager address / amount with LivepeerToken...
-      await utils.getTxReceipt(
-        await LivepeerToken.approve(BondingManager.address, value, tx),
-        config.eth,
-      )
-      // ...aaaand bond!
+    ): Promise<TxReceipt> {
       return await utils.getTxReceipt(
-        await BondingManager.bond(value, to, tx),
+        await BondingManager.claimEarnings(endRound, tx),
         config.eth,
       )
     },
@@ -1609,6 +1519,78 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their `tokenBalance`)
+     * @memberof livepeer~rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {TxReceipt}
+     *
+     * @example
+     *
+     * await rpc.withdrawStake()
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async withdrawStake(tx = config.defaultTx): Promise<TxReceipt> {
+      return await utils.getTxReceipt(
+        await BondingManager.withdrawStake(tx),
+        config.eth,
+      )
+    },
+
+    /**
+     * Withdraws earned fees (Transfers a sender's delegator `fees` to their `ethBalance`)
+     * @memberof livepeer~rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {TxReceipt}
+     *
+     * @example
+     *
+     * await rpc.withdrawFees()
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async withdrawFees(tx = config.defaultTx): Promise<TxReceipt> {
+      return await utils.getTxReceipt(
+        await BondingManager.withdrawFees(tx),
+        config.eth,
+      )
+    },
+
+    /**
      * Creates a job
      * @memberof livepeer~rpc
      * @param {string} streamId - the stream id for the job
@@ -1819,7 +1801,7 @@ export default async function createLivepeerSDK(
   /**
    * An object containing information about the current round
    * @typedef {Object} RoundInfo
-   * @prop {string} number - the number of the current round
+   * @prop {string} id - the number of the current round
    * @prop {boolean} initialized - whether or not the current round is initialized
    * @prop {string} startBlock - the start block of the current round
    * @prop {string} lastInitializedRound - the last round that was initialized prior to the current

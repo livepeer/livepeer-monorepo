@@ -6,17 +6,17 @@
     "@livepeer/apollo": "0.0.0",
     "@livepeer/graphql-sdk": "0.0.0",
     "@livepeer/sdk": "0.0.0",
-    "apollo-cache-inmemory": "^1.1.5",
-    "apollo-client": "^2.0.3",
-    "apollo-link": "^1.0.3",
-    "graphql": "^0.13.0",
-    "graphql-tag": "^2.5.0",
+    "apollo-cache-inmemory": "1.1.10",
+    "apollo-client": "2.2.6",
+    "apollo-link": "1.2.1",
+    "graphql": "0.13.1",
+    "graphql-tag": "2.8.0",
     "query-string": "^5.0.1",
     "react": "^16.2.0",
     "react-apollo": "^2.0.1",
     "react-dom": "^16.2.0",
     "react-feather": "^1.0.7",
-    "react-redux": "^5.0.6",
+    "react-redux": "5.0.7",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.8",
     "react-scripts": "1.1.1",
@@ -24,7 +24,7 @@
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
     "redux-thunk": "^2.2.0",
-    "styled-components": "^3.0.0"
+    "styled-components": "3.2.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "gh-pages": "^1.1.0",
-    "serve": "^6.4.1",
+    "serve": "6.5.3",
     "uglify-es": "^3.2.0"
   }
 }

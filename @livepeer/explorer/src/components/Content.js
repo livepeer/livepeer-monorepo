@@ -5,7 +5,7 @@ const Content = styled.div`
   display: flex;
   flex-flow: column;
   max-width: 100%;
-  margin: 16px auto 120px auto;
+  margin: 32px auto 120px auto;
   padding: 0 16px;
   height: ${({ height }) => (typeof height === 'undefined' ? 'auto' : height)};
   width: ${({ width }) => (typeof width === 'undefined' ? '100%' : width)};
