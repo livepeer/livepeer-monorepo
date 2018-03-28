@@ -7,6 +7,8 @@
 
 The Livepeer project aims to deliver a live video streaming network protocol that is fully decentralized, highly scalable, crypto token incentivized, and results in a solution which can serve as the live media layer in the decentralized development (web3) stack. You can learn more abobut the protocol and economic incentives by reading [our whitepaper](https://github.com/livepeer/wiki/blob/master/WHITEPAPER.md).
 
+This repo contains tools and applications that interact with Livepeer's smart contracts and peer-to-peer network.
+
 <!-- hide-on-docup-start -->
 
 ## Table of Contents
@@ -41,7 +43,7 @@ For next steps, take a look at documentation for the individual package(s) you w
 
 ### Published
 
-| Name                                                                                              | Version                                                                                                               | Description                                                                                                                         |
+| Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                                                                              | Version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                                                                                               | Description                                                                                                                         |
 | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [`@livepeer/chroma`](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/chroma)           | [![npm](https://img.shields.io/npm/v/@livepeer/chroma.svg)](https://www.npmjs.com/package/@livepeer/chroma)           | A component library that contains some UI building blocks for livestreaming video applications.                                     |
 | [`@livepeer/graphql-sdk`](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/graphql-sdk) | [![npm](https://img.shields.io/npm/v/@livepeer/graphql-sdk.svg)](https://www.npmjs.com/package/@livepeer/graphql-sdk) | A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications. |
