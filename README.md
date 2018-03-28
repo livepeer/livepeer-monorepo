@@ -1,9 +1,8 @@
-![LivepeerJS](./logo.svg) JS
+![LivepeerJS](./livepeer_js.png)
 
 ---
 
 [![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/livepeer/livepeerjs/blob/master/LICENSE)
-
 
 The Livepeer project aims to deliver a live video streaming network protocol that is fully decentralized, highly scalable, crypto token incentivized, and results in a solution which can serve as the live media layer in the decentralized development (web3) stack. You can learn more abobut the protocol and economic incentives by reading [our whitepaper](https://github.com/livepeer/wiki/blob/master/WHITEPAPER.md).
 
@@ -52,8 +51,8 @@ For next steps, take a look at documentation for the individual package(s) you w
 
 ### Private
 
-| Name                                                                                        | Description                                                                                                                                                                                                                            |
-| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name                                                                                          | Description                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`@livepeer/apollo`](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/apollo)     | Integrates with [@livepeer/graphql-sdk](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).                                                              |
 | [`@livepeer/explorer`](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/explorer) | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org) |
 | [`@livepeer/player`](https://github.com/livepeer/livepeerjs/tree/master/@livepeer/player)     | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)                                       |
