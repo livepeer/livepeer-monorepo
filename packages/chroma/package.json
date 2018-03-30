@@ -10,7 +10,7 @@
     "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "copy-docs": "echo 'No copy-docs script specified'",
     "prebuild": "rm -rf lib && rm -rf main",
-    "bootstrap": "npm -s run build",
+    "prepack": "npm -s run build",
     "test": "npx jest"
   },
   "dependencies": {

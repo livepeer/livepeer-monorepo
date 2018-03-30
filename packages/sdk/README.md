@@ -79,7 +79,7 @@ The following section details the rpc API's function signatures and typedefs.
     -   [getTotalJobs](#gettotaljobs)
     -   [getJobVerificationRate](#getjobverificationrate)
     -   [getJobVerificationPeriod](#getjobverificationperiod)
-    -   [getJobSlashingPeriod](#getjobslashingperiod)
+    -   [getJobVerificationSlashingPeriod](#getjobverificationslashingperiod)
     -   [getJobFinderFee](#getjobfinderfee)
     -   [getJobsInfo](#getjobsinfo)
     -   [getJob](#getjob)
@@ -628,14 +628,14 @@ await rpc.getJobVerificationPeriod()
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
-#### getJobSlashingPeriod
+#### getJobVerificationSlashingPeriod
 
 Slashing period for jobs
 
 **Examples**
 
 ```javascript
-await rpc.getJobSlashingPeriod()
+await rpc.getJobVerificationSlashingPeriod()
 // => string
 ```
 
@@ -666,7 +666,7 @@ await rpc.getJobsInfo()
 //   total: string,
 //   verificationRate: string,
 //   verificationPeriod: string,
-//   slashingPeriod: string,
+//   verificationSlashingPeriod: string,
 //   finderFee: string,
 // }
 ```
@@ -1272,7 +1272,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `total` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the total number of jobs created
 -   `verificationRate` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** the verification rate for jobs
 -   `verificationPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the verification period for jobs
--   `slashingPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the slashing period for jobs
+-   `verificationSlashingPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the slashing period for jobs
 -   `finderFee` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the finder fee for jobs
 
 ### TxReceipt

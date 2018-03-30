@@ -2,11 +2,11 @@
 
 ---
 
-[![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/livepeer/livepeerjs/blob/master/LICENSE)
+[![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/livepeer/livepeerjs/blob/master/LICENSE) [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
-The Livepeer project aims to deliver a live video streaming network protocol that is fully decentralized, highly scalable, crypto token incentivized, and results in a solution which can serve as the live media layer in the decentralized development (web3) stack. You can learn more abobut the protocol and economic incentives by reading [our whitepaper](https://github.com/livepeer/wiki/blob/master/WHITEPAPER.md).
+The Livepeer project aims to deliver a live video streaming network protocol that is fully decentralized, highly scalable, crypto token incentivized, and results in a solution which can serve as the live media layer in the decentralized development (web3) stack. You can learn more about the protocol and economic incentives by reading [our whitepaper](https://github.com/livepeer/wiki/blob/master/WHITEPAPER.md).
 
-This repo contains tools and applications that interact with Livepeer's smart contracts and peer-to-peer network.
+This monorepo contains JavaScript-based tools and applications that interact with Livepeer's smart contracts and peer-to-peer network.
 
 <!-- hide-on-docup-start -->
 

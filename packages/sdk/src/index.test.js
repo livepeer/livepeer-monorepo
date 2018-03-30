@@ -152,14 +152,14 @@ test('should return object with correct shape from getTranscoder()', async t => 
   const schema = object({
     active: boolean,
     address: string,
-    status: oneOf(livepeer.constants.TRANSCODER_STATUS),
-    lastRewardRound: string,
-    blockRewardCut: string, // %
     feeShare: string, // %
+    lastRewardRound: string,
     pricePerSegment: string,
-    pendingBlockRewardCut: string, // %
+    pendingRewardCut: string, // %
     pendingFeeShare: string, // %
     pendingPricePerSegment: string,
+    rewardCut: string, // %
+    status: oneOf(livepeer.constants.TRANSCODER_STATUS),
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getTranscoder(from)
@@ -171,7 +171,7 @@ test('should return object with correct shape from getTranscoder()', async t => 
 
 test('should return object with correct shape from getCurrentRoundInfo()', async t => {
   const schema = object({
-    number: string,
+    id: string,
     initialized: boolean,
     startBlock: string,
     lastInitializedRound: string,
@@ -189,8 +189,7 @@ test('should return object with correct shape from getJobsInfo()', async t => {
   const schema = object({
     total: string,
     verificationRate: string,
-    verificationPeriod: string,
-    slashingPeriod: string,
+    verificationSlashingPeriod: string,
     finderFee: string,
   })
   const { from } = livepeer.config.defaultTx

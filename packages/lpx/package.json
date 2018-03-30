@@ -10,7 +10,7 @@
     "build": "rm -rf bin && npx babel src --out-dir bin --ignore spec.js,test.js",
     "cmd": "f() { npm -s run build && node ./bin/index $@; };f",
     "copy-docs": "echo 'No copy-docs script specified'",
-    "bootstrap": "npm -s run build",
+    "prepack": "npm -s run build",
     "test": "npx ava"
   },
   "dependencies": {
