@@ -1,11 +1,11 @@
 {
   "name": "@livepeer/player",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "private": true,
   "dependencies": {
-    "@livepeer/apollo": "^1.0.0-alpha.3",
-    "@livepeer/graphql-sdk": "^1.0.0-alpha.3",
-    "@livepeer/sdk": "^1.0.0-alpha.3",
+    "@livepeer/apollo": "^1.0.0-alpha.4",
+    "@livepeer/graphql-sdk": "^1.0.0-alpha.4",
+    "@livepeer/sdk": "^1.0.0-alpha.4",
     "apollo-cache-inmemory": "1.1.10",
     "apollo-client": "2.2.6",
     "apollo-link": "1.2.1",

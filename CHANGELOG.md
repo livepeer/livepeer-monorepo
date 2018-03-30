@@ -1,3 +1,32 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="1.0.0-alpha.4"></a>
+# [1.0.0-alpha.4](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2018-03-30)
+
+
+### Code Refactoring
+
+* **graphql-sdk:** Updated typedefs and resolvers to work with latest sdk updates ([930145c](https://github.com/livepeer/livepeerjs/commit/930145c))
+
+
+### Features
+
+* **apollo:** Added option for controllerAddress ([c5729ed](https://github.com/livepeer/livepeerjs/commit/c5729ed))
+* **player:** Embed route ([8f35f61](https://github.com/livepeer/livepeerjs/commit/8f35f61))
+* **sdk:** Add controllerAddress option and update rpc methods to reflect ABI updates ([1c3a6e3](https://github.com/livepeer/livepeerjs/commit/1c3a6e3)), closes [#36](https://github.com/livepeer/livepeerjs/issues/36)
+
+
+### BREAKING CHANGES
+
+* **graphql-sdk:** Somee type definitions have changed
+* **sdk:** Some method signatures have changed
+
+
+
+
 <a name="1.0.0-alpha.3"></a>
 # [1.0.0-alpha.3](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2018-02-14)
 
@@ -86,6 +115,3 @@
 * **sdk:** Added new getBroadcaster method ([4a9c36e](https://github.com/livepeer/livepeerjs/commit/4a9c36e))
 * **sdk:** getTranscoderTotalStake method ([23d7e51](https://github.com/livepeer/livepeerjs/commit/23d7e51))
 * **sdk:** Wait for transaction receipts ([0262ff7](https://github.com/livepeer/livepeerjs/commit/0262ff7))
-
-
-

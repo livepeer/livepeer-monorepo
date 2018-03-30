@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/apollo",
   "private": true,
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",

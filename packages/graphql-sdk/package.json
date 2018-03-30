@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/graphql-sdk",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
@@ -15,7 +15,7 @@
     "test": "npx ava"
   },
   "dependencies": {
-    "@livepeer/sdk": "^1.0.0-alpha.3",
+    "@livepeer/sdk": "^1.0.0-alpha.4",
     "babel-runtime": "^6.26.0",
     "graphql": "0.13.0",
     "graphql-tools": "^2.19.0"
