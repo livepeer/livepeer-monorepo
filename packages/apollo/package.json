@@ -1,6 +1,7 @@
 {
-  "name": "@livepeer/graphql-sdk",
-  "version": "0.0.0",
+  "name": "@livepeer/apollo",
+  "private": true,
+  "version": "1.0.0-alpha.3",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
@@ -11,14 +12,17 @@
     "copy-docs": "echo 'No copy-docs script specified'",
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
-    "bootstrap": "npm -s run build",
+    "prepack": "npm -s run build",
     "test": "npx ava"
   },
-  "dependencies": {
-    "@livepeer/sdk": "0.0.0",
+  "peerDependencies": {
+    "@livepeer/graphql-sdk": "^1.0.0-alpha.3",
+    "@livepeer/sdk": "^1.0.0-alpha.3",
+    "apollo-cache-inmemory": "1.1.10",
+    "apollo-client": "2.2.6",
+    "apollo-link": "1.2.1",
     "babel-runtime": "^6.26.0",
-    "graphql": "0.13.0",
-    "graphql-tools": "^2.19.0"
+    "graphql": "0.13.0"
   },
   "devDependencies": {
     "ava": "0.25.0",
@@ -39,9 +43,7 @@
     ],
     "babel": "inherit"
   },
-  "homepage": "https://livepeer.org",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/livepeer/livepeerjs.git"
+  "dependencies": {
+    "apollo-client": "2.2.6"
   }
 }

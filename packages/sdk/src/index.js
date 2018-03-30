@@ -335,7 +335,9 @@ export async function initRPC({
  * @param {string} opts.provider  - the httpProvider for contract RPC
  * @param {Object} opts.artifacts - ...
  */
-export async function initContracts(opts): Promise<Object<string, Contract>> {
+export async function initContracts(
+  opts = {},
+): Promise<Object<string, Contract>> {
   // Merge pass options with defaults
   const {
     account = DEFAULTS.account,
@@ -1043,11 +1045,11 @@ export default async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.getJobSlashingPeriod()
+     * await rpc.getJobVerificationSlashingPeriod()
      * // => string
      */
-    async getJobSlashingPeriod(): Promise<string> {
-      return headToString(await JobsManager.slashingPeriod())
+    async getJobVerificationSlashingPeriod(): Promise<string> {
+      return headToString(await JobsManager.verificationSlashingPeriod())
     },
 
     /**
@@ -1076,7 +1078,7 @@ export default async function createLivepeerSDK(
      * //   total: string,
      * //   verificationRate: string,
      * //   verificationPeriod: string,
-     * //   slashingPeriod: string,
+     * //   verificationSlashingPeriod: string,
      * //   finderFee: string,
      * // }
      */
@@ -1084,13 +1086,13 @@ export default async function createLivepeerSDK(
       const total = await rpc.getTotalJobs()
       const verificationRate = await rpc.getJobVerificationRate()
       const verificationPeriod = await rpc.getJobVerificationPeriod()
-      const slashingPeriod = await rpc.getJobSlashingPeriod()
+      const verificationSlashingPeriod = await rpc.getJobVerificationSlashingPeriod()
       const finderFee = await rpc.getJobFinderFee()
       return {
         total,
         verificationRate,
         verificationPeriod,
-        slashingPeriod,
+        verificationSlashingPeriod,
         finderFee,
       }
     },
@@ -1814,7 +1816,7 @@ export default async function createLivepeerSDK(
    * @prop {string} total - the total number of jobs created
    * @prop {boolean} verificationRate - the verification rate for jobs
    * @prop {string} verificationPeriod - the verification period for jobs
-   * @prop {string} slashingPeriod - the slashing period for jobs
+   * @prop {string} verificationSlashingPeriod - the slashing period for jobs
    * @prop {string} finderFee - the finder fee for jobs
    */
 

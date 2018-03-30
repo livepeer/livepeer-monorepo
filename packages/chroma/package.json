@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/chroma",
-  "version": "0.0.0",
+  "version": "1.0.0-alpha.3",
   "main": "main/index.js",
   "module": "lib/index.js",
   "license": "MIT",
@@ -10,11 +10,11 @@
     "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "copy-docs": "echo 'No copy-docs script specified'",
     "prebuild": "rm -rf lib && rm -rf main",
-    "bootstrap": "npm -s run build",
+    "prepack": "npm -s run build",
     "test": "npx jest"
   },
   "dependencies": {
-    "@livepeer/sdk": "0.0.0",
+    "@livepeer/sdk": "^1.0.0-alpha.3",
     "hls.js": "https://github.com/jozanza/hls.js.git#9f68d40971242b0d2216376ff7ff776299acf8fd",
     "prop-types": "15.6.1",
     "react": "^16.1.0",
