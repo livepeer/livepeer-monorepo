@@ -1,4 +1,4 @@
-![LivepeerJS](./livepeer_js.png)
+![LivepeerJS](https://github.com/livepeer/livepeerjs/raw/master/livepeer_js.png)
 
 ---
 
