@@ -9,7 +9,7 @@
     "apollo-cache-inmemory": "1.1.10",
     "apollo-client": "2.2.6",
     "apollo-link": "1.2.1",
-    "graphql": "0.13.1",
+    "graphql": "0.13.0",
     "graphql-tag": "2.8.0",
     "query-string": "^5.0.1",
     "react": "^16.2.0",
