@@ -1,28 +1,30 @@
 {
+  "private": true,
+  "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
+  "workspaces": [
+    "packages/*"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeerjs.git"
   },
+  "bugs": "https://github.com/livepeer/livepeerjs/issues",
   "homepage": "https://livepeer.org",
-  "private": true,
-  "workspaces": [
-    "@livepeer/*"
-  ],
   "scripts": {
+    "build": "npx lerna run build --stream",
     "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "clean": "npx oao clean",
-    "docs": "npx oao run-script copy-docs --tree",
-    "latest": "yarn upgrade-interactive -E --latest",
-    "prepare": "npx oao run-script bootstrap --tree",
-    "release": "npx oao publish && git reset --hard HEAD",
-    "status": "npx oao status",
-    "test": "CI=true npx oao run-script test --tree"
+    "clean": "rm -rf node_modules && rm -rf */**/node_modules",
+    "lerna": "npx lerna",
+    "prepare": "npx lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
+    "release:dry-run": "lerna publish --skip-git --skip-npm --repo-version ${version} --yes"
   },
   "devDependencies": {
     "conventional-changelog-cli": "1.3.16",
     "cz-conventional-changelog": "^2.1.0",
     "edit-json-file": "^1.0.8",
+    "lerna": "^2.9.0",
+    "npm-run-all": "^4.1.2",
     "oao": "https://github.com/jozanza/oao.git#bb996aefd1f13b983c4ef84de5681af616887130"
   },
   "config": {

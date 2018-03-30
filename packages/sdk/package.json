@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/sdk",
-  "version": "0.0.0",
+  "version": "1.0.0-alpha.3",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
@@ -14,7 +14,6 @@
     "docs": "npx documentation readme src/index.js --section=API",
     "copy-docs": "rm -rf ../../docs/sdk && mkdir ../../docs/sdk && cp docs/index.html ../../docs/sdk && cp README.md ../../docs/sdk",
     "prebuild": "rm -rf lib && rm -rf main",
-    "bootstrap": "npm -s run build",
     "test": "npx ava"
   },
   "dependencies": {

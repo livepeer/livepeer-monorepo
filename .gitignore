@@ -1,5 +1,7 @@
 .DS_Store
 node_modules
+lerna-debug.log
+package-lock.json
 **/*/lib
 **/*/main
 **/*/dist
