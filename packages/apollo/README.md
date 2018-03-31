@@ -1,5 +1,7 @@
-# GraphQL SDK Apollo Client [![Join the chat at https://gitter.im/livepeer/dev](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/livepeer/dev)
+# GraphQL SDK Apollo Client
+
+[![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX)
 
 A project that integrates with [@livepeer/graphql-sdk](./@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).
 
-More docs to come soon! For now, take a look at the `scripts` section of [`package.json`](https://github.com/livepeer/livepeerjs/blob/master/%40livepeer/apollo/package.json#L14)
+More docs to come soon! For now, take a look at the `scripts` section of [`package.json`](https://github.com/livepeer/livepeerjs/blob/master/packages/apollo/package.json#L14)

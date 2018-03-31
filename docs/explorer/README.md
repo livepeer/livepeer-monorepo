@@ -1,4 +1,6 @@
-# Livepeer Protocol Explorer <br/>[![Join the chat at https://gitter.im/livepeer/dev](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/livepeer/dev)
+# Livepeer Protocol Explorer
+
+[![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX)
 
 A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org)
 
@@ -29,7 +31,7 @@ yarn start
 
 Be sure to watch the output and follow the instructions on the command line.
 
-Once the app is available (most likely at `http://localhost:3000`), you are free to edit files in the [`src`](https://github.com/livepeer/livepeerjs/tree/master/%40livepeer/explorer/src) directory. The app will rebuild and update as you make changes.
+Once the app is available (most likely at `http://localhost:3000`), you are free to edit files in the [`src`](https://github.com/livepeer/livepeerjs/tree/master/packages/explorer/src) directory. The app will rebuild and update as you make changes.
 
 This project is bootstrapped with [create-react-app](https://github.com/facebook/create-react-app), so all of their documentation applies here as well.
 
@@ -77,7 +79,7 @@ You can build this app as a website or as a desktop app (via `electron`).
 - **Website:** `yarn build:web` (outputs to `./build`)
 - **Desktop:** `yarn build:desktop` (outputs to `./dist`)
 
-**Note:** Only the OSX desktop build has been configured. If you would like to add a configuration for linux or windows, please modify the config accordingly in [package.json](https://github.com/livepeer/livepeerjs/blob/master/%40livepeer/explorer/package.json#L45), and [file a PR](https://github.com/livepeer/livepeerjs/pulls) 🍻
+**Note:** Only the OSX desktop build has been configured. If you would like to add a configuration for linux or windows, please modify the config accordingly in [package.json](https://github.com/livepeer/livepeerjs/blob/master/packages/explorer/package.json#L45), and [file a PR](https://github.com/livepeer/livepeerjs/pulls) 🍻
 ### Customizing A Build
 
 In either case, here are some environment variables you can use to customize the build:
