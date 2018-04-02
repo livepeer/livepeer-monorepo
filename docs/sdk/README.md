@@ -1,4 +1,6 @@
-# LivepeerJS SDK <br />[![Join the chat at https://gitter.im/livepeer/dev](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/livepeer/dev)
+# LivepeerJS SDK
+
+[![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX)
 
 A module for interacting with Livepeer's smart contracts. The SDK is a core dependency of most LivepeerJS packages.
 

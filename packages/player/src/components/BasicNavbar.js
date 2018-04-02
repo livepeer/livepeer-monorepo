@@ -28,9 +28,9 @@ const BasicNavbar = ({ onSearch }) => (
           <GithubIcon color="#fff" size={16} />
           <span>&nbsp;Code</span>
         </NavSocialLink>
-        <NavSocialLink href="https://gitter.im/livepeer/dev" target="_blank">
+        <NavSocialLink href="https://discord.gg/7wRSUGX" target="_blank">
           <MessageCircleIcon color="#fff" size={16} />
-          <span>&nbsp;Gitter</span>
+          <span>&nbsp;Discord</span>
         </NavSocialLink>
         <NavSocialLink href="https://twitter.com/LivepeerOrg" target="_blank">
           <TwitterIcon color="#fff" size={16} />
