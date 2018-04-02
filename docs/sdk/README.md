@@ -1,6 +1,6 @@
 # LivepeerJS SDK
 
-[![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX)
+[![npm](https://img.shields.io/npm/v/@livepeer/sdk.svg)](https://www.npmjs.com/package/@livepeer/sdk) [![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX)
 
 A module for interacting with Livepeer's smart contracts. The SDK is a core dependency of most LivepeerJS packages.
 
