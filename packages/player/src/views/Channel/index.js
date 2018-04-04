@@ -296,7 +296,7 @@ class Channel extends Component {
                   width: '100%',
                 }}
               >
-                <VideoIcon color="#03a678" size={32} />
+                <VideoIcon color="#283845" size={32} />
                 <p
                   style={{
                     width: '75%',
@@ -312,11 +312,11 @@ class Channel extends Component {
                 <p style={{ margin: 0 }}>
                   <button
                     style={{
-                      background: '#03a678',
+                      background: '#283845',
                       color: '#fff',
                       outline: 0,
                       border: 'none',
-                      borderRadius: 4,
+                      borderRadius: 2,
                       margin: 0,
                       padding: '8px 12px',
                       fontSize: 12,

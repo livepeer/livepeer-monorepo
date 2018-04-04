@@ -49,7 +49,7 @@ const Nav = styled.nav`
   height: 64px;
   margin-bottom: 24px;
   padding: 16px 24px;
-  background: #03a678;
+  background: #000;
   & *::placeholder {
     color: #fff;
   }
@@ -110,9 +110,10 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
       onKeyDown={e => {
         const { value } = e.target
         if (e.keyCode !== 13) return
-        const val = 'string' === typeof value && value.startsWith('0x')
-          ? value
-          : Number(value)
+        const val =
+          'string' === typeof value && value.startsWith('0x')
+            ? value
+            : Number(value)
         if (Number.isNaN(val)) return
         onSearch(val)
         e.target.value = ''
