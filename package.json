@@ -2,9 +2,7 @@
   "private": true,
   "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeerjs.git"
@@ -13,16 +11,36 @@
   "homepage": "https://livepeer.org",
   "scripts": {
     "clean": "npx lerna clean --yes && rm -rf node_modules",
-    "docs": "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
-    "prepare": "npx lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
+    "cm": "npx git-cz",
+    "commitmsg": "npx commitlint -e $GIT_PARAMS",
+    "docs":
+      "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
+    "precommit": "npx pretty-quick --staged",
+    "prepare":
+      "npx lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
     "release": "npx lerna publish --conventional-commits --yes",
-    "release:dry-run": "npx lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
-    "release:alpha": "npx lerna publish --cd-version prerelease --conventional-commits --yes",
-    "test": "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player",
+    "release:dry-run":
+      "npx lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
+    "release:alpha":
+      "npx lerna publish --cd-version prerelease --conventional-commits --yes",
+    "test":
+      "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player",
     "updated": "npx lerna updated --json"
   },
   "devDependencies": {
+    "@commitlint/cli": "^6.1.3",
+    "@commitlint/config-conventional": "^6.1.3",
+    "commitizen": "^2.9.6",
+    "cz-conventional-changelog": "^2.1.0",
     "flow-bin": "^0.69.0",
-    "lerna": "^2.9.0"
+    "husky": "^0.14.3",
+    "lerna": "^2.9.0",
+    "prettier": "^1.11.1",
+    "pretty-quick": "^1.4.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
