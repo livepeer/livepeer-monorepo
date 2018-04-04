@@ -50,7 +50,7 @@ const Landing = ({ query, viewAccount, ...props }) => (
     <h3 style={{ letterSpacing: 8 }}>Protocol Explorer</h3>
     <br />
     <br />
-    <p>Enter an ETH account address to view its Livepeer info</p>
+    <p>View a Livepeer account by entering an ETH address</p>
     <div style={{ maxWidth: '100%', width: 480 }}>
       <SearchBar
         id="account"
