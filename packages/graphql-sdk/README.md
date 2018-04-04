@@ -1,6 +1,6 @@
 # GraphQL SDK
 
-[![npm](https://img.shields.io/npm/v/@livepeer/graphql-sdk.svg)](https://www.npmjs.com/package/@livepeer/graphql-sdk) [![Discord](https://img.shields.io/discord/423160867534929930.svg)](https://discord.gg/7wRSUGX)
+[![npm](https://img.shields.io/npm/v/@livepeer/graphql-sdk.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/graphql-sdk) [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
 
 A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
 
@@ -8,9 +8,9 @@ A GraphQL API that can be used to simplify protocol interaction. It can be used 
 
 ## Table of Contents
 
--   [Installation](#installation)
-<!-- -   [Usage](#usage) -->
-<!-- -   [API](#api) -->
+* [Installation](#installation)
+  <!-- -   [Usage](#usage) -->
+  <!-- -   [API](#api) -->
 
 <!-- hide-on-docup-stop -->
 
