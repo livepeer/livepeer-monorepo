@@ -8,10 +8,11 @@ import store, { history } from './store'
 import Root from './containers/Root'
 import App from './containers/App'
 // import registerServiceWorker from './registerServiceWorker'
+const isProd = process.env.NODE_ENV === 'production'
+const isDev = process.env.NODE_ENV === 'development'
+const hot = module.hot && isDev
+const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
-  // Should use hot module reloading if available
-  const hot = module.hot && process.env.NODE_ENV === 'development'
-
   // Dump global styles
   injectGlobal`
     * { box-sizing: border-box }
@@ -38,6 +39,21 @@ import App from './containers/App'
 
   // Update the UI
   update()
+
+  // Analytics
+  if (isProd && trackingId) {
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.async = true
+    script.onload = () => {
+      const dataLayer = window.dataLayer || []
+      const gtag = (window.gtag = dataLayer.push.bind(dataLayer))
+      gtag('js', new Date())
+      gtag('config', trackingId)
+    }
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`
+    document.getElementsByTagName('head')[0].appendChild(script)
+  }
 
   // Hot module reloading
   if (hot) module.hot.accept(update)

@@ -1,5 +1,5 @@
-{"_id":"s3.amazonaws.com/media.livepeer.org/404.html","c":"1bdf233c261a7409aca94a5e8bd72c44","h":"6221d15a","r":"68227629"}
-{"_id":"s3.amazonaws.com/media.livepeer.org/asset-manifest.json","c":"b3b4ea79e49e1f564567310d7c5d6c37","h":"5d3165af","r":"68227629"}
+{"_id":"s3.amazonaws.com/media.livepeer.org/404.html","c":"7626a216410264d3940194d0ad86c51f","h":"6221d15a","r":"68227629"}
+{"_id":"s3.amazonaws.com/media.livepeer.org/asset-manifest.json","c":"ccb4152e4d86bd3a74f8cee1198398b1","h":"5d3165af","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/favicon-114-precomposed.png","c":"470c8eb71154f7e0e8996c140e45e8a5","h":"d6f64e","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/favicon-120-precomposed.png","c":"7a9ee01b99eeb46c14d0ece388eebbff","h":"d6f64e","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/favicon-144-precomposed.png","c":"a1be0fd8df91e9a64be09c2d2789050e","h":"d6f64e","r":"68227629"}
@@ -16,12 +16,14 @@
 {"_id":"s3.amazonaws.com/media.livepeer.org/favicon-76.png","c":"108dfa746e5a398ce1256dcc5d348505","h":"d6f64e","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/favicon-96.png","c":"bfc4804624c1562a75e98e9e88914c1c","h":"d6f64e","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/favicon.ico","c":"bbf366bc44e2a02425bfb0d08c3ee441","h":"389badf7","r":"68227629"}
-{"_id":"s3.amazonaws.com/media.livepeer.org/index.html","c":"1bdf233c261a7409aca94a5e8bd72c44","h":"6221d15a","r":"68227629"}
+{"_id":"s3.amazonaws.com/media.livepeer.org/index.html","c":"7626a216410264d3940194d0ad86c51f","h":"6221d15a","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/manifest.json","c":"64ed0192ef3367fadecaf554b57d67d2","h":"5d3165af","r":"68227629"}
-{"_id":"s3.amazonaws.com/media.livepeer.org/service-worker.js","c":"512a6fd063411e2388c9441c29e312a3","h":"126dcb9a","r":"68227629"}
+{"_id":"s3.amazonaws.com/media.livepeer.org/service-worker.js","c":"8d0c9df168153eb5ff18ab20c353ac9b","h":"126dcb9a","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/static/js/main.65658f7b.js","c":"1db98478c655dc61862a691e1b79b991","h":"126dcb9a","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/static/js/main.65658f7b.js.map","c":"e5d32ada5955da698e95475f6c7d9863","h":"5d3165af","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/static/js/main.6a32349d.js","c":"8b725d79f23837745c2cc79d6702d67d","h":"126dcb9a","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/static/js/main.6a32349d.js.map","c":"b65fd4319d55e584043a91fec0491d4a","h":"5d3165af","r":"68227629"}
+{"_id":"s3.amazonaws.com/media.livepeer.org/static/js/main.d0cd77d2.js","c":"44f288ddf1cc48ce32a718e158567de0","h":"126dcb9a","r":"68227629"}
+{"_id":"s3.amazonaws.com/media.livepeer.org/static/js/main.d0cd77d2.js.map","c":"b5976981be8238cb5bc70296211a86a8","h":"5d3165af","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/static/media/index.8485c181.mjs","c":"8485c18125db1b280f53931f441b8dac","h":"126dcb9a","r":"68227629"}
 {"_id":"s3.amazonaws.com/media.livepeer.org/wordmark.svg","c":"5ec458333ae3fb0f764375ec1173d46b","h":"f3a57b36","r":"68227629"}
