@@ -15,11 +15,14 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
   // Dump global styles
   injectGlobal`
-    * { box-sizing: border-box }
+    * {
+      box-sizing: border-box;
+      font-weight: 300;
+    }
     html, body {
       margin: 0;
-      font-family: helvetica, arial, sans-serif;
-      background: #f9f9f9;
+      font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+      background: #fafafa;
     }
     a { color: #03a678; }
   `

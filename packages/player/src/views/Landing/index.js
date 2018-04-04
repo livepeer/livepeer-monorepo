@@ -25,6 +25,7 @@ const Landing = ({ query, changeChannel }) => (
   <Container>
     <Navbar />
     <img src="/wordmark.svg" width="240" alt="The glorious Livepeer wordmark" />
+    <h3 style={{ letterSpacing: 8 }}>Media Player</h3>
     <br />
     <br />
     <p>Find a channel by entering a broadcaster's ETH address</p>
@@ -65,7 +66,7 @@ const Container = styled.div`
   height: 100vh;
   padding: 0 32px;
   padding-bottom: 33.33vh;
-  background: #03a678;
+  background: #000;
   color: #fff;
 `
 
