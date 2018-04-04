@@ -11,7 +11,7 @@
   "homepage": "https://livepeer.org",
   "scripts": {
     "clean": "npx lerna clean --yes && rm -rf node_modules",
-    "cm": "npx git-cz",
+    "cz": "npx git-cz",
     "commitmsg": "npx commitlint -e $GIT_PARAMS",
     "docs":
       "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
