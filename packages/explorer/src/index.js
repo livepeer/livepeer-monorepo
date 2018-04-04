@@ -8,10 +8,11 @@ import store, { history } from './store'
 import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
+const isProd = process.env.NODE_ENV === 'production'
+const isDev = process.env.NODE_ENV === 'development'
+const hot = module.hot && isDev
+const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
-  // should use hot module reloading if available
-  const hot = module.hot && process.env.NODE_ENV === 'development'
-
   // dump global styles
   injectGlobal`
     @font-face {
@@ -60,6 +61,21 @@ import { unregister } from './registerServiceWorker'
     )
 
   update()
+
+  // Analytics
+  if (isProd && trackingId) {
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.async = true
+    script.onload = () => {
+      const dataLayer = window.dataLayer || []
+      const gtag = (window.gtag = dataLayer.push.bind(dataLayer))
+      gtag('js', new Date())
+      gtag('config', trackingId)
+    }
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`
+    document.getElementsByTagName('head')[0].appendChild(script)
+  }
 
   if (hot) module.hot.accept(update)
 })()
