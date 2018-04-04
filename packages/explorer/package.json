@@ -37,16 +37,20 @@
   },
   "scripts": {
     "build": "npm run -s build:web",
-    "build:desktop": "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:electron",
-    "build:electron": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 npx build",
+    "build:desktop":
+      "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:electron",
+    "build:electron":
+      "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 npx build",
     "build:web": "npx react-scripts build",
-    "copy-docs": "rm -rf ../../docs/explorer && mkdir ../../docs/explorer && cp docs/index.html ../../docs/explorer && cp README.md ../../docs/explorer",
+    "copy-docs":
+      "rm -rf ../../docs/explorer && mkdir ../../docs/explorer && cp docs/index.html ../../docs/explorer && cp README.md ../../docs/explorer",
     "coverage": "npx react-scripts test --env=jsdom --coverage",
-    "deploy": "npx gh-pages -d build",
+    "deploy": "npx poosh",
     "eject": "npx react-scripts eject",
-    "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
-    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
-    "predeploy": "PUBLIC_URL=https://livepeer.github.io/livepeerjs/ npm run build",
+    "postbuild":
+      "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
+    "prebuild":
+      "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
     "serve": "npx serve -s build",
     "start": "npx react-scripts start",
     "test": "npx react-scripts test --env=jsdom"
@@ -67,6 +71,8 @@
     "electron-builder": "20.4.1",
     "flow-bin": "0.67.1",
     "gh-pages": "^1.1.0",
+    "poosh-cli": "^2.0.0",
+    "poosh-plugin-s3": "^2.0.0",
     "serve": "6.5.3",
     "uglify-es": "^3.2.0"
   }
