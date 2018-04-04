@@ -30,16 +30,19 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "copy-docs": "echo 'No copy-docs script specified'",
-    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "predeploy": "PUBLIC_URL=https://livepeer.github.io/livepeerjs/ npm run build",
-    "deploy": "npx gh-pages -d build",
-    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
-    "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
-    "serve": "npx serve -s build"
+    "deploy": "npx poosh",
+    "prebuild":
+      "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
+    "postbuild":
+      "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
+    "serve": "npx serve -s build",
+    "test": "react-scripts test --env=jsdom"
   },
   "devDependencies": {
     "gh-pages": "^1.1.0",
+    "poosh-cli": "^2.0.0",
+    "poosh-plugin-s3": "^2.0.0",
     "serve": "6.5.3",
     "uglify-es": "^3.2.0"
   }

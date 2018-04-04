@@ -1,0 +1,10 @@
+{
+  plugins: ["s3"],
+  baseDir: "./build",
+  remote: "s3-us-east-1.amazonaws.com/media.livepeer.org",
+  "each": [
+    {
+      match: ["**/*", "!.DS_Store"]
+    }
+  ]
+}
