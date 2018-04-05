@@ -67,14 +67,16 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     const script = document.createElement('script')
     script.type = 'text/javascript'
     script.async = true
+    document.body.appendChild(script)
     script.onload = () => {
-      const dataLayer = window.dataLayer || []
-      const gtag = (window.gtag = dataLayer.push.bind(dataLayer))
-      gtag('js', new Date())
-      gtag('config', trackingId)
+      window.dataLayer = window.dataLayer || []
+      window.gtag = function() {
+        window.dataLayer.push(arguments)
+      }
+      window.gtag('js', new Date())
+      window.gtag('config', trackingId)
     }
     script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`
-    document.getElementsByTagName('head')[0].appendChild(script)
   }
 
   if (hot) module.hot.accept(update)
