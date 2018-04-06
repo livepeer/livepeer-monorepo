@@ -1,5 +1,5 @@
 import test from 'ava'
-import { graphql } from 'graphql'
+import { graphql, introspectionQuery } from 'graphql'
 import { EMPTY_ADDRESS } from '@livepeer/sdk'
 // import { schema } from './index'
 import schema from './schema'
@@ -17,6 +17,12 @@ import livepeer from './mock-sdk'
 
 // clears console
 // console.log('\x1Bc')
+
+test.only(async t => {
+  const res = await graphql(schema, introspectionQuery, null, { livepeer }, {})
+  console.log(res)
+  t.pass()
+})
 
 /**
  * Account
