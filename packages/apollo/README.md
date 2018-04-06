@@ -1,6 +1,7 @@
 # GraphQL SDK Apollo Client
 
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
+[![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/apollo.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/apollo)
 
 A project that integrates with [@livepeer/graphql-sdk](./@livepeer/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).
 

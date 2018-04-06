@@ -1,6 +1,8 @@
 # LPX
 
-[![npm](https://img.shields.io/npm/v/@livepeer/lpx.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/lpx) [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
+[![npm](https://img.shields.io/npm/v/@livepeer/lpx.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/lpx)
+[![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
+[![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/lpx.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/lpx)
 
 A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
 

@@ -1,6 +1,7 @@
 # Livepeer Protocol Explorer
 
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
+[![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/explorer.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/explorer)
 
 A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org)
 

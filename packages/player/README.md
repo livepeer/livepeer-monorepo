@@ -1,6 +1,7 @@
 # Livepeer Video Player
 
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
+[![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/player.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/player)
 
 A video player for the web. Lets you see what's live streaming on the network. Our hosted media player ([media.livepeer.org](https://media.livepeer.org)) runs off of this project.
 
