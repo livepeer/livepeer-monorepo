@@ -41,7 +41,7 @@
     "graphql-markdown": "^3.2.0"
   },
   "graphdoc": {
-    "baseUrl": "./livepeerjs/graphql-sdk",
+    "baseUrl": "./",
     "logo":
       "<a href=\"https://livepeer.github.io/livepeerjs/\" rel=\"nofollow\" style=\"\n    padding: 29px;\n    box-sizing: border-box;\n    display: block;\n\"><img src=\"https://github.com/livepeer/livepeerjs/raw/master/livepeer_js.png\" alt=\"LivepeerJS\" style=\"max-width:100%;image-rendering: -webkit-optimize-contrast;\"></a>",
     "output": "./docs",
