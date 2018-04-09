@@ -6,34 +6,39 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:8.11
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
+    environment:
+      CC_TEST_REPORTER_ID: 4ae7f05fed0be51630372d86873a3dbb473b555cc7de00dcf81255ef9649f025
     working_directory: ~/repo
 
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "yarn.lock" }}
-          # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
-      - run: yarn install
-
+      - run:
+          name: Install dependencies
+          command: |
+            yarn install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-        
-      # run tests!
-      - run: yarn test
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: Run tests
+          command: |
+            yarn test
+      - run:
+          name: Report coverage
+          command: |
+            yarn coverage
+            ./cc-test-reporter after-build
+
 
 

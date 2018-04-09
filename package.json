@@ -14,7 +14,7 @@
     "cz": "npx git-cz",
     "commitmsg": "npx commitlint -e $GIT_PARAMS",
     "coverage":
-      "lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
+      "npx lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && npx lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
     "docs":
       "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
     "precommit": "npx pretty-quick --staged",
