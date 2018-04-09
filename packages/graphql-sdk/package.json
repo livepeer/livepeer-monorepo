@@ -6,20 +6,17 @@
   "module": "lib/index.js",
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
-    "build-main":
-      "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
-    "build-module":
-      "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
+    "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "postbuild": "node generate-schema.js",
-    "copy-docs":
-      "rm -rf ../../docs/graphql-sdk && mkdir ../../docs/graphql-sdk && cp -r docs/* ../../docs/graphql-sdk",
-    "docs":
-      "npx graphdoc --force && echo 'main .title { background: #000; }' >> ./docs/styles/graphdoc.css && npx graphql-markdown ./schema.json --update-file README.md --heading-level 2",
+    "copy-docs": "rm -rf ../../docs/graphql-sdk && mkdir ../../docs/graphql-sdk && cp -r docs/* ../../docs/graphql-sdk",
+    "docs": "npx graphdoc --force && echo 'main .title { background: #000; }' >> ./docs/styles/graphdoc.css && npx graphql-markdown ./schema.json --update-file README.md --heading-level 2",
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepack": "npm -s run build",
     "test": "npx nyc ava",
-    "coverage": "npx nyc report --reporter=lcov"
+    "coverage": "npx nyc report --reporter=lcov",
+    "lcov-badge": "npx lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
   "dependencies": {
     "@livepeer/sdk": "^1.0.0-alpha.4",
@@ -40,17 +37,20 @@
     "express": "4.16.3",
     "express-graphql": "0.6.12",
     "graphql-markdown": "^3.2.0",
+    "lcov-badge": "^1.0.4",
     "nyc": "^11.6.0"
   },
   "graphdoc": {
     "baseUrl": "./",
-    "logo":
-      "<a href=\"https://livepeer.github.io/livepeerjs/\" rel=\"nofollow\" style=\"\n    padding: 29px;\n    box-sizing: border-box;\n    display: block;\n\"><img src=\"https://github.com/livepeer/livepeerjs/raw/master/livepeer_js.png\" alt=\"LivepeerJS\" style=\"max-width:100%;image-rendering: -webkit-optimize-contrast;\"></a>",
+    "logo": "<a href=\"https://livepeer.github.io/livepeerjs/\" rel=\"nofollow\" style=\"\n    padding: 29px;\n    box-sizing: border-box;\n    display: block;\n\"><img src=\"https://github.com/livepeer/livepeerjs/raw/master/livepeer_js.png\" alt=\"LivepeerJS\" style=\"max-width:100%;image-rendering: -webkit-optimize-contrast;\"></a>",
     "output": "./docs",
     "schemaFile": "./schema.json"
   },
   "ava": {
-    "require": ["babel-register", "babel-polyfill"],
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
     "babel": "inherit"
   },
   "homepage": "https://livepeer.org",
