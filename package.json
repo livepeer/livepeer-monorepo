@@ -13,6 +13,8 @@
     "clean": "npx lerna clean --yes && rm -rf node_modules",
     "cz": "npx git-cz",
     "commitmsg": "npx commitlint -e $GIT_PARAMS",
+    "coverage":
+      "lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
     "docs":
       "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
     "precommit": "npx pretty-quick --staged",
@@ -34,6 +36,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "flow-bin": "^0.69.0",
     "husky": "^0.14.3",
+    "lcov-result-merger": "^2.0.0",
     "lerna": "^2.9.0",
     "prettier": "^1.11.1",
     "pretty-quick": "^1.4.1"

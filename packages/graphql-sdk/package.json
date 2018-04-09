@@ -18,7 +18,8 @@
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepack": "npm -s run build",
-    "test": "npx ava"
+    "test": "npx nyc ava",
+    "coverage": "npx nyc report --reporter=lcov"
   },
   "dependencies": {
     "@livepeer/sdk": "^1.0.0-alpha.4",
@@ -38,7 +39,8 @@
     "babel-register": "^6.26.0",
     "express": "4.16.3",
     "express-graphql": "0.6.12",
-    "graphql-markdown": "^3.2.0"
+    "graphql-markdown": "^3.2.0",
+    "nyc": "^11.6.0"
   },
   "graphdoc": {
     "baseUrl": "./",
