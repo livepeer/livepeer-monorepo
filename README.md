@@ -6,8 +6,9 @@
 
 ---
 
-[![CircleCI](https://img.shields.io/circleci/project/github/livepeer/livepeerjs.svg?style=flat-square)](https://circleci.com/gh/livepeer/livepeerjs/)
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
+[![CircleCI](https://img.shields.io/circleci/project/github/livepeer/livepeerjs.svg?style=flat-square)](https://circleci.com/gh/livepeer/livepeerjs/)
+[![Code Climate](https://img.shields.io/codeclimate/coverage/livepeer/livepeerjs.svg?style=flat-square)](https://codeclimate.com/github/livepeer/livepeerjs)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/blob/master/LICENSE)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)](http://commitizen.github.io/cz-cli/)

@@ -7,5 +7,6 @@ package-lock.json
 **/*/dist
 **/*/bin
 **/*/build
+**/*/lcov-report
 yarn-error.log
 .env*.local
