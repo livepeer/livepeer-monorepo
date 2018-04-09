@@ -7,8 +7,6 @@ jobs:
   build:
     docker:
       - image: circleci/node:8.11
-    environment:
-      CC_TEST_REPORTER_ID: 4ae7f05fed0be51630372d86873a3dbb473b555cc7de00dcf81255ef9649f025
     working_directory: ~/repo
 
     steps:
