@@ -25,21 +25,21 @@ First off, here are a few important notes:
 
 LivepeerJS contributions will generally fall into one of the following categories:
 
-#### Updating documentation
+#### 📖 Updating documentation
 
 This could be as simple as adding some extra notes to a README.md file, or as complex as creating some new npm scripts to generate docs. Either way, we'd really really love your help with this 💖.
 
-#### Getting involved in issues
+#### ⚠️ Getting involved in issues
 
 Many issues are open discussions. Feel free to add your own concerns, ideas, and workarounds. If you don't see what you're looking for, you can always open a new issue.
 
-#### Fixing a bugs, adding feature/enhancements, or improving code quality
+#### 🐞/💻 Fixing a bugs, adding feature/enhancements, or improving code quality
 
 If you're into this whole coding thing, maybe try picking up [a good first issue](https://github.com/livepeer/livepeerjs/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If picking up issues isn't your thing, no worries. You can always add more tests to improve coverage or refactor code to increase maintainability. Check out Code Climate for some insight into [code quality & coverage](https://codeclimate.com/github/livepeer/livepeerjs/issues) on a file-by-file basis.
 
 > Note: Bonus points if you can delete code instead of adding it! 👾
 
-#### Improving scripts and tooling
+#### 🛠️ Improving scripts and tooling
 
 We want to make sure LivepeerJS contributors have a pleasant developer experience (DX). The tools we use to code continually change and improve. If you see ways to reduce the amount of repetition or stress when it comes to coding in this project, feel free to create an issue and/or PR to discuss. Let's continue to improve this codebase for everyone.
 
