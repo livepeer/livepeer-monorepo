@@ -25,6 +25,7 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 * [Requirements](#requirements)
 * [Getting Started](#getting-started)
+* [Contributing](#contributing)
 * [Packages](#packages)
 * [Resources](#resources)
 
@@ -47,7 +48,15 @@ cd livepeerjs
 yarn
 ```
 
-For next steps, take a look at documentation for the individual package(s) you want to run and/or develop. Just follow the links in the next section.
+For next steps, take a look at documentation for the individual package(s) you want to run and/or develop.
+
+## Contributing
+
+Interested in adding your name to the [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors)? Awesome! Take a few minutes to look over the guide:
+
+### [Contributing to LivepeerJS &raquo;](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md)
+
+We happily await your pull requests and/or involvement in our [issues page](https://github.com/livepeer/livepeerjs/issues) 🎉🎉🎉
 
 ## Packages
 
