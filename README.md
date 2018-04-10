@@ -26,6 +26,7 @@ This monorepo contains JavaScript tools and applications that interact with Live
 * [Requirements](#requirements)
 * [Getting Started](#getting-started)
 * [Packages](#packages)
+* [Contributing](#contributing)
 * [Resources](#resources)
 
 <!-- hide-on-docup-stop -->
@@ -67,6 +68,12 @@ For next steps, take a look at documentation for the individual package(s) you w
 | [`@livepeer/apollo`](https://github.com/livepeer/livepeerjs/tree/master/packages/apollo)     | Integrates with [@livepeer/graphql-sdk](https://github.com/livepeer/livepeerjs/tree/master/packages/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).                                                               |
 | [`@livepeer/explorer`](https://github.com/livepeer/livepeerjs/tree/master/packages/explorer) | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org) |
 | [`@livepeer/player`](https://github.com/livepeer/livepeerjs/tree/master/packages/player)     | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)                                       |
+
+## Contributing
+
+Interested in adding your name to the [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors)? Awesome! Take a few minutes to look over the [Contributing to LivepeerJS](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md) guide.
+
+We happily await your pull requests and/or involvement in our [issues page](https://github.com/livepeer/livepeerjs/issues) 🎉🎉🎉
 
 ## Resources
 
