@@ -41,7 +41,7 @@ If you're into this whole coding thing, maybe try picking up [a good first issue
 
 #### Improving scripts and tooling
 
-We want to make sure LivepeerJS contributors developer experience (DX). The tools we use to code continually change and improve. If you see a script that can be simplified or a tool that can be used or removed, feel free to create an issue and/or PR to discuss.
+We want to make sure LivepeerJS contributors have a pleasant developer experience (DX). The tools we use to code continually change and improve. If you see ways to reduce the amount of repetition or stress when it comes to coding in this project, feel free to create an issue and/or PR to discuss. Let's continue to improve this codebase for everyone.
 
 > Note: These changes generally affect multiple packages, so you'll probably want to be familiar with each project's layout and conventions. Because of this additional cognitive load, you may not want to begin here for you first contribution.
 
@@ -53,12 +53,12 @@ Nothing actually! We expect a rich mixture of commits, conversation, support, an
 
 #### How is a contribution reviewed and accepted?
 
-**If you are opening an issue**, please follow the [ISSUE_TEMPLATE](https://raw.githubusercontent.com/livepeer/livepeerjs/master/ISSUE_TEMPLATE.md) format before submitting. And please *keep your issue simple, clear, and to-the-point*. Most issues do not require many paragraphs of text. In fact, if you write too much, it can become difficult to understand what you are actually trying to communicate.
+- If you are opening an issue, please follow the [ISSUE_TEMPLATE](https://raw.githubusercontent.com/livepeer/livepeerjs/master/ISSUE_TEMPLATE.md) format before submitting. And please *keep your issue simple, clear, and to-the-point*. Most issues do not require many paragraphs of text. In fact, if you write too much, it can become difficult to understand what you are actually trying to communicate.
 
-**If you are submitting a pull request**...
- - Write tests to increase code coverage
- - Tag the issue(s) your PR is closing or relating to
- - Make sure your PR is up-to-date with `origin/master` (rebase please 🙏)
+- If you are submitting a pull request
+   - Write tests to increase code coverage
+   - Tag the issue(s) your PR is closing or relating to
+   - Make sure your PR is up-to-date with `origin/master` (rebase please 🙏)
 
 Code reviews happen each week, so a PR that follows these guidelines will probably get merged quickly if there aren't any major problems with the implementation (we try to watch out for code duplication/complexity). CoacoaPods has [some really useful tips](https://github.com/CocoaPods/CocoaPods/wiki/Communication-&-Design-Rules#design-rules) when it comes to coding. I highly recommend taking a look 🤓.
 
