@@ -1,6 +1,6 @@
 # LPX
 
-[![home](https://img.shields.io/badge/%E2%97%80-home-lightgrey.svg?style=flat-square)](https://github.com/livepeer/livepeerjs)
+[![home](https://img.shields.io/badge/%E2%97%80-home-lightgrey.svg?style=flat-square)](https://github.com/livepeer/livepeerjs#readme)
 [![npm](https://img.shields.io/npm/v/@livepeer/lpx.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/lpx)
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
 [![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/lpx.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/lpx)
