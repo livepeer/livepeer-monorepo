@@ -52,7 +52,9 @@ For next steps, take a look at documentation for the individual package(s) you w
 
 ## Contributing
 
-Interested in adding your name to the [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors)? Awesome! Take a few minutes to look over the [Contributing to LivepeerJS](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md) guide.
+Interested in adding your name to the [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors)? Awesome! Take a few minutes to look over the guide:
+
+### [Contributing to LivepeerJS &raquo;](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md)
 
 We happily await your pull requests and/or involvement in our [issues page](https://github.com/livepeer/livepeerjs/issues) 🎉🎉🎉
 
