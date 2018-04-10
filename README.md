@@ -48,7 +48,7 @@ cd livepeerjs
 yarn
 ```
 
-For next steps, take a look at documentation for the individual package(s) you want to run and/or develop. Just follow the links in the next section.
+For next steps, take a look at documentation for the individual package(s) you want to run and/or develop.
 
 ## Contributing
 
