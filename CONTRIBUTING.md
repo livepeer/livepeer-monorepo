@@ -35,7 +35,7 @@ Many issues are open discussions. Feel free to add your own concerns, ideas, and
 
 #### 🐞 Fixing a bugs, 🕶️ adding feature/enhancements, or 👌 improving code quality
 
-If you're into this whole coding thing, maybe try picking up [a good first issue](https://github.com/livepeer/livepeerjs/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If picking up issues isn't your thing, no worries. You can always add more tests to improve coverage or refactor code to increase maintainability. Check out Code Climate for some insight into [code quality & coverage](https://codeclimate.com/github/livepeer/livepeerjs/issues) on a file-by-file basis.
+If you're into this whole coding thing, maybe try picking up [a good first issue](https://github.com/livepeer/livepeerjs/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If picking up issues isn't your thing, no worries. You can always add more tests to improve coverage or refactor code to increase maintainability. Check out Code Climate for some insight into [code quality & coverage](https://codeclimate.com/github/livepeer/livepeerjs/issues) on a file-by-file basis. Whatever you do, be sure to check out the section about [useful tools](#useful-tools).
 
 > Note: Bonus points if you can delete code instead of adding it! 👾
 
@@ -45,13 +45,13 @@ We want to make sure LivepeerJS contributors have a pleasant developer experienc
 
 > Note: These changes generally affect multiple packages, so you'll probably want to be familiar with each project's layout and conventions. Because of this additional cognitive load, you may not want to begin here for you first contribution.
 
-### FAQ
+## FAQ
 
-#### How much do I need to know about peer-to-peer/livestreaming/dApps/GraphQL/React/etc to be an effective contributor?
+### How much do I need to know about peer-to-peer/livestreaming/dApps/GraphQL/React/etc to be an effective contributor?
 
 Nothing actually! We expect a rich mixture of commits, conversation, support, and review. Adding documentation or opening issues are incredibly useful ways to get involved without coding at all. If you do want to contribute code, however, it'd be good to have some proficiency with JavaScript.
 
-#### How is a contribution reviewed and accepted?
+### How is a contribution reviewed and accepted?
 
 - If you are opening an issue, please follow the [ISSUE_TEMPLATE](https://raw.githubusercontent.com/livepeer/livepeerjs/master/ISSUE_TEMPLATE.md) format before submitting. And please *keep your issue simple, clear, and to-the-point*. Most issues do not require many paragraphs of text. In fact, if you write too much, it can become difficult to understand what you are actually trying to communicate.
 
@@ -62,19 +62,19 @@ Nothing actually! We expect a rich mixture of commits, conversation, support, an
 
 Code reviews happen each week, so a PR that follows these guidelines will probably get merged quickly if there aren't any major problems with the implementation (we try to watch out for code duplication/complexity). CoacoaPods has [some really useful tips](https://github.com/CocoaPods/CocoaPods/wiki/Communication-&-Design-Rules#design-rules) when it comes to coding. I highly recommend taking a look 🤓.
 
-#### When is it appropriate to follow up?
+### When is it appropriate to follow up?
 
 You can expect a response from a maintainer within 7 days. If you haven’t heard anything by then, feel free to ping the thread.
 
-#### How much time is spent on this project?
+### How much time is spent on this project?
 
 Currently, there is a single full-time maintainer dedicated to this project and all of its public/private packages.
 
-#### What types of contributions are accepted?
+### What types of contributions are accepted?
 
 All of the types outlined in [How You Can Help](#how-you-can-help).
 
-#### What happens if my suggestion or PR is not accepted?
+### What happens if my suggestion or PR is not accepted?
 
 While it's unlikely, sometimes there's no acceptable way to implement a suggestion or merge a PR. If that happens, maintainer will still...
 
@@ -85,7 +85,7 @@ While it's unlikely, sometimes there's no acceptable way to implement a suggesti
 
 But do not despair! In many cases, this can still be a great opportunity to follow-up with an improved suggestion or pull request. Worst case, this repo is open source, so forking is always an option 😎.
 
-### Useful Tools
+## Useful Tools
 
 Although not required, you may want to download/install some or all of the following tools, before jumping into development:
 
