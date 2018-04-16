@@ -3,6 +3,7 @@ import * as React from 'react'
 import { matchPath } from 'react-router-dom'
 import BN from 'bn.js'
 import { Cpu as CpuIcon } from 'react-feather'
+import Joyride from 'react-joyride'
 import {
   Avatar,
   Banner,
@@ -45,6 +46,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const isBonded =
     status === 'Pending' || status === 'Bonded' || status === 'Unbonding'
   const searchParams = new URLSearchParams(history.location.search)
+  const TOUR_ENABLED = !!searchParams.get('tour')
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
   const asc = order === 'asc'
@@ -56,7 +58,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       <BasicNavbar onSearch={x => history.push(`/accounts/${x}`)} />
       <Banner height="128px">
         <PageHeading>
-          <CpuIcon color="#fff" size={32} />&nbsp;Transcoders
+          <CpuIcon size={32} />&nbsp;Transcoders
         </PageHeading>
       </Banner>
       <Content>
@@ -151,6 +153,57 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           )
         })}
       </Content>
+      {TOUR_ENABLED && (
+        <Joyride
+          callback={({ step }) => {
+            if (step && 'sortingOptions' === step.name) {
+              window.scrollTo(0, 0)
+            }
+          }}
+          debug={false}
+          locale={{
+            back: <span>Back</span>,
+            close: <span>Okay</span>,
+            last: <span>Done</span>,
+            next: <span>Next</span>,
+            skip: <span>Skip</span>,
+          }}
+          run={!transcoders.loading}
+          showOverlay={false}
+          showSkipButton={false}
+          showStepsProgress={true}
+          steps={[
+            {
+              name: 'transcoderOverview',
+              position: 'right',
+              selector: '.sc-gqjmRU',
+              text:
+                'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
+              title: 'Transcoders List',
+              type: 'click',
+            },
+            {
+              name: 'transcoderCard',
+              position: 'bottom',
+              selector: '.sc-jTzLTM',
+              text:
+                'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
+              title: 'Transcoder',
+              type: 'click',
+            },
+            {
+              name: 'sortingOptions',
+              position: 'top-right',
+              selector: '.sc-ifAKCX',
+              text:
+                'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
+              title: 'Sorting Options',
+              type: 'click',
+            },
+          ]}
+          type="continuous"
+        />
+      )}
     </React.Fragment>
   )
 }

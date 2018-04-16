@@ -15,6 +15,16 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
   // dump global styles
   injectGlobal`
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --green: #00eb87;
+      --tan: #faf5ef;
+      --grey: #cfcfcf;
+      --primary: var(--green);
+      --bg-dark: var(--black);
+      --bg-light: var(--tan);
+    }
     @font-face {
       font-family: 'AkkuratMonoPro';
       src: url('/static/fonts/lineto-akkuratmono-pro-regular.eot');
@@ -33,9 +43,18 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     html, body {
       margin: 0;
       font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
-      background: #fafafa;
+      background: var(--bg-light);
     }
     a { color: #03a678; }
+    .tooltip-medium {
+      max-width: 150px;
+      white-space: normal;
+      word-wrap: break-word;
+      padding: 8px 16px;
+    }
+    .tooltip-nowrap {
+      padding: 8px 16px;
+    }
   `
   // bootstrap the apollo client
   const client = await createApolloClient({

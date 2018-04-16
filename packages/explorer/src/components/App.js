@@ -1,5 +1,6 @@
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
+import { Button, CTA, CTABanner } from '../components'
 import Account from '../views/Account'
 import BondModals from '../views/BondModals'
 import ClaimEarningsModals from '../views/ClaimEarningsModals'
@@ -14,7 +15,7 @@ const onMyAccountPage = (
 ): boolean =>
   accountId ? match.params.accountId.toLowerCase() === accountId : false
 
-const App = ({ location }) => (
+const App = props => (
   <div>
     <Switch>
       <Route exact path="/" component={Landing} />
@@ -46,6 +47,30 @@ const App = ({ location }) => (
     <BondModals />
     <ClaimEarningsModals />
     <ToastNotifications />
+    <CTA>
+      <Switch>
+        <Route exact path="/transcoders" component={() => null} />
+        <Route
+          path="*"
+          component={() => (
+            <CTABanner flag="view-transcoders">
+              <div>
+                Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien
+                odio sollicitudin, in neque magna, orci pede, vel eleifend urna.
+              </div>
+              <div style={{ minWidth: 320, textAlign: 'right' }}>
+                <Button
+                  style={{ margin: 0 }}
+                  onClick={() => history.push('/transcoders?tour=true')}
+                >
+                  View Transcoders
+                </Button>
+              </div>
+            </CTABanner>
+          )}
+        />
+      </Switch>
+    </CTA>
   </div>
 )
 

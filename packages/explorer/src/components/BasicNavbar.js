@@ -63,7 +63,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
               padding: 8,
               background: currentRound.loading
                 ? '#aaa'
-                : currentRound.data.initialized ? '#00eb88' : 'orange',
+                : currentRound.data.initialized ? 'var(--primary)' : 'orange',
               cursor:
                 currentRound.loading || currentRound.data.initialized
                   ? 'default'
@@ -132,7 +132,7 @@ const Nav = styled.nav`
 `
 
 const NavbarLink = styled(NavLink).attrs({
-  activeStyle: props => ({ color: '#00eb88' }),
+  activeStyle: props => ({ color: 'var(--primary)' }),
 })`
   display: inline-flex;
   align-items: center;

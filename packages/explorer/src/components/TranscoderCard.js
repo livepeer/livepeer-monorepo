@@ -3,6 +3,7 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MoreHorizontal as MoreHorizontalIcon } from 'react-feather'
+import ReactTooltip from 'react-tooltip'
 import { formatBalance, formatPercentage } from '../utils'
 import Avatar from './Avatar'
 import Button from './Button'
@@ -23,6 +24,35 @@ type TranscoderCardProps = {|
   status: string,
   totalStake: string,
 |}
+
+const Tooltip = ({
+  children,
+  id = `${Date.now()}`,
+  text,
+  tooltipProps,
+  type = 'medium',
+}) => (
+  <React.Fragment>
+    {React.cloneElement(children, {
+      'data-for': id,
+      'data-tip': true,
+      'data-event': 'mouseover touchdown focus',
+      'data-event-off': 'mouseout touchdown blur',
+      // don't delay on small devices that are probably touch-enabled
+      'data-delay-show': window.innerWidth < 960 ? '0' : '1000',
+      ...tooltipProps,
+    })}
+    <ReactTooltip
+      className={`tooltip-${type}`}
+      id={id}
+      place="top"
+      type="dark"
+      effect="float"
+    >
+      {text}
+    </ReactTooltip>
+  </React.Fragment>
+)
 
 /** Used when displaying Transcoder struct data in a list */
 const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
@@ -46,14 +76,18 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           <Avatar id={id} size={32} />
         </Link>
         <div className="address">
-          <Link
-            to={`/accounts/${id}/transcoding`}
-            style={{ color: '#000', textDecoration: 'none' }}
-          >
-            {id.substr(0, 10)}...
-          </Link>
+          <Tooltip id={id} text={id} type="nowrap">
+            <Link
+              to={`/accounts/${id}/transcoding`}
+              style={{ color: '#000', textDecoration: 'none' }}
+            >
+              {id.substr(0, 10)}...
+            </Link>
+          </Tooltip>
         </div>
-        <div className="status">{active ? 'active' : 'inactive'}</div>
+        <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+          <div className="status">{active ? 'active' : 'inactive'}</div>
+        </Tooltip>
       </div>
       {/* Stats */}
       <div className="stats">
@@ -96,8 +130,16 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
             <MoreHorizontalIcon size={32} color="rgba(0, 0, 0, .25)" />
           </div>
           <div className="actions-buttons">
-            {onBond && <Button onClick={onBond}>Bond</Button>}
-            {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
+            {onBond && (
+              <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+                <Button onClick={onBond}>Bond</Button>
+              </Tooltip>
+            )}
+            {onUnbond && (
+              <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+                <Button onClick={onUnbond}>Unbond</Button>
+              </Tooltip>
+            )}
           </div>
         </React.Fragment>
       )}
@@ -212,8 +254,12 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
     }
     return (
       <div className={className}>
-        <div className="label">{label}</div>
-        <div className="value">{formattedValue}</div>
+        <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+          <div className="label">{label}</div>
+        </Tooltip>
+        <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+          <div className="value">{formattedValue}</div>
+        </Tooltip>
       </div>
     )
   },
