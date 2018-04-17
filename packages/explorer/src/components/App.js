@@ -58,7 +58,7 @@ const App = props => (
                 Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien
                 odio sollicitudin, in neque magna, orci pede, vel eleifend urna.
               </div>
-              <div style={{ minWidth: 320, textAlign: 'right' }}>
+              <div>
                 <Button
                   style={{ margin: 0 }}
                   onClick={() => history.push('/transcoders?tour=true')}

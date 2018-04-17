@@ -23,6 +23,12 @@ const InnerBox = styled.div`
   background: #fff;
   border-radius: 2px;
   box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.15);
+  > div {
+    justify-content: center;
+    display: inline-flex;
+    width: 100%;
+    padding: 8px;
+  }
 `
 
 export default Box

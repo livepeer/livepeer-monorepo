@@ -10,8 +10,12 @@ const Button = styled.button`
   letter-spacing: 2px;
   font-size: 12px;
   // box-shadow: 0 0 0 1px inset;
-  background: #fff;
-  border: 1px solid #ccc;
+  // background: #fff;
+  // border: 1px solid #ccc;
+  background: var(--bg-dark);
+  color: var(--white);
+  outline: none;
+  border: none;
   cursor: pointer;
   :disabled {
     cursor: not-allowed;

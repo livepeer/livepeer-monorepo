@@ -56,6 +56,26 @@ const CTABanner = styled(
     margin-right: 16px;
     font-size: 24px;
   }
+  // message section
+  & div:nth-child(2) {
+    width: 100%;
+  }
+  // button section
+  & div:nth-child(3) {
+    min-width: 320px;
+    text-align: right;
+  }
+  @media (max-width: 640px) {
+    flex-flow: row wrap;
+    & .hide-section {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    & div:nth-child(3) {
+      margin-top: 16px;
+      width: 100%;
+    }
+  }
 `
 
 export default CTABanner

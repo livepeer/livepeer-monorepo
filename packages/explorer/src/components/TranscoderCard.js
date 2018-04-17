@@ -130,16 +130,8 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
             <MoreHorizontalIcon size={32} color="rgba(0, 0, 0, .25)" />
           </div>
           <div className="actions-buttons">
-            {onBond && (
-              <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
-                <Button onClick={onBond}>Bond</Button>
-              </Tooltip>
-            )}
-            {onUnbond && (
-              <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
-                <Button onClick={onUnbond}>Unbond</Button>
-              </Tooltip>
-            )}
+            {onBond && <Button onClick={onBond}>Bond</Button>}
+            {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
           </div>
         </React.Fragment>
       )}
@@ -224,6 +216,39 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       opacity: 0;
     }
   }
+  @media (max-width: 640px) {
+    padding: 0;
+    > .basic-info {
+      width: 100%;
+      padding: 16px;
+      > .address {
+        font-size: 16px;
+      }
+      > .status {
+        float: right;
+        font-size: 16px;
+      }
+    }
+    > .stats {
+      width: 100%;
+      overflow: auto;
+      white-space: nowrap;
+      padding: 16px 0;
+      box-shadow: 0 0 0 1px #eee;
+      .label,
+      .value {
+        font-size: 14px;
+      }
+    }
+    > .actions-placeholder {
+      opacity: 0 !important;
+    }
+    > .actions-buttons {
+      margin-top: 1px;
+      padding: 16px;
+      opacity: 1;
+    }
+  }
 `
 
 type TranscoderStatProps = {|
@@ -257,9 +282,7 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
         <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
           <div className="label">{label}</div>
         </Tooltip>
-        <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
-          <div className="value">{formattedValue}</div>
-        </Tooltip>
+        <div className="value">{formattedValue}</div>
       </div>
     )
   },
@@ -270,6 +293,7 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
   > .label {
     margin-bottom: 4px;
     font-size: 11px;
+    cursor: help;
   }
   > .value {
     font-size: 14px;
