@@ -10,7 +10,13 @@ import {
   promptForArgs,
   toBaseUnit,
 } from '../../utils'
-import { Button, InlineAccount, MetricBox, Wrapper } from '../../components'
+import {
+  Button,
+  InlineAccount,
+  InlineHint,
+  MetricBox,
+  Wrapper,
+} from '../../components'
 import enhance from './enhance'
 
 export type AccountDelegatingProps = {
@@ -56,6 +62,13 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const isMyAccount = !accountId && !delegator.loading
   return (
     <Wrapper>
+      <InlineHint flag="account-delegating">
+        <h3>Lorem Ipsum</h3>
+        <p>
+          Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
+          sollicitudin, in neque magna, orci pede, vel eleifend urna.
+        </p>
+      </InlineHint>
       <MetricBox title="Status" value={status} />
       <MetricBox
         title="Delegate"

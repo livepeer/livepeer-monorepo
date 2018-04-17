@@ -80,7 +80,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           Cancel
         </Button>
       )}
-      <Button disabled={loading} onClick={handleSubmit}>
+      <Button className="primary" disabled={loading} onClick={handleSubmit}>
         {loading ? 'Submitting...' : 'Submit'}
       </Button>
     </div>

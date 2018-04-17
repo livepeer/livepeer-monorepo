@@ -9,6 +9,7 @@ import {
   Banner,
   BasicNavbar,
   Content,
+  InlineHint,
   PageHeading,
   ScrollToTopOnMount,
   TranscoderCard,
@@ -57,19 +58,36 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       <ScrollToTopOnMount />
       <BasicNavbar onSearch={x => history.push(`/accounts/${x}`)} />
       <Banner height="128px">
-        <PageHeading>
+        <PageHeading className="page-heading">
           <CpuIcon size={32} />&nbsp;Transcoders
         </PageHeading>
       </Banner>
       <Content>
+        {!total ? null : (
+          <InlineHint flag="transcoders-list">
+            <h3>Lorem Ipsum</h3>
+            <p>
+              Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien
+              odio sollicitudin, in neque magna, orci pede, vel eleifend urna.
+            </p>
+          </InlineHint>
+        )}
         {/** Empty State */ !total && (
-          <p style={{ textAlign: 'center' }}>
-            {transcoders.loading && 'Loading transcoder data...'}
-            {!transcoders.loading && 'There are no transcoders'}
-          </p>
+          <div style={{ textAlign: 'center' }}>
+            {transcoders.loading && <h2>Loading transcoders...</h2>}
+            {!transcoders.loading && <h2>There are no transcoders</h2>}
+          </div>
         )}
         {/** Toolbar */ !total ? null : (
-          <div style={{ display: 'flex' }}>
+          <div
+            className="filter-sort"
+            style={{
+              display: 'flex',
+              marginBottom: 16,
+              padding: '0 8px',
+              borderBottom: '1px solid #ddd',
+            }}
+          >
             <p>
               Showing 1 - {total} of {total}
             </p>
@@ -144,9 +162,10 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           const onUnbond = (canUnbond && unbondFrom(id)) || undefined
           return (
             <TranscoderCard
-              key={id}
               {...props}
+              key={id}
               bonded={bonded}
+              className="transcoder-card"
               onBond={onBond}
               onUnbond={onUnbond}
             />
@@ -176,7 +195,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             {
               name: 'transcoderOverview',
               position: 'right',
-              selector: '.sc-gqjmRU',
+              selector: '.page-heading',
               text:
                 'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
               title: 'Transcoders List',
@@ -185,7 +204,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             {
               name: 'transcoderCard',
               position: 'bottom',
-              selector: '.sc-jTzLTM',
+              selector: '.transcoder-card',
               text:
                 'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
               title: 'Transcoder',
@@ -194,7 +213,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             {
               name: 'sortingOptions',
               position: 'top-right',
-              selector: '.sc-ifAKCX',
+              selector: '.filter-sort',
               text:
                 'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
               title: 'Sorting Options',

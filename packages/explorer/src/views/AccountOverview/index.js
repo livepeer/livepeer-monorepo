@@ -6,7 +6,7 @@ import {
   Send as SendIcon,
 } from 'react-feather'
 import { formatBalance } from '../../utils'
-import { Button, MetricBox, Wrapper } from '../../components'
+import { Button, InlineHint, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
 type AccountOverviewProps = {
@@ -29,6 +29,13 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   const { ethBalance, id, tokenBalance } = account.data
   return (
     <React.Fragment>
+      <InlineHint flag="account-overview">
+        <h3>Lorem Ipsum</h3>
+        <p>
+          Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
+          sollicitudin, in neque magna, orci pede, vel eleifend urna.
+        </p>
+      </InlineHint>
       <Wrapper>
         <MetricBox
           title="ETH Address"

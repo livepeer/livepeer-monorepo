@@ -3,7 +3,13 @@ import * as React from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Zap as VideoIcon } from 'react-feather'
 import { formatBalance } from '../../utils'
-import { Button, Content, MetricBox, Wrapper } from '../../components'
+import {
+  Button,
+  Content,
+  InlineHint,
+  MetricBox,
+  Wrapper,
+} from '../../components'
 import enhance from './enhance'
 
 type AccountBroadcastingProps = {
@@ -16,6 +22,13 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   const { deposit, jobs, withdrawBlock } = broadcaster.data
   return (
     <Wrapper>
+      <InlineHint flag="account-broadcasting">
+        <h3>Lorem Ipsum</h3>
+        <p>
+          Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
+          sollicitudin, in neque magna, orci pede, vel eleifend urna.
+        </p>
+      </InlineHint>
       {/** ETH Deposit */}
       <MetricBox
         title="Deposit"

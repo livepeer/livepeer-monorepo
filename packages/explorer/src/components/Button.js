@@ -9,16 +9,24 @@ const Button = styled.button`
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 12px;
-  // box-shadow: 0 0 0 1px inset;
-  // background: #fff;
-  // border: 1px solid #ccc;
-  background: var(--bg-dark);
-  color: var(--white);
   outline: none;
   border: none;
   cursor: pointer;
+  background: #fff;
+  color: #000;
+  box-shadow: inset 0 0 0 1px var(--grey);
   :disabled {
     cursor: not-allowed;
+  }
+  &.primary {
+    background: var(--bg-dark);
+    color: var(--white);
+    box-shadow: none;
+  }
+  &.secondary {
+    background: #fff;
+    color: #000;
+    box-shadow: inset 0 0 0 1px var(--grey);
   }
 `
 

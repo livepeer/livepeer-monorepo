@@ -294,6 +294,10 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
     margin-bottom: 4px;
     font-size: 11px;
     cursor: help;
+    border-bottom: 1px dashed #ccc;
+    @media (max-width: 640px) {
+      border: none;
+    }
   }
   > .value {
     font-size: 14px;

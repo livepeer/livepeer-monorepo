@@ -37,7 +37,7 @@ const CTABanner = styled(
   color: var(--bg-dark);
   transition: all 0.3s linear;
   &.hidden {
-    transform: translateY(100%);
+    transform: translateY(200%);
   }
   & .hide-section {
     display: inline-flex;
@@ -47,8 +47,8 @@ const CTABanner = styled(
     color: var(--primary);
     background: var(--bg-dark);
     cursor: pointer;
+    box-shadow: none;
     border: none;
-    outline: none;
   }
   & button.hide {
     color: var(--bg-dark);
@@ -59,6 +59,8 @@ const CTABanner = styled(
   // message section
   & div:nth-child(2) {
     width: 100%;
+    align-items: center;
+    display: inline-flex;
   }
   // button section
   & div:nth-child(3) {

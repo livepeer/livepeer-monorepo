@@ -46,6 +46,29 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       background: var(--bg-light);
     }
     a { color: #03a678; }
+    select {
+      appearance: none;
+      background: none;
+      padding: 8px;
+      padding-right: 40px;
+      font-size: 14px;
+      border-radius: 0;
+      box-shadow: 0 1px 1px rgba(0,0,0,.2);
+      outline: none;
+      border: 0;
+      color: #000;
+      background-color: #fff;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #000 50%),
+        linear-gradient(135deg, #000 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(1em + 1px),
+        calc(100% - 15px) calc(1em + 1px);
+      background-size:
+        5px 5px,
+        5px 5px;
+      background-repeat: no-repeat;
+    }
     .tooltip-medium {
       max-width: 150px;
       white-space: normal;

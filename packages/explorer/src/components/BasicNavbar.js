@@ -8,6 +8,7 @@ import {
   MoreVertical as MoreVerticalIcon,
   Play as PlayIcon,
   Pause as PauseIcon,
+  Sliders as HomeIcon,
   Cpu as CpuIcon,
   User as UserIcon,
 } from 'react-feather'
@@ -28,7 +29,6 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
             alt="The Livepeer wordmark"
           />
         </Link>
-        {onSearch && <NavSearch onSearch={onSearch} />}
         {
           <span
             onClick={async () => {
@@ -72,7 +72,6 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
               width: 116,
               marginLeft: 16,
               whiteSpace: 'nowrap',
-              borderRadius: 4,
             }}
           >
             {currentRound.loading ? (
@@ -87,6 +86,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
             </span>
           </span>
         }
+        {onSearch && <NavSearch onSearch={onSearch} />}
         <div
           style={{
             display: 'inline-flex',
@@ -97,6 +97,10 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
             color: '#fff',
           }}
         >
+          <NavbarLink exact to="/">
+            <HomeIcon size={16} />
+            <span>&nbsp;Overview</span>
+          </NavbarLink>
           <NavbarLink to="/transcoders">
             <CpuIcon size={16} />
             <span>&nbsp;Transcoders</span>
@@ -132,13 +136,18 @@ const Nav = styled.nav`
 `
 
 const NavbarLink = styled(NavLink).attrs({
-  activeStyle: props => ({ color: 'var(--primary)' }),
+  activeStyle: props => ({
+    color: 'var(--primary)',
+    backgroundImage:
+      'linear-gradient(to top,rgba(0,0,0,0),rgba(0,0,0,0) 0px,var(--primary) 0px,var(--primary) 1px,rgba(0,0,0,0) 1px)',
+  }),
 })`
   display: inline-flex;
   align-items: center;
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   margin-left: 24px;
+  padding-bottom: 8px;
   text-decoration: none;
   text-transform: uppercase;
   @media (max-width: 640px) {
@@ -168,7 +177,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
 */}
     <input
       type="search"
-      placeholder="Enter an ETH account address"
+      placeholder="Search accounts by ETH address"
       style={{
         width: '100%',
         height: 32,
@@ -178,7 +187,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
         color: '#fff',
         outline: 0,
         border: 'none',
-        borderRadius: 4,
+        borderRadius: 0,
         WebkitAppearance: 'textfield',
       }}
       onKeyDown={e => {
