@@ -92,6 +92,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       const accountChanged = nextAccount && currentAccount
       if (onMyAccountPage && accountChanged) return window.location.reload()
     },
+    // The address of the deployed Controller contract
+    controllerAddress: process.env.REACT_APP_CONTROLLER_ADDRESS,
   })
 
   const update = () =>
