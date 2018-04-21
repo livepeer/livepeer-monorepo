@@ -1,6 +1,6 @@
 import Eth from 'ethjs'
 import SignerProvider from 'ethjs-provider-signer'
-import { sign } from 'ethjs-signer'
+import EthereumTx from 'ethereumjs-tx'
 import { decodeEvent } from 'ethjs-abi'
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
@@ -301,8 +301,11 @@ export async function initRPC({
       : usePrivateKeys
         ? // Use provider-signer to locally sign transactions
           new SignerProvider(provider, {
-            signTransaction: (rawTx, cb) =>
-              cb(null, sign(rawTx, privateKeys[from])),
+            signTransaction: (rawTx, cb) => {
+              const tx = new EthereumTx(rawTx)
+              tx.sign(privateKeys[from])
+              cb(null, '0x' + tx.serialize().toString('hex'))
+            },
             accounts: cb => cb(null, accounts),
             timeout: 10 * 1000,
           })
