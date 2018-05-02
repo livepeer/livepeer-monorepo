@@ -93,8 +93,8 @@ export { TRANSCODER_STATUS }
 
 // Defaults
 export const DEFAULTS = {
-  controllerAddress: '0x37dC71366Ec655093b9930bc816E16e6b587F968',
-  provider: 'https://rinkeby.infura.io/srFaWg0SlljdJAoClX3B',
+  controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
+  provider: 'https://mainnet.infura.io/srFaWg0SlljdJAoClX3B',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
   gas: 0,
