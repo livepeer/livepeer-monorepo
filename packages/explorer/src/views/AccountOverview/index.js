@@ -27,7 +27,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   onTransferLPT,
 }) => {
   const { ethBalance, id, tokenBalance } = account.data
-  const IS_MAINNET = `${window.web3.version.network}` === '1'
+  const IS_MAINNET = window.web3 && `${window.web3.version.network}` === '1'
   return (
     <React.Fragment>
       {/*<InlineHint flag="account-overview">
