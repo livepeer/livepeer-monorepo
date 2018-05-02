@@ -12,9 +12,9 @@ const Button = styled.button`
   outline: none;
   border: none;
   cursor: pointer;
-  background: #fff;
+  background: none;
   color: #000;
-  box-shadow: inset 0 0 0 1px var(--grey);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
   :disabled {
     cursor: not-allowed;
   }
@@ -24,9 +24,9 @@ const Button = styled.button`
     box-shadow: none;
   }
   &.secondary {
-    background: #fff;
     color: #000;
-    box-shadow: inset 0 0 0 1px var(--grey);
+    background: none;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
   }
 `
 

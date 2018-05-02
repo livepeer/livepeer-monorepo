@@ -34,8 +34,8 @@ const InlineHint = styled(
   flex-flow: row wrap;
   width: 100%;
   padding: 32px;
-  background: #eaedec;
-  box-shadow: 0 1px 0 1px #c0e8d7;
+  background: #d9f2e8;
+  border: 1px solid #b3e6cf;
   margin-bottom: 24px;
   transition: all 0.3s linear;
   &.hidden {
@@ -60,6 +60,9 @@ const InlineHint = styled(
       padding: 8px 16px;
       cursor: pointer;
       outline: none;
+      line-height: 1;
+      opacity: 0.25;
+      box-shadow: none;
     }
   }
   > * {
@@ -75,7 +78,8 @@ const InlineHint = styled(
     font-weight: normal;
   }
   p {
-    margin: 8px 0;
+    margin: 0;
+    line-height: 1.5;
   }
 `
 
