@@ -60,11 +60,11 @@ type IntrospectionQueryResultData = {
  * @return {ApolloClient}
  */
 export default async function createApolloClient(
-  opts: ApolloClientOptions = {},
+  opts: ApolloClientOptions | (() => ApolloClientOptions) = {},
   initialState: ApolloClientState = {},
 ) {
   // options
-  const options = { ...opts }
+  const options = typeof opts === 'function' ? await opts() : { ...opts }
 
   // state
   const state = { ...initialState, updating: false }
@@ -86,7 +86,7 @@ export default async function createApolloClient(
    * @return {boolean}
    */
   function shouldUpdateProvider(web3: Web3): boolean {
-    if (opts.provider) return false
+    if (options.provider) return false
     if (!web3 || state.updating) return false
     return state.provider !== getProviderFromWeb3(web3)
   }
@@ -100,7 +100,7 @@ export default async function createApolloClient(
     try {
       state.updating = true
       state.account = getAccountFromWeb3(web3, accountIndex)
-      state.provider = opts.provider || getProviderFromWeb3(web3)
+      state.provider = options.provider || getProviderFromWeb3(web3)
       state.livepeer = window.livepeer = await initLivepeer(state)
     } catch (err) {
       console.warn('updateConfig() failed with the following error:')
@@ -142,9 +142,9 @@ export default async function createApolloClient(
   function initLivepeer(web3: Web3, accountIndex: number): Livepeer {
     const account = getAccountFromWeb3(web3, accountIndex) || state.account
     const provider =
-      opts.provider || getProviderFromWeb3(web3) || state.provider
-    const gas = opts.defaultGas || 0
-    const { controllerAddress } = opts
+      options.provider || getProviderFromWeb3(web3) || state.provider
+    const gas = options.defaultGas || 0
+    const { controllerAddress } = options
     return Livepeer({ account, gas, provider, controllerAddress })
   }
 
