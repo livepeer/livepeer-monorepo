@@ -28,7 +28,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
   `
   // Bootstrap the apollo client
   const client = await createApolloClient({
-    provider: 'https://rinkeby.infura.io/srFaWg0SlljdJAoClX3B',
+    controllerAddress: process.env.REACT_APP_CONTROLLER_ADDRESS,
+    provider: process.env.REACT_APP_HTTP_PROVIDER,
   })
 
   // Main UI rendering function
