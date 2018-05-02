@@ -29,7 +29,7 @@ LivepeerJS contributions will generally fall into one of the following categorie
 
 This could be as simple as adding some extra notes to a README.md file, or as complex as creating some new `package.json` scripts to generate docs. Either way, we'd really really love your help with this 💖.
 
-#### ⚠️ Getting involved in issues
+#### 💬 Getting involved in issues
 
 Many issues are open discussions. Feel free to add your own concerns, ideas, and workarounds. If you don't see what you're looking for, you can always open a new issue.
 
@@ -53,12 +53,12 @@ Nothing actually! We expect a rich mixture of commits, conversation, support, an
 
 ### How is a contribution reviewed and accepted?
 
-- If you are opening an issue, please follow the [ISSUE_TEMPLATE](https://raw.githubusercontent.com/livepeer/livepeerjs/master/ISSUE_TEMPLATE.md) format before submitting. And please *keep your issue simple, clear, and to-the-point*. Most issues do not require many paragraphs of text. In fact, if you write too much, it can become difficult to understand what you are actually trying to communicate.
+* If you are opening an issue, please follow the [ISSUE_TEMPLATE](https://raw.githubusercontent.com/livepeer/livepeerjs/master/ISSUE_TEMPLATE.md) format before submitting. And please _keep your issue simple, clear, and to-the-point_. Most issues do not require many paragraphs of text. In fact, if you write too much, it can become difficult to understand what you are actually trying to communicate.
 
-- If you are submitting a pull request
-   - Write tests to increase code coverage
-   - Tag the issue(s) your PR is closing or relating to
-   - Make sure your PR is up-to-date with `origin/master` (rebase please 🙏)
+* If you are submitting a pull request
+  * Write tests to increase code coverage
+  * Tag the issue(s) your PR is closing or relating to
+  * Make sure your PR is up-to-date with `origin/master` (rebase please 🙏)
 
 Code reviews happen each week, so a PR that follows these guidelines will probably get merged quickly if there aren't any major problems with the implementation (we try to watch out for code duplication/complexity). CoacoaPods has [some really useful tips](https://github.com/CocoaPods/CocoaPods/wiki/Communication-&-Design-Rules#design-rules) when it comes to coding. I highly recommend taking a look 🤓.
 
@@ -78,10 +78,10 @@ All of the types outlined in [How You Can Help](#how-you-can-help).
 
 While it's unlikely, sometimes there's no acceptable way to implement a suggestion or merge a PR. If that happens, maintainer will still...
 
-- Thank you for your contribution.
-- Explain why it doesn’t fit into the scope of the project and offer clear suggestions for improvement, if possible.
-- Link to relevant documentation, if it exists.
-- Close the issue/request.
+* Thank you for your contribution.
+* Explain why it doesn’t fit into the scope of the project and offer clear suggestions for improvement, if possible.
+* Link to relevant documentation, if it exists.
+* Close the issue/request.
 
 But do not despair! In many cases, this can still be a great opportunity to follow-up with an improved suggestion or pull request. Worst case, this repo is open source, so forking is always an option 😎.
 
