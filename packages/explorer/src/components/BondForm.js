@@ -58,7 +58,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
         name="amount"
         component="input"
         disabled={loading}
-        type="text"
+        type="number"
         style={{
           width: '90%',
           height: 48,
