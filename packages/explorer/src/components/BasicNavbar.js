@@ -19,6 +19,40 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
   const notAuthenticated =
     window.livepeer.config.defaultTx.from ===
     '0x0000000000000000000000000000000000000000'
+  const { host } = window.livepeer.config.eth.currentProvider
+  const networkName = !window.web3
+    ? /infura/.test(host)
+      ? host.split('.')[0].replace(/(http|https):\/\//, '')
+      : 'Custom RPC'
+    : {
+        1: 'Mainnet',
+        4: 'Rinkeby',
+      }[window.web3.version.network] || 'Custom RPC'
+  const initializeRound = async () => {
+    try {
+      if (notAuthenticated) return
+      if (currentRound.data.initialized) return
+      toasts.push({
+        id: 'initialize-round',
+        title: 'Initializing round...',
+        body: 'The current round is being initialized.',
+      })
+      await window.livepeer.rpc.initializeRound()
+      toasts.push({
+        id: 'initialize-round',
+        type: 'success',
+        title: 'Initialization complete',
+        body: 'The current round is now initialized.',
+      })
+    } catch (err) {
+      toasts.push({
+        id: 'initialize-round',
+        type: 'error',
+        title: 'Initialization failed',
+        body: err.message,
+      })
+    }
+  }
   return (
     <Navbar>
       <Nav>
@@ -30,63 +64,74 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
           />
         </Link>
         {
-          <span
-            onClick={async () => {
-              try {
-                if (notAuthenticated) return
-                if (currentRound.data.initialized) return
-                toasts.push({
-                  id: 'initialize-round',
-                  title: 'Initializing round...',
-                  body: 'The current round is being initialized.',
-                })
-                await window.livepeer.rpc.initializeRound()
-                toasts.push({
-                  id: 'initialize-round',
-                  type: 'success',
-                  title: 'Initialization complete',
-                  body: 'The current round is now initialized.',
-                })
-              } catch (err) {
-                toasts.push({
-                  id: 'initialize-round',
-                  type: 'error',
-                  title: 'Initialization failed',
-                  body: err.message,
-                })
-              }
-            }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              paddingRight: 24,
-              padding: 8,
-              background: currentRound.loading
-                ? '#aaa'
-                : currentRound.data.initialized ? 'var(--primary)' : 'orange',
-              cursor:
-                currentRound.loading || currentRound.data.initialized
-                  ? 'default'
-                  : 'pointer',
-              color: '#000',
-              width: 116,
-              marginLeft: 16,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {currentRound.loading ? (
-              <MoreHorizontalIcon size={16} />
-            ) : currentRound.data.initialized ? (
-              <PlayIcon size={16} />
-            ) : (
-              <PauseIcon size={16} />
-            )}
-            <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
-              &nbsp;Round Status
+          <React.Fragment>
+            <span
+              onClick={initializeRound}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                paddingRight: 24,
+                padding: 8,
+                background: 'none',
+                cursor:
+                  currentRound.loading || currentRound.data.initialized
+                    ? 'default'
+                    : 'pointer',
+                color: currentRound.loading
+                  ? '#aaa'
+                  : currentRound.data.initialized ? 'var(--primary)' : 'orange',
+                // width: 116,
+                height: 24,
+                marginLeft: 16,
+                whiteSpace: 'nowrap',
+                fontSize: 10,
+                textTransform: 'uppercase',
+                boxShadow: `inset 0 0 0 1px ${
+                  currentRound.loading
+                    ? '#aaa'
+                    : currentRound.data.initialized
+                      ? 'var(--primary)'
+                      : 'orange'
+                }`,
+              }}
+            >
+              {networkName}
             </span>
-          </span>
+            <span
+              onClick={initializeRound}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                paddingRight: 24,
+                padding: `4px 8px`,
+                background: currentRound.loading
+                  ? '#aaa'
+                  : currentRound.data.initialized ? 'var(--primary)' : 'orange',
+                cursor:
+                  currentRound.loading || currentRound.data.initialized
+                    ? 'default'
+                    : 'pointer',
+                color: '#000',
+                width: 116,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {currentRound.loading ? (
+                <MoreHorizontalIcon size={16} />
+              ) : currentRound.data.initialized ? (
+                <PlayIcon size={16} />
+              ) : (
+                <PauseIcon size={16} />
+              )}
+              <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
+                &nbsp;Round Status
+              </span>
+            </span>
+          </React.Fragment>
         }
-        {onSearch && <NavSearch onSearch={onSearch} />}
+
+        {/*onSearch && <NavSearch onSearch={onSearch} />*/}
+
         <div
           style={{
             display: 'inline-flex',
@@ -139,7 +184,7 @@ const NavbarLink = styled(NavLink).attrs({
   activeStyle: props => ({
     color: 'var(--primary)',
     backgroundImage:
-      'linear-gradient(to top,rgba(0,0,0,0),rgba(0,0,0,0) 0px,var(--primary) 0px,var(--primary) 1px,rgba(0,0,0,0) 1px)',
+      'linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,0) 0px,var(--primary) 0px,var(--primary) 4px,rgba(0,0,0,0) 4px)',
   }),
 })`
   display: inline-flex;
@@ -147,7 +192,7 @@ const NavbarLink = styled(NavLink).attrs({
   color: #fff;
   font-size: 12px;
   margin-left: 24px;
-  padding-bottom: 8px;
+  height: 64px;
   text-decoration: none;
   text-transform: uppercase;
   @media (max-width: 640px) {

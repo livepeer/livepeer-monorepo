@@ -62,13 +62,13 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const isMyAccount = !accountId && !delegator.loading
   return (
     <Wrapper>
-      <InlineHint flag="account-delegating">
+      {/*<InlineHint flag="account-delegating">
         <h3>Lorem Ipsum</h3>
         <p>
           Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
           sollicitudin, in neque magna, orci pede, vel eleifend urna.
         </p>
-      </InlineHint>
+  </InlineHint>*/}
       <MetricBox title="Status" value={status} />
       <MetricBox
         title="Delegate"

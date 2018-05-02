@@ -8,6 +8,7 @@ import store, { history } from './store'
 import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
+import { sleep } from './utils'
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = process.env.NODE_ENV === 'development'
 const hot = module.hot && isDev
@@ -78,22 +79,46 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     .tooltip-nowrap {
       padding: 8px 16px;
     }
+    #header-root {
+      position: fixed;
+      width: 100%;
+      z-index: 1;
+    }
+    #main-root {
+      padding-top: 64px;
+    }
   `
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
   // bootstrap the apollo client
-  const client = await createApolloClient({
-    // Allow builds to configure the http provider
-    provider: process.env.REACT_APP_HTTP_PROVIDER,
-    // Default gas limit to send with transactions (2.1m wei)
-    defaultGas: 2.1 * 1000000,
-    // If user account changes while on /me, this will hard refresh the page
-    onAccountChange: (currentAccount: string, nextAccount: string): void => {
-      const path = window.location.pathname.toLowerCase()
-      const onMyAccountPage = path === '/me'
-      const accountChanged = nextAccount && currentAccount
-      if (onMyAccountPage && accountChanged) return window.location.reload()
-    },
+  const client = await createApolloClient(async () => {
+    const opts = {
+      // Allow builds to configure the http provider
+      provider: process.env.REACT_APP_HTTP_PROVIDER,
+      // Default gas limit to send with transactions (2.1m wei)
+      defaultGas: 2.1 * 1000000,
+      // If user account changes while on /me, this will hard refresh the page
+      onAccountChange: (currentAccount: string, nextAccount: string): void => {
+        const path = window.location.pathname.toLowerCase()
+        const onMyAccountPage = path === '/me'
+        const accountChanged = nextAccount && currentAccount
+        if (onMyAccountPage && accountChanged) return window.location.reload()
+      },
+    }
     // The address of the deployed Controller contract
-    controllerAddress: process.env.REACT_APP_CONTROLLER_ADDRESS,
+    if (window.web3) {
+      const { version } = window.web3
+      const controllers = {
+        1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
+        4: process.env.REACT_APP_RINKEBY_CONTROLLER_ADDRESS,
+      }
+      while (version.network === null) {
+        console.log('waiting on web3 network version...')
+        await sleep(100)
+      }
+      opts.controllerAddress =
+        controllers[version.network] || process.env.REACT_APP_CONTROLLER_ADDRESS
+    }
+    return opts
   })
 
   const update = () =>

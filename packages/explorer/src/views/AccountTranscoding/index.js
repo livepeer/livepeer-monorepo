@@ -26,13 +26,13 @@ const AccountTranscodingView: React.ComponentType<
   const { accountId } = match.params
   return (
     <Wrapper>
-      <InlineHint flag="account-transcoding">
+      {/*<InlineHint flag="account-transcoding">
         <h3>Lorem Ipsum</h3>
         <p>
           Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
           sollicitudin, in neque magna, orci pede, vel eleifend urna.
         </p>
-      </InlineHint>
+  </InlineHint>*/}
       <MetricBox title="Status" value={status} />
       <MetricBox title="Active" value={active ? 'True' : 'False'} />
       <MetricBox

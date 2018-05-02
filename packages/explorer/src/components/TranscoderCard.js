@@ -85,7 +85,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
             </Link>
           </Tooltip>
         </div>
-        <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+        <Tooltip text="Today, only Transcoders with the top 10 most stake will be able to do work in the next round.">
           <div className="status">{active ? 'active' : 'inactive'}</div>
         </Tooltip>
       </div>
@@ -97,6 +97,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           type="percentage"
           value={rewardCut}
           width="64px"
+          help="The percent of the newly minted token that the Transcoder will KEEP from the round’s inflation distribution. The remainder gets distributed across all bonded nodes by how much you bond relative to others."
         />
         <TranscoderStat
           decimals={2}
@@ -104,6 +105,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           type="percentage"
           value={feeShare}
           width="64px"
+          help="How much the you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
         />
         <TranscoderStat
           label="Price"
@@ -112,6 +114,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           unit="wei"
           value={pricePerSegment}
           width="80px"
+          help="The amount the Transcoder will charge broadcasters per segment. Wei is the base unit of ethereum, which is 10^18 Wei = 1 ETH. The price illustrated is based on a segment of video, which is 4 seconds"
         />
         <TranscoderStat
           decimals={2}
@@ -121,6 +124,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           unit="ether"
           value={totalStake}
           width="128px"
+          help="Total amount of LPT staked towards this node, including the transcoders own stake."
         />
       </div>
       {/* Actions */}
@@ -263,7 +267,7 @@ type TranscoderStatProps = {|
 
 /** Displays a numeric or string-based transcoder stat */
 export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
-  ({ className, label, type, value, width, ...props }) => {
+  ({ className, help, label, type, value, width, ...props }) => {
     let formattedValue = value
     switch (type) {
       case 'percentage': {
@@ -279,7 +283,7 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
     }
     return (
       <div className={className}>
-        <Tooltip text="Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.">
+        <Tooltip text={help}>
           <div className="label">{label}</div>
         </Tooltip>
         <div className="value">{formattedValue}</div>

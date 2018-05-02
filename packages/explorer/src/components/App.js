@@ -55,15 +55,16 @@ const App = props => (
           component={() => (
             <CTABanner flag="view-transcoders">
               <div>
-                Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien
-                odio sollicitudin, in neque magna, orci pede, vel eleifend urna.
+                If you are a token holder, you can participate in the network by
+                staking towards a transcoder and earn additional fees and LPT
+                rewards.
               </div>
               <div>
                 <Button
                   style={{ margin: 0 }}
                   onClick={() => history.push('/transcoders?tour=true')}
                 >
-                  View Transcoders
+                  Start Delegating
                 </Button>
               </div>
             </CTABanner>

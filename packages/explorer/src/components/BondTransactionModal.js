@@ -28,13 +28,13 @@ const BondTransactionModal: React.ComponentType<BondTransactionModalProps> = ({
     title="Bond to Transcoder"
     onClose={!props.loading ? onClose : undefined}
   >
-    <InlineHint flag="bond-modal">
+    {/*<InlineHint flag="bond-modal">
       <h3>Lorem Ipsum</h3>
       <p>
         Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
         sollicitudin, in neque magna, orci pede, vel eleifend urna.
       </p>
-    </InlineHint>
+</InlineHint> */}
     <BondForm
       {...props}
       initialValues={{

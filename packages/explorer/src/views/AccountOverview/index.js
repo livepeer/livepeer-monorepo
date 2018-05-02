@@ -27,15 +27,13 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   onTransferLPT,
 }) => {
   const { ethBalance, id, tokenBalance } = account.data
+  const IS_MAINNET = `${window.web3.version.network}` === '1'
   return (
     <React.Fragment>
-      <InlineHint flag="account-overview">
-        <h3>Lorem Ipsum</h3>
-        <p>
-          Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
-          sollicitudin, in neque magna, orci pede, vel eleifend urna.
-        </p>
-      </InlineHint>
+      {/*<InlineHint flag="account-overview">
+        <h3>Account Overview</h3>
+        <p>The overview shows ETH and LPT balances in an account's wallet</p>
+  </InlineHint>*/}
       <Wrapper>
         <MetricBox
           title="ETH Address"
@@ -54,10 +52,12 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           {!match.params.accountId && (
             <React.Fragment>
               {/** request */}
-              <Button onClick={onRequestETH}>
-                <DownloadCloudIcon size={12} />
-                <span style={{ marginLeft: 8 }}>request</span>
-              </Button>
+              {!IS_MAINNET && (
+                <Button onClick={onRequestETH}>
+                  <DownloadCloudIcon size={12} />
+                  <span style={{ marginLeft: 8 }}>request</span>
+                </Button>
+              )}
               {/** deposit */}
               <Button onClick={onDepositETH}>
                 <PlusIcon size={12} />
@@ -76,10 +76,12 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           {!match.params.accountId && (
             <React.Fragment>
               {/** request */}
-              <Button onClick={onRequestLPT}>
-                <DownloadCloudIcon size={12} />
-                <span style={{ marginLeft: 8 }}>request</span>
-              </Button>
+              {!IS_MAINNET && (
+                <Button onClick={onRequestLPT}>
+                  <DownloadCloudIcon size={12} />
+                  <span style={{ marginLeft: 8 }}>request</span>
+                </Button>
+              )}
               {/** transfer */}
               <Button onClick={onTransferLPT}>
                 <SendIcon size={12} />

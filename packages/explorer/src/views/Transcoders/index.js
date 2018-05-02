@@ -8,6 +8,7 @@ import {
   Avatar,
   Banner,
   BasicNavbar,
+  Button,
   Content,
   InlineHint,
   PageHeading,
@@ -65,10 +66,23 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       <Content>
         {!total ? null : (
           <InlineHint flag="transcoders-list">
-            <h3>Lorem Ipsum</h3>
+            <h3>Transcoder Delegation</h3>
             <p>
-              Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien
-              odio sollicitudin, in neque magna, orci pede, vel eleifend urna.
+              As a token holder, you can participate in the network by staking
+              towards a Transcoder and earn additional fees and LPT rewards.
+              Read our Delegator Guide for a comprehensive overview, tutorials,
+              and a FAQ.<br />
+              <br />
+              <Button
+                style={{ margin: 0 }}
+                onClick={() =>
+                  window.open(
+                    'https://github.com/livepeer/wiki/wiki/Delegating',
+                  )
+                }
+              >
+                View Delegator Guide
+              </Button>
             </p>
           </InlineHint>
         )}
@@ -188,7 +202,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
             skip: <span>Skip</span>,
           }}
           run={!transcoders.loading}
-          showOverlay={false}
+          showOverlay={true}
           showSkipButton={false}
           showStepsProgress={true}
           steps={[
@@ -197,7 +211,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               position: 'right',
               selector: '.page-heading',
               text:
-                'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
+                'As a delegator, you earn additional Livepeer token when you stake towards transcoders. Let us show you around and help you delegate. If you’re not already, Sign in to your web3 wallet to access your Livepeer token.',
               title: 'Transcoders List',
               type: 'click',
             },
@@ -206,19 +220,28 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               position: 'bottom',
               selector: '.transcoder-card',
               text:
-                'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
+                'Clicking on a transcoder ETH address lets you learn more about a specific transcoder.',
               title: 'Transcoder',
               type: 'click',
             },
             {
-              name: 'sortingOptions',
-              position: 'top-right',
-              selector: '.filter-sort',
+              name: 'transcoderCardActions',
+              position: 'bottom',
+              selector: '.actions-placeholder',
               text:
-                'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
-              title: 'Sorting Options',
+                'Once you’re ready to choose a transcoder, you can bond by clicking the bond button.',
+              title: 'Bond Your Token',
               type: 'click',
             },
+            // {
+            //   name: 'sortingOptions',
+            //   position: 'top-right',
+            //   selector: '.filter-sort',
+            //   text:
+            //     'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
+            //   title: 'Sorting Options',
+            //   type: 'click',
+            // },
           ]}
           type="continuous"
         />
