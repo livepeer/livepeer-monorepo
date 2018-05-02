@@ -45,8 +45,10 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     delegator: { bondedAmount, delegateAddress, status },
     tokenBalance,
   } = me.data
-  const isBonded =
-    status === 'Pending' || status === 'Bonded' || status === 'Unbonding'
+  const isBonding = status === 'Pending'
+  const isBonded = status === 'Bonded'
+  const isUnbonding = status === 'Unbonding'
+  const isUnbonded = status === 'Unbonded'
   const searchParams = new URLSearchParams(history.location.search)
   const TOUR_ENABLED = !!searchParams.get('tour')
   const sort = searchParams.get('sort') || 'totalStake'
@@ -167,21 +169,20 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           </div>
         )}
         {/* Results */ [...transcoders.data].sort(compareFn).map(props => {
-          const myId = me.data.id
-          const { id } = props
-          const bonded = isBonded && id === delegateAddress
-          const canBond = myId && (!delegateAddress || id === delegateAddress)
-          const canUnbond = isBonded && myId && id === delegateAddress
-          const onBond = (canBond && bondTo(id)) || undefined
-          const onUnbond = (canUnbond && unbondFrom(id)) || undefined
+          const myId = me.data.id // delegator id
+          const { id } = props // transcoder id
+          const isMyDelegate = id === delegateAddress
+          const canRebond = isMyDelegate && (isBonded || isBonding)
+          const canBond = myId && (canRebond || isUnbonded)
+          const canUnbond = myId && isBonded && isMyDelegate
           return (
             <TranscoderCard
               {...props}
               key={id}
-              bonded={bonded}
+              bonded={isMyDelegate}
               className="transcoder-card"
-              onBond={onBond}
-              onUnbond={onUnbond}
+              onBond={canBond ? bondTo(id) : undefined}
+              onUnbond={canUnbond ? unbondFrom(id) : undefined}
             />
           )
         })}

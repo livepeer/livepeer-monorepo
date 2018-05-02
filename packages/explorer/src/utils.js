@@ -14,6 +14,26 @@ export const MathBN = {
     const bBN = new BN(b || '0')
     return aBN.add(bBN).toString(10)
   },
+  gt: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.gt(bBN)
+  },
+  gte: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.gte(bBN)
+  },
+  lt: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.lt(bBN)
+  },
+  lte: (a: string | BN, b: string | BN): string => {
+    const aBN = new BN(a || '0')
+    const bBN = new BN(b || '0')
+    return aBN.lte(bBN)
+  },
   mul: (a: string | BN, b: string | BN): string => {
     const aBN = new BN(a || '0')
     const bBN = new BN(b || '0')

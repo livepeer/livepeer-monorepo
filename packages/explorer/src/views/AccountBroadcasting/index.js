@@ -1,8 +1,12 @@
 // @flow
 import * as React from 'react'
 import styled, { keyframes } from 'styled-components'
-import { Zap as VideoIcon } from 'react-feather'
-import { formatBalance } from '../../utils'
+import {
+  Zap as VideoIcon,
+  Minus as MinusIcon,
+  Plus as PlusIcon,
+} from 'react-feather'
+import { formatBalance, MathBN } from '../../utils'
 import {
   Button,
   Content,
@@ -14,10 +18,16 @@ import enhance from './enhance'
 
 type AccountBroadcastingProps = {
   broadcaster: GraphQLProps<Broadcaster>,
+  match: Match,
+  onDepositETH: (e: Event) => void,
+  onWithdrawDeposit: (e: Event) => void,
 }
 
 const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   broadcaster,
+  match,
+  onDepositETH,
+  onWithdrawDeposit,
 }) => {
   const { deposit, jobs, withdrawBlock } = broadcaster.data
   return (
@@ -35,7 +45,24 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
         suffix="ETH"
         value={formatBalance(deposit)}
         subvalue={formatBalance(deposit, 18)}
-      />
+      >
+        {!match.params.accountId && (
+          <React.Fragment>
+            {/** withdraw */}
+            {MathBN.gt(deposit, '0') && (
+              <Button onClick={onWithdrawDeposit}>
+                <MinusIcon size={12} />
+                <span style={{ marginLeft: 8 }}>withdraw</span>
+              </Button>
+            )}
+            {/** deposit */}
+            <Button onClick={onDepositETH}>
+              <PlusIcon size={12} />
+              <span style={{ marginLeft: 8 }}>deposit</span>
+            </Button>
+          </React.Fragment>
+        )}
+      </MetricBox>
       {/** Withdraw Block */}
       <MetricBox title="Withdraw Block" value={withdrawBlock} />
       <Content>

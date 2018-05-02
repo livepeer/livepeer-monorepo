@@ -1475,7 +1475,7 @@ export default async function createLivepeerSDK(
     },
 
     /**
-     * Withdraws deposited LPT
+     * Withdraws deposited ETH
      * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}

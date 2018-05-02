@@ -96,7 +96,7 @@ export default withHandlers({
         const { claimEarnings } = window.livepeer.rpc
         await claimEarnings()
       } catch (err) {
-        // ...
+        console.error(err)
       }
     },
   onWithdrawStake: props =>
@@ -105,7 +105,7 @@ export default withHandlers({
         const { withdrawStake } = window.livepeer.rpc
         await withdrawStake()
       } catch (err) {
-        // ...
+        console.error(err)
       }
     },
   onWithdrawFees: props =>
@@ -114,7 +114,17 @@ export default withHandlers({
         const { withdrawFees } = window.livepeer.rpc
         await withdrawFees()
       } catch (err) {
-        // ...
+        console.error(err)
+      }
+    },
+  onWithdrawDeposit: props =>
+    async function withdrawDeposit(e: Event): void {
+      try {
+        const { withdraw } = window.livepeer.rpc
+        await withdraw()
+        window.alert('Your deposit has been withdrawn')
+      } catch (err) {
+        console.error(err)
       }
     },
   onBondLPT: props =>

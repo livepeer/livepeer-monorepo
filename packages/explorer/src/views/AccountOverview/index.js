@@ -48,24 +48,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           suffix="ETH"
           value={formatBalance(ethBalance)}
           subvalue={formatBalance(ethBalance, 18)}
-        >
-          {!match.params.accountId && (
-            <React.Fragment>
-              {/** request */}
-              {!IS_MAINNET && (
-                <Button onClick={onRequestETH}>
-                  <DownloadCloudIcon size={12} />
-                  <span style={{ marginLeft: 8 }}>request</span>
-                </Button>
-              )}
-              {/** deposit */}
-              <Button onClick={onDepositETH}>
-                <PlusIcon size={12} />
-                <span style={{ marginLeft: 8 }}>deposit</span>
-              </Button>
-            </React.Fragment>
-          )}
-        </MetricBox>
+        />
         {/** LPT */}
         <MetricBox
           title="Token Balance"

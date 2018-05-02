@@ -27,7 +27,7 @@ type TranscoderCardProps = {|
 
 const Tooltip = ({
   children,
-  id = `${Date.now()}`,
+  id = `${performance.now()}`,
   text,
   tooltipProps,
   type = 'medium',
@@ -153,8 +153,8 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
   overflow: auto;
   box-shadow: ${({ bonded }) =>
     bonded
-      ? '0 0px 1px 1px darkseagreen'
-      : '0 1px 2px 0px rgba(0, 0, 0, 0.15)'};
+      ? '0px 0px 0px 2px var(--primary)'
+      : '0px 1px 2px 0px rgba(0, 0, 0, 0.15)'};
   > a:hover {
     text-decoration: underline !important;
   }
