@@ -160,14 +160,6 @@ export const mapTransactionsToProps = mapProps(props => {
           body: 'You have unclaimed earnings from previous rounds.',
         })
       }
-      if (status === 'Unbonding') {
-        return toasts.push({
-          id: 'bond',
-          type: 'warn',
-          title: 'Unable to bond',
-          body: 'You are currently unbonding',
-        })
-      }
       tx.activate({
         id,
         type: 'BondStatus',
