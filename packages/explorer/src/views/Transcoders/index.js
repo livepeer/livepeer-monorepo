@@ -180,6 +180,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               {...props}
               key={id}
               bonded={isMyDelegate}
+              bondedAmount={bondedAmount}
               className="transcoder-card"
               onBond={canBond ? bondTo(id) : undefined}
               onUnbond={canUnbond ? unbondFrom(id) : undefined}

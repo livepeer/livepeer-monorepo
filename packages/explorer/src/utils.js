@@ -35,13 +35,13 @@ export const MathBN = {
     return aBN.lte(bBN)
   },
   mul: (a: string | BN, b: string | BN): string => {
-    const aBN = new BN(a || '0')
-    const bBN = new BN(b || '0')
+    const aBN = new Big(a || '0')
+    const bBN = new Big(b || '0')
     return aBN.mul(bBN).toString(10)
   },
   div: (a: string | BN, b: string | BN): string => {
-    const aBN = new BN(a || '0')
-    const bBN = new BN(b || '0')
+    const aBN = new Big(a || '0')
+    const bBN = new Big(b || '0')
     return aBN.div(bBN).toString(10)
   },
   min: (a: string | BN, b: string | BN): string => {
@@ -53,6 +53,9 @@ export const MathBN = {
     const aBN = new BN(a || '0')
     const bBN = new BN(b || '0')
     return (aBN.gt(bBN) ? a : b).toString(10)
+  },
+  toBig: (x: string | BN): BN => {
+    return new Big(x)
   },
 }
 

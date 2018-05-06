@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MoreHorizontal as MoreHorizontalIcon } from 'react-feather'
 import ReactTooltip from 'react-tooltip'
-import { formatBalance, formatPercentage } from '../utils'
+import { formatBalance, formatPercentage, MathBN } from '../utils'
 import Avatar from './Avatar'
 import Button from './Button'
 
@@ -59,6 +59,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
   ({
     active,
     bonded,
+    bondedAmount,
     className,
     id,
     status,
@@ -109,11 +110,12 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
         />
         <TranscoderStat
           label="Price"
-          symbol="WEI"
+          symbol="GWEI"
           type="token"
-          unit="wei"
+          unit="gwei"
+          decimals={9}
           value={pricePerSegment}
-          width="80px"
+          width="128px"
           help="The amount the Transcoder will charge broadcasters per segment. Wei is the base unit of ethereum, which is 10^18 Wei = 1 ETH. The price illustrated is based on a segment of video, which is 4 seconds"
         />
         <TranscoderStat
@@ -126,6 +128,24 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           width="128px"
           help="Total amount of LPT staked towards this node, including the transcoders own stake."
         />
+        {bonded &&
+          bondedAmount && (
+            <TranscoderStat
+              decimals={2}
+              label="Your Stake"
+              symbol="LPT"
+              type="token"
+              unit="ether"
+              value={bondedAmount}
+              append={
+                <span style={{ fontSize: 10 }}>{`(${MathBN.toBig(
+                  MathBN.div(bondedAmount + '00', totalStake),
+                ).toFixed(2)}%)`}</span>
+              }
+              width="128px"
+              help="Amount of LPT you have staked towards this node."
+            />
+          )}
       </div>
       {/* Actions */}
       {(onBond || onUnbond) && (
@@ -184,7 +204,8 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     }
   }
   > .stats {
-    display: inline-block;
+    display: flex;
+    align-items: flex-start;
     min-width: 320px;
   }
   > .actions-placeholder {
@@ -267,7 +288,7 @@ type TranscoderStatProps = {|
 
 /** Displays a numeric or string-based transcoder stat */
 export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
-  ({ className, help, label, type, value, width, ...props }) => {
+  ({ append, className, help, label, type, value, width, ...props }) => {
     let formattedValue = value
     switch (type) {
       case 'percentage': {
@@ -286,7 +307,9 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
         <Tooltip text={help}>
           <div className="label">{label}</div>
         </Tooltip>
-        <div className="value">{formattedValue}</div>
+        <div className="value">
+          {formattedValue} {append}
+        </div>
       </div>
     )
   },
@@ -294,7 +317,10 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
   display: inline-block;
   margin: 0 16px;
   width: ${({ width }) => (width ? width : '100%')};
-  > .label {
+  & > .value {
+    font-size: 14px;
+  }
+  & > .label {
     margin-bottom: 4px;
     font-size: 11px;
     cursor: help;
@@ -302,9 +328,6 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
     @media (max-width: 640px) {
       border: none;
     }
-  }
-  > .value {
-    font-size: 14px;
   }
 `
 
