@@ -5,4 +5,4 @@
 **/docs
 **/lib
 **/public
-**/package.json
+**/*.json
