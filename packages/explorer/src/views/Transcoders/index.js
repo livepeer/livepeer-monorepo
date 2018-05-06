@@ -173,7 +173,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           const { id } = props // transcoder id
           const isMyDelegate = id === delegateAddress
           const canRebond = isMyDelegate && (isBonded || isBonding)
-          const canBond = myId && (canRebond || isUnbonded || isUnbonding)
+          const canBond = myId // && (canRebond || isUnbonded || isUnbonding)
           const canUnbond = myId && isBonded && isMyDelegate
           return (
             <TranscoderCard

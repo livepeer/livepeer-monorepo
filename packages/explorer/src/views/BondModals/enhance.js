@@ -54,13 +54,10 @@ export const mapTransactionsToProps = mapProps(props => {
     bondStatus,
     onClose: () => tx.delete(bondStatus),
     onBond: wireTransactionToStatus(tx, bondStatus, async ({ to, amount }) => {
-      await approve({ variables: { type: 'bond', amount } })
+      if (amount) {
+        await approve({ variables: { type: 'bond', amount } })
+      }
       return await bond({ variables: { to, amount } })
-      // return await sleep(1000, {
-      //   transaction: {
-      //     hash: '0xf00',
-      //   },
-      // })
     }),
   }
 })
