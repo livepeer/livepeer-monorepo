@@ -152,14 +152,6 @@ export const mapTransactionsToProps = mapProps(props => {
           body: 'The current round is not initialized.',
         })
       }
-      if (hasUnclaimedRounds) {
-        return toasts.push({
-          id: 'bond',
-          type: 'warn',
-          title: 'Unable to bond',
-          body: 'You have unclaimed earnings from previous rounds.',
-        })
-      }
       tx.activate({
         id,
         type: 'BondStatus',
