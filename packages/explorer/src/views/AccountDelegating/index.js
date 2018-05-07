@@ -95,11 +95,12 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         subvalue={formatBalance(bondedAmount, 18)}
       >
         {isMyAccount &&
-          hasStake && (
+          hasStake &&
+          isUnbonded && (
             <React.Fragment>
               {/** request */}
               <Button onClick={onWithdrawStake(delegator.data.id)}>
-                withdraw
+                withdraw stake
               </Button>
             </React.Fragment>
           )}
@@ -115,7 +116,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             <React.Fragment>
               {/** request */}
               <Button onClick={onWithdrawFees(delegator.data.id)}>
-                withdraw
+                withdraw fees
               </Button>
             </React.Fragment>
           )}
