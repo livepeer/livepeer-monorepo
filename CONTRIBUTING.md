@@ -39,7 +39,7 @@ If you're into this whole coding thing, maybe try picking up [a good first issue
 
 > Note: Bonus points if you can delete code instead of adding it! 👾
 
-#### 🛠️ Improving scripts and tooling
+#### 🛠️ Updating scripts and tooling
 
 We want to make sure LivepeerJS contributors have a pleasant developer experience (DX). The tools we use to code continually change and improve. If you see ways to reduce the amount of repetition or stress when it comes to coding in this project, feel free to create an issue and/or PR to discuss. Let's continue to improve this codebase for everyone.
 
