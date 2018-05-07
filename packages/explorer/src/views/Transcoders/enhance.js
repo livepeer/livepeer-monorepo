@@ -101,9 +101,11 @@ export const mapTransactionsToProps = mapProps(props => {
   const { currentRound, toasts, transactions: tx, ...nextProps } = props
   const { id: currentRoundNum, lastInitializedRound } = currentRound.data
   const { status, lastClaimRound } = nextProps.me.data.delegator
-  const unclaimedRounds = MathBN.sub(lastInitializedRound, lastClaimRound)
-  const hasUnclaimedRounds =
-    status !== 'Unbonded' && currentRoundNum !== lastClaimRound
+  const isUnbonded = status === 'Unbonded'
+  const unclaimedRounds = isUnbonded
+    ? ' 0'
+    : MathBN.sub(lastInitializedRound, lastClaimRound)
+  const hasUnclaimedRounds = !isUnbonded && currentRoundNum !== lastClaimRound
   return {
     ...nextProps,
     unbondFrom: id => async () => {
