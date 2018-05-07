@@ -4,6 +4,8 @@ about: Suggest an idea for this project
 
 ---
 
+<!-- Please keep your answers concise. Provide no more than a few sentences for each question. -->
+
 **Is your feature request related to a problem or need? Please describe. (required)**
 A clear and concise description of what your motivation is. Ex. I'm always frustrated when [...]
 
