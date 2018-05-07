@@ -1,3 +1,4 @@
+import React from 'react'
 import { compose, mapProps } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -6,7 +7,7 @@ import {
   connectToasts,
   connectTransactions,
 } from '../../enhancers'
-import { mockAccount, sleep } from '../../utils'
+import { MathBN, mockAccount, sleep } from '../../utils'
 
 const MeDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {
@@ -98,8 +99,9 @@ const connectTranscodersQuery = graphql(TranscodersQuery, {
 
 export const mapTransactionsToProps = mapProps(props => {
   const { currentRound, toasts, transactions: tx, ...nextProps } = props
-  const currentRoundNum = currentRound.data.id
+  const { id: currentRoundNum, lastInitializedRound } = currentRound.data
   const { status, lastClaimRound } = nextProps.me.data.delegator
+  const unclaimedRounds = MathBN.sub(lastInitializedRound, lastClaimRound)
   const hasUnclaimedRounds =
     status !== 'Unbonded' && currentRoundNum !== lastClaimRound
   return {
@@ -150,6 +152,20 @@ export const mapTransactionsToProps = mapProps(props => {
           type: 'warn',
           title: 'Unable to bond',
           body: 'The current round is not initialized.',
+        })
+      }
+      if (MathBN.gt(unclaimedRounds, '20')) {
+        return toasts.push({
+          id: 'bond',
+          type: 'warn',
+          title: 'Unable to bond',
+          body: (
+            <span>
+              You have unclaimed earnings from more than 20 previous rounds.{' '}
+              <br />
+              <a href="/me/delegating">Claim Your Earnings</a>
+            </span>
+          ),
         })
       }
       tx.activate({

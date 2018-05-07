@@ -130,15 +130,13 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         title="Unclaimed Rounds"
         value={!delegateAddress ? 'N/A' : unclaimedRounds}
         subvalue={
-          !delegateAddress ? (
+          !delegateAddress || !isMyAccount ? (
             ''
           ) : !hasUnclaimedRounds ? (
             `You're all caught up!`
           ) : (
             <span>
-              {`last claimed round: #${lastClaimRound}`}
-              <br />
-              {`last initialized round: #${lastInitializedRound}`}
+              {`You have unclaimed earnings from round #${lastClaimRound} to #${lastInitializedRound}`}
             </span>
           )
         }
@@ -152,7 +150,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
                 onClick={onClaimEarnings(delegator.data.id)}
                 disabled={unclaimedRounds === '0'}
               >
-                claim
+                claim stake & fees
               </Button>
             </React.Fragment>
           )}

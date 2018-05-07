@@ -39,7 +39,7 @@ const Tooltip = ({
       'data-event': 'mouseover touchdown focus',
       'data-event-off': 'mouseout touchdown blur',
       // don't delay on small devices that are probably touch-enabled
-      'data-delay-show': window.innerWidth < 960 ? '0' : '1000',
+      'data-delay-show': window.innerWidth < 960 ? '0' : '500',
       ...tooltipProps,
     })}
     <ReactTooltip
@@ -317,17 +317,14 @@ export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
   display: inline-block;
   margin: 0 16px;
   width: ${({ width }) => (width ? width : '100%')};
-  & > .value {
+  .value {
     font-size: 14px;
   }
-  & > .label {
+  .label {
     margin-bottom: 4px;
     font-size: 11px;
     cursor: help;
     border-bottom: 1px dashed #ccc;
-    @media (max-width: 640px) {
-      border: none;
-    }
   }
 `
 
