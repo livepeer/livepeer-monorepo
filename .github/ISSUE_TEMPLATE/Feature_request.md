@@ -1,5 +1,5 @@
 ---
-name: 🕶 Enhancement or feature request
+name: "\U0001F576 Enhancement or feature request"
 about: Suggest an idea for this project
 
 ---
