@@ -5,13 +5,9 @@ about: Create a report to help us improve
 ---
 
 <!-------------------------------------------------------------------------
- | Thanks for opening an issue!
- |
- | Please make sure this issue is not already reported by searching through
- | 
+ | Thanks for opening an issue! 🎉
+ | First, please make sure this issue is not already reported by browsing
  | https://github.com/livepeer/livepeerjs/issues
- |
- | Cheers 🎉
  -------------------------------------------------------------------------->
 
 **Describe the bug (required)**
