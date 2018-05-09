@@ -1,5 +1,8 @@
+import 'u2f-api-polyfill'
 import Eth from 'ethjs'
 import SignerProvider from 'ethjs-provider-signer'
+import LedgerProvider from 'web3-provider-ledger'
+import LedgerDevice from 'web3-provider-ledger/device'
 import EthereumTx from 'ethereumjs-tx'
 import { decodeEvent } from 'ethjs-abi'
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
@@ -295,26 +298,58 @@ export async function initRPC({
   defaultTx: { from: string, gas: number },
 }> {
   const usePrivateKeys = 0 < Object.keys(privateKeys).length
+  console.log('got provider', provider)
+  console.log(account)
   const ethjsProvider =
-    'object' === typeof provider && provider
+    'object' === typeof provider && provider && !provider.attributes
       ? provider
-      : usePrivateKeys
+      : usePrivateKeys || (provider && provider.attributes)
         ? // Use provider-signer to locally sign transactions
-          new SignerProvider(provider, {
+          (console.log('adsfasdf'),
+          new SignerProvider('https://rinkeby.infura.io', {
             signTransaction: (rawTx, cb) => {
+              const _rawTx = {
+                ...rawTx,
+                chainId: 4,
+                v: '0x04',
+                r: '0x00',
+                s: '0x00',
+              }
               const tx = new EthereumTx(rawTx)
+              if (provider && provider.attributes) {
+                const { device } = provider.attributes
+                if (device) {
+                  console.log(rawTx, tx, tx.toJSON())
+                  return device
+                    .sign(tx.serialize())
+                    .then(x => {
+                      const nextTx = new EthereumTx(x)
+                      const hash = nextTx.serialize().toString('hex')
+                      console.log('signed', x, nextTx.toJSON(), hash)
+                      cb(null, '0x' + hash)
+                    })
+                    .catch(console.error)
+                }
+              }
               tx.sign(privateKeys[from])
               cb(null, '0x' + tx.serialize().toString('hex'))
             },
             accounts: cb => cb(null, accounts),
             timeout: 10 * 1000,
-          })
+          }))
         : // Use default signer
           new Eth.HttpProvider(provider || DEFAULTS.provider)
   const eth = new Eth(ethjsProvider)
-  const accounts = usePrivateKeys
-    ? Object.keys(privateKeys)
-    : await eth.accounts()
+  let accounts = []
+  if (provider && provider.attributes) {
+    accounts = (await provider.attributes.device.listAddresses()).map(x =>
+      `0x${x}`.toLowerCase(),
+    )
+  } else if (usePrivateKeys) {
+    accounts = Object.keys(privateKeys)
+  } else {
+    accounts = await eth.accounts()
+  }
   const from =
     // select account by address or index
     // default to EMPTY_ADDRESS (read-only; cannot transact)
@@ -327,7 +362,7 @@ export async function initRPC({
     accounts,
     defaultTx: {
       from,
-      gas,
+      gas: 0,
     },
   }
 }
@@ -368,7 +403,8 @@ export async function initContracts(
   const Controller = await getContractAt(eth, {
     ...artifacts.Controller,
     defaultTx,
-    address: controllerAddress,
+    // address: controllerAddress,
+    address: '0x37dC71366Ec655093b9930bc816E16e6b587F968',
   })
   for (const name of Object.keys(contracts)) {
     // Get contract address from Controller

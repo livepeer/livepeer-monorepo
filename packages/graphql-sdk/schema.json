@@ -179,8 +179,7 @@
             },
             {
               "name": "me",
-              "description":
-                "The currently selected account (usually set by something like MetaMask)",
+              "description": "The currently selected account (usually set by something like MetaMask)",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -283,8 +282,7 @@
         {
           "kind": "SCALAR",
           "name": "String",
-          "description":
-            "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
+          "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -421,8 +419,7 @@
             },
             {
               "name": "deposit",
-              "description":
-                "The broadcaster's ETH deposit (required to create a Job)",
+              "description": "The broadcaster's ETH deposit (required to create a Job)",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -438,8 +435,7 @@
             },
             {
               "name": "withdrawBlock",
-              "description":
-                "The earliest ETH block at which the broadcaster is eligible to withdraw their deposited ETH",
+              "description": "The earliest ETH block at which the broadcaster is eligible to withdraw their deposited ETH",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -507,8 +503,7 @@
         {
           "kind": "SCALAR",
           "name": "Int",
-          "description":
-            "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. ",
+          "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. ",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -538,8 +533,7 @@
             },
             {
               "name": "broadcaster",
-              "description":
-                "Address of broadcaster that requested the transcoding job",
+              "description": "Address of broadcaster that requested the transcoding job",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -693,8 +687,7 @@
         {
           "kind": "OBJECT",
           "name": "Delegator",
-          "description":
-            "Users that bond tokens and delegate their bonded stake to other users, usually registered transcoders in exchange for shared rewards and fees.",
+          "description": "Users that bond tokens and delegate their bonded stake to other users, usually registered transcoders in exchange for shared rewards and fees.",
           "fields": [
             {
               "name": "id",
@@ -730,8 +723,7 @@
             },
             {
               "name": "bondedAmount",
-              "description":
-                "The amount of Livepeer Token a delegator has bonded",
+              "description": "The amount of Livepeer Token a delegator has bonded",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -763,8 +755,7 @@
             },
             {
               "name": "delegateAddress",
-              "description":
-                "The ETH address of the delegate (the one whom the delegator has bonded to)",
+              "description": "The ETH address of the delegate (the one whom the delegator has bonded to)",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -780,8 +771,7 @@
             },
             {
               "name": "delegatedAmount",
-              "description":
-                "The amount of Livepeer Token the delegator has delegated",
+              "description": "The amount of Livepeer Token the delegator has delegated",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -797,8 +787,7 @@
             },
             {
               "name": "lastClaimRound",
-              "description":
-                "The last round that the delegator claimed reward and fee pool shares",
+              "description": "The last round that the delegator claimed reward and fee pool shares",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -814,8 +803,7 @@
             },
             {
               "name": "startRound",
-              "description":
-                "The round the delegator becomes bonded and delegated to its delegate",
+              "description": "The round the delegator becomes bonded and delegated to its delegate",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -889,8 +877,7 @@
         {
           "kind": "OBJECT",
           "name": "Transcoder",
-          "description":
-            "Perform transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.",
+          "description": "Perform transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.",
           "fields": [
             {
               "name": "id",
@@ -958,8 +945,7 @@
             },
             {
               "name": "rewardCut",
-              "description":
-                "% of block reward cut paid to transcoder by a delegator",
+              "description": "% of block reward cut paid to transcoder by a delegator",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1007,8 +993,7 @@
             },
             {
               "name": "pendingRewardCut",
-              "description":
-                "Pending block reward cut for next round if the transcoder is active",
+              "description": "Pending block reward cut for next round if the transcoder is active",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1024,8 +1009,7 @@
             },
             {
               "name": "pendingFeeShare",
-              "description":
-                "Pending fee share for next round if the transcoder is active",
+              "description": "Pending fee share for next round if the transcoder is active",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1041,8 +1025,7 @@
             },
             {
               "name": "pendingPricePerSegment",
-              "description":
-                "Pending price per segment for next round if the transcoder is active",
+              "description": "Pending price per segment for next round if the transcoder is active",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1058,8 +1041,7 @@
             },
             {
               "name": "totalStake",
-              "description":
-                "Total tokens delegated toward a transcoder (including their own)",
+              "description": "Total tokens delegated toward a transcoder (including their own)",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1082,8 +1064,7 @@
         {
           "kind": "SCALAR",
           "name": "Boolean",
-          "description":
-            "The `Boolean` scalar type represents `true` or `false`.",
+          "description": "The `Boolean` scalar type represents `true` or `false`.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -1258,8 +1239,7 @@
             },
             {
               "name": "bond",
-              "description":
-                "Submits a bond transaction for a previously approved amount",
+              "description": "Submits a bond transaction for a previously approved amount",
               "args": [
                 {
                   "name": "to",
@@ -1300,8 +1280,7 @@
             },
             {
               "name": "claimEarnings",
-              "description":
-                "Claims earnings from your last claim round through specified round",
+              "description": "Claims earnings from your last claim round through specified round",
               "args": [
                 {
                   "name": "endRound",
@@ -1328,8 +1307,7 @@
             },
             {
               "name": "unbond",
-              "description":
-                "Submits a bond transaction for a previously approved amount",
+              "description": "Submits a bond transaction for a previously approved amount",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -1348,8 +1326,7 @@
         {
           "kind": "OBJECT",
           "name": "__Schema",
-          "description":
-            "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
+          "description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
           "fields": [
             {
               "name": "types",
@@ -1377,8 +1354,7 @@
             },
             {
               "name": "queryType",
-              "description":
-                "The type that query operations will be rooted at.",
+              "description": "The type that query operations will be rooted at.",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1394,8 +1370,7 @@
             },
             {
               "name": "mutationType",
-              "description":
-                "If this server supports mutation, the type that mutation operations will be rooted at.",
+              "description": "If this server supports mutation, the type that mutation operations will be rooted at.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -1407,8 +1382,7 @@
             },
             {
               "name": "subscriptionType",
-              "description":
-                "If this server support subscription, the type that subscription operations will be rooted at.",
+              "description": "If this server support subscription, the type that subscription operations will be rooted at.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -1420,8 +1394,7 @@
             },
             {
               "name": "directives",
-              "description":
-                "A list of all directives supported by this server.",
+              "description": "A list of all directives supported by this server.",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1452,8 +1425,7 @@
         {
           "kind": "OBJECT",
           "name": "__Type",
-          "description":
-            "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+          "description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
           "fields": [
             {
               "name": "kind",
@@ -1638,8 +1610,7 @@
         {
           "kind": "ENUM",
           "name": "__TypeKind",
-          "description":
-            "An enum describing what kind of type a given `__Type` is.",
+          "description": "An enum describing what kind of type a given `__Type` is.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -1652,50 +1623,43 @@
             },
             {
               "name": "OBJECT",
-              "description":
-                "Indicates this type is an object. `fields` and `interfaces` are valid fields.",
+              "description": "Indicates this type is an object. `fields` and `interfaces` are valid fields.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "INTERFACE",
-              "description":
-                "Indicates this type is an interface. `fields` and `possibleTypes` are valid fields.",
+              "description": "Indicates this type is an interface. `fields` and `possibleTypes` are valid fields.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "UNION",
-              "description":
-                "Indicates this type is a union. `possibleTypes` is a valid field.",
+              "description": "Indicates this type is a union. `possibleTypes` is a valid field.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "ENUM",
-              "description":
-                "Indicates this type is an enum. `enumValues` is a valid field.",
+              "description": "Indicates this type is an enum. `enumValues` is a valid field.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "INPUT_OBJECT",
-              "description":
-                "Indicates this type is an input object. `inputFields` is a valid field.",
+              "description": "Indicates this type is an input object. `inputFields` is a valid field.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "LIST",
-              "description":
-                "Indicates this type is a list. `ofType` is a valid field.",
+              "description": "Indicates this type is a list. `ofType` is a valid field.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "NON_NULL",
-              "description":
-                "Indicates this type is a non-null. `ofType` is a valid field.",
+              "description": "Indicates this type is a non-null. `ofType` is a valid field.",
               "isDeprecated": false,
               "deprecationReason": null
             }
@@ -1705,8 +1669,7 @@
         {
           "kind": "OBJECT",
           "name": "__Field",
-          "description":
-            "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+          "description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
           "fields": [
             {
               "name": "name",
@@ -1813,8 +1776,7 @@
         {
           "kind": "OBJECT",
           "name": "__InputValue",
-          "description":
-            "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+          "description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
           "fields": [
             {
               "name": "name",
@@ -1862,8 +1824,7 @@
             },
             {
               "name": "defaultValue",
-              "description":
-                "A GraphQL-formatted string representing the default value for this input value.",
+              "description": "A GraphQL-formatted string representing the default value for this input value.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -1882,8 +1843,7 @@
         {
           "kind": "OBJECT",
           "name": "__EnumValue",
-          "description":
-            "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+          "description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
           "fields": [
             {
               "name": "name",
@@ -1950,8 +1910,7 @@
         {
           "kind": "OBJECT",
           "name": "__Directive",
-          "description":
-            "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+          "description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
           "fields": [
             {
               "name": "name",
@@ -2086,8 +2045,7 @@
         {
           "kind": "ENUM",
           "name": "__DirectiveLocation",
-          "description":
-            "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+          "description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -2190,15 +2148,13 @@
             },
             {
               "name": "INPUT_OBJECT",
-              "description":
-                "Location adjacent to an input object type definition.",
+              "description": "Location adjacent to an input object type definition.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "INPUT_FIELD_DEFINITION",
-              "description":
-                "Location adjacent to an input object field definition.",
+              "description": "Location adjacent to an input object field definition.",
               "isDeprecated": false,
               "deprecationReason": null
             }
@@ -2209,9 +2165,12 @@
       "directives": [
         {
           "name": "skip",
-          "description":
-            "Directs the executor to skip this field or fragment when the `if` argument is true.",
-          "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
+          "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
+          "locations": [
+            "FIELD",
+            "FRAGMENT_SPREAD",
+            "INLINE_FRAGMENT"
+          ],
           "args": [
             {
               "name": "if",
@@ -2231,9 +2190,12 @@
         },
         {
           "name": "include",
-          "description":
-            "Directs the executor to include this field or fragment only when the `if` argument is true.",
-          "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
+          "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
+          "locations": [
+            "FIELD",
+            "FRAGMENT_SPREAD",
+            "INLINE_FRAGMENT"
+          ],
           "args": [
             {
               "name": "if",
@@ -2253,14 +2215,15 @@
         },
         {
           "name": "deprecated",
-          "description":
-            "Marks an element of a GraphQL schema as no longer supported.",
-          "locations": ["FIELD_DEFINITION", "ENUM_VALUE"],
+          "description": "Marks an element of a GraphQL schema as no longer supported.",
+          "locations": [
+            "FIELD_DEFINITION",
+            "ENUM_VALUE"
+          ],
           "args": [
             {
               "name": "reason",
-              "description":
-                "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted in [Markdown](https://daringfireball.net/projects/markdown/).",
+              "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted in [Markdown](https://daringfireball.net/projects/markdown/).",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

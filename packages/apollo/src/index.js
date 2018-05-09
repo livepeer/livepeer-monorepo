@@ -99,7 +99,7 @@ export default async function createApolloClient(
   async function updateConfig(web3: Web3, accountIndex: number): void {
     try {
       state.updating = true
-      state.account = getAccountFromWeb3(web3, accountIndex)
+      state.account = options.account || getAccountFromWeb3(web3, accountIndex)
       state.provider = options.provider || getProviderFromWeb3(web3)
       state.livepeer = window.livepeer = await initLivepeer(state)
     } catch (err) {
@@ -140,11 +140,13 @@ export default async function createApolloClient(
    * @return {Livepeer}
    */
   function initLivepeer(web3: Web3, accountIndex: number): Livepeer {
-    const account = getAccountFromWeb3(web3, accountIndex) || state.account
+    const account =
+      options.account || getAccountFromWeb3(web3, accountIndex) || state.account
     const provider =
       options.provider || getProviderFromWeb3(web3) || state.provider
     const gas = options.defaultGas || 0
     const { controllerAddress } = options
+    console.log('initLivepeer', account)
     return Livepeer({ account, gas, provider, controllerAddress })
   }
 
