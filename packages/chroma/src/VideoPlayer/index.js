@@ -133,7 +133,7 @@ export default class VideoPlayer extends Component {
       ...props
     } = this.props
     return (
-      <Player autoPlay={autoPlay} playsInline {...props}>
+      <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
         <Source
           isVideoChild
@@ -303,7 +303,7 @@ export class Source extends Component {
     // no autoplay on mobile safari
     // if not muted, playback must be started by user-initiated event
     // https://webkit.org/blog/6784/new-video-policies-for-ios/
-    // we can enable, if desires, but video would have to be muted during initial playback
+    // we can enable, if desired, but video would have to be muted during initial playback
     onLive()
   }
   /**
