@@ -8,6 +8,7 @@ exports[`should render as expected 1`] = `
 >
   <video
     class="video-react-video"
+    muted=""
     playsinline=""
     preload="auto"
   >
