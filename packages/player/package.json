@@ -17,6 +17,7 @@
     "react-dom": "^16.2.0",
     "react-feather": "^1.0.7",
     "react-redux": "5.0.7",
+    "react-responsive-modal": "^3.0.1",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.8",
     "react-scripts": "1.1.1",
@@ -32,10 +33,8 @@
     "copy-docs": "echo 'No copy-docs script specified'",
     "eject": "react-scripts eject",
     "deploy": "npx poosh",
-    "prebuild":
-      "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
-    "postbuild":
-      "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
+    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
+    "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
     "serve": "npx serve -s build",
     "test": "react-scripts test --env=jsdom"
   },
