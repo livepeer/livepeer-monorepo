@@ -18,6 +18,7 @@
     "docs":
       "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
     "precommit": "npx pretty-quick --staged",
+    "prepush": "yarn test",
     "prepare":
       "npx lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
     "release": "npx lerna publish --conventional-commits --yes",
@@ -44,6 +45,12 @@
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx pretty-quick --staged",
+      "pre-push": "yarn test"
     }
   }
 }
