@@ -19,6 +19,7 @@ import { VideoPlayer, Snapshot } from '@livepeer/chroma'
 import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
+import Modal from 'react-responsive-modal'
 
 const { changeChannel } = routingActions
 
@@ -62,7 +63,34 @@ class Channel extends Component {
   state = {
     url: '',
     live: null,
+    tippingOpen: false,
+    tipAmount: 0,
   }
+  onOpenModal = () => {
+    this.setState({ tippingOpen: true })
+  }
+
+  onCloseModal = () => {
+    this.setState({ tippingOpen: false })
+  }
+
+  sendTip = (broadcaster, value) => {
+    window.web3.eth.sendTransaction(
+      {
+        from: window.web3.eth.coinbase,
+        to: broadcaster,
+        value: window.web3.toWei(value, 'ether'),
+      },
+      (error, result) => {
+        this.setState({ tippingOpen: false })
+      },
+    )
+  }
+
+  handleValueChange = e => {
+    this.setState({ tipAmount: e.target.value })
+  }
+
   async componentWillReceiveProps(nextProps) {
     const [newJob] = nextProps.jobs
     if (!newJob) {
@@ -73,11 +101,14 @@ class Channel extends Component {
     const url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
     this.setState({ url })
   }
+
   render() {
     const { jobs, loading, match, changeChannel, updateJob } = this.props
-    const { live, url } = this.state
+    const { live, url, tippingOpen } = this.state
     const [latestJob] = jobs
     const { streamId, broadcaster = match.params.channel } = latestJob || {}
+    const web3IsEnabled = window.web3 && window.web3.eth.coinbase
+
     return (
       <div>
         <BasicNavbar onSearch={changeChannel} />
@@ -162,6 +193,111 @@ class Channel extends Component {
               </p>
             </div>
           </Info>
+
+          <div
+            style={{
+              display: web3IsEnabled ? 'block' : 'none',
+            }}
+          >
+            <div
+              style={{
+                width: 640,
+                maxWidth: '100%',
+                margin: '0 auto',
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  display: 'inline-flex',
+                  flexFlow: 'row-wrap',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    width: '75%',
+                    margin: 0,
+                    paddingLeft: 16,
+                    lineHeight: 1.5,
+                    color: '#555',
+                  }}
+                >
+                  Enjoying the show? Support your favorite broadcasters.<br />
+                </p>
+                <p style={{ margin: 0 }}>
+                  <button
+                    style={{
+                      background: '#03a678',
+                      color: '#fff',
+                      outline: 0,
+                      border: 'none',
+                      borderRadius: 4,
+                      margin: 0,
+                      padding: '8px 12px',
+                      fontSize: 12,
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      this.onOpenModal()
+                    }}
+                  >
+                    ♥ &nbsp;&nbsp;Leave a tip
+                  </button>
+                </p>
+              </div>
+            </div>
+            <Modal open={tippingOpen} onClose={this.onCloseModal} center>
+              <h2>Leave a tip</h2>
+              <p
+                style={{
+                  lineHeight: 1.5,
+                  color: '#555',
+                }}
+              >
+                Enter the amount of ETH you want to tip:
+              </p>
+              <input
+                style={{
+                  borderRadius: 4,
+                  borderWidth: 2,
+                  borderColor: '#03a678',
+                  borderStyle: 'solid',
+                  padding: 5,
+                  outline: 'none',
+                }}
+                type="number"
+                placeholder="0.002"
+                step="0.001"
+                min="0"
+                onChange={this.handleValueChange.bind(this)}
+                value={this.state.tipAmount}
+              />
+              <button
+                onClick={() => {
+                  this.sendTip(broadcaster, this.state.tipAmount)
+                }}
+                style={{
+                  background: '#03a678',
+                  color: '#fff',
+                  outline: 0,
+                  border: 'none',
+                  borderRadius: 4,
+                  margin: 10,
+                  padding: '8px 12px',
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                }}
+              >
+                ♥ Send tip
+              </button>
+            </Modal>
+          </div>
+
           {/*
           <div>
             <p
@@ -336,78 +472,6 @@ class Channel extends Component {
             </div>
           </div>
         </Footer>
-        {/* Tipping
-        <Footer>
-          <div
-            style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              width: '100vw',
-              background: '#fff',
-              boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
-            }}
-          >
-            <div
-              style={{
-                width: 640,
-                maxWidth: '100%',
-                margin: '0 auto',
-                padding: 16,
-              }}
-            >
-              <div
-                style={{
-                  display: 'inline-flex',
-                  flexFlow: 'row-wrap',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  width: '100%',
-                }}
-              >
-                <ThumbsUp color="#03a678" size={32} />
-                <p
-                  style={{
-                    width: '75%',
-                    margin: 0,
-                    paddingLeft: 16,
-                    lineHeight: 1.5,
-                    color: '#555',
-                  }}
-                >
-                  Enjoying the show? Show your appreciation.<br />
-                  <a href="#" style={{ fontSize: 12 }}>
-                    Learn more
-                  </a>
-                </p>
-                <p style={{ margin: 0 }}>
-                  <button
-                    style={{
-                      background: '#03a678',
-                      color: '#fff',
-                      outline: 0,
-                      border: 'none',
-                      borderRadius: 4,
-                      margin: 0,
-                      padding: '8px 12px',
-                      fontSize: 12,
-                      textTransform: 'uppercase',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                      window.prompt(
-                        'Enter an amount of LPT or ETH...',
-                      )
-                    }}
-                  >
-                    ♥ &nbsp;&nbsp;Leave a tip
-                  </button>
-                </p>
-              </div>
-            </div>
-          </div>
-        </Footer>
-        */}
       </div>
     )
   }

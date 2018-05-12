@@ -51,6 +51,10 @@ We want to make sure LivepeerJS contributors have a pleasant developer experienc
 
 Nothing actually! We expect a rich mixture of commits, conversation, support, and review. Adding documentation or opening issues are incredibly useful ways to get involved without coding at all. If you do want to contribute code, however, it'd be good to have some proficiency with JavaScript.
 
+### How can i run LivepeerJS on Windows?
+
+You need a unix shell to run LivepeerJS. You can get one on Windows by installing the Linux on Windows subsystem on Windows 10. You can find instructions [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
 ### How is a contribution reviewed and accepted?
 
 * If you are opening an issue, please follow the [ISSUE_TEMPLATE](https://raw.githubusercontent.com/livepeer/livepeerjs/master/ISSUE_TEMPLATE.md) format before submitting. And please _keep your issue simple, clear, and to-the-point_. Most issues do not require many paragraphs of text. In fact, if you write too much, it can become difficult to understand what you are actually trying to communicate.
