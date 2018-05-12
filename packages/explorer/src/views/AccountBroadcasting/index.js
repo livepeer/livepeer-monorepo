@@ -121,7 +121,7 @@ const JobCard = ({ id, broadcaster, profiles, streamId }) => {
         >
           Profiles
         </strong>
-        <div style={{ display: 'flex', flexFlow: 'row' }}>
+        <div style={{ display: 'flex', flexFlow: 'row', flexWrap: 'wrap' }}>
           {profiles.map(props => (
             <JobProfileItem key={props.name} {...props} />
           ))}
@@ -137,7 +137,7 @@ const JobProfileItem = ({ name, bitrate, framerate, resolution }) => {
       key={name}
       style={{
         display: 'inline-block',
-        width: '50%',
+        width: 'calc(50% - 20px)',
         padding: 8,
         margin: 10,
         border: '1px solid #eee',

@@ -12,3 +12,6 @@ coverage
 yarn-error.log
 .env*.local
 .poosh.cache
+
+.idea
+.vscode
