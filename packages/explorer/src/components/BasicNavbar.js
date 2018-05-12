@@ -151,7 +151,18 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
             <span>&nbsp;Transcoders</span>
           </NavbarLink>
           {window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS && (
-            <NavbarLink to="/me">
+            <NavbarLink
+              to="/me"
+              isActive={(match, location) => {
+                const { pathname } = location
+                const [addr] = pathname
+                  .split('/')
+                  .filter(x => x.substring(0, 2) === '0x')
+                return addr
+                  ? addr.toLowerCase() === window.livepeer.config.defaultTx.from
+                  : false
+              }}
+            >
               <UserIcon size={16} />
               <span>&nbsp;My Account</span>
             </NavbarLink>

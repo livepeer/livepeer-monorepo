@@ -22,24 +22,20 @@ const App = props => (
       <Route exact path="/transcoders" component={Transcoders} />
       <Route
         path="/accounts/:accountId"
-        render={props => {
-          return onMyAccountPage(
-            props.match,
-            window.livepeer.config.defaultTx.from,
-          ) ? (
-            <Redirect to="/me" />
-          ) : (
-            <Account {...props} />
-          )
-        }}
+        render={props => <Account {...props} />}
       />
       <Route
         path="/me"
         render={(props, ctx) => {
+          const { pathname, search } = props.location
           const account = window.livepeer.config.defaultTx.from
-          const athenticated =
+          const authenticated =
             account && account !== '0x0000000000000000000000000000000000000000'
-          return !athenticated ? <Redirect to="/" /> : <Account {...props} />
+          const nextPath =
+            (authenticated
+              ? pathname.replace(/^\/me/, `/accounts/${account}`)
+              : '/') + search
+          return <Redirect to={nextPath} />
         }}
       />
       <Redirect to="/" />
