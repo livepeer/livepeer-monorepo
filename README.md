@@ -33,11 +33,12 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 ## Requirements
 
-This project requires `node >=8.0.0` and `yarn >=1.0.0`. A unix shell is also required.
+This project requires `node >=8.0.0` and `yarn >=1.0.0`.
 
 * [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
 * [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
-* [UNIX Shell (Windows users)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+
+> Note: If you're on Windows, you'll also need to [install the Linux Subsystem and a UNIX shell](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
 ## Getting Started
 
