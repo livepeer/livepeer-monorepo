@@ -10,6 +10,7 @@ import { formatBalance, MathBN } from '../../utils'
 import {
   Button,
   Content,
+  EmptyMessage,
   InlineHint,
   MetricBox,
   Wrapper,
@@ -70,7 +71,11 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
       <MetricBox title="Withdraw Block" value={withdrawBlock} />
       <Content>
         <h3>Job History</h3>
-        {!jobs.length && <div>There are no jobs for this account</div>}
+        {!jobs.length && (
+          <EmptyMessage>
+            <h2>This account has no broadcast history</h2>
+          </EmptyMessage>
+        )}
         <div>{jobs.map(props => <JobCard key={props.id} {...props} />)}</div>
       </Content>
     </Wrapper>

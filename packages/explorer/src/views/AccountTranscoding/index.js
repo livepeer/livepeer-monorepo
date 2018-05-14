@@ -1,7 +1,13 @@
 // @flow
 import * as React from 'react'
 import { formatBalance, formatPercentage } from '../../utils'
-import { Button, InlineHint, MetricBox, Wrapper } from '../../components'
+import {
+  Button,
+  EmptyMessage,
+  InlineHint,
+  MetricBox,
+  Wrapper,
+} from '../../components'
 import enhance from './enhance'
 
 type AccountTranscodingViewProps = {
@@ -32,8 +38,8 @@ const AccountTranscodingView: React.ComponentType<
       {notRegistered ? (
         <React.Fragment>
           {isMe ? (
-            <InlineHint flag="account-transcoding" disableHide>
-              <h3>You are not registered as a transcoder</h3>
+            <EmptyMessage>
+              <h2>You are not registered as a transcoder</h2>
               <p>
                 In The Livepeer network, nodes who play the role of transcoder,
                 perform this very important function, and as a result it's
@@ -54,9 +60,9 @@ const AccountTranscodingView: React.ComponentType<
                   Learn More About Transcoding
                 </Button>
               </p>
-            </InlineHint>
+            </EmptyMessage>
           ) : (
-            <InlineHint flag="account-transcoding" disableHide>
+            <EmptyMessage>
               <h3>This Account is not registered as a transcoder</h3>
               <p>
                 In The Livepeer network, nodes who play the role of transcoder,
@@ -78,7 +84,7 @@ const AccountTranscodingView: React.ComponentType<
                   Learn More About Transcoding
                 </Button>
               </p>
-            </InlineHint>
+            </EmptyMessage>
           )}
         </React.Fragment>
       ) : (
