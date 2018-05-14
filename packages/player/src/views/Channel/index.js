@@ -65,6 +65,8 @@ class Channel extends Component {
     live: null,
     tippingOpen: false,
     tipAmount: 0,
+    copyModal: false,
+    copyStatus: '',
   }
   onOpenModal = () => {
     this.setState({ tippingOpen: true })
@@ -72,6 +74,25 @@ class Channel extends Component {
 
   onCloseModal = () => {
     this.setState({ tippingOpen: false })
+  }
+
+  openCopyModal = () => {
+    this.setState({ copyModal: true })
+  }
+
+  closeCopyModal = () => {
+    this.setState({
+      copyModal: false,
+      copyStatus: '',
+    })
+  }
+
+  copyToClipboard = e => {
+    console.log(this.text, e)
+    this.text.select()
+    document.execCommand('copy')
+
+    this.setState({ copyStatus: 'Copied!' })
   }
 
   sendTip = (broadcaster, value) => {
@@ -104,10 +125,14 @@ class Channel extends Component {
 
   render() {
     const { jobs, loading, match, changeChannel, updateJob } = this.props
-    const { live, url, tippingOpen } = this.state
+    const { live, url, tippingOpen, copyModal, copyStatus } = this.state
     const [latestJob] = jobs
     const { streamId, broadcaster = match.params.channel } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
+
+    const embedLink = `<iframe width="240" height="160" src="${
+      window.location
+    }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
 
     return (
       <div>
@@ -171,6 +196,64 @@ class Channel extends Component {
                 <span>•</span>
                 {live ? 'live' : 'offline'}
               </ChannelStatus>
+              <button
+                style={{
+                  position: 'absolute',
+                  right: '8px',
+                  top: '55px',
+                  fontSize: '12px',
+                  background: '#03a678',
+                  color: 'rgb(255, 255, 255)',
+                  outline: '0px',
+                  border: 'none',
+                  borderRadius: '2px',
+                  margin: '0px',
+                  padding: '8px 12px',
+                  cursor: 'pointer',
+                }}
+                onClick={() => this.openCopyModal()}
+              >
+                Embed
+              </button>
+              <Modal open={copyModal} onClose={this.closeCopyModal} center>
+                <h2>Copy Embed Link</h2>
+                <p
+                  style={{
+                    lineHeight: 1.5,
+                    color: '#555',
+                  }}
+                >
+                  Click to copy link
+                </p>
+                <input
+                  ref={text => (this.text = text)}
+                  style={{
+                    padding: 5,
+                    outline: 'none',
+                    fontSize: '14px',
+                  }}
+                  onClick={this.copyToClipboard}
+                  value={embedLink}
+                />
+                {document.queryCommandSupported('copy') && (
+                  <button
+                    onClick={this.copyToClipboard}
+                    style={{
+                      background: copyStatus ? '#03a678' : 'rgb(40, 56, 69)',
+                      fontSize: '14px',
+                      color: 'rgb(255, 255, 255)',
+                      outline: '0px',
+                      border: 'none',
+                      borderRadius: '2px',
+                      margin: '0px',
+                      padding: '7px 20px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {copyStatus ? 'Copied!' : 'Copy'}
+                  </button>
+                )}
+              </Modal>
               <p
                 style={{
                   textOverflow: 'ellipsis',
