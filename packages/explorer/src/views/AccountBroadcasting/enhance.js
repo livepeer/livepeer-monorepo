@@ -2,7 +2,7 @@ import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockBroadcaster } from '../../utils'
-import { withTransactionHandlers } from '../../enhancers'
+import { connectCoinbaseQuery, withTransactionHandlers } from '../../enhancers'
 
 const AccountBroadcasterAndJobsQuery = gql`
   fragment BroadcasterFragment on Broadcaster {
@@ -24,17 +24,8 @@ const AccountBroadcasterAndJobsQuery = gql`
     }
   }
 
-  query AccountBroadcasterAndJobsQuery($id: String!, $me: Boolean!) {
-    me @include(if: $me) {
-      id
-      broadcaster {
-        ...BroadcasterFragment
-        jobs {
-          ...JobFragment
-        }
-      }
-    }
-    account(id: $id) @skip(if: $me) {
+  query AccountBroadcasterAndJobsQuery($id: String!) {
+    account(id: $id) {
       id
       broadcaster {
         ...BroadcasterFragment
@@ -50,8 +41,8 @@ const connectAccountBroadcasterAndJobsQuery = graphql(
   AccountBroadcasterAndJobsQuery,
   {
     props: ({ data, ownProps }) => {
-      const { account, me, ...queryProps } = data
-      const { broadcaster } = me || account || {}
+      const { account, ...queryProps } = data
+      const { broadcaster } = account || {}
       return {
         ...ownProps,
         broadcaster: {
@@ -63,8 +54,7 @@ const connectAccountBroadcasterAndJobsQuery = graphql(
     options: ({ match }) => ({
       pollInterval: 5 * 1000,
       variables: {
-        id: match.params.accountId || '',
-        me: !match.params.accountId,
+        id: match.params.accountId,
       },
     }),
   },
@@ -72,5 +62,6 @@ const connectAccountBroadcasterAndJobsQuery = graphql(
 
 export default compose(
   connectAccountBroadcasterAndJobsQuery,
+  connectCoinbaseQuery,
   withTransactionHandlers,
 )

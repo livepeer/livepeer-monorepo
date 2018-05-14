@@ -3,6 +3,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockDelegator } from '../../utils'
 import {
+  connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectToasts,
   connectTransactions,
@@ -21,14 +22,8 @@ const AccountDelegatorQuery = gql`
     withdrawRound
   }
 
-  query AccountDelegatorQuery($id: String!, $me: Boolean!) {
-    me @include(if: $me) {
-      id
-      delegator {
-        ...DelegatorFragment
-      }
-    }
-    account(id: $id) @skip(if: $me) {
+  query AccountDelegatorQuery($id: String!) {
+    account(id: $id) {
       id
       delegator {
         ...DelegatorFragment
@@ -39,8 +34,8 @@ const AccountDelegatorQuery = gql`
 
 const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
   props: ({ data, ownProps }) => {
-    const { account, me, ...queryProps } = data
-    const { delegator } = me || account || {}
+    const { account, ...queryProps } = data
+    const { delegator } = account || {}
     return {
       ...ownProps,
       delegator: {
@@ -50,10 +45,9 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 30 * 1000,
+    pollInterval: 5 * 1000,
     variables: {
-      id: match.params.accountId || '',
-      me: !match.params.accountId,
+      id: match.params.accountId,
     },
     // ssr: false,
     fetchPolicy: 'network-only',
@@ -157,6 +151,7 @@ export const mapTransactionsToProps = mapProps(props => {
 })
 
 export default compose(
+  connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectAccountDelegatorQuery,
   connectToasts,

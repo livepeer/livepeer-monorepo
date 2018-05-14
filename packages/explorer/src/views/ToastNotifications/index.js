@@ -32,7 +32,7 @@ const ToastNotificiationsView: React.ComponentType<
 }
 
 const ToastNotificationsSection = styled(TransitionGroup)`
-  position: fixed;
+  position: absolute;
   bottom: 0;
   right: 0;
 `

@@ -9,6 +9,7 @@ import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
 import { sleep } from './utils'
+import { CTA } from './components'
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = process.env.NODE_ENV === 'development'
 const hot = module.hot && isDev
@@ -25,6 +26,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       --primary: var(--green);
       --bg-dark: var(--black);
       --bg-light: var(--tan);
+      --mdc-theme-primary: var(--green);
+      --mdc-theme-secondary: var(--black);
     }
     @font-face {
       font-family: 'AkkuratMonoPro';

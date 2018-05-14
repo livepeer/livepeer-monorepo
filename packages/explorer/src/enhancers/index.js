@@ -151,6 +151,32 @@ export const connectUnbondMutation = graphql(
   },
 )
 
+const CoinbaseQuery = gql`
+  query CoinbaseQuery {
+    coinbase
+  }
+`
+
+export const connectCoinbaseQuery = graphql(CoinbaseQuery, {
+  props: ({ data, ownProps }) => {
+    const { coinbase, ...queryData } = data
+    return {
+      ...ownProps,
+      coinbase: {
+        ...queryData,
+        data: {
+          coinbase: coinbase || '',
+        },
+      },
+    }
+  },
+  options: () => ({
+    // this query doesn't touch the network, so we can run it often
+    pollInterval: 1000,
+    variables: {},
+  }),
+})
+
 const CurrentRoundQuery = gql`
   fragment RoundFragment on Round {
     id

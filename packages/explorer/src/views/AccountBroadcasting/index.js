@@ -18,6 +18,7 @@ import enhance from './enhance'
 
 type AccountBroadcastingProps = {
   broadcaster: GraphQLProps<Broadcaster>,
+  coinbase: GraphQLProps<Coinbase>,
   match: Match,
   onDepositETH: (e: Event) => void,
   onWithdrawDeposit: (e: Event) => void,
@@ -25,10 +26,12 @@ type AccountBroadcastingProps = {
 
 const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   broadcaster,
+  coinbase,
   match,
   onDepositETH,
   onWithdrawDeposit,
 }) => {
+  const isMe = match.params.accountId === coinbase.data.coinbase
   const { deposit, jobs, withdrawBlock } = broadcaster.data
   return (
     <Wrapper>
@@ -46,7 +49,7 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
         value={formatBalance(deposit)}
         subvalue={formatBalance(deposit, 18)}
       >
-        {!match.params.accountId && (
+        {isMe && (
           <React.Fragment>
             {/** withdraw */}
             {MathBN.gt(deposit, '0') && (

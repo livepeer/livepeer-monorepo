@@ -12,13 +12,19 @@ import {
   Cpu as CpuIcon,
   User as UserIcon,
 } from 'react-feather'
+import { MenuItem, SimpleMenu } from 'rmwc/Menu'
+import { Button } from 'rmwc/Button'
+import { Icon } from 'rmwc/Icon'
 import Navbar from './Navbar'
-import { connectCurrentRoundQuery, connectToasts } from '../enhancers'
+import {
+  connectCoinbaseQuery,
+  connectCurrentRoundQuery,
+  connectToasts,
+} from '../enhancers'
 
-const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
-  const notAuthenticated =
-    window.livepeer.config.defaultTx.from ===
-    '0x0000000000000000000000000000000000000000'
+const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
+  const myAccountAddress = coinbase.data.coinbase
+  const notAuthenticated = !myAccountAddress
   const { host } = window.livepeer.config.eth.currentProvider
   const networkName = !window.web3
     ? /infura/.test(host)
@@ -124,7 +130,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
                 <PauseIcon size={16} />
               )}
               <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
-                &nbsp;Round Status
+                &nbsp;Round{' '}
+                {currentRound.data.initialized ? 'Active' : 'Paused'}
               </span>
             </span>
           </React.Fragment>
@@ -150,7 +157,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
             <CpuIcon size={16} />
             <span>&nbsp;Transcoders</span>
           </NavbarLink>
-          {window.livepeer.config.defaultTx.from !== EMPTY_ADDRESS && (
+          {myAccountAddress && (
             <NavbarLink
               to="/me"
               isActive={(match, location) => {
@@ -158,15 +165,41 @@ const BasicNavbar = ({ onSearch, currentRound, toasts }) => {
                 const [addr] = pathname
                   .split('/')
                   .filter(x => x.substring(0, 2) === '0x')
-                return addr
-                  ? addr.toLowerCase() === window.livepeer.config.defaultTx.from
-                  : false
+                return addr ? addr.toLowerCase() === myAccountAddress : false
               }}
             >
               <UserIcon size={16} />
               <span>&nbsp;My Account</span>
             </NavbarLink>
           )}
+          <SimpleMenu
+            handle={
+              <Button
+                style={{
+                  minWidth: 0,
+                  width: 32,
+                  height: 32,
+                  color: '#fff',
+                  marginLeft: 16,
+                }}
+              >
+                <Icon use="more_vert" />
+              </Button>
+            }
+            onSelected={async ({ detail }) => {
+              const { action } = detail.item.dataset
+              switch (action) {
+                case 'feedback':
+                  return window.open(
+                    'https://github.com/livepeer/livepeerjs/issues',
+                  )
+              }
+            }}
+          >
+            <MenuItem data-action="feedback">
+              <Icon use="feedback" style={{ marginRight: 8 }} />Report an issue
+            </MenuItem>
+          </SimpleMenu>
         </div>
       </Nav>
     </Navbar>
@@ -257,4 +290,8 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
   </NavSearchContainer>
 )
 
-export default compose(connectToasts, connectCurrentRoundQuery)(BasicNavbar)
+export default compose(
+  connectToasts,
+  connectCoinbaseQuery,
+  connectCurrentRoundQuery,
+)(BasicNavbar)

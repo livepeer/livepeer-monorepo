@@ -2,7 +2,7 @@ import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockTranscoder } from '../../utils'
-// import { withTransactionHandlers } from '../../enhancers'
+import { connectCoinbaseQuery } from '../../enhancers'
 
 const AccountTranscoderQuery = gql`
   fragment TranscoderFragment on Transcoder {
@@ -18,14 +18,8 @@ const AccountTranscoderQuery = gql`
     pendingPricePerSegment
   }
 
-  query AccountTranscoderQuery($id: String!, $me: Boolean!) {
-    me @include(if: $me) {
-      id
-      transcoder {
-        ...TranscoderFragment
-      }
-    }
-    account(id: $id) @skip(if: $me) {
+  query AccountTranscoderQuery($id: String!) {
+    account(id: $id) {
       id
       transcoder {
         ...TranscoderFragment
@@ -36,8 +30,8 @@ const AccountTranscoderQuery = gql`
 
 const connectAccountTranscoderQuery = graphql(AccountTranscoderQuery, {
   props: ({ data, ownProps }) => {
-    const { account, me, ...queryProps } = data
-    const { transcoder } = me || account || {}
+    const { account, ...queryProps } = data
+    const { transcoder } = account || {}
     return {
       ...ownProps,
       transcoder: {
@@ -47,12 +41,11 @@ const connectAccountTranscoderQuery = graphql(AccountTranscoderQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 5 * 1000,
+    pollInterval: 30 * 1000,
     variables: {
-      id: match.params.accountId || '',
-      me: !match.params.accountId,
+      id: match.params.accountId,
     },
   }),
 })
 
-export default compose(connectAccountTranscoderQuery)
+export default compose(connectCoinbaseQuery, connectAccountTranscoderQuery)

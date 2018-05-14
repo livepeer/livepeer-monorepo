@@ -42,8 +42,8 @@ const App = props => (
     </Switch>
     <BondModals />
     <ClaimEarningsModals />
-    <ToastNotifications />
     <CTA>
+      <ToastNotifications />
       <Switch>
         <Route exact path="/transcoders" component={() => null} />
         <Route

@@ -11,6 +11,7 @@ import enhance from './enhance'
 
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
+  coinbase: GraphQLProps<Coinbase>,
   match: Match,
   onDepositETH: (e: Event) => void,
   onRequestETH: (e: Event) => void,
@@ -20,12 +21,14 @@ type AccountOverviewProps = {
 
 const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   account,
+  coinbase,
   match,
   onDepositETH,
   onRequestETH,
   onRequestLPT,
   onTransferLPT,
 }) => {
+  const isMe = match.params.accountId === coinbase.data.coinbase
   const { ethBalance, id, tokenBalance } = account.data
   const IS_MAINNET = window.web3 && `${window.web3.version.network}` === '1'
   return (
@@ -56,7 +59,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           value={formatBalance(tokenBalance)}
           subvalue={formatBalance(tokenBalance, 18)}
         >
-          {!match.params.accountId && (
+          {isMe && (
             <React.Fragment>
               {/** request */}
               {!IS_MAINNET && (

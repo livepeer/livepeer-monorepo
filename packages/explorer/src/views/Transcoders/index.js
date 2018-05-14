@@ -26,7 +26,6 @@ type TranscodersViewProps = {
   me: GraphQLProps<Account>,
   unbondFrom: string => void,
   transcoders: GraphQLProps<Array<Transcoder>>,
-  toasts: any,
 }
 
 /**
@@ -37,7 +36,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   history,
   match,
   me,
-  toasts,
   transcoders,
   unbondFrom,
 }) => {

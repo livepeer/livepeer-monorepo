@@ -2,6 +2,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import BN from 'bn.js'
+import { Minus as MinusIcon, Plus as PlusIcon } from 'react-feather'
 import {
   formatBalance,
   MathBN,
@@ -20,6 +21,7 @@ import {
 import enhance from './enhance'
 
 export type AccountDelegatingProps = {
+  coinbase: GraphQLProps<Coinbase>,
   currentRound: GraphQLProps<Round>,
   delegator: GraphQLProps<Delegator>,
   match: Match,
@@ -32,12 +34,14 @@ export type AccountDelegatingProps = {
 
 const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   currentRound,
+  coinbase,
   delegator,
   match,
   onClaimEarnings,
   onWithdrawStake,
   onWithdrawFees,
 }) => {
+  const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
   const {
     status,
@@ -59,7 +63,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const hasStake = bondedAmount !== '0'
   const hasFees = fees !== '0'
   const isUnbonded = status === 'Unbonded'
-  const isMyAccount = !accountId && !delegator.loading
   return (
     <Wrapper>
       {/*<InlineHint flag="account-delegating">
@@ -94,13 +97,14 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         value={formatBalance(bondedAmount)}
         subvalue={formatBalance(bondedAmount, 18)}
       >
-        {isMyAccount &&
+        {isMe &&
           hasStake &&
           isUnbonded && (
             <React.Fragment>
               {/** request */}
               <Button onClick={onWithdrawStake(delegator.data.id)}>
-                withdraw stake
+                <MinusIcon size={12} />
+                <span style={{ marginLeft: 8 }}>withdraw stake</span>
               </Button>
             </React.Fragment>
           )}
@@ -111,12 +115,13 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         value={formatBalance(fees)}
         subvalue={formatBalance(fees, 18)}
       >
-        {isMyAccount &&
+        {isMe &&
           hasFees && (
             <React.Fragment>
               {/** request */}
               <Button onClick={onWithdrawFees(delegator.data.id)}>
-                withdraw fees
+                <MinusIcon size={12} />
+                <span style={{ marginLeft: 8 }}>withdraw fees</span>
               </Button>
             </React.Fragment>
           )}
@@ -131,7 +136,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         title="Unclaimed Rounds"
         value={!delegateAddress ? 'N/A' : unclaimedRounds}
         subvalue={
-          !delegateAddress || !isMyAccount ? (
+          !delegateAddress || !isMe ? (
             ''
           ) : !hasUnclaimedRounds ? (
             `You're all caught up!`
@@ -142,7 +147,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           )
         }
       >
-        {isMyAccount &&
+        {isMe &&
           delegateAddress &&
           hasUnclaimedRounds && (
             <React.Fragment>

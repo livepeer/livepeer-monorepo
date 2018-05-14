@@ -13,6 +13,10 @@ declare type Broadcaster = {
   withdrawBlock: string,
 }
 
+declare type Coinbase = {
+  coinbase: string,
+}
+
 declare type Delegator = {
   bondedAmount: string,
   id: string,

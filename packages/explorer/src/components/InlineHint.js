@@ -5,24 +5,30 @@ const InlineHint = styled(
   class InlineHint extends React.Component {
     static defaultProps = {
       flag: 'help_default',
+      disableHide: false,
     }
     state = {
-      hidden: !!localStorage.getItem(`help_${this.props.flag}`),
+      hidden: this.props.disableHide
+        ? false
+        : !!localStorage.getItem(`help_${this.props.flag}`),
     }
     onHide = () => {
+      if (this.props.disableHide) return
       localStorage.setItem(`help_${this.props.flag}`, 'true')
       this.setState({ hidden: true })
     }
     render() {
-      const { className, children } = this.props
+      const { className, children, disableHide } = this.props
       const { hidden } = this.state
       return (
         <div className={`${className}${hidden ? ' hidden' : ''}`}>
-          <div className="hide-section">
-            <button className="hide" onClick={this.onHide}>
-              &times;
-            </button>
-          </div>
+          {!disableHide && (
+            <div className="hide-section">
+              <button className="hide" onClick={this.onHide}>
+                &times;
+              </button>
+            </div>
+          )}
           {children}
         </div>
       )
