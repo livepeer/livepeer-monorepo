@@ -177,6 +177,7 @@ export default compose(
   connectCurrentRoundQuery,
   connectMeDelegatorQuery,
   connectToasts,
+  connectTransactions,
   mapTransactionsToProps,
   withTransactionHandlers,
 )
