@@ -16,6 +16,9 @@ type Query {
   "A Broadcaster by ETH address"
   broadcaster(id: String!): Broadcaster
 
+  "The currently authenticated user's ETH address"
+  coinbase: String!
+
   "A Delegator by ETH address"
   delegator(id: String!): Delegator
 
@@ -39,4 +42,12 @@ type Query {
 
 }`
 
-export default () => [Query, Account, Broadcaster, Delegator, Job, Round, Transcoder]
+export default () => [
+  Query,
+  Account,
+  Broadcaster,
+  Delegator,
+  Job,
+  Round,
+  Transcoder,
+]

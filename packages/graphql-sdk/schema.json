@@ -69,6 +69,22 @@
               "deprecationReason": null
             },
             {
+              "name": "coinbase",
+              "description": "The currently authenticated user's ETH address",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "delegator",
               "description": "A Delegator by ETH address",
               "args": [

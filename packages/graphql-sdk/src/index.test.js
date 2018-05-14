@@ -6,6 +6,7 @@ import schema from './schema'
 import {
   AccountQuery,
   BroadcasterQuery,
+  CoinbaseQuery,
   CurrentRoundQuery,
   DelegatorQuery,
   JobQuery,
@@ -18,9 +19,9 @@ import livepeer from './mock-sdk'
 // clears console
 // console.log('\x1Bc')
 
-test.only(async t => {
+test(async t => {
   const res = await graphql(schema, introspectionQuery, null, { livepeer }, {})
-  console.log(res)
+  // console.log(res)
   t.pass()
 })
 
@@ -67,6 +68,29 @@ test('BroadcasterQuery (include jobs using skip/limit args)', async t => {
     jobsLimit: 1,
   }
   const res = await graphql(schema, BroadcasterQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+/**
+ * Coinbase
+ */
+test.only('CoinbaseQuery (not authenticated)', async t => {
+  const args = null
+  const res = await graphql(schema, CoinbaseQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test.only('CoinbaseQuery (authenticated)', async t => {
+  const args = null
+  const res = await graphql(
+    schema,
+    CoinbaseQuery,
+    null,
+    { account: '0x0ddb225031ccb58ff42866f82d907f7766899014', livepeer },
+    args,
+  )
   // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })

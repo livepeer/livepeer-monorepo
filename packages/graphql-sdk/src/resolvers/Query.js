@@ -72,6 +72,18 @@ export async function broadcaster(
 }
 
 /**
+ * Gets the currently authenticated user's ETH account address. ctx.account
+ * @param {QueryObj} obj
+ * @param {QueryAccountArgs} args
+ * @param {string} args.id - ETH address
+ * @param {GQLContext} ctx
+ * @return {Account}
+ */
+export async function coinbase(obj, args, ctx) {
+  return ctx.account || ''
+}
+
+/**
  * Gets a Delegator by ID (ETH address)
  * @param {QueryObj} obj
  * @param {QueryBroadcasterArgs} args

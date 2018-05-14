@@ -30,6 +30,12 @@ query BroadcasterQuery($id: String!, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit
 }
 `
 
+export const CoinbaseQuery = `
+query CoinbaseQuery {
+  coinbase
+}
+`
+
 export const CurrentRoundQuery = `
 ${RoundFragment}
 query CurrentRoundQuery {
