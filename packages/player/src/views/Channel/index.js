@@ -88,10 +88,8 @@ class Channel extends Component {
   }
 
   copyToClipboard = e => {
-    console.log(this.text, e)
     this.text.select()
     document.execCommand('copy')
-
     this.setState({ copyStatus: 'Copied!' })
   }
 
@@ -131,7 +129,7 @@ class Channel extends Component {
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
 
     const embedLink = `<iframe width="240" height="160" src="${
-      window.location
+      window.location.origin
     }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
 
     return (
