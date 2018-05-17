@@ -24,7 +24,9 @@ export async function approve(
   const { type, amount } = args
   switch (type) {
     case 'bond':
-      return await ctx.livepeer.rpc.approveTokenBondAmount(amount)
+      return await ctx.livepeer.rpc.approveTokenBondAmount(amount, {
+        gas: 60000,
+      })
       break
     default:
       throw new Error(`Approval type "${type}" is not supported.`)
@@ -44,7 +46,9 @@ export async function bond(
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { to, amount } = args
-  return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount)
+  return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount, {
+    gas: 350000,
+  })
 }
 
 /**
