@@ -1308,12 +1308,15 @@ export default async function createLivepeerSDK(
 
     async approveTokenBondAmount(
       amount: string,
-      tx = config.eth.defaultTx,
+      tx: TxObject,
     ): Promise<TxReceipt> {
       const token = toBN(amount)
       // @todo - check token balance
       await utils.getTxReceipt(
-        await LivepeerToken.approve(BondingManager.address, token),
+        await LivepeerToken.approve(BondingManager.address, token, {
+          ...config.defaultTx,
+          ...tx,
+        }),
         config.eth,
       )
     },
@@ -1321,12 +1324,12 @@ export default async function createLivepeerSDK(
     async bondApprovedTokenAmount(
       to: string,
       amount: string,
-      tx = config.defaultTx,
+      tx: TxObject,
     ): Promise<TxReceipt> {
       const token = toBN(amount)
       // @todo - check for existing approval / round initialization / token balance
       return await utils.getTxReceipt(
-        await BondingManager.bond(token, to),
+        await BondingManager.bond(token, to, { ...config.defaultTx, ...tx }),
         config.eth,
       )
     },
