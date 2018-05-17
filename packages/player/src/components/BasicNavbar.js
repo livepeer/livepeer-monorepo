@@ -7,6 +7,9 @@ import {
   Twitter as TwitterIcon,
 } from 'react-feather'
 import Navbar from './Navbar'
+import { MenuItem, SimpleMenu } from 'rmwc/Menu'
+import { Button } from 'rmwc/Button'
+import { Icon } from 'rmwc/Icon'
 
 const BasicNavbar = ({ onSearch }) => (
   <Navbar>
@@ -36,6 +39,34 @@ const BasicNavbar = ({ onSearch }) => (
           <TwitterIcon color="#fff" size={16} />
           <span>&nbsp;Follow</span>
         </NavSocialLink>
+        <SimpleMenu
+          handle={
+            <Button
+              style={{
+                minWidth: 0,
+                width: 32,
+                height: 32,
+                color: '#fff',
+                marginLeft: 16,
+              }}
+            >
+              <Icon use="more_vert" />
+            </Button>
+          }
+          onSelected={async ({ detail }) => {
+            const { action } = detail.item.dataset
+            switch (action) {
+              case 'feedback':
+                return window.open(
+                  'https://github.com/livepeer/livepeerjs/issues',
+                )
+            }
+          }}
+        >
+          <MenuItem data-action="feedback">
+            <Icon use="feedback" style={{ marginRight: 8 }} />Report an issue
+          </MenuItem>
+        </SimpleMenu>
       </div>
     </Nav>
   </Navbar>
