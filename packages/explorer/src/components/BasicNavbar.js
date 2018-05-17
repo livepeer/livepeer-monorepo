@@ -1,11 +1,9 @@
 import React from 'react'
 import { compose } from 'recompose'
-import { EMPTY_ADDRESS } from '@livepeer/sdk'
 import styled from 'styled-components'
 import { NavLink, Link } from 'react-router-dom'
 import {
   MoreHorizontal as MoreHorizontalIcon,
-  MoreVertical as MoreVerticalIcon,
   Play as PlayIcon,
   Pause as PauseIcon,
   Sliders as HomeIcon,
