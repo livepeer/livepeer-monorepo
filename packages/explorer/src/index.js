@@ -102,9 +102,11 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       // If user account changes while on /me, this will hard refresh the page
       onAccountChange: (currentAccount: string, nextAccount: string): void => {
         const path = window.location.pathname.toLowerCase()
-        const onMyAccountPage = path === '/me'
-        const accountChanged = nextAccount && currentAccount
-        if (onMyAccountPage && accountChanged) return window.location.reload()
+        const onMyAccountPage = new RegExp(`^/accounts/${currentAccount}`).test(
+          path,
+        )
+        const accountChanged = nextAccount !== currentAccount
+        if (onMyAccountPage && accountChanged) return (window.location = '/me')
       },
     }
     // The address of the deployed Controller contract
