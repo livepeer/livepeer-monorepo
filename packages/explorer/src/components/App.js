@@ -42,31 +42,30 @@ const App = props => (
     </Switch>
     <BondModals />
     <ClaimEarningsModals />
+    <Switch>
+      <Route
+        path="*"
+        component={() => (
+          <CTABanner flag="view-transcoders">
+            <div>
+              If you are a token holder, you can participate in the network by
+              staking towards a transcoder and earn additional fees and LPT
+              rewards.
+            </div>
+            <div>
+              <Button
+                style={{ margin: 0 }}
+                onClick={() => history.push('/transcoders?tour=true')}
+              >
+                Start Delegating
+              </Button>
+            </div>
+          </CTABanner>
+        )}
+      />
+    </Switch>
     <CTA>
       <ToastNotifications />
-      <Switch>
-        <Route exact path="/transcoders" component={() => null} />
-        <Route
-          path="*"
-          component={() => (
-            <CTABanner flag="view-transcoders">
-              <div>
-                If you are a token holder, you can participate in the network by
-                staking towards a transcoder and earn additional fees and LPT
-                rewards.
-              </div>
-              <div>
-                <Button
-                  style={{ margin: 0 }}
-                  onClick={() => history.push('/transcoders?tour=true')}
-                >
-                  Start Delegating
-                </Button>
-              </div>
-            </CTABanner>
-          )}
-        />
-      </Switch>
     </CTA>
   </div>
 )
