@@ -3,8 +3,10 @@ import {
   InMemoryCache,
   IntrospectionFragmentMatcher,
 } from 'apollo-cache-inmemory'
+import { CachePersistor } from 'apollo-cache-persist'
+import { withClientState } from 'apollo-link-state'
 import { ApolloClient } from 'apollo-client'
-import { graphql, print } from 'graphql'
+import { graphql, parse, print, subscribe } from 'graphql'
 import Livepeer from '@livepeer/sdk'
 import { schema, introspectionQueryResultData } from '@livepeer/graphql-sdk'
 
@@ -23,7 +25,6 @@ type ApolloClientOptions = {
   defaultGas?: number,
   onAccountChange?: OnAccountChangeCallback,
   onProviderChange?: OnProviderChangeCallback,
-  // @todo - middleware option
 }
 
 type ApolloClientState = {
@@ -67,7 +68,11 @@ export default async function createApolloClient(
   const options = typeof opts === 'function' ? await opts() : { ...opts }
 
   // state
-  const state = { ...initialState, updating: false }
+  const state = {
+    ...initialState,
+    updating: false,
+    etherscanApiKey: options.etherscanApiKey,
+  }
 
   /**
    * Determines whether or not current account should be updated in state
@@ -157,11 +162,41 @@ export default async function createApolloClient(
   function createApolloCache({
     introspectionQueryResultData: IntrospectionQueryResultData,
   }): InMemoryCache {
-    return new InMemoryCache({
+    const cache = new InMemoryCache({
       fragmentMatcher: new IntrospectionFragmentMatcher({
         introspectionQueryResultData,
       }),
     })
+    if (window.localStorage) {
+      const { localStorage } = window
+      const persistor = (state.persistor = new CachePersistor({
+        cache,
+        storage: localStorage,
+        debug: true,
+      }))
+      const SCHEMA_VERSION = '0'
+      const SCHEMA_VERSION_KEY = 'apollo-schema-version'
+      const currentVersion = localStorage.getItem(SCHEMA_VERSION_KEY)
+      if (currentVersion === SCHEMA_VERSION) {
+        persistor.restore()
+      } else {
+        persistor
+          .purge()
+          .then(() => {
+            localStorage.setItem(SCHEMA_VERSION_KEY, SCHEMA_VERSION)
+            console.log(
+              'Upgraded schema cache persistor storage apollo schema version',
+            )
+          })
+          .catch(err => {
+            console.warn(
+              'Could not upgrade schema cache persistor storage apollo schema version',
+            )
+            console.error(err)
+          })
+      }
+    }
+    return cache
   }
 
   /**
@@ -169,24 +204,55 @@ export default async function createApolloClient(
    * @param {ApolloLinkContext} ctx
    * @return {ApolloLink}
    */
-  function createApolloLink(ctx: ApolloLinkContext): ApolloLink {
-    return new ApolloLink(
+  function createApolloLink(
+    ctx: ApolloLinkContext,
+    cache: InMemoryCache,
+  ): ApolloLink {
+    // Lets an app describe how non-schema queries can be resolved
+    const stateLink = options.stateLink
+      ? withClientState({
+          cache,
+          ...options.stateLink,
+        })
+      : null
+    const mainLink = new ApolloLink(
       operation =>
         new Observable(observer => {
           const { query, variables, operationName } = operation
-          graphql(schema, print(query), null, ctx, variables, operationName)
-            .then(result => {
-              // console.log(operationName, variables, result.data)
-              const value = result
-              observer.next(value)
-              observer.complete(value)
-            })
-            .catch(e => {
-              console.error(e)
-              observer.error(e)
-            })
+          const [def] = query.definitions
+          if (def && def.operation === 'subscription') {
+            subscribe(
+              schema,
+              parse(print(query)),
+              null,
+              ctx,
+              variables,
+              operationName,
+            )
+              .then(async sub => {
+                while (true) {
+                  const { value } = await sub.next()
+                  observer.next(value)
+                }
+              })
+              .catch(e => {
+                console.error(e)
+                observer.error(e)
+              })
+          } else {
+            graphql(schema, print(query), null, ctx, variables, operationName)
+              .then(value => {
+                observer.next(value)
+                observer.complete(value)
+              })
+              .catch(e => {
+                console.error(e)
+                observer.error(e)
+              })
+          }
         }),
     )
+    return !stateLink ? mainLink : ApolloLink.from([stateLink, mainLink])
   }
 
   /**
@@ -229,8 +295,8 @@ export default async function createApolloClient(
    */
   async function createClient(): ApolloClient {
     await updateConfig(window.web3, 0)
-    const link = createApolloLink(state)
     const cache = createApolloCache({ introspectionQueryResultData })
+    const link = createApolloLink(state, cache)
     return new ApolloClient({ link, cache })
   }
 

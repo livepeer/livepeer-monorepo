@@ -44,6 +44,8 @@
     "babel": "inherit"
   },
   "dependencies": {
-    "apollo-client": "2.2.6"
+    "apollo-cache-persist": "^0.1.1",
+    "apollo-client": "2.2.6",
+    "apollo-link-state": "^0.4.1"
   }
 }
