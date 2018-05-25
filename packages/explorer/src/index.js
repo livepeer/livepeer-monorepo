@@ -126,19 +126,6 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       opts.controllerAddress =
         controllers[version.network] || process.env.REACT_APP_CONTROLLER_ADDRESS
     }
-    // opts.stateLink = {
-    //   resolvers: {
-    //     defaults: {
-    //       pendingTransactions: []
-    //     },
-    //     Query: {
-    //       pendingTransactions: (obj, args, ctx) => {
-    //         // ctx.cache
-    //         return
-    //       }
-    //     }
-    //   }
-    // }
     return opts
   })
 

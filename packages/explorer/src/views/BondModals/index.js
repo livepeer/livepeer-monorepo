@@ -21,8 +21,6 @@ type BondModalsViewProps = {
 }
 
 const BondModalsView: React.ComponentType<BondModalsViewProps> = ({
-  // bondStatus,
-  // className,
   history,
   location,
   match,

@@ -101,7 +101,20 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           )}
         </MetricBox>
         <Content>
-          <h3>Activity</h3>
+          <h3>
+            Recent Activity{' '}
+            <a
+              target="_blank"
+              href={`https://www.supermax.cool/livepeer/mainnet/activity?filter=%7B%22search%22%3A%22${
+                match.params.accountId
+              }%22%7D`}
+              style={{
+                fontSize: 12,
+              }}
+            >
+              view full history
+            </a>
+          </h3>
           {transactions.loading &&
             !transactionData.length && (
               <EmptyMessage>
@@ -169,7 +182,9 @@ class TransactionCard extends React.Component {
                 use={
                   pending
                     ? 'warning'
-                    : failed ? 'error_outline' : 'check_circle_outline'
+                    : failed
+                      ? 'error_outline'
+                      : 'check_circle_outline'
                 }
                 style={{
                   color: pending ? 'orange' : failed ? 'red' : `var(--primary)`,
@@ -238,17 +253,23 @@ class TransactionCard extends React.Component {
                         use={
                           pending
                             ? 'warning'
-                            : failed ? 'error_outline' : 'check_circle_outline'
+                            : failed
+                              ? 'error_outline'
+                              : 'check_circle_outline'
                         }
                         style={{
                           fontSize: 18,
                           color: pending
                             ? 'orange'
-                            : failed ? 'red' : `var(--primary)`,
+                            : failed
+                              ? 'red'
+                              : `var(--primary)`,
                         }}
                       />&nbsp;{pending
                         ? 'Pending'
-                        : failed ? 'Failed' : `Success`}
+                        : failed
+                          ? 'Failed'
+                          : `Success`}
                     </span>
                   }
                   meta=""

@@ -237,7 +237,6 @@ export async function transactions(
     },
   )
   const values = [...pendingTxns.values()]
-  // console.log(values)
   return [
     ...values.map(({ __typename, params, ...x }) => {
       return {
@@ -247,12 +246,6 @@ export async function transactions(
     }),
     ...transactions,
   ]
-  // if (accountTxns) console.log('txns >>>>>>>>>>>>', [...accountTxns.values()])
-  // const allTransactions = accountTxns
-  //   ? [...accountTxns.values(), ...transactions]
-  //   : transactions
-  // console.log(allTransactions)
-  // return allTransactions
 }
 
 /**
