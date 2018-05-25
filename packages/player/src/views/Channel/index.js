@@ -36,8 +36,6 @@ const mapDispatchToProps = dispatch =>
 const connectRedux = connect(null, mapDispatchToProps)
 
 const connectApollo = graphql(gql(queries.JobsQuery), {
-  // @TODO: figure out why pollInterval seems to do nothing
-  // pollInterval: 10,
   props: ({ data, ownProps }, state) => {
     // console.log(data)
     return {
@@ -111,13 +109,30 @@ class Channel extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    const [newJob] = nextProps.jobs
-    if (!newJob) {
+    const { channel } = nextProps.match.params
+    const [latestJob] = nextProps.jobs
+    if (!latestJob) {
       if (nextProps.loading === false) this.setState({ live: false })
       return
     }
-    const manifestId = newJob.streamId.substr(0, 68 + 64)
-    const url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
+    const manifestId = latestJob.streamId.substr(0, 68 + 64)
+    if (channel === process.env.REACT_APP_LIVEPEER_TV_ADDRESS) {
+      return this.setState({
+        live: true,
+        url: `${
+          process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
+        }/${manifestId}.m3u8`,
+      })
+    }
+    if (channel === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS) {
+      return this.setState({
+        live: true,
+        url: `${
+          process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
+        }/${manifestId}.m3u8`,
+      })
+    }
+    let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
     this.setState({ url })
   }
 
@@ -127,11 +142,9 @@ class Channel extends Component {
     const [latestJob] = jobs
     const { streamId, broadcaster = match.params.channel } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
-
     const embedLink = `<iframe width="240" height="160" src="${
       window.location.origin
     }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
-
     return (
       <div>
         <BasicNavbar onSearch={changeChannel} />
