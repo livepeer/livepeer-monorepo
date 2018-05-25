@@ -10,6 +10,14 @@ const Content = styled.div`
   height: ${({ height }) => (typeof height === 'undefined' ? 'auto' : height)};
   width: ${({ width }) => (typeof width === 'undefined' ? '100%' : width)};
   background: ${({ background }) => background || 'none'};
+  &.modal-enter {
+    opacity: 0;
+    z-index: 1;
+  }
+  &.modal-enter.modal-enter-active {
+    opacity: 1;
+    transition: opacity 250ms ease-in;
+  }
 `
 
 export default Content

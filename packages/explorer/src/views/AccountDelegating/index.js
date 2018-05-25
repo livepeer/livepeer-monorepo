@@ -24,22 +24,22 @@ export type AccountDelegatingProps = {
   coinbase: GraphQLProps<Coinbase>,
   currentRound: GraphQLProps<Round>,
   delegator: GraphQLProps<Delegator>,
+  history: History,
   match: Match,
-  // TODO: 1. Add to mutation queries to schema 2. inject via enhancers
-  // For now, go with tx.activate() and create confirmation modals
-  onClaimEarnings: any => () => void,
-  onWithdrawStake: any => () => void,
-  onWithdrawFees: any => () => void,
+  claimEarnings: () => void,
+  withdrawStake: () => void,
+  withdrawFees: () => void,
 }
 
 const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   currentRound,
   coinbase,
   delegator,
+  history,
   match,
-  onClaimEarnings,
-  onWithdrawStake,
-  onWithdrawFees,
+  claimEarnings,
+  withdrawStake,
+  withdrawFees,
 }) => {
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
@@ -97,17 +97,15 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         value={formatBalance(bondedAmount)}
         subvalue={formatBalance(bondedAmount, 18)}
       >
-        {isMe &&
-          hasStake &&
-          isUnbonded && (
-            <React.Fragment>
-              {/** request */}
-              <Button onClick={onWithdrawStake(delegator.data.id)}>
-                <MinusIcon size={12} />
-                <span style={{ marginLeft: 8 }}>withdraw stake</span>
-              </Button>
-            </React.Fragment>
-          )}
+        {isMe && (
+          <React.Fragment>
+            {/** request */}
+            <Button disabled={!hasStake} onClick={withdrawStake}>
+              <MinusIcon size={12} />
+              <span style={{ marginLeft: 8 }}>withdraw stake</span>
+            </Button>
+          </React.Fragment>
+        )}
       </MetricBox>
       <MetricBox
         title="Fees"
@@ -115,16 +113,15 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         value={formatBalance(fees)}
         subvalue={formatBalance(fees, 18)}
       >
-        {isMe &&
-          hasFees && (
-            <React.Fragment>
-              {/** request */}
-              <Button onClick={onWithdrawFees(delegator.data.id)}>
-                <MinusIcon size={12} />
-                <span style={{ marginLeft: 8 }}>withdraw fees</span>
-              </Button>
-            </React.Fragment>
-          )}
+        {isMe && (
+          <React.Fragment>
+            {/** request */}
+            <Button disabled={!hasFees} onClick={withdrawFees}>
+              <MinusIcon size={12} />
+              <span style={{ marginLeft: 8 }}>withdraw fees</span>
+            </Button>
+          </React.Fragment>
+        )}
       </MetricBox>
       <MetricBox
         title="Delegated Amount"
@@ -142,7 +139,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             `You're all caught up!`
           ) : (
             <span>
-              {`You have unclaimed earnings from round #${lastClaimRound} to #${lastInitializedRound}`}
+              {`You have unclaimed earnings from round #${MathBN.add(
+                lastClaimRound,
+                '1',
+              )} to #${lastInitializedRound}`}
             </span>
           )
         }
@@ -153,7 +153,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             <React.Fragment>
               {/** request */}
               <Button
-                onClick={onClaimEarnings(delegator.data.id)}
+                onClick={claimEarnings}
                 disabled={unclaimedRounds === '0'}
               >
                 claim stake & fees

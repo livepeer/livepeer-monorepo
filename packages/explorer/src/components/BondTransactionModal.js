@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import { formatBalance, toBaseUnit } from '../utils'
+import { formatBalance, sleep, toBaseUnit } from '../utils'
 import { cond } from '../enhancers'
 import Avatar from './Avatar'
 import BasicModal from './BasicModal'
@@ -47,12 +47,15 @@ const BondTransactionModal: React.ComponentType<BondTransactionModalProps> = ({
   </BasicModal>
 )
 
-const handleSubmitBond = submit => ({ to, amount }) => {
+const handleSubmitBond = submit => async ({ to, amount }) => {
   // console.log(to, amount)
-  submit({
-    to,
-    amount: toBaseUnit(amount),
-  })
+  console.log('submitting...', to, amount)
+  await sleep(1000)
+  console.log('submitted!')
+  // submit({
+  //   to,
+  //   amount: toBaseUnit(amount),
+  // })
 }
 
 export default cond(BondTransactionModal)

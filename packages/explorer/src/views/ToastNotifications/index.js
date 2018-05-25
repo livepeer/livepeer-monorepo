@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react'
+import { compose, lifecycle } from 'recompose'
 import styled from 'styled-components'
 import { Transition, TransitionGroup } from 'react-transition-group'
 // import { Toast } from '../../components'
 import { connectToasts } from '../../enhancers'
+import { notify } from '../../utils'
 // import enhance from './enhance'
-
-const enhance = connectToasts
 
 export type ToastNotificiationsViewProps = {
   toasts: any,
@@ -37,14 +37,30 @@ const ToastNotificationsSection = styled(TransitionGroup)`
   right: 0;
 `
 
-const ToastNotification = styled(({ body, className, title, type }) => {
-  return (
-    <div className={className}>
-      <h3 className="title">{title}</h3>
-      <div className="body">{body}</div>
-    </div>
-  )
-})`
+const nativeNotify = lifecycle({
+  componentDidMount() {
+    const { type, title, body } = this.props
+    console.log('notify', this.props)
+    if (
+      (type !== 'error' && type !== 'success') ||
+      typeof title !== 'string' ||
+      typeof body !== 'string'
+    )
+      return
+    notify(title, { body })
+  },
+})
+
+const ToastNotification = nativeNotify(styled(
+  ({ body, className, title, type }) => {
+    return (
+      <div className={className}>
+        <h3 className="title">{title}</h3>
+        <div className="body">{body}</div>
+      </div>
+    )
+  },
+)`
   background: #fff;
   padding: 16px;
   margin-bottom: 16px;
@@ -86,6 +102,6 @@ const ToastNotification = styled(({ body, className, title, type }) => {
     max-height: 240px;
     overflow: auto;
   }
-`
+`)
 
-export default enhance(ToastNotificiationsView)
+export default connectToasts(ToastNotificiationsView)

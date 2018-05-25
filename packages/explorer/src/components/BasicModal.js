@@ -45,6 +45,21 @@ const Backdrop = styled.div`
   right: 0;
   background: rgba(0, 0, 0, 0.5);
   overflow: auto;
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  &.modal-enter,
+  &.modal-exit {
+    opacity: 0;
+    > div {
+      transform: translateY(100vh);
+      transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+  }
+  &.modal-enter.modal-enter-active {
+    opacity: 1;
+    > div {
+      transform: translateY(0);
+    }
+  }
 `
 
 export default BasicModal

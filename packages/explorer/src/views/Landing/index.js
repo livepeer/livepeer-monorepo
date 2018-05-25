@@ -1,16 +1,6 @@
 import React from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-// import { withApollo } from 'react-apollo'
 import styled from 'styled-components'
 import { BasicNavbar, Footer, ScrollToTopOnMount } from '../../components'
-import {
-  actions as routingActions,
-  selectors as routingSelectors,
-} from '../../services/routing'
-
-const { viewAccount } = routingActions
-const { getParsedQueryString } = routingSelectors
 
 const NETWORKS = {
   1: 'Ethereum Main Network',
@@ -29,16 +19,8 @@ const getNetwork = web3 => {
     ? NETWORKS[web3.version.network] || 'Unknown'
     : NETWORKS['858585']
 }
-const mapStateToProps = state => ({
-  query: getParsedQueryString(state),
-})
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ viewAccount }, dispatch)
-
-const enhance = connect(mapStateToProps, mapDispatchToProps)
-
-const Landing = ({ query, viewAccount, ...props }) => (
+const Landing = ({ viewAccount, ...props }) => (
   <Container>
     <ScrollToTopOnMount />
     <BasicNavbar />
@@ -137,4 +119,4 @@ const SearchButton = styled.button`
   cursor: pointer;
 `
 
-export default enhance(Landing)
+export default Landing

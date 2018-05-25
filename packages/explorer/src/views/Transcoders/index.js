@@ -19,12 +19,12 @@ import {
 import enhance from './enhance'
 
 type TranscodersViewProps = {
-  bondTo: string => void,
+  bond: ({ id: string }) => void,
   currentRound: GraphQLProps<Array<Round>>,
   history: History,
   match: Match,
   me: GraphQLProps<Account>,
-  unbondFrom: string => void,
+  unbond: ({ id: string }) => void,
   transcoders: GraphQLProps<Array<Transcoder>>,
 }
 
@@ -32,12 +32,12 @@ type TranscodersViewProps = {
  * Displays a list of transcoders and allows authenticated users to sort and bond/unbond from them
  */
 const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
-  bondTo,
+  bond,
   history,
   match,
   me,
   transcoders,
-  unbondFrom,
+  unbond,
 }) => {
   const {
     delegator: { bondedAmount, delegateAddress, status },
@@ -180,8 +180,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               bonded={isMyDelegate}
               bondedAmount={bondedAmount}
               className="transcoder-card"
-              onBond={canBond ? bondTo(id) : undefined}
-              onUnbond={canUnbond ? unbondFrom(id) : undefined}
+              onBond={canBond ? () => bond({ id }) : undefined}
+              onUnbond={canUnbond ? () => unbond({ id }) : undefined}
             />
           )
         })}

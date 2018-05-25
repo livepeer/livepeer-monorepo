@@ -1,12 +1,19 @@
-import { compose, mapProps } from 'recompose'
-import { graphql, withApollo } from 'react-apollo'
+import { compose, withHandlers, withStateHandlers } from 'recompose'
+import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { FORM_ERROR } from 'final-form'
 import {
   connectCurrentRoundQuery,
   connectClaimEarningsMutation,
-  connectTransactions,
+  connectToasts,
+  TransactionsQuery,
 } from '../../enhancers'
-import { mockAccount, sleep, wireTransactionToStatus } from '../../utils'
+import {
+  MathBN,
+  mockAccount,
+  sleep,
+  wireTransactionToStatus,
+} from '../../utils'
 
 const MeDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {
@@ -43,45 +50,56 @@ const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 30 * 1000,
+    // pollInterval: 30 * 1000,
     variables: {},
-    // ssr: false,
-    fetchPolicy: 'network-only',
   }),
 })
 
-export const mapTransactionsToProps = mapProps(props => {
-  const { approve, claimEarnings, transactions: tx, ...nextProps } = props
-  const claimEarningsStatusQuery = { active: true, type: 'ClaimEarningsStatus' }
-  const claimEarningsStatus =
-    tx.findWhere(claimEarningsStatusQuery) ||
-    tx.empty(claimEarningsStatusQuery.type)
-  return {
-    ...nextProps,
-    claimEarningsStatus,
-    onClose: () => tx.delete(claimEarningsStatus),
-    onClaimMore: () => tx.reset(claimEarningsStatus),
-    onClaimEarnings: wireTransactionToStatus(
-      tx,
-      claimEarningsStatus,
-      async ({ endRound }) =>
-        await claimEarnings({
-          variables: { endRound },
-          update: store => {
-            const data = store.readQuery({ query: MeDelegatorQuery })
-            data.me.delegator.lastClaimRound = endRound
-            store.writeQuery({ query: MeDelegatorQuery, data })
-          },
-        }),
-    ),
-  }
+const mapMutationHandlers = withHandlers({
+  claimEarnings: ({ claimEarnings, toasts, me }) => async ({ numRounds }) => {
+    try {
+      const { lastClaimRound } = me.data.delegator
+      const endRound = MathBN.add(lastClaimRound, numRounds)
+      console.log('lastClaimRound', lastClaimRound)
+      console.log('claimEarnings', endRound)
+      await claimEarnings({
+        variables: { endRound },
+        refetchQueries: [
+          { query: MeDelegatorQuery },
+          // It takes a while for the tx to show up on etherscan
+          // So we get stale data if we refresh immediately :\
+          // { query: TransactionsQuery, variables: { address: me.data.id } },
+        ],
+      })
+      toasts.push({
+        id: 'claimEarnings',
+        type: 'success',
+        title: 'Claimed Earnings',
+        body: `Successfully claimed earnings up to round #${endRound}`,
+      })
+    } catch (err) {
+      if (!/User denied/.test(err.message)) {
+        // Push notification if error is not a user cancel error
+        toasts.push({
+          id: 'claimEarnings',
+          type: 'error',
+          title: 'Error Claiming Earnings',
+          body: 'There was a problem claiming your earnings.',
+        })
+      }
+      // resolve the submitError -- do not throw!
+      // https://github.com/final-form/react-final-form#submission-errors
+      return {
+        [FORM_ERROR]: err.message.replace('GraphQL error: ', ''),
+      }
+    }
+  },
 })
 
 export default compose(
-  withApollo,
   connectCurrentRoundQuery,
   connectClaimEarningsMutation,
   connectMeDelegatorQuery,
-  connectTransactions,
-  mapTransactionsToProps,
+  connectToasts,
+  mapMutationHandlers,
 )

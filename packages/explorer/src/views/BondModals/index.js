@@ -1,50 +1,55 @@
 // @flow
 import * as React from 'react'
 import {
-  BondErrorModal,
-  BondSuccessModal,
-  BondTransactionModal,
+  BasicModal,
+  BondForm,
+  // BondErrorModal,
+  // BondSuccessModal,
+  // BondTransactionModal,
 } from '../../components'
 import enhance from './enhance'
 import { sleep } from '../../utils'
 
 type BondModalsViewProps = {
   bondStatus: TransactionStatus,
+  history: History,
+  location: Location,
+  match: Match,
   me: GraphQLProps<Account>,
   onClose: any => void,
-  onBond: any => void,
+  approveAndBond: any => void,
 }
 
 const BondModalsView: React.ComponentType<BondModalsViewProps> = ({
-  bondStatus,
+  // bondStatus,
+  // className,
+  history,
+  location,
+  match,
   me,
   onClose,
-  onBond,
-}) => (
-  <React.Fragment>
-    <BondErrorModal
-      action="bond"
-      error={bondStatus.error}
-      onClose={onClose}
-      test={bondStatus.active && bondStatus.error}
-      title="Bond Failed"
-    />
-    <BondSuccessModal
-      delegateAddress={bondStatus.id}
-      onClose={onClose}
-      test={bondStatus.active && bondStatus.done && !bondStatus.error}
-      title="Bonding Complete"
-    />
-    <BondTransactionModal
-      bondedAmount={me.data.delegator.bondedAmount}
-      delegateAddress={bondStatus.id}
-      loading={bondStatus.submitted}
-      onBond={onBond}
-      onClose={onClose}
-      test={bondStatus.active && !bondStatus.done}
-      tokenBalance={me.data.tokenBalance}
-    />
-  </React.Fragment>
-)
-
+  approveAndBond,
+  ...props
+}) => {
+  const { delegateAddress } = match.params
+  const { bondedAmount } = me.data.delegator
+  const closeModal = () => history.push(history.location.pathname)
+  return (
+    <BasicModal title="Bond Your Token" onClose={closeModal}>
+      <BondForm
+        bondedAmount={bondedAmount}
+        delegateAddress={delegateAddress}
+        initialValues={{
+          amount: '',
+          to: delegateAddress,
+        }}
+        loading={me.loading}
+        onSubmit={approveAndBond}
+        onCancel={closeModal}
+        tokenBalance={me.data.tokenBalance}
+        validateOnBlur
+      />
+    </BasicModal>
+  )
+}
 export default enhance(BondModalsView)

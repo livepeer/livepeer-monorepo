@@ -1,5 +1,5 @@
 import React from 'react'
-import { compose, mapProps } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { MathBN, mockAccount } from '../../utils'
@@ -7,7 +7,6 @@ import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectToasts,
-  connectTransactions,
   withTransactionHandlers,
 } from '../../enhancers'
 
@@ -85,90 +84,82 @@ const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 5 * 1000,
+    // pollInterval: 5 * 1000,
     variables: {},
   }),
 })
 
-export const mapTransactionsToProps = mapProps(props => {
-  const { currentRound, toasts, transactions: tx, ...nextProps } = props
-  const { id: currentRoundNum, lastInitializedRound } = currentRound.data
-  const { status, lastClaimRound } = nextProps.me.data.delegator
-  const isUnbonded = status === 'Unbonded'
-  const unclaimedRounds = isUnbonded
-    ? ' 0'
-    : MathBN.sub(lastInitializedRound, lastClaimRound)
-  const hasUnclaimedRounds = !isUnbonded && currentRoundNum !== lastClaimRound
-  return {
-    ...nextProps,
-    unbondFrom: async id => {
+const mapMutationHandlers = withHandlers({
+  bond: ({ currentRound, history, me, toasts }) => ({ id }) => {
+    const { id: currentRoundNum, lastInitializedRound } = currentRound.data
+    const { status, lastClaimRound } = me.data.delegator
+    const isUnbonded = status === 'Unbonded'
+    const unclaimedRounds = isUnbonded
+      ? ' 0'
+      : MathBN.sub(lastInitializedRound, lastClaimRound)
+    if (!currentRound.data.initialized) {
+      return toasts.push({
+        id: 'bond',
+        type: 'warn',
+        title: 'Unable to bond',
+        body: 'The current round is not initialized.',
+      })
+    }
+    if (MathBN.gt(unclaimedRounds, '20')) {
+      return toasts.push({
+        id: 'bond',
+        type: 'warn',
+        title: 'Unable to bond',
+        body: 'You have unclaimed earnings from more than 20 previous rounds.',
+      })
+    }
+    history.push(`#/bond/${id}`)
+  },
+  unbond: ({ currentRound, me, toasts }) => async ({ id }) => {
+    try {
+      const { id: currentRoundNum, lastInitializedRound } = currentRound.data
+      const { status, lastClaimRound } = me.data.delegator
+      const isUnbonded = status === 'Unbonded'
+      const unclaimedRounds = isUnbonded
+        ? ' 0'
+        : MathBN.sub(lastInitializedRound, lastClaimRound)
+      const hasUnclaimedRounds =
+        !isUnbonded && currentRoundNum !== lastClaimRound
       if (!currentRound.data.initialized) {
         return toasts.push({
           id: 'unbond',
           type: 'warn',
           title: 'Unable to unbond',
-          body: 'The current round is not initialized.',
-        })
-      }
-      if (hasUnclaimedRounds) {
-        return toasts.push({
-          id: 'unbond',
-          type: 'warn',
-          title: 'Unable to unbond',
-          body: 'You have unclaimed earnings from previous rounds.',
-        })
-      }
-      try {
-        toasts.push({
-          id: 'unbond',
-          title: 'Unbonding',
-          body: 'Unbonding in progress.',
-        })
-        await window.livepeer.rpc.unbond()
-        toasts.push({
-          id: 'unbond',
-          type: 'success',
-          title: 'Unbonding Complete',
-          body: 'Now, you must wait through the unbonding period.',
-        })
-      } catch (err) {
-        toasts.push({
-          id: 'unbond',
-          type: 'warn',
-          title: 'Unbond Failed',
-          body: err.message,
-        })
-      }
-    },
-    bondTo: id => {
-      if (!currentRound.data.initialized) {
-        return toasts.push({
-          id: 'bond',
-          type: 'warn',
-          title: 'Unable to bond',
           body: 'The current round is not initialized.',
         })
       }
       if (MathBN.gt(unclaimedRounds, '20')) {
         return toasts.push({
-          id: 'bond',
+          id: 'unbond',
           type: 'warn',
-          title: 'Unable to bond',
-          body: (
-            <span>
-              You have unclaimed earnings from more than 20 previous rounds.{' '}
-              <br />
-              <a href="/me/delegating">Claim Your Earnings</a>
-            </span>
-          ),
+          title: 'Unable to unbond',
+          body:
+            'You have unclaimed earnings from more than 20 previous rounds.',
         })
       }
-      tx.activate({
-        id,
-        type: 'BondStatus',
+      await window.livepeer.rpc.unbond()
+      toasts.push({
+        id: 'unbond',
+        type: 'success',
+        title: 'Unbonding Complete',
+        body: `Successfully unbonded from ${id}`,
       })
-    },
-  }
+    } catch (err) {
+      if (!/User denied/.test(err.message)) {
+        toasts.push({
+          id: 'unbond',
+          type: 'error',
+          title: 'Unbond Failed',
+          body: err.message,
+        })
+      }
+    }
+  },
 })
 
 export default compose(
@@ -177,7 +168,6 @@ export default compose(
   connectCurrentRoundQuery,
   connectMeDelegatorQuery,
   connectToasts,
-  connectTransactions,
-  mapTransactionsToProps,
   withTransactionHandlers,
+  mapMutationHandlers,
 )

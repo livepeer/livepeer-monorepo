@@ -5,10 +5,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
-import {
-  ToastNotificationContainer,
-  TransactionStatusContainer,
-} from '../containers'
+import { ToastNotificationContainer } from '../containers'
 import { mockRound } from '../utils'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
@@ -76,21 +73,6 @@ export const withPathMatches = (matches: { [key: string]: string }) =>
       }, {}),
     }
   })
-
-/**
- * Subscribes a component to the TransactionContainer's state
- */
-export const connectTransactions = (Consumer: React.ComponentType<any>) => {
-  return (
-    props: React.ElementProps<typeof Consumer>,
-  ): React.Element<typeof Consumer> => (
-    <Subscribe to={[TransactionStatusContainer]}>
-      {(transactions: TransactionStatusContainer) => (
-        <Consumer {...props} transactions={transactions} />
-      )}
-    </Subscribe>
-  )
-}
 
 /**
  * Subscribes a component to the ToastNofiticationContainer's state
@@ -207,5 +189,127 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
   options: ({ match }) => ({
     pollInterval: 10 * 1000,
     variables: {},
+  }),
+})
+
+export const TransactionSubmittedSubscription = gql`
+  subscription TransactionSubmitted {
+    transactionSubmitted {
+      id
+      blockNumber
+      timeStamp
+      nonce
+      blockHash
+      transactionIndex
+      from
+      to
+      value
+      gas
+      gasPrice
+      isError
+      status
+      input
+      contractAddress
+      cumulativeGasUsed
+      gasUsed
+      confirmations
+      contract
+      method
+      params
+    }
+  }
+`
+
+export const TransactionConfirmedSubscription = gql`
+  subscription TransactionConfirmed {
+    transactionConfirmed {
+      id
+      blockNumber
+      timeStamp
+      nonce
+      blockHash
+      transactionIndex
+      from
+      to
+      value
+      gas
+      gasPrice
+      isError
+      status
+      input
+      contractAddress
+      cumulativeGasUsed
+      gasUsed
+      confirmations
+      contract
+      method
+      params
+    }
+  }
+`
+
+export const TransactionsQuery = gql`
+  fragment TransactionFragment on Transaction {
+    id
+    blockNumber
+    timeStamp
+    nonce
+    blockHash
+    transactionIndex
+    from
+    to
+    value
+    gas
+    gasPrice
+    isError
+    status
+    input
+    contractAddress
+    cumulativeGasUsed
+    gasUsed
+    confirmations
+    contract
+    method
+    params
+  }
+
+  query TransactionQuery(
+    $address: String!
+    $startBlock: String
+    $endBlock: String
+    $skip: String
+    $limit: String
+    $sort: String
+  ) {
+    transactions(
+      address: $address
+      startBlock: $startBlock
+      endBlock: $endBlock
+      skip: $skip
+      limit: $limit
+      sort: $sort
+    ) {
+      ...TransactionFragment
+    }
+  }
+`
+
+export const connectTransactionsQuery = graphql(TransactionsQuery, {
+  props: ({ data, ownProps }) => {
+    const { transactions, ...queryData } = data
+    return {
+      ...ownProps,
+      transactions: {
+        ...queryData,
+        data: transactions || [],
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 30 * 1000,
+    variables: {
+      address: match.params.accountId,
+    },
+    fetchPolicy: 'cache-and-network',
   }),
 })

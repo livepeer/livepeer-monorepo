@@ -17,6 +17,7 @@ const Button = styled.button`
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
   :disabled {
     cursor: not-allowed;
+    opacity: 0.5;
   }
   &.primary {
     background: var(--bg-dark);

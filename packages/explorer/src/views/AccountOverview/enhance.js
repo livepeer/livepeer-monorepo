@@ -1,8 +1,13 @@
-import { compose } from 'recompose'
-import { graphql } from 'react-apollo'
+import { compose, lifecycle } from 'recompose'
+import { graphql, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockAccount } from '../../utils'
-import { connectCoinbaseQuery, withTransactionHandlers } from '../../enhancers'
+import {
+  connectCoinbaseQuery,
+  connectTransactionsQuery,
+  TransactionSubmittedSubscription,
+  withTransactionHandlers,
+} from '../../enhancers'
 
 const accountQuery = gql`
   fragment AccountFragment on Account {
@@ -34,11 +39,25 @@ const connectAccountQuery = graphql(accountQuery, {
     variables: {
       id: match.params.accountId,
     },
+    fetchPolicy: 'cache-and-network',
   }),
+})
+
+const subscribeToTransactionSubmitted = lifecycle({
+  componentDidMount() {
+    // causes re-render when subscription receives entries
+    this.props.transactions.subscribeToMore({
+      document: TransactionSubmittedSubscription,
+      updateQuery: (prev, { subscriptionData }) => prev,
+    })
+  },
 })
 
 export default compose(
   connectAccountQuery,
   connectCoinbaseQuery,
+  connectTransactionsQuery,
   withTransactionHandlers,
+  withApollo,
+  subscribeToTransactionSubmitted,
 )

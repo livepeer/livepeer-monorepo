@@ -106,9 +106,7 @@ declare type GraphQLProps<D> = {
 }
 
 declare type History = {
-  location: {
-    search: string,
-  },
+  location: Location,
   push: (url: string) => void,
   replace: (url: string) => void,
 }

@@ -1,12 +1,18 @@
-import { compose, mapProps } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { FORM_ERROR } from 'final-form'
 import {
   connectApproveMutation,
   connectBondMutation,
-  connectTransactions,
+  connectToasts,
 } from '../../enhancers'
-import { mockAccount, sleep, wireTransactionToStatus } from '../../utils'
+import {
+  mockAccount,
+  sleep,
+  toBaseUnit,
+  wireTransactionToStatus,
+} from '../../utils'
 
 const MeDelegatorQuery = gql`
   fragment AccountFragment on Account {
@@ -39,33 +45,63 @@ const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 5 * 1000,
+    // pollInterval: 5 * 1000,
     variables: {},
   }),
 })
 
-export const mapTransactionsToProps = mapProps(props => {
-  const { approve, bond, transactions: tx, ...nextProps } = props
-  const bondStatusQuery = { active: true, type: 'BondStatus' }
-  const bondStatus =
-    tx.findWhere(bondStatusQuery) || tx.empty(bondStatusQuery.type)
-  return {
-    ...nextProps,
-    bondStatus,
-    onClose: () => tx.delete(bondStatus),
-    onBond: wireTransactionToStatus(tx, bondStatus, async ({ to, amount }) => {
-      if (amount) {
-        await approve({ variables: { type: 'bond', amount } })
+export const mapMutationHandlers = withHandlers({
+  approveAndBond: ({ approve, bond, me, toasts }) => async ({ to, amount }) => {
+    try {
+      const hasAmount = amount && amount.replace(/0|\./g, '')
+      const wei = hasAmount ? toBaseUnit(amount) : '0'
+      console.log('bondAndApprove', to, `${amount} LPT`, `${wei} WEI`)
+      if (hasAmount) {
+        console.log('approving...')
+        await approve({
+          variables: { type: 'bond', amount: wei },
+        })
+        toasts.push({
+          id: 'approveToken',
+          type: 'success',
+          title: 'Approved token bond amount',
+          body: `Successfully approved ${amount} LPT for transfer`,
+        })
       }
-      return await bond({ variables: { to, amount } })
-    }),
-  }
+      console.log('bonding...')
+      await bond({
+        variables: { to, amount: wei },
+        refreshQueries: ['MeDelegatorQuery', 'TranscodersQuery'],
+      })
+      toasts.push({
+        id: 'bond',
+        type: 'success',
+        title: 'Bonded Token',
+        body: `Successfully bonded ${amount} LPT to ${to}`,
+      })
+    } catch (err) {
+      if (!/User denied/.test(err.message)) {
+        // Push notification if error is not a user cancel error
+        toasts.push({
+          id: 'bond',
+          type: 'error',
+          title: 'Error Bonding',
+          body: 'There was a problem bonding your token',
+        })
+      }
+      // resolve the submitError -- do not throw!
+      // https://github.com/final-form/react-final-form#submission-errors
+      return {
+        [FORM_ERROR]: err.message.replace('GraphQL error: ', ''),
+      }
+    }
+  },
 })
 
 export default compose(
   connectApproveMutation,
   connectBondMutation,
   connectMeDelegatorQuery,
-  connectTransactions,
-  mapTransactionsToProps,
+  connectToasts,
+  mapMutationHandlers,
 )

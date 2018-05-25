@@ -3,8 +3,8 @@ import 'url-search-params-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
 import { injectGlobal } from 'styled-components'
+import gql from 'graphql-tag'
 import createApolloClient from '@livepeer/apollo'
-import store, { history } from './store'
 import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
@@ -43,6 +43,9 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       box-sizing: border-box;
       font-weight: 300;
       // font-family: 'AkkuratMonoPro';
+    }
+    strong, b {
+      font-weight: 500;
     }
     html, body {
       margin: 0;
@@ -99,14 +102,14 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       provider: process.env.REACT_APP_HTTP_PROVIDER,
       // Default gas limit to send with transactions (2.1m wei)
       defaultGas: 2.1 * 1000000,
+      // Etherscan API Key
+      etherscanApiKey: process.env.REACT_APP_ETHERSCAN_API_KEY,
       // If user account changes while on /me, this will hard refresh the page
       onAccountChange: (currentAccount: string, nextAccount: string): void => {
         const path = window.location.pathname.toLowerCase()
-        const onMyAccountPage = new RegExp(`^/accounts/${currentAccount}`).test(
-          path,
-        )
+        const onMyAccountPage = path.includes(`/accounts/${currentAccount}`)
         const accountChanged = nextAccount !== currentAccount
-        if (onMyAccountPage && accountChanged) return (window.location = '/me')
+        if (onMyAccountPage && accountChanged) window.location = '/me'
       },
     }
     // The address of the deployed Controller contract
@@ -123,12 +126,25 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       opts.controllerAddress =
         controllers[version.network] || process.env.REACT_APP_CONTROLLER_ADDRESS
     }
+    // opts.stateLink = {
+    //   resolvers: {
+    //     defaults: {
+    //       pendingTransactions: []
+    //     },
+    //     Query: {
+    //       pendingTransactions: (obj, args, ctx) => {
+    //         // ctx.cache
+    //         return
+    //       }
+    //     }
+    //   }
+    // }
     return opts
   })
 
   const update = () =>
     render(
-      <Root store={store} history={history} client={client}>
+      <Root client={client}>
         <App />
       </Root>,
       document.getElementById('main-root'),

@@ -45,7 +45,7 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   </InlineHint>*/}
       {/** ETH Deposit */}
       <MetricBox
-        title="Deposit"
+        title="Broadcasting Funds"
         suffix="ETH"
         value={formatBalance(deposit)}
         subvalue={formatBalance(deposit, 18)}

@@ -25,23 +25,23 @@ import enhance from './enhance'
 
 type AccountViewProps = {
   account: GraphQLProps<Account>,
-  bondTo: string => void,
+  bond: ({ id: string }) => void,
   coinbase: GraphQLProps<Coinbase>,
   currentRound: GraphQLProps<Array<Round>>,
   history: History,
   match: Match,
   me: GraphQLProps<Account>,
-  unbondFrom: string => void,
+  unbond: ({ id: string }) => void,
 }
 
 const AccountView: React.ComponentType<AccountViewProps> = ({
   account,
-  bondTo,
+  bond,
   coinbase,
   history,
   match,
   me,
-  unbondFrom,
+  unbond,
 }) => {
   const accountAddress = match.params.accountId
   const userAddress = coinbase.data.coinbase
@@ -86,9 +86,9 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
                   const { action } = detail.item.dataset
                   switch (action) {
                     case 'bond':
-                      return await bondTo(accountAddress)
+                      return bond({ id: accountAddress })
                     case 'unbond':
-                      return await unbondFrom(accountAddress)
+                      return await unbond({ id: accountAddress })
                   }
                 }}
               >
