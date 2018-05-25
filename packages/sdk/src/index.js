@@ -1,7 +1,12 @@
 import Eth from 'ethjs'
 import SignerProvider from 'ethjs-provider-signer'
 import EthereumTx from 'ethereumjs-tx'
-import { decodeEvent } from 'ethjs-abi'
+import {
+  decodeParams,
+  decodeEvent,
+  encodeMethod,
+  encodeSignature,
+} from 'ethjs-abi'
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
 import ControllerArtifact from '../etc/Controller'
@@ -110,6 +115,61 @@ export const DEFAULTS = {
 
 // Utils
 export const utils = {
+  getMethodHash: item => {
+    // const sig = `${item.name}(${item.inputs.map(x => x.type).join(',')})`
+    // const hash = Eth.keccak256(sig)
+    // return hash
+    return encodeSignature(item)
+  },
+  findAbiByName: (abis, name) => {
+    const [abi] = abis.filter(item => {
+      if (item.type !== 'function') return false
+      if (item.name === name) return true
+    })
+    return abi
+  },
+  findAbiByHash: (abis, hash) => {
+    const [abi] = abis.filter(item => {
+      if (item.type !== 'function') return false
+      return encodeSignature(item) === hash
+    })
+    return abi
+  },
+  encodeMethodParams: (abi, params) => {
+    return encodeMethod(abi, params)
+  },
+  decodeMethodParams: (abi, bytecode) => {
+    return decodeParams(
+      abi.inputs.map(x => x.name),
+      abi.inputs.map(x => x.type),
+      `0x${bytecode.substr(10)}`,
+      false,
+    )
+  },
+  decodeContractInput: (contracts, contractAddress, input) => {
+    for (const key in contracts) {
+      const contract = contracts[key]
+      if (contract.address !== contractAddress) continue
+      const hash = input.substring(0, 10)
+      const abi = utils.findAbiByHash(contract.abi, hash)
+      return {
+        contract: key,
+        method: abi.name,
+        params: Object.entries(utils.decodeMethodParams(abi, input)).reduce(
+          (obj, [k, v]) => {
+            return {
+              ...obj,
+              [k]: Array.isArray(v)
+                ? v.map(_v => (BN.isBN(_v) ? toString(_v) : _v))
+                : BN.isBN(v) ? toString(v) : v,
+            }
+          },
+          {},
+        ),
+      }
+    }
+    return { contract: '', method: '', params: {} }
+  },
   /**
    * Polls for a transaction receipt
    * @ignore
@@ -364,6 +424,13 @@ export async function initContracts(
     JobsManager: null,
     RoundsManager: null,
   }
+  const hashes = {
+    LivepeerToken: {},
+    LivepeerTokenFaucet: {},
+    BondingManager: {},
+    JobsManager: {},
+    RoundsManager: {},
+  }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
     ...artifacts.Controller,
@@ -380,6 +447,9 @@ export async function initContracts(
       defaultTx,
       address,
     })
+    for (const item of contracts[name].abi) {
+      hashes[name][utils.getMethodHash(item)] = item.name
+    }
   }
   // Add the Controller contract to the contracts object
   contracts.Controller = Controller
@@ -414,6 +484,7 @@ export async function initContracts(
     defaultTx,
     eth,
     events,
+    hashes,
   }
 }
 
@@ -1159,8 +1230,6 @@ export default async function createLivepeerSDK(
         toBlock,
         topics,
       }
-      // @TODO - caching algorithm
-      // const key = JSON.stringify(params)
       const results =
         // cache[key] ||
         (await config.eth.getLogs(params)).map(
@@ -1271,39 +1340,21 @@ export default async function createLivepeerSDK(
      * @memberof livepeer~rpc
      * @param {string} endRound - the round to claim earnings until
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
-     * @return {TxReceipt}
+     * @return {string}
      *
      * @example
      *
      * await rpc.claimEarnings()
-     * // => TxReceipt {
-     * //   transactionHash: string,
-     * //   transactionIndex": BN,
-     * //   blockHash: string,
-     * //   blockNumber: BN,
-     * //   cumulativeGasUsed: BN,
-     * //   gasUsed: BN,
-     * //   contractAddress: string,
-     * //   logs: Array<Log {
-     * //     logIndex: BN,
-     * //     blockNumber: BN,
-     * //     blockHash: string,
-     * //     transactionHash: string,
-     * //     transactionIndex: string,
-     * //     address: string,
-     * //     data: string,
-     * //     topics: Array<string>
-     * //   }>
-     * // }
+     * // => string
      */
     async claimEarnings(
       endRound: string,
       tx = config.defaultTx,
-    ): Promise<TxReceipt> {
-      return await utils.getTxReceipt(
-        await BondingManager.claimEarnings(endRound, tx),
-        config.eth,
-      )
+    ): Promise<string> {
+      return await BondingManager.claimEarnings(endRound, {
+        ...config.defaultTx,
+        ...tx,
+      })
     },
 
     async approveTokenBondAmount(
@@ -1311,7 +1362,7 @@ export default async function createLivepeerSDK(
       tx: TxObject,
     ): Promise<TxReceipt> {
       const token = toBN(amount)
-      // @todo - check token balance
+      // TODO: - check token balance
       await utils.getTxReceipt(
         await LivepeerToken.approve(BondingManager.address, token, {
           ...config.defaultTx,
@@ -1327,7 +1378,7 @@ export default async function createLivepeerSDK(
       tx: TxObject,
     ): Promise<TxReceipt> {
       const token = toBN(amount)
-      // @todo - check for existing approval / round initialization / token balance
+      // TODO: check for existing approval / round initialization / token balance
       return await utils.getTxReceipt(
         await BondingManager.bond(token, to, { ...config.defaultTx, ...tx }),
         config.eth,

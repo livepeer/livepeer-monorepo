@@ -57,13 +57,13 @@ test('should initialize contracts', async t => {
     c[b].query.rpc.idCounter = 0
     return c
   }, contracts)
-  // @TODO - unskip once contract schema is stable
+  // TODO: unskip once contract schema is stable
   t.skip.snapshot(snap)
 })
 
 test('should initialize SDK', async t => {
   const { rpc } = await Livepeer()
-  // @TODO - unskip once sdk rpc is stable
+  // TODO: unskip once sdk rpc is stable
   t.skip.snapshot(rpc)
 })
 
