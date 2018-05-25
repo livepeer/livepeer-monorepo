@@ -5,11 +5,13 @@ import * as Job from './Job'
 import * as JobProfile from './JobProfile'
 import * as Mutation from './Mutation'
 import * as Query from './Query'
+import Subscription from './Subscription'
 import * as Transcoder from './Transcoder'
 
 export default {
   Query,
   Mutation,
+  Subscription,
   Account,
   Broadcaster,
   Delegator,

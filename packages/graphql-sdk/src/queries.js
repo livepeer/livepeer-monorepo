@@ -3,6 +3,7 @@ import { default as BroadcasterFragment } from './fragments/Broadcaster'
 import { default as DelegatorFragment } from './fragments/Delegator'
 import { default as JobFragment } from './fragments/Job'
 import { default as RoundFragment } from './fragments/Round'
+import { default as TransactionFragment } from './fragments/Transaction'
 import { default as TranscoderFragment } from './fragments/Transcoder'
 
 export const AccountQuery = `
@@ -80,6 +81,29 @@ ${TranscoderFragment}
 query MeQuery {
   me {
     ...AccountFragment
+  }
+}
+`
+
+export const TransactionsQuery = `
+${TransactionFragment}
+query TransactionQuery(
+  $address: String!,
+  $startBlock: String,
+  $endBlock: String,
+  $skip: String,
+  $limit: String,
+  $sort: String
+) {
+  transactions(
+    address: $address,
+    startBlock: $startBlock,
+    endBlock: $endBlock,
+    skip: $skip,
+    limit: $limit,
+    sort: $sort,
+  ) {
+    ...TransactionFragment
   }
 }
 `

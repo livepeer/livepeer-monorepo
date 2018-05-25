@@ -5,6 +5,7 @@ import { transformJob } from '../utils'
 type GQLContext = {
   livepeer: Object,
   account?: string,
+  etherscanApiKey: string,
 }
 
 type QueryObj = {}
@@ -177,6 +178,84 @@ export async function currentRound(
 }
 
 /**
+ * Gets all transactions to and from an account between the given start block and end block
+ * @param {QueryObj} obj
+ * @param {QueryTransactionsArgs} args
+ * @param {string} [args.address] - ETH address that sent the transaction
+ * @param {number} [args.startBlock=0] - The start block to search from
+ * @param {number} [args.endBlock=99999999] - The end block to search to
+ * @param {string} [args.skip] - Page number
+ * @param {string} [args.limit] - Max records to return
+ * @param {string} [args.sort='asc'] - 'asc' or 'desc'
+ * @param {GQLContext} ctx
+ * @return {Array<Transaction>}
+ */
+export async function transactions(
+  obj: QueryObj,
+  args: QueryTranscactionsArgs,
+  ctx: GQLContext,
+): Array<Transactions> {
+  // console.log(ctx)
+  const { account, etherscanApiKey, livepeer, persistor } = ctx
+  const { cache } = persistor.cache
+  const { config, utils } = livepeer
+  const { contracts, eth } = config
+  const {
+    address,
+    startBlock = 0,
+    endBlock = 99999999,
+    skip = 0,
+    limit = 100,
+    sort = 'desc',
+  } = args
+  const networkId = await eth.net_version()
+  const rootUrl = `https://${
+    networkId === '4' ? 'api-rinkeby' : 'api'
+  }.etherscan.io/api`
+  const queryString = `?module=account&action=txlist&address=${address}&startBlock=${startBlock}&endBlock=${endBlock}&page=${1 +
+    skip}&offset=${limit}&sort=${sort}&apiKey=${etherscanApiKey}`
+  const result = await fetch(rootUrl + queryString)
+  const json = await result.json()
+  const cacheData = cache.data.data
+  // console.log(cache)
+  const pendingTxRefs =
+    cacheData.ROOT_QUERY[`pendingTransactions({"address":"${address}"})`] || []
+  const pendingTxns = new Map(
+    pendingTxRefs.map(x => [cacheData[x.id].id, cacheData[x.id]]),
+  )
+  const transactions = json.result.map(
+    ({ hash: id, txreceipt_status: status, ...x }) => {
+      const { contract, method, params } = utils.decodeContractInput(
+        contracts,
+        x.to,
+        x.input,
+      )
+      if (pendingTxns.has(id)) {
+        pendingTxns.delete(id)
+      }
+      return { ...x, id, status, contract, method, params }
+    },
+  )
+  const values = [...pendingTxns.values()]
+  // console.log(values)
+  return [
+    ...values.map(({ __typename, params, ...x }) => {
+      return {
+        ...x,
+        params: params.json,
+      }
+    }),
+    ...transactions,
+  ]
+  // if (accountTxns) console.log('txns >>>>>>>>>>>>', [...accountTxns.values()])
+  // const allTransactions = accountTxns
+  //   ? [...accountTxns.values(), ...transactions]
+  //   : transactions
+  // console.log(allTransactions)
+  // return allTransactions
+}
+
+/**
  * Gets a Transcoder by ID (ETH address)
  * @param {QueryObj} obj
  * @param {QueryTranscoderArgs} args
@@ -214,7 +293,7 @@ export async function transcoders(
   args: QueryTranscodersArgs,
   ctx: GQLContext,
 ): Array<Transcoder> {
-  const { skip = 0, limit = 100, ..._args } = args
+  const { skip = 0, limit = 100 } = args
   const result = await ctx.livepeer.rpc.getTranscoders()
   const transcoders = result
     .slice(skip, skip + limit)

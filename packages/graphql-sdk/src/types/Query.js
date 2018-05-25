@@ -3,6 +3,7 @@ import Broadcaster from './Broadcaster'
 import Delegator from './Delegator'
 import Job from './Job'
 import Round from './Round'
+import Transaction from './Transaction'
 import Transcoder from './Transcoder'
 
 const Query = `
@@ -19,6 +20,9 @@ type Query {
   "The currently authenticated user's ETH address"
   coinbase: String!
 
+  "Gets the current round"
+  currentRound: Round
+
   "A Delegator by ETH address"
   delegator(id: String!): Delegator
 
@@ -31,8 +35,15 @@ type Query {
   "The currently selected account (usually set by something like MetaMask)"
   me: Account
 
-  "Gets the current round"
-  currentRound: Round
+  "All transactions to or from an account between the given start block and end block"
+  transactions(
+    address: String!,
+    startBlock: String,
+    endBlock: String,
+    skip: String,
+    limit: String,
+    sort: String
+  ): [Transaction!]!
 
   "A Transcoder by ETH address"
   transcoder(id: String!): Transcoder
@@ -49,5 +60,6 @@ export default () => [
   Delegator,
   Job,
   Round,
+  Transaction,
   Transcoder,
 ]

@@ -1,3 +1,9 @@
+import {
+  publish,
+  TransactionConfirmed,
+  TransactionSubmitted,
+} from './Subscription'
+
 /** Typedefs */
 
 type GQLContext = {
@@ -62,8 +68,48 @@ export async function claimEarnings(
   args: { endRound: string },
   ctx: GQLContext,
 ): Promise<TxReceipt> {
+  const { utils, config } = ctx.livepeer
+  const { eth } = config
   const { endRound } = args
-  return await ctx.livepeer.rpc.claimEarnings(endRound)
+  const txHash = await ctx.livepeer.rpc.claimEarnings(endRound)
+  console.log(txHash)
+  const mockTx = {
+    blockNumber: '',
+    blockHash: '',
+    transactionIndex: '',
+    from: ctx.account,
+    to: '',
+    value: '',
+    isError: '0x0',
+    status: '',
+    input: '',
+    contractAddress: '',
+    cumulativeGasUsed: '',
+    confirmations: '0',
+    contract: 'BondingManager',
+    gas: '',
+    gasUsed: '',
+    gasPrice: '',
+    id: txHash,
+    method: 'claimEarnings',
+    nonce: '',
+    params: { _endRound: endRound },
+    status: 'pending',
+    timeStamp: `${Math.floor(Date.now() / 1000)}`,
+  }
+  publish(TransactionSubmitted, mockTx)
+  const receipt = await utils.getTxReceipt(txHash, eth)
+  publish(TransactionConfirmed, {
+    ...mockTx,
+    blockHash: receipt.blockHash,
+    blockNumber: receipt.blockNumber.toString(10),
+    cumulativeGasUsed: receipt.cumulativeGasUsed.toString(10),
+    gasUsed: receipt.gasUsed.toString(10),
+    to: receipt.to,
+    transactionIndex: receipt.transactionIndex.toString(10),
+    status: receipt.status.substr(2),
+    confirmations: '1',
+  })
 }
 
 /**

@@ -1,5 +1,6 @@
+import 'cross-fetch/polyfill'
 import test from 'ava'
-import { graphql, introspectionQuery } from 'graphql'
+import { graphql, introspectionQuery, parse, subscribe } from 'graphql'
 import { EMPTY_ADDRESS } from '@livepeer/sdk'
 // import { schema } from './index'
 import schema from './schema'
@@ -11,10 +12,12 @@ import {
   DelegatorQuery,
   JobQuery,
   JobsQuery,
+  TransactionsQuery,
   TranscoderQuery,
   TranscodersQuery,
 } from './queries'
 import livepeer from './mock-sdk'
+import { publish, TransactionSubmitted } from './resolvers/Subscription'
 
 // clears console
 // console.log('\x1Bc')
@@ -22,6 +25,42 @@ import livepeer from './mock-sdk'
 test(async t => {
   const res = await graphql(schema, introspectionQuery, null, { livepeer }, {})
   // console.log(res)
+  t.pass()
+})
+
+test('Subscription', async t => {
+  const query = `
+    subscription {
+      transactionSubmitted {
+        id
+        contract
+        gas
+        gasUsed
+        gasPrice
+        id
+        method
+        nonce
+        params
+        status
+        timeStamp
+      }
+    }
+  `
+  const ast = parse(query)
+  const subscription = await subscribe(schema, ast)
+  publish(TransactionSubmitted, {
+    contract: 'BondingManager',
+    gas: '',
+    gasUsed: '',
+    gasPrice: '',
+    id: `${Date.now()}`,
+    method: 'claimEarnings',
+    nonce: '',
+    params: { endRound: 0 },
+    status: 'pending',
+    timeStamp: `${Math.floor(Date.now() / 1000)}`,
+  })
+  const res = await subscription.next()
   t.pass()
 })
 
@@ -75,14 +114,14 @@ test('BroadcasterQuery (include jobs using skip/limit args)', async t => {
 /**
  * Coinbase
  */
-test.only('CoinbaseQuery (not authenticated)', async t => {
+test('CoinbaseQuery (not authenticated)', async t => {
   const args = null
   const res = await graphql(schema, CoinbaseQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })
 
-test.only('CoinbaseQuery (authenticated)', async t => {
+test('CoinbaseQuery (authenticated)', async t => {
   const args = null
   const res = await graphql(
     schema,
@@ -169,11 +208,77 @@ test('JobsQuery (skip / limit args)', async t => {
 /**
  * Round
  */
-test.only('CurrentRoundQuery', async t => {
+test('CurrentRoundQuery', async t => {
   const args = {}
   const res = await graphql(schema, CurrentRoundQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
+})
+
+/**
+ * Transactions
+ */
+test('TransactionsQuery', async t => {
+  const args = {
+    address: '0x0000000000000000000000000000000000000000',
+    limit: 2,
+    sort: 'desc',
+    // this address has 3 txns in this range
+    // (1 on 46423, 1 on 46421, and 1 on 46420)
+    // this query should return the txns from the two more recent blocks
+    startBlock: 46420,
+    endBlock: 46423,
+  }
+  const res = await graphql(
+    schema,
+    TransactionsQuery,
+    null,
+    {
+      persistor: {
+        cache: {
+          cache: {
+            data: {
+              data: {
+                ROOT_QUERY: {},
+              },
+            },
+          },
+        },
+      },
+      livepeer: {
+        utils: {
+          decodeContractInput: x => ({
+            ...x,
+            contract: '',
+            method: '',
+            params: {},
+          }),
+        },
+        config: {
+          eth: {
+            async net_version() {
+              return '1'
+            },
+          },
+          contracts: {},
+        },
+      },
+      etherscanApiKey: 'REYGA15N2SCUKVFQKG3C24USKSR8WZB29B',
+    },
+    args,
+  )
+  // remove "confirmations" field since it changes frequently
+  const transactions = res.data.transactions.map(
+    ({ confirmations, ...tx }) => tx,
+  )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot({
+    ...res,
+    data: {
+      ...res.data,
+      transactions,
+    },
+  })
 })
 
 /**

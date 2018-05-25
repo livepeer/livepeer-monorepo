@@ -2,9 +2,6 @@
 
 type GQLContext = {
   livepeer: Object,
-  resolvers: {
-    // ...
-  },
 }
 
 type JobProfileObj = {
