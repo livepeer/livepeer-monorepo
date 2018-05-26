@@ -32,9 +32,10 @@ const ToastNotificiationsView: React.ComponentType<
 }
 
 const ToastNotificationsSection = styled(TransitionGroup)`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   right: 0;
+  z-index: 1;
 `
 
 const nativeNotify = lifecycle({
