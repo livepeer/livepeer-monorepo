@@ -20,7 +20,7 @@ const getNetwork = web3 => {
     : NETWORKS['858585']
 }
 
-const Landing = ({ viewAccount, ...props }) => (
+const Landing = ({ history, ...props }) => (
   <Container>
     <ScrollToTopOnMount />
     <BasicNavbar />
@@ -51,7 +51,7 @@ const Landing = ({ viewAccount, ...props }) => (
           onClick={() => {
             const { value } = document.getElementById('account')
             if (!value) return
-            viewAccount(value)
+            history.push(`/accounts/${value}`)
           }}
         >
           search
