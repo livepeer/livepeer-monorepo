@@ -93,6 +93,10 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     #main-root {
       padding-top: 64px;
     }
+    #modal-root {
+      z-index: 1;
+      position: relative;
+    }
   `
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
   // bootstrap the apollo client

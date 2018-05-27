@@ -12,6 +12,7 @@ import { Button, CTA, CTABanner, Modal } from '../components'
 import Account from '../views/Account'
 import BondModals from '../views/BondModals'
 import ClaimEarningsModals from '../views/ClaimEarningsModals'
+import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
 import ToastNotifications from '../views/ToastNotifications'
 import Transcoders from '../views/Transcoders'
@@ -61,6 +62,7 @@ const App = () => (
                   },
                 }}
               >
+                <Route component={ImportantMessage} />
                 <Route path="/bond/:delegateAddress" component={BondModals} />
                 <Route path="/claim-earnings" component={ClaimEarningsModals} />
               </Switch>
