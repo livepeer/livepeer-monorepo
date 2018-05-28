@@ -62,7 +62,6 @@ const App = () => (
                   },
                 }}
               >
-                <Route component={ImportantMessage} />
                 <Route path="/bond/:delegateAddress" component={BondModals} />
                 <Route path="/claim-earnings" component={ClaimEarningsModals} />
               </Switch>
