@@ -132,8 +132,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
                 <PauseIcon size={16} />
               )}
               <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
-                &nbsp;Round{' '}
-                {currentRound.data.initialized ? 'Active' : 'Paused'}
+                &nbsp;Round #{currentRound.data.id}
               </span>
             </span>
           </React.Fragment>

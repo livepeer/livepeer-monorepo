@@ -7,6 +7,7 @@ import Confetti from 'react-dom-confetti'
 import { withProp } from '../enhancers'
 import { formatBalance, toBaseUnit } from '../utils'
 import InlineAccount from './InlineAccount'
+import InlineHint from './InlineHint'
 import Button from './Button'
 
 type BondFormProps = {
@@ -112,9 +113,15 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   return (
     <React.Fragment>
       {confetti}
+      <InlineHint flag="bond-modal" disableHide>
+        <p>
+          <strong>Note:</strong> You may only bond to a single delegate at a
+          time, but you may switch between delegates without unbonding as often
+          as you please.
+        </p>
+      </InlineHint>
       <p>You are about to bond to the following delegate</p>
-      <InlineAccount address={delegateAddress} />
-      <hr />
+      <InlineAccount border address={delegateAddress} />
       <p>Your Token Balance</p>
       <p style={{ fontWeight: 400 }}>{max} LPT</p>
       <p>Amount to Bond</p>
@@ -142,14 +149,6 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           </p>
         )}
         <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-          {/*<InlineHint flag="bond-modal">
-      <h3>Lorem Ipsum</h3>
-      <p>
-        Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
-        sollicitudin, in neque magna, orci pede, vel eleifend urna.
-      </p>
-</InlineHint> */}
-          <strong style={{ fontWeight: 'normal' }}>Note</strong>:{' '}
           {bondedAmount !== '0' ? (
             <span>
               You already have a bonded amount of{' '}
