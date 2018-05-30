@@ -3,10 +3,10 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MoreHorizontal as MoreHorizontalIcon } from 'react-feather'
-import ReactTooltip from 'react-tooltip'
 import { formatBalance, formatPercentage, MathBN } from '../utils'
 import Avatar from './Avatar'
 import Button from './Button'
+import Tooltip from './Tooltip'
 
 type TranscoderCardProps = {|
   active: boolean,
@@ -24,35 +24,6 @@ type TranscoderCardProps = {|
   status: string,
   totalStake: string,
 |}
-
-const Tooltip = ({
-  children,
-  id = `${performance.now()}`,
-  text,
-  tooltipProps,
-  type = 'medium',
-}) => (
-  <React.Fragment>
-    {React.cloneElement(children, {
-      'data-for': id,
-      'data-tip': true,
-      'data-event': 'mouseover touchdown focus',
-      'data-event-off': 'mouseout touchdown blur',
-      // don't delay on small devices that are probably touch-enabled
-      'data-delay-show': window.innerWidth < 960 ? '0' : '500',
-      ...tooltipProps,
-    })}
-    <ReactTooltip
-      className={`tooltip-${type}`}
-      id={id}
-      place="top"
-      type="dark"
-      effect="float"
-    >
-      {text}
-    </ReactTooltip>
-  </React.Fragment>
-)
 
 /** Used when displaying Transcoder struct data in a list */
 const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(

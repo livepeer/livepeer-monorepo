@@ -1,7 +1,10 @@
-import React from 'react'
+import * as React from 'react'
+import { Icon } from 'rmwc/Icon'
 import Box from './Box'
+import Tooltip from './Tooltip'
 
 const MetricBox = ({
+  help = '',
   value,
   subvalue,
   title,
@@ -17,12 +20,22 @@ const MetricBox = ({
           margin: 0,
           padding: 16,
           fontSize: 14,
-          textTransform: 'uppercase',
           borderBottom: '1px solid #eee',
           color: '#666',
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
-        {title}
+        <span style={{ textTransform: 'uppercase' }}>{title}</span>
+        {help && (
+          <Tooltip text={help}>
+            <Icon
+              use="info"
+              style={{ opacity: 0.5, fontSize: 17, marginLeft: 4 }}
+            />
+          </Tooltip>
+        )}
       </h2>
       <h3
         style={{
