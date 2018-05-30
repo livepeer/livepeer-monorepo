@@ -45,16 +45,14 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   onRequestETH,
   onRequestLPT,
   onTransferLPT,
-  pendingTransactions = [],
   transactions,
 }) => {
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { ethBalance, id, tokenBalance } = account.data
   const IS_MAINNET = window.web3 && `${window.web3.version.network}` === '1'
-  const transactionData = [
-    ...pendingTransactions,
-    ...transactions.data.filter(x => x.method),
-  ].slice(0, 50) // chrome breaks with a large list
+  const transactionData = transactions.data
+    // only livepeer transactions
+    .filter(x => x.method)
   return (
     <React.Fragment>
       {/*<InlineHint flag="account-overview">
@@ -203,7 +201,7 @@ class TransactionCard extends React.Component {
           </div>
           <div>
             <ListDivider />
-            <List dense nonInteractive={true} twoLine>
+            <List dense twoLine>
               <SimpleListItem
                 key="hash"
                 graphic=""
@@ -223,6 +221,12 @@ class TransactionCard extends React.Component {
             temporary
             open={expanded}
             onClose={() => this.setState(state => ({ expanded: false }))}
+            style={{
+              // chrome breaks with a large list fixed-position drawer elements
+              // hiding them seems to fix
+              opacity: expanded ? 1 : 0,
+              transition: 'opacity .2s ease-out',
+            }}
           >
             <DrawerHeader>
               <h3>Transaction Information</h3>
