@@ -3,6 +3,7 @@ import { lifecycle } from 'recompose'
 import gql from 'graphql-tag'
 import { ApolloProvider } from 'react-apollo'
 import { Provider as UnstatedProvider, Container } from 'unstated'
+import { RMWCProvider } from 'rmwc/Provider'
 import { ToastNotificationContainer } from '../containers'
 import {
   TransactionsQuery,
@@ -15,7 +16,7 @@ const TOAST_NOTIFICATION = new ToastNotificationContainer()
 const Root = ({ client, children }) => (
   <ApolloProvider client={client}>
     <UnstatedProvider inject={[TOAST_NOTIFICATION]}>
-      {children}
+      <RMWCProvider listItemDefaultRipple={false}>{children}</RMWCProvider>
     </UnstatedProvider>
   </ApolloProvider>
 )
