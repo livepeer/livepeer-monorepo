@@ -59,10 +59,15 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     !delegator.loading && !currentRound.loading
       ? MathBN.sub(lastInitializedRound, lastClaimRound)
       : '0'
+  const roundsUntilUnbonded =
+    withdrawRound !== '0' ? MathBN.sub(withdrawRound, lastInitializedRound) : ''
   const hasUnclaimedRounds = unclaimedRounds !== '0'
   const hasStake = bondedAmount !== '0'
   const hasFees = fees !== '0'
+  const isUnbonding = status === 'Unbonding'
   const isUnbonded = status === 'Unbonded'
+  const isBonding = status === 'Pending'
+  const isBonded = status === 'Bonded'
   return (
     <Wrapper>
       {/*<InlineHint flag="account-delegating">
@@ -72,8 +77,22 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           sollicitudin, in neque magna, orci pede, vel eleifend urna.
         </p>
   </InlineHint>*/}
-      <MetricBox title="Status" value={status} />
       <MetricBox
+        help="A delegator can be in one of the following states: Pending, Bonded, Unbonding or Unbonded"
+        title="Status"
+        value={status}
+        subvalue={
+          isBonded
+            ? `Bonded to delegate at round #${startRound}`
+            : isBonding
+              ? `Bonding will complete at round #${startRound}`
+              : isUnbonding
+                ? `${roundsUntilUnbonded} round(s) left in the unbonding period`
+                : ''
+        }
+      />
+      <MetricBox
+        help="The ETH account the delegator has bonded token to"
         title="Delegate"
         value={
           !delegateAddress ? (
@@ -90,12 +109,20 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             </Link>
           )
         }
+        subvalue={
+          !delegateAddress ? 'Not currently bonded to any delegate' : ''
+        }
       />
       <MetricBox
+        help="Total tokens earned from reward cuts each round"
         title="Stake"
         suffix="LPT"
         value={formatBalance(bondedAmount)}
-        subvalue={formatBalance(bondedAmount, 18)}
+        subvalue={
+          withdrawRound === '0'
+            ? ''
+            : `Token may be withdrawn at round #${withdrawRound}`
+        }
       >
         {isMe && (
           <React.Fragment>
@@ -108,10 +135,11 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         )}
       </MetricBox>
       <MetricBox
+        help="Total ETH earned from fee shares each round"
         title="Fees"
         suffix="ETH"
         value={formatBalance(fees)}
-        subvalue={formatBalance(fees, 18)}
+        subvalue={`${formatBalance(fees, 18, 'wei')} WEI`}
       >
         {isMe && (
           <React.Fragment>
@@ -124,25 +152,26 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         )}
       </MetricBox>
       <MetricBox
+        help="Total tokens bonded to this account"
         title="Delegated Amount"
         suffix="LPT"
         value={formatBalance(delegatedAmount)}
-        subvalue={formatBalance(delegatedAmount, 18)}
       />
       <MetricBox
+        help="Rounds with stake and fees available to be claimed"
         title="Unclaimed Rounds"
         value={!delegateAddress ? 'N/A' : unclaimedRounds}
         subvalue={
-          !delegateAddress || !isMe ? (
-            ''
+          !delegateAddress ? (
+            'No round-based earnings are gained when unbonded'
           ) : !hasUnclaimedRounds ? (
-            `You're all caught up!`
+            `All caught up!`
           ) : (
             <span>
-              {`You have unclaimed earnings from round #${MathBN.add(
+              {`Earnings available from rounds #${MathBN.add(
                 lastClaimRound,
                 '1',
-              )} to #${lastInitializedRound}`}
+              )} - #${lastInitializedRound}`}
             </span>
           )
         }
@@ -161,14 +190,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             </React.Fragment>
           )}
       </MetricBox>
-      <MetricBox
-        title="Start Round"
-        value={startRound === '0' ? 'N/A' : `#${startRound}`}
-      />
-      <MetricBox
-        title="Withdraw Round"
-        value={withdrawRound === '0' ? 'N/A' : `#${withdrawRound}`}
-      />
     </Wrapper>
   )
 }

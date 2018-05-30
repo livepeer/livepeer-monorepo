@@ -45,20 +45,26 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
   </InlineHint>*/}
       {/** ETH Deposit */}
       <MetricBox
+        help="The amount of Ethereum deposited by this account to pay transcoding fees"
         title="Broadcasting Funds"
         suffix="ETH"
         value={formatBalance(deposit)}
-        subvalue={formatBalance(deposit, 18)}
+        subvalue={
+          withdrawBlock !== '0'
+            ? `These funds may not be withdrawn until block #${withdrawBlock}`
+            : ''
+        }
       >
         {isMe && (
           <React.Fragment>
             {/** withdraw */}
-            {MathBN.gt(deposit, '0') && (
-              <Button onClick={onWithdrawDeposit}>
-                <MinusIcon size={12} />
-                <span style={{ marginLeft: 8 }}>withdraw</span>
-              </Button>
-            )}
+            <Button
+              disabled={!MathBN.gt(deposit, '0')}
+              onClick={onWithdrawDeposit}
+            >
+              <MinusIcon size={12} />
+              <span style={{ marginLeft: 8 }}>withdraw</span>
+            </Button>
             {/** deposit */}
             <Button onClick={onDepositETH}>
               <PlusIcon size={12} />
@@ -67,8 +73,7 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
           </React.Fragment>
         )}
       </MetricBox>
-      {/** Withdraw Block */}
-      <MetricBox title="Withdraw Block" value={withdrawBlock} />
+      {/* Jobs List */}
       <Content>
         <h3>Job History</h3>
         {!jobs.length && (

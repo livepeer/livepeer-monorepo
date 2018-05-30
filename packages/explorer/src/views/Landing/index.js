@@ -28,13 +28,13 @@ const Landing = ({ history, ...props }) => (
         <div style={{ display: 'flex' }}>
           <InfoBox>
             <h2>
-              <Icon use="event_note" />&nbsp;
-              {`See What's Happening`}
+              <Icon use="explore" />&nbsp;
+              {`Explore Protocol Activity`}
             </h2>
             <p>
-              The Livepeer account view shows the recent protocol activity for
-              any Ethereum address. It also gives you deep insight into
-              important protocol metrics.
+              The account view shows the recent Livepeer smart contract
+              transactions for any Ethereum address. It also gives you deep
+              insight into important protocol metrics.
             </p>
             <br />
             <form

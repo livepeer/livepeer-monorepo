@@ -61,6 +61,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   </InlineHint>*/}
       <Wrapper>
         <MetricBox
+          help="The Ethereum address representing this account"
           title="ETH Address"
           width="100%"
           subvalue={<code style={{ fontSize: 16 }}>{id}</code>}
@@ -69,14 +70,16 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
       <Wrapper>
         {/** ETH */}
         <MetricBox
+          help="The amount of Ethereum owned by this account"
           title="ETH Balance"
           suffix="ETH"
           value={formatBalance(ethBalance)}
-          subvalue={formatBalance(ethBalance, 18)}
+          subvalue={`${formatBalance(ethBalance, 18, 'wei')} WEI`}
         />
         {/** LPT */}
         <MetricBox
-          title="Token Balance"
+          help="The amount of Livepeer Token (LPT) owned by this account"
+          title="Livepeer Token Balance"
           suffix="LPT"
           value={formatBalance(tokenBalance)}
           subvalue={formatBalance(tokenBalance, 18)}

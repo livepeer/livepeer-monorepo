@@ -2,7 +2,7 @@ import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockTranscoder } from '../../utils'
-import { connectCoinbaseQuery } from '../../enhancers'
+import { connectCoinbaseQuery, connectCurrentRoundQuery } from '../../enhancers'
 
 const AccountTranscoderQuery = gql`
   fragment TranscoderFragment on Transcoder {
@@ -48,4 +48,8 @@ const connectAccountTranscoderQuery = graphql(AccountTranscoderQuery, {
   }),
 })
 
-export default compose(connectCoinbaseQuery, connectAccountTranscoderQuery)
+export default compose(
+  connectCoinbaseQuery,
+  connectAccountTranscoderQuery,
+  connectCurrentRoundQuery,
+)

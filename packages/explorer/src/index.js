@@ -23,7 +23,9 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       --green: #00eb87;
       --tan: #faf5ef;
       --grey: #cfcfcf;
+      --red: #f00;
       --primary: var(--green);
+      --error: var(--red);
       --bg-dark: var(--black);
       --bg-light: var(--tan);
       --mdc-theme-primary: var(--green);
