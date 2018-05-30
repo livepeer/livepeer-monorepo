@@ -276,6 +276,7 @@ class Channel extends Component {
             poster=""
             src={url}
             aspectRatio="16:9"
+            style={{ paddingTop: 'calc(100% - 56.25%)' }}
             onLive={() => {
               this.setState({ live: true })
             }}
@@ -585,9 +586,13 @@ const Media = styled.div`
   display: block;
   width: 100%;
   max-width: 100%;
-  max-height: 66vh;
+  // max-height: 56.25vw;
+  // padding-top: 56.25%;
   background: #000;
   overflow: hidden;
+  .video-react {
+    padding-top: calc(100% - 56.25%) !important;
+  }
 `
 
 const Info = styled.div`
