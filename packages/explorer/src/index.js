@@ -53,6 +53,9 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       background: var(--bg-light);
     }
     a { color: #03a678; }
+    p {
+      line-height: 1.5
+    }
     select {
       appearance: none;
       background: none;
@@ -96,6 +99,10 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     #modal-root {
       z-index: 1;
       position: relative;
+    }
+    .mdc-text-field__input {
+      font-size: 16px;
+      margin-top: 11px;
     }
   `
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))

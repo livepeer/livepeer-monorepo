@@ -83,7 +83,9 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
                     : 'pointer',
                 color: currentRound.loading
                   ? '#aaa'
-                  : currentRound.data.initialized ? 'var(--primary)' : 'orange',
+                  : currentRound.data.initialized
+                    ? 'var(--primary)'
+                    : 'orange',
                 // width: 116,
                 height: 24,
                 marginLeft: 16,
@@ -110,7 +112,9 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
                 padding: `4px 8px`,
                 background: currentRound.loading
                   ? '#aaa'
-                  : currentRound.data.initialized ? 'var(--primary)' : 'orange',
+                  : currentRound.data.initialized
+                    ? 'var(--primary)'
+                    : 'orange',
                 cursor:
                   currentRound.loading || currentRound.data.initialized
                     ? 'default'
@@ -191,11 +195,17 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
                   return window.open(
                     'https://github.com/livepeer/livepeerjs/issues',
                   )
+                case 'smart-contracts':
+                  return (window.location.hash = '#/smart-contracts')
               }
             }}
           >
             <MenuItem data-action="feedback">
               <Icon use="feedback" style={{ marginRight: 8 }} />Report an issue
+            </MenuItem>
+            <MenuItem data-action="smart-contracts">
+              <Icon use="code" style={{ marginRight: 8 }} />Smart Contract
+              Addresses
             </MenuItem>
           </SimpleMenu>
         </div>

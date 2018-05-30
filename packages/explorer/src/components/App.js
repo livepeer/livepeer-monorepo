@@ -14,6 +14,7 @@ import BondModals from '../views/BondModals'
 import ClaimEarningsModals from '../views/ClaimEarningsModals'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
+import SmartContracts from '../views/SmartContracts'
 import ToastNotifications from '../views/ToastNotifications'
 import Transcoders from '../views/Transcoders'
 
@@ -26,7 +27,12 @@ const App = () => (
         <Route exact path="/transcoders" component={Transcoders} />
         <Route
           path="/accounts/:accountId"
-          render={props => <Account {...props} />}
+          render={props => {
+            const isEthAddress = /^0x[a-fA-F0-9]{40}$/.test(
+              props.match.params.accountId,
+            )
+            return isEthAddress ? <Account {...props} /> : <Redirect to="/" />
+          }}
         />
         <Route
           path="/me"
@@ -64,6 +70,7 @@ const App = () => (
               >
                 <Route path="/bond/:delegateAddress" component={BondModals} />
                 <Route path="/claim-earnings" component={ClaimEarningsModals} />
+                <Route path="/smart-contracts" component={SmartContracts} />
               </Switch>
             </CSSTransition>
           </TransitionGroup>
