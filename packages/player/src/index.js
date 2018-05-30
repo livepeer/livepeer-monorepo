@@ -15,6 +15,21 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
   // Dump global styles
   injectGlobal`
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --green: #00eb87;
+      --tan: #faf5ef;
+      --grey: #cfcfcf;
+      --red: #f00;
+      --text: var(--grey);
+      --primary: var(--green);
+      --error: var(--red);
+      --bg-dark: var(--black);
+      --bg-light: var(--tan);
+      --mdc-theme-primary: var(--green);
+      --mdc-theme-secondary: var(--black);
+    }
     * {
       box-sizing: border-box;
       font-weight: 300;
@@ -23,7 +38,10 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       margin: 0;
       font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
       background: #fafafa;
+      background: linear-gradient(rgb(0, 0, 0), rgb(27, 27, 27) 320px);
+      min-height: 100vh;
     }
+    p { color: var(--text); line-height: 1.5; }
     a { color: #03a678; }
   `
   // Bootstrap the apollo client

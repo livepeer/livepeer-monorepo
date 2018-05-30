@@ -28,7 +28,7 @@ const Landing = ({ query, changeChannel }) => (
     <h3 style={{ letterSpacing: 8 }}>Media Player</h3>
     <br />
     <br />
-    <p>Find a channel by entering a broadcaster's ETH address</p>
+    <p>{`Find a channel by entering a broadcaster's ETH address`}</p>
     <div style={{ maxWidth: '100%', width: 480 }}>
       <SearchBar
         id="broadcaster"

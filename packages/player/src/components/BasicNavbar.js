@@ -126,7 +126,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
 */}
     <input
       type="search"
-      placeholder="Enter a broadcaster address"
+      placeholder="Search channels by ETH address"
       style={{
         width: '100%',
         height: 32,
@@ -136,7 +136,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
         color: '#fff',
         outline: 0,
         border: 'none',
-        borderRadius: 4,
+        borderRadius: 1,
       }}
       onKeyDown={e => {
         const { value } = e.target
