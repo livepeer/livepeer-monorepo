@@ -71,7 +71,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               As a token holder, you can participate in the network by staking
               towards a Transcoder and earn additional fees and LPT rewards.
               Read our Delegator Guide for a comprehensive overview, tutorials,
-              and a FAQ.<br />
+              and a FAQ. You can learn more about each transcoder on the forum
+              by checking out their social campaign on the Livepeer forum.<br />
               <br />
               <Button
                 style={{ margin: 0 }}
@@ -81,7 +82,17 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                   )
                 }
               >
-                View Delegator Guide
+                Read the Delegator Guide
+              </Button>
+              <Button
+                style={{ margin: '0 0 0 16px' }}
+                onClick={() =>
+                  window.open(
+                    'https://forum.livepeer.org/c/transcoders/transcoder-campaign',
+                  )
+                }
+              >
+                View Transcoder Campaigns
               </Button>
             </p>
           </InlineHint>
