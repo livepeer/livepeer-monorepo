@@ -201,6 +201,11 @@ export const mockRound = ({ id = '', ...round } = {}) => ({
   ...round,
 })
 
+export const mockProtocol = ({ id = '', ...protocol } = {}) => ({
+  paused: false,
+  ...protocol,
+})
+
 export const mockTranscoder = ({ id = '', ...transcoder } = {}) => ({
   active: false,
   feeShare: '0',

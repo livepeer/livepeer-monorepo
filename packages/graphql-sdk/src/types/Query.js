@@ -5,6 +5,7 @@ import Job from './Job'
 import Round from './Round'
 import Transaction from './Transaction'
 import Transcoder from './Transcoder'
+import Protocol from './Protocol'
 
 const Query = `
 
@@ -51,6 +52,8 @@ type Query {
   "A list of Transcoders"
   transcoders(skip: Int, limit: Int): [Transcoder!]!
 
+  "The protocol as a whole"
+  protocol: Protocol
 }`
 
 export default () => [
@@ -62,4 +65,5 @@ export default () => [
   Round,
   Transaction,
   Transcoder,
+  Protocol,
 ]

@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
 import { ToastNotificationContainer } from '../containers'
-import { mockRound } from '../utils'
+import { mockRound, mockProtocol } from '../utils'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
 
@@ -188,6 +188,35 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
   },
   options: ({ match }) => ({
     pollInterval: 10 * 1000,
+    variables: {},
+  }),
+})
+
+const ProtocolQuery = gql`
+  fragment ProtocolFragment on Protocol {
+    paused
+  }
+
+  query ProtocolQuery {
+    protocol {
+      ...ProtocolFragment
+    }
+  }
+`
+
+export const connectProtocolQuery = graphql(ProtocolQuery, {
+  props: ({ data, ownProps }) => {
+    const { protocol, ...queryData } = data
+    return {
+      ...ownProps,
+      protocol: {
+        ...queryData,
+        data: mockProtocol(protocol),
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 5 * 1000,
     variables: {},
   }),
 })

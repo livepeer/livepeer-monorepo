@@ -76,6 +76,7 @@ const App = () => (
           </TransitionGroup>
         )}
       />
+      <Route component={ImportantMessage} />
       <ToastNotifications />
       <Switch>
         <Route exact path="/transcoders" component={() => null} />
