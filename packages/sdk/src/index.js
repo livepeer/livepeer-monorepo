@@ -161,7 +161,9 @@ export const utils = {
               ...obj,
               [k]: Array.isArray(v)
                 ? v.map(_v => (BN.isBN(_v) ? toString(_v) : _v))
-                : BN.isBN(v) ? toString(v) : v,
+                : BN.isBN(v)
+                  ? toString(v)
+                  : v,
             }
           },
           {},
@@ -951,6 +953,20 @@ export default async function createLivepeerSDK(
         addr = headToString(await BondingManager.getNextTranscoderInPool(addr))
       }
       return transcoders
+    },
+
+    /**
+     * Whether the protocol is paused
+     * @memberof livepeer~rpc
+     * @return {Promise<boolean>}
+     *
+     * @example
+     *
+     * await rpc.getProtocolPaused()
+     * // => boolean
+     */
+    async getProtocolPaused(): Promise<boolean> {
+      return headToBool(await Controller.paused())
     },
 
     /**

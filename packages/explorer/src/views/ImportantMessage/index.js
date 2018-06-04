@@ -1,18 +1,19 @@
 import * as React from 'react'
+import enhance from './enhance'
 import { BasicModal } from '../../components'
 
-export default () => (
-  <BasicModal title="Protocol Upgrade In Progress">
-    <p style={{ lineHeight: 1.5 }}>
-      The Livepeer protocol is paused due to a bug fixing upgrade as of 5/26/18
-      9:00pm EDT. The estimated duration of the pause is 2 days. For more
-      information, please read this{' '}
-      <a
-        href="https://forum.livepeer.org/t/protocol-paused-for-bug-fix-upgrade-5-26-18-9-00pm-edt/265"
-        target="_blank"
-      >
-        forum post
-      </a>
-    </p>
-  </BasicModal>
-)
+const ImportantMessage = ({ protocol }) => {
+  return !protocol.data.paused ? null : (
+    <BasicModal title="Protocol Paused">
+      <p style={{ lineHeight: 1.5 }}>
+        The Livepeer protocol is currently paused for an upgrade. For more
+        information, please visit the Livepeer{' '}
+        <a href="https://forum.livepeer.org/" target="_blank">
+          forum
+        </a>.
+      </p>
+    </BasicModal>
+  )
+}
+
+export default enhance(ImportantMessage)

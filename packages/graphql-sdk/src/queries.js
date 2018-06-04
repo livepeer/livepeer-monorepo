@@ -5,6 +5,7 @@ import { default as JobFragment } from './fragments/Job'
 import { default as RoundFragment } from './fragments/Round'
 import { default as TransactionFragment } from './fragments/Transaction'
 import { default as TranscoderFragment } from './fragments/Transcoder'
+import { default as ProtocolFragment } from './fragments/Protocol'
 
 export const AccountQuery = `
 ${AccountFragment}
@@ -122,6 +123,15 @@ ${TranscoderFragment}
 query TranscodersQuery($skip: Int, $limit: Int) {
   transcoders(skip: $skip, limit: $limit) {
     ...TranscoderFragment
+  }
+}
+`
+
+export const ProtocolQuery = `
+${ProtocolFragment}
+query ProtocolQuery {
+  protocol {
+    ...ProtocolFragment
   }
 }
 `

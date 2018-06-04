@@ -75,6 +75,7 @@ The following section details the rpc API's function signatures and typedefs.
     -   [getTranscoderTotalStake](#gettranscodertotalstake)
     -   [getTranscoder](#gettranscoder)
     -   [getTranscoders](#gettranscoders)
+    -   [getProtocolPaused](#getprotocolpaused)
     -   [getRoundLength](#getroundlength)
     -   [getRoundsPerYear](#getroundsperyear)
     -   [getCurrentRound](#getcurrentround)
@@ -498,6 +499,19 @@ await rpc.getTranscoders()
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Transcoder](#transcoder)>** 
 
+#### getProtocolPaused
+
+Whether the protocol is paused
+
+**Examples**
+
+```javascript
+await rpc.getProtocolPaused()
+// => boolean
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+
 #### getRoundLength
 
 Gets the length of a round (in blocks)
@@ -806,28 +820,10 @@ Claims token and eth earnings from the sender's `lastClaimRound + 1` through a g
 
 ```javascript
 await rpc.claimEarnings()
-// => TxReceipt {
-//   transactionHash: string,
-//   transactionIndex": BN,
-//   blockHash: string,
-//   blockNumber: BN,
-//   cumulativeGasUsed: BN,
-//   gasUsed: BN,
-//   contractAddress: string,
-//   logs: Array<Log {
-//     logIndex: BN,
-//     blockNumber: BN,
-//     blockHash: string,
-//     transactionHash: string,
-//     transactionIndex: string,
-//     address: string,
-//     data: string,
-//     topics: Array<string>
-//   }>
-// }
+// => string
 ```
 
-Returns **[TxReceipt](#txreceipt)** 
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 #### unbond
 
@@ -940,7 +936,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### withdraw
 
-Withdraws deposited LPT
+Withdraws deposited ETH
 
 **Parameters**
 

@@ -39,7 +39,10 @@ yarn add @livepeer/graphql-sdk
   * [Job](#job)
   * [JobProfile](#jobprofile)
   * [Mutation](#mutation)
+  * [Protocol](#protocol)
   * [Round](#round)
+  * [Subscription](#subscription)
+  * [Transaction](#transaction)
   * [Transcoder](#transcoder)
 * [Enums](#enums)
   * [DelegatorStatus](#delegatorstatus)
@@ -47,6 +50,7 @@ yarn add @livepeer/graphql-sdk
 * [Scalars](#scalars)
   * [Boolean](#boolean)
   * [Int](#int)
+  * [JSON](#json)
   * [String](#string)
 
 </details>
@@ -92,6 +96,24 @@ A Broadcaster by ETH address
 <td colspan="2" align="right" valign="top">id</td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>coinbase</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The currently authenticated user's ETH address
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>currentRound</strong></td>
+<td valign="top"><a href="#round">Round</a></td>
+<td>
+
+Gets the current round
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>delegator</strong></td>
@@ -155,13 +177,43 @@ The currently selected account (usually set by something like MetaMask)
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>currentRound</strong></td>
-<td valign="top"><a href="#round">Round</a></td>
+<td colspan="2" valign="top"><strong>transactions</strong></td>
+<td valign="top">[<a href="#transaction">Transaction</a>!]!</td>
 <td>
 
-Gets the current round
+All transactions to or from an account between the given start block and end block
 
 </td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">address</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">startBlock</td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">endBlock</td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">skip</td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">limit</td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">sort</td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>transcoder</strong></td>
@@ -195,6 +247,15 @@ A list of Transcoders
 <td colspan="2" align="right" valign="top">limit</td>
 <td valign="top"><a href="#int">Int</a></td>
 <td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>protocol</strong></td>
+<td valign="top"><a href="#protocol">Protocol</a></td>
+<td>
+
+The protocol as a whole
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -626,6 +687,39 @@ Submits a bond transaction for a previously approved amount
 </tbody>
 </table>
 
+#### Protocol
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>paused</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td>
+
+Protocol paused
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Protocol id
+
+</td>
+</tr>
+</tbody>
+</table>
+
 #### Round
 
 Submit transcode jobs for live video streams.
@@ -684,6 +778,165 @@ The number of blocks this round lasts for
 When the round starts
 
 </td>
+</tr>
+</tbody>
+</table>
+
+#### Subscription
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>transactionSubmitted</strong></td>
+<td valign="top"><a href="#transaction">Transaction</a>!</td>
+<td>
+
+A newly submitted transaction
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>transactionConfirmed</strong></td>
+<td valign="top"><a href="#transaction">Transaction</a>!</td>
+<td>
+
+A newly confirmed transaction
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Transaction
+
+An Ethereum transaction receipt
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The transaction hash
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>blockNumber</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>timeStamp</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>nonce</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>blockHash</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>transactionIndex</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>from</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>to</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>value</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>gas</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>gasPrice</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>isError</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>status</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>input</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>contractAddress</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>cumulativeGasUsed</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>gasUsed</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>confirmations</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>contract</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>method</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>params</strong></td>
+<td valign="top"><a href="#json">JSON</a>!</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -869,6 +1122,10 @@ The `Boolean` scalar type represents `true` or `false`.
 #### Int
 
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+
+#### JSON
+
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 
 #### String
 
