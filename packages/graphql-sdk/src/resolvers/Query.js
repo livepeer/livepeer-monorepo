@@ -293,3 +293,20 @@ export async function transcoders(
     .map(({ address: id, ...x }) => ({ ...x, id }))
   return transcoders
 }
+
+/**
+ * Gets a the protocol
+ * @param {QueryObj} obj
+ * @param {QueryRoundArgs} args
+ * @param {GQLContext} ctx
+ * @return {Round}
+ */
+export async function protocol(
+  obj: QueryObj,
+  args: QueryRoundArgs,
+  ctx: GQLContext,
+): Round {
+  return {
+    paused: await ctx.livepeer.rpc.getProtocolPaused(),
+  }
+}

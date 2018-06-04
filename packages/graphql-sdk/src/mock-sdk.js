@@ -34,6 +34,7 @@ const livepeer = {
         : ALL_JOBS.slice().reverse(),
     getTranscoder: async id => ALL_TRANSCODERS[id],
     getTranscoders: async () => Object.values(ALL_TRANSCODERS),
+    getProtocolPaused: async () => false,
   },
   utils,
 }

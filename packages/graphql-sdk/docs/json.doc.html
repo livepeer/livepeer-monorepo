@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>Mutation</title>
+    <title>JSON</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -34,7 +34,7 @@
                 Query
             </a>
         </li>
-        <li class="slds-is-active" title="Mutation">
+        <li  title="Mutation">
             <a href="mutation.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Mutation
             </a>
@@ -59,7 +59,7 @@
                 Int
             </a>
         </li>
-        <li  title="JSON">
+        <li class="slds-is-active" title="JSON">
             <a href="json.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 JSON
             </a>
@@ -209,9 +209,9 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">Mutation</h1>
-        <div class="slds-text-body--regular"><p>Contains all protocol transaction queries</p>
+        <p class="slds-text-title--caps slds-text-color--weak">SCALAR</p>
+        <h1 class="slds-text-heading--large">JSON</h1>
+        <div class="slds-text-body--regular"><p>The <code>JSON</code> scalar type represents JSON values as specified by <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">ECMA-404</a>.</p>
 </div>
     </div>
 </section>
@@ -223,7 +223,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Mutation</span> {</li><li></li><li><span class="tab"><span class="comment line">#   Approve an amount for an ERC20 token transfer</span></span></li><li><span class="tab"><span class="comment line"># </span></span></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>type</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>amount</strong>: </span></span></li><li><span class="tab"><span class="meta">approve</span>(<span class="meta">type</span>: <a class="support type" href="string.doc.html">String</a>!, <span class="meta">amount</span>: <a class="support type" href="string.doc.html">String</a>!): <a class="support type" href="boolean.doc.html">Boolean</a> </span></li><li></li><li><span class="tab"><span class="comment line">#   Submits a bond transaction for a previously approved amount</span></span></li><li><span class="tab"><span class="comment line"># </span></span></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>to</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>amount</strong>: </span></span></li><li><span class="tab"><span class="meta">bond</span>(<span class="meta">to</span>: <a class="support type" href="string.doc.html">String</a>!, <span class="meta">amount</span>: <a class="support type" href="string.doc.html">String</a>!): <a class="support type" href="boolean.doc.html">Boolean</a> </span></li><li></li><li><span class="tab"><span class="comment line">#   Claims earnings from your last claim round through specified round</span></span></li><li><span class="tab"><span class="comment line"># </span></span></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>endRound</strong>: </span></span></li><li><span class="tab"><span class="meta">claimEarnings</span>(<span class="meta">endRound</span>: <a class="support type" href="string.doc.html">String</a>!): <a class="support type" href="boolean.doc.html">Boolean</a> </span></li><li></li><li><span class="tab"><span class="comment line">#   Submits a bond transaction for a previously approved amount</span></span></li><li><span class="tab"><span class="meta">unbond</span>: <a class="support type" href="boolean.doc.html">Boolean</a> </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">scalar</span> <span class="identifier">JSON</span></li></ul></code>
     </div>
 </section>
 <section>
@@ -234,7 +234,7 @@
             </a>
             Require by
         </h2>
-        <div class="require-by anyone">This element is not required by anyone</div>
+        <ul class="require-by"><li><a href="transaction.doc.html" title="Transaction - An Ethereum transaction receipt">Transaction<em>An Ethereum transaction receipt</em></a><li></ul>
     </div>
 </section>
 <footer>

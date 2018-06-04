@@ -33,10 +33,11 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 ## Requirements
 
-This project requires `node >=8.0.0` and `yarn >=1.0.0`.
+This project requires `node >=8.0.0` and `yarn >=1.0.0`. A unix shell is also required.
 
 * [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
 * [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
+* [UNIX Shell (Windows users)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 
 ## Getting Started
 
@@ -52,11 +53,11 @@ For next steps, take a look at documentation for the individual package(s) you w
 
 ## Contributing
 
-Interested in adding your name to the [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors)? Awesome! Take a few minutes to look over the guide:
+Thanks for your interest in LivepeerJS. There are many ways you can contribute. To start, take a few minutes to look over the official guide:
 
-### [Contributing to LivepeerJS &raquo;](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md)
+**[Read the "Contributing to LivepeerJS" Guide &raquo;](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md)**
 
-We happily await your pull requests and/or involvement in our [issues page](https://github.com/livepeer/livepeerjs/issues) 🎉🎉🎉
+We happily await your pull requests and/or involvement in our [issues page](https://github.com/livepeer/livepeerjs/issues) and hope to see your username on our [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors) 🎉🎉🎉
 
 ## Packages
 
