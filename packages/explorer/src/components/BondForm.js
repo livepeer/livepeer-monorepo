@@ -5,7 +5,7 @@ import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
 import Confetti from 'react-dom-confetti'
 import { withProp } from '../enhancers'
-import { formatBalance, toBaseUnit } from '../utils'
+import { formatBalance, toBaseUnit, MathBN } from '../utils'
 import InlineAccount from './InlineAccount'
 import InlineHint from './InlineHint'
 import Button from './Button'
@@ -26,15 +26,18 @@ type BondFormProps = {
 }
 
 /**
- * Renders a form for approval and bonding.
+ * Renders a form for token bonding.
  */
 const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
+  allowance,
   bondedAmount,
   delegateAddress,
   errors,
   handleSubmit,
   loading,
+  max,
   onCancel,
+  onUpdateAllowance,
   pristine,
   reset,
   submitting,
@@ -58,8 +61,14 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
       }}
     />
   )
-  const max = formatBalance(tokenBalance, 18)
-  console.log(submitSucceeded, valid, errors, props)
+  const noAllowance = allowance === '0'
+  const noBondedAmount = bondedAmount === '0'
+  const noTokens = tokenBalance === '0'
+  const cannotBond =
+    (noAllowance && noBondedAmount) ||
+    (values.amount && MathBN.gt(toBaseUnit(values.amount), allowance))
+  // const max = formatBalance(tokenBalance, 18)
+  // console.log(submitSucceeded, valid, errors, props)
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
     return (
       <React.Fragment>
@@ -113,79 +122,105 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   return (
     <React.Fragment>
       {confetti}
-      <InlineHint flag="bond-modal" disableHide>
-        <p>
-          <strong>Note:</strong> You may only bond to a single delegate at a
-          time, but you may switch between delegates without unbonding as often
-          as you please.
-        </p>
-      </InlineHint>
-      <p>You are about to bond to the following delegate</p>
-      <InlineAccount border address={delegateAddress} />
-      <p>Your Token Balance</p>
-      <p style={{ fontWeight: 400 }}>{max} LPT</p>
-      <p>Amount to Bond</p>
       <div>
-        <Field
-          name="amount"
-          component="input"
-          type="number"
-          min="0"
-          max={max}
-          disabled={loading}
-          rangeOverflow={`The maximum amount you may bond is ${max} LPT`}
-          step="any"
-          style={{
-            width: '90%',
-            height: 48,
-            padding: 8,
-            fontSize: 16,
-          }}
-        />{' '}
-        LPT
-        {errors.amount && (
-          <p style={{ fontSize: 12, fontWeight: 400, color: 'red' }}>
-            {errors.amount}
-          </p>
-        )}
-        <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-          {bondedAmount !== '0' ? (
-            <span>
-              You already have a bonded amount of{' '}
-              {formatBalance(bondedAmount, 18)} LPT. By entering an amount of 0
-              LPT or leaving the input empty, you will transfer this bonded
-              amount to the selected delegate. No approval transaction is
-              required in this case. Otherwise, by clicking "Submit", MetaMask
-              will prompt you twice — first for an approval transaction, and
-              then for a bonding transaction. You must submit both in order to
-              complete the bonding process.
-            </span>
-          ) : (
-            <span>
-              By clicking "Submit", MetaMask will prompt you twice — first for
-              an approval transaction, and then for a bonding transaction. You
-              must submit both in order to complete the bonding process.
-            </span>
-          )}
+        <p>
+          <strong>Bonding Tips:</strong>
         </p>
+        <ul>
+          <li>You may only bond to one delegate.</li>
+          <li>You may switch delegates any time.</li>
+          <li>You do not need to unbond to switch delegates.</li>
+          <li>
+            You will automatically claim up to 20 rounds of unclaimed earnings
+            when bonding.
+          </li>
+        </ul>
       </div>
+      <hr />
+      {!(noBondedAmount && noAllowance) ? null : (
+        <InlineHint disableHide>
+          <p>
+            <strong>One last thing:</strong> In order to bond, first, you will
+            need to approve a non-zero amount of tokens for transfer:<br />
+            <br />
+            <Button onClick={onUpdateAllowance} style={{ fontWeight: 400 }}>
+              Update your transfer allowance
+            </Button>
+          </p>
+        </InlineHint>
+      )}
+      <p>Delegate</p>
+      <InlineAccount border address={delegateAddress} />
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: '50%' }}>
+          <p>Your Token Balance</p>
+          <p style={{ fontWeight: 400, marginBottom: 0 }}>
+            {formatBalance(tokenBalance)} LPT
+          </p>
+        </div>
+        <div style={{ width: '50%' }}>
+          <p>Your Transfer Allowance</p>
+          <p style={{ fontWeight: 400, marginBottom: 0 }}>
+            {formatBalance(allowance)} LPT&nbsp;<Button
+              onClick={onUpdateAllowance}
+              style={{ marginTop: 0 }}
+            >
+              Edit
+            </Button>
+          </p>
+        </div>
+      </div>
+      {noBondedAmount && noAllowance ? null : (
+        <React.Fragment>
+          <p style={{ marginTop: 0 }}>Amount to Bond</p>
+          {noBondedAmount ? null : (
+            <p style={{ fontSize: 14, lineHeight: 1.5 }}>
+              <strong>Note:</strong> By entering 0 or leaving this field blank,
+              you will transfer your existing bonded amount of{' '}
+              {formatBalance(bondedAmount, 18)} LPT the selected delegate.
+            </p>
+          )}
+          <div>
+            <Field
+              name="amount"
+              component="input"
+              type="number"
+              min="0"
+              max={max}
+              disabled={loading}
+              rangeOverflow={`This amount is too large. Either your token balance is too low or you need to approve a higher transfer allowance.`}
+              step="any"
+              style={{
+                width: '90%',
+                height: 48,
+                padding: 8,
+                fontSize: 16,
+              }}
+            />{' '}
+            LPT
+            {errors.amount && (
+              <p style={{ fontSize: 12, fontWeight: 400, color: 'red' }}>
+                {errors.amount}
+              </p>
+            )}
+          </div>
+        </React.Fragment>
+      )}
       <div style={{ textAlign: 'right', paddingTop: 24 }}>
         {onCancel && (
           <Button disabled={loading} onClick={onCancel}>
             Cancel
           </Button>
         )}
-        <Button
-          className="primary"
-          disabled={loading || submitting || errors.amount}
-          onClick={handleSubmit}
-        >
-          {submitting
-            ? 'Submitting...'
-            : (values.amount || '').replace(/0|\./g, '')
-              ? 'Approve & Bond'
-              : 'Bond'}
-        </Button>
+        {noBondedAmount && noAllowance ? null : (
+          <Button
+            className="primary"
+            disabled={loading || submitting || errors.amount || cannotBond}
+            onClick={handleSubmit}
+          >
+            {submitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        )}
       </div>
     </React.Fragment>
   )

@@ -130,12 +130,15 @@ test('should return object with correct shape from getBroadcaster()', async t =>
 
 test('should return object with correct shape from getDelegator()', async t => {
   const schema = object({
+    allowance: string,
     address: string,
     bondedAmount: string,
     delegateAddress: yup.string(), // can be empty ('')
     delegatedAmount: string,
     fees: string,
     lastClaimRound: string,
+    pendingStake: string,
+    pendingFees: string,
     startRound: string,
     status: oneOf(livepeer.constants.DELEGATOR_STATUS),
     withdrawRound: string,

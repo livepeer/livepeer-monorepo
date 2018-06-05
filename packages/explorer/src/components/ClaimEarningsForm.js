@@ -6,6 +6,7 @@ import Confetti from 'react-dom-confetti'
 import { withProp } from '../enhancers'
 import { formatBalance, toBaseUnit, MathBN } from '../utils'
 import InlineAccount from './InlineAccount'
+import InlineHint from './InlineHint'
 import Button from './Button'
 
 export type ClaimEarningsFormProps = {
@@ -52,6 +53,7 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
   ...props
 }) => {
   const lastClaimRound = MathBN.sub(from, '1')
+  const currentRound = MathBN.add(lastClaimRound, max)
   const endRound = MathBN.add(values.numRounds, lastClaimRound)
   const confetti = (
     <Confetti
@@ -119,35 +121,48 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
   return (
     <React.Fragment>
       {confetti}
+      {max === '20' && (
+        <InlineHint flag="claim-earnings-max" disableHide>
+          <p>
+            <strong>Note:</strong> You may claim up to 20 rounds at a time.
+          </p>
+        </InlineHint>
+      )}
       <p>
-        You have {diff} rounds of earnings left to claim. You may claim earnings
-        up to {max} rounds at a time.
+        You have {diff} rounds of earnings left to claim. Please select the
+        range of rounds you would like to claim:
       </p>
-      <p>Please select the number of rounds you would like to claim:</p>
-      <div style={{ display: 'flex' }}>
-        <p style={{ display: 'inline-block', width: 32, textAlign: 'left' }}>
-          {min}
-        </p>
-        <Field
-          name="numRounds"
-          component="input"
-          type="range"
-          disabled={loading || submitting}
-          min={min}
-          max={max}
+      <div style={{ border: '1px solid #eee', padding: '0 16px 16px 16px' }}>
+        <div
           style={{
-            width: '100%',
-          }}
-        />
-        <p
-          style={{
-            display: 'inline-block',
-            width: 32,
-            textAlign: 'right',
+            display: 'flex',
+            justifyContent: 'space-between',
           }}
         >
-          {max}
-        </p>
+          <p style={{ display: 'inline-block', textAlign: 'left' }}>#{from}</p>
+          <p>. . .</p>
+          <p
+            style={{
+              display: 'inline-block',
+              textAlign: 'right',
+            }}
+          >
+            #{currentRound}
+          </p>
+        </div>
+        <div>
+          <Field
+            name="numRounds"
+            component="input"
+            type="range"
+            disabled={loading || submitting}
+            min={min}
+            max={max}
+            style={{
+              width: '100%',
+            }}
+          />
+        </div>
       </div>
       <p>
         You are about to claim {values.numRounds} round(s)&nbsp;

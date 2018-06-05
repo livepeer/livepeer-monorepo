@@ -4,6 +4,7 @@ import * as resolvers from './Delegator'
 
 test('Delegator resolves fields', async t => {
   const obj = {
+    allowance: '0',
     id: EMPTY_ADDRESS.replace(/00/g, '11'),
     status: DELEGATOR_STATUS.Unbonded,
     bondedAmount: '0',
@@ -11,7 +12,9 @@ test('Delegator resolves fields', async t => {
     delegateAddress: EMPTY_ADDRESS.replace(/00/g, '22'),
     delegatedAmount: '0',
     lastClaimRound: '0',
+    pendingStake: '0',
     startRound: '0',
+    status: 'Unbonded',
     withdrawRound: '0',
   }
   const args = null

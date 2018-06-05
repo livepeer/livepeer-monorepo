@@ -5,7 +5,7 @@ import { BasicModal, ClaimEarningsForm } from '../../components'
 import enhance from './enhance'
 import { MathBN } from '../../utils'
 
-export type ClaimEarningsModalsViewProps = {
+export type ClaimEarningsViewProps = {
   currentRound: GraphQLProps<Round>,
   history: History,
   me: GraphQLProps<Account>,
@@ -13,9 +13,7 @@ export type ClaimEarningsModalsViewProps = {
   onClaimMore: any => void,
 }
 
-const ClaimEarningsModalsView: React.ComponentType<
-  ClaimEarningsModalsViewProps,
-> = ({
+const ClaimEarningsView: React.ComponentType<ClaimEarningsViewProps> = ({
   claimEarnings,
   currentRound,
   history,
@@ -48,4 +46,4 @@ const ClaimEarningsModalsView: React.ComponentType<
   )
 }
 
-export default enhance(ClaimEarningsModalsView)
+export default enhance(ClaimEarningsView)

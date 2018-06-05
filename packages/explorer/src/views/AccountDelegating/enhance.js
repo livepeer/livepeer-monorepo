@@ -12,12 +12,15 @@ import {
 const AccountDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {
     id
+    allowance
     status
     delegateAddress
     bondedAmount
     fees
     delegatedAmount
     lastClaimRound
+    pendingFees
+    pendingStake
     startRound
     withdrawRound
   }

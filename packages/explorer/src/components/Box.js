@@ -16,6 +16,7 @@ const OuterBox = styled.div`
   flex: ${({ width }) => width || '100%'};;
   flex-direction: row;
   display: inline-flex;
+  max-width: 100%;
 `
 
 const InnerBox = styled.div`

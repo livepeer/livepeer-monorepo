@@ -10,8 +10,9 @@ import {
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { Button, CTA, CTABanner, Modal } from '../components'
 import Account from '../views/Account'
-import BondModals from '../views/BondModals'
-import ClaimEarningsModals from '../views/ClaimEarningsModals'
+import Approve from '../views/Approve'
+import Bond from '../views/Bond'
+import ClaimEarnings from '../views/ClaimEarnings'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
 import SmartContracts from '../views/SmartContracts'
@@ -68,8 +69,9 @@ const App = () => (
                   },
                 }}
               >
-                <Route path="/bond/:delegateAddress" component={BondModals} />
-                <Route path="/claim-earnings" component={ClaimEarningsModals} />
+                <Route path="/approve/:delegateAddress" component={Approve} />
+                <Route path="/bond/:delegateAddress" component={Bond} />
+                <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
               </Switch>
             </CSSTransition>
@@ -86,8 +88,7 @@ const App = () => (
             <CTABanner flag="view-transcoders">
               <div>
                 If you are a token holder, you can participate in the network by
-                staking towards a transcoder and earn additional fees and LPT
-                rewards.
+                staking towards a transcoder to earn fees and LPT rewards.
               </div>
               <div>
                 <Button

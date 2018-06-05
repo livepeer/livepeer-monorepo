@@ -1,3 +1,4 @@
+export { default as ApproveForm } from './ApproveForm'
 export { default as Avatar } from './Avatar'
 export { default as Banner } from './Banner'
 export { default as BasicNavbar } from './BasicNavbar'

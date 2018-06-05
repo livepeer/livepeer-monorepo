@@ -797,12 +797,15 @@ export default async function createLivepeerSDK(
      *
      * await rpc.getDelegator('0xf00...')
      * // => Delegator {
+     * //   allowance: string,
      * //   address: string,
      * //   bondedAmount: string,
      * //   delegateAddress: string,
      * //   delegateAmount: string,
      * //   fees: string,
      * //   lastClaimRound: string,
+     * //   pendingFees: string,
+     * //   pendingStake: string,
      * //   startRound: string,
      * //   status: 'Pending' | 'Bonded' | 'Unbonding' | 'Unbonded',
      * //   withdrawRound: string,
@@ -810,7 +813,16 @@ export default async function createLivepeerSDK(
      */
     async getDelegator(addr: string): Promise<Delegator> {
       const status = await rpc.getDelegatorStatus(addr)
-      // const pendingStake = await rpc.pendingStake(addr)
+      const allowance = headToString(
+        await LivepeerToken.allowance(addr, BondingManager.address),
+      )
+      const currentRound = await rpc.getCurrentRound()
+      const pendingStake = headToString(
+        await BondingManager.pendingStake(addr, currentRound),
+      )
+      const pendingFees = headToString(
+        await BondingManager.pendingFees(addr, currentRound),
+      )
       const d = await BondingManager.getDelegator(addr)
       const bondedAmount = toString(d.bondedAmount)
       const fees = toString(d.fees)
@@ -822,11 +834,14 @@ export default async function createLivepeerSDK(
       const withdrawRound = toString(d.withdrawRound)
       return {
         address: addr,
+        allowance,
         bondedAmount,
         delegateAddress,
         delegatedAmount,
         fees,
         lastClaimRound,
+        pendingFees,
+        pendingStake,
         startRound,
         status,
         withdrawRound,
@@ -1846,12 +1861,15 @@ export default async function createLivepeerSDK(
   /**
    * A Delegator struct
    * @typedef {Object} Delegator
+   * @prop {string} allowance - the delegator's LivepeerToken approved amount for transfer
    * @prop {string} address - the delegator's ETH address
    * @prop {string} bondedAmount - The amount of LPTU a delegator has bonded
    * @prop {string} delegateAddress - the ETH address of the delegator's delegate
    * @prop {string} delegatedAmount - the amount of LPTU the delegator has delegated
    * @prop {string} fees - the amount of LPTU a delegator has collected
    * @prop {string} lastClaimRound - the last round that the delegator claimed reward and fee pool shares
+   * @prop {string} pendingFees - the amount of ETH the delegator has earned up to the current round
+   * @prop {string} pendingStake - the amount of token the delegator has earned up to the current round
    * @prop {string} startRound - the round the delegator becomes bonded and delegated to its delegate
    * @prop {string} status - the delegator's status
    * @prop {string} withdrawRound - the round the delegator can withdraw its stake

@@ -1,12 +1,15 @@
 export default `
 fragment DelegatorFragment on Delegator {
   id
-  status
+  allowance
   delegateAddress
   bondedAmount
   fees
   delegatedAmount
   lastClaimRound
+  pendingFees
+  pendingStake
   startRound
+  status
   withdrawRound
 }`

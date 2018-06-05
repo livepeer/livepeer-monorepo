@@ -18,12 +18,15 @@ declare type Coinbase = {
 }
 
 declare type Delegator = {
+  allowance: string,
   bondedAmount: string,
   id: string,
   delegateAddress: string,
   delegatedAmount: string,
   fees: string,
   lastClaimRound: string,
+  pendingStake: string,
+  pendingFees: string,
   startRound: string,
   status: string,
   withdrawRound: string,

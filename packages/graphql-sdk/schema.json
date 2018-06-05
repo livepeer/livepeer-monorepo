@@ -825,15 +825,15 @@
               "deprecationReason": null
             },
             {
-              "name": "status",
-              "description": "The status of a delegator",
+              "name": "allowance",
+              "description": "The delegator's token allowance",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "ENUM",
-                  "name": "DelegatorStatus",
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 }
               },
@@ -921,6 +921,38 @@
               "deprecationReason": null
             },
             {
+              "name": "pendingFees",
+              "description": "The total amount of ETH the delegator has earned through the current round",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "pendingStake",
+              "description": "The total amount of tokens the delegator has earned through the current round",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "startRound",
               "description": "The round the delegator becomes bonded and delegated to its delegate",
               "args": [],
@@ -930,6 +962,22 @@
                 "ofType": {
                   "kind": "SCALAR",
                   "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "status",
+              "description": "The status of a delegator",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "DelegatorStatus",
                   "ofType": null
                 }
               },

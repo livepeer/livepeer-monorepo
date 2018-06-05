@@ -22,13 +22,13 @@ export function id(obj: DelegatorObj): string {
 }
 
 /**
- * Gets the status for a Delegator
+ * Gets the allowance for a Delegator
  * @param {Object} obj
- * @param {DelegatorStatus} obj.status - The status of the delegator
+ * @param {DelegatorStatus} obj.allowance - The allowance of the delegator
  * @return {DelegatorStatus}
  */
-export function status(obj: DelegatorObj): DelegatorStatus {
-  return obj.status
+export function allowance(obj: DelegatorObj): DelegatorStatus {
+  return obj.allowance
 }
 
 /**
@@ -82,6 +82,26 @@ export function lastClaimRound(obj: DelegatorObj): string {
 }
 
 /**
+ * Gets the total pending fees for a Delegator
+ * @param {Object} obj
+ * @param {string} obj.pendingFees - The pendingFees of the delegator
+ * @return {string}
+ */
+export function pendingFees(obj: DelegatorObj): string {
+  return obj.pendingFees
+}
+
+/**
+ * Gets the total pending stake for a Delegator
+ * @param {Object} obj
+ * @param {string} obj.pendingStake - The pendingStake of the delegator
+ * @return {string}
+ */
+export function pendingStake(obj: DelegatorObj): string {
+  return obj.pendingStake
+}
+
+/**
  * Gets the startRound for a Delegator
  * @param {Object} obj
  * @param {string} obj.startRound - The startRound of the delegator
@@ -89,6 +109,16 @@ export function lastClaimRound(obj: DelegatorObj): string {
  */
 export function startRound(obj: DelegatorObj): string {
   return obj.startRound
+}
+
+/**
+ * Gets the status for a Delegator
+ * @param {Object} obj
+ * @param {DelegatorStatus} obj.status - The status of the delegator
+ * @return {DelegatorStatus}
+ */
+export function status(obj: DelegatorObj): DelegatorStatus {
+  return obj.status
 }
 
 /**

@@ -94,6 +94,10 @@ export function toBaseUnit(x: string) {
   return !x ? '' : unit.toWei(x, 'ether').toString(10)
 }
 
+export function fromBaseUnit(x: string) {
+  return !x ? '' : formatBalance(x, 18)
+}
+
 export function promptForArgs(
   prompts: Array<{
     ask: string,
@@ -180,14 +184,17 @@ export const mockBroadcaster = ({ id = '', ...broadcaster } = {}) => ({
 })
 
 export const mockDelegator = ({ id = '', ...delegator } = {}) => ({
+  allowance: '0',
   bondedAmount: '0',
   id,
   delegateAddress: '',
   delegatedAmount: '0',
   fees: '0',
   lastClaimRound: '0',
+  pendingFees: '0',
+  pendingStake: '0',
   startRound: '0',
-  status: '',
+  status: 'Unbonded',
   withdrawRound: '0',
   ...delegator,
 })

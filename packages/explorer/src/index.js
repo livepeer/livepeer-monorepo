@@ -55,7 +55,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       background: var(--bg-light);
     }
     a { color: #03a678; }
-    p {
+    p, ul {
       line-height: 1.5
     }
     select {

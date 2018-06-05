@@ -44,12 +44,15 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
   const {
+    allowance,
     status,
     delegateAddress,
     bondedAmount,
     fees,
     delegatedAmount,
     lastClaimRound,
+    pendingStake,
+    pendingFees,
     startRound,
     withdrawRound,
   } = delegator.data
@@ -62,6 +65,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const roundsUntilUnbonded =
     withdrawRound !== '0' ? MathBN.sub(withdrawRound, lastInitializedRound) : ''
   const hasUnclaimedRounds = unclaimedRounds !== '0'
+  const earnedStake = hasUnclaimedRounds
+    ? MathBN.sub(pendingStake, bondedAmount)
+    : '0'
+  const earnedFees = hasUnclaimedRounds ? MathBN.sub(pendingFees, fees) : '0'
   const hasStake = bondedAmount !== '0'
   const hasFees = fees !== '0'
   const isUnbonding = status === 'Unbonding'
@@ -151,16 +158,25 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           </React.Fragment>
         )}
       </MetricBox>
+      {delegatedAmount !== '0' && (
+        <MetricBox
+          help="Total tokens others have bonded to this account"
+          title="Delegated Amount"
+          suffix="LPT"
+          value={formatBalance(delegatedAmount)}
+        />
+      )}
       <MetricBox
-        help="Total tokens bonded to this account"
-        title="Delegated Amount"
-        suffix="LPT"
-        value={formatBalance(delegatedAmount)}
-      />
-      <MetricBox
-        help="Rounds with stake and fees available to be claimed"
-        title="Unclaimed Rounds"
-        value={!delegateAddress ? 'N/A' : unclaimedRounds}
+        help="Stake and fees earned since the last claimed round"
+        title="Unclaimed Earnings"
+        value={
+          !delegateAddress
+            ? 'N/A'
+            : `${formatBalance(earnedStake, 2)} LPT / ${formatBalance(
+                earnedFees,
+                2,
+              )} ETH`
+        }
         subvalue={
           !delegateAddress ? (
             'No round-based earnings are gained when unbonded'
@@ -168,10 +184,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             `All caught up!`
           ) : (
             <span>
-              {`Earnings available from rounds #${MathBN.add(
+              {`Earned during the last ${unclaimedRounds} rounds (#${MathBN.add(
                 lastClaimRound,
                 '1',
-              )} - #${lastInitializedRound}`}
+              )} - #${lastInitializedRound})`}
             </span>
           )
         }

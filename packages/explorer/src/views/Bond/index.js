@@ -1,53 +1,55 @@
 // @flow
 import * as React from 'react'
-import {
-  BasicModal,
-  BondForm,
-  // BondErrorModal,
-  // BondSuccessModal,
-  // BondTransactionModal,
-} from '../../components'
+import { BasicModal, BondForm } from '../../components'
 import enhance from './enhance'
-import { sleep } from '../../utils'
+import { MathBN, fromBaseUnit } from '../../utils'
 
-type BondModalsViewProps = {
+type BondViewProps = {
+  bond: any => void,
   bondStatus: TransactionStatus,
+  goApprove: any => void,
   history: History,
   location: Location,
   match: Match,
   me: GraphQLProps<Account>,
   onClose: any => void,
-  approveAndBond: any => void,
 }
 
-const BondModalsView: React.ComponentType<BondModalsViewProps> = ({
+const BondView: React.ComponentType<BondViewProps> = ({
+  approve,
+  bond,
+  goApprove,
   history,
   location,
   match,
   me,
   onClose,
-  approveAndBond,
   ...props
 }) => {
   const { delegateAddress } = match.params
-  const { bondedAmount } = me.data.delegator
+  const { tokenBalance } = me.data
+  const { allowance, bondedAmount } = me.data.delegator
   const closeModal = () => history.push(history.location.pathname)
+  const max = fromBaseUnit(MathBN.min(allowance, tokenBalance))
   return (
     <BasicModal title="Bond Your Token" onClose={closeModal}>
       <BondForm
+        allowance={allowance}
         bondedAmount={bondedAmount}
         delegateAddress={delegateAddress}
         initialValues={{
-          amount: '',
+          amount: max,
           to: delegateAddress,
         }}
         loading={me.loading}
-        onSubmit={approveAndBond}
+        max={max}
+        onSubmit={bond}
         onCancel={closeModal}
-        tokenBalance={me.data.tokenBalance}
+        onUpdateAllowance={goApprove}
+        tokenBalance={tokenBalance}
         validateOnBlur
       />
     </BasicModal>
   )
 }
-export default enhance(BondModalsView)
+export default enhance(BondView)
