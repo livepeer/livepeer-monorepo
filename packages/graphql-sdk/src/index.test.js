@@ -5,6 +5,7 @@ import { EMPTY_ADDRESS } from '@livepeer/sdk'
 // import { schema } from './index'
 import schema from './schema'
 import {
+  ENSNameQuery,
   AccountQuery,
   BroadcasterQuery,
   CoinbaseQuery,
@@ -63,6 +64,18 @@ test('Subscription', async t => {
   })
   const res = await subscription.next()
   t.pass()
+})
+
+/**
+ * ENSName
+ */
+test('ENSNameQuery', async t => {
+  const args = {
+    id: 'foo.test',
+  }
+  const res = await graphql(schema, ENSNameQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
 })
 
 /**

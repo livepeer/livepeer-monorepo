@@ -10,6 +10,10 @@ type GQLContext = {
 
 type QueryObj = {}
 
+type QueryENSNameArgs = {
+  id?: string,
+}
+
 type QueryAccountArgs = {
   id?: string,
 }
@@ -39,6 +43,23 @@ type QueryTranscoderArgs = {
 }
 
 /** Resolvers */
+
+/**
+ * Gets an ENSName by ID (ENS name)
+ * @param {QueryObj} obj
+ * @param {QueryENSNameArgs} args
+ * @param {string} args.id - ENS name
+ * @param {GQLContext} ctx
+ * @return {ENSName}
+ */
+export async function ensName(
+  obj: QueryObj,
+  args: QueryENSNameArgs,
+  ctx: GQLContext,
+): ENSName {
+  // ENSName field resolvers will fill in the rest
+  return { id: args.id }
+}
 
 /**
  * Gets an Account by ID (ETH address)

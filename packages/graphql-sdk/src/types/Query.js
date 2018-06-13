@@ -1,3 +1,4 @@
+import ENSName from './ENSName'
 import Account from './Account'
 import Broadcaster from './Broadcaster'
 import Delegator from './Delegator'
@@ -11,6 +12,9 @@ const Query = `
 
 "Contains all protocol data-fetching queries"
 type Query {
+
+  "A ENSName with associated Account"
+  ensName(id: String!): ENSName
 
   "An Account by ETH address"
   account(id: String!): Account
@@ -58,6 +62,7 @@ type Query {
 
 export default () => [
   Query,
+  ENSName,
   Account,
   Broadcaster,
   Delegator,

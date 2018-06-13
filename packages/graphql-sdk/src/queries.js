@@ -1,3 +1,4 @@
+import { default as ENSNameFragment } from './fragments/ENSName'
 import { default as AccountFragment } from './fragments/Account'
 import { default as BroadcasterFragment } from './fragments/Broadcaster'
 import { default as DelegatorFragment } from './fragments/Delegator'
@@ -6,6 +7,19 @@ import { default as RoundFragment } from './fragments/Round'
 import { default as TransactionFragment } from './fragments/Transaction'
 import { default as TranscoderFragment } from './fragments/Transcoder'
 import { default as ProtocolFragment } from './fragments/Protocol'
+
+export const ENSNameQuery = `
+${ENSNameFragment}
+${AccountFragment}
+${BroadcasterFragment}
+${DelegatorFragment}
+${TranscoderFragment}
+query ENSNameQuery($id: String!) {
+  ensName(id: $id) {
+    ...ENSNameFragment
+  }
+}
+`
 
 export const AccountQuery = `
 ${AccountFragment}

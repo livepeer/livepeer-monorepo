@@ -1,3 +1,4 @@
+import * as ENSName from './ENSName'
 import * as Account from './Account'
 import * as Broadcaster from './Broadcaster'
 import * as Delegator from './Delegator'
@@ -12,6 +13,7 @@ export default {
   Query,
   Mutation,
   Subscription,
+  ENSName,
   Account,
   Broadcaster,
   Delegator,

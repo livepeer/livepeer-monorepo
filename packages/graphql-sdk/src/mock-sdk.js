@@ -22,6 +22,7 @@ const livepeer = {
     VIDEO_PROFILES,
   },
   rpc: {
+    getENSNameAddress: async ensName => ALL_ENS_NAMES[ensName],
     getEthBalance: async id => ALL_ETH_BALANCES[id],
     getTokenBalance: async id => ALL_TOKEN_BALANCES[id],
     getBroadcaster: async id => ALL_BROADCASTERS[id],
@@ -42,6 +43,11 @@ const livepeer = {
 /**
  * Mock Contract Data
  */
+
+const ALL_ENS_NAMES = {
+  'foo.test': EMPTY_ADDRESS.replace(/00/g, '11'),
+  'bar.test': EMPTY_ADDRESS.replace(/00/g, '22'),
+}
 
 const ALL_ETH_BALANCES = {
   [EMPTY_ADDRESS.replace(/00/g, '11')]: '0',

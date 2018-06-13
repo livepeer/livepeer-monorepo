@@ -7,6 +7,7 @@ import {
   encodeMethod,
   encodeSignature,
 } from 'ethjs-abi'
+import ENS from 'ethereum-ens'
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
 import ControllerArtifact from '../etc/Controller'
@@ -479,6 +480,7 @@ export async function initContracts(
         }, a),
       {},
     )
+
   return {
     abis,
     accounts,
@@ -488,6 +490,17 @@ export async function initContracts(
     events,
     hashes,
   }
+}
+
+/**
+ * Creates ENS instance
+ * @param {string} opts.provider the httpProvider for contract RPC
+ */
+export function initENS(opts = {}): ENS {
+  // Merge pass options with defaults
+  const { provider = DEFAULTS.provider } = opts
+
+  return new ENS(new Eth.HttpProvider(provider))
 }
 
 /**
@@ -525,6 +538,9 @@ export default async function createLivepeerSDK(
     LivepeerTokenFaucet,
     RoundsManager,
   } = config.contracts
+  // Initialize ENS
+  const ens = initENS(opts)
+
   // Cache
   const cache = {
     // previous log queries are held here to improve perf
@@ -1320,6 +1336,15 @@ export default async function createLivepeerSDK(
         )
       // cache[key] = results
       return results.reverse()
+    },
+
+    /**
+     * Gets the address for an ENS name
+     * @param {string} ensName - ENS name to look up an address for
+     */
+    async getENSNameAddress(ensName) {
+      const resolver = await ens.resolver(ensName)
+      return resolver.addr()
     },
 
     /**
