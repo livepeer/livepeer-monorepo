@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { queries } from '@livepeer/graphql-sdk'
+import { mockENSName } from '../../utils'
 import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
@@ -36,13 +37,46 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const connectApollo = graphql(gql(queries.JobsQuery), {
+const connectENSNameBroadcasterQuery = graphql(
+  gql(queries.ENSNameBroadcasterQuery),
+  {
+    props: ({ data, ownProps }, state) => {
+      const { ensName } = data
+      const ensNameObj = mockENSName(ensName)
+
+      return {
+        ...ownProps,
+        loading: data.loading,
+        jobs: ensNameObj.account.broadcaster.jobs,
+        name: ensNameObj.id,
+        account: ensNameObj.account.broadcaster.id,
+      }
+    },
+    options: ({ match }) => {
+      const { channel } = match.params
+      return {
+        pollInterval: 5000,
+        variables: {
+          id: channel,
+          jobs: true,
+        },
+      }
+    },
+    skip: ({ match }) => {
+      const { channel } = match.params
+      return isAddress(channel)
+    },
+  },
+)
+
+const connectJobsQuery = graphql(gql(queries.JobsQuery), {
   props: ({ data, ownProps }, state) => {
     // console.log(data)
     return {
       ...ownProps,
       loading: data.loading,
       jobs: data.jobs || [],
+      account: data.variables.broadcaster,
     }
   },
   options: ({ match }) => {
@@ -54,9 +88,17 @@ const connectApollo = graphql(gql(queries.JobsQuery), {
       },
     }
   },
+  skip: ({ match }) => {
+    const { channel } = match.params
+    return !isAddress(channel)
+  },
 })
 
-const enhance = compose(connectRedux, connectApollo)
+const enhance = compose(
+  connectRedux,
+  connectENSNameBroadcasterQuery,
+  connectJobsQuery,
+)
 
 class Channel extends Component {
   state = {
@@ -126,10 +168,18 @@ class Channel extends Component {
   }
 
   render() {
-    const { jobs, loading, match, changeChannel, updateJob } = this.props
+    const {
+      name,
+      account,
+      jobs,
+      loading,
+      match,
+      changeChannel,
+      updateJob,
+    } = this.props
     const { live, url, modal, didCopy, tipAmount } = this.state
     const [latestJob] = jobs
-    const { streamId, broadcaster = match.params.channel } = latestJob || {}
+    const { streamId, broadcaster = account } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
     const embedLink = `<iframe width="240" height="160" src="${
       window.location.origin
@@ -303,6 +353,18 @@ class Channel extends Component {
                 <span>•</span>
                 {live ? 'live' : 'offline'}
               </ChannelStatus>
+              {name && (
+                <p
+                  style={{
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                  }}
+                >
+                  Broadcaster ENS Name:<br />
+                  <span>{name}</span>
+                </p>
+              )}
               <p
                 style={{
                   textOverflow: 'ellipsis',
@@ -310,7 +372,7 @@ class Channel extends Component {
                   overflow: 'hidden',
                 }}
               >
-                Broadcaster:<br />
+                Broadcaster ETH Address:<br />
                 <span>{isAddress(broadcaster) ? broadcaster : 'Unknown'}</span>
               </p>
               <p

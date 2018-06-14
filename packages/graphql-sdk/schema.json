@@ -17,6 +17,33 @@
           "description": "Contains all protocol data-fetching queries",
           "fields": [
             {
+              "name": "ensName",
+              "description": "A ENSName with associated Account",
+              "args": [
+                {
+                  "name": "id",
+                  "description": "",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ENSName",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "account",
               "description": "An Account by ETH address",
               "args": [
@@ -405,6 +432,45 @@
           "fields": null,
           "inputFields": null,
           "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ENSName",
+          "description": "A type that describes an ENS name for a Livepeer account",
+          "fields": [
+            {
+              "name": "id",
+              "description": "The ENS name for a Livepeer account",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "account",
+              "description": "The info for a Livepeer account",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Account",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
           "enumValues": null,
           "possibleTypes": null
         },

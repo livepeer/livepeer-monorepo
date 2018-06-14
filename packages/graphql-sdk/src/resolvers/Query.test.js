@@ -8,6 +8,18 @@ import {
 import * as resolvers from './Query'
 import { transformJob } from '../utils'
 
+test('Query resolves `ensName` field', async t => {
+  const obj = {
+    id: 'foo',
+  }
+  const args = {
+    id: obj.id,
+  }
+  const ctx = {}
+  const result = await resolvers.ensName(obj, args, ctx)
+  t.deepEqual(obj, result)
+})
+
 test('Query resolves `account` field', async t => {
   const obj = {
     id: 'foo',

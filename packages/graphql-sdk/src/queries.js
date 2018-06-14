@@ -40,7 +40,6 @@ query ENSNameBroadcasterQuery($id: String!, $jobs: Boolean!, $jobsSkip: Int, $jo
   ensName(id: $id) {
     id
     account {
-      id
       broadcaster {
         ...BroadcasterFragment
         jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
