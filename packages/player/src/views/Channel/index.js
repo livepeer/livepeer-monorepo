@@ -3,8 +3,7 @@ import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { queries } from '@livepeer/graphql-sdk'
-import { mockENSName } from '../../utils'
+import { queries, utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
 import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
@@ -24,6 +23,7 @@ import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 
 const { changeChannel } = routingActions
+const { mockENSName } = gqlSDKUtils
 
 const isAddress = x => x.startsWith('0x') && x.length === 42
 

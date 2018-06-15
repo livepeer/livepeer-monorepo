@@ -6,9 +6,11 @@ import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
 import { ToastNotificationContainer } from '../containers'
-import { mockRound, mockProtocol } from '../utils'
+import { utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
+
+const { mockRound, mockProtocol } = gqlSDKUtils
 
 type nestFunc = (
   parent: React.ComponentType<any>,

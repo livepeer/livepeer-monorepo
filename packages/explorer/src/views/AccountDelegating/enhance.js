@@ -1,13 +1,15 @@
 import { compose, lifecycle, mapProps, withHandlers } from 'recompose'
 import { graphql, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
-import { mockDelegator } from '../../utils'
+import { utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectToasts,
   withTransactionHandlers,
 } from '../../enhancers'
+
+const { mockDelegator } = gqlSDKUtils
 
 const AccountDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {

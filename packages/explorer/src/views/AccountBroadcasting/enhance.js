@@ -1,8 +1,10 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { mockBroadcaster } from '../../utils'
+import { utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
 import { connectCoinbaseQuery, withTransactionHandlers } from '../../enhancers'
+
+const { mockBroadcaster } = gqlSDKUtils
 
 const AccountBroadcasterAndJobsQuery = gql`
   fragment BroadcasterFragment on Broadcaster {
