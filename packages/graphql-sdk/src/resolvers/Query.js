@@ -10,10 +10,6 @@ type GQLContext = {
 
 type QueryObj = {}
 
-type QueryENSNameArgs = {
-  id?: string,
-}
-
 type QueryAccountArgs = {
   id?: string,
 }
@@ -45,33 +41,25 @@ type QueryTranscoderArgs = {
 /** Resolvers */
 
 /**
- * Gets an ENSName by ID (ENS name)
- * @param {QueryObj} obj
- * @param {QueryENSNameArgs} args
- * @param {string} args.id - ENS name
- * @param {GQLContext} ctx
- * @return {ENSName}
- */
-export async function ensName(
-  obj: QueryObj,
-  args: QueryENSNameArgs,
-  ctx: GQLContext,
-): ENSName {
-  // ENSName field resolvers will fill in the rest
-  return { id: args.id }
-}
-
-/**
  * Gets an Account by ID (ETH address)
  * @param {QueryObj} obj
  * @param {QueryAccountArgs} args
  * @param {string} args.id - ETH address
+ * @param {string} args.ensName - ENS name
  * @param {GQLContext} ctx
  * @return {Account}
  */
 export async function account(obj, args, ctx) {
+  const { id, ensName } = args
+  if (!id && !ensName) throw new Error('Must pass in either id or ensName')
+
   // Account field resolvers will fill in the rest
-  return { id: args.id }
+  if (id) {
+    return { id: id }
+  } else {
+    const address = await ctx.livepeer.rpc.getENSNameAddress(ensName)
+    return { id: address, ensName: ensName }
+  }
 }
 
 /**

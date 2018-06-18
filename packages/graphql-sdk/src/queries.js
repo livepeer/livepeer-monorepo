@@ -1,4 +1,3 @@
-import { default as ENSNameFragment } from './fragments/ENSName'
 import { default as AccountFragment } from './fragments/Account'
 import { default as BroadcasterFragment } from './fragments/Broadcaster'
 import { default as DelegatorFragment } from './fragments/Delegator'
@@ -8,43 +7,29 @@ import { default as TransactionFragment } from './fragments/Transaction'
 import { default as TranscoderFragment } from './fragments/Transcoder'
 import { default as ProtocolFragment } from './fragments/Protocol'
 
-export const ENSNameQuery = `
-${ENSNameFragment}
-${AccountFragment}
-${BroadcasterFragment}
-${DelegatorFragment}
-${TranscoderFragment}
-query ENSNameQuery($id: String!) {
-  ensName(id: $id) {
-    ...ENSNameFragment
-  }
-}
-`
-
 export const AccountQuery = `
 ${AccountFragment}
 ${BroadcasterFragment}
 ${DelegatorFragment}
 ${TranscoderFragment}
-query AccountQuery($id: String!) {
-  account(id: $id) {
+query AccountQuery($id: String, $ensName: String) {
+  account(id: $id, ensName: $ensName) {
     ...AccountFragment
   }
 }
 `
 
-export const ENSNameBroadcasterQuery = `
-${BroadcasterFragment}
+export const AccountBroadcasterQuery = `
 ${JobFragment}
-query ENSNameBroadcasterQuery($id: String!, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit: Int) {
-  ensName(id: $id) {
+${BroadcasterFragment}
+query AccountBroadcasterQuery($id: String, $ensName: String, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit: Int) {
+  account(id: $id, ensName: $ensName) {
     id
-    account {
-      broadcaster {
-        ...BroadcasterFragment
-        jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
-          ...JobFragment
-        }
+    ensName
+    broadcaster {
+      ...BroadcasterFragment
+      jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
+        ...JobFragment
       }
     }
   }

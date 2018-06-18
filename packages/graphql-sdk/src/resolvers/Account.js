@@ -13,6 +13,7 @@ type GQLContext = {
 
 type AccountObj = {
   id: string,
+  ensName?: string,
 }
 
 /** Resolvers */
@@ -25,6 +26,17 @@ type AccountObj = {
  */
 export function id(obj: AccountObj): string {
   return obj.id
+}
+
+/**
+ * Gets the ENS name for an Account
+ * @param {string} obj.ensName - The ENS name
+ */
+export function ensName(obj: AccountObj): string {
+  // In the future, if obj.ensName is null, this resolver
+  // could also check if the account address has a reverse ENS record
+  // to look up the ENS name
+  return obj.ensName
 }
 
 /**

@@ -23,7 +23,7 @@ import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 
 const { changeChannel } = routingActions
-const { mockENSName } = gqlSDKUtils
+const { mockAccount } = gqlSDKUtils
 
 const isAddress = x => x.startsWith('0x') && x.length === 42
 
@@ -37,68 +37,34 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const connectENSNameBroadcasterQuery = graphql(
-  gql(queries.ENSNameBroadcasterQuery),
-  {
-    props: ({ data, ownProps }, state) => {
-      const { ensName } = data
-      const ensNameObj = mockENSName(ensName)
-
-      return {
-        ...ownProps,
-        loading: data.loading,
-        jobs: ensNameObj.account.broadcaster.jobs,
-        name: ensNameObj.id,
-        account: ensNameObj.account.broadcaster.id,
-      }
-    },
-    options: ({ match }) => {
-      const { channel } = match.params
-      return {
-        pollInterval: 5000,
-        variables: {
-          id: channel,
-          jobs: true,
-        },
-      }
-    },
-    skip: ({ match }) => {
-      const { channel } = match.params
-      return isAddress(channel)
-    },
-  },
-)
-
-const connectJobsQuery = graphql(gql(queries.JobsQuery), {
+const connectApollo = graphql(gql(queries.AccountBroadcasterQuery), {
   props: ({ data, ownProps }, state) => {
-    // console.log(data)
+    const { account } = data
+    const accountObj = mockAccount(account)
+
     return {
       ...ownProps,
       loading: data.loading,
-      jobs: data.jobs || [],
-      account: data.variables.broadcaster,
+      jobs: accountObj.broadcaster.jobs,
+      name: accountObj.ensName,
+      account: accountObj.id,
     }
   },
   options: ({ match }) => {
     const { channel } = match.params
+
     return {
       pollInterval: 5000,
       variables: {
-        broadcaster: channel,
+        id: isAddress(channel) ? channel : null,
+        ensName: !isAddress(channel) ? channel : null,
+        jobs: true,
       },
     }
   },
-  skip: ({ match }) => {
-    const { channel } = match.params
-    return !isAddress(channel)
-  },
 })
 
-const enhance = compose(
-  connectRedux,
-  connectENSNameBroadcasterQuery,
-  connectJobsQuery,
-)
+const enhance = compose(connectRedux, connectApollo)
 
 class Channel extends Component {
   state = {

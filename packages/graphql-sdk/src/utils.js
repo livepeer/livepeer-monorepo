@@ -16,14 +16,6 @@ export function transformJob({
   }
 }
 
-export const mockENSName = ({ id = '', ...ensName } = {}) => ({
-  id,
-  account: mockAccount({
-    id,
-    ...ensName.account,
-  }),
-})
-
 export const mockAccount = ({ id = '', ...account } = {}) => ({
   id,
   ethBalance: '0',

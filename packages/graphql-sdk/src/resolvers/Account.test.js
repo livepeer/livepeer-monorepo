@@ -4,6 +4,7 @@ import * as resolvers from './Account'
 test('Account resolves fields', async t => {
   const obj = {
     id: '0xf00',
+    ensName: 'foo.test',
     ethBalance: '0',
     tokenBalance: '0',
     broadcaster: {

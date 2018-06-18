@@ -10,6 +10,9 @@ type Account {
   "The ETH address for an account"
   id: String!
 
+  "The ENS name for an account"
+  ensName: String
+
   "The ETH balance for an account"
   ethBalance: String!
 

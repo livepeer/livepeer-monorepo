@@ -5,9 +5,8 @@ import { EMPTY_ADDRESS } from '@livepeer/sdk'
 // import { schema } from './index'
 import schema from './schema'
 import {
-  ENSNameQuery,
   AccountQuery,
-  ENSNameBroadcasterQuery,
+  AccountBroadcasterQuery,
   BroadcasterQuery,
   CoinbaseQuery,
   CurrentRoundQuery,
@@ -68,21 +67,9 @@ test('Subscription', async t => {
 })
 
 /**
- * ENSName
- */
-test('ENSNameQuery', async t => {
-  const args = {
-    id: 'foo.test',
-  }
-  const res = await graphql(schema, ENSNameQuery, null, { livepeer }, args)
-  // console.log(JSON.stringify(res, null, 2))
-  t.snapshot(res)
-})
-
-/**
  * Account
  */
-test('AccountQuery', async t => {
+test('AccountQuery (with ID)', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
   }
@@ -91,17 +78,26 @@ test('AccountQuery', async t => {
   t.snapshot(res)
 })
 
-/**
- * Broadcaster with ENS name
- */
-test('ENSNameBroadcasterQuery', async t => {
+test('AccountQuery (with ENS name)', async t => {
   const args = {
-    id: 'foo.test',
+    ensName: 'foo.test',
+  }
+  const res = await graphql(schema, AccountQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+/**
+ * Account Broadcaster
+ */
+test('AccountBroadcasterQuery (with ID)', async t => {
+  const args = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
     jobs: false,
   }
   const res = await graphql(
     schema,
-    ENSNameBroadcasterQuery,
+    AccountBroadcasterQuery,
     null,
     { livepeer },
     args,
@@ -110,14 +106,14 @@ test('ENSNameBroadcasterQuery', async t => {
   t.snapshot(res)
 })
 
-test('ENSNameBroadcasterQuery (include jobs)', async t => {
+test('AccountBroadcasterQuery (include jobs)', async t => {
   const args = {
-    id: 'foo.test',
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
     jobs: true,
   }
   const res = await graphql(
     schema,
-    ENSNameBroadcasterQuery,
+    AccountBroadcasterQuery,
     null,
     { livepeer },
     args,
@@ -126,16 +122,66 @@ test('ENSNameBroadcasterQuery (include jobs)', async t => {
   t.snapshot(res)
 })
 
-test('ENSNameBroadcasterQuery (include jobs using skip/limit args)', async t => {
+test('AccountBroadcasterQuery (include jobs using skip/limit args)', async t => {
   const args = {
-    id: 'foo.test',
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
     jobs: true,
     jobsSkip: 1,
     jobsLimit: 1,
   }
   const res = await graphql(
     schema,
-    ENSNameBroadcasterQuery,
+    AccountBroadcasterQuery,
+    null,
+    { livepeer },
+    args,
+  )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('AccountBroadcasterQuery (with ENS name)', async t => {
+  const args = {
+    ensName: 'foo.test',
+    jobs: false,
+  }
+  const res = await graphql(
+    schema,
+    AccountBroadcasterQuery,
+    null,
+    { livepeer },
+    args,
+  )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('AccountBroadcasterQuery (with ENS name, include jobs)', async t => {
+  const args = {
+    ensName: 'foo.test',
+    jobs: true,
+  }
+  const res = await graphql(
+    schema,
+    AccountBroadcasterQuery,
+    null,
+    { livepeer },
+    args,
+  )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('AccountBroadcasterQuery (with ENS name, include jobs using skip/limit args)', async t => {
+  const args = {
+    ensName: 'foo.test',
+    jobs: true,
+    jobsSkip: 1,
+    jobsLimit: 1,
+  }
+  const res = await graphql(
+    schema,
+    AccountBroadcasterQuery,
     null,
     { livepeer },
     args,

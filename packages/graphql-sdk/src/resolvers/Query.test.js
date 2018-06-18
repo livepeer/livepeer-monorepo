@@ -8,7 +8,7 @@ import {
 import * as resolvers from './Query'
 import { transformJob } from '../utils'
 
-test('Query resolves `ensName` field', async t => {
+test('Query resolves `account` field with ID', async t => {
   const obj = {
     id: 'foo',
   }
@@ -16,18 +16,25 @@ test('Query resolves `ensName` field', async t => {
     id: obj.id,
   }
   const ctx = {}
-  const result = await resolvers.ensName(obj, args, ctx)
+  const result = await resolvers.account(obj, args, ctx)
   t.deepEqual(obj, result)
 })
 
-test('Query resolves `account` field', async t => {
+test('Query resolves `account` field with ENS name', async t => {
   const obj = {
     id: 'foo',
+    ensName: 'foo.test',
   }
   const args = {
-    id: obj.id,
+    ensName: obj.ensName,
   }
-  const ctx = {}
+  const ctx = {
+    livepeer: {
+      rpc: {
+        getENSNameAddress: () => obj.id,
+      },
+    },
+  }
   const result = await resolvers.account(obj, args, ctx)
   t.deepEqual(obj, result)
 })
