@@ -5,7 +5,7 @@
  -------------------------------------------------------------------------->
 
 **What does this pull request do? Explain your changes. (required)**
-A clear and concise description of what this pull request does.
+<!-- A clear and concise description of what this pull request does. -->
 
 **Specific updates (required)**
 <!--- List out all significant updates your code introduces -->
@@ -14,13 +14,13 @@ A clear and concise description of what this pull request does.
 - 
 
 **How did you test each of these updates (required)**
-A detailed description of how you tested your code changes. Include details of your testing environment, and the tests you ran to see how your change affects other areas of the code, etc.
+<!-- A detailed description of how you tested your code changes. Include details of your testing environment, and the tests you ran to see how your change affects other areas of the code, etc. -->
 
 **Does this pull request close any open issues?**
-Fixes #
+<!-- Fixes # -->
 
 **Screenshots (optional):**
-...
+<!-- Drag some screenshots here, if applicable -->
 
 **Checklist:**
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
