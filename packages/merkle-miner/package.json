@@ -15,7 +15,6 @@
     "prepack": "npm -s run build",
     "test": "npx nyc ava",
     "coverage": "npx nyc report --reporter=lcov",
-    "postcoverage": "npm -s run lcov-badge",
     "lcov-badge": "npx lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
   "dependencies": {
