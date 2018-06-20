@@ -1,0 +1,49 @@
+{
+  "name": "@livepeer/merkle-miner",
+  "version": "1.0.0-alpha.4",
+  "license": "MIT",
+  "main": "dist/merkle-miner.cjs.js",
+  "module": "dist/merkle-miner.es.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "npm -s run ipfs-add && npx parcel -d build index.html",
+    "build": "npx bili src/worker.js --format iife --filename worker.js --no-babel.babelrc && npx bili src/index.js --filename '[name][suffix].js' --no-babel.babelrc --format cjs,es",
+    "ipfs-add": "npm -s run build && echo \"export default \\\"$(ipfs add -Q dist/worker.js)\\\"\" > hash.js",
+    "prebuild": "rm -rf dist",
+    "prepack": "npm -s run build",
+    "test": "npx nyc ava",
+    "coverage": "npx nyc report --reporter=lcov",
+    "postcoverage": "npm -s run lcov-badge",
+    "lcov-badge": "npx lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
+  },
+  "dependencies": {
+    "js-sha3": "^0.7.0",
+    "localforage": "^1.7.1"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "bili": "^3.1.2",
+    "lcov-badge": "^1.0.4",
+    "parcel-bundler": "^1.9.2"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  },
+  "homepage": "https://livepeer.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeerjs.git"
+  }
+}
