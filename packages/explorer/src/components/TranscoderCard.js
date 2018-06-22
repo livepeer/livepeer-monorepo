@@ -176,16 +176,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     align-items: flex-start;
     min-width: 320px;
   }
-  > .actions-placeholder {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 32px;
-    margin: auto;
-    display: block;
-    height: 32px;
-    pointer-events: none;
-  }
   > .actions-buttons {
     display: inline-block;
     flex-grow: 1;
