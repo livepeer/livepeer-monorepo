@@ -576,6 +576,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets the number of active transcoders
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getNumActiveTranscoders()
+     * // => string
+     */
+    async getNumActiveTranscoders(): Promise<string> {
+      return headToString(await BondingManager.numActiveTranscoders())
+    },
+
+    /**
      * Gets the total supply of token (LTPU) available in the protocol
      * @memberof livepeer~rpc
      * @return {Promise<string>}
