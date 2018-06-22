@@ -181,7 +181,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     flex-grow: 1;
     text-align: right;
     background: inherit;
-    transition: all 0.2s linear;
     & > ${Button} {
       margin: 0;
       margin-left: 8px;
@@ -217,7 +216,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     > .actions-buttons {
       margin-top: 1px;
       padding: 16px;
-      opacity: 1;
     }
   }
 `
