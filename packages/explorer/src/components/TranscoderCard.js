@@ -190,14 +190,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       }
     }
   }
-  :hover {
-    & > .actions-buttons {
-      opacity: 1;
-    }
-    & > .actions-placeholder {
-      opacity: 0;
-    }
-  }
   @media (max-width: 640px) {
     padding: 0;
     > .basic-info {
