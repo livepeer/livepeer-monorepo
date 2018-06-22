@@ -121,9 +121,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       {/* Actions */}
       {(onBond || onUnbond) && (
         <React.Fragment>
-          <div className="actions-placeholder">
-            <MoreHorizontalIcon size={32} color="rgba(0, 0, 0, .25)" />
-          </div>
           <div className="actions-buttons">
             {onBond && <Button onClick={onBond}>Bond</Button>}
             {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
