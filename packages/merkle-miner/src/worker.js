@@ -21,6 +21,7 @@ self.onmessage = createMessageHandlers(
     tree: null,
     root: '',
     address: '',
+    progress: { download: 0, tree: 0 },
     proof: '',
   },
   // message handlers
@@ -64,12 +65,7 @@ async function generateProof(
     // Update address
     state.address = address
   }
-  return {
-    hash: state.hash,
-    root: state.root,
-    address: state.address,
-    proof: state.proof,
-  }
+  return getResponseMessage(state)
 }
 
 /** Generates a merkle tree for the given input ArrayBuffer. This takes ~30s */
@@ -77,7 +73,11 @@ async function constructTree(state, payload: { hash: string }) {
   try {
     const { hash, input } = state
     const key = `${hash}_tree`
-    const onProgress = n => dispatch('constructTreeProgress', null, null, n)
+    const onProgress = n => {
+      state.progress.tree = n
+      if (n < 1)
+        dispatch('constructTree', null, null, getResponseMessage(state))
+    }
     if (hash !== payload.hash) {
       throw new Error(
         `Cannot create merkle tree for hash ${
@@ -87,16 +87,18 @@ async function constructTree(state, payload: { hash: string }) {
     }
     // Use cached merkle tree if available
     if (!state.tree) {
-      const treeLength = CACHING_ENABLED
-        ? await localforage.getItem(`${key}_len`)
+      const totalBranches = CACHING_ENABLED
+        ? await localforage.getItem(`${key}_branch_total`)
         : 0
-      if (treeLength) {
+      if (totalBranches > 0) {
         const tree = []
         onProgress(0)
-        for (let i = 0; i < treeLength; i++) {
-          const leaf = await localforage.getItem(`${key}_leaf_${i}`)
-          tree.push(leaf)
-          onProgress((i + 1) / treeLength)
+        for (let i = 0; i < totalBranches; i++) {
+          const branch = await localforage.getItem(`${key}_branch_${i}`)
+          if (!Array.isArray(branch))
+            throw new Error('Malformed merkle tree branch')
+          tree.push(branch)
+          onProgress((i + 1) / totalBranches)
         }
         state.tree = tree
       }
@@ -105,10 +107,12 @@ async function constructTree(state, payload: { hash: string }) {
         // Create tree synchronously, but send progress events along the way
         state.tree = createTree(input, onProgress)
         if (CACHING_ENABLED) {
-          await localforage.setItem(`${key}_len`, state.tree.length)
-          let i = 0
-          for (const leaf of state.tree) {
-            await localforage.setItem(`${key}_leaf_${i++}`, leaf)
+          const totalBranches = state.tree.length
+          await localforage.setItem(`${key}_branch_total`, totalBranches)
+          for (let i = 0; i < totalBranches; i++) {
+            const branch = state.tree[i]
+            const branchKey = `${key}_branch_${i}`
+            await localforage.setItem(branchKey, branch)
           }
         }
       }
@@ -119,6 +123,7 @@ async function constructTree(state, payload: { hash: string }) {
       hash: state.hash,
       root: state.root,
       address: state.address,
+      progress: state.progress,
       proof: state.proof,
     }
   } catch (err) {
@@ -129,8 +134,11 @@ async function constructTree(state, payload: { hash: string }) {
 }
 
 /** Fetches input data via hash from IPFS gateway */
-async function resolveHash(state, payload: { gateway: string, hash: string }) {
-  const { hash } = payload
+async function resolveHash(
+  state,
+  payload: { contentLength: ?number, gateway: string, hash: string },
+) {
+  const { gateway, hash } = payload
   if (state.hash !== hash) {
     // reset state
     state.hash = ''
@@ -143,20 +151,73 @@ async function resolveHash(state, payload: { gateway: string, hash: string }) {
     const input = CACHING_ENABLED ? await localforage.getItem(hash) : null
     if (input) {
       state.input = input
+      state.progress.download = 1
     }
     // Otherwise, get data from ipfs
     else {
-      const res = await fetch(`${gateway}/${hash}`)
+      let res = await fetch(`${gateway}/${hash}`)
+      const contentLength =
+        typeof payload.contentLength === 'number'
+          ? // IPFS gateway response headers lack Access-Control-Expose-Headers
+            payload.contentLength
+          : res.headers.get('Content-Length')
+      state.progress.download = 0
+      dispatch(
+        'resolveHash',
+        null,
+        null,
+        getResponseMessage({ hash, ...state }),
+      )
+      // Emit progress if content length is available
+      if (contentLength) {
+        const total = parseInt(contentLength, 10)
+        let loaded = 0
+        let lastProgress = 0
+        const responseStream = new ReadableStream({
+          start(controller) {
+            const reader = res.body.getReader()
+            ;(async function read() {
+              try {
+                const { done, value } = await reader.read()
+                if (done) return controller.close()
+                loaded += value.byteLength
+                const n = loaded / total
+                state.progress.download = n
+                if (n < 1 && n - lastProgress >= 0.01) {
+                  lastProgress = n
+                  dispatch(
+                    'resolveHash',
+                    null,
+                    null,
+                    getResponseMessage({ hash, ...state }),
+                  )
+                }
+                controller.enqueue(value)
+                read()
+              } catch (err) {
+                controller.error(err)
+              }
+            })()
+          },
+        })
+        res = new Response(responseStream)
+      }
       state.input = await res.arrayBuffer()
       if (CACHING_ENABLED) await localforage.setItem(hash, state.input)
     }
-    // Update hash
+    // Update hash only once input data download is complete
     state.hash = hash
   }
+  return getResponseMessage(state)
+}
+
+/** Returns a slimmed-down version of the state that can bbe sent across the write without perf issues */
+function getResponseMessage(state) {
   return {
     hash: state.hash,
     root: state.root,
     address: state.address,
+    progress: state.progress,
     proof: state.proof,
   }
 }
@@ -172,10 +233,10 @@ function createMessageHandlers(
     const f = handlers[type]
     if (!f) throw new Error(`No handler for message type "${type}"`)
     try {
-      dispatch(`${type}Success`, id, null, await f(state, payload))
+      dispatch(type, id, null, await f(state, payload))
     } catch (err) {
       console.log(`got error:`, id, type, err.message, err.stack)
-      dispatch(`${type}Error`, id, err, null)
+      dispatch(type, id, err, null)
     }
   }
 }

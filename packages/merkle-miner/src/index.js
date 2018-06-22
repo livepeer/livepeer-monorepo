@@ -25,19 +25,23 @@ export default class MerkleMiner {
       const { type, error, payload } = data
       const methodName = `on${type[0].toUpperCase()}${type.substr(1)}`
       const f = this.handlers[methodName]
-      if (f) f(error || payload)
+      if (f) f(error, payload)
     })
     return this
   }
-  async getProof(hash: string, address: string): Promise<string> {
-    await this.resolveHash(hash)
+  async getProof(
+    hash: string,
+    address: string,
+    contentLength: ?number,
+  ): Promise<string> {
+    await this.resolveHash(hash, contentLength)
     await this.constructTree(hash)
     return this.generateProof(hash, address)
   }
-  async resolveHash(hash: string): Promise<void> {
+  async resolveHash(hash: string, contentLength: ?number): Promise<void> {
     await this.postMessage({
       type: 'resolveHash',
-      payload: { hash },
+      payload: { hash, gateway: this.gateway, contentLength },
     })
     return
   }
