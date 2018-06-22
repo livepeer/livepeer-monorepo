@@ -214,9 +214,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
         font-size: 14px;
       }
     }
-    > .actions-placeholder {
-      opacity: 0 !important;
-    }
     > .actions-buttons {
       margin-top: 1px;
       padding: 16px;
