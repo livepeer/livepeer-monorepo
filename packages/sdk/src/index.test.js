@@ -67,6 +67,12 @@ test('should initialize SDK', async t => {
   t.skip.snapshot(rpc)
 })
 
+// Bonding Manager
+test('should get unbonding period', async t => {
+  const res = await livepeer.rpc.getUnbondingPeriod()
+  t.true(string.isValidSync(res))
+})
+
 // ETH
 
 test('should get ETH balance', async t => {
