@@ -121,9 +121,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       {/* Actions */}
       {(onBond || onUnbond) && (
         <React.Fragment>
-          <div className="actions-placeholder">
-            <MoreHorizontalIcon size={32} color="rgba(0, 0, 0, .25)" />
-          </div>
           <div className="actions-buttons">
             {onBond && <Button onClick={onBond}>Bond</Button>}
             {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
@@ -179,37 +176,17 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     align-items: flex-start;
     min-width: 320px;
   }
-  > .actions-placeholder {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 32px;
-    margin: auto;
-    display: block;
-    height: 32px;
-    pointer-events: none;
-  }
   > .actions-buttons {
     display: inline-block;
     flex-grow: 1;
     text-align: right;
     background: inherit;
-    opacity: 0;
-    transition: all 0.2s linear;
     & > ${Button} {
       margin: 0;
       margin-left: 8px;
       &:first-child: {
         margin-left: 0;
       }
-    }
-  }
-  :hover {
-    & > .actions-buttons {
-      opacity: 1;
-    }
-    & > .actions-placeholder {
-      opacity: 0;
     }
   }
   @media (max-width: 640px) {
@@ -236,13 +213,9 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
         font-size: 14px;
       }
     }
-    > .actions-placeholder {
-      opacity: 0 !important;
-    }
     > .actions-buttons {
       margin-top: 1px;
       padding: 16px;
-      opacity: 1;
     }
   }
 `
