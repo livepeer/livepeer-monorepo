@@ -590,6 +590,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets the maximum earnings for claims rounds
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getMaxEarningsClaimsRounds()
+     * // => string
+     */
+    async getMaxEarningsClaimsRounds(): Promise<string> {
+      return headToString(await BondingManager.maxEarningsClaimsRounds())
+    },
+
+    /**
      * Gets the total supply of token (LTPU) available in the protocol
      * @memberof livepeer~rpc
      * @return {Promise<string>}
