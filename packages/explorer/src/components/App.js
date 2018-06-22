@@ -15,6 +15,7 @@ import Bond from '../views/Bond'
 import ClaimEarnings from '../views/ClaimEarnings'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
+import Mining from '../views/Mining'
 import SmartContracts from '../views/SmartContracts'
 import ToastNotifications from '../views/ToastNotifications'
 import Transcoders from '../views/Transcoders'
@@ -65,6 +66,7 @@ const App = () => (
                 <Route path="/bond/:delegateAddress" component={Bond} />
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
+                <Route path="/mine" component={Mining} />
               </Switch>
             </CSSTransition>
           </TransitionGroup>
