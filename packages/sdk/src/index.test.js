@@ -79,6 +79,11 @@ test('should get number active transcoders', async t => {
   t.true(string.isValidSync(res))
 })
 
+test('should get maximum earning for claims rounds', async t => {
+  const res = await livepeer.rpc.getMaxEarningsClaimsRounds()
+  t.true(string.isValidSync(res))
+})
+
 // ETH
 
 test('should get ETH balance', async t => {
