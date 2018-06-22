@@ -68,8 +68,14 @@ test('should initialize SDK', async t => {
 })
 
 // Bonding Manager
+
 test('should get unbonding period', async t => {
   const res = await livepeer.rpc.getUnbondingPeriod()
+  t.true(string.isValidSync(res))
+})
+
+test('should get number active transcoders', async t => {
+  const res = await livepeer.rpc.getNumActiveTranscoders()
   t.true(string.isValidSync(res))
 })
 
