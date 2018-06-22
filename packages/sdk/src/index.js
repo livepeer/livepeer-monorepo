@@ -562,6 +562,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets the unbonding period for transcoders
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getUnbondingPeriod()
+     * // => string
+     */
+    async getUnbondingPeriod(): Promise<string> {
+      return headToString(await BondingManager.unbondingPeriod())
+    },
+
+    /**
      * Gets the total supply of token (LTPU) available in the protocol
      * @memberof livepeer~rpc
      * @return {Promise<string>}
