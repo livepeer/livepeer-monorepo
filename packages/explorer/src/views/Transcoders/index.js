@@ -43,6 +43,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     delegator: { bondedAmount, delegateAddress, status },
     tokenBalance,
   } = me.data
+  console.log('Me ', me.data.transcoder)
   const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
   const isUnbonding = status === 'Unbonding'
@@ -51,6 +52,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const TOUR_ENABLED = !!searchParams.get('tour')
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
+  const myTranscoder = me.data.transcoder.active
   const asc = order === 'asc'
   const total = transcoders.data.length
   const compareFn = createCompareFunction(asc, sort)
@@ -191,6 +193,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               bonded={isMyDelegate}
               bondedAmount={bondedAmount}
               className="transcoder-card"
+              myTranscoder={myTranscoder}
               onBond={canBond ? () => bond({ id }) : undefined}
               onUnbond={canUnbond ? () => unbond({ id }) : undefined}
             />

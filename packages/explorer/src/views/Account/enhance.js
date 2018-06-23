@@ -15,6 +15,7 @@ const accountQuery = gql`
     id
     ethBalance
     tokenBalance
+    transcoder
   }
 
   query AccountOverviewQuery($id: String!) {
@@ -56,12 +57,28 @@ const MeDelegatorQuery = gql`
     withdrawRound
   }
 
+  fragment TranscoderFragment on Transcoder {
+    id
+    active
+    status
+    lastRewardRound
+    rewardCut
+    feeShare
+    pricePerSegment
+    pendingRewardCut
+    pendingFeeShare
+    pendingPricePerSegment
+  }
+
   fragment AccountFragment on Account {
     id
     ethBalance
     tokenBalance
     delegator {
       ...DelegatorFragment
+    }
+    transcoder {
+      ...TranscoderFragment
     }
   }
 
@@ -75,6 +92,7 @@ const MeDelegatorQuery = gql`
 const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
   props: ({ data, ownProps }) => {
     const { me, ...queryData } = data
+    console.log('Data ', mockAccount(data))
     return {
       ...ownProps,
       me: {

@@ -54,6 +54,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   const canRebond = isMyDelegate && (isBonded || isBonding)
   const canBond = !!userAddress
   const canUnbond = userAddress && isBonded && isMyDelegate
+  const myTranscoder = me.data.transcoder.active
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -78,7 +79,14 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
             (canBond || canRebond || canUnbond) && (
               <SimpleMenu
                 handle={
-                  <Button style={{ minWidth: 0, width: 32, height: 32 }}>
+                  <Button
+                    style={{
+                      minWidth: 0,
+                      width: 32,
+                      height: 32,
+                      display: myTranscoder ? 'none' : 'block',
+                    }}
+                  >
                     <Icon use="arrow_drop_down_circle" />
                   </Button>
                 }
