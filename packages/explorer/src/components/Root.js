@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { lifecycle } from 'recompose'
-import gql from 'graphql-tag'
 import { ApolloProvider } from 'react-apollo'
-import { Provider as UnstatedProvider, Container } from 'unstated'
+import { Provider as UnstatedProvider } from 'unstated'
 import { RMWCProvider } from 'rmwc/Provider'
 import { ToastNotificationContainer } from '../containers'
 import {

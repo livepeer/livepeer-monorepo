@@ -1,31 +1,12 @@
 import * as React from 'react'
-import styled from 'styled-components'
 import { Form } from 'react-final-form'
 import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
 import Confetti from 'react-dom-confetti'
-import { withProp } from '../enhancers'
-import { formatBalance, toBaseUnit } from '../utils'
-import InlineHint from './InlineHint'
-import Button from './Button'
-
-type ApproveFormProps = {
-  allowance: string,
-  errors: {},
-  handleSubmit: any => void,
-  loading: boolean,
-  onCancel: any => void,
-  pristine: boolean,
-  reset: any => void,
-  submitting: boolean,
-  submitError: ?string,
-  submitFailed: boolean,
-  submitSucceeded: boolean,
-  valid: boolean,
-  values: {
-    amount: string,
-  },
-}
+import { withProp } from '../../enhancers'
+import { formatBalance } from '../../utils'
+import Button from '../Button'
+import type { ApproveFormProps } from './props'
 
 /**
  * Renders a form for token allowance approval

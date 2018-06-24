@@ -2,29 +2,12 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { MoreHorizontal as MoreHorizontalIcon } from 'react-feather'
-import { formatBalance, formatPercentage, MathBN } from '../utils'
-import Avatar from './Avatar'
-import Button from './Button'
-import Tooltip from './Tooltip'
-
-type TranscoderCardProps = {|
-  active: boolean,
-  bonded: boolean,
-  ensName: string,
-  feeShare: string,
-  id: string,
-  lastRewardRound: string,
-  onBond?: any => void,
-  onUnbond?: any => void,
-  pendingRewardCut: string,
-  pendingFeeShare: string,
-  pendingPricePerSegment: string,
-  pricePerSegment: string,
-  rewardCut: string,
-  status: string,
-  totalStake: string,
-|}
+import { MathBN } from '../../utils'
+import Avatar from '../Avatar'
+import Button from '../Button'
+import Tooltip from '../Tooltip'
+import TranscoderStat from '../TranscoderStat'
+import type { TranscoderCardProps } from './props'
 
 /** Used when displaying Transcoder struct data in a list */
 const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
@@ -219,58 +202,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       margin-top: 1px;
       padding: 16px;
     }
-  }
-`
-
-type TranscoderStatProps = {|
-  decimals?: number,
-  label: string,
-  symbol?: string,
-  type?: 'percentage' | 'token',
-  unit?: string,
-  value: string | number,
-  width: string,
-|}
-
-/** Displays a numeric or string-based transcoder stat */
-export const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
-  ({ append, className, help, label, type, value, width, ...props }) => {
-    let formattedValue = value
-    switch (type) {
-      case 'percentage': {
-        const { decimals = 2 } = props
-        formattedValue = formatPercentage(value, decimals) + '%'
-        break
-      }
-      case 'token': {
-        const { decimals = 0, symbol = 'WEI', unit = 'wei' } = props
-        formattedValue = formatBalance(value, decimals, unit) + ` ${symbol}`
-        break
-      }
-    }
-    return (
-      <div className={className}>
-        <Tooltip text={help}>
-          <div className="label">{label}</div>
-        </Tooltip>
-        <div className="value">
-          {formattedValue} {append}
-        </div>
-      </div>
-    )
-  },
-)`
-  display: inline-block;
-  margin: 0 16px;
-  width: ${({ width }) => (width ? width : '100%')};
-  .value {
-    font-size: 14px;
-  }
-  .label {
-    margin-bottom: 4px;
-    font-size: 11px;
-    cursor: help;
-    border-bottom: 1px dashed #ccc;
   }
 `
 

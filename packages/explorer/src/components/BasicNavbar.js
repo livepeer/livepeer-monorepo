@@ -22,7 +22,6 @@ import {
 
 const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
-  const notAuthenticated = !myAccountAddress
   const { host } = window.livepeer.config.eth.currentProvider
   const networkName = !window.web3
     ? /infura/.test(host)
@@ -163,6 +162,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                   )
                 case 'smart-contracts':
                   return (window.location.hash = '#/smart-contracts')
+                default:
+                  return ''
               }
             }}
           >
@@ -243,7 +244,7 @@ const NetworkBadge = styled.span`
   }
 `
 
-const NavSearchContainer = styled.div`
+/*const NavSearchContainer = styled.div`
   width: 320px;
   padding-left: 16px;
   position: relative;
@@ -254,13 +255,13 @@ const NavSearchContainer = styled.div`
 
 const NavSearch = ({ onSearch }) => (
   <NavSearchContainer>
-    {/*
-<Search
-color="#fff"
-size={24}
-style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
-/>
-*/}
+    {
+      <Search
+      color="#fff"
+      size={24}
+      style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
+      />
+    }
     <input
       type="search"
       placeholder="Search accounts by ETH address"
@@ -285,7 +286,7 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
       }}
     />
   </NavSearchContainer>
-)
+)*/
 
 export default compose(
   connectToasts,
