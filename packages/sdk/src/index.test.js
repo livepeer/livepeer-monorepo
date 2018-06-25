@@ -67,6 +67,23 @@ test('should initialize SDK', async t => {
   t.skip.snapshot(rpc)
 })
 
+// Bonding Manager
+
+test('should get unbonding period', async t => {
+  const res = await livepeer.rpc.getUnbondingPeriod()
+  t.true(string.isValidSync(res))
+})
+
+test('should get number active transcoders', async t => {
+  const res = await livepeer.rpc.getNumActiveTranscoders()
+  t.true(string.isValidSync(res))
+})
+
+test('should get maximum earning for claims rounds', async t => {
+  const res = await livepeer.rpc.getMaxEarningsClaimsRounds()
+  t.true(string.isValidSync(res))
+})
+
 // ETH
 
 test('should get ETH balance', async t => {
