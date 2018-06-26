@@ -15,7 +15,6 @@ const accountQuery = gql`
     id
     ethBalance
     tokenBalance
-    transcoder
   }
 
   query AccountOverviewQuery($id: String!) {
@@ -44,7 +43,7 @@ const connectAccountQuery = graphql(accountQuery, {
   }),
 })
 
-const MeDelegatorQuery = gql`
+const MeDelegatorTranscoderQuery = gql`
   fragment DelegatorFragment on Delegator {
     id
     status
@@ -82,17 +81,16 @@ const MeDelegatorQuery = gql`
     }
   }
 
-  query MeDelegatorQuery {
+  query MeDelegatorTranscoderQuery {
     me {
       ...AccountFragment
     }
   }
 `
 
-const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
+const connectMeDelegatorTranscoderQuery = graphql(MeDelegatorTranscoderQuery, {
   props: ({ data, ownProps }) => {
     const { me, ...queryData } = data
-    console.log('Data ', mockAccount(data))
     return {
       ...ownProps,
       me: {
@@ -184,7 +182,7 @@ export default compose(
   connectAccountQuery,
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
-  connectMeDelegatorQuery,
+  connectMeDelegatorTranscoderQuery,
   connectToasts,
   withTransactionHandlers,
   mapMutationHandlers,

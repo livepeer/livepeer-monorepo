@@ -150,8 +150,8 @@ export function toRGBA(hex, opacity = 1) {
   const x = hex.replace('#', '')
   const len = x.length
   const r = parseInt(x.substring(0, len / 3), 16)
-  const g = parseInt(x.substring(len / 3, 2 * len / 3), 16)
-  const b = parseInt(x.substring(2 * len / 3, 3 * len / 3), 16)
+  const g = parseInt(x.substring(len / 3, (2 * len) / 3), 16)
+  const b = parseInt(x.substring((2 * len) / 3, (3 * len) / 3), 16)
   const a = Math.min(1, Math.max(0, opacity))
   return `rgba(${[r, g, b, a]})`
 }
@@ -223,7 +223,7 @@ export const mockTranscoder = ({ id = '', ...transcoder } = {}) => ({
   pendingFeeShare: '0',
   pendingPricePerSegment: '0',
   rewardCut: '0',
-  status: '',
+  status: 'Unregistered',
   totalStake: '0',
   ...transcoder,
 })

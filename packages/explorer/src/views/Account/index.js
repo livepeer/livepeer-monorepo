@@ -54,7 +54,10 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   const canRebond = isMyDelegate && (isBonded || isBonding)
   const canBond = !!userAddress
   const canUnbond = userAddress && isBonded && isMyDelegate
-  const myTranscoder = me.data.transcoder.active
+  const isTranscoder = me.data.transcoder.status === 'Registered'
+  const showBondButtons =
+    (canBond || canRebond || canUnbond) &&
+    ((isTranscoder && isMe) || (!isTranscoder && !isMe))
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -75,37 +78,35 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
             </React.Fragment>
           )}
           {/** Bonding Actions */}
-          {!isMe &&
-            (canBond || canRebond || canUnbond) && (
-              <SimpleMenu
-                handle={
-                  <Button
-                    style={{
-                      minWidth: 0,
-                      width: 32,
-                      height: 32,
-                      display: myTranscoder ? 'none' : 'block',
-                    }}
-                  >
-                    <Icon use="arrow_drop_down_circle" />
-                  </Button>
+          {showBondButtons && (
+            <SimpleMenu
+              handle={
+                <Button
+                  style={{
+                    minWidth: 0,
+                    width: 32,
+                    height: 32,
+                  }}
+                >
+                  <Icon use="arrow_drop_down_circle" />
+                </Button>
+              }
+              onSelected={async ({ detail }) => {
+                const { action } = detail.item.dataset
+                switch (action) {
+                  case 'bond':
+                    return bond({ id: accountAddress })
+                  case 'unbond':
+                    return await unbond({ id: accountAddress })
                 }
-                onSelected={async ({ detail }) => {
-                  const { action } = detail.item.dataset
-                  switch (action) {
-                    case 'bond':
-                      return bond({ id: accountAddress })
-                    case 'unbond':
-                      return await unbond({ id: accountAddress })
-                  }
-                }}
-              >
-                {(canBond || canRebond) && (
-                  <MenuItem data-action="bond">Bond</MenuItem>
-                )}
-                {canUnbond && <MenuItem data-action="unbond">Unbond</MenuItem>}
-              </SimpleMenu>
-            )}
+              }}
+            >
+              {(canBond || canRebond) && (
+                <MenuItem data-action="bond">Bond</MenuItem>
+              )}
+              {canUnbond && <MenuItem data-action="unbond">Unbond</MenuItem>}
+            </SimpleMenu>
+          )}
         </PageHeading>
         <div style={{ marginBottom: -32, paddingTop: 32 }}>
           <Tabs url={match.url}>

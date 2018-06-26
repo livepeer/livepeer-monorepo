@@ -23,7 +23,6 @@ type TranscoderCardProps = {|
   rewardCut: string,
   status: string,
   totalStake: string,
-  myTranscoder?: any,
 |}
 
 /** Used when displaying Transcoder struct data in a list */
@@ -41,7 +40,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     pricePerSegment,
     rewardCut,
     totalStake,
-    myTranscoder,
   }) => (
     <div className={className}>
       {/* Basic Info */}
@@ -124,11 +122,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       {(onBond || onUnbond) && (
         <React.Fragment>
           <div className="actions-buttons">
-            {onBond && (
-              <Button disabled={myTranscoder} onClick={onBond}>
-                Bond
-              </Button>
-            )}
+            {onBond && <Button onClick={onBond}>Bond</Button>}
             {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
           </div>
         </React.Fragment>
