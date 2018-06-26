@@ -47,6 +47,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const isBonded = status === 'Bonded'
   const isUnbonding = status === 'Unbonding'
   const isUnbonded = status === 'Unbonded'
+  const isTranscoder = me.data.transcoder.status === 'Registered'
   const searchParams = new URLSearchParams(history.location.search)
   const TOUR_ENABLED = !!searchParams.get('tour')
   const sort = searchParams.get('sort') || 'totalStake'
@@ -182,7 +183,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           const { id } = props // transcoder id
           const isMyDelegate = id === delegateAddress
           const canRebond = isMyDelegate && (isBonded || isBonding)
-          const canBond = myId // && (canRebond || isUnbonded || isUnbonding)
+          const canBond =
+            myId && (!isTranscoder || (isTranscoder && id === myId))
           const canUnbond = myId && isBonded && isMyDelegate
           return (
             <TranscoderCard

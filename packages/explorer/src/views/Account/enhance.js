@@ -43,7 +43,7 @@ const connectAccountQuery = graphql(accountQuery, {
   }),
 })
 
-const MeDelegatorQuery = gql`
+const MeDelegatorTranscoderQuery = gql`
   fragment DelegatorFragment on Delegator {
     id
     status
@@ -56,6 +56,19 @@ const MeDelegatorQuery = gql`
     withdrawRound
   }
 
+  fragment TranscoderFragment on Transcoder {
+    id
+    active
+    status
+    lastRewardRound
+    rewardCut
+    feeShare
+    pricePerSegment
+    pendingRewardCut
+    pendingFeeShare
+    pendingPricePerSegment
+  }
+
   fragment AccountFragment on Account {
     id
     ethBalance
@@ -63,16 +76,19 @@ const MeDelegatorQuery = gql`
     delegator {
       ...DelegatorFragment
     }
+    transcoder {
+      ...TranscoderFragment
+    }
   }
 
-  query MeDelegatorQuery {
+  query MeDelegatorTranscoderQuery {
     me {
       ...AccountFragment
     }
   }
 `
 
-const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
+const connectMeDelegatorTranscoderQuery = graphql(MeDelegatorTranscoderQuery, {
   props: ({ data, ownProps }) => {
     const { me, ...queryData } = data
     return {
@@ -166,7 +182,7 @@ export default compose(
   connectAccountQuery,
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
-  connectMeDelegatorQuery,
+  connectMeDelegatorTranscoderQuery,
   connectToasts,
   withTransactionHandlers,
   mapMutationHandlers,
