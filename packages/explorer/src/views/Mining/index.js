@@ -16,7 +16,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
 }) => {
   const { loading } = coinbase
   // temporarily hard-code valid address for testing
-  const defaultAddress = '0x4fe9367ef5dad459ae9cc4265c69b1b10a4e1288' //coinbase.data.coinbase
+  const defaultAddress = coinbase.data.coinbase
   const contentLength = 51961420
   const closeModal = () => history.push(history.location.pathname)
   const formatError = err =>

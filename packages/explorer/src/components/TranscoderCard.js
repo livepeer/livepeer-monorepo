@@ -79,7 +79,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           type="percentage"
           value={feeShare}
           width="64px"
-          help="How much the you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
+          help="How much you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
         />
         <TranscoderStat
           label="Price"
