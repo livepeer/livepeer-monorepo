@@ -38,9 +38,9 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     status,
     onBond,
     onUnbond,
-    feeShare,
-    pricePerSegment,
-    rewardCut,
+    pendingFeeShare: feeShare,
+    pendingPricePerSegment: pricePerSegment,
+    pendingRewardCut: rewardCut,
     totalStake,
   }) => (
     <div className={className}>

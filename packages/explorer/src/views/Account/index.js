@@ -29,6 +29,7 @@ type AccountViewProps = {
   coinbase: GraphQLProps<Coinbase>,
   currentRound: GraphQLProps<Round>,
   history: History,
+  location: Location,
   match: Match,
   me: GraphQLProps<Account>,
   unbond: ({ id: string }) => void,
@@ -39,6 +40,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   bond,
   coinbase,
   history,
+  location,
   match,
   me,
   unbond,
@@ -64,7 +66,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
       <ScrollToTopOnMount />
       <BasicNavbar />
       <Banner>
-        <PageHeading>
+        <PageHeading className="page-heading">
           <React.Fragment>
             <Avatar id={accountAddress} size={32} bg="#000" />&nbsp;
             {isMe ? 'My Account' : 'Account'}&nbsp;<span
@@ -125,7 +127,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
               path={`${match.path}/transcoding`}
               component={AccountTranscoding}
             />
-            <Redirect to={`${match.url}/overview`} />
+            <Redirect to={`${match.url}/overview${location.search}`} />
           </Switch>
         </div>
       </Content>

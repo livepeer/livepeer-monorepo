@@ -20,7 +20,7 @@ import enhance from './enhance'
 
 type TranscodersViewProps = {
   bond: ({ id: string }) => void,
-  currentRound: GraphQLProps<Array<Round>>,
+  currentRound: GraphQLProps<Round>,
   history: History,
   match: Match,
   me: GraphQLProps<Account>,
@@ -40,7 +40,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   unbond,
 }) => {
   const {
-    delegator: { bondedAmount, delegateAddress, status },
+    delegator: { bondedAmount, delegateAddress, pendingStake, status },
     tokenBalance,
   } = me.data
   const isBonding = status === 'Pending'
@@ -146,9 +146,9 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                   }}
                 >
                   <option value="totalStake">Total Stake</option>
-                  <option value="rewardCut">Reward Cut</option>
-                  <option value="feeShare">Fee Share</option>
-                  <option value="pricePerSegment">Price</option>
+                  <option value="pendingRewardCut">Reward Cut</option>
+                  <option value="pendingFeeShare">Fee Share</option>
+                  <option value="pendingPricePerSegment">Price</option>
                 </select>
               </div>
               <div style={{ marginLeft: 16 }}>
@@ -191,7 +191,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               {...props}
               key={id}
               bonded={isMyDelegate}
-              bondedAmount={bondedAmount}
+              bondedAmount={pendingStake}
               className="transcoder-card"
               onBond={canBond ? () => bond({ id }) : undefined}
               onUnbond={canUnbond ? () => unbond({ id }) : undefined}
@@ -200,67 +200,56 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
         })}
       </Content>
       {TOUR_ENABLED && (
-        <Joyride
-          callback={({ step }) => {
-            if (step && 'sortingOptions' === step.name) {
-              window.scrollTo(0, 0)
-            }
-          }}
-          debug={false}
+        <Tour
+          // callback={({ step }) => {
+          //   if (step && 'sortingOptions' === step.name) {
+          //     window.scrollTo(0, 0)
+          //   }
+          // }}
+          continuous={true}
           locale={{
-            back: <span>Back</span>,
-            close: <span>Okay</span>,
-            last: <span>Done</span>,
-            next: <span>Next</span>,
-            skip: <span>Skip</span>,
+            back: 'Back',
+            close: 'Okay',
+            last: 'Done',
+            next: 'Next',
+            skip: 'Skip',
           }}
-          run={!transcoders.loading}
-          showOverlay={true}
-          showSkipButton={false}
-          showStepsProgress={true}
+          run={transcoders.data.length > 0 && !me.loading}
+          disableOverlay={false}
+          showProgress={true}
           steps={[
             {
-              name: 'transcoderOverview',
-              position: 'right',
-              selector: '.page-heading',
-              text:
-                'As a delegator, you earn additional Livepeer token when you stake towards transcoders. Let us show you around and help you delegate. If you’re not already, Sign in to your web3 wallet to access your Livepeer token.',
-              title: 'Transcoders List',
-              type: 'click',
+              content:
+                'Transcoders play a critical role in the Livepeer ecosystem. They are the ones who are taking an input stream and converting it into many different formats in a timely manner for low latency distribution.',
+              placement: 'right',
+              target: '.page-heading',
             },
             {
-              name: 'transcoderCard',
-              position: 'bottom',
-              selector: '.transcoder-card',
-              text:
-                'Clicking on a transcoder ETH address lets you learn more about a specific transcoder.',
-              title: 'Transcoder',
-              type: 'click',
+              content: `These cards display protocol metrics relating to each transcoder. These numbers can help you understand which transcoder you would like to bond to.`,
+              placement: 'bottom',
+              target: '.transcoder-card',
             },
-            {
-              name: 'transcoderCardActions',
-              position: 'bottom',
-              selector: '.actions-placeholder',
-              text:
-                'Once you’re ready to choose a transcoder, you can bond by clicking the bond button.',
-              title: 'Bond Your Token',
-              type: 'click',
+            me.data.id && {
+              content:
+                'You can earn additional Livepeer token by bonding towards transcoders. You will need to be signed into your web3 wallet in order to bond.',
+              placement: 'bottom-end',
+              target: '.actions-buttons button',
             },
-            // {
-            //   name: 'sortingOptions',
-            //   position: 'top-right',
-            //   selector: '.filter-sort',
-            //   text:
-            //     'Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio sollicitudin, in neque magna, orci pede, vel eleifend urna.',
-            //   title: 'Sorting Options',
-            //   type: 'click',
-            // },
-          ]}
-          type="continuous"
+          ].filter(Boolean)}
         />
       )}
     </React.Fragment>
   )
+}
+
+class Tour extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    // Don't update if already running (causes beacon/tooltips to blink)
+    return !this.props.run
+  }
+  render() {
+    return <Joyride {...this.props} />
+  }
 }
 
 const createCompareFunction = (asc: boolean, sort: string) => (

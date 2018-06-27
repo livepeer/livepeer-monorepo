@@ -23,11 +23,11 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 ## Table of Contents
 
-* [Requirements](#requirements)
-* [Getting Started](#getting-started)
-* [Contributing](#contributing)
-* [Packages](#packages)
-* [Resources](#resources)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [Packages](#packages)
+- [Resources](#resources)
 
 <!-- hide-on-docup-stop -->
 
@@ -35,9 +35,9 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 This project requires `node >=8.0.0` and `yarn >=1.0.0`. A unix shell is also required.
 
-* [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
-* [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
-* [UNIX Shell (Windows users)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+- [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
+- [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
+- [UNIX Shell (Windows users)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 
 ## Getting Started
 
@@ -63,12 +63,13 @@ We happily await your pull requests and/or involvement in our [issues page](http
 
 ### Published
 
-| Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                                         | Description                                                                                                                         |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| [`@livepeer/chroma`](https://github.com/livepeer/livepeerjs/tree/master/packages/chroma)                                                                                                                                                             | [![npm](https://img.shields.io/npm/v/@livepeer/chroma.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/chroma)           | A component library that contains some UI building blocks for livestreaming video applications.                                     |
-| [`@livepeer/graphql-sdk`](https://github.com/livepeer/livepeerjs/tree/master/packages/graphql-sdk)                                                                                                                                                   | [![npm](https://img.shields.io/npm/v/@livepeer/graphql-sdk.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/graphql-sdk) | A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications. |
-| [`@livepeer/lpx`](https://github.com/livepeer/livepeerjs/tree/master/packages/lpx)                                                                                                                                                                   | [![npm](https://img.shields.io/npm/v/@livepeer/lpx.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/lpx)                 | A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.                               |
-| [`@livepeer/sdk`](https://github.com/livepeer/livepeerjs/tree/master/packages/sdk)                                                                                                                                                                   | [![npm](https://img.shields.io/npm/v/@livepeer/sdk.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/sdk)                 | A module for interacting with Livepeer's smart contracts. A core dependency of most LivepeerJS projects.                            |
+| Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                                           | Description                                                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [`@livepeer/chroma`](https://github.com/livepeer/livepeerjs/tree/master/packages/chroma)                                                                                                                                                             | [![npm](https://img.shields.io/npm/v/@livepeer/chroma.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/chroma)             | A component library that contains some UI building blocks for livestreaming video applications.                                     |
+| [`@livepeer/graphql-sdk`](https://github.com/livepeer/livepeerjs/tree/master/packages/graphql-sdk)                                                                                                                                                   | [![npm](https://img.shields.io/npm/v/@livepeer/graphql-sdk.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/graphql-sdk)   | A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications. |
+| [`@livepeer/lpx`](https://github.com/livepeer/livepeerjs/tree/master/packages/lpx)                                                                                                                                                                   | [![npm](https://img.shields.io/npm/v/@livepeer/lpx.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/lpx)                   | A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.                               |
+| [`@livepeer/merkle-miner`](https://github.com/livepeer/livepeerjs/tree/master/packages/merkle-miner)                                                                                                                                                 | [![npm](https://img.shields.io/npm/v/@livepeer/merkle-miner.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/merkle-miner) | Helpers for mining a merkle proof and generating Livepeer Token                                                                     |
+| [`@livepeer/sdk`](https://github.com/livepeer/livepeerjs/tree/master/packages/sdk)                                                                                                                                                                   | [![npm](https://img.shields.io/npm/v/@livepeer/sdk.svg?style=flat-square)](https://www.npmjs.com/package/@livepeer/sdk)                   | A module for interacting with Livepeer's smart contracts. A core dependency of most LivepeerJS projects.                            |
 
 ### Private
 
@@ -82,8 +83,8 @@ We happily await your pull requests and/or involvement in our [issues page](http
 
 To get a full idea of what Livepeer is about, be sure to take a look at these other resources:
 
-* 🌐 [The Livepeer Website](https://livepeer.org)
-* ✍ [The Livepeer Blog](https://medium.com/livepeer-blog)
-* 📖 [The Livepeer Docs](https://livepeer.readthedocs.io/)
-* 💬 [The Livepeer Chat](https://discord.gg/7wRSUGX)
-* ❓ [The Livepeer Forum](https://forum.livepeer.org/)
+- 🌐 [The Livepeer Website](https://livepeer.org)
+- ✍ [The Livepeer Blog](https://medium.com/livepeer-blog)
+- 📖 [The Livepeer Docs](https://livepeer.readthedocs.io/)
+- 💬 [The Livepeer Chat](https://discord.gg/7wRSUGX)
+- ❓ [The Livepeer Forum](https://forum.livepeer.org/)

@@ -121,10 +121,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         }
       />
       <MetricBox
-        help="Total tokens earned from reward cuts each round"
+        help="Total tokens earned from reward cuts each round. Includes unclaimed token rewards."
         title="Stake"
         suffix="LPT"
-        value={formatBalance(bondedAmount)}
+        value={formatBalance(pendingStake)}
         subvalue={
           withdrawRound === '0'
             ? ''
