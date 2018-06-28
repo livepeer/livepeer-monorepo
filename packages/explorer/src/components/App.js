@@ -17,6 +17,7 @@ import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
 import Mining from '../views/Mining'
 import SmartContracts from '../views/SmartContracts'
+import ProtocolStatus from '../views/ProtocolStatus'
 import ToastNotifications from '../views/ToastNotifications'
 import Token from '../views/Token'
 import Transcoders from '../views/Transcoders'
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/mine" component={Mining} />
+                <Route path="/protocol-status" component={ProtocolStatus} />
               </Switch>
             </CSSTransition>
           </TransitionGroup>
