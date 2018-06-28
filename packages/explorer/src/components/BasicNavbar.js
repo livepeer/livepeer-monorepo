@@ -14,13 +14,14 @@ import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import { Button } from 'rmwc/Button'
 import { Icon } from 'rmwc/Icon'
 import Navbar from './Navbar'
+import BasicModal from './BasicModal'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectToasts,
 } from '../enhancers'
 
-const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
+const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
   const notAuthenticated = !myAccountAddress
   const { host } = window.livepeer.config.eth.currentProvider
@@ -57,6 +58,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
       })
     }
   }
+
   return (
     <Navbar>
       <Nav>
@@ -104,7 +106,11 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
               {networkName}
             </span>
             <span
-              onClick={initializeRound}
+              onClick={
+                currentRound.data.initialized
+                  ? () => (window.location.hash = '#/protocol-status')
+                  : initializeRound
+              }
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -115,10 +121,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
                   : currentRound.data.initialized
                     ? 'var(--primary)'
                     : 'orange',
-                cursor:
-                  currentRound.loading || currentRound.data.initialized
-                    ? 'default'
-                    : 'pointer',
+                cursor: 'pointer',
                 color: '#000',
                 width: 116,
                 whiteSpace: 'nowrap',
