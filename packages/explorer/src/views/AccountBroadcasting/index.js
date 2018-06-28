@@ -48,7 +48,7 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
         help="The amount of Ethereum deposited by this account to pay transcoding fees"
         title="Broadcasting Funds"
         suffix="ETH"
-        value={formatBalance(deposit)}
+        value={formatBalance(deposit, 18)}
         subvalue={
           withdrawBlock !== '0'
             ? `These funds may not be withdrawn until block #${withdrawBlock}`
