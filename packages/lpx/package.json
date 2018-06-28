@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/lpx",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "license": "MIT",
   "bin": {
     "lpx": "bin/index.js"
@@ -14,7 +14,7 @@
     "test": "npx ava"
   },
   "dependencies": {
-    "@livepeer/sdk": "^1.0.0-alpha.4",
+    "@livepeer/sdk": "^1.0.0-alpha.5",
     "as-table": "^1.0.31",
     "babel-runtime": "^6.26.0",
     "cli-spinner": "0.2.8",

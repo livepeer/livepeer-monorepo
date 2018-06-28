@@ -7,14 +7,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # [1.0.0-alpha.5](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2018-06-28)
 
 
+### Features
 
-
-**Note:** Version bump only for package @livepeer/lpx
-
-<a name="1.0.0-alpha.4"></a>
-# [1.0.0-alpha.4](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2018-03-30)
-
-
-
-
-**Note:** Version bump only for package @livepeer/lpx
+* **merkle-miner:** Added a merkle miner module ([#120](https://github.com/livepeer/livepeerjs/issues/120)) ([13f58cc](https://github.com/livepeer/livepeerjs/commit/13f58cc))
