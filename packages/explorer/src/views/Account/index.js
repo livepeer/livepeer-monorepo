@@ -79,33 +79,18 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
           )}
           {/** Bonding Actions */}
           {showBondButtons && (
-            <SimpleMenu
-              handle={
-                <Button
-                  style={{
-                    minWidth: 0,
-                    width: 32,
-                    height: 32,
-                  }}
-                >
-                  <Icon use="arrow_drop_down_circle" />
-                </Button>
-              }
-              onSelected={async ({ detail }) => {
-                const { action } = detail.item.dataset
-                switch (action) {
-                  case 'bond':
-                    return bond({ id: accountAddress })
-                  case 'unbond':
-                    return await unbond({ id: accountAddress })
-                }
-              }}
-            >
+            <span>
               {(canBond || canRebond) && (
-                <MenuItem data-action="bond">Bond</MenuItem>
+                <Button onClick={() => bond({ id: accountAddress })}>
+                  Bond
+                </Button>
               )}
-              {canUnbond && <MenuItem data-action="unbond">Unbond</MenuItem>}
-            </SimpleMenu>
+              {canUnbond && (
+                <Button onClick={() => unbond({ id: accountAddress })}>
+                  Unbond
+                </Button>
+              )}
+            </span>
           )}
         </PageHeading>
         <div style={{ marginBottom: -32, paddingTop: 32 }}>
