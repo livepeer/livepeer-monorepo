@@ -3,7 +3,6 @@ import * as React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import QRCode from 'qrcode-react'
 import { MoreVertical as MoreVerticalIcon } from 'react-feather'
-import { Button } from 'rmwc/Button'
 import { Icon } from 'rmwc/Icon'
 import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import AccountOverview from '../AccountOverview'
@@ -14,6 +13,7 @@ import {
   Avatar,
   Banner,
   BasicNavbar,
+  Button,
   Content,
   Footer,
   PageHeading,
@@ -79,14 +79,22 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
           )}
           {/** Bonding Actions */}
           {showBondButtons && (
-            <span>
+            <span style={{ marginLeft: 8 }}>
               {(canBond || canRebond) && (
-                <Button onClick={() => bond({ id: accountAddress })}>
+                <Button
+                  className="outlined"
+                  style={{ margin: 4 }}
+                  onClick={() => bond({ id: accountAddress })}
+                >
                   Bond
                 </Button>
               )}
               {canUnbond && (
-                <Button onClick={() => unbond({ id: accountAddress })}>
+                <Button
+                  className="outlined"
+                  style={{ margin: 4 }}
+                  onClick={() => unbond({ id: accountAddress })}
+                >
                   Unbond
                 </Button>
               )}
