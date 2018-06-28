@@ -3,7 +3,6 @@ import * as React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import QRCode from 'qrcode-react'
 import { MoreVertical as MoreVerticalIcon } from 'react-feather'
-import { Button } from 'rmwc/Button'
 import { Icon } from 'rmwc/Icon'
 import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import AccountOverview from '../AccountOverview'
@@ -14,6 +13,7 @@ import {
   Avatar,
   Banner,
   BasicNavbar,
+  Button,
   Content,
   Footer,
   PageHeading,
@@ -79,33 +79,26 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
           )}
           {/** Bonding Actions */}
           {showBondButtons && (
-            <SimpleMenu
-              handle={
-                <Button
-                  style={{
-                    minWidth: 0,
-                    width: 32,
-                    height: 32,
-                  }}
-                >
-                  <Icon use="arrow_drop_down_circle" />
-                </Button>
-              }
-              onSelected={async ({ detail }) => {
-                const { action } = detail.item.dataset
-                switch (action) {
-                  case 'bond':
-                    return bond({ id: accountAddress })
-                  case 'unbond':
-                    return await unbond({ id: accountAddress })
-                }
-              }}
-            >
+            <span style={{ marginLeft: 8 }}>
               {(canBond || canRebond) && (
-                <MenuItem data-action="bond">Bond</MenuItem>
+                <Button
+                  className="outlined"
+                  style={{ margin: 4 }}
+                  onClick={() => bond({ id: accountAddress })}
+                >
+                  Bond
+                </Button>
               )}
-              {canUnbond && <MenuItem data-action="unbond">Unbond</MenuItem>}
-            </SimpleMenu>
+              {canUnbond && (
+                <Button
+                  className="outlined"
+                  style={{ margin: 4 }}
+                  onClick={() => unbond({ id: accountAddress })}
+                >
+                  Unbond
+                </Button>
+              )}
+            </span>
           )}
         </PageHeading>
         <div style={{ marginBottom: -32, paddingTop: 32 }}>
