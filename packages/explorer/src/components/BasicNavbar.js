@@ -14,6 +14,7 @@ import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import { Button } from 'rmwc/Button'
 import { Icon } from 'rmwc/Icon'
 import Navbar from './Navbar'
+import BasicModal from './BasicModal'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
