@@ -72,6 +72,10 @@ export const mockAccount = ({ id = '', ...account } = {}) => ({
   }),
 })
 
+export const mockBlock = ({ id = '' } = {}) => ({
+  id,
+})
+
 export const mockBroadcaster = ({ id = '', ...broadcaster } = {}) => ({
   deposit: '0',
   id,

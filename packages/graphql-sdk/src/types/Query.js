@@ -1,4 +1,5 @@
 import Account from './Account'
+import Block from './Block'
 import Broadcaster from './Broadcaster'
 import Delegator from './Delegator'
 import Job from './Job'
@@ -14,14 +15,17 @@ type Query {
 
   "An Account by ETH address or ENS name"
   account(id: String): Account!
-
+  
   "A Broadcaster by ETH address"
   broadcaster(id: String!): Broadcaster!
-
+  
   "The currently authenticated user's ETH address"
   coinbase: String!
 
-  "Gets the current round"
+  "The current Ethereum block"
+  currentBlock: Block!
+
+  "The current round in the Livepeer protocol"
   currentRound: Round!
 
   "A Delegator by ETH address"
@@ -59,6 +63,7 @@ type Query {
 export default () => [
   Query,
   Account,
+  Block,
   Broadcaster,
   Delegator,
   Job,

@@ -5,7 +5,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
-import { mockRound, mockProtocol } from '@livepeer/graphql-sdk'
+import { mockBlock, mockRound, mockProtocol } from '@livepeer/graphql-sdk'
 import { ToastNotificationContainer } from '../containers'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
@@ -155,6 +155,35 @@ export const connectCoinbaseQuery = graphql(CoinbaseQuery, {
   options: () => ({
     // this query doesn't touch the network, so we can run it often
     pollInterval: 1000,
+    variables: {},
+  }),
+})
+
+const CurrentBlockQuery = gql`
+  fragment BlockFragment on Block {
+    id
+  }
+
+  query CurrentBlockQuery {
+    currentBlock {
+      ...BlockFragment
+    }
+  }
+`
+
+export const connectCurrentBlockQuery = graphql(CurrentBlockQuery, {
+  props: ({ data, ownProps }) => {
+    const { currentBlock, ...queryData } = data
+    return {
+      ...ownProps,
+      currentBlock: {
+        ...queryData,
+        data: mockBlock(currentBlock),
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 15 * 1000,
     variables: {},
   }),
 })

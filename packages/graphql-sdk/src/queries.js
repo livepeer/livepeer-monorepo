@@ -1,4 +1,5 @@
 import { default as AccountFragment } from './fragments/Account'
+import { default as BlockFragment } from './fragments/Block'
 import { default as BroadcasterFragment } from './fragments/Broadcaster'
 import { default as DelegatorFragment } from './fragments/Delegator'
 import { default as JobFragment } from './fragments/Job'
@@ -52,6 +53,15 @@ query BroadcasterQuery($id: String!, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit
 export const CoinbaseQuery = `
 query CoinbaseQuery {
   coinbase
+}
+`
+
+export const CurrentBlockQuery = `
+${BlockFragment}
+query CurrentBlockQuery {
+  currentBlock {
+    ...BlockFragment
+  }
 }
 `
 

@@ -28,6 +28,13 @@ const livepeer = {
     VIDEO_PROFILES,
   },
   rpc: {
+    getBlock: async id => ({
+      number: /latest/.test(id)
+        ? `${CURRENT_BLOCK++}`
+        : /earliest/.test(id)
+          ? '0'
+          : `${id}`,
+    }),
     getENSName: async id => ALL_ENS_NAMES[id] || '',
     getENSAddress: async name => ALL_ENS_ADDRESSES[name] || '',
     getEthBalance: async id =>
@@ -72,6 +79,8 @@ const livepeer = {
 /**
  * Mock Contract Data
  */
+
+let CURRENT_BLOCK = 0
 
 const ALL_ENS_ADDRESSES = {
   'foo.test': EMPTY_ADDRESS.replace(/00/g, '11'),

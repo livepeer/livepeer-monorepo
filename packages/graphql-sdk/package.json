@@ -11,7 +11,7 @@
     "postbuild": "node generate-schema.js",
     "copy-docs": "rm -rf ../../docs/graphql-sdk && mkdir ../../docs/graphql-sdk && cp -r docs/* ../../docs/graphql-sdk",
     "docs": "npx graphdoc --force && echo 'main .title { background: #000; }' >> ./docs/styles/graphdoc.css && npx graphql-markdown ./schema.json --update-file README.md --heading-level 2",
-    "graphiql": "yarn build && node ./server.js",
+    "graphiql": "node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepack": "npm -s run build",
     "test": "npx nyc ava",

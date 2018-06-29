@@ -18,6 +18,10 @@ type QueryBroadcasterArgs = {
   id?: string,
 }
 
+type QueryCurrentBlockArgs = {}
+
+type QueryCurrentRoundArgs = {}
+
 type QueryDelegatorArgs = {
   id?: string,
 }
@@ -31,8 +35,6 @@ type QueryJobsArgs = {
   skip?: number,
   limit?: number,
 }
-
-type QueryRoundArgs = {}
 
 type QueryTranscoderArgs = {
   id?: string,
@@ -86,6 +88,41 @@ export async function broadcaster(
  */
 export async function coinbase(obj, args, ctx) {
   return ctx.account || ''
+}
+
+/**
+ * Gets the current Ethereum block
+ * @param {QueryObj} obj
+ * @param {QueryCurrentBlockArgs} args
+ * @param {GQLContext} ctx
+ * @return {Block}
+ */
+export async function currentBlock(
+  obj: QueryObj,
+  args: QueryCurrentBlockArgs,
+  ctx: GQLContext,
+): Block {
+  const result = await ctx.livepeer.rpc.getBlock('latest')
+  return {
+    ...result,
+    id: result.number,
+  }
+}
+
+/**
+ * Gets a the current round
+ * @param {QueryObj} obj
+ * @param {QueryCurrentRoundArgs} args
+ * @param {GQLContext} ctx
+ * @return {Round}
+ */
+export async function currentRound(
+  obj: QueryObj,
+  args: QueryCurrentRoundArgs,
+  ctx: GQLContext,
+): Round {
+  const result = await ctx.livepeer.rpc.getCurrentRoundInfo()
+  return result
 }
 
 /**
@@ -163,22 +200,6 @@ export async function me(obj, args, ctx) {
   const id = ctx.account
   if (!id) throw new Error(`No unlocked account is available`)
   return { id }
-}
-
-/**
- * Gets a the current round
- * @param {QueryObj} obj
- * @param {QueryRoundArgs} args
- * @param {GQLContext} ctx
- * @return {Round}
- */
-export async function currentRound(
-  obj: QueryObj,
-  args: QueryRoundArgs,
-  ctx: GQLContext,
-): Round {
-  const result = await ctx.livepeer.rpc.getCurrentRoundInfo()
-  return result
 }
 
 /**
@@ -301,13 +322,13 @@ export async function transcoders(
 /**
  * Gets a the protocol
  * @param {QueryObj} obj
- * @param {QueryRoundArgs} args
+ * @param {QueryCurrentRoundArgs} args
  * @param {GQLContext} ctx
  * @return {Round}
  */
 export async function protocol(
   obj: QueryObj,
-  args: QueryRoundArgs,
+  args: QueryCurrentRoundArgs,
   ctx: GQLContext,
 ): Round {
   return {

@@ -9,6 +9,7 @@ import {
   AccountBroadcasterQuery,
   BroadcasterQuery,
   CoinbaseQuery,
+  CurrentBlockQuery,
   CurrentRoundQuery,
   DelegatorQuery,
   JobQuery,
@@ -136,6 +137,16 @@ test('AccountBroadcasterQuery (include jobs using skip/limit args)', async t => 
     { livepeer },
     args,
   )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+/**
+ * Block
+ */
+test('CurrentBlockQuery', async t => {
+  const args = {}
+  const res = await graphql(schema, CurrentBlockQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })

@@ -91,8 +91,24 @@
               "deprecationReason": null
             },
             {
+              "name": "currentBlock",
+              "description": "The current Ethereum block",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Block",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "currentRound",
-              "description": "Gets the current round",
+              "description": "The current round in the Livepeer protocol",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1373,6 +1389,33 @@
               "deprecationReason": null
             }
           ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Block",
+          "description": "Info about an Ethereum block.",
+          "fields": [
+            {
+              "name": "id",
+              "description": "The block number",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
           "possibleTypes": null
         },
         {

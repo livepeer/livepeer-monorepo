@@ -157,6 +157,37 @@ test('should return object with correct shape from getFaucetInfo()', async t => 
   t.pass()
 })
 
+// Block
+
+test('should return object with correct shape from getBlock()', async t => {
+  const schema = object({
+    number: string,
+    hash: string,
+    parentHash: string,
+    nonce: string,
+    sha3Uncles: string,
+    logsBloom: string,
+    transactionsRoot: string,
+    stateRoot: string,
+    receiptsRoot: string,
+    miner: string,
+    mixHash: string,
+    difficulty: string,
+    totalDifficulty: string,
+    extraData: string,
+    size: string,
+    gasLimit: string,
+    gasUsed: string,
+    timestamp: number,
+    transactions: array(object({})),
+    transactionsRoot: string,
+    uncles: array(string),
+  })
+  const res = await livepeer.rpc.getBlock('latest')
+  schema.validateSync(res)
+  t.pass()
+})
+
 // Broadcaster
 
 test('should return object with correct shape from getBroadcaster()', async t => {

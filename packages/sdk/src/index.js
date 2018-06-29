@@ -581,6 +581,7 @@ export default async function createLivepeerSDK(
      * So most of the time, this method just returns an empty string
      * More info here:
      * (https://docs.ens.domains/en/latest/userguide.html#reverse-name-resolution)
+     * @memberof livepeer~rpc
      * @param {string} address - address to look up an ENS name for
      * @return {Promise<string>}
      *
@@ -607,6 +608,7 @@ export default async function createLivepeerSDK(
 
     /**
      * Gets the address for an ENS name
+     * @memberof livepeer~rpc
      * @param {string} name - ENS name to look up an address for
      * @return {Promise<string>}
      *
@@ -628,6 +630,54 @@ export default async function createLivepeerSDK(
         }
         // if there's no name, we can just resolve an empty string
         return ''
+      }
+    },
+
+    /**
+     * Gets a block by number, hash, or keyword ('earliest' | 'latest')
+     * @memberof livepeer~rpc
+     * @param {string} block - Number of block to get
+     *
+     * @example
+     *
+     * await rpc.getBlock('latest')
+     * // => {
+     *   "number": string,
+     *   "hash": string,
+     *   "parentHash": string,
+     *   "nonce": string,
+     *   "sha3Uncles": string,
+     *   "logsBloom": string,
+     *   "transactionsRoot": string,
+     *   "stateRoot": string,
+     *   "receiptsRoot": string,
+     *   "miner": string,
+     *   "mixHash": string,
+     *   "difficulty": string,
+     *   "totalDifficulty": string,
+     *   "extraData": string,
+     *   "size": string,
+     *   "gasLimit": string,
+     *   "gasUsed": string,
+     *   "timestamp": number,
+     *   "transactions": Array<Transaction>,
+     *   "transactionsRoot": string,
+     *   "uncles": Array<Uncle>,
+     * }
+     */
+    async getBlock(id: string): Promise<Block> {
+      const block = id.startsWith('0x')
+        ? await config.eth.getBlockByHash(id, true)
+        : await config.eth.getBlockByNumber(id, true)
+      return {
+        ...block,
+        difficulty: toString(block.difficulty),
+        gasLimit: toString(block.gasLimit),
+        gasUsed: toString(block.gasUsed),
+        number: toString(block.number),
+        size: toString(block.size),
+        timestamp: Number(toString(block.timestamp)),
+        totalDifficulty: toString(block.totalDifficulty),
       }
     },
 
@@ -2088,6 +2138,34 @@ export default async function createLivepeerSDK(
    * @prop {string} startBlock - the start block of the current round
    * @prop {string} lastInitializedRound - the last round that was initialized prior to the current
    * @prop {string} length - the length of rounds
+   */
+
+  /**
+   * An object containing information about an Ethereum block
+   * @typedef {Object} Block
+   * @prop {string} number - block number
+   * @prop {string} hash - block hash
+   * @prop {string} parentHash - parent has of the block
+   * @prop {string} nonce - block nonce
+   * @prop {string} sha3Uncles - block sha3 uncles
+   * @prop {string} logsBloom - logss bloom for the block
+   * @prop {string} transactionsRoot - block transaction root hash
+   * @prop {string} stateRoot - block state root hash
+   * @prop {string} receiptsRoot - block receipts root hash
+   * @prop {string} miner - block miner hash
+   * @prop {string} mixHash - block mixHash
+   * @prop {string} difficulty - difficulty int
+   * @prop {string} totalDifficulty - total difficulty int
+   * @prop {string} extraData - hash of extra data
+   * @prop {string} size - block size
+   * @prop {string} gasLimit - block gas limit
+   * @prop {string} gasUsed - gas used in block
+   * @prop {number} timestamp - block timestamp
+   * @prop {string} transactions - block transactions hash
+   * @prop {string} uncles - block uncles hash
+   * @prop {Array<Transaction>} transactions - transactions in the block
+   * @prop {string} transactionsRoot - root transaction hash
+   * @prop {Array<Uncle>} uncles - block uncles
    */
 
   /**
