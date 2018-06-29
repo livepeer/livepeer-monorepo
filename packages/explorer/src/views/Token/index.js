@@ -37,10 +37,10 @@ const TokenView = ({ ...props }) => {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
               <p style={{ fontSize: 14 }}>
-                {`All Livepeer Token (LPT) holders can participate in our Delegated Proof-of-Stake (DPoS) protocol. Here's how to get started:`}
+                {`Livepeer Token (LPT) holders can participate in our Delegated Proof-of-Stake (DPoS) protocol. If you had greater than 0.1 ETH in your account on March 16th, you can generate 2.44 LPT. Here's how to get started:`}
               </p>
               <ol>
-                <li>Mine & Claim Token</li>
+                <li>Mine & Generate Token</li>
                 <li>Bond Your Token to A Transcoder</li>
               </ol>
               <Button

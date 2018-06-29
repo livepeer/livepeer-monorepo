@@ -11734,7 +11734,7 @@ react-final-form-html5-validation@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-final-form-html5-validation/-/react-final-form-html5-validation-1.0.0.tgz#6e959b4d430f60e2238b85cd2a2d5c52e8f72d3b"
 
-react-final-form@^3.1.2:
+react-final-form@^3.6.3:
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/react-final-form/-/react-final-form-3.6.4.tgz#1ca37935c2af0bc659a53b293dd84a75d2381548"
 

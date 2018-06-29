@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Prompt } from 'react-router-dom'
 import { Form, Field } from 'react-final-form'
+import { Link } from 'react-router-dom'
 import Confetti from 'react-dom-confetti'
 import styled, { keyframes } from 'styled-components'
 import MerkleMiner from '@livepeer/merkle-miner'
@@ -8,14 +9,18 @@ import { withProp } from '../../enhancers'
 import { BasicModal, Button } from '../../components'
 import enhance from './enhance'
 
-type MiningViewProps = {}
+type MiningViewProps = {
+  generateToken: ({ address: string, proof: string }) => Promise<*>,
+}
 
 const MiningView: React.ComponentType<MiningViewProps> = ({
   coinbase,
+  generateToken,
   history,
 }) => {
   const { loading } = coinbase
-  // temporarily hard-code valid address for testing
+  // You can hard-code a valid address for testing purpose
+  // const defaultAddress = '0x4fe9367ef5dad459ae9cc4265c69b1b10a4e1288'
   const defaultAddress = coinbase.data.coinbase
   const contentLength = 51961420
   const closeModal = () => history.push(history.location.pathname)
@@ -30,6 +35,25 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
     <BasicModal title="Mine Livepeer Token">
       {loading ? (
         <p>Loading...</p>
+      ) : !defaultAddress ? (
+        <React.Fragment>
+          <p>
+            In order to mine, you will need to log into your ETH account using a
+            web3-enabled browser or plugin. If you are not sure how to do this,
+            please read our guide:
+          </p>
+          <h3>
+            <a
+              href="https://forum.livepeer.org/t/how-to-install-metamask-on-chrome-browser-to-enable-web-3-0/272"
+              target="_blank"
+            >
+              How to Install MetaMask &rarr;
+            </a>
+          </h3>
+          <div style={{ textAlign: 'right', paddingTop: 24 }}>
+            <Button onClick={closeModal}>Okay</Button>
+          </div>
+        </React.Fragment>
       ) : (
         <TokenMiner
           allowManualEntry={false}
@@ -38,6 +62,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
           renderError={renderError}
           input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
           onCancel={closeModal}
+          onGenerateToken={generateToken}
           onDone={e => {
             e.preventDefault()
             console.log('view account...')
@@ -186,29 +211,26 @@ class TokenMiner extends React.Component {
         proof: await miner.getProof(input, address.substr(2), contentLength),
       })
   }
-  generateToken = async ({ address, proof }) => {
-    try {
-      // TODO: move into GraphQL schema
-      console.log('generate token for address', address)
-      console.log('with proof', proof)
-      const { livepeer } = window
-      await livepeer.config.eth.sendTransaction({
-        ...livepeer.config.defaultTx,
-        to: '0x8e306b005773bee6ba6a6e8972bc79d766cc15c8',
-        value: '0',
-        data:
-          `0x2c84bfa6000000000000000000000000${address.substr(2)}` +
-          '0000000000000000000000000000000000000000000000000000000000000040' +
-          '00000000000000000000000000000000000000000000000000000000000002c0' +
-          proof,
-      })
-    } catch (err) {
-      // Catch any error for now, so we always trigger success state
-      console.warn(err)
-    } finally {
-      console.log('generated token!')
+  generateToken = async opts => {
+    const maybeError = await this.props.onGenerateToken(opts)
+    if (!maybeError) {
       this.setState({ done: true })
+    } else {
+      const [submitError] = Object.values(maybeError)
+      if (!/User denied/.test(submitError)) {
+        this.setState({
+          error: (
+            <React.Fragment>
+              <p>
+                Sorry, it looks like there was a problem generating your token:
+              </p>
+              <p>{submitError}</p>
+            </React.Fragment>
+          ),
+        })
+      }
     }
+    return maybeError
   }
   render() {
     const { allowManualEntry, renderError, onCancel, onDone } = this.props
@@ -251,11 +273,13 @@ const GenerateTokenForm: React.ComponentType<GenerateTokenFormProps> = withProp(
     handleSubmit,
     onCancel,
     onDone,
+    reset,
     submitting,
+    submitError,
+    submitFailed,
     submitSucceeded,
     ...props
   }) => {
-    // console.log(submitting, submitSucceeded, props)
     const confetti = (
       <Confetti
         active={submitSucceeded}
@@ -268,7 +292,32 @@ const GenerateTokenForm: React.ComponentType<GenerateTokenFormProps> = withProp(
         }}
       />
     )
-    if (submitSucceeded && !submitting)
+    if (submitFailed && submitError && !/User denied/.test(submitError)) {
+      return (
+        <React.Fragment>
+          {confetti}
+          <p>
+            There was an error submitting your transaction. See error message
+            below for more details:
+          </p>
+          <pre>
+            <textarea disabled readOnly style={{ height: 320, width: '100%' }}>
+              {submitError}
+            </textarea>
+          </pre>
+          <p>
+            You can also{' '}
+            <Link to="/me/overview">view your recent protocol activity</Link> on
+            your account overview page.
+          </p>
+          <div style={{ textAlign: 'right', paddingTop: 24 }}>
+            {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+            <Button onClick={reset}>Try Again</Button>
+          </div>
+        </React.Fragment>
+      )
+    }
+    if (submitSucceeded)
       return (
         <React.Fragment>
           {confetti}
