@@ -4,9 +4,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { connectCurrentRoundQuery, connectToasts } from '../../enhancers'
 import { MathBN, sleep } from '../../utils'
-import { utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
-
-const { mockAccount } = gqlSDKUtils
+import { mockAccount } from '@livepeer/graphql-sdk'
 
 const MeDelegatorTranscoderQuery = gql`
   fragment DelegatorFragment on Delegator {

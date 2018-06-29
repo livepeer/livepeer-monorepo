@@ -27,7 +27,7 @@ type AccountViewProps = {
   account: GraphQLProps<Account>,
   bond: ({ id: string }) => void,
   coinbase: GraphQLProps<Coinbase>,
-  currentRound: GraphQLProps<Array<Round>>,
+  currentRound: GraphQLProps<Round>,
   history: History,
   match: Match,
   me: GraphQLProps<Account>,

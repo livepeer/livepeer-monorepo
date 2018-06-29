@@ -1,15 +1,13 @@
 import { compose, lifecycle } from 'recompose'
 import { graphql, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
-import { utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
+import { mockAccount } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectTransactionsQuery,
   TransactionSubmittedSubscription,
   withTransactionHandlers,
 } from '../../enhancers'
-
-const { mockAccount } = gqlSDKUtils
 
 const accountQuery = gql`
   fragment AccountFragment on Account {

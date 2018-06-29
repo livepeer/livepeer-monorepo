@@ -3,7 +3,7 @@ import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { queries, utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
+import { mockAccount } from '@livepeer/graphql-sdk'
 import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
@@ -23,7 +23,6 @@ import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 
 const { changeChannel } = routingActions
-const { mockAccount } = gqlSDKUtils
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -33,7 +32,10 @@ const mapDispatchToProps = dispatch =>
     dispatch,
   )
 
-const connectRedux = connect(null, mapDispatchToProps)
+const connectRedux = connect(
+  null,
+  mapDispatchToProps,
+)
 
 const AccountBroadcasterQuery = gql`
   fragment BroadcasterFragment on Broadcaster {
@@ -77,7 +79,6 @@ const AccountBroadcasterQuery = gql`
 const connectApollo = graphql(AccountBroadcasterQuery, {
   props: ({ data, ownProps }, state) => {
     const { account, ...queryProps } = data
-    console.log(data)
     return {
       ...ownProps,
       account: {
@@ -98,7 +99,10 @@ const connectApollo = graphql(AccountBroadcasterQuery, {
   },
 })
 
-const enhance = compose(connectRedux, connectApollo)
+const enhance = compose(
+  connectRedux,
+  connectApollo,
+)
 
 class Channel extends Component {
   state = {

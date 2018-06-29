@@ -8,9 +8,7 @@ import {
   connectToasts,
 } from '../../enhancers'
 import { sleep, toBaseUnit, wireTransactionToStatus } from '../../utils'
-import { utils as gqlSDKUtils } from '@livepeer/graphql-sdk'
-
-const { mockAccount } = gqlSDKUtils
+import { mockAccount } from '@livepeer/graphql-sdk'
 
 const MeDelegatorQuery = gql`
   fragment AccountFragment on Account {
