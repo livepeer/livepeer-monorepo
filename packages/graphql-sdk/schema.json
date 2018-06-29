@@ -2024,6 +2024,33 @@
               "deprecationReason": null
             },
             {
+              "name": "sendTransaction",
+              "description": "Sends a transaction based on an input object",
+              "args": [
+                {
+                  "name": "options",
+                  "description": "",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "JSON",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "unbond",
               "description": "Submits a bond transaction for a previously approved amount",
               "args": [],

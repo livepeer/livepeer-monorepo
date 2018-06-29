@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import Joyride from 'react-joyride'
 import {
   DownloadCloud as DownloadCloudIcon,
   Plus as PlusIcon,
@@ -29,6 +30,7 @@ import enhance from './enhance'
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
   coinbase: GraphQLProps<Coinbase>,
+  history: History,
   match: Match,
   onDepositETH: (e: Event) => void,
   onRequestETH: (e: Event) => void,
@@ -40,6 +42,7 @@ type AccountOverviewProps = {
 const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   account,
   coinbase,
+  history,
   match,
   onDepositETH,
   onRequestETH,
@@ -47,6 +50,8 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   onTransferLPT,
   transactions,
 }) => {
+  const searchParams = new URLSearchParams(history.location.search)
+  const TOUR_ENABLED = !!searchParams.get('tour')
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { ethBalance, id, tokenBalance } = account.data
   const IS_MAINNET = window.web3 && `${window.web3.version.network}` === '1'
@@ -61,6 +66,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   </InlineHint>*/}
       <Wrapper>
         <MetricBox
+          className="eth-address"
           help="The Ethereum address representing this account"
           title="ETH Address"
           width="100%"
@@ -70,6 +76,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
       <Wrapper>
         {/** ETH */}
         <MetricBox
+          className="eth-balance"
           help="The amount of Ethereum owned by this account"
           title="ETH Balance"
           suffix="ETH"
@@ -78,6 +85,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
         />
         {/** LPT */}
         <MetricBox
+          className="token-balance"
           help="The amount of Livepeer Token (LPT) owned by this account"
           title="Livepeer Token Balance"
           suffix="LPT"
@@ -97,6 +105,17 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
               <Button onClick={onTransferLPT}>
                 <SendIcon size={12} />
                 <span style={{ marginLeft: 8 }}>transfer</span>
+              </Button>
+              {/** bond */}
+              <Button
+                className="bond-token primary"
+                onClick={e => {
+                  e.preventDefault()
+                  history.push(`/transcoders?tour=true`)
+                }}
+              >
+                <span>bond to a transcoder</span>
+                <span style={{ marginLeft: 8 }}>&rarr;</span>
               </Button>
             </React.Fragment>
           )}
@@ -137,8 +156,65 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           </div>
         </Content>
       </Wrapper>
+      {TOUR_ENABLED &&
+        isMe && (
+          <Tour
+            callback={({ action, index, type }) => {
+              console.log(action, index, type)
+              if (action === 'next' && type === 'tour:end') {
+                history.push(`/transcoders?tour=true`)
+              }
+            }}
+            continuous={true}
+            disableOverlay={false}
+            locale={{
+              back: 'Back',
+              close: 'Okay',
+              last: 'Get Started',
+              next: 'Next',
+              skip: 'Skip',
+            }}
+            run={!account.loading}
+            showProgress={true}
+            steps={[
+              {
+                content:
+                  'Welcome to your account page. This is where you can find important information about your Livepeer account.',
+                placement: 'right',
+                target: '.page-heading',
+              },
+              {
+                content:
+                  'This is the Ethereum wallet address that holds your Livepeer Token.',
+                placement: 'top',
+                target: '.eth-address',
+              },
+              {
+                content:
+                  'This is the amount of Livepeer Token you currently own.',
+                placement: 'top',
+                target: '.token-balance',
+              },
+              {
+                content: `You can bond these tokens to a transcoder to earn additional LPT and ETH every day. Bonding as soon as possible will help you maximize your earnings. Why not get started?`,
+                placement: 'bottom',
+                target: '.bond-token',
+              },
+            ]}
+          />
+        )}
     </React.Fragment>
   )
+}
+
+class Tour extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    // Don't update if already running (causes beacon/tooltips to blink)
+    return !this.props.run
+  }
+  render() {
+    return <Joyride {...this.props} />
+  }
 }
 
 class TransactionCard extends React.Component {

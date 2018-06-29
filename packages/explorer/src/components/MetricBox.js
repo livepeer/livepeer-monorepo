@@ -12,9 +12,10 @@ const MetricBox = ({
   prefix,
   width,
   children,
+  ...props
 }) => {
   return (
-    <Box width={width || '50%'}>
+    <Box width={width || '50%'} {...props}>
       <h2
         style={{
           margin: 0,

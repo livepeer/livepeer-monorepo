@@ -106,6 +106,33 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       font-size: 16px;
       margin-top: 11px;
     }
+    .joyride-beacon span:nth-child(1) {
+      background-color: var(--primary) !important;
+    }
+    .joyride-beacon span:nth-child(2) {
+      background-color: rgba(0, 235, 135, .2) !important;
+      border: 2px solid var(--primary) !important;
+    }
+    .__floater__body div div:nth-child(2) {
+      justify-content: flex-end !important;
+      button {
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 8px 12px !important;
+        margin: 8px !important;
+        background-image: none !important !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
+        font-size: 12px !important;
+        outline: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        cursor: pointer !important;
+        background: none !important;
+        color: #000 !important;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35) !important;
+      }
+    }
   `
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
   // bootstrap the apollo client

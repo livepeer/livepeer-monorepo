@@ -154,6 +154,16 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
             <HomeIcon size={16} />
             <span>&nbsp;Overview</span>
           </NavbarLink>
+          <NavbarLink exact to="/token">
+            <Icon
+              stategy="url"
+              use={`/static/images/lpt-${
+                window.location.pathname === '/token' ? 'green' : 'light'
+              }.svg`}
+              style={{ width: 16 }}
+            />
+            <span>&nbsp;Token</span>
+          </NavbarLink>
           <NavbarLink to="/transcoders">
             <CpuIcon size={16} />
             <span>&nbsp;Transcoders</span>

@@ -6,14 +6,14 @@
 [![coverage](https://github.com/livepeer/livepeerjs/raw/master/packages/graphql-sdk/coverage.svg?sanitize=true)](https://codeclimate.com/github/livepeer/livepeerjs/code?q=packages%2Fgraphql-sdk%2Fsrc)
 [![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/graphql-sdk.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/graphql-sdk)
 
-A GraphQL API that can be used to simplify protocol interaction. It can be used directly in the browser or in node.js applications.
+A GraphQL schema that can be used to simplify protocol interactions in the browser or node.js.
 
 <!-- hide-on-docup-start -->
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Schema Types](#schema-types)
+- [Installation](#installation)
+- [Schema Types](#schema-types)
   <!-- -   [API](#api) -->
 
 <!-- hide-on-docup-stop -->
@@ -31,27 +31,27 @@ yarn add @livepeer/graphql-sdk
 <details>
   <summary><strong>Table of Contents</strong></summary>
 
-* [Query](#query)
-* [Objects](#objects)
-  * [Account](#account)
-  * [Broadcaster](#broadcaster)
-  * [Delegator](#delegator)
-  * [Job](#job)
-  * [JobProfile](#jobprofile)
-  * [Mutation](#mutation)
-  * [Protocol](#protocol)
-  * [Round](#round)
-  * [Subscription](#subscription)
-  * [Transaction](#transaction)
-  * [Transcoder](#transcoder)
-* [Enums](#enums)
-  * [DelegatorStatus](#delegatorstatus)
-  * [TranscoderStatus](#transcoderstatus)
-* [Scalars](#scalars)
-  * [Boolean](#boolean)
-  * [Int](#int)
-  * [JSON](#json)
-  * [String](#string)
+- [Query](#query)
+- [Objects](#objects)
+  - [Account](#account)
+  - [Broadcaster](#broadcaster)
+  - [Delegator](#delegator)
+  - [Job](#job)
+  - [JobProfile](#jobprofile)
+  - [Mutation](#mutation)
+  - [Protocol](#protocol)
+  - [Round](#round)
+  - [Subscription](#subscription)
+  - [Transaction](#transaction)
+  - [Transcoder](#transcoder)
+- [Enums](#enums)
+  - [DelegatorStatus](#delegatorstatus)
+  - [TranscoderStatus](#transcoderstatus)
+- [Scalars](#scalars)
+  - [Boolean](#boolean)
+  - [Int](#int)
+  - [JSON](#json)
+  - [String](#string)
 
 </details>
 

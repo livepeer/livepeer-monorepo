@@ -122,6 +122,17 @@ export const connectClaimEarningsMutation = graphql(
   },
 )
 
+export const connectSendTransactionMutation = graphql(
+  gql`
+    mutation sendTransaction($options: JSON!) {
+      sendTransaction(options: $options)
+    }
+  `,
+  {
+    name: 'sendTransaction',
+  },
+)
+
 export const connectUnbondMutation = graphql(
   gql`
     mutation unbond {

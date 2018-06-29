@@ -15,6 +15,7 @@ const MeDelegatorTranscoderQuery = gql`
     fees
     delegatedAmount
     lastClaimRound
+    pendingStake
     startRound
     withdrawRound
   }

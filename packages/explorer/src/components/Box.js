@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const Box = ({ children, width }) => {
+const Box = ({ children, width, ...props }) => {
   return (
-    <OuterBox width={width}>
+    <OuterBox width={width} {...props}>
       <InnerBox>{children}</InnerBox>
     </OuterBox>
   )

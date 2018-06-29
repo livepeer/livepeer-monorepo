@@ -12,6 +12,9 @@ type Mutation {
   "Claims earnings from your last claim round through specified round"
   claimEarnings(endRound: String!): Boolean
 
+  "Sends a transaction based on an input object"
+  sendTransaction(options: JSON!): Boolean
+
   "Submits a bond transaction for a previously approved amount"
   unbond: Boolean
 
