@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
-    "ethereum-ens": "^0.7.4",
     "ethereumjs-tx": "^1.3.4",
     "ethjs": "^0.3.0",
     "ethjs-abi": "^0.2.1",
