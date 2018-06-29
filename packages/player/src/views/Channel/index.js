@@ -25,8 +25,6 @@ import Modal from 'react-responsive-modal'
 const { changeChannel } = routingActions
 const { mockAccount } = gqlSDKUtils
 
-const isAddress = x => x.startsWith('0x') && x.length === 42
-
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
@@ -37,27 +35,63 @@ const mapDispatchToProps = dispatch =>
 
 const connectRedux = connect(null, mapDispatchToProps)
 
-const connectApollo = graphql(gql(queries.AccountBroadcasterQuery), {
-  props: ({ data, ownProps }, state) => {
-    const { account } = data
-    const accountObj = mockAccount(account)
+const AccountBroadcasterQuery = gql`
+  fragment BroadcasterFragment on Broadcaster {
+    id
+    deposit
+    withdrawBlock
+  }
 
+  fragment JobFragment on Job {
+    id
+    broadcaster
+    streamId
+    profiles {
+      id
+      name
+      bitrate
+      framerate
+      resolution
+    }
+  }
+
+  query AccountBroadcasterQuery(
+    $id: String
+    $jobs: Boolean!
+    $jobsSkip: Int
+    $jobsLimit: Int
+  ) {
+    account(id: $id) {
+      id
+      ensName
+      broadcaster {
+        ...BroadcasterFragment
+        jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
+          ...JobFragment
+        }
+      }
+    }
+  }
+`
+
+const connectApollo = graphql(AccountBroadcasterQuery, {
+  props: ({ data, ownProps }, state) => {
+    const { account, ...queryProps } = data
+    console.log(data)
     return {
       ...ownProps,
-      loading: data.loading,
-      jobs: accountObj.broadcaster.jobs,
-      name: accountObj.ensName,
-      account: accountObj.id,
+      account: {
+        ...queryProps,
+        data: mockAccount(account),
+      },
     }
   },
   options: ({ match }) => {
     const { channel } = match.params
-
     return {
       pollInterval: 5000,
       variables: {
-        id: isAddress(channel) ? channel : null,
-        ensName: !isAddress(channel) ? channel : null,
+        id: channel,
         jobs: true,
       },
     }
@@ -106,14 +140,15 @@ class Channel extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    const { channel } = nextProps.match.params
-    const [latestJob] = nextProps.jobs
+    const { data } = nextProps.account
+    const address = data.id.toLowerCase()
+    const [latestJob] = data.broadcaster.jobs
     if (!latestJob) {
       if (nextProps.loading === false) this.setState({ live: false })
       return
     }
     const manifestId = latestJob.streamId.substr(0, 68 + 64)
-    if (channel === process.env.REACT_APP_LIVEPEER_TV_ADDRESS) {
+    if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
       return this.setState({
         live: true,
         url: `${
@@ -121,7 +156,9 @@ class Channel extends Component {
         }/${manifestId}.m3u8`,
       })
     }
-    if (channel === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS) {
+    if (
+      address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
+    ) {
       return this.setState({
         live: true,
         url: `${
@@ -134,18 +171,16 @@ class Channel extends Component {
   }
 
   render() {
+    const { account, changeChannel } = this.props
+    const { loading } = account
     const {
-      name,
-      account,
-      jobs,
-      loading,
-      match,
-      changeChannel,
-      updateJob,
-    } = this.props
+      id,
+      ensName: name,
+      broadcaster: { jobs },
+    } = account.data
     const { live, url, modal, didCopy, tipAmount } = this.state
     const [latestJob] = jobs
-    const { streamId, broadcaster = account } = latestJob || {}
+    const { streamId, broadcaster = id } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
     const embedLink = `<iframe width="240" height="160" src="${
       window.location.origin
@@ -319,18 +354,6 @@ class Channel extends Component {
                 <span>•</span>
                 {live ? 'live' : 'offline'}
               </ChannelStatus>
-              {name && (
-                <p
-                  style={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                  }}
-                >
-                  Broadcaster ENS Name:<br />
-                  <span>{name}</span>
-                </p>
-              )}
               <p
                 style={{
                   textOverflow: 'ellipsis',
@@ -338,8 +361,8 @@ class Channel extends Component {
                   overflow: 'hidden',
                 }}
               >
-                Broadcaster ETH Address:<br />
-                <span>{isAddress(broadcaster) ? broadcaster : 'Unknown'}</span>
+                Broadcaster:<br />
+                <span>{name ? `${name} (${id})` : id || '...'}</span>
               </p>
               <p
                 style={{

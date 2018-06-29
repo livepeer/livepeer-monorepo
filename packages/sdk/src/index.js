@@ -574,8 +574,6 @@ export default async function createLivepeerSDK(
      */
     async getENSName(address: string): Promise<string> {
       try {
-        if ('0x0ddb225031ccb58ff42866f82d907f7766899014' === address)
-          return 'livepeer-tv.eth'
         return await ens.reverse(address)
       } catch (err) {
         // custom networks or unavailable resolvers can cause failure
