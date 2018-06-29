@@ -27,7 +27,7 @@ type AccountViewProps = {
   account: GraphQLProps<Account>,
   bond: ({ id: string }) => void,
   coinbase: GraphQLProps<Coinbase>,
-  currentRound: GraphQLProps<Array<Round>>,
+  currentRound: GraphQLProps<Round>,
   history: History,
   match: Match,
   me: GraphQLProps<Account>,
@@ -43,7 +43,8 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   me,
   unbond,
 }) => {
-  const accountAddress = match.params.accountId
+  const accountAddress = account.data.id
+  const ensName = account.data.ensName
   const userAddress = coinbase.data.coinbase
   const isMe = accountAddress === userAddress
   const { delegateAddress, status } = me.data.delegator
@@ -64,19 +65,14 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
       <BasicNavbar />
       <Banner>
         <PageHeading>
-          {isMe ? (
-            <React.Fragment>
-              <Avatar id={account.data.id} size={32} bg="#000" />&nbsp;My
-              Account
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Avatar id={account.data.id} size={32} bg="#000" />&nbsp;
-              Account&nbsp;<span style={{ fontSize: 16, height: 26 }}>
-                {account.data.id.substr(0, 10)}...
-              </span>
-            </React.Fragment>
-          )}
+          <React.Fragment>
+            <Avatar id={accountAddress} size={32} bg="#000" />&nbsp;
+            {isMe ? 'My Account' : 'Account'}&nbsp;<span
+              style={{ fontSize: 16, height: 26 }}
+            >
+              {ensName ? ensName : `${accountAddress.substr(0, 10)}...`}
+            </span>
+          </React.Fragment>
           {/** Bonding Actions */}
           {showBondButtons && (
             <span style={{ marginLeft: 8 }}>

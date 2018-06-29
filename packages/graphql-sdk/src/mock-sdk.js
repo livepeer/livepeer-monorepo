@@ -13,6 +13,12 @@ import {
  */
 
 const livepeer = {
+  config: {
+    eth: {
+      net_version: async () => '1',
+    },
+    contracts: {},
+  },
   constants: {
     ADDRESS_PAD,
     EMPTY_ADDRESS,
@@ -22,26 +28,61 @@ const livepeer = {
     VIDEO_PROFILES,
   },
   rpc: {
-    getEthBalance: async id => ALL_ETH_BALANCES[id],
-    getTokenBalance: async id => ALL_TOKEN_BALANCES[id],
-    getBroadcaster: async id => ALL_BROADCASTERS[id],
+    getENSName: async id => ALL_ENS_NAMES[id] || '',
+    getENSAddress: async name => ALL_ENS_ADDRESSES[name] || '',
+    getEthBalance: async id =>
+      ALL_ETH_BALANCES[
+        await livepeer.utils.resolveAddress(livepeer.rpc.getENSAddress, id)
+      ],
+    getTokenBalance: async id =>
+      ALL_TOKEN_BALANCES[
+        await livepeer.utils.resolveAddress(livepeer.rpc.getENSAddress, id)
+      ],
+    getBroadcaster: async id =>
+      ALL_BROADCASTERS[
+        await livepeer.utils.resolveAddress(livepeer.rpc.getENSAddress, id)
+      ],
     getCurrentRoundInfo: async () => ALL_ROUNDS[100],
-    getDelegator: async id => ALL_DELEGATORS[id],
+    getDelegator: async id =>
+      ALL_DELEGATORS[
+        await livepeer.utils.resolveAddress(livepeer.rpc.getENSAddress, id)
+      ],
     getJob: async id => ALL_JOBS[id],
     getJobs: async ({ broadcaster } = {}) =>
       broadcaster
         ? ALL_JOBS.filter(x => x.broadcaster === broadcaster).reverse()
         : ALL_JOBS.slice().reverse(),
-    getTranscoder: async id => ALL_TRANSCODERS[id],
+    getTranscoder: async id =>
+      ALL_TRANSCODERS[
+        await livepeer.utils.resolveAddress(livepeer.rpc.getENSAddress, id)
+      ],
     getTranscoders: async () => Object.values(ALL_TRANSCODERS),
     getProtocolPaused: async () => false,
   },
-  utils,
+  utils: {
+    ...utils,
+    resolveAddress: async (resolve, addrOrName) => {
+      return utils.isValidAddress(addrOrName)
+        ? addrOrName
+        : await livepeer.rpc.getENSAddress(addrOrName)
+    },
+  },
 }
 
 /**
  * Mock Contract Data
  */
+
+const ALL_ENS_ADDRESSES = {
+  'foo.test': EMPTY_ADDRESS.replace(/00/g, '11'),
+  'bar.test': EMPTY_ADDRESS.replace(/00/g, '22'),
+}
+
+const ALL_ENS_NAMES = {
+  [`${EMPTY_ADDRESS.replace(/00/g, '11')}`]: '',
+  // simulate reverse lookup fail (happens most of the time)
+  [`${EMPTY_ADDRESS.replace(/00/g, '22')}`]: 'bar.test',
+}
 
 const ALL_ETH_BALANCES = {
   [EMPTY_ADDRESS.replace(/00/g, '11')]: '0',

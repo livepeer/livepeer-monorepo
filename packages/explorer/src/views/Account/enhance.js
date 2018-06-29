@@ -2,17 +2,18 @@ import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { MathBN, mockAccount } from '../../utils'
+import { MathBN } from '../../utils'
+import { mockAccount } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectToasts,
-  withTransactionHandlers,
 } from '../../enhancers'
 
 const accountQuery = gql`
   fragment AccountFragment on Account {
     id
+    ensName
     ethBalance
     tokenBalance
   }
@@ -184,6 +185,5 @@ export default compose(
   connectCurrentRoundQuery,
   connectMeDelegatorTranscoderQuery,
   connectToasts,
-  withTransactionHandlers,
   mapMutationHandlers,
 )

@@ -5,8 +5,8 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
+import { mockRound, mockProtocol } from '@livepeer/graphql-sdk'
 import { ToastNotificationContainer } from '../containers'
-import { mockRound, mockProtocol } from '../utils'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
 

@@ -45,12 +45,16 @@ type QueryTranscoderArgs = {
  * @param {QueryObj} obj
  * @param {QueryAccountArgs} args
  * @param {string} args.id - ETH address
+ * @param {string} args.ensName - ENS name
  * @param {GQLContext} ctx
  * @return {Account}
  */
 export async function account(obj, args, ctx) {
-  // Account field resolvers will fill in the rest
-  return { id: args.id }
+  const { rpc, utils } = ctx.livepeer
+  const addrOrName = args.id.toLowerCase()
+  const id = await utils.resolveAddress(rpc.getENSAddress, addrOrName)
+  const ensName = addrOrName === id ? await rpc.getENSName(id) : addrOrName
+  return { id, ensName }
 }
 
 /**
@@ -198,16 +202,16 @@ export async function transactions(
   // console.log(ctx)
   const { account, etherscanApiKey, livepeer, persistor } = ctx
   const { cache } = persistor.cache
-  const { config, utils } = livepeer
+  const { config, rpc, utils } = livepeer
   const { contracts, eth } = config
   const {
-    address,
     startBlock = 0,
     endBlock = 99999999,
     skip = 0,
     limit = 100,
     sort = 'desc',
   } = args
+  const address = await utils.resolveAddress(rpc.getENSAddress, args.address)
   const networkId = await eth.net_version()
   const rootUrl = `https://${
     networkId === '4' ? 'api-rinkeby' : 'api'

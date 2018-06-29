@@ -6,6 +6,7 @@ import { EMPTY_ADDRESS } from '@livepeer/sdk'
 import schema from './schema'
 import {
   AccountQuery,
+  AccountBroadcasterQuery,
   BroadcasterQuery,
   CoinbaseQuery,
   CurrentRoundQuery,
@@ -68,11 +69,73 @@ test('Subscription', async t => {
 /**
  * Account
  */
-test('AccountQuery', async t => {
+test('AccountQuery (with ID)', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
   }
   const res = await graphql(schema, AccountQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('AccountQuery (with ENS name)', async t => {
+  const args = {
+    id: 'foo.test',
+  }
+  const res = await graphql(schema, AccountQuery, null, { livepeer }, args)
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+/**
+ * Account Broadcaster
+ */
+test('AccountBroadcasterQuery (with ID)', async t => {
+  const args = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    jobs: false,
+  }
+  const res = await graphql(
+    schema,
+    AccountBroadcasterQuery,
+    null,
+    { livepeer },
+    args,
+  )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('AccountBroadcasterQuery (include jobs)', async t => {
+  const args = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    jobs: true,
+  }
+  const res = await graphql(
+    schema,
+    AccountBroadcasterQuery,
+    null,
+    { livepeer },
+    args,
+  )
+  // console.log(JSON.stringify(res, null, 2))
+  t.snapshot(res)
+})
+
+test('AccountBroadcasterQuery (include jobs using skip/limit args)', async t => {
+  const args = {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    jobs: true,
+    jobsSkip: 1,
+    jobsLimit: 1,
+  }
+  const res = await graphql(
+    schema,
+    AccountBroadcasterQuery,
+    null,
+    { livepeer },
+    args,
+  )
   // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })
@@ -246,24 +309,7 @@ test('TransactionsQuery', async t => {
           },
         },
       },
-      livepeer: {
-        utils: {
-          decodeContractInput: x => ({
-            ...x,
-            contract: '',
-            method: '',
-            params: {},
-          }),
-        },
-        config: {
-          eth: {
-            async net_version() {
-              return '1'
-            },
-          },
-          contracts: {},
-        },
-      },
+      livepeer,
       etherscanApiKey: 'REYGA15N2SCUKVFQKG3C24USKSR8WZB29B',
     },
     args,

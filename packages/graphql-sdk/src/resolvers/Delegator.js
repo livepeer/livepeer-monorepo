@@ -22,6 +22,16 @@ export function id(obj: DelegatorObj): string {
 }
 
 /**
+ * Gets the ENS name for a Delegator
+ * @param {Object} obj
+ * @param {string} obj.id - The id of the delegator
+ */
+export async function ensName(obj: DelegatorObj, args, ctx): string {
+  const { id } = obj
+  return await ctx.livepeer.rpc.getENSName(id)
+}
+
+/**
  * Gets the allowance for a Delegator
  * @param {Object} obj
  * @param {DelegatorStatus} obj.allowance - The allowance of the delegator

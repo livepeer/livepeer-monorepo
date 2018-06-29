@@ -13,6 +13,7 @@ type GQLContext = {
 
 type AccountObj = {
   id: string,
+  ensName?: string,
 }
 
 /** Resolvers */
@@ -23,8 +24,17 @@ type AccountObj = {
  * @param {string} obj.id - The id of the broadcaster
  * @return {string}
  */
-export function id(obj: AccountObj): string {
+export async function id(obj: AccountObj, args, ctx): string {
   return obj.id
+}
+
+/**
+ * Gets the ENS name for an Account
+ * @param {string} obj.ensName - The ENS name
+ */
+export async function ensName(obj: AccountObj, args, ctx): string {
+  const { id, ensName } = obj
+  return ensName || (await ctx.livepeer.rpc.getENSName(id))
 }
 
 /**

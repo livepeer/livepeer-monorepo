@@ -1,6 +1,7 @@
 declare type Account = {
   broadcaster: Broadcaster,
   delegator: Delegator,
+  ensName: string,
   ethBalance: string,
   id: string,
   tokenBalance: string,

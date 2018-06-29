@@ -2,6 +2,7 @@ import 'babel-polyfill'
 import test from 'ava'
 import yup from 'yup'
 import Livepeer, { utils, initContracts } from './index'
+import { AsyncSubject } from 'rxjs'
 
 // clears console
 // console.log('\x1Bc')
@@ -84,6 +85,32 @@ test('should get maximum earning for claims rounds', async t => {
   t.true(string.isValidSync(res))
 })
 
+// ENS
+
+test('should get ENS for ETH address', async t => {
+  const res = await livepeer.rpc.getENSName(
+    '0x96b20f67309a0750b3fc3dcbe989f347167482ff',
+  )
+  t.true(string.isValidSync(res))
+})
+
+test('should get empty string when no ENS name address', async t => {
+  const res = await livepeer.rpc.getENSName(
+    '0x0000000000000000000000000000000000000000',
+  )
+  t.true('' === res)
+})
+
+test('should get ETH address for ENS name', async t => {
+  const res = await livepeer.rpc.getENSAddress('please.buymecoffee.eth')
+  t.true(string.isValidSync(res))
+})
+
+test('should get empty string for nonexistent ENS name', async t => {
+  const res = await livepeer.rpc.getENSAddress('donot.buymecoffee.eth')
+  t.true('' === res)
+})
+
 // ETH
 
 test('should get ETH balance', async t => {
@@ -161,7 +188,7 @@ test('should return object with correct shape from getDelegator()', async t => {
     withdrawRound: string,
   })
   const { from } = livepeer.config.defaultTx
-  const res = await livepeer.rpc.getDelegator(from)
+  const res = await livepeer.rpc.getDelegator('please.buymecoffee.eth')
   schema.validateSync(res)
   t.pass()
 })

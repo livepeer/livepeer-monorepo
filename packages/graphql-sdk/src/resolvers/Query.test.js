@@ -10,12 +10,22 @@ import { transformJob } from '../utils'
 
 test('Query resolves `account` field', async t => {
   const obj = {
-    id: 'foo',
+    id: EMPTY_ADDRESS.replace(/00/g, '11'),
+    ensName: 'foo.test',
   }
   const args = {
     id: obj.id,
   }
-  const ctx = {}
+  const ctx = {
+    livepeer: {
+      utils: {
+        resolveAddress: () => obj.id,
+      },
+      rpc: {
+        getENSName: () => obj.ensName,
+      },
+    },
+  }
   const result = await resolvers.account(obj, args, ctx)
   t.deepEqual(obj, result)
 })

@@ -32,6 +32,20 @@ export function broadcaster(obj: JobObj): string {
 }
 
 /**
+ * Gets the ENS name for a Job's broadcaster
+ * @param {Object} obj
+ * @param {string} obj.id - The id of the broadcaster
+ */
+export async function broadcasterENSName(
+  obj: BroadcasterObj,
+  args,
+  ctx,
+): string {
+  const { broadcaster } = obj
+  return await ctx.livepeer.rpc.getENSName(broadcaster)
+}
+
+/**
  * Gets the profiles for a Job
  * @param {Object} obj
  * @param {string} obj.profiles - The profiles of the profiles

@@ -12,9 +12,26 @@ ${AccountFragment}
 ${BroadcasterFragment}
 ${DelegatorFragment}
 ${TranscoderFragment}
-query AccountQuery($id: String!) {
+query AccountQuery($id: String) {
   account(id: $id) {
     ...AccountFragment
+  }
+}
+`
+
+export const AccountBroadcasterQuery = `
+${JobFragment}
+${BroadcasterFragment}
+query AccountBroadcasterQuery($id: String, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit: Int) {
+  account(id: $id) {
+    id
+    ensName
+    broadcaster {
+      ...BroadcasterFragment
+      jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
+        ...JobFragment
+      }
+    }
   }
 }
 `

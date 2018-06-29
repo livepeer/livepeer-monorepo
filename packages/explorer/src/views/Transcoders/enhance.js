@@ -3,7 +3,8 @@ import { compose, mapProps, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { connectCurrentRoundQuery, connectToasts } from '../../enhancers'
-import { MathBN, mockAccount, sleep } from '../../utils'
+import { MathBN, sleep } from '../../utils'
+import { mockAccount } from '@livepeer/graphql-sdk'
 
 const MeDelegatorTranscoderQuery = gql`
   fragment DelegatorFragment on Delegator {
@@ -71,6 +72,7 @@ const TranscodersQuery = gql`
   fragment TranscoderFragment on Transcoder {
     id
     active
+    ensName
     status
     lastRewardRound
     rewardCut

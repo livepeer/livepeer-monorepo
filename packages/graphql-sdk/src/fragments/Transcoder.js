@@ -2,13 +2,14 @@ export default `
 fragment TranscoderFragment on Transcoder {
   id
   active
-  status
-  lastRewardRound
-  rewardCut
+  ensName
   feeShare
+  lastRewardRound
   pricePerSegment
   pendingFeeShare
   pendingPricePerSegment
   pendingRewardCut
+  rewardCut
+  status
   totalStake
 }`

@@ -26,15 +26,7 @@ const App = () => (
       <Switch>
         <Route exact path="/" component={Landing} />
         <Route exact path="/transcoders" component={Transcoders} />
-        <Route
-          path="/accounts/:accountId"
-          render={props => {
-            const isEthAddress = /^0x[a-fA-F0-9]{40}$/.test(
-              props.match.params.accountId,
-            )
-            return isEthAddress ? <Account {...props} /> : <Redirect to="/" />
-          }}
-        />
+        <Route path="/accounts/:accountId" component={Account} />
         <Route
           path="/me"
           render={(props, ctx) => {
