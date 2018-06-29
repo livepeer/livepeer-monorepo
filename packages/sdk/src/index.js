@@ -112,6 +112,14 @@ export const DEFAULTS = {
     RoundsManager: RoundsManagerArtifact,
     BondingManager: BondingManagerArtifact,
   },
+  ensRegistries: {
+    // Mainnet
+    '1': '0x314159265dd8dbb310642f98f50c066173c1259b',
+    // Ropsten
+    '3': '0x112234455c3a32fd11230c42e7bccd4a84e02010',
+    // Rinkeby
+    '4': '0xe7410170f87102df0055eb195163a03b7f2bff4a',
+  },
 }
 
 // Utils
@@ -299,9 +307,18 @@ const prop = (k: string | number) => (x): any => x[k]
 const toBool = (x: any): boolean => !!x
 const toString = (x: Eth.BN): string => x.toString(10)
 const toNumber = (x: Eth.BN): string => Number(x.toString(10))
-const headToBool = compose(toBool, prop(0))
-const headToString = compose(toString, prop(0))
-const headToNumber = compose(toNumber, prop(0))
+const headToBool = compose(
+  toBool,
+  prop(0),
+)
+const headToString = compose(
+  toString,
+  prop(0),
+)
+const headToNumber = compose(
+  toNumber,
+  prop(0),
+)
 const invariant = (name, pos, type) => {
   throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`)
 }
@@ -380,7 +397,7 @@ export async function initRPC({
   const eth = new Eth(ethjsProvider)
   const ens = new ENS({
     provider: eth.currentProvider,
-    network: await eth.net_version(),
+    registryAddress: DEFAULTS.ensRegistries[await eth.net_version()],
   })
   const accounts = usePrivateKeys
     ? Object.keys(privateKeys)
