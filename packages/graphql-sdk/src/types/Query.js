@@ -57,7 +57,10 @@ type Query {
   transcoders(skip: Int, limit: Int): [Transcoder!]!
 
   "The protocol as a whole"
-  protocol: Protocol!
+  protocol(id: String!): Protocol
+
+  "A list of protocols"
+  protocols: [Protocol!]!
 }`
 
 export default () => [

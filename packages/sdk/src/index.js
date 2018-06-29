@@ -749,6 +749,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets the total bonded token
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getTotalBonded()
+     * // => string
+     */
+    async getTotalBonded(): Promise<string> {
+      return headToString(await BondingManager.getTotalBonded())
+    },
+
+    /**
      * Gets the total supply of token (LTPU) available in the protocol
      * @memberof livepeer~rpc
      * @return {Promise<string>}
@@ -1150,6 +1164,20 @@ export default async function createLivepeerSDK(
           await resolveAddress(rpc.getENSAddress, addr),
         ),
       )
+    },
+
+    /**
+     * Gets a transcoder's pool max size
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getTranscoderPoolMaxSize()
+     * // => string
+     */
+    async getTranscoderPoolMaxSize(): Promise<string> {
+      return headToString(await BondingManager.getTranscoderPoolMaxSize())
     },
 
     /**
@@ -1778,6 +1806,20 @@ export default async function createLivepeerSDK(
         ),
         config.eth,
       )
+    },
+
+    /**
+     * Get target bonding rate
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getTargetBondingRate()
+     * // => string
+     */
+    async getTargetBondingRate(): Promise<string> {
+      return headToString(await Minter.targetBondingRate())
     },
 
     /**

@@ -16,7 +16,7 @@ type ProtocolObj = {}
  * @return {string}
  */
 export function id(obj: ProtocolObj): string {
-  return 'protocol'
+  return obj.id
 }
 
 /**
@@ -27,4 +27,44 @@ export function id(obj: ProtocolObj): string {
  */
 export function paused(obj: ProtocolObj): string {
   return obj.paused
+}
+
+/**
+ * Gets total token supply for the protocol
+ * @param {Object} obj
+ * @param {string} obj.totalTokenSupply - totalTokenSupply for the protocol
+ * @return {string}
+ */
+export function totalTokenSupply(obj: ProtocolObj): string {
+  return obj.totalTokenSupply
+}
+
+/**
+ * Gets total bonded token for the protocol
+ * @param {Object} obj
+ * @param {string} obj.totalBondedToken - totalBondedToken for the protocol
+ * @return {string}
+ */
+export function totalBondedToken(obj: ProtocolObj): string {
+  return obj.totalBondedToken
+}
+
+/**
+ * Gets target bonding rate for the protocol
+ * @param {Object} obj
+ * @param {string} obj.targetBondingRate - targetBondingRate for the protocol
+ * @return {string}
+ */
+export function targetBondingRate(obj: ProtocolObj): string {
+  return obj.targetBondingRate
+}
+
+/**
+ * Gets transcoder pool max size for the protocol
+ * @param {Object} obj
+ * @param {string} obj.transcoderPoolMaxSize - transcoderPoolMaxSize for the protocol
+ * @return {string}
+ */
+export function transcoderPoolMaxSize(obj: ProtocolObj): string {
+  return obj.transcoderPoolMaxSize
 }

@@ -40,6 +40,12 @@ type QueryTranscoderArgs = {
   id?: string,
 }
 
+type QueryProtocolArgs = {
+  id?: string,
+}
+
+type QueryProtocolsArgs = {}
+
 /** Resolvers */
 
 /**
@@ -322,16 +328,31 @@ export async function transcoders(
 /**
  * Gets a the protocol
  * @param {QueryObj} obj
- * @param {QueryCurrentRoundArgs} args
+ * @param {QueryProtocolArgs} args
  * @param {GQLContext} ctx
- * @return {Round}
+ * @return {Protocol}
  */
 export async function protocol(
   obj: QueryObj,
-  args: QueryCurrentRoundArgs,
+  args: QueryProtocolArgs,
   ctx: GQLContext,
-): Round {
-  return {
-    paused: await ctx.livepeer.rpc.getProtocolPaused(),
-  }
+): Protocol {
+  const { id } = args
+  const protocol = await ctx.livepeer.rpc.getProtocol(id)
+  return protocol
+}
+
+/**
+ * Gets the protocols
+ * @param {QueryObj} obj
+ * @param {GQLContext} ctx
+ * @return {Protocols}
+ */
+export async function protocols(
+  obj: QueryObj,
+  args: QueryProtocolsArgs,
+  ctx: GQLContext,
+): Array<Protocol> {
+  const protocols = await ctx.livepeer.rpc.getProtocols()
+  return protocols
 }

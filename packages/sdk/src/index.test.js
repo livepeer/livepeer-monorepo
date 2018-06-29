@@ -85,6 +85,16 @@ test('should get maximum earning for claims rounds', async t => {
   t.true(string.isValidSync(res))
 })
 
+test('should get total bonded', async t => {
+  const res = await livepeer.rpc.getTotalBonded()
+  t.true(string.isValidSync(res))
+})
+
+test('should get transcoder pool max size', async t => {
+  const res = await livepeer.rpc.getTranscoderPoolMaxSize()
+  t.true(string.isValidSync(res))
+})
+
 // ENS
 
 test('should get ENS for ETH address', async t => {
@@ -309,4 +319,11 @@ test('should get many jobs from getJobs()', async t => {
   const res = await livepeer.rpc.getJobs()
   res.forEach(x => schema.validateSync(x))
   t.pass()
+})
+
+// Minter
+
+test('should return target bonding rate', async t => {
+  const res = await livepeer.rpc.getTargetBondingRate()
+  t.true(string.isValidSync(res))
 })
