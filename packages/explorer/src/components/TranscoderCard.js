@@ -11,8 +11,9 @@ import Tooltip from './Tooltip'
 type TranscoderCardProps = {|
   active: boolean,
   bonded: boolean,
-  id: string,
+  ensName: string,
   feeShare: string,
+  id: string,
   lastRewardRound: string,
   onBond?: any => void,
   onUnbond?: any => void,
@@ -32,6 +33,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     bonded,
     bondedAmount,
     className,
+    ensName,
     id,
     status,
     onBond,
@@ -53,7 +55,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
               to={`/accounts/${id}/transcoding`}
               style={{ color: '#000', textDecoration: 'none' }}
             >
-              {id.substr(0, 10)}...
+              {ensName || `${id.substr(0, 10)}...`}
             </Link>
           </Tooltip>
         </div>

@@ -16,6 +16,7 @@ const { mockAccount } = gqlSDKUtils
 const accountQuery = gql`
   fragment AccountFragment on Account {
     id
+    ensName
     ethBalance
     tokenBalance
   }

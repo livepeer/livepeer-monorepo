@@ -74,6 +74,7 @@ const TranscodersQuery = gql`
   fragment TranscoderFragment on Transcoder {
     id
     active
+    ensName
     status
     lastRewardRound
     rewardCut
