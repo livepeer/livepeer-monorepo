@@ -12,8 +12,8 @@ ${AccountFragment}
 ${BroadcasterFragment}
 ${DelegatorFragment}
 ${TranscoderFragment}
-query AccountQuery($id: String, $ensName: String) {
-  account(id: $id, ensName: $ensName) {
+query AccountQuery($id: String) {
+  account(id: $id) {
     ...AccountFragment
   }
 }
@@ -22,8 +22,8 @@ query AccountQuery($id: String, $ensName: String) {
 export const AccountBroadcasterQuery = `
 ${JobFragment}
 ${BroadcasterFragment}
-query AccountBroadcasterQuery($id: String, $ensName: String, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit: Int) {
-  account(id: $id, ensName: $ensName) {
+query AccountBroadcasterQuery($id: String, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit: Int) {
+  account(id: $id) {
     id
     ensName
     broadcaster {

@@ -8,6 +8,9 @@ type Delegator {
   "The ETH address of a delegator"
   id: String!
 
+  "The ENS name for an account"
+  ensName: String!
+
   "The delegator's token allowance"
   allowance: String!
   

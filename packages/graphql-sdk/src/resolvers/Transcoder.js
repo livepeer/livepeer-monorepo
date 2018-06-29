@@ -22,6 +22,16 @@ export function id(obj: TranscoderObj): string {
 }
 
 /**
+ * Gets the ENS name for a Transcoder
+ * @param {Object} obj
+ * @param {string} obj.id - The id of the transcoder
+ */
+export async function ensName(obj: TranscoderObj, args, ctx): string {
+  const { id } = obj
+  return await ctx.livepeer.rpc.getENSName(id)
+}
+
+/**
  * Gets the status for a Transcoder
  * @param {Object} obj
  * @param {TranscoderStatus} obj.status - The status of the transcoder

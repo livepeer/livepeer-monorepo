@@ -80,7 +80,7 @@ test('AccountQuery (with ID)', async t => {
 
 test('AccountQuery (with ENS name)', async t => {
   const args = {
-    ensName: 'foo.test',
+    id: 'foo.test',
   }
   const res = await graphql(schema, AccountQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))
@@ -125,56 +125,6 @@ test('AccountBroadcasterQuery (include jobs)', async t => {
 test('AccountBroadcasterQuery (include jobs using skip/limit args)', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
-    jobs: true,
-    jobsSkip: 1,
-    jobsLimit: 1,
-  }
-  const res = await graphql(
-    schema,
-    AccountBroadcasterQuery,
-    null,
-    { livepeer },
-    args,
-  )
-  // console.log(JSON.stringify(res, null, 2))
-  t.snapshot(res)
-})
-
-test('AccountBroadcasterQuery (with ENS name)', async t => {
-  const args = {
-    ensName: 'foo.test',
-    jobs: false,
-  }
-  const res = await graphql(
-    schema,
-    AccountBroadcasterQuery,
-    null,
-    { livepeer },
-    args,
-  )
-  // console.log(JSON.stringify(res, null, 2))
-  t.snapshot(res)
-})
-
-test('AccountBroadcasterQuery (with ENS name, include jobs)', async t => {
-  const args = {
-    ensName: 'foo.test',
-    jobs: true,
-  }
-  const res = await graphql(
-    schema,
-    AccountBroadcasterQuery,
-    null,
-    { livepeer },
-    args,
-  )
-  // console.log(JSON.stringify(res, null, 2))
-  t.snapshot(res)
-})
-
-test('AccountBroadcasterQuery (with ENS name, include jobs using skip/limit args)', async t => {
-  const args = {
-    ensName: 'foo.test',
     jobs: true,
     jobsSkip: 1,
     jobsLimit: 1,
@@ -359,24 +309,7 @@ test('TransactionsQuery', async t => {
           },
         },
       },
-      livepeer: {
-        utils: {
-          decodeContractInput: x => ({
-            ...x,
-            contract: '',
-            method: '',
-            params: {},
-          }),
-        },
-        config: {
-          eth: {
-            async net_version() {
-              return '1'
-            },
-          },
-          contracts: {},
-        },
-      },
+      livepeer,
       etherscanApiKey: 'REYGA15N2SCUKVFQKG3C24USKSR8WZB29B',
     },
     args,

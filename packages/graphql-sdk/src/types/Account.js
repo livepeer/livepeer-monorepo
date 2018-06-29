@@ -11,7 +11,7 @@ type Account {
   id: String!
 
   "The ENS name for an account"
-  ensName: String
+  ensName: String!
 
   "The ETH balance for an account"
   ethBalance: String!

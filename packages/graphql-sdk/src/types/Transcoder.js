@@ -11,6 +11,9 @@ type Transcoder {
   "Whether or not the transcoder is active"
   active: Boolean!
 
+  "The ENS name for an account"
+  ensName: String!
+
   "The status of the transcoder"
   status: TranscoderStatus!
 

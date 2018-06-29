@@ -11,6 +11,9 @@ type Job {
   "Address of broadcaster that requested the transcoding job"
   broadcaster: String!
 
+  "The broadcaster's ENS name"
+  broadcasterENSName: String!
+
   "Transcoding profiles associated with the job"
   profiles: [JobProfile!]!
 

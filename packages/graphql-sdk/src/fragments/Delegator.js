@@ -3,6 +3,7 @@ fragment DelegatorFragment on Delegator {
   id
   allowance
   delegateAddress
+  ensName
   bondedAmount
   fees
   delegatedAmount

@@ -24,7 +24,7 @@ type AccountObj = {
  * @param {string} obj.id - The id of the broadcaster
  * @return {string}
  */
-export function id(obj: AccountObj): string {
+export async function id(obj: AccountObj, args, ctx): string {
   return obj.id
 }
 
@@ -32,11 +32,9 @@ export function id(obj: AccountObj): string {
  * Gets the ENS name for an Account
  * @param {string} obj.ensName - The ENS name
  */
-export function ensName(obj: AccountObj): string {
-  // In the future, if obj.ensName is null, this resolver
-  // could also check if the account address has a reverse ENS record
-  // to look up the ENS name
-  return obj.ensName
+export async function ensName(obj: AccountObj, args, ctx): string {
+  const { id, ensName } = obj
+  return ensName || (await ctx.livepeer.rpc.getENSName(id))
 }
 
 /**

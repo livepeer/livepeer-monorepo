@@ -8,6 +8,9 @@ type Broadcaster {
   "The broadcaster's ETH address"
   id: String!
 
+  "The ENS name for an account"
+  ensName: String!
+
   "The broadcaster's ETH deposit (required to create a Job)"
   deposit: String!
 
