@@ -19,10 +19,13 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
   const defaultAddress = coinbase.data.coinbase
   const contentLength = 51961420
   const closeModal = () => history.push(history.location.pathname)
-  const formatError = err =>
-    /sorry/i.test(err)
-      ? err
-      : `Sorry, mining is unavailable at this time. Please try again later. ${err}`
+  const renderError = err =>
+    typeof err !== 'string' ? (
+      err
+    ) : (
+      <p
+      >{`Sorry, mining is unavailable at this time. Please try again later. ${err}`}</p>
+    )
   return (
     <BasicModal title="Mine Livepeer Token">
       {loading ? (
@@ -32,7 +35,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
           allowManualEntry={false}
           contentLength={contentLength}
           defaultAddress={defaultAddress}
-          formatError={formatError}
+          renderError={renderError}
           input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
           onCancel={closeModal}
           onDone={e => {
@@ -80,7 +83,7 @@ class TokenMiner extends React.Component {
       const { worker } = this.props
       const { address } = this.state
       this.miner = await new MerkleMiner({
-        gateway: 'http://dweb.link/ipfs',
+        gateway: 'https://gateway.ipfs.io/ipfs',
         workerHash: worker,
         onResolveHash: this.onResolveHash,
         onConstructTree: this.onConstructTree,
@@ -112,7 +115,25 @@ class TokenMiner extends React.Component {
       `https://568kysoy9c.execute-api.us-east-1.amazonaws.com/prod/accounts/${address}`,
     )
     if (!res.ok) {
-      const error = `Sorry, but LPT cannot be mined for this account (${address}). Please use another account or try again when mining is unrestricted.`
+      const error = (
+        <React.Fragment>
+          <p>Sorry, but LPT cannot be mined for this account ({address}). </p>
+          <p>
+            <strong>
+              Please use another account or try again when mining is open to all
+              around late July or early August (block #6034099).
+            </strong>
+          </p>
+          <p>
+            Alternatively, join the{' '}
+            <a href="https://livepeercommunity.org/" target="_blank">
+              Decentralized Livepeer Community
+            </a>{' '}
+            to learn about other ways you can earn LPT and take part in
+            community calls, meetups, hackathons, grant programs and more.
+          </p>
+        </React.Fragment>
+      )
       this.setState({ error })
       return res
     }
@@ -190,14 +211,14 @@ class TokenMiner extends React.Component {
     }
   }
   render() {
-    const { allowManualEntry, formatError, onCancel, onDone } = this.props
+    const { allowManualEntry, renderError, onCancel, onDone } = this.props
     const { address, done, error, progress, proof, ready } = this.state
     if (!ready && address) {
       return <p>Validating ETH address...</p>
     }
     return error ? (
       <React.Fragment>
-        <p>{formatError(error)}</p>
+        {renderError(error)}
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           <Button onClick={onCancel}>Cancel</Button>
           {allowManualEntry && (

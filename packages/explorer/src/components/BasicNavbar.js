@@ -150,6 +150,10 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
             color: '#fff',
           }}
         >
+          <NavbarLink exact to="/">
+            <HomeIcon size={16} />
+            <span>&nbsp;Overview</span>
+          </NavbarLink>
           <NavbarLink exact to="/token">
             <Icon
               stategy="url"
