@@ -56,8 +56,8 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     startRound,
     withdrawRound,
   } = delegator.data
+  const totalStake = MathBN.add(bondedAmount, pendingStake)
   const { lastInitializedRound } = currentRound.data
-  // const from = MathBN.add(lastClaimRound, '1')
   const unclaimedRounds =
     !delegator.loading && !currentRound.loading
       ? MathBN.sub(lastInitializedRound, lastClaimRound)
@@ -124,7 +124,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         help="Total tokens earned from reward cuts each round. Includes unclaimed token rewards."
         title="Stake"
         suffix="LPT"
-        value={formatBalance(pendingStake)}
+        value={formatBalance(totalStake)}
         subvalue={
           withdrawRound === '0'
             ? ''

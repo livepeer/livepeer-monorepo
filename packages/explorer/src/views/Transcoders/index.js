@@ -16,6 +16,7 @@ import {
   TranscoderCard,
   Wrapper,
 } from '../../components'
+import { MathBN } from '../../utils'
 import enhance from './enhance'
 
 type TranscodersViewProps = {
@@ -43,6 +44,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     delegator: { bondedAmount, delegateAddress, pendingStake, status },
     tokenBalance,
   } = me.data
+  const totalStake = MathBN.add(bondedAmount, pendingStake)
   const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
   const isUnbonding = status === 'Unbonding'
@@ -191,7 +193,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               {...props}
               key={id}
               bonded={isMyDelegate}
-              bondedAmount={pendingStake}
+              bondedAmount={totalStake}
               className="transcoder-card"
               onBond={canBond ? () => bond({ id }) : undefined}
               onUnbond={canUnbond ? () => unbond({ id }) : undefined}
