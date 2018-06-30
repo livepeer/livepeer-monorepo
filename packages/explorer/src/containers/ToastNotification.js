@@ -37,11 +37,11 @@ export class ToastNotificationContainer extends Container<
       [toast.id]: toast,
     })
     this[timerKey] = setTimeout(() => {
-      this.delete(toast.id)
+      this.dismiss(toast.id)
       clearTimeout(this[timerKey])
     }, Math.max(1000, timeout))
   }
-  delete = (id: string) => {
+  dismiss = (id: string) => {
     delete this.state[id]
     this.setState(this.state)
   };
