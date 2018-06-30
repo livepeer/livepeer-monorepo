@@ -1,3 +1,10 @@
-import { connectCurrentRoundQuery } from '../../enhancers'
+import { compose } from 'recompose'
+import {
+  connectCurrentBlockQuery,
+  connectCurrentRoundQuery,
+} from '../../enhancers'
 
-export default connectCurrentRoundQuery
+export default compose(
+  connectCurrentBlockQuery,
+  connectCurrentRoundQuery,
+)
