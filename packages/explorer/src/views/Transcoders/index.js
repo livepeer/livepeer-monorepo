@@ -44,7 +44,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     delegator: { bondedAmount, delegateAddress, pendingStake, status },
     tokenBalance,
   } = me.data
-  const totalStake = MathBN.add(bondedAmount, pendingStake)
+  const totalStake = MathBN.max(bondedAmount, pendingStake)
   const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
   const isUnbonding = status === 'Unbonding'

@@ -56,7 +56,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     startRound,
     withdrawRound,
   } = delegator.data
-  const totalStake = MathBN.add(bondedAmount, pendingStake)
+  const totalStake = MathBN.max(bondedAmount, pendingStake)
   const { lastInitializedRound } = currentRound.data
   const unclaimedRounds =
     !delegator.loading && !currentRound.loading
@@ -66,7 +66,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     withdrawRound !== '0' ? MathBN.sub(withdrawRound, lastInitializedRound) : ''
   const hasUnclaimedRounds = unclaimedRounds !== '0'
   const earnedStake = hasUnclaimedRounds
-    ? MathBN.sub(pendingStake, bondedAmount)
+    ? MathBN.max('0', MathBN.sub(pendingStake, bondedAmount))
     : '0'
   const earnedFees = hasUnclaimedRounds ? MathBN.sub(pendingFees, fees) : '0'
   const hasStake = bondedAmount !== '0'
