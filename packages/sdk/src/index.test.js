@@ -119,6 +119,18 @@ test('should get ETH balance', async t => {
   t.true(string.isValidSync(res))
 })
 
+// Minter
+
+test('should return a number from getInflation()', async t => {
+  const res = await livepeer.rpc.getInflation()
+  t.true(string.isValidSync(res))
+})
+
+test('should return a number from getInflationChange()', async t => {
+  const res = await livepeer.rpc.getInflationChange()
+  t.true(string.isValidSync(res))
+})
+
 // Token
 
 test('should return a number from getTokenTotalSupply()', async t => {

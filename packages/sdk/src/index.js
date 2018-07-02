@@ -14,6 +14,7 @@ import ControllerArtifact from '../etc/Controller'
 import JobsManagerArtifact from '../etc/JobsManager'
 import RoundsManagerArtifact from '../etc/RoundsManager'
 import BondingManagerArtifact from '../etc/BondingManager'
+import MinterArtifact from '../etc/Minter'
 
 // Constants
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -111,6 +112,7 @@ export const DEFAULTS = {
     JobsManager: JobsManagerArtifact,
     RoundsManager: RoundsManagerArtifact,
     BondingManager: BondingManagerArtifact,
+    Minter: MinterArtifact,
   },
   ensRegistries: {
     // Mainnet
@@ -451,6 +453,7 @@ export async function initContracts(
     BondingManager: null,
     JobsManager: null,
     RoundsManager: null,
+    Minter: null,
   }
   const hashes = {
     LivepeerToken: {},
@@ -458,6 +461,7 @@ export async function initContracts(
     BondingManager: {},
     JobsManager: {},
     RoundsManager: {},
+    Minter: {},
   }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
@@ -552,6 +556,7 @@ export default async function createLivepeerSDK(
     LivepeerToken,
     LivepeerTokenFaucet,
     RoundsManager,
+    Minter,
   } = config.contracts
   const { resolveAddress } = utils
 
@@ -932,6 +937,34 @@ export default async function createLivepeerSDK(
           await resolveAddress(rpc.getENSAddress, addr),
         ),
       }
+    },
+
+    /**
+     * Gets the per round inflation rate
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getInflation()
+     * // => string
+     */
+    async getInflation(): Promise<string> {
+      return headToString(await Minter.inflation())
+    },
+
+    /**
+     * Gets the change in inflation rate per round until the target bonding rate is achieved
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getInflationChange()
+     * // => string
+     */
+    async getInflationChange(): Promise<string> {
+      return headToString(await Minter.inflationChange())
     },
 
     /**
