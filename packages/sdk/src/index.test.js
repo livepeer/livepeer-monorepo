@@ -321,6 +321,21 @@ test('should get many jobs from getJobs()', async t => {
   t.pass()
 })
 
+// Protocol
+
+test('should return object with correct shape from getProtocol()', async t => {
+  const schema = object({
+    paused: boolean,
+    totalTokenSupply: string,
+    totalBondedToken: string,
+    targetBondingRate: string,
+    transcoderPoolMaxSize: string,
+  })
+  const res = await livepeer.rpc.getProtocol()
+  schema.validateSync(res)
+  t.pass()
+})
+
 // Minter
 
 test('should return target bonding rate', async t => {

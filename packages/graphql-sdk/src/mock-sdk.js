@@ -64,8 +64,8 @@ const livepeer = {
         await livepeer.utils.resolveAddress(livepeer.rpc.getENSAddress, id)
       ],
     getTranscoders: async () => Object.values(ALL_TRANSCODERS),
-    getProtocol: async id => ALL_PROTOCOLS[id],
-    getProtocols: async () => ALL_PROTOCOLS,
+    getProtocolPaused: async () => false,
+    getProtocol: async () => PROTOCOL,
   },
   utils: {
     ...utils,
@@ -223,23 +223,12 @@ const ALL_TRANSCODERS = {
   },
 }
 
-const ALL_PROTOCOLS = [
-  {
-    id: '0',
-    paused: false,
-    totalTokenSupply: '0',
-    totalBondedToken: '0',
-    targetBondingRate: '0',
-    transcoderPoolMaxSize: '0',
-  },
-  {
-    id: '1',
-    paused: true,
-    totalTokenSupply: '0',
-    totalBondedToken: '0',
-    targetBondingRate: '0',
-    transcoderPoolMaxSize: '0',
-  },
-]
+const PROTOCOL = {
+  paused: false,
+  totalTokenSupply: '0',
+  totalBondedToken: '0',
+  targetBondingRate: '0',
+  transcoderPoolMaxSize: '0',
+}
 
 export default livepeer

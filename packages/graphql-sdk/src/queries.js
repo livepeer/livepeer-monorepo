@@ -156,17 +156,8 @@ query TranscodersQuery($skip: Int, $limit: Int) {
 
 export const ProtocolQuery = `
 ${ProtocolFragment}
-query ProtocolQuery($id: String!) {
-  protocol(id: $id) {
+query ProtocolQuery {
+  protocol {
     ...ProtocolFragment
   }
-}
-`
-export const ProtocolsQuery = `
-${ProtocolFragment}
-query ProtocolsQuery {
-  protocols {
-    ...ProtocolFragment
-  }
-}
-`
+}`

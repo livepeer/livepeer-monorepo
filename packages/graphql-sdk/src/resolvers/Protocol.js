@@ -16,7 +16,7 @@ type ProtocolObj = {}
  * @return {string}
  */
 export function id(obj: ProtocolObj): string {
-  return obj.id
+  return 'protocol'
 }
 
 /**

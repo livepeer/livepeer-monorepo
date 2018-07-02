@@ -18,7 +18,6 @@ import {
   TranscoderQuery,
   TranscodersQuery,
   ProtocolQuery,
-  ProtocolsQuery,
 } from './queries'
 import livepeer from './mock-sdk'
 import { publish, TransactionSubmitted } from './resolvers/Subscription'
@@ -363,16 +362,7 @@ test('TranscodersQuery', async t => {
  * Protocol
  */
 test('ProtocolQuery', async t => {
-  const args = {
-    id: '1',
-  }
-  const res = await graphql(schema, ProtocolQuery, null, { livepeer }, args)
-  //console.log(JSON.stringify(res, null, 2))
-  t.snapshot(res)
-})
-
-test('ProtocolsQuery', async t => {
-  const res = await graphql(schema, ProtocolsQuery, null, { livepeer }, {})
+  const res = await graphql(schema, ProtocolQuery, null, { livepeer }, {})
   //console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })

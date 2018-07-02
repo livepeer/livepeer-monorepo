@@ -39,13 +39,6 @@ type QueryJobsArgs = {
 type QueryTranscoderArgs = {
   id?: string,
 }
-
-type QueryProtocolArgs = {
-  id?: string,
-}
-
-type QueryProtocolsArgs = {}
-
 /** Resolvers */
 
 /**
@@ -328,31 +321,10 @@ export async function transcoders(
 /**
  * Gets a the protocol
  * @param {QueryObj} obj
- * @param {QueryProtocolArgs} args
  * @param {GQLContext} ctx
  * @return {Protocol}
  */
-export async function protocol(
-  obj: QueryObj,
-  args: QueryProtocolArgs,
-  ctx: GQLContext,
-): Protocol {
-  const { id } = args
-  const protocol = await ctx.livepeer.rpc.getProtocol(id)
+export async function protocol(obj: QueryObj, ctx: GQLContext): Protocol {
+  const protocol = await ctx.livepeer.rpc.getProtocol()
   return protocol
-}
-
-/**
- * Gets the protocols
- * @param {QueryObj} obj
- * @param {GQLContext} ctx
- * @return {Protocols}
- */
-export async function protocols(
-  obj: QueryObj,
-  args: QueryProtocolsArgs,
-  ctx: GQLContext,
-): Array<Protocol> {
-  const protocols = await ctx.livepeer.rpc.getProtocols()
-  return protocols
 }

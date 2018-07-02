@@ -3,7 +3,7 @@ import * as resolvers from './Protocol'
 
 test('Protocol resolved fields', async t => {
   const obj = {
-    id: '1',
+    id: 'protocol',
     paused: true,
     totalTokenSupply: '0',
     totalBondedToken: '0',
