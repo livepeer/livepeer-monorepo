@@ -234,7 +234,6 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
 
 const ProtocolQuery = gql`
   fragment ProtocolFragment on Protocol {
-    id
     paused
     totalTokenSupply
     totalBondedToken
