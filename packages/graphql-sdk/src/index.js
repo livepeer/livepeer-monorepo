@@ -48,6 +48,15 @@ export const introspectionQueryResultData = {
           },
         ],
       },
+      {
+        kind: 'INTERFACE',
+        name: 'Protocol',
+        possibleTypes: [
+          {
+            name: 'ProtocolType',
+          },
+        ],
+      },
     ],
   },
 }
@@ -111,6 +120,10 @@ export const mockRound = ({ id = '', ...round } = {}) => ({
 
 export const mockProtocol = ({ id = '', ...protocol } = {}) => ({
   paused: false,
+  totalTokenSupply: '0',
+  totalBondedToken: '0',
+  targetBondingRate: '0',
+  transcoderPoolMaxSize: '0',
   ...protocol,
 })
 
