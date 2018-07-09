@@ -24,7 +24,7 @@ const TokenView = ({ ...props }) => {
             stategy="url"
             use="/static/images/lpt-light.svg"
             style={{ width: 32 }}
-          />&nbsp;Livepeer Token Delegation
+          />&nbsp;Livepeer Token Distribution
         </PageHeading>
         <div
           style={{
@@ -37,12 +37,26 @@ const TokenView = ({ ...props }) => {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
               <p style={{ fontSize: 14 }}>
-                {`Livepeer Token (LPT) holders can participate in our Delegated Proof-of-Stake (DPoS) protocol. If you had greater than 0.1 ETH in your account on March 16th, you can generate 2.44 LPT. Here's how to get started:`}
+                {`Livepeer distributed 6.3 million Livepeer Token (LPT) to the community upon genesis. 2.5 million eligible accounts can each earn 2.4 LPT. There are two ways to get token:`}
               </p>
-              <ol>
-                <li>Mine & Generate Token</li>
-                <li>Bond Your Token to A Transcoder</li>
-              </ol>
+              <p>
+                Slow Start: March 16 - July 26 2018
+                <br />
+                <span style={{ fontSize: 14 }}>
+                  If you had greater than 0.1 ETH in a private key account on
+                  March 16th, you can generate 2.44 LPT now.
+                </span>
+              </p>
+
+              <p>
+                Claim Period: July 26, 2018 until all accounts are mined
+                <br />
+                <span style={{ fontSize: 14 }}>
+                  2.5 Million accounts each with 2.44 LPT will be unclaimed, and
+                  anyone can claim token using this application (live July
+                  26th).
+                </span>
+              </p>
               <Button
                 onClick={() => {
                   window.location.hash = '#/mine'
@@ -69,7 +83,7 @@ const TokenView = ({ ...props }) => {
               }}
             >
               <Video
-                src="/static/media/instructions.mp4"
+                src="/static/media/lpt.mp4"
                 style={{
                   background: '#000',
                   border: '2px solid rgba(255,255,255,.1)',
