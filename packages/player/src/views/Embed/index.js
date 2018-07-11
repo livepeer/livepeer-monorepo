@@ -95,7 +95,11 @@ class Channel extends Component {
       return
     }
     const manifestId = latestJob.streamId.substr(0, 68 + 64)
-    if (channel === process.env.REACT_APP_LIVEPEER_TV_ADDRESS) {
+    // Change cases of compared cdn and channel to match each case
+    if (
+      channel.toLowerCase() ===
+      process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()
+    ) {
       return this.setState({
         live: true,
         url: `${
@@ -103,7 +107,10 @@ class Channel extends Component {
         }/${manifestId}.m3u8`,
       })
     }
-    if (channel === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS) {
+    if (
+      channel.toLowerCase() ===
+      process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
+    ) {
       return this.setState({
         live: true,
         url: `${
