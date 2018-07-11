@@ -56,8 +56,8 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     startRound,
     withdrawRound,
   } = delegator.data
+  const totalStake = MathBN.max(bondedAmount, pendingStake)
   const { lastInitializedRound } = currentRound.data
-  // const from = MathBN.add(lastClaimRound, '1')
   const unclaimedRounds =
     !delegator.loading && !currentRound.loading
       ? MathBN.sub(lastInitializedRound, lastClaimRound)
@@ -66,7 +66,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     withdrawRound !== '0' ? MathBN.sub(withdrawRound, lastInitializedRound) : ''
   const hasUnclaimedRounds = unclaimedRounds !== '0'
   const earnedStake = hasUnclaimedRounds
-    ? MathBN.sub(pendingStake, bondedAmount)
+    ? MathBN.max('0', MathBN.sub(pendingStake, bondedAmount))
     : '0'
   const earnedFees = hasUnclaimedRounds ? MathBN.sub(pendingFees, fees) : '0'
   const hasStake = bondedAmount !== '0'
@@ -121,10 +121,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         }
       />
       <MetricBox
-        help="Total tokens earned from reward cuts each round"
+        help="Total tokens earned from reward cuts each round. Includes unclaimed token rewards."
         title="Stake"
         suffix="LPT"
-        value={formatBalance(bondedAmount)}
+        value={formatBalance(totalStake)}
         subvalue={
           withdrawRound === '0'
             ? ''

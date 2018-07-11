@@ -1,7 +1,7 @@
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { mockTranscoder } from '../../utils'
+import { mockTranscoder } from '@livepeer/graphql-sdk'
 import { connectCoinbaseQuery, connectCurrentRoundQuery } from '../../enhancers'
 
 const AccountTranscoderQuery = gql`

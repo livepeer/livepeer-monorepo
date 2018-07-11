@@ -7,12 +7,14 @@ import {
   encodeMethod,
   encodeSignature,
 } from 'ethjs-abi'
+import ENS from 'ethjs-ens'
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
 import ControllerArtifact from '../etc/Controller'
 import JobsManagerArtifact from '../etc/JobsManager'
 import RoundsManagerArtifact from '../etc/RoundsManager'
 import BondingManagerArtifact from '../etc/BondingManager'
+import MinterArtifact from '../etc/Minter'
 
 // Constants
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -110,11 +112,23 @@ export const DEFAULTS = {
     JobsManager: JobsManagerArtifact,
     RoundsManager: RoundsManagerArtifact,
     BondingManager: BondingManagerArtifact,
+    Minter: MinterArtifact,
+  },
+  ensRegistries: {
+    // Mainnet
+    '1': '0x314159265dd8dbb310642f98f50c066173c1259b',
+    // Ropsten
+    '3': '0x112234455c3a32fd11230c42e7bccd4a84e02010',
+    // Rinkeby
+    '4': '0xe7410170f87102df0055eb195163a03b7f2bff4a',
   },
 }
 
 // Utils
 export const utils = {
+  isValidAddress: x => /^0x[a-fA-F0-9]{40}$/.test(x),
+  resolveAddress: async (resolve, x) =>
+    utils.isValidAddress(x) ? x : await resolve(x),
   getMethodHash: item => {
     // const sig = `${item.name}(${item.inputs.map(x => x.type).join(',')})`
     // const hash = Eth.keccak256(sig)
@@ -295,9 +309,18 @@ const prop = (k: string | number) => (x): any => x[k]
 const toBool = (x: any): boolean => !!x
 const toString = (x: Eth.BN): string => x.toString(10)
 const toNumber = (x: Eth.BN): string => Number(x.toString(10))
-const headToBool = compose(toBool, prop(0))
-const headToString = compose(toString, prop(0))
-const headToNumber = compose(toNumber, prop(0))
+const headToBool = compose(
+  toBool,
+  prop(0),
+)
+const headToString = compose(
+  toString,
+  prop(0),
+)
+const headToNumber = compose(
+  toNumber,
+  prop(0),
+)
 const invariant = (name, pos, type) => {
   throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`)
 }
@@ -374,6 +397,10 @@ export async function initRPC({
         : // Use default signer
           new Eth.HttpProvider(provider || DEFAULTS.provider)
   const eth = new Eth(ethjsProvider)
+  const ens = new ENS({
+    provider: eth.currentProvider,
+    registryAddress: DEFAULTS.ensRegistries[await eth.net_version()],
+  })
   const accounts = usePrivateKeys
     ? Object.keys(privateKeys)
     : await eth.accounts()
@@ -385,6 +412,7 @@ export async function initRPC({
       : accounts[account] || EMPTY_ADDRESS
   return {
     eth,
+    ens,
     provider,
     accounts,
     defaultTx: {
@@ -413,7 +441,7 @@ export async function initContracts(
     provider = DEFAULTS.provider,
   } = opts
   // Instanstiate new ethjs instance with specified provider
-  const { eth, accounts, defaultTx } = await initRPC({
+  const { accounts, defaultTx, ens, eth } = await initRPC({
     account,
     gas,
     privateKeys,
@@ -425,6 +453,7 @@ export async function initContracts(
     BondingManager: null,
     JobsManager: null,
     RoundsManager: null,
+    Minter: null,
   }
   const hashes = {
     LivepeerToken: {},
@@ -432,6 +461,7 @@ export async function initContracts(
     BondingManager: {},
     JobsManager: {},
     RoundsManager: {},
+    Minter: {},
   }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
@@ -479,11 +509,13 @@ export async function initContracts(
         }, a),
       {},
     )
+
   return {
     abis,
     accounts,
     contracts,
     defaultTx,
+    ens,
     eth,
     events,
     hashes,
@@ -516,7 +548,7 @@ export async function initContracts(
 export default async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
 ): Promise<LivepeerSDK> {
-  const { events, ...config } = await initContracts(opts)
+  const { ens, events, ...config } = await initContracts(opts)
   const {
     BondingManager,
     Controller,
@@ -524,7 +556,10 @@ export default async function createLivepeerSDK(
     LivepeerToken,
     LivepeerTokenFaucet,
     RoundsManager,
+    Minter,
   } = config.contracts
+  const { resolveAddress } = utils
+
   // Cache
   const cache = {
     // previous log queries are held here to improve perf
@@ -546,6 +581,112 @@ export default async function createLivepeerSDK(
    */
   const rpc = {
     /**
+     * Gets the ENS name for an address. This is known as a reverse lookup.
+     * Unfortunately, users must explicitly set their own resolver.
+     * So most of the time, this method just returns an empty string
+     * More info here:
+     * (https://docs.ens.domains/en/latest/userguide.html#reverse-name-resolution)
+     * @memberof livepeer~rpc
+     * @param {string} address - address to look up an ENS name for
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getENSName('0xd34db33f...')
+     * // => string
+     */
+    async getENSName(address: string): Promise<string> {
+      try {
+        return await ens.reverse(address)
+      } catch (err) {
+        // custom networks or unavailable resolvers can cause failure
+        if (err.message !== 'ENS name not defined.') {
+          console.warn(
+            `Could not get ENS name for address "${address}":`,
+            err.message,
+          )
+        }
+        // if there's no name, we can just resolve an empty string
+        return ''
+      }
+    },
+
+    /**
+     * Gets the address for an ENS name
+     * @memberof livepeer~rpc
+     * @param {string} name - ENS name to look up an address for
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getENSAddress('vitalik.eth')
+     * // => string
+     */
+    async getENSAddress(name: string): Promise<string> {
+      try {
+        return await ens.lookup(name)
+      } catch (err) {
+        // custom networks or unavailable resolvers can cause failure
+        if (err.message !== 'ENS name not defined.') {
+          console.warn(
+            `Could not get address for ENS name "${name}":`,
+            err.message,
+          )
+        }
+        // if there's no name, we can just resolve an empty string
+        return ''
+      }
+    },
+
+    /**
+     * Gets a block by number, hash, or keyword ('earliest' | 'latest')
+     * @memberof livepeer~rpc
+     * @param {string} block - Number of block to get
+     *
+     * @example
+     *
+     * await rpc.getBlock('latest')
+     * // => {
+     *   "number": string,
+     *   "hash": string,
+     *   "parentHash": string,
+     *   "nonce": string,
+     *   "sha3Uncles": string,
+     *   "logsBloom": string,
+     *   "transactionsRoot": string,
+     *   "stateRoot": string,
+     *   "receiptsRoot": string,
+     *   "miner": string,
+     *   "mixHash": string,
+     *   "difficulty": string,
+     *   "totalDifficulty": string,
+     *   "extraData": string,
+     *   "size": string,
+     *   "gasLimit": string,
+     *   "gasUsed": string,
+     *   "timestamp": number,
+     *   "transactions": Array<Transaction>,
+     *   "transactionsRoot": string,
+     *   "uncles": Array<Uncle>,
+     * }
+     */
+    async getBlock(id: string): Promise<Block> {
+      const block = id.startsWith('0x')
+        ? await config.eth.getBlockByHash(id, true)
+        : await config.eth.getBlockByNumber(id, true)
+      return {
+        ...block,
+        difficulty: toString(block.difficulty),
+        gasLimit: toString(block.gasLimit),
+        gasUsed: toString(block.gasUsed),
+        number: toString(block.number),
+        size: toString(block.size),
+        timestamp: Number(toString(block.timestamp)),
+        totalDifficulty: toString(block.totalDifficulty),
+      }
+    },
+
+    /**
      * Gets the ETH balance for an account
      * @memberof livepeer~rpc
      * @param {string} addr - ETH account address
@@ -558,7 +699,53 @@ export default async function createLivepeerSDK(
      *
      */
     async getEthBalance(addr: string): Promise<string> {
-      return toString(await config.eth.getBalance(addr))
+      return toString(
+        await config.eth.getBalance(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
+    },
+
+    /**
+     * Gets the unbonding period for transcoders
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getUnbondingPeriod()
+     * // => string
+     */
+    async getUnbondingPeriod(): Promise<string> {
+      return headToString(await BondingManager.unbondingPeriod())
+    },
+
+    /**
+     * Gets the number of active transcoders
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getNumActiveTranscoders()
+     * // => string
+     */
+    async getNumActiveTranscoders(): Promise<string> {
+      return headToString(await BondingManager.numActiveTranscoders())
+    },
+
+    /**
+     * Gets the maximum earnings for claims rounds
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getMaxEarningsClaimsRounds()
+     * // => string
+     */
+    async getMaxEarningsClaimsRounds(): Promise<string> {
+      return headToString(await BondingManager.maxEarningsClaimsRounds())
     },
 
     /**
@@ -629,7 +816,11 @@ export default async function createLivepeerSDK(
      * // => string
      */
     async getTokenBalance(addr: string): Promise<string> {
-      return headToString(await LivepeerToken.balanceOf(addr))
+      return headToString(
+        await LivepeerToken.balanceOf(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
     },
 
     /**
@@ -646,7 +837,9 @@ export default async function createLivepeerSDK(
     async getTokenInfo(addr: string): Promise<TokenInfo> {
       return {
         totalSupply: await rpc.getTokenTotalSupply(),
-        balance: await rpc.getTokenBalance(addr),
+        balance: await rpc.getTokenBalance(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
       }
     },
 
@@ -698,12 +891,20 @@ export default async function createLivepeerSDK(
       }
       // approve address / amount with LivepeerToken...
       await utils.getTxReceipt(
-        await LivepeerToken.approve(to, value, tx),
+        await LivepeerToken.approve(
+          await resolveAddress(rpc.getENSAddress, addr),
+          value,
+          tx,
+        ),
         config.eth,
       )
       // ...aaaand transfer!
       return await utils.getTxReceipt(
-        await LivepeerToken.transfer(to, value, tx),
+        await LivepeerToken.transfer(
+          await resolveAddress(rpc.getENSAddress, addr),
+          value,
+          tx,
+        ),
         config.eth,
       )
     },
@@ -748,7 +949,11 @@ export default async function createLivepeerSDK(
      * // => string
      */
     async getFaucetNext(addr: string): Promise<string> {
-      return headToString(await LivepeerTokenFaucet.nextValidRequest(addr))
+      return headToString(
+        await LivepeerTokenFaucet.nextValidRequest(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
     },
 
     /**
@@ -770,8 +975,38 @@ export default async function createLivepeerSDK(
       return {
         amount: await rpc.getFaucetAmount(),
         wait: await rpc.getFaucetWait(),
-        next: await rpc.getFaucetNext(addr),
+        next: await rpc.getFaucetNext(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
       }
+    },
+
+    /**
+     * Gets the per round inflation rate
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getInflation()
+     * // => string
+     */
+    async getInflation(): Promise<string> {
+      return headToString(await Minter.inflation())
+    },
+
+    /**
+     * Gets the change in inflation rate per round until the target bonding rate is achieved
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getInflationChange()
+     * // => string
+     */
+    async getInflationChange(): Promise<string> {
+      return headToString(await Minter.inflationChange())
     },
 
     /**
@@ -790,9 +1025,10 @@ export default async function createLivepeerSDK(
      * // }
      */
     async getBroadcaster(addr: string): Promise<Broadcaster> {
-      const b = await JobsManager.broadcasters(addr)
+      const address = await resolveAddress(rpc.getENSAddress, addr)
+      const b = await JobsManager.broadcasters(address)
       return {
-        address: addr,
+        address,
         deposit: toString(b.deposit),
         withdrawBlock: toString(b.withdrawBlock),
       }
@@ -810,7 +1046,11 @@ export default async function createLivepeerSDK(
      * // => 'Pending' | 'Bonded' | 'Unbonding' | 'Unbonded'
      */
     async getDelegatorStatus(addr: string): Promise<string> {
-      const status = headToString(await BondingManager.delegatorStatus(addr))
+      const status = headToString(
+        await BondingManager.delegatorStatus(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
       return DELEGATOR_STATUS[status]
     },
 
@@ -826,7 +1066,11 @@ export default async function createLivepeerSDK(
      * // => string
      */
     async getDelegatorStake(addr: string): Promise<string> {
-      return headToString(await BondingManager.delegatorStake(addr))
+      return headToString(
+        await BondingManager.delegatorStake(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
     },
 
     /**
@@ -854,18 +1098,19 @@ export default async function createLivepeerSDK(
      * // }
      */
     async getDelegator(addr: string): Promise<Delegator> {
-      const status = await rpc.getDelegatorStatus(addr)
+      const address = await resolveAddress(rpc.getENSAddress, addr)
+      const status = await rpc.getDelegatorStatus(address)
       const allowance = headToString(
-        await LivepeerToken.allowance(addr, BondingManager.address),
+        await LivepeerToken.allowance(address, BondingManager.address),
       )
       const currentRound = await rpc.getCurrentRound()
       const pendingStake = headToString(
-        await BondingManager.pendingStake(addr, currentRound),
+        await BondingManager.pendingStake(address, currentRound),
       )
       const pendingFees = headToString(
-        await BondingManager.pendingFees(addr, currentRound),
+        await BondingManager.pendingFees(address, currentRound),
       )
-      const d = await BondingManager.getDelegator(addr)
+      const d = await BondingManager.getDelegator(address)
       const bondedAmount = toString(d.bondedAmount)
       const fees = toString(d.fees)
       const delegateAddress =
@@ -875,7 +1120,7 @@ export default async function createLivepeerSDK(
       const startRound = toString(d.startRound)
       const withdrawRound = toString(d.withdrawRound)
       return {
-        address: addr,
+        address,
         allowance,
         bondedAmount,
         delegateAddress,
@@ -904,7 +1149,7 @@ export default async function createLivepeerSDK(
     async getTranscoderIsActive(addr: string): Promise<boolean> {
       return headToBool(
         await BondingManager.isActiveTranscoder(
-          addr,
+          await resolveAddress(rpc.getENSAddress, addr),
           await rpc.getCurrentRound(),
         ),
       )
@@ -922,7 +1167,11 @@ export default async function createLivepeerSDK(
      * // => 'NotRegistered' | 'Registered' | 'Resigned'
      */
     async getTranscoderStatus(addr: string): Promise<string> {
-      const status = headToString(await BondingManager.transcoderStatus(addr))
+      const status = headToString(
+        await BondingManager.transcoderStatus(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
       return TRANSCODER_STATUS[status]
     },
 
@@ -938,7 +1187,11 @@ export default async function createLivepeerSDK(
      * // => string
      */
     async getTranscoderTotalStake(addr: string): Promise<string> {
-      return headToString(await BondingManager.transcoderTotalStake(addr))
+      return headToString(
+        await BondingManager.transcoderTotalStake(
+          await resolveAddress(rpc.getENSAddress, addr),
+        ),
+      )
     },
 
     /**
@@ -965,10 +1218,11 @@ export default async function createLivepeerSDK(
      * // }
      */
     async getTranscoder(addr: string): Promise<Transcoder> {
-      const status = await rpc.getTranscoderStatus(addr)
-      const active = await rpc.getTranscoderIsActive(addr)
-      const totalStake = await rpc.getTranscoderTotalStake(addr)
-      const t = await BondingManager.getTranscoder(addr)
+      const address = await resolveAddress(rpc.getENSAddress, addr)
+      const status = await rpc.getTranscoderStatus(address)
+      const active = await rpc.getTranscoderIsActive(address)
+      const totalStake = await rpc.getTranscoderTotalStake(address)
+      const t = await BondingManager.getTranscoder(address)
       const feeShare = toString(t.feeShare)
       const lastRewardRound = toString(t.lastRewardRound)
       const pendingFeeShare = toString(t.pendingFeeShare)
@@ -978,14 +1232,14 @@ export default async function createLivepeerSDK(
       const rewardCut = toString(t.rewardCut)
       return {
         active,
-        address: addr,
-        rewardCut,
+        address,
         feeShare,
         lastRewardRound,
         pricePerSegment,
         pendingRewardCut,
         pendingFeeShare,
         pendingPricePerSegment,
+        rewardCut,
         status,
         totalStake,
       }
@@ -1264,7 +1518,7 @@ export default async function createLivepeerSDK(
     async getJob(id: string): Promise<Job> {
       const x = await JobsManager.getJob(id)
       return {
-        id: `${id}`,
+        id: toString(id),
         streamId: x.streamId,
         transcodingOptions: utils.parseTranscodingOptions(x.transcodingOptions),
         transcoder: x.transcoderAddress,
@@ -1296,7 +1550,18 @@ export default async function createLivepeerSDK(
       const head = await config.eth.blockNumber()
       const fromBlock = from || Math.max(0, head - blocksAgo)
       const toBlock = to || 'latest'
-      const topics = utils.encodeEventTopics(event, filters)
+      const topics = utils.encodeEventTopics(
+        event,
+        filters.broadcaster
+          ? {
+              ...filters,
+              broadcaster: await resolveAddress(
+                rpc.getENSAddress,
+                filters.broadcaster,
+              ),
+            }
+          : filters,
+      )
       const params = {
         address: JobsManager.address,
         fromBlock,
@@ -1453,7 +1718,14 @@ export default async function createLivepeerSDK(
       const token = toBN(amount)
       // TODO: check for existing approval / round initialization / token balance
       return await utils.getTxReceipt(
-        await BondingManager.bond(token, to, { ...config.defaultTx, ...tx }),
+        await BondingManager.bond(
+          token,
+          await resolveAddress(rpc.getENSAddress, to),
+          {
+            ...config.defaultTx,
+            ...tx,
+          },
+        ),
         config.eth,
       )
     },
@@ -1941,6 +2213,34 @@ export default async function createLivepeerSDK(
    * @prop {string} startBlock - the start block of the current round
    * @prop {string} lastInitializedRound - the last round that was initialized prior to the current
    * @prop {string} length - the length of rounds
+   */
+
+  /**
+   * An object containing information about an Ethereum block
+   * @typedef {Object} Block
+   * @prop {string} number - block number
+   * @prop {string} hash - block hash
+   * @prop {string} parentHash - parent has of the block
+   * @prop {string} nonce - block nonce
+   * @prop {string} sha3Uncles - block sha3 uncles
+   * @prop {string} logsBloom - logss bloom for the block
+   * @prop {string} transactionsRoot - block transaction root hash
+   * @prop {string} stateRoot - block state root hash
+   * @prop {string} receiptsRoot - block receipts root hash
+   * @prop {string} miner - block miner hash
+   * @prop {string} mixHash - block mixHash
+   * @prop {string} difficulty - difficulty int
+   * @prop {string} totalDifficulty - total difficulty int
+   * @prop {string} extraData - hash of extra data
+   * @prop {string} size - block size
+   * @prop {string} gasLimit - block gas limit
+   * @prop {string} gasUsed - gas used in block
+   * @prop {number} timestamp - block timestamp
+   * @prop {string} transactions - block transactions hash
+   * @prop {string} uncles - block uncles hash
+   * @prop {Array<Transaction>} transactions - transactions in the block
+   * @prop {string} transactionsRoot - root transaction hash
+   * @prop {Array<Uncle>} uncles - block uncles
    */
 
   /**

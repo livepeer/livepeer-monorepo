@@ -23,11 +23,11 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 ## Table of Contents
 
-* [Requirements](#requirements)
-* [Getting Started](#getting-started)
-* [Contributing](#contributing)
-* [Packages](#packages)
-* [Resources](#resources)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [Packages](#packages)
+- [Resources](#resources)
 
 <!-- hide-on-docup-stop -->
 
@@ -35,9 +35,9 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 This project requires `node >=8.0.0` and `yarn >=1.0.0`. A unix shell is also required.
 
-* [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
-* [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
-* [UNIX Shell (Windows users)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+- [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
+- [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
+- [UNIX Shell (Windows users)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 
 ## Getting Started
 
@@ -72,18 +72,19 @@ We happily await your pull requests and/or involvement in our [issues page](http
 
 ### Private
 
-| Name                                                                                         | Description                                                                                                                                                                                                                            |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`@livepeer/apollo`](https://github.com/livepeer/livepeerjs/tree/master/packages/apollo)     | Integrates with [@livepeer/graphql-sdk](https://github.com/livepeer/livepeerjs/tree/master/packages/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).                                                               |
-| [`@livepeer/explorer`](https://github.com/livepeer/livepeerjs/tree/master/packages/explorer) | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org) |
-| [`@livepeer/player`](https://github.com/livepeer/livepeerjs/tree/master/packages/player)     | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)                                       |
+| Name                                                                                                 | Description                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@livepeer/apollo`](https://github.com/livepeer/livepeerjs/tree/master/packages/apollo)             | Integrates with [@livepeer/graphql-sdk](https://github.com/livepeer/livepeerjs/tree/master/packages/graphql-sdk) with [apollo](https://github.com/apollographql/apollo).                                                               |
+| [`@livepeer/explorer`](https://github.com/livepeer/livepeerjs/tree/master/packages/explorer)         | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org) |
+| [`@livepeer/player`](https://github.com/livepeer/livepeerjs/tree/master/packages/player)             | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)                                       |
+| [`@livepeer/merkle-miner`](https://github.com/livepeer/livepeerjs/tree/master/packages/merkle-miner) | Helpers for mining a merkle proof and generating Livepeer Token                                                                                                                                                                        |
 
 ## Resources
 
 To get a full idea of what Livepeer is about, be sure to take a look at these other resources:
 
-* 🌐 [The Livepeer Website](https://livepeer.org)
-* ✍ [The Livepeer Blog](https://medium.com/livepeer-blog)
-* 📖 [The Livepeer Docs](https://livepeer.readthedocs.io/)
-* 💬 [The Livepeer Chat](https://discord.gg/7wRSUGX)
-* ❓ [The Livepeer Forum](https://forum.livepeer.org/)
+- 🌐 [The Livepeer Website](https://livepeer.org)
+- ✍ [The Livepeer Blog](https://medium.com/livepeer-blog)
+- 📖 [The Livepeer Docs](https://livepeer.readthedocs.io/)
+- 💬 [The Livepeer Chat](https://discord.gg/7wRSUGX)
+- ❓ [The Livepeer Forum](https://forum.livepeer.org/)

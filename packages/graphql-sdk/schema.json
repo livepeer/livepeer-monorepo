@@ -18,27 +18,27 @@
           "fields": [
             {
               "name": "account",
-              "description": "An Account by ETH address",
+              "description": "An Account by ETH address or ENS name",
               "args": [
                 {
                   "name": "id",
                   "description": "",
                   "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
                   },
                   "defaultValue": null
                 }
               ],
               "type": {
-                "kind": "OBJECT",
-                "name": "Account",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Account",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -63,9 +63,13 @@
                 }
               ],
               "type": {
-                "kind": "OBJECT",
-                "name": "Broadcaster",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Broadcaster",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -87,13 +91,33 @@
               "deprecationReason": null
             },
             {
-              "name": "currentRound",
-              "description": "Gets the current round",
+              "name": "currentBlock",
+              "description": "The current Ethereum block",
               "args": [],
               "type": {
-                "kind": "OBJECT",
-                "name": "Round",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Block",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "currentRound",
+              "description": "The current round in the Livepeer protocol",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Round",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -118,9 +142,13 @@
                 }
               ],
               "type": {
-                "kind": "OBJECT",
-                "name": "Delegator",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Delegator",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -145,9 +173,13 @@
                 }
               ],
               "type": {
-                "kind": "OBJECT",
-                "name": "Job",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Job",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -212,9 +244,13 @@
               "description": "The currently selected account (usually set by something like MetaMask)",
               "args": [],
               "type": {
-                "kind": "OBJECT",
-                "name": "Account",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Account",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -328,9 +364,13 @@
                 }
               ],
               "type": {
-                "kind": "OBJECT",
-                "name": "Transcoder",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Transcoder",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -385,9 +425,13 @@
               "description": "The protocol as a whole",
               "args": [],
               "type": {
-                "kind": "OBJECT",
-                "name": "Protocol",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Protocol",
+                  "ofType": null
+                }
               },
               "isDeprecated": false,
               "deprecationReason": null
@@ -416,6 +460,22 @@
             {
               "name": "id",
               "description": "The ETH address for an account",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "ensName",
+              "description": "The ENS name for an account",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -523,6 +583,22 @@
             {
               "name": "id",
               "description": "The broadcaster's ETH address",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "ensName",
+              "description": "The ENS name for an account",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -653,6 +729,22 @@
             {
               "name": "broadcaster",
               "description": "Address of broadcaster that requested the transcoding job",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "broadcasterENSName",
+              "description": "The broadcaster's ENS name",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -811,6 +903,22 @@
             {
               "name": "id",
               "description": "The ETH address of a delegator",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "ensName",
+              "description": "The ENS name for an account",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1079,6 +1187,22 @@
               "deprecationReason": null
             },
             {
+              "name": "ensName",
+              "description": "The ENS name for an account",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "status",
               "description": "The status of the transcoder",
               "args": [],
@@ -1265,6 +1389,33 @@
               "deprecationReason": null
             }
           ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Block",
+          "description": "Info about an Ethereum block.",
+          "fields": [
+            {
+              "name": "id",
+              "description": "The block number",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
           "possibleTypes": null
         },
         {
@@ -1858,6 +2009,33 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "sendTransaction",
+              "description": "Sends a transaction based on an input object",
+              "args": [
+                {
+                  "name": "options",
+                  "description": "",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "JSON",
                       "ofType": null
                     }
                   },

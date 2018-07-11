@@ -1,7 +1,7 @@
 import { compose, lifecycle, mapProps, withHandlers } from 'recompose'
 import { graphql, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
-import { mockDelegator } from '../../utils'
+import { mockDelegator } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,

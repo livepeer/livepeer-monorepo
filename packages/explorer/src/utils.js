@@ -150,80 +150,8 @@ export function toRGBA(hex, opacity = 1) {
   const x = hex.replace('#', '')
   const len = x.length
   const r = parseInt(x.substring(0, len / 3), 16)
-  const g = parseInt(x.substring(len / 3, 2 * len / 3), 16)
-  const b = parseInt(x.substring(2 * len / 3, 3 * len / 3), 16)
+  const g = parseInt(x.substring(len / 3, (2 * len) / 3), 16)
+  const b = parseInt(x.substring((2 * len) / 3, (3 * len) / 3), 16)
   const a = Math.min(1, Math.max(0, opacity))
   return `rgba(${[r, g, b, a]})`
 }
-
-export const mockAccount = ({ id = '', ...account } = {}) => ({
-  id,
-  ethBalance: '0',
-  tokenBalance: '0',
-  ...account,
-  broadcaster: mockBroadcaster({
-    id,
-    ...account.broadcaster,
-  }),
-  delegator: mockDelegator({
-    id,
-    ...account.delegator,
-  }),
-  transcoder: mockTranscoder({
-    id,
-    ...account.transcoder,
-  }),
-})
-
-export const mockBroadcaster = ({ id = '', ...broadcaster } = {}) => ({
-  deposit: '0',
-  id,
-  jobs: [],
-  withdrawBlock: '0',
-  ...broadcaster,
-})
-
-export const mockDelegator = ({ id = '', ...delegator } = {}) => ({
-  allowance: '0',
-  bondedAmount: '0',
-  id,
-  delegateAddress: '',
-  delegatedAmount: '0',
-  fees: '0',
-  lastClaimRound: '0',
-  pendingFees: '0',
-  pendingStake: '0',
-  startRound: '0',
-  status: 'Unbonded',
-  withdrawRound: '0',
-  ...delegator,
-})
-
-export const mockRound = ({ id = '', ...round } = {}) => ({
-  id,
-  initialized: false,
-  lastInitializedRound: '0',
-  length: '0',
-  startBlock: '0',
-  ...round,
-})
-
-export const mockProtocol = ({ id = '', ...protocol } = {}) => ({
-  paused: false,
-  ...protocol,
-})
-
-export const mockTranscoder = ({ id = '', ...transcoder } = {}) => ({
-  active: false,
-  feeShare: '0',
-  id,
-  lastRewardRound: '0',
-  pricePerSegment: '0',
-  pendingRewardCut: '0',
-  pendingFeeShare: '0',
-  pendingPricePerSegment: '0',
-  rewardCut: '0',
-  status: '',
-  totalStake: '0',
-  ...transcoder,
-})

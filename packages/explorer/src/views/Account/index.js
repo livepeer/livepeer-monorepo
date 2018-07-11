@@ -3,7 +3,6 @@ import * as React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import QRCode from 'qrcode-react'
 import { MoreVertical as MoreVerticalIcon } from 'react-feather'
-import { Button } from 'rmwc/Button'
 import { Icon } from 'rmwc/Icon'
 import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import AccountOverview from '../AccountOverview'
@@ -14,6 +13,7 @@ import {
   Avatar,
   Banner,
   BasicNavbar,
+  Button,
   Content,
   Footer,
   PageHeading,
@@ -27,8 +27,9 @@ type AccountViewProps = {
   account: GraphQLProps<Account>,
   bond: ({ id: string }) => void,
   coinbase: GraphQLProps<Coinbase>,
-  currentRound: GraphQLProps<Array<Round>>,
+  currentRound: GraphQLProps<Round>,
   history: History,
+  location: Location,
   match: Match,
   me: GraphQLProps<Account>,
   unbond: ({ id: string }) => void,
@@ -39,11 +40,13 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   bond,
   coinbase,
   history,
+  location,
   match,
   me,
   unbond,
 }) => {
-  const accountAddress = match.params.accountId
+  const accountAddress = account.data.id
+  const ensName = account.data.ensName
   const userAddress = coinbase.data.coinbase
   const isMe = accountAddress === userAddress
   const { delegateAddress, status } = me.data.delegator
@@ -54,50 +57,47 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   const canRebond = isMyDelegate && (isBonded || isBonding)
   const canBond = !!userAddress
   const canUnbond = userAddress && isBonded && isMyDelegate
+  const isTranscoder = me.data.transcoder.status === 'Registered'
+  const showBondButtons =
+    (canBond || canRebond || canUnbond) &&
+    ((isTranscoder && isMe) || (!isTranscoder && !isMe))
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
       <BasicNavbar />
       <Banner>
-        <PageHeading>
-          {isMe ? (
-            <React.Fragment>
-              <Avatar id={account.data.id} size={32} bg="#000" />&nbsp;My
-              Account
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Avatar id={account.data.id} size={32} bg="#000" />&nbsp;
-              Account&nbsp;<span style={{ fontSize: 16, height: 26 }}>
-                {account.data.id.substr(0, 10)}...
-              </span>
-            </React.Fragment>
-          )}
+        <PageHeading className="page-heading">
+          <React.Fragment>
+            <Avatar id={accountAddress} size={32} bg="#000" />&nbsp;
+            {isMe ? 'My Account' : 'Account'}&nbsp;<span
+              style={{ fontSize: 16, height: 26 }}
+            >
+              {ensName ? ensName : `${accountAddress.substr(0, 10)}...`}
+            </span>
+          </React.Fragment>
           {/** Bonding Actions */}
-          {!isMe &&
-            (canBond || canRebond || canUnbond) && (
-              <SimpleMenu
-                handle={
-                  <Button style={{ minWidth: 0, width: 32, height: 32 }}>
-                    <Icon use="arrow_drop_down_circle" />
-                  </Button>
-                }
-                onSelected={async ({ detail }) => {
-                  const { action } = detail.item.dataset
-                  switch (action) {
-                    case 'bond':
-                      return bond({ id: accountAddress })
-                    case 'unbond':
-                      return await unbond({ id: accountAddress })
-                  }
-                }}
-              >
-                {(canBond || canRebond) && (
-                  <MenuItem data-action="bond">Bond</MenuItem>
-                )}
-                {canUnbond && <MenuItem data-action="unbond">Unbond</MenuItem>}
-              </SimpleMenu>
-            )}
+          {showBondButtons && (
+            <span style={{ marginLeft: 8 }}>
+              {(canBond || canRebond) && (
+                <Button
+                  className="outlined"
+                  style={{ margin: 4 }}
+                  onClick={() => bond({ id: accountAddress })}
+                >
+                  Bond
+                </Button>
+              )}
+              {canUnbond && (
+                <Button
+                  className="outlined"
+                  style={{ margin: 4 }}
+                  onClick={() => unbond({ id: accountAddress })}
+                >
+                  Unbond
+                </Button>
+              )}
+            </span>
+          )}
         </PageHeading>
         <div style={{ marginBottom: -32, paddingTop: 32 }}>
           <Tabs url={match.url}>
@@ -127,7 +127,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
               path={`${match.path}/transcoding`}
               component={AccountTranscoding}
             />
-            <Redirect to={`${match.url}/overview`} />
+            <Redirect to={`${match.url}/overview${location.search}`} />
           </Switch>
         </div>
       </Content>

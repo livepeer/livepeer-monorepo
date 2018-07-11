@@ -78,10 +78,10 @@ const Landing = ({ history, ...props }) => (
                 big
                 type="submit"
                 onClick={() => {
-                  history.push('/transcoders')
+                  history.push('/token')
                 }}
               >
-                View Transcoders
+                Get Token
               </CTAButton>
             </p>
           </InfoBox>

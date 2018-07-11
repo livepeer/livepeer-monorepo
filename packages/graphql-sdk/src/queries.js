@@ -1,4 +1,5 @@
 import { default as AccountFragment } from './fragments/Account'
+import { default as BlockFragment } from './fragments/Block'
 import { default as BroadcasterFragment } from './fragments/Broadcaster'
 import { default as DelegatorFragment } from './fragments/Delegator'
 import { default as JobFragment } from './fragments/Job'
@@ -12,9 +13,26 @@ ${AccountFragment}
 ${BroadcasterFragment}
 ${DelegatorFragment}
 ${TranscoderFragment}
-query AccountQuery($id: String!) {
+query AccountQuery($id: String) {
   account(id: $id) {
     ...AccountFragment
+  }
+}
+`
+
+export const AccountBroadcasterQuery = `
+${JobFragment}
+${BroadcasterFragment}
+query AccountBroadcasterQuery($id: String, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit: Int) {
+  account(id: $id) {
+    id
+    ensName
+    broadcaster {
+      ...BroadcasterFragment
+      jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
+        ...JobFragment
+      }
+    }
   }
 }
 `
@@ -35,6 +53,15 @@ query BroadcasterQuery($id: String!, $jobs: Boolean!, $jobsSkip: Int, $jobsLimit
 export const CoinbaseQuery = `
 query CoinbaseQuery {
   coinbase
+}
+`
+
+export const CurrentBlockQuery = `
+${BlockFragment}
+query CurrentBlockQuery {
+  currentBlock {
+    ...BlockFragment
+  }
 }
 `
 

@@ -29,6 +29,16 @@ export function id(obj: BroadcasterObj): string {
 }
 
 /**
+ * Gets the ENS name for a Broadcaster
+ * @param {Object} obj
+ * @param {string} obj.id - The id of the broadcaster
+ */
+export async function ensName(obj: BroadcasterObj, args, ctx): string {
+  const { id } = obj
+  return await ctx.livepeer.rpc.getENSName(id)
+}
+
+/**
  * Gets the deposit for a Broadcaster
  * @param {Object} obj
  * @param {string} obj.deposit - The deposit of the broadcaster

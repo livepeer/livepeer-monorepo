@@ -1,6 +1,7 @@
 {
   "name": "@livepeer/graphql-sdk",
-  "version": "1.0.0-alpha.4",
+  "description": "A GraphQL schema that can be used to simplify protocol interactions in the browser or node.js.",
+  "version": "1.0.0-alpha.5",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
@@ -11,7 +12,7 @@
     "postbuild": "node generate-schema.js",
     "copy-docs": "rm -rf ../../docs/graphql-sdk && mkdir ../../docs/graphql-sdk && cp -r docs/* ../../docs/graphql-sdk",
     "docs": "npx graphdoc --force && echo 'main .title { background: #000; }' >> ./docs/styles/graphdoc.css && npx graphql-markdown ./schema.json --update-file README.md --heading-level 2",
-    "graphiql": "yarn build && node ./server.js",
+    "graphiql": "node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepack": "npm -s run build",
     "test": "npx nyc ava",
@@ -19,7 +20,7 @@
     "lcov-badge": "npx lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
   "dependencies": {
-    "@livepeer/sdk": "^1.0.0-alpha.4",
+    "@livepeer/sdk": "^1.0.0-alpha.5",
     "babel-runtime": "^6.26.0",
     "graphql": "0.13.0",
     "graphql-subscriptions": "^0.5.8",

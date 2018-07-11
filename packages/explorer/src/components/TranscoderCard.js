@@ -11,8 +11,9 @@ import Tooltip from './Tooltip'
 type TranscoderCardProps = {|
   active: boolean,
   bonded: boolean,
-  id: string,
+  ensName: string,
   feeShare: string,
+  id: string,
   lastRewardRound: string,
   onBond?: any => void,
   onUnbond?: any => void,
@@ -32,13 +33,14 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     bonded,
     bondedAmount,
     className,
+    ensName,
     id,
     status,
     onBond,
     onUnbond,
-    feeShare,
-    pricePerSegment,
-    rewardCut,
+    pendingFeeShare: feeShare,
+    pendingPricePerSegment: pricePerSegment,
+    pendingRewardCut: rewardCut,
     totalStake,
   }) => (
     <div className={className}>
@@ -53,7 +55,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
               to={`/accounts/${id}/transcoding`}
               style={{ color: '#000', textDecoration: 'none' }}
             >
-              {id.substr(0, 10)}...
+              {ensName || `${id.substr(0, 10)}...`}
             </Link>
           </Tooltip>
         </div>
@@ -77,7 +79,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           type="percentage"
           value={feeShare}
           width="64px"
-          help="How much the you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
+          help="How much you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
         />
         <TranscoderStat
           label="Price"

@@ -3,7 +3,6 @@ import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { queries } from '@livepeer/graphql-sdk'
 import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
@@ -32,11 +31,35 @@ const mapDispatchToProps = dispatch =>
     dispatch,
   )
 
-const connectRedux = connect(null, mapDispatchToProps)
+const connectRedux = connect(
+  null,
+  mapDispatchToProps,
+)
 
-const connectApollo = graphql(gql(queries.JobsQuery), {
+const JobsQuery = gql`
+  fragment JobFragment on Job {
+    id
+    broadcaster
+    broadcasterENSName
+    streamId
+    profiles {
+      id
+      name
+      bitrate
+      framerate
+      resolution
+    }
+  }
+
+  query JobsQuery($broadcaster: String, $skip: Int, $limit: Int) {
+    jobs(broadcaster: $broadcaster, skip: $skip, limit: $limit) {
+      ...JobFragment
+    }
+  }
+`
+
+const connectApollo = graphql(JobsQuery, {
   props: ({ data, ownProps }, state) => {
-    // console.log(data)
     return {
       ...ownProps,
       loading: data.loading,
@@ -54,7 +77,10 @@ const connectApollo = graphql(gql(queries.JobsQuery), {
   },
 })
 
-const enhance = compose(connectRedux, connectApollo)
+const enhance = compose(
+  connectRedux,
+  connectApollo,
+)
 
 class Channel extends Component {
   state = {
@@ -110,7 +136,6 @@ class Channel extends Component {
     const searchParams = new URLSearchParams(history.location.search)
     const maxWidth = searchParams.get('maxWidth') || '100%'
     const aspectRatio = searchParams.get('aspectRatio') || '16:9'
-    console.log(maxWidth, aspectRatio)
     return (
       <Media maxWidth={maxWidth}>
         {(!live || loading) && (

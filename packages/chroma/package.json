@@ -1,6 +1,7 @@
 {
   "name": "@livepeer/chroma",
-  "version": "1.0.0-alpha.4",
+  "description": "A component library that contains some UI building blocks for livestreaming video applications.",
+  "version": "1.0.0-alpha.5",
   "main": "main/index.js",
   "module": "lib/index.js",
   "license": "MIT",
@@ -14,7 +15,7 @@
     "test": "npx jest"
   },
   "dependencies": {
-    "@livepeer/sdk": "^1.0.0-alpha.4",
+    "@livepeer/sdk": "^1.0.0-alpha.5",
     "hls.js": "https://github.com/jozanza/hls.js.git#9f68d40971242b0d2216376ff7ff776299acf8fd",
     "prop-types": "15.6.1",
     "react": "^16.1.0",

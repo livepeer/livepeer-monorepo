@@ -1,15 +1,15 @@
 require('babel-polyfill')
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
-const createSchema = require('./main').default
+const { schema } = require('./main')
 const livepeer = require('./main/mock-sdk.js').default
-const LivepeerSchema = createSchema({ livepeer })
 const app = express()
 
 app.use(
   '/',
   graphqlHTTP(req => ({
-    schema: LivepeerSchema,
+    schema,
+    context: { livepeer },
     graphiql: true,
   })),
 )

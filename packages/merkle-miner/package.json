@@ -1,6 +1,7 @@
 {
   "name": "@livepeer/merkle-miner",
-  "version": "1.0.0-alpha.4",
+  "private": true,
+  "version": "1.0.0-alpha.5",
   "license": "MIT",
   "main": "dist/merkle-miner.cjs.js",
   "module": "dist/merkle-miner.es.js",

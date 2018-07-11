@@ -18,6 +18,10 @@ type QueryBroadcasterArgs = {
   id?: string,
 }
 
+type QueryCurrentBlockArgs = {}
+
+type QueryCurrentRoundArgs = {}
+
 type QueryDelegatorArgs = {
   id?: string,
 }
@@ -32,8 +36,6 @@ type QueryJobsArgs = {
   limit?: number,
 }
 
-type QueryRoundArgs = {}
-
 type QueryTranscoderArgs = {
   id?: string,
 }
@@ -45,12 +47,16 @@ type QueryTranscoderArgs = {
  * @param {QueryObj} obj
  * @param {QueryAccountArgs} args
  * @param {string} args.id - ETH address
+ * @param {string} args.ensName - ENS name
  * @param {GQLContext} ctx
  * @return {Account}
  */
 export async function account(obj, args, ctx) {
-  // Account field resolvers will fill in the rest
-  return { id: args.id }
+  const { rpc, utils } = ctx.livepeer
+  const addrOrName = args.id.toLowerCase()
+  const id = await utils.resolveAddress(rpc.getENSAddress, addrOrName)
+  const ensName = addrOrName === id ? await rpc.getENSName(id) : addrOrName
+  return { id, ensName }
 }
 
 /**
@@ -82,6 +88,41 @@ export async function broadcaster(
  */
 export async function coinbase(obj, args, ctx) {
   return ctx.account || ''
+}
+
+/**
+ * Gets the current Ethereum block
+ * @param {QueryObj} obj
+ * @param {QueryCurrentBlockArgs} args
+ * @param {GQLContext} ctx
+ * @return {Block}
+ */
+export async function currentBlock(
+  obj: QueryObj,
+  args: QueryCurrentBlockArgs,
+  ctx: GQLContext,
+): Block {
+  const result = await ctx.livepeer.rpc.getBlock('latest')
+  return {
+    ...result,
+    id: result.number,
+  }
+}
+
+/**
+ * Gets a the current round
+ * @param {QueryObj} obj
+ * @param {QueryCurrentRoundArgs} args
+ * @param {GQLContext} ctx
+ * @return {Round}
+ */
+export async function currentRound(
+  obj: QueryObj,
+  args: QueryCurrentRoundArgs,
+  ctx: GQLContext,
+): Round {
+  const result = await ctx.livepeer.rpc.getCurrentRoundInfo()
+  return result
 }
 
 /**
@@ -162,22 +203,6 @@ export async function me(obj, args, ctx) {
 }
 
 /**
- * Gets a the current round
- * @param {QueryObj} obj
- * @param {QueryRoundArgs} args
- * @param {GQLContext} ctx
- * @return {Round}
- */
-export async function currentRound(
-  obj: QueryObj,
-  args: QueryRoundArgs,
-  ctx: GQLContext,
-): Round {
-  const result = await ctx.livepeer.rpc.getCurrentRoundInfo()
-  return result
-}
-
-/**
  * Gets all transactions to and from an account between the given start block and end block
  * @param {QueryObj} obj
  * @param {QueryTransactionsArgs} args
@@ -198,16 +223,16 @@ export async function transactions(
   // console.log(ctx)
   const { account, etherscanApiKey, livepeer, persistor } = ctx
   const { cache } = persistor.cache
-  const { config, utils } = livepeer
+  const { config, rpc, utils } = livepeer
   const { contracts, eth } = config
   const {
-    address,
     startBlock = 0,
     endBlock = 99999999,
     skip = 0,
     limit = 100,
     sort = 'desc',
   } = args
+  const address = await utils.resolveAddress(rpc.getENSAddress, args.address)
   const networkId = await eth.net_version()
   const rootUrl = `https://${
     networkId === '4' ? 'api-rinkeby' : 'api'
@@ -297,13 +322,13 @@ export async function transcoders(
 /**
  * Gets a the protocol
  * @param {QueryObj} obj
- * @param {QueryRoundArgs} args
+ * @param {QueryCurrentRoundArgs} args
  * @param {GQLContext} ctx
  * @return {Round}
  */
 export async function protocol(
   obj: QueryObj,
-  args: QueryRoundArgs,
+  args: QueryCurrentRoundArgs,
   ctx: GQLContext,
 ): Round {
   return {

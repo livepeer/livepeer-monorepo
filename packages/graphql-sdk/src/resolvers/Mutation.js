@@ -113,6 +113,27 @@ export async function claimEarnings(
 }
 
 /**
+ * Send a transaction object
+ * @param {MutationObj} obj
+ * @return {Promise<TxReceipt>}
+ */
+export async function sendTransaction(
+  obj: MutationObj,
+  args,
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const { utils, config } = ctx.livepeer
+  const { eth, defaultTx } = config
+  return await utils.getTxReceipt(
+    await eth.sendTransaction({
+      ...defaultTx,
+      ...args.options,
+    }),
+    eth,
+  )
+}
+
+/**
  * Submits an unbond transaction
  * @param {MutationObj} obj
  * @return {Promise<TxReceipt>}
