@@ -69,6 +69,7 @@ class Channel extends Component {
       return
     }
     const manifestId = latestJob.streamId.substr(0, 68 + 64)
+    // Change cases of compared cdn and channel to match each case
     if (
       channel.toLowerCase() ===
       process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()
