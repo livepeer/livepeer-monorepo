@@ -20,7 +20,7 @@ import {
   connectToasts,
 } from '../enhancers'
 
-const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
+const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
   const notAuthenticated = !myAccountAddress
   const { host } = window.livepeer.config.eth.currentProvider
@@ -32,31 +32,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
         1: 'Mainnet',
         4: 'Rinkeby',
       }[window.web3.version.network] || 'Custom RPC'
-  const initializeRound = async () => {
-    try {
-      if (notAuthenticated) return
-      if (currentRound.data.initialized) return
-      toasts.push({
-        id: 'initialize-round',
-        title: 'Initializing round...',
-        body: 'The current round is being initialized.',
-      })
-      await window.livepeer.rpc.initializeRound()
-      toasts.push({
-        id: 'initialize-round',
-        type: 'success',
-        title: 'Initialization complete',
-        body: 'The current round is now initialized.',
-      })
-    } catch (err) {
-      toasts.push({
-        id: 'initialize-round',
-        type: 'error',
-        title: 'Initialization failed',
-        body: err.message,
-      })
-    }
-  }
+
   return (
     <Navbar>
       <Nav>
@@ -67,89 +43,70 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
             alt="The Livepeer wordmark"
           />
         </Link>
-        {
-          <React.Fragment>
-            <span
-              onClick={initializeRound}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                paddingRight: 24,
-                padding: 8,
-                background: 'none',
-                cursor:
-                  currentRound.loading || currentRound.data.initialized
-                    ? 'default'
-                    : 'pointer',
-                color: currentRound.loading
+        <NetworkBadge
+          onClick={() => (window.location.hash = '#/protocol-status')}
+        >
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              paddingRight: 24,
+              padding: 8,
+              background: 'none',
+              cursor: 'pointer',
+              color: currentRound.loading
+                ? '#aaa'
+                : currentRound.data.initialized
+                  ? 'var(--primary)'
+                  : 'orange',
+              height: 24,
+              marginLeft: 16,
+              whiteSpace: 'nowrap',
+              fontSize: 10,
+              textTransform: 'uppercase',
+              boxShadow: `inset 0 0 0 1px ${
+                currentRound.loading
                   ? '#aaa'
                   : currentRound.data.initialized
                     ? 'var(--primary)'
-                    : 'orange',
-                // width: 116,
-                height: 24,
-                marginLeft: 16,
-                whiteSpace: 'nowrap',
-                fontSize: 10,
-                textTransform: 'uppercase',
-                boxShadow: `inset 0 0 0 1px ${
-                  currentRound.loading
-                    ? '#aaa'
-                    : currentRound.data.initialized
-                      ? 'var(--primary)'
-                      : 'orange'
-                }`,
-              }}
-            >
-              {networkName}
+                    : 'orange'
+              }`,
+            }}
+          >
+            {networkName}
+          </span>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              paddingRight: 24,
+              padding: `4px 8px`,
+              background: currentRound.loading
+                ? '#aaa'
+                : currentRound.data.initialized
+                  ? 'var(--primary)'
+                  : 'orange',
+              cursor: 'pointer',
+              color: '#000',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {currentRound.loading ? (
+              <MoreHorizontalIcon size={16} />
+            ) : currentRound.data.initialized ? (
+              <PlayIcon size={16} />
+            ) : (
+              <PauseIcon size={16} />
+            )}
+            <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
+              &nbsp;Round #{currentRound.data.id}
             </span>
-            <span
-              onClick={initializeRound}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                paddingRight: 24,
-                padding: `4px 8px`,
-                background: currentRound.loading
-                  ? '#aaa'
-                  : currentRound.data.initialized
-                    ? 'var(--primary)'
-                    : 'orange',
-                cursor:
-                  currentRound.loading || currentRound.data.initialized
-                    ? 'default'
-                    : 'pointer',
-                color: '#000',
-                width: 116,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {currentRound.loading ? (
-                <MoreHorizontalIcon size={16} />
-              ) : currentRound.data.initialized ? (
-                <PlayIcon size={16} />
-              ) : (
-                <PauseIcon size={16} />
-              )}
-              <span style={{ fontSize: 10, textTransform: 'uppercase' }}>
-                &nbsp;Round #{currentRound.data.id}
-              </span>
-            </span>
-          </React.Fragment>
-        }
+          </span>
+        </NetworkBadge>
 
         {/*onSearch && <NavSearch onSearch={onSearch} />*/}
 
-        <div
-          style={{
-            display: 'inline-flex',
-            flexFlow: 'row wrap',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            width: '100%',
-            color: '#fff',
-          }}
-        >
+        <NavbarLinks>
           <NavbarLink exact to="/">
             <HomeIcon size={16} />
             <span>&nbsp;Overview</span>
@@ -217,7 +174,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
               Addresses
             </MenuItem>
           </SimpleMenu>
-        </div>
+        </NavbarLinks>
       </Nav>
     </Navbar>
   )
@@ -225,10 +182,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase }) => {
 const Nav = styled.nav`
   display: flex;
   flex-flow: row;
-  // justify-content: space-between;
   align-items: center;
   height: 64px;
-  // margin-bottom: 24px;
   padding: 16px 24px;
   background: #000;
   & *::placeholder {
@@ -238,6 +193,21 @@ const Nav = styled.nav`
     text-decoration: none;
     font-size: 16px;
     color: #fff;
+  }
+`
+
+const NavbarLinks = styled.div`
+  display: inline-flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  min-width: 180px;
+  color: #fff;
+  @media (max-width: 480px) {
+    > a:first-child {
+      display: none;
+    }
   }
 `
 
@@ -256,9 +226,19 @@ const NavbarLink = styled(NavLink).attrs({
   height: 64px;
   text-decoration: none;
   text-transform: uppercase;
-  @media (max-width: 640px) {
+  @media (max-width: 800px) {
     > span {
       display: none;
+    }
+  }
+`
+
+const NetworkBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  @media (max-width: 480px) {
+    > span:nth-child(2) {
+      display: none !important;
     }
   }
 `
@@ -267,7 +247,7 @@ const NavSearchContainer = styled.div`
   width: 320px;
   padding-left: 16px;
   position: relative;
-  @media (max-width: 480px) {
+  @media (max-width: 640px) {
     display: none;
   }
 `

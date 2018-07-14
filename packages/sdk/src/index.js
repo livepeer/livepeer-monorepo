@@ -549,7 +549,7 @@ export default async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
 ): Promise<LivepeerSDK> {
   const { ens, events, ...config } = await initContracts(opts)
-  const {
+  const {>>>>>>> master
     BondingManager,
     Controller,
     JobsManager,
@@ -749,17 +749,45 @@ export default async function createLivepeerSDK(
     },
 
     /**
-     * Gets the total bonded token
+     * Gets the unbonding period for transcoders
      * @memberof livepeer~rpc
      * @return {Promise<string>}
      *
      * @example
      *
-     * await rpc.getTotalBonded()
+     * await rpc.getUnbondingPeriod()
      * // => string
      */
-    async getTotalBonded(): Promise<string> {
-      return headToString(await BondingManager.getTotalBonded())
+    async getUnbondingPeriod(): Promise<string> {
+      return headToString(await BondingManager.unbondingPeriod())
+    },
+
+    /**
+     * Gets the number of active transcoders
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getNumActiveTranscoders()
+     * // => string
+     */
+    async getNumActiveTranscoders(): Promise<string> {
+      return headToString(await BondingManager.numActiveTranscoders())
+    },
+
+    /**
+     * Gets the maximum earnings for claims rounds
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getMaxEarningsClaimsRounds()
+     * // => string
+     */
+    async getMaxEarningsClaimsRounds(): Promise<string> {
+      return headToString(await BondingManager.maxEarningsClaimsRounds())
     },
 
     /**

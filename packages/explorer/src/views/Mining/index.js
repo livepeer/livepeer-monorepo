@@ -68,7 +68,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
             console.log('view account...')
             history.push(`/me?tour=true`)
           }}
-          worker="QmQfp4zZ6p9CKy6tEwKMWqRtg1DSNG5pLsajg3Rjk3yTeW"
+          worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
         />
       )}
     </BasicModal>

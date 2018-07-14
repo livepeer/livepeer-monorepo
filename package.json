@@ -37,7 +37,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "flow-bin": "^0.69.0",
     "husky": "^0.14.3",
-    "lcov-result-merger": "^2.0.0",
+    "lcov-result-merger": "^3.0.0",
     "lerna": "^2.9.0",
     "prettier": "^1.11.1",
     "pretty-quick": "^1.4.1"
