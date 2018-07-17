@@ -6,6 +6,21 @@ import {
   connectToasts,
 } from '../../enhancers'
 
+const encodeProofSize = proof => {
+  // Assume hex encoded proof
+  const proofSize = proof.length / 2
+
+  let res = proofSize.toString('16')
+  let len = res.length
+
+  while (len < 64) {
+    res = '0' + res
+    len++
+  }
+
+  return res
+}
+
 const mapMutationHandlers = withHandlers({
   generateToken: ({ sendTransaction, toasts }) => async ({
     address,
@@ -18,7 +33,7 @@ const mapMutationHandlers = withHandlers({
         data:
           `0x2c84bfa6000000000000000000000000${address.substr(2)}` +
           '0000000000000000000000000000000000000000000000000000000000000040' +
-          '00000000000000000000000000000000000000000000000000000000000002c0' +
+          encodeProofSize(proof) +
           proof,
       }
       console.log('submitting transaction', options)
