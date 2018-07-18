@@ -6,8 +6,42 @@ import Confetti from 'react-dom-confetti'
 import styled, { keyframes } from 'styled-components'
 import MerkleMiner from '@livepeer/merkle-miner'
 import { withProp } from '../../enhancers'
-import { BasicModal, Button } from '../../components'
+import {
+  BasicModal,
+  Button,
+  BasicNavbar,
+  ScrollToTopOnMount,
+} from '../../components'
 import enhance from './enhance'
+import './style.css'
+const instructions = function() {
+  let data = [
+    {
+      heading: '1. Log in to Web 3 Wallet',
+      instruction: [
+        'You will need a Web3 wallet such as MetaMask with enough Ethereum to pay for the Gas cost of executing the smart contracts that generate LPT tokens',
+      ],
+      imgSrc: 'static/images/download.jpeg',
+    },
+    {
+      heading: '2. Set Mining Parameters',
+      instruction: [
+        'Selct your gas price. If your gas price is too low, the transaction might take longer or miners might not process your transaction.',
+      ],
+      imgSrc: 'static/images/download.jpeg',
+    },
+    {
+      heading: '3. Earn LPT tokens',
+      instruction: [
+        'The Livepeer Mining smart contract will generate 2.4 LPT in each of the eligible Ethereum addresses. A portion of LPT generated will be allocated to you for claiming the address.',
+        'Each round of mining generates tokens for 20 eligible Ethereum addresses.',
+        'You do not need to provide the eligible ethereum addresses. Livepeer provides and submits the eligible Ethereum addresses for you.',
+      ],
+      imgSrc: 'static/images/download.jpeg',
+    },
+  ]
+  return data
+}
 
 type MiningViewProps = {
   generateToken: ({ address: string, proof: string }) => Promise<*>,
@@ -22,56 +56,95 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
   // You can hard-code a valid address for testing purpose
   // const defaultAddress = '0x4fe9367ef5dad459ae9cc4265c69b1b10a4e1288'
   const defaultAddress = coinbase.data.coinbase
+  const instruction = instructions().map((item, index) => {
+    return <Instruction key={index} item={item} />
+  })
   const contentLength = 51961420
   const closeModal = () => history.push(history.location.pathname)
   const renderError = err =>
     typeof err !== 'string' ? (
       err
     ) : (
-      <p
-      >{`Sorry, mining is unavailable at this time. Please try again later. ${err}`}</p>
+      <p>
+        {`Sorry, mining is unavailable at this time. Please try again later. ${err}`}
+      </p>
     )
   return (
-    <BasicModal title="Mine Livepeer Token">
-      {loading ? (
-        <p>Loading...</p>
-      ) : !defaultAddress ? (
-        <React.Fragment>
+    <React.Fragment>
+      <ScrollToTopOnMount />
+      <BasicNavbar />
+      <div className="main">
+        <div className="main-instruct">
+          <h1>How to Earn Livepeer Token</h1>
+          {instruction}
           <p>
-            In order to mine, you will need to log into your ETH account using a
-            web3-enabled browser or plugin. If you are not sure how to do this,
-            please read our guide:
+            You can repeat this process as many times as you like and increase
+            your number of tokens.
           </p>
-          <h3>
-            <a
-              href="https://forum.livepeer.org/t/how-to-install-metamask-on-chrome-browser-to-enable-web-3-0/272"
-              target="_blank"
-            >
-              How to Install MetaMask &rarr;
-            </a>
-          </h3>
-          <div style={{ textAlign: 'right', paddingTop: 24 }}>
-            <Button onClick={closeModal}>Okay</Button>
+          <br />
+          <h2>Hardware / Software Requirements:</h2>
+          <ul>
+            <li>Operating System: Windows or Mac</li>
+            <li>Access to the internet</li>
+            <li>Web 3 wallet MetaMask</li>
+          </ul>
+        </div>
+        <div className="token-area">
+          <div>
+            <h2> Tokens Remaining: 6,343,232</h2>
+            <ProgressBar
+              done={false}
+              className="progress"
+              style={{
+                background: 6 < 2 ? '#ccc' : 'var(--primary)',
+                width: `calc(${(100 * 1.3) / 2}% - 32px)`,
+                color: '#000',
+              }}
+            >{`${((100 * 1.3) / 2) | 0}%`}</ProgressBar>
           </div>
-        </React.Fragment>
-      ) : (
-        <TokenMiner
-          allowManualEntry={false}
-          contentLength={contentLength}
-          defaultAddress={defaultAddress}
-          renderError={renderError}
-          input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
-          onCancel={closeModal}
-          onGenerateToken={generateToken}
-          onDone={e => {
-            e.preventDefault()
-            console.log('view account...')
-            history.push(`/me?tour=true`)
-          }}
-          worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
-        />
-      )}
-    </BasicModal>
+          <div className="mining-area">
+            {loading ? (
+              <p>Loading...</p>
+            ) : !defaultAddress ? (
+              <React.Fragment>
+                <p>
+                  In order to mine, you will need to log into your ETH account
+                  using a web3-enabled browser or plugin. If you are not sure
+                  how to do this, please read our guide:
+                </p>
+                <h3>
+                  <a
+                    href="https://forum.livepeer.org/t/how-to-install-metamask-on-chrome-browser-to-enable-web-3-0/272"
+                    target="_blank"
+                  >
+                    How to Install MetaMask &rarr;
+                  </a>
+                </h3>
+                <div style={{ textAlign: 'right', paddingTop: 24 }}>
+                  <Button onClick={closeModal}>Okay</Button>
+                </div>
+              </React.Fragment>
+            ) : (
+              <TokenMiner
+                allowManualEntry={false}
+                contentLength={contentLength}
+                defaultAddress={defaultAddress}
+                renderError={renderError}
+                input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
+                onCancel={closeModal}
+                onGenerateToken={generateToken}
+                onDone={e => {
+                  e.preventDefault()
+                  console.log('view account...')
+                  history.push(`/me?tour=true`)
+                }}
+                worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </React.Fragment>
   )
 }
 
@@ -521,4 +594,37 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
   },
 )(Form)
 
+class Image extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return <img className="imgStyle" src={this.props.imgSrc} />
+  }
+}
+
+class Instruction extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <div>
+        <div className="instruct-img">
+          <Image imgSrc={this.props.item.imgSrc} />
+        </div>
+        <div className="instruct-div">
+          <h2 className="instruct-heading">{this.props.item.heading}</h2>
+          {this.props.item.instruction.map((item, index) => {
+            return (
+              <p className="instruct-p" key={index}>
+                {item}
+              </p>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+}
 export default enhance(MiningView)
