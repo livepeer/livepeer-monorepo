@@ -1,0 +1,86 @@
+.imgStyle {
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+}
+
+.instruct-div {
+  display: inline-flex;
+  flex-direction: column;
+  flex-flow: wrap;
+  width: 70%;
+}
+
+.instruct-heading {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.instruct-img {
+  display: inline-flex;
+  width: 20%;
+}
+
+.instruct-p {
+  display: inline-block;
+}
+
+.main {
+  background-color: white;
+  display: inline-flex;
+  flex-direction: row;
+  padding: 30px 10px 0px 0px;
+}
+
+.main-instruct {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 10px 15px 50px;
+  width: 60%;
+}
+
+.mining-area {
+  /*
+    width: 40%;
+    display: inline-block;
+    */
+  background-color: #efefef;
+  border-radius: 6px;
+  padding: 60px;
+}
+
+.progress {
+  border-radius: 4px;
+  margin: 10px 0px;
+  padding: 4px 8px;
+  text-align: right;
+  transition: all 0.5s linear;
+}
+
+.token-area {
+  width: 40%;
+  display: inline-block;
+}
+
+@media only screen and (max-width: 768px) {
+  h1 {
+    font-size: 22px;
+  }
+  h2 {
+    font-size: 19px;
+  }
+  p {
+    width: 100%;
+  }
+  .main {
+    flex-direction: column-reverse;
+  }
+  .token-area {
+    margin: 5px;
+  }
+  .main-instruct,
+  .token-area {
+    display: block;
+    width: 100%;
+  }
+}

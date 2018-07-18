@@ -13,7 +13,7 @@ import {
   Tabs,
 } from '../../components'
 
-const TokenView = ({ ...props }) => {
+const TokenView = ({ history, ...props }) => {
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -59,7 +59,13 @@ const TokenView = ({ ...props }) => {
               </p>
               <Button
                 onClick={() => {
-                  window.location.hash = '#/mine'
+                  //window.location.hash = '#/mine'
+
+                  /***
+                   * Push mine route onto history stack of the browser
+                   * to go to mining page
+                   */
+                  history.push('/mine')
                 }}
                 style={{
                   background: 'var(--primary)',
