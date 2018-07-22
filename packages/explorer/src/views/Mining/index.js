@@ -1,3 +1,4 @@
+import axios from 'axios'
 import * as React from 'react'
 import { Prompt } from 'react-router-dom'
 import { Form, Field } from 'react-final-form'
@@ -18,6 +19,10 @@ import enhance from './enhance'
 // Get external css file -- this might change during refactoring
 import './style.css'
 
+const api_addr = 'http://localhost:3000/random_address'
+const contract_abi = require('./merklemine.json')
+const contract_address = '0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'
+//console.log(window.web3.eth.getBalance(window.web3.eth.coinbase).then(console.log))
 /***
  * Returns data array which stores instructions for
  * mining Livepeer tokens
@@ -25,21 +30,21 @@ import './style.css'
 const instructions = function() {
   let data = [
     {
-      heading: '1. Log in to Web 3 Wallet',
+      heading: '1. Log in to web 3 wallet',
       instruction: [
         'You will need a Web3 wallet such as MetaMask with enough Ethereum to pay for the Gas cost of executing the smart contracts that generate LPT tokens',
       ],
       imgSrc: 'static/images/download.jpeg',
     },
     {
-      heading: '2. Set Mining Parameters',
+      heading: '2. Set mining parameters',
       instruction: [
         'Selct your gas price. If your gas price is too low, the transaction might take longer or miners might not process your transaction.',
       ],
       imgSrc: 'static/images/download.jpeg',
     },
     {
-      heading: '3. Earn LPT tokens',
+      heading: '3. Earn lpt tokens',
       instruction: [
         'The Livepeer Mining smart contract will generate 2.4 LPT in each of the eligible Ethereum addresses. A portion of LPT generated will be allocated to you for claiming the address.',
         'Each round of mining generates tokens for 20 eligible Ethereum addresses.',
@@ -79,14 +84,8 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
     return <Instruction key={index} item={item} />
   })
   // Store instructions for header and footer
-  const instruction_header = 'How to Earn Livepeer Tokens'
+  const instruction_header = 'How to earn livepeer tokens'
   const instruction_footer = `You can repeat this process as many times as you like and increase your number of tokens.`
-  let web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-  const acc = web3.eth.getCoinbase(res => {
-    console.log(res)
-    return res
-  })
-  console.log(acc)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -106,7 +105,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
         </div>
         <div className="token-area">
           <div>
-            <h2> Tokens Remaining: 6,343,232</h2>
+            <h2> Tokens remaining: 6,343,232</h2>
             <ProgressBar
               done={false}
               className="progress"
@@ -122,7 +121,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
               <p>Loading...</p>
             ) : !defaultAddress ? (
               <React.Fragment>
-                <h2 className="instruct-heading">Mine Livepeer Token</h2>
+                <h2 className="instruct-heading">Mine livepeer token</h2>
                 <p>
                   In order to mine, you will need to log into your ETH account
                   using a web3-enabled browser or plugin. If you are not sure
@@ -182,11 +181,19 @@ class TokenMiner extends React.Component {
   }
   state = {
     address: this.props.defaultAddress,
+    addresses: [],
     done: false,
+    progressBar: -1,
     ready: false,
     error: '',
     proof: '',
+    gas: 32,
     progress: null,
+    editGas: false,
+    balance: '',
+    contract: window.web3.eth
+      .contract(contract_abi)
+      .at('0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'),
   }
 
   async componentDidMount() {
@@ -207,6 +214,8 @@ class TokenMiner extends React.Component {
         error: err.message,
       })
     }
+    this.getAccountBal()
+    this.getCurrentGasPrices()
   }
   componentWillUnmount() {
     window.onbeforeunload = null
@@ -224,6 +233,21 @@ class TokenMiner extends React.Component {
   updateAddress = async address => {
     return true
   }
+
+  // Used to get ether amout to display
+  getAccountBal = async () => {
+    await window.web3.eth.getBalance(
+      window.web3.eth.defaultAccount,
+      (err, result) => {
+        if (err === null) {
+          let myBalance = window.web3.fromWei(result, 'ether')
+          this.setState({ balance: myBalance.c[0] })
+        }
+      },
+    )
+  }
+
+  // Reset the app to  original state
   reset = () => {
     this.setState({
       address: '',
@@ -260,28 +284,56 @@ class TokenMiner extends React.Component {
     console.log('generating merkle tree...', data.progress.tree)
     this.setState({ progress: data.progress })
   }
+
   getProof = async ({ address }) => {
-    let addresses = [
-      '0x03032599cf173d66f5b8766404247599378e3604',
-      '0x06e9d9aed50e4de9b16056f82d431f0c33eb9ec2',
-      '0x0adcf4c94183464bb34a203c2121cc89456acd08',
-    ]
+    /***
+     * contract.multiGenerate("0xEF90D389C64C623DE3FA3B6E0B694453D02B875F",[],[]).send({
+     * from: window.web3.eth.coinbase,
+     * }).then(console.log).catch(console.log)
+     */
+    this.setState({ progressBar: 0 })
+    this.setState({ ready: true, progress: { tree: 0, download: 0 } })
     const { miner } = this
     const { input, contentLength } = this.props
-    this.setState({ address, proof: '' })
-    this.setState({ ready: true, progress: { tree: 0, download: 0 } })
+    await axios
+      .get(api_addr)
+      .then(res => {
+        this.setState({ addresses: res })
+        this.setState({ progressBar: 1 })
+      })
+      .catch(console.log)
 
-    let proof = []
-
-    console.log(contentLength)
-    for (let i = 0, n = addresses.length; i < n; i++) {
-      proof.push(await miner.getProof(input, addresses[i], contentLength))
+    const proofs = []
+    // Loop through addresses and generate proofs
+    for (const addr of this.state.addresses.data) {
+      proofs.push(
+        await miner.getProof(input, addr.address.substr(2)),
+        contentLength,
+      )
     }
-    console.log(proof)
-    this.setState({
-      proof: proof,
-    })
+    this.setState({ proof: proofs })
+    this.setState({ progressBar: 2 })
+    this.multiMerkleMine()
   }
+
+  // Used to get current gas price
+  getCurrentGasPrices = async () => {
+    let response = await axios.get(
+      'https://ethgasstation.info/json/ethgasAPI.json',
+    )
+    let prices = {
+      low: response.data.safeLow / 10,
+      medium: response.data.average / 10,
+      high: response.data.fast / 10,
+    }
+
+    this.setState({ gas: prices.medium })
+  }
+
+  multiMerkleMine = async () => {
+    this.setState({ progressBar: 3 })
+  }
+
   generateToken = async opts => {
     const maybeError = await this.props.onGenerateToken(opts)
     if (!maybeError) {
@@ -303,6 +355,16 @@ class TokenMiner extends React.Component {
     }
     return maybeError
   }
+
+  /**
+   * Controller for edit and cancel button in token
+   * miner
+   */
+  editGas = async e => {
+    e.preventDefault
+    this.setState({ editGas: !this.state.editGas })
+  }
+
   render() {
     const { allowManualEntry, renderError, onCancel, onDone } = this.props
     const { address, done, error, progress, proof, ready } = this.state
@@ -325,98 +387,26 @@ class TokenMiner extends React.Component {
       <MineProofForm
         addressLocked={!allowManualEntry}
         done={done}
+        editGas={this.state.editGas}
+        handleGas={this.handleGas}
+        gas={this.state.gas}
         generateToken={this.generateToken}
+        handleCancel={this.editGas}
+        handleEdit={this.editGas}
         initialValues={{ address }}
         loading={!ready && address}
-        progress={progress}
-        proof={proof}
         onCancel={onCancel}
         onDone={onDone}
+        balance={this.state.balance}
         onSubmit={this.getProof}
+        progress={progress}
+        progressBar={this.state.progressBar}
+        proof={proof}
       />
     )
   }
 }
 
-/*
-const GenerateTokenForm: React.ComponentType<GenerateTokenFormProps> = withProp(
-  'component',
-  ({
-    handleSubmit,
-    onCancel,
-    onDone,
-    reset,
-    submitting,
-    submitError,
-    submitFailed,
-    submitSucceeded,
-    ...props
-  }) => {
-    const confetti = (
-      <Confetti
-        active={submitSucceeded}
-        config={{
-          angle: 90,
-          spread: 197,
-          startVelocity: 45,
-          elementCount: 50,
-          decay: 0.9,
-        }}
-      />
-    )
-    if (submitFailed && submitError && !/User denied/.test(submitError)) {
-      return (
-        <React.Fragment>
-          {confetti}
-          <p>
-            There was an error submitting your transaction. See error message
-            below for more details:
-          </p>
-          <pre>
-            <textarea disabled readOnly style={{ height: 320, width: '100%' }}>
-              {submitError}
-            </textarea>
-          </pre>
-          <p>
-            You can also{' '}
-            <Link to="/me/overview">view your recent protocol activity</Link> on
-            your account overview page.
-          </p>
-          <div style={{ textAlign: 'right', paddingTop: 24 }}>
-            {onCancel && <Button onClick={onCancel}>Cancel</Button>}
-            <Button onClick={reset}>Try Again</Button>
-          </div>
-        </React.Fragment>
-      )
-    }
-    if (submitSucceeded)
-      return (
-        <React.Fragment>
-          {confetti}
-          <div style={{ textAlign: 'right' }}>
-            {onCancel && <Button onClick={onCancel}>Cancel</Button>}
-            <Button className="primary" onClick={onDone}>
-              View Account
-            </Button>
-          </div>
-        </React.Fragment>
-      )
-    return (
-      <React.Fragment>
-        {confetti}
-        <Field component="input" name="address" type="hidden" />
-        <Field component="input" name="proof" type="hidden" />
-        <div style={{ textAlign: 'right' }}>
-          {onCancel && <Button onClick={onCancel}>Cancel</Button>}
-          <Button className="primary" onClick={handleSubmit}>
-            Claim Token
-          </Button>
-        </div>
-      </React.Fragment>
-    )
-  },
-)(Form)
-*/
 const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
   'component',
   ({
@@ -435,6 +425,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
     onDone,
     pristine,
     progress,
+    progressBar,
+    balance,
     proof,
     reset,
     submitting,
@@ -450,83 +442,90 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
       <React.Fragment>
         {/* Before Mining... */}
         {loading && <p>Initializing miner...</p>}
-        {!loading && !progress && <h1>Your Mining Parameters</h1>}
+        {!loading && !progress && <h1>Your mining parameters</h1>}
         {!progress && (
           <React.Fragment>
-            <form>
-              <br />
-              <br />
-              <label className="info-lbl">Account balance:</label>
-              <div className="gas-info">
-                <label>
-                  <strong>1.845</strong>
-                  Ether
-                </label>
-              </div>
-              <br />
-              <br />
-              <label className="info-lbl">Gas price:</label>
-              {editGas && (
-                <div className="gas-info">
-                  <input
-                    placeholder="Gas price: 999"
-                    value={gas}
-                    onChange={handleGas}
-                  />
-                  <a onClick={handleCancel}>Cancel</a>
-                  <a onClick={handleSave} style={{ backgroundColor: 'red' }}>
-                    Save
-                  </a>
-                </div>
-              )}
-              {!editGas && (
-                <React.Fragment>
-                  <div className="gas-info">
-                    <label>
-                      <strong>32</strong>
-                      Gwei
-                    </label>
-                    <a>Edit</a>
-                  </div>
-                </React.Fragment>
-              )}
-              <br />
-              <br />
-              <hr />
-            </form>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <label className="info-lbl">Account balance:</label>
+                  </td>
+                  <td>
+                    <strong>{balance}</strong> Ether
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label className="info-lbl">Gas price:</label>
+                  </td>
+                  <td>
+                    {editGas ? (
+                      <React.Fragment>
+                        <a onClick={handleCancel}>Cancel</a>
+                        <input
+                          placeholder="Gas price: 999"
+                          type="number"
+                          value={gas}
+                          onChange={handleGas}
+                        />
+                        <a
+                          onClick={handleSave}
+                          style={{ backgroundColor: 'red' }}
+                        >
+                          Save
+                        </a>
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        <label>
+                          <strong>{gas}</strong>
+                          Gwei
+                        </label>
+                        <a onClick={handleEdit}>Edit</a>
+                      </React.Fragment>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </React.Fragment>
         )}
         {!progress && (
           <React.Fragment>
-            <h1>Estimated Mining Results</h1>
-            <br />
-            <br />
-            <label>Estimated cost:</label>
-            <div className="gas-info">
-              <label>
-                <strong>0.4</strong>
-                Ether
-              </label>
-            </div>
-            <br />
-            <br />
-            <label>Estimated time:</label>
-            <div className="gas-info">
-              <label>
-                <strong>1 - 5</strong>
-                Min
-              </label>
-            </div>
-            <br />
-            <br />
-            <label>Estimated number of LPT Tokens to earn:</label>
-            <div className="gas-info">
-              <label>
-                <strong>1.845</strong>
-                Ether
-              </label>
-            </div>
-            <br />
+            <h1>Estimated mining results</h1>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <label>Estimated cost:</label>
+                  </td>
+                  <td>
+                    <label>
+                      <strong>0.4</strong>
+                      Ether
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label>Estimated time:</label>
+                  </td>
+                  <td>
+                    <label>
+                      <strong>1 - 5</strong>
+                      Min
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Estimated number of LPT tokens to earn:</td>
+                  <td>
+                    <strong>1.845</strong> LPT
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <div className="center-div">
               <a onClick={handleSubmit} className="primary-btn">
                 Earn LPT
@@ -534,30 +533,25 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
             </div>
           </React.Fragment>
         )}
-        {progress && <h1>Mining...</h1>}
-        {proof && <h1>Seccess!</h1>}
+        {progressBar < 5 && progressBar >= 0 && <h1>Mining...</h1>}
+        {progressBar >= 5 && <h1>Seccess!</h1>}
         {!loading &&
-          (progress || proof) && (
+          progressBar >= 0 && (
             <div style={{ backgroundColor: '#FFF' }}>
               <ProgressBar
                 className="progress"
-                /*done={progress.download + progress.tree === 2}*/
-                done={5 === 2}
+                done={progressBar === 5}
                 style={{
                   background:
                     /*progress.download + progress.tree < 2*/
-                    1 < 2 ? '#ccc' : 'var(--primary)',
+                    progressBar < 5 ? '#ccc' : 'var(--primary)',
                   margin: 0,
                   transition: 'all .5s linear',
-                  width: `calc(${
-                    /*(100 * (progress.download + progress.tree))*/ 120 / 2
-                  }% - 32px)`,
+                  width: `calc(${(100 * progressBar) / 5}% - 32px)`,
                   color: '#000',
                 }}
               >
-                {`${
-                  /*(100 * (progress.download + progress.tree))*/ (130 / 2) | 0
-                }%`}
+                {`${((100 * progressBar) / 5) | 0}%`}
               </ProgressBar>
             </div>
           )}
@@ -574,33 +568,46 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <ol>
                   <li
                     style={{
-                      textDecoration:
-                        progress.download === 1 ? 'line-through' : '',
-                      opacity: progress.download === 1 ? 0.5 : 1,
+                      opacity: progressBar >= 0 && progressBar < 2 ? 1 : 0.5,
                     }}
                   >
                     Initializing
+                    <span
+                      style={{
+                        display: progressBar === 0 ? 'block' : 'none',
+                        color: 'red',
+                      }}
+                    >
+                      Livepeer is gathering a list of 20 unlciamed &nbsp;
+                      eligible Ethereum addresses to generate LPT tokens for.
+                    </span>
                   </li>
                   <li
                     style={{
-                      textDecoration: progress.tree !== 0 ? 'line-through' : '',
-                      opacity: progress.tree !== 0 ? 0.5 : 1,
+                      opacity: progress.tree !== 0 ? 1 : 0.5,
                     }}
                   >
                     Waiting for wallet approval
+                    <span
+                      style={{
+                        display: progressBar === 2 ? 'block' : 'none',
+                        color: 'red',
+                      }}
+                    >
+                      * Visit your web3 browser / plugin and approve the
+                      transaction to generate LPT tokens.
+                    </span>
                   </li>
                   <li
                     style={{
-                      textDecoration: progress.tree === 1 ? 'line-through' : '',
-                      opacity: progress.tree === 1 ? 0.5 : 1,
+                      opacity: progressBar === 3 ? 1 : 0.5,
                     }}
                   >
                     Claiming accounts
                   </li>
                   <li
                     style={{
-                      textDecoration: progress.tree === 1 ? 'line-through' : '',
-                      opacity: progress.tree === 1 ? 0.5 : 1,
+                      opacity: progressBar === 4 ? 1 : 0.5,
                     }}
                   >
                     Generating tokens
@@ -681,7 +688,7 @@ class Image extends React.Component {
     super(props)
   }
   render() {
-    return <img src={this.props.imgSrc} />
+    return <img src={this.props.imgSrc} alt="" />
   }
 }
 
