@@ -3,13 +3,14 @@ export default class MerkleMiner {
     // IPFS http gateway
     gateway = 'https://gateway.ipfs.io/ipfs',
     // IPFS web worker hash
-    workerHash,
+    // workerHash,
     // Event handlers
     ...handlers
   } = {}) {
     this.gateway = gateway
     this.workerHash = workerHash
     this.handlers = handlers
+    console.log(handlers)
     this.messageId = 0
     return this.init()
   }
@@ -34,7 +35,6 @@ export default class MerkleMiner {
     address: string,
     contentLength: ?number,
   ): Promise<string> {
-    await this.resolveHash(hash, contentLength)
     await this.constructTree(hash)
     return this.generateProof(hash, address)
   }

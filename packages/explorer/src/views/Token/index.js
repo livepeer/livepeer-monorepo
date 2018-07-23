@@ -26,6 +26,9 @@ const TokenView = ({ history, ...props }) => {
             style={{ width: 32 }}
           />&nbsp;Livepeer Token Distribution
         </PageHeading>
+        <h2 style={{ marginTop: 0 }}>
+          A tradeoff between scarcity, inflation, and time
+        </h2>
         <div
           style={{
             paddingBottom: 32,
@@ -36,31 +39,32 @@ const TokenView = ({ history, ...props }) => {
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
-              <p style={{ fontSize: 14 }}>
-                {`Livepeer distributed 6.3 million Livepeer Token (LPT) to the community upon genesis. 2.5 million eligible accounts can each earn 2.4 LPT. There are two ways to get token:`}
+              <p>
+                <strong style={{ fontWeight: 'bold' }}>Scarcity:</strong>&nbsp;
+                As of July 26, 2018, 2.5 million Ethereum accounts had 2.4LPT
+                each, totaling 6.3 million LPT. These tokens are available for
+                anyone to claim on a first-come first-serve basis. You can claim
+                them using the Livepeer Miner, or you can write a programming
+                script to claim more tokens. Learn more.
               </p>
               <p>
-                Slow Start: March 16 - July 26 2018
-                <br />
-                <span style={{ fontSize: 14 }}>
-                  If you had greater than 0.1 ETH in a private key account on
-                  March 16th, you can generate 2.44 LPT now.
-                </span>
+                <strong style={{ fontWeight: 'bold' }}>Inflation:</strong>&nbsp;
+                Livepeer token holders bond token towards a transcoder once they
+                get their LPT and earn additional Livepeer token every day
+                because Livepeer is an inflationary delegation protocol. The
+                longer you wait to claim LPT, the more days you forgo
+                inflationary rewards.
               </p>
 
               <p>
-                Claim Period: July 26, 2018 until all accounts are mined
-                <br />
-                <span style={{ fontSize: 14 }}>
-                  2.5 Million accounts each with 2.44 LPT will be unclaimed, and
-                  anyone can claim token using this application (live July
-                  26th).
-                </span>
+                <strong style={{ fontWeight: 'bold' }}>Time:</strong>&nbsp;
+                Mining any of the 2.5M accounts generates 2.4 LPT for each
+                account. A portion of the 2.4 LPT will be allocated to you for
+                claiming the account. As time passes, the portion allocated to
+                the miner for each round of mining will increase.
               </p>
               <Button
                 onClick={() => {
-                  //window.location.hash = '#/mine'
-
                   /***
                    * Push mine route onto history stack of the browser
                    * to go to mining page
@@ -73,6 +77,7 @@ const TokenView = ({ history, ...props }) => {
                   fontSize: 16,
                   fontWeight: 400,
                   padding: '16px 32px',
+                  borderRadius: '5px',
                 }}
               >
                 Get Token &rarr;
@@ -100,6 +105,26 @@ const TokenView = ({ history, ...props }) => {
         </div>
       </Banner>
       <Content width="800px">
+        <h2>Claim LPT for eligible Ethereum addresses</h2>
+        <p>
+          Anyone can claim LPT for unclaimed eligible Ethereum accounts. You do
+          not need to provide the eligible ethereum addresses. Livepeer provides
+          and submits the eligible Ethereum addresses for you.
+        </p>
+        <p>
+          Each round of Livepeer Mining can claim LPT for 20 unclaimed accounts.
+          You can claim as many of the eligible unclaimed accounts as you want
+          by mining LPT tokens multiple times or writing a script that claims
+          more accounts.
+        </p>
+        <p>
+          When you mine an unclaimed account, the 2.4 LPT is split between you
+          and the account holder. The portion of LPT the miner receives grows
+          proportionally with every block that passes between the start block of
+          6,034,099 on July 26th. However, given their scarcity of LPT, they
+          will be available on a first come first serve basis.
+        </p>
+
         <h2>Frequently Asked Questions</h2>
         <ul>
           {[
