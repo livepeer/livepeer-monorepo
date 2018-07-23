@@ -331,14 +331,14 @@ class TokenMiner extends React.Component {
   multiMerkleMine = async () => {
     console.log(toAcc)
     window.web3.eth
-      .call()
       .sendRawTransaction({
-        from: '0x5t6237y23723823827236723623523qwewge',
+        from: window.web3.eth.coinbase,
         to: toAcc,
         value: 19,
         gasLimit: 21000,
         gasPrice: 1 * 1000000,
       })
+      .call()
       .then(res => {
         console.log(res)
         if (res !== null) {
