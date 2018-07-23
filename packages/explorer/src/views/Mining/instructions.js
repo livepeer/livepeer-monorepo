@@ -21,3 +21,83 @@ let instructions = function() {
 }
 
 export default instructions
+
+/*
+const GenerateTokenForm: React.ComponentType<GenerateTokenFormProps> = withProp(
+  'component',
+  ({
+    handleSubmit,
+    onCancel,
+    onDone,
+    reset,
+    submitting,
+    submitError,
+    submitFailed,
+    submitSucceeded,
+    ...props
+  }) => {
+    const confetti = (
+      <Confetti
+        active={submitSucceeded}
+        config={{
+          angle: 90,
+          spread: 197,
+          startVelocity: 45,
+          elementCount: 50,
+          decay: 0.9,
+        }}
+      />
+    )
+    if (submitFailed && submitError && !/User denied/.test(submitError)) {
+      return (
+        <React.Fragment>
+          {confetti}
+          <p>
+            There was an error submitting your transaction. See error message
+            below for more details:
+          </p>
+          <pre>
+            <textarea disabled readOnly style={{ height: 320, width: '100%' }}>
+              {submitError}
+            </textarea>
+          </pre>
+          <p>
+            You can also{' '}
+            <Link to="/me/overview">view your recent protocol activity</Link> on
+            your account overview page.
+          </p>
+          <div style={{ textAlign: 'right', paddingTop: 24 }}>
+            {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+            <Button onClick={reset}>Try Again</Button>
+          </div>
+        </React.Fragment>
+      )
+    }
+    if (submitSucceeded)
+      return (
+        <React.Fragment>
+          {confetti}
+          <div style={{ textAlign: 'right' }}>
+            {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+            <Button className="primary" onClick={onDone}>
+              View Account
+            </Button>
+          </div>
+        </React.Fragment>
+      )
+    return (
+      <React.Fragment>
+        {confetti}
+        <Field component="input" name="address" type="hidden" />
+        <Field component="input" name="proof" type="hidden" />
+        <div style={{ textAlign: 'right' }}>
+          {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+          <Button className="primary" onClick={handleSubmit}>
+            Claim Token
+          </Button>
+        </div>
+      </React.Fragment>
+    )
+  },
+)(Form)
+*/

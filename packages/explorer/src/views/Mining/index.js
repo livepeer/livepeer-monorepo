@@ -19,9 +19,10 @@ import enhance from './enhance'
 // Get external css file -- this might change during refactoring
 import './style.css'
 
-const api_addr = 'http://localhost:3000/random_address'
-const contract_abi = require('./merklemine.json')
-const contract_address = '0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'
+const apiAddr = 'http://localhost:3000/random_address'
+const contractAbi = require('./merklemine.json')
+const minerContractAddress = '0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'
+const multiMinerContractAddress = '0xD8AB5396C32EAB7AD3C1C42190609E077C424735'
 const gasPriceApi = 'https://ethgasstation.info/json/ethgasAPI.json'
 const toAcc = '0x68ff3d810180ce319b223cb8e5c7527bcab1ed60'
 //console.log(window.web3.eth.getBalance(window.web3.eth.coinbase).then(console.log))
@@ -36,14 +37,14 @@ const instructions = function() {
       instruction: [
         'You will need a Web3 wallet such as MetaMask with enough Ethereum to pay for the Gas cost of executing the smart contracts that generate LPT tokens',
       ],
-      imgSrc: 'static/images/download.jpeg',
+      imgSrc: 'static/images/Step-1-Livepeer.png',
     },
     {
       heading: '2. Set mining parameters',
       instruction: [
         'Selct your gas price. If your gas price is too low, the transaction might take longer or miners might not process your transaction.',
       ],
-      imgSrc: 'static/images/download.jpeg',
+      imgSrc: 'static/images/Step-2-Livepeer.png',
     },
     {
       heading: '3. Earn lpt tokens',
@@ -52,7 +53,7 @@ const instructions = function() {
         'Each round of mining generates tokens for 20 eligible Ethereum addresses.',
         'You do not need to provide the eligible ethereum addresses. Livepeer provides and submits the eligible Ethereum addresses for you.',
       ],
-      imgSrc: 'static/images/download.jpeg',
+      imgSrc: 'static/images/Step-3-Livepeer.png',
     },
   ]
   return data
@@ -194,9 +195,7 @@ class TokenMiner extends React.Component {
     progress: null,
     editGas: false,
     balance: '',
-    contract: window.web3.eth
-      .contract(contract_abi)
-      .at('0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'),
+    contract: '',
   }
 
   async componentDidMount() {
@@ -217,6 +216,10 @@ class TokenMiner extends React.Component {
         error: err.message,
       })
     }
+    this.state.contract = window.web3.eth
+      .contract(contractAbi)
+      .at(multiMinerContractAddress)
+
     await this.getAccountBal()
     await this.getCurrentGasPrices()
     await this.determineEstimetedCost()
@@ -289,28 +292,31 @@ class TokenMiner extends React.Component {
     this.setState({ progress: data.progress })
   }
 
+  extendedProof = proofs => {
+    return '0x' + proofs.map(proof => this.extendedProof(proof))
+  }
+
   getProof = async ({ address }) => {
     this.setState({ progressBar: 0 })
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
     const { miner } = this
     const { input, contentLength } = this.props
     await axios
-      .get(api_addr)
+      .get(apiAddr)
       .then(res => {
         this.setState({ addresses: res })
         this.setState({ progressBar: 1 })
       })
       .catch(console.log)
 
-    const proofs = []
+    let proofs = []
     // Loop through addresses and generate proofs
     for (const addr of this.state.addresses.data) {
-      proofs.push(
-        await miner.getProof(input, addr.address.substr(2)),
-        contentLength,
-      )
+      proofs.push(await miner.getProof(input, addr.substr(2)))
     }
-    this.setState({ proof: proofs })
+    let proof = this.extendedProof(proofs)
+
+    this.setState({ proof: '0x' + proof })
     this.setState({ progressBar: 2 })
     this.multiMerkleMine()
   }
@@ -330,6 +336,7 @@ class TokenMiner extends React.Component {
 
   multiMerkleMine = async () => {
     console.log(toAcc)
+    /*
     window.web3.eth
       .sendTransaction({
         from: window.web3.eth.coinbase,
@@ -344,6 +351,21 @@ class TokenMiner extends React.Component {
         if (res !== null) {
           this.setState({ progressBar: 3 })
         }
+      })
+      .catch(console.log)
+      */
+    this.state.contract
+      .multiGenerate(
+        minerContractAddress,
+        this.state.addresses,
+        this.state.proof,
+        {
+          from: window.web3.eth.coinbase,
+          gasPrice: 1 * 1000000,
+        },
+      )
+      .then(res => {
+        this.setState({ progressBar: 5 })
       })
       .catch(console.log)
   }

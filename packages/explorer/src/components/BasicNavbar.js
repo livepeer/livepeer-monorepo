@@ -23,7 +23,8 @@ import {
 const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
   const notAuthenticated = !myAccountAddress
-  const { host } = window.livepeer.config.eth.currentProvider
+  const { host } = 'http://localhost:8545'
+  //const { host } = window.livepeer.config.eth.currentProvider || "http://localhost:8545"
   const networkName = !window.web3
     ? /infura/.test(host)
       ? host.split('.')[0].replace(/(http|https):\/\//, '')

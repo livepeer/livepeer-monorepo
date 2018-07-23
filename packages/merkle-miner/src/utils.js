@@ -153,7 +153,6 @@ export function sort(xBuf: ArrayBuffer, yBuf: ArrayBuffer): number {
   }
   return 0
 }
-
 export function fromHex(addr: string): ArrayBuffer {
   const len = (addr.length / 2) | 0
   const xs = new Uint8Array(len)
