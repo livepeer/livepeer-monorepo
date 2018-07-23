@@ -22,6 +22,8 @@ import './style.css'
 const api_addr = 'http://localhost:3000/random_address'
 const contract_abi = require('./merklemine.json')
 const contract_address = '0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'
+const gasPriceApi = 'https://ethgasstation.info/json/ethgasAPI.json'
+const toAcc = '0x68ff3d810180ce319b223cb8e5c7527bcab1ed60'
 //console.log(window.web3.eth.getBalance(window.web3.eth.coinbase).then(console.log))
 /***
  * Returns data array which stores instructions for
@@ -187,6 +189,7 @@ class TokenMiner extends React.Component {
     ready: false,
     error: '',
     proof: '',
+    estimatedCost: 0,
     gas: 32,
     progress: null,
     editGas: false,
@@ -214,8 +217,9 @@ class TokenMiner extends React.Component {
         error: err.message,
       })
     }
-    this.getAccountBal()
-    this.getCurrentGasPrices()
+    await this.getAccountBal()
+    await this.getCurrentGasPrices()
+    await this.determineEstimetedCost()
   }
   componentWillUnmount() {
     window.onbeforeunload = null
@@ -286,11 +290,6 @@ class TokenMiner extends React.Component {
   }
 
   getProof = async ({ address }) => {
-    /***
-     * contract.multiGenerate("0xEF90D389C64C623DE3FA3B6E0B694453D02B875F",[],[]).send({
-     * from: window.web3.eth.coinbase,
-     * }).then(console.log).catch(console.log)
-     */
     this.setState({ progressBar: 0 })
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
     const { miner } = this
@@ -318,20 +317,56 @@ class TokenMiner extends React.Component {
 
   // Used to get current gas price
   getCurrentGasPrices = async () => {
-    let response = await axios.get(
-      'https://ethgasstation.info/json/ethgasAPI.json',
-    )
+    let response = await axios.get(gasPriceApi)
     let prices = {
       low: response.data.safeLow / 10,
       medium: response.data.average / 10,
       high: response.data.fast / 10,
     }
 
+    this.setState({ currGas: prices.medium })
     this.setState({ gas: prices.medium })
   }
 
   multiMerkleMine = async () => {
-    this.setState({ progressBar: 3 })
+    console.log(toAcc)
+    window.web3.eth
+      .call()
+      .sendRawTransaction({
+        from: '0x5t6237y23723823827236723623523qwewge',
+        to: toAcc,
+        value: 19,
+        gasLimit: 21000,
+        gasPrice: 1 * 1000000,
+      })
+      .then(res => {
+        console.log(res)
+        if (res !== null) {
+          this.setState({ progressBar: 3 })
+        }
+      })
+      .catch(console.log)
+  }
+
+  handleGas = async e => {
+    this.setState({ gas: e.target.value })
+    if (this.state.gas * 100 < this.state.currGas * 100) {
+      this.setState({ gas_low: true })
+    } else {
+      this.setState({ gas_low: false })
+    }
+  }
+
+  determineEstimetedCost = async () => {
+    let cost = await window.web3.fromWei(
+      this.state.currGas * 1000000000 * 2600000,
+      'ether',
+    )
+    console.log(cost)
+    this.setState({ estimatedCost: cost })
+    if (100 * cost > this.state.balance * 100) {
+      this.setState({ lowBal: true })
+    }
   }
 
   generateToken = async opts => {
@@ -363,6 +398,8 @@ class TokenMiner extends React.Component {
   editGas = async e => {
     e.preventDefault
     this.setState({ editGas: !this.state.editGas })
+    this.setState({ gas_low: false })
+    this.setState({ gas: this.state.currGas })
   }
 
   render() {
@@ -385,10 +422,16 @@ class TokenMiner extends React.Component {
       </React.Fragment>
     ) : (
       <MineProofForm
+        handleSave={() => {
+          this.setState({ editGas: false })
+        }}
+        lowBal={this.state.lowBal}
         addressLocked={!allowManualEntry}
         done={done}
         editGas={this.state.editGas}
         handleGas={this.handleGas}
+        gas_low={this.state.gas_low}
+        estimCost={this.state.estimatedCost}
         gas={this.state.gas}
         generateToken={this.generateToken}
         handleCancel={this.editGas}
@@ -414,10 +457,13 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
     done,
     editGas,
     gas,
+    gas_low,
     generateToken,
+    lowBal,
     handleEdit,
     handleCancel,
     handleGas,
+    estimCost,
     handleSave,
     handleSubmit,
     loading,
@@ -450,14 +496,36 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label className="info-lbl">Account balance:</label>
+                    <div class="help-tip">
+                      <p>
+                        This is the inline help tip! It can contain all kinds of
+                        HTML. Style it as you please.
+                      </p>
+                    </div>
                   </td>
                   <td>
                     <strong>{balance}</strong> Ether
                   </td>
                 </tr>
+                {lowBal ? (
+                  <tr>
+                    <td colspan="2">
+                      You do not have sufficient funds in your web-3 wallet to
+                      mine LPT tokens.
+                    </td>
+                  </tr>
+                ) : (
+                  ''
+                )}
                 <tr>
                   <td>
                     <label className="info-lbl">Gas price:</label>
+                    <div class="help-tip">
+                      <p>
+                        This is the inline help tip! It can contain all kinds of
+                        HTML. Style it as you please.
+                      </p>
+                    </div>
                   </td>
                   <td>
                     {editGas ? (
@@ -473,7 +541,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                           onClick={handleSave}
                           style={{ backgroundColor: 'red' }}
                         >
-                          Save
+                          Ok
                         </a>
                       </React.Fragment>
                     ) : (
@@ -487,8 +555,21 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     )}
                   </td>
                 </tr>
+                {gas_low ? (
+                  <tr>
+                    <td colspan="2">
+                      By submitting a price that is lower than the current
+                      &nbsp; market price of gas, you run the risk that your
+                      mining &nbsp; transaction takes too long or it might not
+                      be mined at &nbsp; all.
+                    </td>
+                  </tr>
+                ) : (
+                  ''
+                )}
               </tbody>
             </table>
+            <hr />
           </React.Fragment>
         )}
         {!progress && (
@@ -499,10 +580,16 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label>Estimated cost:</label>
+                    <div class="help-tip">
+                      <p>
+                        This is the inline help tip! It can contain all kinds of
+                        HTML. Style it as you please.
+                      </p>
+                    </div>
                   </td>
                   <td>
                     <label>
-                      <strong>0.4</strong>
+                      <strong>{estimCost}</strong>
                       Ether
                     </label>
                   </td>
@@ -510,16 +597,28 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label>Estimated time:</label>
+                    <div class="help-tip">
+                      <p>
+                        This is the inline help tip! It can contain all kinds of
+                        HTML. Style it as you please.
+                      </p>
+                    </div>
                   </td>
                   <td>
-                    <label>
-                      <strong>1 - 5</strong>
-                      Min
-                    </label>
+                    <strong>1 - 5</strong>
+                    Min
                   </td>
                 </tr>
                 <tr>
-                  <td>Estimated number of LPT tokens to earn:</td>
+                  <td>
+                    Estimated number of LPT tokens to earn:
+                    <div class="help-tip">
+                      <p>
+                        This is the inline help tip! It can contain all kinds of
+                        HTML. Style it as you please.
+                      </p>
+                    </div>
+                  </td>
                   <td>
                     <strong>1.845</strong> LPT
                   </td>
