@@ -1,7 +1,216 @@
+a {
+  cursor: pointer;
+}
+
+h1,
+h2 {
+  font-family: monospace;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 2px solid #ccc;
+  margin: 30px auto;
+  width: 80%;
+}
+
+table {
+  width: 100%;
+  font-variant: small-caps;
+}
+
+table tr {
+  height: 50px;
+}
+
+table a {
+  display: inline-block;
+  padding: 3px 5px;
+  color: #fff;
+  background-color: blue;
+  border-radius: 5px;
+  margin: 0 10px;
+}
+
+td[colspan='2'] {
+  color: red;
+}
+
+table input {
+  width: 20%;
+}
+
+table strong {
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+table td {
+  width: 50%;
+}
+
+.center-div {
+  margin: 40px auto 10px;
+  width: 300px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0 25px;
+  border-radius: 25px;
+  margin: 30px;
+}
+
+.chip img {
+  float: left;
+  margin: 15px 10px 0 -25px;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+}
+
+.chip h2 {
+  font-weight: bold;
+}
+
+.chip h2,
+.chip p {
+  width: 60%;
+  margin: 10px auto;
+}
+
+.chip p {
+  text-align: justify;
+  color: #333;
+}
+
+.gas-info {
+  min-width: 60%;
+  max-width: 70%;
+  display: inline-block;
+  text-align: right;
+}
+
+.gas-info a {
+  padding: 4px 10px;
+  display: inline-block;
+  color: #fff;
+  background-color: #09ed59;
+  border-radius: 3px;
+  margin: 0px 10px;
+}
+
+.gas-info input {
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.gas-info strong {
+  margin: 0px 10px;
+  font-weight: bold;
+}
+
+.help-tip {
+  display: inline-block;
+  top: 18px;
+  right: 18px;
+  text-align: center;
+  background-color: #bcdbea;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  line-height: 26px;
+  cursor: default;
+  margin: 0 0 0 5px;
+}
+
+.help-tip:before {
+  content: '?';
+  font-weight: bold;
+  color: #fff;
+}
+
+.help-tip:hover p {
+  display: block;
+  transform-origin: 100% 0%;
+
+  -webkit-animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.help-tip p {
+  /* The tooltip */
+  display: none;
+  text-align: left;
+  background-color: #1e2021;
+  padding: 20px;
+  width: 300px;
+  position: absolute;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.help-tip p:before {
+  /* The pointer of the tooltip */
+  position: absolute;
+  content: '';
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-bottom-color: #1e2021;
+  left: 10px;
+  top: -12px;
+}
+
+.help-tip p:after {
+  /* Prevents the tooltip from being hidden */
+  width: 100%;
+  height: 40px;
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: 0;
+}
+
+/* CSS animation */
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 100%;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 100%;
+  }
+}
 .imgStyle {
   border-radius: 50%;
   height: 100px;
   width: 100px;
+}
+
+.info-lbl {
+  display: inline-block;
+  min-width: 30%;
 }
 
 .instruct-div {
@@ -39,14 +248,33 @@
   width: 60%;
 }
 
+.mining {
+  padding: 8px 0 0;
+}
+
+.mining ol li {
+  margin: 30px 0;
+}
+
 .mining-area {
-  /*
-    width: 40%;
-    display: inline-block;
-    */
   background-color: #efefef;
   border-radius: 6px;
   padding: 60px;
+  font-variant: small-caps;
+}
+
+.primary-btn {
+  min-width: 200px;
+  background-color: #49ec92;
+  color: #fff;
+  padding: 18px;
+  border: 0px;
+  box-shadow: 0px 0px 0px transparent;
+  font-size: 25px;
+  width: 300px;
+  text-align: center;
+  border-radius: 5px;
+  display: inline-block;
 }
 
 .progress {
@@ -55,6 +283,40 @@
   padding: 4px 8px;
   text-align: right;
   transition: all 0.5s linear;
+}
+
+.success {
+  text-align: justify;
+}
+
+.success a {
+  border-radius: 8px;
+  color: #ffffff;
+  display: inline-block;
+  font-variant: small-caps;
+  padding: 15px 35px;
+  margin: 0 5px;
+}
+
+.success a:first-child {
+  background-color: #09ed59;
+}
+
+.success a:nth-child(2) {
+  background-color: #00b9eb;
+}
+
+.success div {
+  margin: 60px 0 5px;
+  text-align: center;
+}
+
+.success li {
+  margin: 35px 0;
+}
+
+.success ol {
+  padding: 0 18px;
 }
 
 .token-area {
@@ -82,5 +344,32 @@
   .token-area {
     display: block;
     width: 100%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .chip img {
+    height: 125px;
+    width: 100%;
+    float: none;
+    border-radius: 0px;
+    margin: 0px;
+  }
+  .chip h2,
+  .chip p {
+    width: 100%;
+    margin: 0;
+  }
+
+  .chip h2 {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 15px 0;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  .main {
+    padding: 10px 300px 50px;
   }
 }
