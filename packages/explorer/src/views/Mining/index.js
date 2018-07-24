@@ -33,21 +33,21 @@ const toAcc = '0x68ff3d810180ce319b223cb8e5c7527bcab1ed60'
 const instructions = function() {
   let data = [
     {
-      heading: '1. Log in to web 3 wallet',
+      heading: 'Log in to web 3 wallet',
       instruction: [
         'You will need a Web3 wallet such as MetaMask with enough Ethereum to pay for the Gas cost of executing the smart contracts that generate LPT tokens',
       ],
       imgSrc: 'static/images/Step-1-Livepeer.png',
     },
     {
-      heading: '2. Set mining parameters',
+      heading: 'Set mining parameters',
       instruction: [
         'Selct your gas price. If your gas price is too low, the transaction might take longer or miners might not process your transaction.',
       ],
       imgSrc: 'static/images/Step-2-Livepeer.png',
     },
     {
-      heading: '3. Earn lpt tokens',
+      heading: 'Earn lpt tokens',
       instruction: [
         'The Livepeer Mining smart contract will generate 2.4 LPT in each of the eligible Ethereum addresses. A portion of LPT generated will be allocated to you for claiming the address.',
         'Each round of mining generates tokens for 20 eligible Ethereum addresses.',
@@ -109,15 +109,25 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
         <div className="token-area">
           <div>
             <h2> Tokens remaining: 6,343,232</h2>
-            <ProgressBar
-              done={false}
-              className="progress"
+            <div
               style={{
-                background: 6 < 2 ? '#ccc' : 'var(--primary)',
-                width: `calc(${(100 * 1.3) / 2}% - 32px)`,
-                color: '#000',
+                margin: '10px 0px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                backgroundColor: '#afafaf',
               }}
-            >{`${((100 * 1.3) / 2) | 0}%`}</ProgressBar>
+            >
+              <ProgressBar
+                done={false}
+                className="progress"
+                style={{
+                  background: 6 < 2 ? '#ccc' : 'var(--primary)',
+                  width: `calc(${(100 * 1.3) / 2}%)`,
+                  color: '#000',
+                  margin: 0,
+                }}
+              >{`${((100 * 1.3) / 2) | 0}%`}</ProgressBar>
+            </div>
           </div>
           <div className="mining-area">
             {loading ? (
@@ -127,8 +137,8 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
                 <h2 className="instruct-heading">Mine livepeer token</h2>
                 <p>
                   In order to mine, you will need to log into your ETH account
-                  using a web3-enabled browser or plugin. If you are not sure
-                  how to do this, please read our guide:
+                  using the metamask plugin. If you are not sure how to do this,
+                  please read our guide:
                 </p>
                 <h3>
                   <a
@@ -147,10 +157,9 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
                 renderError={renderError}
                 input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
                 onGenerateToken={generateToken}
+                history={history}
                 onDone={e => {
                   e.preventDefault()
-                  // This should be removed
-                  //console.log('view account...')
                   history.push(`/me?tour=true`)
                 }}
                 worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
@@ -257,12 +266,17 @@ class TokenMiner extends React.Component {
   // Reset the app to  original state
   reset = () => {
     this.setState({
-      address: '',
       done: false,
+      subProofs: false,
       error: '',
       progress: null,
       proof: [],
-      ready: false,
+      address: this.props.defaultAddress,
+      addresses: [],
+      progressBar: -1,
+      proof: '',
+      progress: null,
+      editGas: false,
     })
   }
   onError = err => {
@@ -292,11 +306,12 @@ class TokenMiner extends React.Component {
     this.setState({ progress: data.progress })
   }
 
-  extendedProof = proofs => {
-    return '0x' + proofs.map(proof => this.extendedProof(proof))
+  extendedBufArrToHex = proofs => {
+    return '0x' + proofs.map(proof => (proof.length / 2).toString(16) + proof)
   }
 
   getProof = async ({ address }) => {
+    if (this.state.gas_low || this.state.lowBal) return
     this.setState({ progressBar: 0 })
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
     const { miner } = this
@@ -309,14 +324,14 @@ class TokenMiner extends React.Component {
       })
       .catch(console.log)
 
-    let proofs = []
+    const proofs = []
     // Loop through addresses and generate proofs
     for (const addr of this.state.addresses.data) {
       proofs.push(await miner.getProof(input, addr.substr(2)))
     }
-    let proof = this.extendedProof(proofs)
-
-    this.setState({ proof: '0x' + proof })
+    let proof
+    proof = this.extendedBufArrToHex(proofs)
+    this.setState({ proof: proof })
     this.setState({ progressBar: 2 })
     this.multiMerkleMine()
   }
@@ -335,17 +350,23 @@ class TokenMiner extends React.Component {
   }
 
   multiMerkleMine = async () => {
-    console.log(toAcc)
-    /*
-    window.web3.eth
-      .sendTransaction({
+    await window.web3.eth.sendTransaction(
+      {
         from: window.web3.eth.coinbase,
         to: toAcc,
         value: 19,
         gasLimit: 21000,
         gasPrice: 1 * 1000000,
-      })
-      .call()
+      },
+      (err, res) => {
+        if (err === null) {
+          this.setState({ subProofs: true })
+          this.setState({ progressBar: 2.1 })
+          setTimeout(this.doneMining, 10000)
+        }
+      },
+    )
+    /*
       .then(res => {
         console.log(res)
         if (res !== null) {
@@ -353,21 +374,21 @@ class TokenMiner extends React.Component {
         }
       })
       .catch(console.log)
+    this.state.contract.multiGenerate(
+      minerContractAddress,
+      this.state.addresses,
+      this.state.proof,
+      {
+      from: window.web3.eth.coinbase,
+      gasPrice: 1 * 1000000
+      }).then((res)=>{
+        this.setState({progressBar: 5})
+      }).catch(console.log)
       */
-    this.state.contract
-      .multiGenerate(
-        minerContractAddress,
-        this.state.addresses,
-        this.state.proof,
-        {
-          from: window.web3.eth.coinbase,
-          gasPrice: 1 * 1000000,
-        },
-      )
-      .then(res => {
-        this.setState({ progressBar: 5 })
-      })
-      .catch(console.log)
+  }
+
+  doneMining = async () => {
+    this.setState({ progressBar: 3 })
   }
 
   handleGas = async e => {
@@ -384,11 +405,14 @@ class TokenMiner extends React.Component {
       this.state.currGas * 1000000000 * 2600000,
       'ether',
     )
-    console.log(cost)
     this.setState({ estimatedCost: cost })
     if (100 * cost > this.state.balance * 100) {
       this.setState({ lowBal: true })
     }
+  }
+
+  stakeTokens = async => {
+    this.props.history.push('/transcoders')
   }
 
   generateToken = async opts => {
@@ -458,6 +482,7 @@ class TokenMiner extends React.Component {
         generateToken={this.generateToken}
         handleCancel={this.editGas}
         handleEdit={this.editGas}
+        stakeTokens={this.stakeTokens}
         initialValues={{ address }}
         loading={!ready && address}
         onCancel={onCancel}
@@ -465,8 +490,10 @@ class TokenMiner extends React.Component {
         balance={this.state.balance}
         onSubmit={this.getProof}
         progress={progress}
+        handleReset={this.reset}
         progressBar={this.state.progressBar}
         proof={proof}
+        subProofs={this.state.subProofs}
       />
     )
   }
@@ -496,13 +523,15 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
     progressBar,
     balance,
     proof,
-    reset,
+    handleReset,
+    stakeTokens,
     submitting,
     submitError,
     submitFailed,
     submitSucceeded,
     valid,
     values,
+    subProofs,
     ...props
   }) => {
     // console.log('MineProofForm', done, props)
@@ -520,8 +549,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     <label className="info-lbl">Account balance:</label>
                     <div class="help-tip">
                       <p>
-                        This is the inline help tip! It can contain all kinds of
-                        HTML. Style it as you please.
+                        The balance on your web3 enabled browser or wallet
+                        plugin.
                       </p>
                     </div>
                   </td>
@@ -544,8 +573,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     <label className="info-lbl">Gas price:</label>
                     <div class="help-tip">
                       <p>
-                        This is the inline help tip! It can contain all kinds of
-                        HTML. Style it as you please.
+                        The current market price of 1 gas according to
+                        EthGasStation.
                       </p>
                     </div>
                   </td>
@@ -604,8 +633,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     <label>Estimated cost:</label>
                     <div class="help-tip">
                       <p>
-                        This is the inline help tip! It can contain all kinds of
-                        HTML. Style it as you please.
+                        Total total cost of one round of mining and generating
+                        tokens for the 20 eligible ethereum addresses.
                       </p>
                     </div>
                   </td>
@@ -620,10 +649,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                   <td>
                     <label>Estimated time:</label>
                     <div class="help-tip">
-                      <p>
-                        This is the inline help tip! It can contain all kinds of
-                        HTML. Style it as you please.
-                      </p>
+                      <p>The time it takes to complete one round of mining.</p>
                     </div>
                   </td>
                   <td>
@@ -636,8 +662,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     Estimated number of LPT tokens to earn:
                     <div class="help-tip">
                       <p>
-                        This is the inline help tip! It can contain all kinds of
-                        HTML. Style it as you please.
+                        The portion of the LPT tokens that will be issued to you
+                        in one round of mining.
                       </p>
                     </div>
                   </td>
@@ -648,37 +674,44 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
               </tbody>
             </table>
             <div className="center-div">
-              <a onClick={handleSubmit} className="primary-btn">
+              <a
+                onClick={handleSubmit}
+                style={{
+                  backgroundColor: gas_low || lowBal ? '#ccc' : '#00eb87',
+                }}
+                className="primary-btn"
+              >
                 Earn LPT
               </a>
             </div>
           </React.Fragment>
         )}
-        {progressBar < 5 && progressBar >= 0 && <h1>Mining...</h1>}
-        {progressBar >= 5 && <h1>Seccess!</h1>}
+        {progressBar < 3 && progressBar >= 0 && <h1>Mining...</h1>}
+        {progressBar >= 3 && <h1>Seccess!</h1>}
         {!loading &&
           progressBar >= 0 && (
-            <div style={{ backgroundColor: '#FFF' }}>
+            <div style={{ backgroundColor: '#FFF', borderRadius: '5px' }}>
               <ProgressBar
                 className="progress"
-                done={progressBar === 5}
+                done={progressBar === 3}
                 style={{
                   background:
                     /*progress.download + progress.tree < 2*/
-                    progressBar < 5 ? '#ccc' : 'var(--primary)',
+                    progressBar < 3 ? '#ccc' : 'var(--primary)',
                   margin: 0,
                   transition: 'all .5s linear',
-                  width: `calc(${(100 * progressBar) / 5}% - 32px)`,
+                  width: `calc(${(100 * progressBar) / 3}%)`,
                   color: '#000',
                 }}
               >
-                {`${((100 * progressBar) / 5) | 0}%`}
+                {`${((100 * progressBar) / 3) | 0}%`}
               </ProgressBar>
             </div>
           )}
         {/* During Mining... */}
         {!loading &&
-          progress && (
+          progressBar >= 0 &&
+          progressBar < 3 && (
             <React.Fragment>
               <div
                 className="mining"
@@ -695,8 +728,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     Initializing
                     <span
                       style={{
-                        display: progressBar === 0 ? 'block' : 'none',
-                        color: 'red',
+                        display: progressBar === 1 ? 'block' : 'none',
                       }}
                     >
                       Livepeer is gathering a list of 20 unlciamed &nbsp;
@@ -710,91 +742,82 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                   >
                     Waiting for wallet approval
                     <span
-                      style={{
-                        display: progressBar === 2 ? 'block' : 'none',
-                        color: 'red',
-                      }}
+                      style={{ display: progressBar === 2 ? 'block' : 'none' }}
                     >
                       * Visit your web3 browser / plugin and approve the
                       transaction to generate LPT tokens.
                     </span>
                   </li>
-                  <li
-                    style={{
-                      opacity: progressBar === 3 ? 1 : 0.5,
-                    }}
-                  >
-                    Claiming accounts
-                  </li>
-                  <li
-                    style={{
-                      opacity: progressBar === 4 ? 1 : 0.5,
-                    }}
-                  >
+                  <li style={{ opacity: subProofs ? 1 : 0.5 }}>
                     Generating tokens
+                    <span style={{ display: subProofs ? 'block' : 'none' }}>
+                      Executing the smart contracts for generating the LPT
+                      tokens for the eligible Ethereum addresses and for you.
+                    </span>
+                    <span
+                      style={{
+                        display: subProofs ? 'block' : 'none',
+                        color: 'red',
+                      }}
+                    >
+                      If this is taking too long, you can speed up transaction
+                      by increasing your gas price from your web3 wallet.
+                    </span>
                   </li>
                 </ol>
               </div>
+              <React.Fragment>
+                <p>
+                  Almost there! Please remain patient as this process may take
+                  several minutes.
+                </p>
+                <div style={{ textAlign: 'center' }}>
+                  <Button
+                    className="primary-btn"
+                    style={{
+                      backgroundColor: 'rgba(48, 39, 38, 0.8)',
+                      minWidth: '300px',
+                      width: '400px',
+                    }}
+                    disabled
+                  >
+                    {progressBar === 2
+                      ? `Waiting for your action...`
+                      : `Mining... Please Wait`}
+                  </Button>
+                </div>
+              </React.Fragment>
+            </React.Fragment>
+          )}
+        {!loading &&
+          progressBar >= 3 && (
+            <React.Fragment>
               <div className="success">
                 {proof ? (
                   <React.Fragment>
-                    {done ? (
-                      <React.Fragment>
-                        <p>
-                          You have successfully mined LPT tokens and earned 1.4
-                          tokens. The tokens are now available in your web3
-                          wallet.
-                        </p>
-                        <p>There are two ways to earn additional LPT tokens:</p>
-                        <ol>
-                          <li>
-                            Repeat Mining: Repeat this process by going back to
-                            the main.
-                          </li>
-                          <li>
-                            Stake your LPT tokens : Delegate your LPT tokens to
-                            a Livepeer transcoder and earn LPT's for
-                            contributing to the LivePeer network.
-                          </li>
-                        </ol>
-                        <div>
-                          <a>Repeat Mining</a>
-                          <a>Stake LPT tokens</a>
-                        </div>
-                      </React.Fragment>
-                    ) : (
-                      <p>
-                        Mining complete! You may now claim your Livepeer Token.
-                      </p>
-                    )}
-                    {/*
-                    <GenerateTokenForm
-                      initialValues={{ address: values.address, proof }}
-                      onCancel={onCancel}
-                      onDone={onDone}
-                      onSubmit={generateToken}
-                    />*/}
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment>
                     <p>
-                      Almost there! Please remain patient as this process may
-                      take several minutes.
+                      You have successfully mined LPT tokens and earned 1.4
+                      tokens. The tokens are now available in your web3 wallet.
                     </p>
-                    <div style={{ textAlign: 'center' }}>
-                      <Button
-                        className="primary-btn"
-                        style={{
-                          backgroundColor: 'rgba(48, 39, 38, 0.8)',
-                          minWidth: '300px',
-                          width: '400px',
-                        }}
-                        disabled
-                      >
-                        Mining... Please Wait
-                      </Button>
+                    <p>There are two ways to earn additional LPT tokens:</p>
+                    <ol>
+                      <li>
+                        Repeat Mining: Repeat this process by going back to the
+                        main.
+                      </li>
+                      <li>
+                        Stake your LPT tokens : Delegate your LPT tokens to a
+                        Livepeer transcoder and earn LPT's for contributing to
+                        the LivePeer network.
+                      </li>
+                    </ol>
+                    <div>
+                      <a onClick={handleReset}>Repeat Mining</a>
+                      <a onClick={stakeTokens}>Stake LPT tokens</a>
                     </div>
                   </React.Fragment>
+                ) : (
+                  ''
                 )}
               </div>
             </React.Fragment>
