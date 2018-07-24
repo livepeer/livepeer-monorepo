@@ -2,54 +2,59 @@ a {
   cursor: pointer;
 }
 
-h1,
-h2 {
-  font-family: monospace;
-  font-variant: small-caps;
+.main-instruct h1,
+.main-instruct h2,
+.token-area h1,
+.token-area h2 {
+  font-variant: all-petite-caps;
   font-weight: bold;
 }
 
-hr {
+.mining-area hr {
   display: block;
   height: 1px;
   border: 0;
   border-top: 2px solid #ccc;
-  margin: 30px auto;
+  margin: 30px 0;
   width: 80%;
 }
 
-table {
-  width: 100%;
-  font-variant: small-caps;
+.mining-area h3 a {
+  color: #00eb87;
 }
 
-table tr {
+.token-area table {
+  width: 100%;
+  font-variant: all-petite-caps;
+}
+
+.token-area table tr {
   height: 50px;
 }
 
-table a {
+.token-area table a {
   display: inline-block;
   padding: 3px 5px;
-  color: #fff;
-  background-color: blue;
+  color: #000000;
+  background-color: #00eb87;
   border-radius: 5px;
   margin: 0 10px;
 }
 
-td[colspan='2'] {
+.token-area td[colspan='2'] {
   color: red;
 }
 
-table input {
+.token-area table input {
   width: 20%;
 }
 
-table strong {
+.token-area table strong {
   margin: 0 10px;
   font-weight: bold;
 }
 
-table td {
+.token-area table td {
   width: 50%;
 }
 
@@ -119,20 +124,20 @@ table td {
   top: 18px;
   right: 18px;
   text-align: center;
-  background-color: #bcdbea;
+  background-color: #ffffff;
   border-radius: 50%;
   width: 24px;
   height: 24px;
   font-size: 14px;
+  cursor: pointer;
   line-height: 26px;
-  cursor: default;
   margin: 0 0 0 5px;
 }
 
 .help-tip:before {
   content: '?';
   font-weight: bold;
-  color: #fff;
+  font-variant: initial;
 }
 
 .help-tip:hover p {
@@ -202,6 +207,7 @@ table td {
     opacity: 100%;
   }
 }
+
 .imgStyle {
   border-radius: 50%;
   height: 100px;
@@ -257,16 +263,21 @@ table td {
 }
 
 .mining-area {
-  background-color: #efefef;
+  background-color: #afafaf;
   border-radius: 6px;
   padding: 60px;
-  font-variant: small-caps;
+  font-variant: all-petite-caps;
+}
+
+.mining span {
+  font-weight: bold;
 }
 
 .primary-btn {
   min-width: 200px;
-  background-color: #49ec92;
-  color: #fff;
+  background-color: #00eb87;
+  color: #000000;
+  font-weight: bold;
   padding: 18px;
   border: 0px;
   box-shadow: 0px 0px 0px transparent;
@@ -291,15 +302,14 @@ table td {
 
 .success a {
   border-radius: 8px;
-  color: #ffffff;
+  color: #000000;
   display: inline-block;
-  font-variant: small-caps;
   padding: 15px 35px;
   margin: 0 5px;
 }
 
 .success a:first-child {
-  background-color: #09ed59;
+  background-color: #00eb87;
 }
 
 .success a:nth-child(2) {
@@ -325,10 +335,12 @@ table td {
 }
 
 @media only screen and (max-width: 768px) {
-  h1 {
+  .main-instruct h1,
+  .token-area h1 {
     font-size: 22px;
   }
-  h2 {
+  .main-instruct h2,
+  .token-area h2 {
     font-size: 19px;
   }
   p {
@@ -348,13 +360,6 @@ table td {
 }
 
 @media only screen and (max-width: 768px) {
-  .chip img {
-    height: 125px;
-    width: 100%;
-    float: none;
-    border-radius: 0px;
-    margin: 0px;
-  }
   .chip h2,
   .chip p {
     width: 100%;
