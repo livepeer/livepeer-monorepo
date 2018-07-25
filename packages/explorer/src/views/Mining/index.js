@@ -19,13 +19,12 @@ import enhance from './enhance'
 // Get external css file -- this might change during refactoring
 import './style.css'
 
-const apiAddr = 'http://localhost:3000/random_address'
-const contractAbi = require('./merklemine.json')
-const minerContractAddress = '0xEF90D389C64C623DE3FA3B6E0B694453D02B875F'
-const multiMinerContractAddress = '0xD8AB5396C32EAB7AD3C1C42190609E077C424735'
-const gasPriceApi = 'https://ethgasstation.info/json/ethgasAPI.json'
+const multiMerkleMineAbi = require('./multi-merklemine.json')
+const merkleMineAbi = require('./merklemine.json')
+const tokenAbi = require('./token.json')
+
 const toAcc = '0x68ff3d810180ce319b223cb8e5c7527bcab1ed60'
-//console.log(window.web3.eth.getBalance(window.web3.eth.coinbase).then(console.log))
+
 /***
  * Returns data array which stores instructions for
  * mining Livepeer tokens
@@ -73,6 +72,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
   // const defaultAddress = '0x4fe9367ef5dad459ae9cc4265c69b1b10a4e1288'
   const defaultAddress = coinbase.data.coinbase
   const contentLength = 51961420
+
   // Renders error when it occurs
   const renderError = err =>
     typeof err !== 'string' ? (
@@ -89,6 +89,39 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
   // Store instructions for header and footer
   const instruction_header = 'How to earn livepeer tokens'
   const instruction_footer = `You can repeat this process as many times as you like and increase your number of tokens.`
+
+  const getPercentageTokensMined = async () => {
+    let genesisToken
+    let tokenBal
+    const con = await window.web3.eth
+      .contract(JSON.parse(merkleMineAbi.result))
+      .at(process.env.REACT_APP_MERKLE_MINE_CONTRACT)
+    con.totalGenesisTokens((err, res) => {
+      if (err === null) {
+        genesisToken = res
+        console.log(genesisToken.c[0])
+        return
+      }
+      console.log(err)
+    })
+
+    const tokenCon = await window.web3.eth
+      .contract(JSON.parse(tokenAbi.result))
+      .at(process.env.REACT_APP_TOKEN_ADDRESS)
+    tokenCon.balanceOf(
+      '0x8573f2F5A3Bd960eeE3D998473e50C75cDbE6828',
+      (err, res) => {
+        if (err === null) {
+          tokenBal = res
+          console.log(tokenBal.c[0])
+          return
+        }
+        console.log(err)
+      },
+    )
+    console.log(genesisToken)
+  }
+
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -107,14 +140,20 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
           </ul>
         </div>
         <div className="token-area">
-          <div>
-            <h2> Tokens remaining: 6,343,232</h2>
+          <div
+            style={{
+              backgroundColor: '#FFFFFF',
+              margin: '0px 0px 10px',
+              paddingBottom: '10px',
+            }}
+          >
+            <h1> Tokens remaining: 6,590,556</h1>
             <div
               style={{
-                margin: '10px 0px',
-                borderRadius: '5px',
+                margin: '10px auto',
                 border: '1px solid #ccc',
                 backgroundColor: '#afafaf',
+                width: '90%',
               }}
             >
               <ProgressBar
@@ -226,12 +265,13 @@ class TokenMiner extends React.Component {
       })
     }
     this.state.contract = window.web3.eth
-      .contract(contractAbi)
-      .at(multiMinerContractAddress)
+      .contract(multiMerkleMineAbi)
+      .at(process.env.REACT_APP_MULTI_MERKLE_MINE_CONTRACT)
 
     await this.getAccountBal()
     await this.getCurrentGasPrices()
     await this.determineEstimetedCost()
+    await this.getAmountLpt()
   }
   componentWillUnmount() {
     window.onbeforeunload = null
@@ -248,6 +288,41 @@ class TokenMiner extends React.Component {
   // Might remove this function when refactoring
   updateAddress = async address => {
     return true
+  }
+
+  // This function gets the amount of token that miner addres will be allocated
+  getAmountLpt = async => {
+    window.web3.eth.getBlockNumber((err, res) => {
+      if (err === null) {
+        const con = window.web3.eth
+          .contract(JSON.parse(merkleMineAbi.result))
+          .at(process.env.REACT_APP_MERKLE_MINE_CONTRACT)
+        con.callerTokenAmountAtBlock(res, (err, res) => {
+          if (err === null) {
+            this.setState({
+              amtLpt: res.c[0] * process.env.REACT_APP_NUM_ADDRESS,
+            })
+            return
+          }
+          this.setState({ amtLpt: 0 })
+        })
+        return
+      }
+      this.setState({ amtLpt: 0 })
+    })
+  }
+  encodeProofSize = proof => {
+    const proofSize = proof.length / 2
+
+    let res = proofSize.toString('16')
+    let len = res.length
+
+    while (len < 64) {
+      res = '0' + res
+      len++
+    }
+
+    return res
   }
 
   // Used to get ether amout to display
@@ -307,27 +382,40 @@ class TokenMiner extends React.Component {
   }
 
   extendedBufArrToHex = proofs => {
-    return '0x' + proofs.map(proof => (proof.length / 2).toString(16) + proof)
+    return (
+      '0x' +
+      proofs
+        .map(proof => {
+          return this.encodeProofSize(proof) + proof
+        })
+        .join('')
+    )
   }
 
-  getProof = async ({ address }) => {
+  getProof = async () => {
     if (this.state.gas_low || this.state.lowBal) return
     this.setState({ progressBar: 0 })
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
     const { miner } = this
     const { input, contentLength } = this.props
     await axios
-      .get(apiAddr)
+      .get(process.env.REACT_APP_LAMBDA_API)
       .then(res => {
         this.setState({ addresses: res })
         this.setState({ progressBar: 1 })
       })
-      .catch(console.log)
+      .catch(err => {
+        return
+      })
 
+    console.log(this.state.addresses)
     const proofs = []
+    if (this.state.addresses.length <= 0) {
+      return
+    }
     // Loop through addresses and generate proofs
     for (const addr of this.state.addresses.data) {
-      proofs.push(await miner.getProof(input, addr.substr(2)))
+      proofs.push(await miner.getProof(input, addr.substr(2), contentLength))
     }
     let proof
     proof = this.extendedBufArrToHex(proofs)
@@ -338,7 +426,7 @@ class TokenMiner extends React.Component {
 
   // Used to get current gas price
   getCurrentGasPrices = async () => {
-    let response = await axios.get(gasPriceApi)
+    let response = await axios.get(process.env.REACT_APP_GAS_PRICE_API)
     let prices = {
       low: response.data.safeLow / 10,
       medium: response.data.average / 10,
@@ -350,13 +438,12 @@ class TokenMiner extends React.Component {
   }
 
   multiMerkleMine = async () => {
-    await window.web3.eth.sendTransaction(
+    /*await window.web3.eth.sendTransaction(
       {
         from: window.web3.eth.coinbase,
         to: toAcc,
-        value: 19,
-        gasLimit: 21000,
-        gasPrice: 1 * 1000000,
+        gasLimit: 29000 * process.env.REACT_APP_NUM_ADDRESS,
+        gasPrice: 1 * this.state.gas,
       },
       (err, res) => {
         if (err === null) {
@@ -365,26 +452,17 @@ class TokenMiner extends React.Component {
           setTimeout(this.doneMining, 10000)
         }
       },
-    )
-    /*
-      .then(res => {
-        console.log(res)
-        if (res !== null) {
-          this.setState({ progressBar: 3 })
-        }
-      })
-      .catch(console.log)
+    )*/
     this.state.contract.multiGenerate(
-      minerContractAddress,
+      process.env.REACT_APP_MERKLE_MINE_CONTRACT.toString(),
       this.state.addresses,
       this.state.proof,
       {
-      from: window.web3.eth.coinbase,
-      gasPrice: 1 * 1000000
-      }).then((res)=>{
-        this.setState({progressBar: 5})
-      }).catch(console.log)
-      */
+        from: window.web3.eth.coinbase,
+        gasPrice: 1 * 1000000,
+      },
+      (err, txHash) => console.log(txHash),
+    )
   }
 
   doneMining = async () => {
@@ -402,7 +480,7 @@ class TokenMiner extends React.Component {
 
   determineEstimetedCost = async () => {
     let cost = await window.web3.fromWei(
-      this.state.currGas * 1000000000 * 2600000,
+      this.state.currGas * 1000000 * 2600000,
       'ether',
     )
     this.setState({ estimatedCost: cost })
@@ -494,6 +572,7 @@ class TokenMiner extends React.Component {
         progressBar={this.state.progressBar}
         proof={proof}
         subProofs={this.state.subProofs}
+        amtLpt={this.state.amtLpt}
       />
     )
   }
@@ -503,6 +582,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
   'component',
   ({
     addressLocked,
+    amtLpt,
     done,
     editGas,
     gas,
@@ -547,7 +627,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label className="info-lbl">Account balance:</label>
-                    <div class="help-tip">
+                    <div className="help-tip">
                       <p>
                         The balance on your web3 enabled browser or wallet
                         plugin.
@@ -560,7 +640,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 </tr>
                 {lowBal ? (
                   <tr>
-                    <td colspan="2">
+                    <td colSpan="2">
                       You do not have sufficient funds in your web-3 wallet to
                       mine LPT tokens.
                     </td>
@@ -571,7 +651,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label className="info-lbl">Gas price:</label>
-                    <div class="help-tip">
+                    <div className="help-tip">
                       <p>
                         The current market price of 1 gas according to
                         EthGasStation.
@@ -608,7 +688,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 </tr>
                 {gas_low ? (
                   <tr>
-                    <td colspan="2">
+                    <td colSpan="2">
                       By submitting a price that is lower than the current
                       &nbsp; market price of gas, you run the risk that your
                       mining &nbsp; transaction takes too long or it might not
@@ -631,7 +711,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label>Estimated cost:</label>
-                    <div class="help-tip">
+                    <div className="help-tip">
                       <p>
                         Total total cost of one round of mining and generating
                         tokens for the 20 eligible ethereum addresses.
@@ -648,7 +728,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     <label>Estimated time:</label>
-                    <div class="help-tip">
+                    <div className="help-tip">
                       <p>The time it takes to complete one round of mining.</p>
                     </div>
                   </td>
@@ -660,7 +740,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                 <tr>
                   <td>
                     Estimated number of LPT tokens to earn:
-                    <div class="help-tip">
+                    <div className="help-tip">
                       <p>
                         The portion of the LPT tokens that will be issued to you
                         in one round of mining.
@@ -668,7 +748,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     </div>
                   </td>
                   <td>
-                    <strong>1.845</strong> LPT
+                    <strong>{amtLpt}</strong> LPT
                   </td>
                 </tr>
               </tbody>
@@ -677,7 +757,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
               <a
                 onClick={handleSubmit}
                 style={{
-                  backgroundColor: gas_low || lowBal ? '#ccc' : '#00eb87',
+                  backgroundColor: gas_low || lowBal ? '#ccc' : '#000000',
                 }}
                 className="primary-btn"
               >
@@ -690,7 +770,14 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
         {progressBar >= 3 && <h1>Seccess!</h1>}
         {!loading &&
           progressBar >= 0 && (
-            <div style={{ backgroundColor: '#FFF', borderRadius: '5px' }}>
+            <div
+              style={{
+                backgroundColor: '#FFF',
+                width: '90%',
+                margin: 'auto',
+                border: '1px solid #ccc',
+              }}
+            >
               <ProgressBar
                 className="progress"
                 done={progressBar === 3}
@@ -802,8 +889,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     <p>There are two ways to earn additional LPT tokens:</p>
                     <ol>
                       <li>
-                        Repeat Mining: Repeat this process by going back to the
-                        main.
+                        Repeat this process by clicking the green "Repeat
+                        Mining" button below.
                       </li>
                       <li>
                         Stake your LPT tokens : Delegate your LPT tokens to a
