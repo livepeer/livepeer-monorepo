@@ -417,7 +417,7 @@ class TokenMiner extends React.Component {
         error: `
           Error getting addresses from server.
         This might be a netwok problem. Please try again later. If the problem
-        persists contact livepeer administrators in their discor group.
+        persists contact livepeer administrators in their discord group.
         `,
       })
       return
