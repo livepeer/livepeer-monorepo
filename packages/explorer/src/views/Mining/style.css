@@ -8,23 +8,33 @@ a {
 .token-area h2 {
   font-variant: all-petite-caps;
   font-weight: bold;
+  padding: 16px;
+  border-bottom: 1px solid rgb(238, 238, 238);
+  color: rgb(102, 102, 102);
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .mining-area hr {
   display: block;
   height: 1px;
   border: 0;
-  border-top: 2px solid #ccc;
-  margin: 30px 0;
-  width: 80%;
+  border-top: 1px solid #ccc;
+  margin: 50px 0 0;
 }
 
 .mining-area h3 a {
   color: #00eb87;
 }
 
+.mining-area > p {
+  padding: 10px 25px;
+}
+
 .token-area table {
-  width: 100%;
+  width: 90%;
+  margin: auto;
   font-variant: all-petite-caps;
 }
 
@@ -33,12 +43,32 @@ a {
 }
 
 .token-area table a {
-  display: inline-block;
-  padding: 3px 5px;
-  color: #000000;
-  background-color: #00eb87;
-  border-radius: 5px;
-  margin: 0 10px;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  background-position-x: initial;
+  background-position-y: initial;
+  background-size: initial;
+  background-repeat-x: initial;
+  background-repeat-y: initial;
+  background-attachment: initial;
+  background-origin: initial;
+  background-clip: initial;
+  background-color: initial;
+  color: rgb(0, 0, 0);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 0px 1px inset;
+  background-image: none !important;
+  padding: 8px 12px;
+  margin: 8px;
+  outline: none;
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
 }
 
 .token-area td[colspan='2'] {
@@ -82,9 +112,15 @@ a {
   font-weight: bold;
 }
 
+.token-area ~ div {
+  background-color: #ffffff;
+  padding-bottom: 20px;
+  margin: 30px 0;
+}
+
 .chip h2,
 .chip p {
-  width: 60%;
+  width: 70%;
   margin: 10px auto;
 }
 
@@ -124,8 +160,9 @@ a {
   top: 18px;
   right: 18px;
   text-align: center;
-  background-color: #ffffff;
+  background-color: #ccc;
   border-radius: 50%;
+  border: 1px solid #ccc;
   width: 24px;
   height: 24px;
   font-size: 14px;
@@ -138,6 +175,7 @@ a {
   content: '?';
   font-weight: bold;
   font-variant: initial;
+  color: #ffffff;
 }
 
 .help-tip:hover p {
@@ -241,16 +279,15 @@ a {
 }
 
 .main {
-  background-color: white;
   display: inline-flex;
   flex-direction: row;
-  padding: 30px 10px 0px 0px;
 }
 
 .main-instruct {
+  margin: 20px;
   display: inline-flex;
+  background-color: #ffffff;
   flex-direction: column;
-  padding: 10px 15px 50px;
   width: 60%;
 }
 
@@ -263,9 +300,8 @@ a {
 }
 
 .mining-area {
-  background-color: #afafaf;
-  border-radius: 6px;
-  padding: 60px;
+  background-color: #fff;
+  padding: 0 0 60px;
   font-variant: all-petite-caps;
 }
 
@@ -275,21 +311,19 @@ a {
 
 .primary-btn {
   min-width: 200px;
-  background-color: #00eb87;
-  color: #000000;
+  background-color: #000000;
+  color: #ffffff;
   font-weight: bold;
   padding: 18px;
   border: 0px;
   box-shadow: 0px 0px 0px transparent;
-  font-size: 25px;
+  font-size: 20px;
   width: 300px;
   text-align: center;
-  border-radius: 5px;
   display: inline-block;
 }
 
 .progress {
-  border-radius: 4px;
   margin: 10px 0px;
   padding: 4px 8px;
   text-align: right;
@@ -298,22 +332,47 @@ a {
 
 .success {
   text-align: justify;
+  padding: 60px 50px;
 }
 
 .success a {
-  border-radius: 8px;
   color: #000000;
   display: inline-block;
   padding: 15px 35px;
   margin: 0 5px;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  background-position-x: initial;
+  background-position-y: initial;
+  background-size: initial;
+  background-repeat-x: initial;
+  background-repeat-y: initial;
+  background-attachment: initial;
+  background-origin: initial;
+  background-clip: initial;
+  background-color: initial;
+  color: rgb(0, 0, 0);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 0px 1px inset;
+  background-image: none !important;
+  margin: 8px;
+  outline: none;
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
 }
 
 .success a:first-child {
-  background-color: #00eb87;
+  background-color: #ffffff;
+  color: #000000;
 }
 
 .success a:nth-child(2) {
-  background-color: #00b9eb;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .success div {
@@ -332,6 +391,10 @@ a {
 .token-area {
   width: 40%;
   display: inline-block;
+}
+
+.token-area ~ div {
+  background-color: #ffffff;
 }
 
 @media only screen and (max-width: 768px) {
