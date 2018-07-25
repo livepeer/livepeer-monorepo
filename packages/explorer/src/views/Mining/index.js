@@ -354,12 +354,14 @@ class TokenMiner extends React.Component {
       editGas: false,
     })
   }
+  // Show error if called
   onError = err => {
     console.error(err)
     return this.setState({
       error: err.message,
     })
   }
+
   onResolveHash = (err, data) => {
     if (err) {
       console.error(err)
@@ -405,18 +407,28 @@ class TokenMiner extends React.Component {
         this.setState({ progressBar: 1 })
       })
       .catch(err => {
+        this.setState({ error: err.toString() })
         return
       })
 
-    console.log(this.state.addresses)
     const proofs = []
     if (this.state.addresses.length <= 0) {
+      this.setState({
+        error: `
+          Error getting addresses from server.
+        This might be a netwok problem. Please try again later. If the problem
+        persists contact livepeer administrators in their discor group.
+        `,
+      })
       return
     }
+    this.setState({ progressBar: 1.5 })
+
     // Loop through addresses and generate proofs
     for (const addr of this.state.addresses.data) {
       proofs.push(await miner.getProof(input, addr.substr(2), contentLength))
     }
+
     let proof
     proof = this.extendedBufArrToHex(proofs)
     this.setState({ proof: proof })
@@ -438,30 +450,21 @@ class TokenMiner extends React.Component {
   }
 
   multiMerkleMine = async () => {
-    /*await window.web3.eth.sendTransaction(
-      {
-        from: window.web3.eth.coinbase,
-        to: toAcc,
-        gasLimit: 29000 * process.env.REACT_APP_NUM_ADDRESS,
-        gasPrice: 1 * this.state.gas,
-      },
-      (err, res) => {
-        if (err === null) {
-          this.setState({ subProofs: true })
-          this.setState({ progressBar: 2.1 })
-          setTimeout(this.doneMining, 10000)
-        }
-      },
-    )*/
-    this.state.contract.multiGenerate(
-      process.env.REACT_APP_MERKLE_MINE_CONTRACT.toString(),
-      this.state.addresses,
+    await this.state.contract.multiGenerate(
+      process.env.REACT_APP_MERKLE_MINE_CONTRACT,
+      this.state.addresses.data,
       this.state.proof,
       {
         from: window.web3.eth.coinbase,
         gasPrice: 1 * 1000000,
       },
-      (err, txHash) => console.log(txHash),
+      (err, txHash) => {
+        if (err === null) {
+          this.setState({ progressBar: 3 })
+          return
+        }
+        this.onError(err)
+      },
     )
   }
 
@@ -536,7 +539,7 @@ class TokenMiner extends React.Component {
       <React.Fragment>
         {renderError(error)}
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={this.reset}>Home</Button>
           {allowManualEntry && (
             <Button className="primary" onClick={this.reset}>
               Try another address
@@ -670,7 +673,10 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                         />
                         <a
                           onClick={handleSave}
-                          style={{ backgroundColor: 'red' }}
+                          style={{
+                            backgroundColor: '#000000',
+                            color: '#FFFFFF',
+                          }}
                         >
                           Ok
                         </a>
