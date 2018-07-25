@@ -179,7 +179,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
                   using the metamask plugin. If you are not sure how to do this,
                   please read our guide:
                 </p>
-                <h3>
+                <h3 style={{ margin: '30px' }}>
                   <a
                     href="https://forum.livepeer.org/t/how-to-install-metamask-on-chrome-browser-to-enable-web-3-0/272"
                     target="_blank"
