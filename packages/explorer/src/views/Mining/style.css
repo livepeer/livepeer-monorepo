@@ -24,12 +24,20 @@ a {
   margin: 50px 0 0;
 }
 
+.main ~ div:nth-child(4) {
+  display: none;
+}
+
 .mining-area h3 a {
   color: #00eb87;
 }
 
 .mining-area > p {
   padding: 10px 25px;
+}
+
+.token-area {
+  margin-right: 20px;
 }
 
 .token-area table {
@@ -166,7 +174,7 @@ a {
   width: 24px;
   height: 24px;
   font-size: 14px;
-  cursor: pointer;
+  cursor: help;
   line-height: 26px;
   margin: 0 0 0 5px;
 }
@@ -420,12 +428,15 @@ a {
     display: block;
     width: 100%;
   }
+  .main-instruct {
+    margin: 5px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
   .chip h2,
   .chip p {
-    width: 100%;
+    width: 80%;
     margin: 0;
   }
 
