@@ -40,6 +40,11 @@ a {
   margin-right: 20px;
 }
 
+.main-instruct p {
+  padding: 10px;
+  margin: 10px;
+}
+
 .token-area table {
   width: 90%;
   margin: auto;
