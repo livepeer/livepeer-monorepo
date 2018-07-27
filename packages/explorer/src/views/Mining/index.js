@@ -452,7 +452,7 @@ class TokenMiner extends React.Component {
       this.state.proof,
       {
         from: window.web3.eth.coinbase,
-        gas: 2600000,
+        gas: 3200000,
         gasPrice: window.web3.toWei(this.state.gas, 'gwei'),
       },
       async (err, txHash) => {
@@ -492,7 +492,7 @@ class TokenMiner extends React.Component {
   }
 
   determineEstimetedCost = async () => {
-    let cost = await window.web3.fromWei(this.state.gas * 2600000, 'gwei')
+    let cost = await window.web3.fromWei(this.state.gas * 3200000, 'gwei')
     this.setState({ estimatedCost: cost })
     if (100 * cost > this.state.balance * 100) {
       this.setState({ lowBal: true })
