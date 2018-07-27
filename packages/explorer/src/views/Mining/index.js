@@ -754,7 +754,9 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                             <strong>{gas}</strong>
                             Gwei
                           </label>
-                          <a onClick={handleEdit}>Edit</a>
+                          <a style={{ display: 'none' }} onClick={handleEdit}>
+                            Edit
+                          </a>
                         </React.Fragment>
                       )}
                     </td>
