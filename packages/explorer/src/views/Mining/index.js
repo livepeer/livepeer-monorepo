@@ -19,6 +19,8 @@ import enhance from './enhance'
 // Get external css file -- this might change during refactoring
 import './style.css'
 
+const BN = require('bn.js')
+
 const multiMerkleMineAbi = require('./multi-merklemine.json')
 const merkleMineAbi = require('./merklemine.json')
 const tokenAbi = require('./token.json')
@@ -245,7 +247,10 @@ class TokenMiner extends React.Component {
         con.callerTokenAmountAtBlock(res, (err, res) => {
           if (err === null) {
             this.setState({
-              amtLpt: res.c[0] * process.env.REACT_APP_NUM_ADDRESS,
+              amtLpt: (
+                res.mul(new BN(process.env.REACT_APP_NUM_ADDRESS)) /
+                Math.pow(10, 18)
+              ).toString(10),
             })
             return
           }
@@ -277,14 +282,8 @@ class TokenMiner extends React.Component {
       (err, result) => {
         if (err === null) {
           let myBalance = window.web3.fromWei(result)
-          if (myBalance.e >= 0)
-            this.setState({ balance: parseFloat(myBalance.c.join('.')) })
-          else
-            this.setState({
-              balance: parseFloat(
-                '0.' + '0'.repeat(Math.abs(myBalance.e)) + myBalance.c[0],
-              ),
-            })
+          console.log(myBalance.toString(10))
+          this.setState({ balance: parseFloat(myBalance.toString(10)) })
         }
       },
     )
@@ -299,9 +298,11 @@ class TokenMiner extends React.Component {
       process.env.REACT_APP_MERKLE_MINE_CONTRACT,
       (err, res) => {
         if (err === null) {
-          const tokens = parseFloat(res.c.join('.')) / Math.pow(10, 4)
+          const tokens = res.div(new BN(10).pow(new BN(18))).toString(10)
           this.setState({ tokensRemaining: tokens })
+          return
         }
+        console.log(err)
       },
     )
   }
