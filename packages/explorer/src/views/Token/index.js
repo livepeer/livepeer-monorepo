@@ -41,11 +41,15 @@ const TokenView = ({ history, ...props }) => {
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
               <p style={{ margin: '2px auto' }}>
                 Scarcity:&nbsp;<span style={{ fontSize: '14px' }}>
-                  As of July 26, 2018, 2.5 million Ethereum accounts had 2.4LPT
-                  each, totaling 6.3 million LPT. These tokens are available for
+                  As of July 26th, 2018, the Livepeer protocol specifies that
+                  2.44 LPT can be generated into 2 59M Ethereum accounts
+                  totaling a release of 6.3M LPT. These tokens are available for
                   anyone to claim on a first-come first-serve basis. You can
                   claim them using the Livepeer Miner, or you can write a
-                  programming script to claim more tokens. Learn more.
+                  programming script to claim more tokens.&nbsp;
+                  <a href="https://forum.livepeer.org/t/the-economics-of-generating-livepeer-token-after-the-merklemine-slow-start-ends-and-claim-period-begins-on-7-26/317">
+                    Learn more
+                  </a>
                 </span>
               </p>
               <p style={{ margin: '15px auto 0' }}>
