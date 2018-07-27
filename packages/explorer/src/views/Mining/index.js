@@ -452,7 +452,8 @@ class TokenMiner extends React.Component {
       this.state.proof,
       {
         from: window.web3.eth.coinbase,
-        gasPrice: this.state.gas * 1000000000,
+        gas: 2600000,
+        gasPrice: window.web3.toWei(this.state.gas, 'gwei'),
       },
       async (err, txHash) => {
         if (err === null) {
@@ -475,22 +476,23 @@ class TokenMiner extends React.Component {
   }
 
   handleGas = async e => {
+    e.preventDefault()
+    this.determineEstimetedCost()
     this.setState({ prevGas: this.state.gas })
     this.setState({ gas: parseFloat(e.target.value) })
-    console.log(e.target.value)
-    if (e.target.value * 100 < this.state.currGas * 100) {
+    try {
+      if (e.target.value * 100 < this.state.currGas * 100) {
+        this.setState({ gas_low: true })
+      } else {
+        this.setState({ gas_low: false })
+      }
+    } catch (err) {
       this.setState({ gas_low: true })
-    } else {
-      this.setState({ gas_low: false })
     }
-    this.determineEstimetedCost()
   }
 
   determineEstimetedCost = async () => {
-    let cost = await window.web3.fromWei(
-      this.state.gas * 1000000 * 2600000,
-      'ether',
-    )
+    let cost = await window.web3.fromWei(this.state.gas * 2600000, 'gwei')
     this.setState({ estimatedCost: cost })
     if (100 * cost > this.state.balance * 100) {
       this.setState({ lowBal: true })
@@ -531,22 +533,21 @@ class TokenMiner extends React.Component {
    * miner
    */
   editGas = async e => {
-    e.preventDefault
+    e.preventDefault()
+    this.determineEstimetedCost()
     this.setState({ editGas: !this.state.editGas })
     this.setState({ prevGas: this.state.gas })
-    this.determineEstimetedCost()
   }
 
   cancelEditGas = async e => {
-    e.preventDefault
+    e.preventDefault()
     this.setState({ gas: this.state.prevGas })
-
+    this.determineEstimetedCost()
     if (parseFloat(this.state.gas) * 100 < this.state.currGas * 100) {
       this.setState({ gas_low: true })
     } else {
       this.setState({ gas_low: false })
     }
-    this.determineEstimetedCost()
     this.setState({ editGas: !this.state.editGas })
   }
 

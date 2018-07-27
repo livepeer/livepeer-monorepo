@@ -42,7 +42,7 @@ const TokenView = ({ history, ...props }) => {
               <p style={{ margin: '2px auto' }}>
                 Scarcity:&nbsp;<span style={{ fontSize: '14px' }}>
                   As of July 26th, 2018, the Livepeer protocol specifies that
-                  2.44 LPT can be generated into 2 59M Ethereum accounts
+                  2.44 LPT can be generated into 2.59M Ethereum accounts
                   totaling a release of 6.3M LPT. These tokens are available for
                   anyone to claim on a first-come first-serve basis. You can
                   claim them using the Livepeer Miner, or you can write a
