@@ -895,7 +895,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                           display: progressBar === 1 ? 'block' : 'none',
                         }}
                       >
-                        Livepeer is gathering a list of 20 unlciamed eligible
+                        Livepeer is gathering a list of 20 unclaimed eligible
                         Ethereum addresses to generate LPT tokens for.
                       </span>
                     </li>
