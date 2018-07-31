@@ -246,7 +246,6 @@ class TokenMiner extends React.Component {
       (err, result) => {
         if (err === null) {
           let myBalance = window.web3.fromWei(result)
-          console.log(myBalance.toString(10))
           this.setState({ balance: parseFloat(myBalance.toString(10)) })
         }
       },
@@ -270,6 +269,7 @@ class TokenMiner extends React.Component {
       },
     )
   }
+
   // Reset the app to  original state
   reset = () => {
     this.setState({
@@ -285,7 +285,10 @@ class TokenMiner extends React.Component {
       progress: null,
       editGas: false,
     })
+    this.getAmountLpt()
+    this.getBalance()
   }
+
   // Show error if called
   onError = err => {
     console.error(err)
@@ -304,6 +307,7 @@ class TokenMiner extends React.Component {
     console.log(`Loading ${data.hash} from ipfs...`, data.progress.download)
     this.setState({ progress: data.progress })
   }
+
   onConstructTree = (err, data) => {
     if (err) {
       console.error(err)
