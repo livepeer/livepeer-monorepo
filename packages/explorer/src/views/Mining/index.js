@@ -15,7 +15,7 @@ import {
   ScrollToTopOnMount,
 } from '../../components'
 import enhance from './enhance'
-import { instructions } from './instructions'
+import { instructions, Instruction } from './instructions'
 
 // Get external css file -- this might change during refactoring
 import './style.css'
@@ -964,29 +964,4 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
   },
 )(Form)
 
-class Image extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return <img src={this.props.imgSrc} alt="" />
-  }
-}
-
-class Instruction extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <div className="chip">
-        {this.props.item.imgSrc && <Image imgSrc={this.props.item.imgSrc} />}
-        <h2>{this.props.item.heading}</h2>
-        {this.props.item.instruction.map((item, index) => {
-          return <p key={index}>{item}</p>
-        })}
-      </div>
-    )
-  }
-}
 export default enhance(MiningView)
