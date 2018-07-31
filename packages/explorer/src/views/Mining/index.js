@@ -71,7 +71,7 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
           <br />
           <h2>Hardware / Software Requirements:</h2>
           <ul>
-            <li>Operating System: Windows or Mac</li>
+            <li>Operating System Windows or Mac</li>
             <li>Access to the internet</li>
             <li>Web 3 wallet MetaMask</li>
           </ul>
