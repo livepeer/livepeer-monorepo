@@ -109,7 +109,6 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
                 defaultAddress={defaultAddress}
                 renderError={renderError}
                 input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
-                onGenerateToken={generateToken}
                 history={history}
                 onDone={e => {
                   e.preventDefault()
@@ -513,31 +512,6 @@ class TokenMiner extends React.Component {
     this.props.history.push('/transcoders')
   }
 
-  generateToken = async opts => {
-    const maybeError = await this.props.onGenerateToken(opts)
-    if (!maybeError) {
-      this.setState({ done: true })
-    } else {
-      const [submitError] = Object.values(maybeError)
-      if (!/User denied/.test(submitError)) {
-        this.setState({
-          error: (
-            <React.Fragment>
-              <div className="mining-area">
-                <p>
-                  Sorry, it looks like there was a problem generating your
-                  token:
-                </p>
-                <p>{submitError}</p>
-              </div>
-            </React.Fragment>
-          ),
-        })
-      }
-    }
-    return maybeError
-  }
-
   /**
    * Controller for edit and cancel button in token
    * miner
@@ -594,7 +568,6 @@ class TokenMiner extends React.Component {
         gas_low={this.state.gas_low}
         estimCost={this.state.estimatedCost}
         gas={this.state.gas}
-        generateToken={this.generateToken}
         handleCancel={this.cancelEditGas}
         handleEdit={this.editGas}
         stakeTokens={this.stakeTokens}
@@ -625,7 +598,6 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
     editGas,
     gas,
     gas_low,
-    generateToken,
     lowBal,
     handleEdit,
     handleCancel,
