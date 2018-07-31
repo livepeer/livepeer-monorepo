@@ -225,6 +225,11 @@ class TokenMiner extends React.Component {
       this.setState({ amtLpt: 0 })
     })
   }
+
+  /**
+   * This is a helper method used for preparing
+   * the proofs to be passed to multiGenerate smart contract
+   */
   encodeProofSize = proof => {
     const proofSize = proof.length / 2
 
@@ -287,6 +292,7 @@ class TokenMiner extends React.Component {
     })
     this.getAmountLpt()
     this.getBalance()
+    this.getCurrentGasPrices()
   }
 
   // Show error if called
@@ -319,6 +325,10 @@ class TokenMiner extends React.Component {
     this.setState({ progress: data.progress })
   }
 
+  /**
+   * Helper method used to prepare proofs to be passed to
+   * multiGenerate smart contract
+   */
   extendedBufArrToHex = proofs => {
     return (
       '0x' +
@@ -367,6 +377,10 @@ class TokenMiner extends React.Component {
     this.setState({ progressBar: 2 })
   }
 
+  /**
+   * This method calls all the necessary methods
+   * to multi merkle mine of users behalf
+   */
   getProof = async () => {
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
 
@@ -412,6 +426,9 @@ class TokenMiner extends React.Component {
     this.setState({ prevGas: prices.medium })
   }
 
+  /**
+   * This method checks with EVM to determine if merkle mining is finished
+   */
   getTransactionReceiptMined = async (txHash, interval) => {
     const transactionReceiptAsync = function(resolve, reject) {
       window.web3.eth.getTransactionReceipt(txHash, (error, receipt) => {
@@ -704,15 +721,13 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                       <strong>{balance}</strong> Ether
                     </td>
                   </tr>
-                  {lowBal ? (
+                  {lowBal && (
                     <tr>
                       <td colSpan="2">
                         You do not have sufficient funds in your web-3 wallet to
                         mine LPT tokens.
                       </td>
                     </tr>
-                  ) : (
-                    ''
                   )}
                   <tr>
                     <td>
@@ -757,7 +772,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                       )}
                     </td>
                   </tr>
-                  {gas_low ? (
+                  {gas_low && (
                     <tr>
                       <td colSpan="2">
                         By submitting a price that is lower than the current
@@ -766,8 +781,6 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                         all.
                       </td>
                     </tr>
-                  ) : (
-                    ''
                   )}
                 </tbody>
               </table>
