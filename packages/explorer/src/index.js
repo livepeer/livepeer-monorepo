@@ -153,7 +153,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       },
     }
     // The address of the deployed Controller contract
-    if (window.web3) {
+    if (window.web3.version) {
       const { version } = window.web3
       const controllers = {
         1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
