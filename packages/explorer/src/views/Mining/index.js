@@ -330,12 +330,11 @@ class TokenMiner extends React.Component {
     )
   }
 
-  getProof = async () => {
-    if (this.state.gas_low || this.state.lowBal) return
-    this.setState({ progressBar: 0 })
-    this.setState({ ready: true, progress: { tree: 0, download: 0 } })
-    const { miner } = this
-    const { input, contentLength } = this.props
+  /**
+   * Used to get minable addresses from server
+   */
+  getAddresses = async () => {
+    // Make get request to API
     await axios
       .get(process.env.REACT_APP_LAMBDA_API)
       .then(res => {
@@ -346,17 +345,16 @@ class TokenMiner extends React.Component {
         this.setState({ error: err.toString() })
         return
       })
+  }
+
+  /**
+   * Used to generate the proofs
+   */
+  generateProof = async () => {
+    const { miner } = this
+    const { input, contentLength } = this.props
+    // Constant to hold proofs
     const proofs = []
-    if (this.state.addresses.length <= 0) {
-      this.setState({
-        error: `
-          Error getting addresses from server.
-          This might be a netwok problem. Please try again later. If the problem
-          persists contact livepeer administrators in their discord group.
-        `,
-      })
-      return
-    }
     // Loop through addresses and generate proofs
     for (const addr of this.state.addresses) {
       proofs.push(await miner.getProof(input, addr.substr(2), contentLength))
@@ -367,7 +365,37 @@ class TokenMiner extends React.Component {
     proof = this.extendedBufArrToHex(proofs)
     this.setState({ proof: proof })
     this.setState({ progressBar: 2 })
-    this.multiMerkleMine()
+  }
+
+  getProof = async () => {
+    this.setState({ ready: true, progress: { tree: 0, download: 0 } })
+
+    // Do nothing if balance or gas is low
+    if (this.state.gas_low || this.state.lowBal) return
+
+    // Set the state of the mining progress
+    this.setState({ progressBar: 0 })
+
+    // Get minable addresses from server
+    await this.getAddresses()
+
+    // If no addresses have been returned then show error
+    if (this.state.addresses.length <= 0) {
+      this.setState({
+        error: `
+          Error getting addresses from server.
+          This might be a netwok problem. Please try again later. If the problem
+          persists contact livepeer administrators in their discord group.
+        `,
+      })
+      return
+    }
+
+    // Generate proofs
+    await this.generateProof()
+
+    // Mine addresses
+    await this.multiMerkleMine()
   }
 
   // Used to get current gas price
