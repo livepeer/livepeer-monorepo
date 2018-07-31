@@ -200,10 +200,6 @@ class TokenMiner extends React.Component {
       )
     }
   }
-  // Might remove this function when refactoring
-  updateAddress = async address => {
-    return true
-  }
 
   // This function gets the amount of token that miner addres will be allocated
   getAmountLpt = async => {
