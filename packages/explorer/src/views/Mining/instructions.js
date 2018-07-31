@@ -15,9 +15,9 @@ const instructions = function() {
       altText: 'Image 1',
     },
     {
-      heading: 'Set mining parameters',
+      heading: 'Start Mining',
       instruction: [
-        'Select your gas price. If your gas price is too low, the transaction might take longer or miners might not process your transaction.',
+        'Click on Earn LPT to start mining. You can change the gas price from your web 3 wallet. If your gas price is too low, the transaction might take longer or miners might not process your transaction.',
       ],
       imgSrc: 'static/images/Step-2-Livepeer.png',
       altText: 'Image 1',
