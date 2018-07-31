@@ -44,6 +44,9 @@ type Delegator {
   "The round the delegator can withdraw its stake."
   withdrawRound: String!
 
+  "The ID of the delegator's next unbonding lock"
+  nextUnbondingLockId: String!
+
 }`
 
 export default () => [Delegator, DelegatorStatus]

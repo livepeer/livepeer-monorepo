@@ -13,4 +13,5 @@ fragment DelegatorFragment on Delegator {
   startRound
   status
   withdrawRound
+  nextUnbondingLockId
 }`

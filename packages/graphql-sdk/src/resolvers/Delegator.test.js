@@ -16,6 +16,7 @@ test('Delegator resolves fields', async t => {
     startRound: '0',
     status: 'Unbonded',
     withdrawRound: '0',
+    nextUnbondingLockId: '0',
   }
   const args = null
   const ctx = {}

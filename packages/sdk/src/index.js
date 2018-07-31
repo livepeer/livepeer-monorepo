@@ -86,16 +86,15 @@ export const VIDEO_PROFILES = {
   },
 }
 
-const DELEGATOR_STATUS = ['Pending', 'Bonded', 'Unbonding', 'Unbonded']
+const DELEGATOR_STATUS = ['Pending', 'Bonded', 'Unbonded', 'Unbonding']
 DELEGATOR_STATUS.Pending = DELEGATOR_STATUS[0]
 DELEGATOR_STATUS.Bonded = DELEGATOR_STATUS[1]
-DELEGATOR_STATUS.Unbonding = DELEGATOR_STATUS[2]
-DELEGATOR_STATUS.Unbonded = DELEGATOR_STATUS[3]
+DELEGATOR_STATUS.Unbonded = DELEGATOR_STATUS[2]
+DELEGATOR_STATUS.Unbonding = DELEGATOR_STATUS[3]
 export { DELEGATOR_STATUS }
-const TRANSCODER_STATUS = ['NotRegistered', 'Registered', 'Resigned']
+const TRANSCODER_STATUS = ['NotRegistered', 'Registered']
 TRANSCODER_STATUS.NotRegistered = TRANSCODER_STATUS[0]
 TRANSCODER_STATUS.Registered = TRANSCODER_STATUS[1]
-TRANSCODER_STATUS.Resigned = TRANSCODER_STATUS[2]
 export { TRANSCODER_STATUS }
 
 // Defaults
@@ -1057,7 +1056,7 @@ export default async function createLivepeerSDK(
      * @example
      *
      * await rpc.getDelegatorStatus('0xf00...')
-     * // => 'Pending' | 'Bonded' | 'Unbonding' | 'Unbonded'
+     * // => 'Pending' | 'Bonded' | 'Unbonded'
      */
     async getDelegatorStatus(addr: string): Promise<string> {
       const status = headToString(
@@ -1109,11 +1108,11 @@ export default async function createLivepeerSDK(
      * //   startRound: string,
      * //   status: 'Pending' | 'Bonded' | 'Unbonding' | 'Unbonded',
      * //   withdrawRound: string,
+     * //   nextUnbondingLockId: string,
      * // }
      */
     async getDelegator(addr: string): Promise<Delegator> {
       const address = await resolveAddress(rpc.getENSAddress, addr)
-      const status = await rpc.getDelegatorStatus(address)
       const allowance = headToString(
         await LivepeerToken.allowance(address, BondingManager.address),
       )
@@ -1132,7 +1131,21 @@ export default async function createLivepeerSDK(
       const delegatedAmount = toString(d.delegatedAmount)
       const lastClaimRound = toString(d.lastClaimRound)
       const startRound = toString(d.startRound)
-      const withdrawRound = toString(d.withdrawRound)
+
+      const nextUnbondingLockId = toString(d.nextUnbondingLockId)
+      let unbondingLockId = toBN(nextUnbondingLockId)
+      if (unbondingLockId.cmp(new BN(0)) > 0) {
+        unbondingLockId = unbondingLockId.sub(new BN(1))
+      }
+      const { withdrawRound } = await rpc.getDelegatorUnbondingLock(
+        address,
+        toString(unbondingLockId),
+      )
+      const status =
+        withdrawRound == '0'
+          ? await rpc.getDelegatorStatus(address)
+          : DELEGATOR_STATUS.Unbonding
+
       return {
         address,
         allowance,
@@ -1145,6 +1158,40 @@ export default async function createLivepeerSDK(
         pendingStake,
         startRound,
         status,
+        withdrawRound,
+        nextUnbondingLockId,
+      }
+    },
+
+    /**
+     * Get an unbonding lock for a delegator
+     * @param {string} addr - delegator's ETH address
+     * @param {string} unbondingLockId - unbonding lock ID
+     *
+     * @example
+     *
+     * await rpc.getDelegatorUnbondingLock('0xf00...', 1)
+     * // => UnbondingLock {
+     * //   id: string,
+     * //   delegator: string,
+     * //   amount: string,
+     * //   withdrawRound: string
+     * // }
+     */
+    async getDelegatorUnbondingLock(
+      addr: string,
+      unbondingLockId: string,
+    ): Promise<UnbondingLock> {
+      const lock = await BondingManager.getDelegatorUnbondingLock(
+        addr,
+        unbondingLockId,
+      )
+      const amount = toString(lock.amount)
+      const withdrawRound = toString(lock.withdrawRound)
+      return {
+        id: unbondingLockId,
+        delegator: addr,
+        amount,
         withdrawRound,
       }
     },
@@ -1178,7 +1225,7 @@ export default async function createLivepeerSDK(
      * @example
      *
      * await rpc.getTranscoderStatus('0xf00...')
-     * // => 'NotRegistered' | 'Registered' | 'Resigned'
+     * // => 'NotRegistered' | 'Registered'
      */
     async getTranscoderStatus(addr: string): Promise<string> {
       const status = headToString(
@@ -1241,7 +1288,7 @@ export default async function createLivepeerSDK(
      * //   pendingFeeShare: string,
      * //   pendingPricePerSegment: string,
      * //   pricePerSegment: string,
-     * //   status: 'NotRegistered' | 'Registered' | 'Resigned',
+     * //   status: 'NotRegistered' | 'Registered',
      * //   totalStake: string,
      * // }
      */
@@ -1819,13 +1866,13 @@ export default async function createLivepeerSDK(
      * // }
      */
     async unbond(tx = config.defaultTx): Promise<TxReceipt> {
-      const { status } = await rpc.getDelegator(tx.from)
-      // Can only unbond successfully when not already "Unbonding"
-      if (status === DELEGATOR_STATUS.Unbonding) {
-        throw new Error('This account is already unbonding.')
+      const { status, bondedAmount } = await rpc.getDelegator(tx.from)
+      // Can only unbond successfully when not already "Unbonded"
+      if (status === DELEGATOR_STATUS.Unbonded) {
+        throw new Error('This account is already unbonded.')
       } else {
         return await utils.getTxReceipt(
-          await BondingManager.unbond(),
+          await BondingManager.unbond(bondedAmount),
           config.eth,
         )
       }
@@ -2025,10 +2072,21 @@ export default async function createLivepeerSDK(
      * // }
      */
     async withdrawStake(tx = config.defaultTx): Promise<TxReceipt> {
-      return await utils.getTxReceipt(
-        await BondingManager.withdrawStake(tx),
-        config.eth,
-      )
+      const { status, nextUnbondingLockId } = await rpc.getDelegator(tx.from)
+
+      let unbondingLockId = toBN(nextUnbondingLockId)
+      if (unbondingLockId.Cmp(new BN(0)) > 0) {
+        unbondingLockId = unbondingLockId.sub(new BN(1))
+      }
+
+      if (status != DELEGATOR_STATUS.Unbonding) {
+        throw new Error('Delegator is not in the unbonding state')
+      } else {
+        return await utils.getTxReceipt(
+          await BondingManager.withdrawStake(toString(unbondingLockId), tx),
+          config.eth,
+        )
+      }
     },
 
     /**
@@ -2276,6 +2334,15 @@ export default async function createLivepeerSDK(
    * @prop {string} pricePerSegment - price per segment for a stream (LPTU)
    * @prop {string} status - the transcoder's status
    * @prop {string} totalStake - total tokens delegated toward a transcoder (including their own)
+   */
+
+  /**
+   * An UnbondingLock struct
+   * @typedef {Object} UnbondingLock
+   * @prop {string} id - the unbonding lock ID
+   * @prop {string} delegator - the delegator's ETH address
+   * @prop {string} amount - the amount of tokens being unbonded
+   * @prop {string} withdrawRound - the round at which unbonding period is over and tokens can be withdrawn
    */
 
   /**

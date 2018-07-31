@@ -62,6 +62,7 @@ test('Query resolves `delegator` field', async t => {
     lastClaimRound: '0',
     startRound: '0',
     withdrawRound: '0',
+    nextUnbondingLockId: '0',
     delegate: {},
   }
   const args = {

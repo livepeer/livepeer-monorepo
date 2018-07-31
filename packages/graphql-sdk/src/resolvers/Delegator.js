@@ -141,6 +141,16 @@ export function withdrawRound(obj: DelegatorObj): string {
   return obj.withdrawRound
 }
 
+/**
+ * Gets the nextUnbondingLockId for a Delegator
+ * @param {Object} obj
+ * @param {string} obj.nextUnbondingLockId - The nextUnbondingLockId of the delegator
+ * @return {string}
+ */
+export function nextUnbondingLockId(obj: DelegatorObj): string {
+  return obj.nextUnbondingLockId
+}
+
 // /**
 //  * Gets the delegate for a Delegator
 //  * @param {Object} obj
