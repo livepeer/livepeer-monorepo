@@ -942,9 +942,9 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                       className="primary-btn"
                       style={{
                         backgroundColor: 'rgba(48, 39, 38, 0.8)',
-                        minWidth: '300px',
                         textAlign: 'center',
-                        width: '400px',
+                        width: 'auto',
+                        fontSize: '14px',
                       }}
                       disabled
                     >
