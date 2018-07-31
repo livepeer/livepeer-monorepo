@@ -188,9 +188,11 @@ class TokenMiner extends React.Component {
       .at(process.env.REACT_APP_MULTI_MERKLE_MINE_CONTRACT)
     this.getBalance()
   }
+
   componentWillUnmount() {
     window.onbeforeunload = null
   }
+
   componentWillReceiveProps(nextProps) {
     const { address } = this.state
     if (address && address == nextProps.defaultAddress) {
@@ -475,17 +477,12 @@ class TokenMiner extends React.Component {
           await this.getTransactionReceiptMined(txHash).then(function(
             tsHash,
           ) {})
-          console.log(txHash)
           this.setState({ progressBar: 3 })
           return
         }
         this.onError(err)
       },
     )
-  }
-
-  doneMining = async () => {
-    this.setState({ progressBar: 3 })
   }
 
   handleGas = async e => {
@@ -656,7 +653,6 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
     subProofs,
     ...props
   }) => {
-    // console.log('MineProofForm', done, props)
     return (
       <React.Fragment>
         {progressBar <= 0 && (
@@ -969,7 +965,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
             progressBar >= 3 && (
               <React.Fragment>
                 <div className="success">
-                  {proof ? (
+                  {proof && (
                     <React.Fragment>
                       <p>
                         You have successfully mined LPT tokens and earned{' '}
@@ -993,8 +989,6 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                         <a onClick={stakeTokens}>Stake LPT tokens</a>
                       </div>
                     </React.Fragment>
-                  ) : (
-                    ''
                   )}
                 </div>
               </React.Fragment>
