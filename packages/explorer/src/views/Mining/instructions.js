@@ -5,7 +5,7 @@ import * as React from 'react'
  * mining Livepeer tokens
  */
 const instructions = function() {
-  let data = [
+  return [
     {
       heading: 'Log in to web 3 wallet',
       instruction: [
@@ -33,7 +33,6 @@ const instructions = function() {
       altText: 'Image 1',
     },
   ]
-  return data
 }
 
 class Instruction extends React.Component {
