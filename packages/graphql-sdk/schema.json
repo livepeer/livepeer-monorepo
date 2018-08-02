@@ -1089,8 +1089,40 @@
               "deprecationReason": null
             },
             {
+              "name": "withdrawAmount",
+              "description": "The amount of Livepeer Token to withdraw for a delegator",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "withdrawRound",
               "description": "The round the delegator can withdraw its stake.",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "nextUnbondingLockId",
+              "description": "The ID of the delegator's next unbonding lock",
               "args": [],
               "type": {
                 "kind": "NON_NULL",
@@ -1131,13 +1163,13 @@
               "deprecationReason": null
             },
             {
-              "name": "Unbonding",
+              "name": "Unbonded",
               "description": "",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
-              "name": "Unbonded",
+              "name": "Unbonding",
               "description": "",
               "isDeprecated": false,
               "deprecationReason": null

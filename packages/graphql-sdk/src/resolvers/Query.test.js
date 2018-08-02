@@ -61,6 +61,7 @@ test('Query resolves `delegator` field', async t => {
     delegatedAmount: '0',
     lastClaimRound: '0',
     startRound: '0',
+    withdrawAmount: '0',
     withdrawRound: '0',
     nextUnbondingLockId: '0',
     delegate: {},

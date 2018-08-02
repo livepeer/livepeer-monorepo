@@ -30,7 +30,9 @@ declare type Delegator = {
   pendingFees: string,
   startRound: string,
   status: string,
+  withdrawAmount: string,
   withdrawRound: string,
+  nextUnbondingLockId: string,
 }
 
 declare type Job = {

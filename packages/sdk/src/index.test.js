@@ -240,6 +240,7 @@ test('should return object with correct shape from getDelegator()', async t => {
     pendingFees: string,
     startRound: string,
     status: oneOf(livepeer.constants.DELEGATOR_STATUS),
+    withdrawAmount: string,
     withdrawRound: string,
     nextUnbondingLockId: string,
   })

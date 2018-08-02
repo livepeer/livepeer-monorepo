@@ -132,6 +132,15 @@ export function status(obj: DelegatorObj): DelegatorStatus {
 }
 
 /**
+ * Gets the amount of tokens to withdraw of the delegator
+ * @param {Object} obj
+ * @param {string} obj.withdrawAmount - The amount of tokens to withdraw of the delegator
+ */
+export function withdrawAmount(obj: DelegatorObj): string {
+  return obj.withdrawAmount
+}
+
+/**
  * Gets the withdrawRound for a Delegator
  * @param {Object} obj
  * @param {string} obj.withdrawRound - The withdrawRound of the delegator

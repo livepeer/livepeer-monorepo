@@ -54,6 +54,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     pendingStake,
     pendingFees,
     startRound,
+    withdrawAmount,
     withdrawRound,
   } = delegator.data
   const totalStake = MathBN.max(bondedAmount, pendingStake)
@@ -62,19 +63,20 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     !delegator.loading && !currentRound.loading
       ? MathBN.sub(lastInitializedRound, lastClaimRound)
       : '0'
-  const roundsUntilUnbonded =
-    withdrawRound !== '0' ? MathBN.sub(withdrawRound, lastInitializedRound) : ''
   const hasUnclaimedRounds = unclaimedRounds !== '0'
   const earnedStake = hasUnclaimedRounds
     ? MathBN.max('0', MathBN.sub(pendingStake, bondedAmount))
     : '0'
   const earnedFees = hasUnclaimedRounds ? MathBN.sub(pendingFees, fees) : '0'
-  const hasStake = bondedAmount !== '0'
   const hasFees = fees !== '0'
   const isUnbonding = status === 'Unbonding'
   const isUnbonded = status === 'Unbonded'
   const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
+  const roundsUntilUnbonded = isUnbonding
+    ? MathBN.sub(withdrawRound, lastInitializedRound)
+    : ''
+  const canWithdraw = isUnbonded && withdrawAmount !== '0'
   return (
     <Wrapper>
       {/*<InlineHint flag="account-delegating">
@@ -128,13 +130,17 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         subvalue={
           withdrawRound === '0'
             ? ''
-            : `Token may be withdrawn at round #${withdrawRound}`
+            : MathBN.lt(lastInitializedRound, withdrawRound)
+              ? `${formatBalance(
+                  withdrawAmount,
+                )} LPT may be withdrawn at round #${withdrawRound}`
+              : `${formatBalance(withdrawAmount)} LPT may be withdrawn`
         }
       >
         {isMe && (
           <React.Fragment>
             {/** request */}
-            <Button disabled={!hasStake} onClick={withdrawStake}>
+            <Button disabled={!canWithdraw} onClick={withdrawStake}>
               <MinusIcon size={12} />
               <span style={{ marginLeft: 8 }}>withdraw stake</span>
             </Button>

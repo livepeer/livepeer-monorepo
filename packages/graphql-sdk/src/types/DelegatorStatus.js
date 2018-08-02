@@ -4,8 +4,8 @@ const DelegatorStatus = `
 enum DelegatorStatus {
   Pending
   Bonded
-  Unbonding
   Unbonded
+  Unbonding
 }`
 
 export default () => [DelegatorStatus]

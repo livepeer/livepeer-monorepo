@@ -1131,20 +1131,23 @@ export default async function createLivepeerSDK(
       const delegatedAmount = toString(d.delegatedAmount)
       const lastClaimRound = toString(d.lastClaimRound)
       const startRound = toString(d.startRound)
-
       const nextUnbondingLockId = toString(d.nextUnbondingLockId)
+
       let unbondingLockId = toBN(nextUnbondingLockId)
       if (unbondingLockId.cmp(new BN(0)) > 0) {
         unbondingLockId = unbondingLockId.sub(new BN(1))
       }
-      const { withdrawRound } = await rpc.getDelegatorUnbondingLock(
+      const {
+        amount: withdrawAmount,
+        withdrawRound,
+      } = await rpc.getDelegatorUnbondingLock(
         address,
         toString(unbondingLockId),
       )
       const status =
-        withdrawRound == '0'
-          ? await rpc.getDelegatorStatus(address)
-          : DELEGATOR_STATUS.Unbonding
+        withdrawRound !== '0' && toBN(currentRound).cmp(toBN(withdrawRound)) < 0
+          ? DELEGATOR_STATUS.Unbonding
+          : await rpc.getDelegatorStatus(address)
 
       return {
         address,
@@ -1159,6 +1162,7 @@ export default async function createLivepeerSDK(
         startRound,
         status,
         withdrawRound,
+        withdrawAmount,
         nextUnbondingLockId,
       }
     },
@@ -2072,16 +2076,21 @@ export default async function createLivepeerSDK(
      * // }
      */
     async withdrawStake(tx = config.defaultTx): Promise<TxReceipt> {
-      const { status, nextUnbondingLockId } = await rpc.getDelegator(tx.from)
+      const {
+        status,
+        withdrawAmount,
+        nextUnbondingLockId,
+      } = await rpc.getDelegator(tx.from)
 
-      let unbondingLockId = toBN(nextUnbondingLockId)
-      if (unbondingLockId.Cmp(new BN(0)) > 0) {
-        unbondingLockId = unbondingLockId.sub(new BN(1))
-      }
-
-      if (status != DELEGATOR_STATUS.Unbonding) {
-        throw new Error('Delegator is not in the unbonding state')
+      if (status !== DELEGATOR_STATUS.Unbonded && withdrawAmount !== '0') {
+        throw new Error(
+          'Delegator is not in the unbonded state with a withdraw amount',
+        )
       } else {
+        let unbondingLockId = toBN(nextUnbondingLockId)
+        if (unbondingLockId.cmp(new BN(0)) > 0) {
+          unbondingLockId = unbondingLockId.sub(new BN(1))
+        }
         return await utils.getTxReceipt(
           await BondingManager.withdrawStake(toString(unbondingLockId), tx),
           config.eth,
@@ -2317,7 +2326,9 @@ export default async function createLivepeerSDK(
    * @prop {string} pendingStake - the amount of token the delegator has earned up to the current round
    * @prop {string} startRound - the round the delegator becomes bonded and delegated to its delegate
    * @prop {string} status - the delegator's status
+   * @prop {string} withdrawableAmount - the amount of LPTU a delegator can withdraw
    * @prop {string} withdrawRound - the round the delegator can withdraw its stake
+   * @prop {string} nextUnbondingLockId - the next unbonding lock ID for the delegator
    */
 
   /**
