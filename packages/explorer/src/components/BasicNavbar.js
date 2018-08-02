@@ -24,7 +24,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
   const notAuthenticated = !myAccountAddress
   const { host } = window.livepeer.config.eth.currentProvider
-  const networkName = !window.web3
+  const networkName = !window.web3.version
     ? /infura/.test(host)
       ? host.split('.')[0].replace(/(http|https):\/\//, '')
       : 'Custom RPC'
