@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import MerkleMiner from '@livepeer/merkle-miner'
+import LivepeerSDK from '@livepeer/sdk'
 import { Button } from '../../components'
 import { MineProofForm } from './mineProofForm'
 
@@ -77,6 +78,12 @@ class TokenMiner extends React.Component {
 
   // This function gets the amount of token that miner addres will be allocated
   getAmountLpt = async => {
+    // Testing this method returns 0
+    LivepeerSDK({}).then(async sdk => {
+      const { rpc } = sdk
+      const tokens = await rpc.getTokenTotalSupply()
+      console.log(tokens)
+    })
     window.web3.eth.getBlockNumber((err, res) => {
       if (err === null) {
         const con = window.web3.eth

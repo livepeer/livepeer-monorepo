@@ -53,7 +53,9 @@ test('should serialize profiles', t => {
 test('should initialize contracts', async t => {
   const { contracts } = await initContracts()
   const snap = Object.keys(contracts).reduce((a, b) => {
-    const c = { ...a }
+    const c = {
+      ...a,
+    }
     // constantly changes, so set to 0 for snapshot purposes
     c[b].query.rpc.idCounter = 0
     return c
@@ -117,6 +119,13 @@ test('should get ETH balance', async t => {
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getEthBalance(from)
   t.true(string.isValidSync(res))
+})
+
+// MerkleMiner
+
+test('should return a number from callerTokenAmountAtBlock()', async t => {
+  const res = await livepeer.rpc.getCallerTokenAmountAtBlock(6890092)
+  t.true(number.isValidSync(res))
 })
 
 // Minter

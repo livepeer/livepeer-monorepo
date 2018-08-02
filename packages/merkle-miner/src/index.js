@@ -11,7 +11,6 @@ export default class MerkleMiner {
     this.gateway = gateway
     this.workerHash = workerHash
     this.handlers = handlers
-    console.log(handlers)
     this.messageId = 0
     return this.init()
   }

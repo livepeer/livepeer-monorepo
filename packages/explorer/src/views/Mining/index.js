@@ -95,13 +95,9 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
                   e.preventDefault()
                   history.push(`/me?tour=true`)
                 }}
-                worker="QmU3aMRGAHahFoP8aC2jHiMb3DcqZ43myLx3ZPN4dfYYXZ"
+                worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
               />
             )}
-            {/**
-             * This is the old worker hash on IPFS
-             * worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
-             **/}
           </div>
         </div>
       </div>
