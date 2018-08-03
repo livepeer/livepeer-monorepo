@@ -549,7 +549,7 @@ export default async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
 ): Promise<LivepeerSDK> {
   const { ens, events, ...config } = await initContracts(opts)
-  const {>>>>>>> master
+  const {
     BondingManager,
     Controller,
     JobsManager,
