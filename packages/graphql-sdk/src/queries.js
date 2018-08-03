@@ -160,5 +160,4 @@ query ProtocolQuery {
   protocol {
     ...ProtocolFragment
   }
-}
-`
+}`

@@ -7,6 +7,7 @@ import * as Mutation from './Mutation'
 import * as Query from './Query'
 import Subscription from './Subscription'
 import * as Transcoder from './Transcoder'
+import * as Protocol from './Protocol'
 
 export default {
   Query,
@@ -18,4 +19,5 @@ export default {
   Job,
   JobProfile,
   Transcoder,
+  Protocol,
 }

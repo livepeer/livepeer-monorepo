@@ -1195,6 +1195,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets a transcoder's pool max size
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getTranscoderPoolMaxSize()
+     * // => string
+     */
+    async getTranscoderPoolMaxSize(): Promise<string> {
+      return headToString(await BondingManager.getTranscoderPoolMaxSize())
+    },
+
+    /**
      * Gets info about a transcoder
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
@@ -1276,8 +1290,39 @@ export default async function createLivepeerSDK(
      * await rpc.getProtocolPaused()
      * // => boolean
      */
-    async getProtocolPaused(): Promise<boolean> {
+    async getProtocolPaused(): Promise<Protocol> {
       return headToBool(await Controller.paused())
+    },
+
+    /**
+     * Gets the protocol
+     * @memberof livepeer~rpc
+     * @return {Promise<Protocol>}
+     *
+     * @example
+     *
+     * await rpc.getProtocol()
+     * // => Protocol {
+        paused
+        totalTokenSupply
+        totalBondedToken
+        targetBondingRate
+        transcoderPoolMaxSize
+     }
+     */
+    async getProtocol(): Promise<Protocol> {
+      const paused = await rpc.getProtocolPaused()
+      const totalTokenSupply = await rpc.getTokenTotalSupply()
+      const totalBondedToken = await rpc.getTotalBonded()
+      const targetBondingRate = await rpc.getTargetBondingRate()
+      const transcoderPoolMaxSize = await rpc.getTranscoderPoolMaxSize()
+      return {
+        paused,
+        totalTokenSupply,
+        totalBondedToken,
+        targetBondingRate,
+        transcoderPoolMaxSize,
+      }
     },
 
     /**
@@ -1823,6 +1868,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Get target bonding rate
+     * @memberof livepeer~rpc
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getTargetBondingRate()
+     * // => string
+     */
+    async getTargetBondingRate(): Promise<string> {
+      return headToString(await Minter.targetBondingRate())
+    },
+
+    /**
      * Deposits ETH for broadcasting
      * @memberof livepeer~rpc
      * @param {string} amount - amount of ETH to deposit
@@ -2261,5 +2320,15 @@ export default async function createLivepeerSDK(
    * @prop {Array<TranscodingProfile>} transcodingOptions - transcoding profiles
    * @prop {string} [transcoder] - the ETH address of the assigned transcoder
    * @prop {string} broadcaster - the ETH address of the broadcaster who created the job
+   */
+
+  /**
+   * A Protocol struct
+   * @typedef {Object} Protocol
+   * @prop {boolean} paused - the protocol paused or not
+   * @prop {string} totalTokenSupply - total token supply for protocol
+   * @prop {string} totalBondedToken - total bonded token for protocol
+   * @prop {string} targetBondingRate - target bonding rate for protocol
+   * @prop {string} transcoderPoolMaxSize - transcoder pool max size
    */
 }

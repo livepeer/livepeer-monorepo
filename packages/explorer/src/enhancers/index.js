@@ -235,6 +235,10 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
 const ProtocolQuery = gql`
   fragment ProtocolFragment on Protocol {
     paused
+    totalTokenSupply
+    totalBondedToken
+    targetBondingRate
+    transcoderPoolMaxSize
   }
 
   query ProtocolQuery {

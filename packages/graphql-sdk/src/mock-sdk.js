@@ -65,6 +65,7 @@ const livepeer = {
       ],
     getTranscoders: async () => Object.values(ALL_TRANSCODERS),
     getProtocolPaused: async () => false,
+    getProtocol: async () => PROTOCOL,
   },
   utils: {
     ...utils,
@@ -220,6 +221,14 @@ const ALL_TRANSCODERS = {
     status: TRANSCODER_STATUS.Registered,
     totalStake: '0',
   },
+}
+
+const PROTOCOL = {
+  paused: false,
+  totalTokenSupply: '0',
+  totalBondedToken: '0',
+  targetBondingRate: '0',
+  transcoderPoolMaxSize: '0',
 }
 
 export default livepeer
