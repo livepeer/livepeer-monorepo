@@ -363,7 +363,7 @@ class TokenMiner extends React.Component {
 
   multiMerkleMine = async () => {
     await this.state.contract.multiGenerate(
-      process.env.REACT_APP_MERKLE_MINE_CONTRACT,
+      this.state.netAddresses.merkleMine,
       this.state.addresses,
       this.state.proof,
       {
