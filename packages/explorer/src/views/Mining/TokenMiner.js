@@ -2,15 +2,45 @@ import axios from 'axios'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import MerkleMiner from '@livepeer/merkle-miner'
-import LivepeerSDK from '@livepeer/sdk'
 import { Button } from '../../components'
 import { MineProofForm } from './mineProofForm'
 
 const BN = require('bn.js')
 
-const multiMerkleMineAbi = require('./multi-merklemine.json')
-const merkleMineAbi = require('./merklemine.json')
-const tokenAbi = require('./token.json')
+const Abi = require('./Abi.json')
+
+/**
+ * Defines contract addresses for
+ * MerkleMine, MultiMerkleMine and LPT
+ * currently contracts are only deployed on
+ * MainNet and Rinkeby which holds the positions
+ * 1 and 4. If contracts gets deployed on ropsten = 2
+ * or Kovan = 3, then those filed could be placed here
+ */
+const netAddresses = {
+  '1': {
+    merkleMine: '0x8e306b005773bee6ba6a6e8972bc79d766cc15c8',
+    multiMerkleMine: '0x182ebf4c80b28efc45ad992ecbb9f730e31e8c7f',
+    token: '0x58b6a8a3302369daec383334672404ee733ab239',
+  },
+  '2': {
+    merkleMine: '',
+    multiMerkleMine: '',
+    token: '',
+  },
+  '3': {
+    merkleMine: '',
+    multiMerkleMine: '',
+    token: '',
+  },
+  '4': {
+    merkleMine: '0x3bb5c927b9dcf20c1dca97b93397d22fda4f5451',
+    multiMerkleMine: '0x2ec3202aaeff2d3f7dd8571fe4a0bfc195ef6a17',
+    token: '0x750809dbdb422e09dabb7429ffaa94e42021ea04',
+  },
+}
+
+const numAddresses = 20
 
 class TokenMiner extends React.Component {
   static defaultProps = {
@@ -35,6 +65,19 @@ class TokenMiner extends React.Component {
   }
 
   async componentDidMount() {
+    await window.web3.version.getNetwork((err, res) => {
+      if (err === null) {
+        this.setState({ netAddresses: netAddresses[res] })
+        return
+      }
+      this.setState({
+        netAddresses: {
+          merkleMine: process.env.REACT_APP_MERKLE_MINE_CONTRACT,
+          multiMerkleMine: process.env.REACT_APP_MULTI_MERKLE_MINE_CONTRACT,
+          token: process.env.REACT_APP_TOKEN_ADDRESS,
+        },
+      })
+    })
     try {
       window.onbeforeunload = () => true
       const { worker } = this.props
@@ -57,8 +100,8 @@ class TokenMiner extends React.Component {
       })
     }
     this.state.contract = window.web3.eth
-      .contract(multiMerkleMineAbi)
-      .at(process.env.REACT_APP_MULTI_MERKLE_MINE_CONTRACT)
+      .contract(Abi.MultiMerkleMine)
+      .at(this.state.netAddresses.multiMerkleMine)
     this.getBalance()
   }
 
@@ -75,26 +118,20 @@ class TokenMiner extends React.Component {
       )
     }
   }
-
   // This function gets the amount of token that miner addres will be allocated
-  getAmountLpt = async => {
-    // Testing this method returns 0
-    LivepeerSDK({}).then(async sdk => {
-      const { rpc } = sdk
-      const tokens = await rpc.getTokenTotalSupply()
-      console.log(tokens)
-    })
-    window.web3.eth.getBlockNumber((err, res) => {
+  getAmountLpt = async () => {
+    window.web3.eth.getBlockNumber(async (err, res) => {
       if (err === null) {
         const con = window.web3.eth
-          .contract(JSON.parse(merkleMineAbi.result))
-          .at(process.env.REACT_APP_MERKLE_MINE_CONTRACT)
+          .contract(Abi.MerkleMine)
+          .at(this.state.netAddresses.merkleMine)
         con.callerTokenAmountAtBlock(res, (err, res) => {
           if (err === null) {
             this.setState({
               amtLpt: (
-                res.mul(new BN(process.env.REACT_APP_NUM_ADDRESS)) /
-                Math.pow(10, 18)
+                res.mul(
+                  new BN(numAddresses || process.env.REACT_APP_NUM_ADDRESS),
+                ) / Math.pow(10, 18)
               ).toString(10),
             })
             return
@@ -106,7 +143,6 @@ class TokenMiner extends React.Component {
       this.setState({ amtLpt: 0 })
     })
   }
-
   /**
    * This is a helper method used for preparing
    * the proofs to be passed to multiGenerate smart contract
@@ -124,7 +160,6 @@ class TokenMiner extends React.Component {
 
     return res
   }
-
   // Used to get ether amount to display
   getAccountBal = async () => {
     await window.web3.eth.getBalance(
@@ -140,20 +175,17 @@ class TokenMiner extends React.Component {
 
   getBalance = async () => {
     let mkContract = window.web3.eth
-      .contract(JSON.parse(tokenAbi.result))
-      .at(process.env.REACT_APP_TOKEN_ADDRESS)
+      .contract(Abi.token)
+      .at(this.state.netAddresses.token)
 
-    mkContract.balanceOf(
-      process.env.REACT_APP_MERKLE_MINE_CONTRACT,
-      (err, res) => {
-        if (err === null) {
-          const tokens = res.div(new BN(10).pow(new BN(18))).toString(10)
-          this.setState({ tokensRemaining: tokens })
-          return
-        }
-        console.log(err)
-      },
-    )
+    mkContract.balanceOf(this.state.netAddresses.merkleMine, (err, res) => {
+      if (err === null) {
+        const tokens = res.div(new BN(10).pow(new BN(18))).toString(10)
+        this.setState({ tokensRemaining: tokens })
+        return
+      }
+      console.log(err)
+    })
   }
 
   // Reset the app to  original state
@@ -264,16 +296,12 @@ class TokenMiner extends React.Component {
    */
   getProof = async () => {
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
-
     // Do nothing if balance or gas is low
     if (this.state.gas_low || this.state.lowBal) return
-
     // Set the state of the mining progress
     this.setState({ progressBar: 0 })
-
     // Get minable addresses from server
     await this.getAddresses()
-
     // If no addresses have been returned then show error
     if (this.state.addresses.length <= 0) {
       this.setState({
@@ -285,14 +313,11 @@ class TokenMiner extends React.Component {
       })
       return
     }
-
     // Generate proofs
     await this.generateProof()
-
     // Mine addresses
     await this.multiMerkleMine()
   }
-
   // Used to get current gas price
   getCurrentGasPrices = async () => {
     let response = await axios.get(process.env.REACT_APP_GAS_PRICE_API)
@@ -301,12 +326,10 @@ class TokenMiner extends React.Component {
       medium: response.data.average / 10,
       high: response.data.fast / 10,
     }
-
     this.setState({ currGas: prices.medium })
     this.setState({ gas: prices.medium })
     this.setState({ prevGas: prices.medium })
   }
-
   /**
    * This method checks with EVM to determine if merkle mining is finished
    */
@@ -325,7 +348,6 @@ class TokenMiner extends React.Component {
         }
       })
     }
-
     if (Array.isArray(txHash)) {
       return Promise.all(
         txHash.map(oneTxHash =>

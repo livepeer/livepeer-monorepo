@@ -2,7 +2,7 @@ import * as React from 'react'
 import { BasicNavbar, ScrollToTopOnMount } from '../../components'
 import enhance from './enhance'
 import { instructions, Instruction } from './instructions'
-import TokenMiner from './tokenMiner'
+import TokenMiner from './TokenMiner'
 
 // Get external css file
 import './style.css'

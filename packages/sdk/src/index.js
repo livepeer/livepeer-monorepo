@@ -15,8 +15,6 @@ import JobsManagerArtifact from '../etc/JobsManager'
 import RoundsManagerArtifact from '../etc/RoundsManager'
 import BondingManagerArtifact from '../etc/BondingManager'
 import MinterArtifact from '../etc/Minter'
-import MerkleMineArtifact from '../etc/MerkleMiner'
-import MultiMerkleMineArtifact from '../etc/MultiMerkleMine'
 
 // Constants
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -115,8 +113,6 @@ export const DEFAULTS = {
     RoundsManager: RoundsManagerArtifact,
     BondingManager: BondingManagerArtifact,
     Minter: MinterArtifact,
-    MerkleMine: MerkleMineArtifact,
-    MultiMerkleMine: MultiMerkleMineArtifact,
   },
   ensRegistries: {
     // Mainnet
@@ -458,8 +454,6 @@ export async function initContracts(
     JobsManager: null,
     RoundsManager: null,
     Minter: null,
-    MerkleMine: null,
-    MultiMerkleMine: null,
   }
   const hashes = {
     LivepeerToken: {},
@@ -468,8 +462,6 @@ export async function initContracts(
     JobsManager: {},
     RoundsManager: {},
     Minter: {},
-    MerkleMine: {},
-    MultiMerkleMine: {},
   }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
@@ -565,8 +557,6 @@ export default async function createLivepeerSDK(
     LivepeerTokenFaucet,
     RoundsManager,
     Minter,
-    MerkleMine,
-    MultiMerkleMine,
   } = config.contracts
   const { resolveAddress } = utils
 
@@ -590,50 +580,6 @@ export default async function createLivepeerSDK(
    *
    */
   const rpc = {
-    /**
-     * Gets the amount of LPT token to be shared with the caller.
-     * @memberof livepeer~rpc
-     * @param {number} blockNumber - The current Ethereum block number
-     * @return {Promise<number>}
-     *
-     * @example
-     *
-     * await rpc.multiMerkleMineGenerate('0x88390H8J...', [addr1, addr2 ...], '2892wiwjwuw...')
-     * // => txHash
-     */
-    async multiMerkleMineGenerate(
-      contractAddress: string,
-      recipientsAddresses: Array,
-      merkleProofs: string,
-      opts: object,
-    ): Promise<string> {
-      return headToString(
-        await MultiMerkleMine.multiGenerate(
-          contractAddress,
-          recipientsAddresses,
-          merkleProofs,
-          opts,
-        ),
-      )
-    },
-
-    /**
-     * Gets the amount of LPT token to be shared with the caller.
-     * @memberof livepeer~rpc
-     * @param {number} blockNumber - The current Ethereum block number
-     * @return {Promise<number>}
-     *
-     * @example
-     *
-     * await rpc.getCallerTokenAmountAtBlock(6998902)
-     * // => number
-     */
-    async getCallerTokenAmountAtBlock(blockNumber: number): Promise<number> {
-      return headToNumber(
-        await MerkleMine.callerTokenAmountAtBlock(parseInt(blockNumber)),
-      )
-    },
-
     /**
      * Gets the ENS name for an address. This is known as a reverse lookup.
      * Unfortunately, users must explicitly set their own resolver.

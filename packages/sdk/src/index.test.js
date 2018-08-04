@@ -121,13 +121,6 @@ test('should get ETH balance', async t => {
   t.true(string.isValidSync(res))
 })
 
-// MerkleMiner
-
-test('should return a number from callerTokenAmountAtBlock()', async t => {
-  const res = await livepeer.rpc.getCallerTokenAmountAtBlock(6890092)
-  t.true(number.isValidSync(res))
-})
-
 // Minter
 
 test('should return a number from getInflation()', async t => {
