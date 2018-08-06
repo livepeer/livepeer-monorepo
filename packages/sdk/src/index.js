@@ -791,6 +791,20 @@ export default async function createLivepeerSDK(
     },
 
     /**
+     * Gets the total amount of bonded tokens
+     * @memberof livepeer~rpc
+     * @return {Promise<string}
+     *
+     * @example
+     *
+     * await rpc.getTotalBonded()
+     * // => string
+     */
+    async getTotalBonded(): Promise<string> {
+      return headToString(await BondingManager.getTotalBonded())
+    },
+
+    /**
      * Gets the total supply of token (LTPU) available in the protocol
      * @memberof livepeer~rpc
      * @return {Promise<string>}
