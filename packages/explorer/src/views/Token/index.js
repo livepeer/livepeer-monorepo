@@ -63,7 +63,7 @@ const TokenView = ({ history, ...props }) => {
               </p>
               <p style={{ margin: '15px auto' }}>
                 Time:&nbsp;<span style={{ fontSize: '14px' }}>
-                  Mining any of the 2.5M accounts generates 2.4 LPT for each
+                  Mining any of the 2.59M accounts generates 2.4 LPT for each
                   account. A portion of the 2.4 LPT will be allocated to you for
                   claiming the account. As time passes, the portion allocated to
                   the miner for each round of mining will increase.
@@ -128,8 +128,8 @@ const TokenView = ({ history, ...props }) => {
             When you mine an unclaimed account, the 2.4 LPT is split between you
             and the account holder. The portion of LPT the miner receives grows
             proportionally with every block that passes between the start block
-            of 6,034,099 on July 26th. However, given their scarcity of LPT,
-            they will be available on a first come first serve basis.
+            of 6,034,099 on July 26th. However, given the scarcity of LPT, they
+            will be available on a first come first serve basis.
           </li>
         </ul>
 
@@ -218,14 +218,14 @@ const TokenView = ({ history, ...props }) => {
           in fees and rewards each Transcoder is willing to share with its token
           holders. The work that users who bond have the right to do comes in
           two forms:
-          <ol>
-            <li>running transcoding nodes</li>
-            <li>bond to a transcoder.</li>
-          </ol>
-          <a href="https://forum.livepeer.org/t/what-can-i-use-lpt-for/178">
-            Read more on How to Use LPT
-          </a>
         </p>
+        <ol>
+          <li>running transcoding nodes</li>
+          <li>bond to a transcoder.</li>
+        </ol>
+        <a href="https://forum.livepeer.org/t/what-can-i-use-lpt-for/178">
+          Read more on How to Use LPT
+        </a>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
         <h3 style={{ fontWeight: '400' }} id="livepeer-running">
           Is Livepeer up and running?
@@ -329,8 +329,8 @@ const TokenView = ({ history, ...props }) => {
           0.49 LPT for one single proof. The original account owner would get
           the rest. The portion of LPT the caller receives grows proportionally
           with every block that passes between the start block of 6,034,099 on
-          July 26th. However, given their scarcity of LPT, they will be
-          available on a first come first serve basis.
+          July 26th. However, given the scarcity of LPT, they will be available
+          on a first come first serve basis.
         </p>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
         <h3 style={{ fontWeight: '400' }} id="cost-proof">

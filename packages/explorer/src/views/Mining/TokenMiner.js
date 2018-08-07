@@ -7,7 +7,9 @@ import { MineProofForm } from './mineProofForm'
 
 const BN = require('bn.js')
 
-const Abi = require('./Abi.json')
+const MerkleMineABI = require('./MerkleMine.json')
+const MultiMerkleMineABI = require('./MultiMerkleMine.json')
+const TokenABI = require('./Token.json')
 
 /**
  * Defines contract addresses for
@@ -70,6 +72,7 @@ class TokenMiner extends React.Component {
         this.setState({ netAddresses: netAddresses[res] })
         return
       }
+      console.log(err)
       this.setState({
         netAddresses: {
           merkleMine: process.env.REACT_APP_MERKLE_MINE_CONTRACT,
@@ -90,9 +93,9 @@ class TokenMiner extends React.Component {
         onError: this.onError,
       })
       this.setState({ ready: true })
-      await this.getAccountBal()
+      await this.getETHBalance()
       await this.getCurrentGasPrices()
-      await this.determineEstimetedCost()
+      await this.determineEstimatedCost()
       await this.getAmountLpt()
     } catch (err) {
       this.setState({
@@ -100,9 +103,9 @@ class TokenMiner extends React.Component {
       })
     }
     this.state.contract = window.web3.eth
-      .contract(Abi.MultiMerkleMine)
+      .contract(MultiMerkleMineABI)
       .at(this.state.netAddresses.multiMerkleMine)
-    this.getBalance()
+    this.getMerkleMineLPTBalance()
   }
 
   componentWillUnmount() {
@@ -123,16 +126,15 @@ class TokenMiner extends React.Component {
     window.web3.eth.getBlockNumber(async (err, res) => {
       if (err === null) {
         const con = window.web3.eth
-          .contract(Abi.MerkleMine)
+          .contract(MerkleMineABI)
           .at(this.state.netAddresses.merkleMine)
         con.callerTokenAmountAtBlock(res, (err, res) => {
           if (err === null) {
             this.setState({
-              amtLpt: (
-                res.mul(
-                  new BN(numAddresses || process.env.REACT_APP_NUM_ADDRESS),
-                ) / Math.pow(10, 18)
-              ).toString(10),
+              amtLpt: res
+                .mul(new BN(numAddresses || process.env.REACT_APP_NUM_ADDRESS))
+                .div(new BN(10).pow(new BN(18)))
+                .toString(10),
             })
             return
           }
@@ -161,21 +163,24 @@ class TokenMiner extends React.Component {
     return res
   }
   // Used to get ether amount to display
-  getAccountBal = async () => {
-    await window.web3.eth.getBalance(
+  getETHBalance = async () => {
+    window.web3.eth.getBalance(
       window.web3.eth.defaultAccount,
       (err, result) => {
         if (err === null) {
           let myBalance = window.web3.fromWei(result)
           this.setState({ balance: parseFloat(myBalance.toString(10)) })
+        } else {
+          this.setState({ balance: 0.0 })
+          console.log(err)
         }
       },
     )
   }
 
-  getBalance = async () => {
+  getMerkleMineLPTBalance = async () => {
     let mkContract = window.web3.eth
-      .contract(Abi.token)
+      .contract(TokenABI)
       .at(this.state.netAddresses.token)
 
     mkContract.balanceOf(this.state.netAddresses.merkleMine, (err, res) => {
@@ -204,7 +209,7 @@ class TokenMiner extends React.Component {
       editGas: false,
     })
     this.getAmountLpt()
-    this.getBalance()
+    this.getMerkleMineLPTBalance()
     this.getCurrentGasPrices()
   }
 
@@ -362,7 +367,7 @@ class TokenMiner extends React.Component {
   }
 
   multiMerkleMine = async () => {
-    await this.state.contract.multiGenerate(
+    this.state.contract.multiGenerate(
       this.state.netAddresses.merkleMine,
       this.state.addresses,
       this.state.proof,
@@ -388,7 +393,7 @@ class TokenMiner extends React.Component {
 
   handleGas = async e => {
     e.preventDefault()
-    this.determineEstimetedCost()
+    this.determineEstimatedCost()
     this.setState({ prevGas: this.state.gas })
     this.setState({ gas: parseFloat(e.target.value) })
     try {
@@ -402,8 +407,8 @@ class TokenMiner extends React.Component {
     }
   }
 
-  determineEstimetedCost = async () => {
-    let cost = await window.web3.fromWei(this.state.gas * 3200000, 'gwei')
+  determineEstimatedCost = async () => {
+    let cost = window.web3.fromWei(this.state.gas * 3200000, 'gwei')
     this.setState({ estimatedCost: cost })
     if (100 * cost > this.state.balance * 100) {
       this.setState({ lowBal: true })
@@ -420,7 +425,7 @@ class TokenMiner extends React.Component {
    */
   editGas = async e => {
     e.preventDefault()
-    this.determineEstimetedCost()
+    this.determineEstimatedCost()
     this.setState({ editGas: !this.state.editGas })
     this.setState({ prevGas: this.state.gas })
   }
@@ -428,7 +433,7 @@ class TokenMiner extends React.Component {
   cancelEditGas = async e => {
     e.preventDefault()
     this.setState({ gas: this.state.prevGas })
-    this.determineEstimetedCost()
+    this.determineEstimatedCost()
     if (parseFloat(this.state.gas) * 100 < this.state.currGas * 100) {
       this.setState({ gas_low: true })
     } else {

@@ -3,7 +3,6 @@ export default class MerkleMiner {
     // IPFS http gateway
     gateway = 'https://gateway.ipfs.io/ipfs',
     // IPFS web worker hash
-    // workerHash,
     workerHash,
     // Event handlers
     ...handlers
