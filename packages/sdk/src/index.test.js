@@ -53,7 +53,9 @@ test('should serialize profiles', t => {
 test('should initialize contracts', async t => {
   const { contracts } = await initContracts()
   const snap = Object.keys(contracts).reduce((a, b) => {
-    const c = { ...a }
+    const c = {
+      ...a,
+    }
     // constantly changes, so set to 0 for snapshot purposes
     c[b].query.rpc.idCounter = 0
     return c

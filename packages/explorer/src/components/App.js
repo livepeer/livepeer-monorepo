@@ -28,6 +28,7 @@ const App = () => (
       {/* Pages */}
       <Switch>
         <Route exact path="/" component={Landing} />
+        <Route path="/mine" component={Mining} />
         <Route exact path="/token" component={Token} />
         <Route exact path="/transcoders" component={Transcoders} />
         <Route path="/accounts/:accountId" component={Account} />
@@ -69,7 +70,6 @@ const App = () => (
                 <Route path="/bond/:delegateAddress" component={Bond} />
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
-                <Route path="/mine" component={Mining} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
               </Switch>
             </CSSTransition>

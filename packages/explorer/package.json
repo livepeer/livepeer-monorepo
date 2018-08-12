@@ -11,6 +11,7 @@
     "apollo-cache-inmemory": "1.1.10",
     "apollo-client": "2.2.6",
     "apollo-link": "1.2.1",
+    "axios": "^0.18.0",
     "big.js": "^5.0.3",
     "bn.js": "^4.11.8",
     "final-form": "^4.2.1",
@@ -39,7 +40,8 @@
     "rmwc": "^1.6.2",
     "styled-components": "3.2.1",
     "unstated": "1.1.0",
-    "url-search-params-polyfill": "3.0.0"
+    "url-search-params-polyfill": "3.0.0",
+    "web3": "github:ethereum/web3.js"
   },
   "scripts": {
     "build": "npm run -s build:web",

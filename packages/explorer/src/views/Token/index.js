@@ -13,7 +13,7 @@ import {
   Tabs,
 } from '../../components'
 
-const TokenView = ({ ...props }) => {
+const TokenView = ({ history, ...props }) => {
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -26,6 +26,9 @@ const TokenView = ({ ...props }) => {
             style={{ width: 32 }}
           />&nbsp;Livepeer Token Distribution
         </PageHeading>
+        <h2 style={{ margin: 0 }}>
+          A tradeoff between scarcity, inflation, and time
+        </h2>
         <div
           style={{
             paddingBottom: 32,
@@ -36,30 +39,43 @@ const TokenView = ({ ...props }) => {
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
-              <p style={{ fontSize: 14 }}>
-                {`Livepeer distributed 6.3 million Livepeer Token (LPT) to the community upon genesis. 2.5 million eligible accounts can each earn 2.4 LPT. There are two ways to get token:`}
-              </p>
-              <p>
-                Slow Start: March 16 - July 26 2018
-                <br />
-                <span style={{ fontSize: 14 }}>
-                  If you had greater than 0.1 ETH in a private key account on
-                  March 16th, you can generate 2.44 LPT now.
+              <p style={{ margin: '2px auto' }}>
+                Scarcity:&nbsp;<span style={{ fontSize: '14px' }}>
+                  As of July 26th, 2018, the Livepeer protocol specifies that
+                  2.44 LPT can be generated into 2.59M Ethereum accounts
+                  totaling a release of 6.3M LPT. These tokens are available for
+                  anyone to claim on a first-come first-serve basis. You can
+                  claim them using the Livepeer Miner, or you can write a
+                  programming script to claim more tokens.&nbsp;
+                  <a href="https://forum.livepeer.org/t/the-economics-of-generating-livepeer-token-after-the-merklemine-slow-start-ends-and-claim-period-begins-on-7-26/317">
+                    Learn more
+                  </a>
                 </span>
               </p>
-
-              <p>
-                Claim Period: July 26, 2018 until all accounts are mined
-                <br />
-                <span style={{ fontSize: 14 }}>
-                  2.5 Million accounts each with 2.44 LPT will be unclaimed, and
-                  anyone can claim token using this application (live July
-                  26th).
+              <p style={{ margin: '15px auto 0' }}>
+                Inflation:&nbsp;<span style={{ fontSize: '14px' }}>
+                  Livepeer token holders bond token towards a transcoder once
+                  they get their LPT and earn additional Livepeer token every
+                  day because Livepeer is an inflationary delegation protocol.
+                  The longer you wait to claim LPT, the more days you forgo
+                  inflationary rewards.
+                </span>
+              </p>
+              <p style={{ margin: '15px auto' }}>
+                Time:&nbsp;<span style={{ fontSize: '14px' }}>
+                  Mining any of the 2.59M accounts generates 2.4 LPT for each
+                  account. A portion of the 2.4 LPT will be allocated to you for
+                  claiming the account. As time passes, the portion allocated to
+                  the miner for each round of mining will increase.
                 </span>
               </p>
               <Button
                 onClick={() => {
-                  window.location.hash = '#/mine'
+                  /***
+                   * Push mine route onto history stack of the browser
+                   * to go to mining page
+                   */
+                  history.push('/mine')
                 }}
                 style={{
                   background: 'var(--primary)',
@@ -67,6 +83,7 @@ const TokenView = ({ ...props }) => {
                   fontSize: 16,
                   fontWeight: 400,
                   padding: '16px 32px',
+                  borderRadius: '5px',
                 }}
               >
                 Get Token &rarr;
@@ -94,33 +111,62 @@ const TokenView = ({ ...props }) => {
         </div>
       </Banner>
       <Content width="800px">
+        <h2>Key Points to Claim LPT using the Livepeer Miner</h2>
+        <ul>
+          <li>
+            Anyone can claim LPT for unclaimed eligible Ethereum accounts. You
+            do not need to provide the eligible ethereum addresses. Livepeer
+            provides and submits the eligible Ethereum addresses for you.
+          </li>
+          <li>
+            Each round of Livepeer Mining can claim LPT for 20 unclaimed
+            accounts. You can claim as many of the eligible unclaimed accounts
+            as you want by mining LPT tokens multiple times or writing a script
+            that claims more accounts.
+          </li>
+          <li>
+            When you mine an unclaimed account, the 2.4 LPT is split between you
+            and the account holder. The portion of LPT the miner receives grows
+            proportionally with every block that passes between the start block
+            of 6,034,099 on July 26th. However, given the scarcity of LPT, they
+            will be available on a first come first serve basis.
+          </li>
+        </ul>
+
         <h2>Frequently Asked Questions</h2>
         <ul>
           {[
             {
-              text: 'What are the key points I need to know?',
-              id: 'key-points',
+              text: 'How does Livepeer work?',
+              id: 'livepeer-works',
             },
             {
-              text: 'Am I eligible?',
-              id: 'am-i-eligible',
+              text: 'How can Livepeer Token be used?',
+              id: 'livepeer-usage',
             },
             {
-              text: 'How did Livepeer distribute token?',
-              id: 'how-distribute',
+              text: 'Is Livepeer up and running?',
+              id: 'livepeer-running',
             },
             {
-              text: `I'm not eligible or I want to get more token`,
-              id: 'i-want-more',
+              text: `How did Livepeer distribute token?`,
+              id: 'token-distribute',
             },
             {
-              text: 'I have a JSON keystore file, how do I get token?',
-              id: 'how-keystore',
+              text: 'How do I submit a larger number of transactions?',
+              id: 'large-transaction-submition',
             },
             {
-              text:
-                'I have a hardware wallet eligible account. How do I get token?',
-              id: 'how-hardware',
+              text: 'Am I eligible to claim LPT?',
+              id: 'eligibility',
+            },
+            {
+              text: 'How much LPT do you get per submission?',
+              id: 'amount-lpt',
+            },
+            {
+              text: 'How much does it cost to submit a proof? ',
+              id: 'cost-proof',
             },
           ].map(({ text, id }) => {
             return (
@@ -140,59 +186,59 @@ const TokenView = ({ ...props }) => {
           })}
         </ul>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
-        <h3 style={{ fontWeight: '400' }} id="key-points">
-          What are the Key Points I need to Know?
+        <h3 style={{ fontWeight: '400' }} id="livepeer-works">
+          How does Livepeer work?
         </h3>
         <p>
-          Livepeer launched on Ethereum's Mainnet on April 30, 2018. Upon
-          launch, the protocol included rules to generate 10,000,000 initial
-          Livepeer token (LPT). Any ETH account holder with 0.1ETH on March
-          16th, 2018 are eligible to generate 2.44 LPT as a part of this
-          distribution.
-        </p>
-        <p>
-          <b>Safety</b>: The Livepeer project will NOT be asking you for ETH,
-          BTC, USD, or any money. Livepeer is not selling anything at this
-          point. If someone claiming to represent Livepeer asks you to send them
-          any currency, please report this as fraud to fraud@livepeer.org.
-        </p>
-        <p>
-          <b>Amount</b>: 2.44 LPT into each eligible account Eligibility: Any
-          Ethereum account private key holder with greater than 0.1 ETH in their
-          account on March 16th (Ethereum block # 5,264,265) can generate 2.44
-          LPT token using the application above until August 1st, after which
-          the slow start period ends.
-        </p>
-        <p>
-          <b>Timeframe</b>: During the slow start period which will last through
-          ~August 1st 2018, users can only generate their own token in their own
-          eligible ETH account. After this period, users can generate token in
-          any eligible account, and the amount that they generate for themselves
-          will grow as more time passes.
-        </p>
-        <p>
-          <b>Alternate ways to get LPT</b>: Users who wish to participate but
-          don’t meet the threshold can generate token following the 3 month slow
-          start, or can participate in the community campaign to earn LPT.
-        </p>
-        <p>
-          <b>Stake and grow</b>: Over time the majority of token will be earned
-          through doing work on the network as a token holder that stakes token
-          or as a transcoder. Once you generate your token, stake towards a
-          transcoder to earn inflationary token every day.
+          Livepeer is an open source project that is focused on decentralizing
+          live video streaming over the internet. Content creators send video
+          into the Livepeer network, and the network takes care of transcoding
+          it into all the different formats necessary to reach the majority of
+          the devices on the planet, and distributing it to as many users as
+          want to consume it. &nbsp;
+          <a href="https://medium.com/livepeer-blog/livepeer-for-beginners-3b49945c24a7">
+            Read Livepeer For Beginners for more.
+          </a>
         </p>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
-        <h3 style={{ fontWeight: '400' }} id="am-i-eligible">
-          Am I Eligible?
+        <h3 style={{ fontWeight: '400' }} id="livepeer-usage">
+          How can Livepeer Token be used?
         </h3>
         <p>
-          Any ETH account holder with 0.1ETH on March 16th, 2018 are eligible to
-          generate 2.44 LPT as a part of this distribution. If you're not sure,
-          paste your ETH account here and double check.
+          The main use of LPT is to bond it towards a transcoder. Token holders
+          can either do transcoding work themselves, or bond their LPT towards a
+          Transcoder node who does the work on their behalf. Bonding LPT means
+          depositing some token into a smart contract, which is locked up for a
+          period of time (currently one week) before it can be withdrawn. This
+          serves as a security deposit which can be taken away if the user does
+          not act honestly. Transcoders who do the work earn ETH fees from
+          content creators who pay to use the network, as well as inflationary
+          LPT. Transcoders share those fees and rewards with token holders who
+          bond towards them. You can head to the Transcoders tab to see how much
+          in fees and rewards each Transcoder is willing to share with its token
+          holders. The work that users who bond have the right to do comes in
+          two forms:
+        </p>
+        <ol>
+          <li>running transcoding nodes</li>
+          <li>bond to a transcoder.</li>
+        </ol>
+        <a href="https://forum.livepeer.org/t/what-can-i-use-lpt-for/178">
+          Read more on How to Use LPT
+        </a>
+        <hr style={{ border: '1px solid #ccc', width: '100%' }} />
+        <h3 style={{ fontWeight: '400' }} id="livepeer-running">
+          Is Livepeer up and running?
+        </h3>
+        <p>
+          Yes, Livepeer launched to mainnet on April 30th and is in alpha.
+          <a href="https://medium.com/livepeer-blog/launching-the-livepeer-network-50dc7be7840">
+            You can read about the launch here.
+          </a>
         </p>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
-        <h3 style={{ fontWeight: '400' }} id="how-distribute">
-          How did Livepeer Distribute Token?
+        <h3 style={{ fontWeight: '400' }} id="token-distribute">
+          How did Livepeer distribute token?
         </h3>
         <p>
           The initial distribution prioritizes open access and wide distribution
@@ -245,47 +291,62 @@ const TokenView = ({ ...props }) => {
           />
         </p>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
-        <h3 style={{ fontWeight: '400' }} id="i-want-more">
-          I'm not Eligible or I want to get more Token
+        <h3 style={{ fontWeight: '400' }} id="large-transaction-submition">
+          How do I submit a larger number of transactions?
         </h3>
         <p>
-          Not eligible for the slow start period? Join the Decentralized
-          Livepeer Community Node Telegram group to earn LPT, as well as
-          community calls, meetups, hackathons, grant programs and more. In
-          August, the slow start period ends and anyone can generate token from
-          the remaining ~6.3MM ETH Accounts with LPT that has not been claimed.
+          The point and click tools above are for those looking to get a
+          moderate amount of token to start staking in an easy, user friendly
+          way. For those looking to submit a large number of transactions to
+          generate many LPT, you may need to write some custom scripts to
+          automate&nbsp;
+          <a href="https://forum.livepeer.org/t/the-economics-of-generating-livepeer-token-after-the-merklemine-slow-start-ends-and-claim-period-begins-on-7-26/317">
+            the process.
+          </a>
         </p>
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
-        <h3 style={{ fontWeight: '400' }} id="how-keystore">
-          I have a JSON Keystore File, how do I get token?
+        <h3 style={{ fontWeight: '400' }} id="eligibility">
+          Am I eligible to claim LPT?
         </h3>
+
         <p>
-          If you do not want to use the DApp, and you have a JSON keystore file
-          for your eligible account, you can use the MerkleMine command line
-          script included in{' '}
-          <a href="https://github.com/livepeer/merkle-mine">
-            this github repository
-          </a>
-          to generate and submit your proof to the MerkleMine generate
-          transaction. This may be useful if you’d like to automate MerkleMining
-          across many accounts.
-        </p>
-        <p>
-          Having Trouble? Check this walkthrough first
-          (https://forum.livepeer.org/t/common-troubleshooting-questions-merklemine-client-scripts/206)
+          Anyone can claim LPT for unclaimed eligible Ethereum accounts during
+          the Claim Period, from July 26th, 2018 until all accounts are claimed.
         </p>
 
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
-        <h3 style={{ fontWeight: '400' }} id="how-hardware">
-          I have a hardware wallet eligible account. How do I get token?
+        <h3 style={{ fontWeight: '400' }} id="amount-lpt">
+          How much LPT do you get per submission?
         </h3>
         <p>
-          See{' '}
-          <a href="https://forum.livepeer.org/t/how-to-generate-livepeer-token-using-mycrypto-myetherwallet-ledger-trezor-support/209">
-            this forum post
+          Each time you click get token you generate a transaction that contains
+          20 proofs for 20 eligible Ethereum accounts. The LPT is split between
+          you, the caller, and the original account owner whom you mine token
+          for, in proportion to how far into the claim period we are. Early on
+          the portion you, the caller, gets is very small, but it grows over
+          time. As an example, 500,000 blocks into the claim period, the caller
+          would get 500,000 / 2,500,000 * 2.44 LPT, or 1 5th of the 2.44 LPT ==
+          0.49 LPT for one single proof. The original account owner would get
+          the rest. The portion of LPT the caller receives grows proportionally
+          with every block that passes between the start block of 6,034,099 on
+          July 26th. However, given the scarcity of LPT, they will be available
+          on a first come first serve basis.
+        </p>
+        <hr style={{ border: '1px solid #ccc', width: '100%' }} />
+        <h3 style={{ fontWeight: '400' }} id="cost-proof">
+          How much LPT do you get per submission?
+        </h3>
+        <p>
+          Livepeer is not selling any LPT, as there is no crowd sale, ICO or
+          investment opportunity. No one from Livepeer will ask you for money.
+          However, in order to submit a transaction to generate LPT, you have to
+          pay the gas cost required to get transactions confirmed on the
+          blockchain, and this price varies quite a bit from hour to hour on the
+          network in response to market conditions. To learn more about
+          potential costs per proof,&nbsp;
+          <a href="https://forum.livepeer.org/t/the-economics-of-generating-livepeer-token-after-the-merklemine-slow-start-ends-and-claim-period-begins-on-7-26/317">
+            read more
           </a>
-          for instructions on how to generate token using a Ledger Wallet and
-          MyCrypto.
         </p>
       </Content>
     </React.Fragment>
