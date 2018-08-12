@@ -170,6 +170,14 @@ class Channel extends Component {
         }/${manifestId}.m3u8`,
       })
     }
+    if (address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()) {
+      return this.setState({
+        live: true,
+        url: `${
+          process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
+        }/${manifestId}.m3u8`,
+      })
+    }
     let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
     this.setState({ url })
   }
