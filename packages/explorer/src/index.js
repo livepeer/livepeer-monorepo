@@ -153,7 +153,12 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       },
     }
     // The address of the deployed Controller contract
-    if (window.web3.version) {
+    // Test if web3 is injected
+    // For Mist compatability we also check if the web3 object has the `version` property
+    // because at the moment the Mist provided web3 object does not have additional properties like `version`
+    // As a result, if a web3 object with the `version` property is not available, we fallback
+    // to using a default provider which should be the case when using Mist
+    if (window.web3 && window.web3.version) {
       const { version } = window.web3
       const controllers = {
         1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
