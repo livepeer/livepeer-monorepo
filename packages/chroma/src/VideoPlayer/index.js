@@ -1,6 +1,6 @@
 import React, { Component, ReactChildren, ReactElement } from 'react'
 import PropTypes from 'prop-types'
-import { Player, BigPlayButton } from 'video-react'
+import { Player, BigPlayButton, ControlBar } from 'video-react'
 import injectStyles from './styles'
 import Hls from 'hls.js'
 
@@ -68,6 +68,46 @@ const getSourceType = (src: string): string => {
  */
 const isHLS = (x: string): boolean => x === 'application/x-mpegURL'
 
+export class QualityPicker extends Component {
+  static propTypes = {
+    actions: PropTypes.object,
+    player: PropTypes.object,
+    className: PropTypes.string,
+  }
+
+  constructor(props, context) {
+    super(props, context)
+    // this.handleClick = this.handleClick.bind(this)
+    this.handleClick = this.props.handleClick
+  }
+
+  // handleClick () {
+  //   const { actions } = this.props
+  //   actions.play()
+  //   console.log('clicked QualityPicker, this.props: ', this.props)
+  // }
+
+  render() {
+    const { player, className } = this.props
+    return (
+      <button
+        ref={c => {
+          this.button = c
+        }}
+        className={'video-react-control video-react-button'}
+        style={{
+          backgroundImage:
+            'url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTE5IDloLTRWM0g5djZINWw3IDcgNy03ek01IDE4djJoMTR2LTJINXoiLz4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==)',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }}
+        tabIndex="0"
+        onClick={this.handleClick}
+      />
+    )
+  }
+}
+
 /**
  * A VideoPlayer class that extends the functionality of `video-react`'s default player
  * Additional features include updated styles and HLS support
@@ -122,6 +162,10 @@ export default class VideoPlayer extends Component {
   }
   // Injects player css into the dom
   componentDidMount = injectStyles
+  getLevels() {
+    console.log('available levels: ', this.source.getLevels())
+  }
+
   render() {
     const {
       src,
@@ -135,7 +179,13 @@ export default class VideoPlayer extends Component {
     return (
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
+        <ControlBar autoHide={false}>
+          <QualityPicker order={7} handleClick={this.getLevels.bind(this)} />
+        </ControlBar>
         <Source
+          ref={instance => {
+            this.source = instance
+          }}
           isVideoChild
           onLive={onLive}
           onDead={onDead}
@@ -278,6 +328,7 @@ export class Source extends Component {
       this.hls.on(Hls.Events.MEDIA_ATTACHED, this.onMediaAttached)
       this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed)
       this.hls.on(Hls.Events.ERROR, this.onError)
+      // console.info('modded chroma2')
       this.debug('attaching media')
       this.hls.attachMedia(video)
     } else if (canPlayHLS) {
@@ -291,6 +342,13 @@ export class Source extends Component {
       video.src = src
     }
   }
+
+  getLevels = (): void => {
+    let levels = this.hls.levels
+    // console.log('hlsjs: Levels: ', levels)
+    return levels
+  }
+
   /**
    * Event handler that is fired when native 'canplay' event is triggered on <video>
    * @note This handler is only bound when HLS is natively supported
@@ -386,6 +444,7 @@ export class Source extends Component {
       'manifest loaded, found levels\n',
       data.levels.map(x => x.url.toString()).join('\n'),
     )
+    // this.getLevels()
     this.debug('will load level', this.hls.loadLevel)
     this.hls.startLoad()
     if (autoPlay) await video.play()
