@@ -86,7 +86,7 @@ class TokenMiner extends React.Component {
       const { worker } = this.props
       const { address } = this.state
       this.miner = await new MerkleMiner({
-        gateway: 'https://gateway.ipfs.io/ipfs',
+        gateway: 'https://s3.amazonaws.com/livepeer-static',
         workerHash: worker,
         onResolveHash: this.onResolveHash,
         onConstructTree: this.onConstructTree,
