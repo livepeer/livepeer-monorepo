@@ -24,7 +24,12 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
   const notAuthenticated = !myAccountAddress
   const { host } = window.livepeer.config.eth.currentProvider
-  const networkName = !window.web3.version
+  // Test if web3 is injected
+  // For Mist compatability we also check if the web3 object has the `version` property
+  // because at the moment the Mist provided web3 object does not have additional properties like `version`
+  // As a result, if a web3 object with the `version` property is not available, we fallback
+  // to using a default provider which should be the case for Mist
+  const networkName = !(window.web3 && window.web3.version)
     ? /infura/.test(host)
       ? host.split('.')[0].replace(/(http|https):\/\//, '')
       : 'Custom RPC'
