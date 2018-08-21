@@ -916,7 +916,8 @@ export default () => {
 
   .menu-container {
     display: block;
-    background-color: #000;
+    background: linear-gradient(to top,rgba(43,51,63,1) -25%,transparent);
+    text-align: center;
     position: absolute;
     bottom: 100%;
     right: 0;
@@ -926,8 +927,7 @@ export default () => {
 
   .menu-container > ul {
     list-style: none;
-    padding-top: 15px;
-    padding-botom: 15px;
+    padding: 15px 5px;
   }
 
   .menu-container > ul > li {
