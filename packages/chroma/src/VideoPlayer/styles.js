@@ -913,5 +913,15 @@ export default () => {
       transform: scale(2)
     }
   }
+
+  .menu-container {
+    display: block;
+    background-color: #000;
+    position: absolute;
+    top: -60px;
+    right: 0;
+    min-width: 50px;
+    min-height: 70px;
+  }
 `
 }

@@ -79,6 +79,15 @@ export class QualityPicker extends Component {
     super(props, context)
     // this.handleClick = this.handleClick.bind(this)
     this.handleClick = this.props.handleClick
+    this.createResOptions = this.createResOptions.bind(this)
+    this.state = {
+      visible: false,
+      levels: this.handleClick,
+    }
+  }
+
+  toggleMenu() {
+    this.setState({ visible: !this.state.visible })
   }
 
   // handleClick () {
@@ -87,23 +96,56 @@ export class QualityPicker extends Component {
   //   console.log('clicked QualityPicker, this.props: ', this.props)
   // }
 
+  createResOptions() {
+    let levels = this.state.levels || []
+    let res = []
+    for (let i = 0; i < levels.length; i++) {
+      res.push(<li>{levels[i].attrs.RESOLUTION}</li>)
+    }
+    // console.log('res lvls: ', res)
+    return res
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      let lvls = this.handleClick()
+      // console.log('lvls:', lvls, typeof lvls)
+      if (lvls && lvls.length && lvls[0]) {
+        console.log('lvl0:', lvls[0])
+        console.log('lvl0:', lvls[0].attrs.RESOLUTION)
+      }
+      this.setState({ levels: lvls })
+      this.render()
+    }, 1000)
+  }
+
   render() {
     const { player, className } = this.props
     return (
-      <button
-        ref={c => {
-          this.button = c
-        }}
-        className={'video-react-control video-react-button'}
-        style={{
-          backgroundImage:
-            'url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTE5IDloLTRWM0g5djZINWw3IDcgNy03ek01IDE4djJoMTR2LTJINXoiLz4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==)',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-        }}
-        tabIndex="0"
-        onClick={this.handleClick}
-      />
+      <div className={'video-react-control'}>
+        <div
+          class={'menu-container'}
+          style={{
+            display: !this.state.visible ? 'none' : 'block',
+          }}
+        >
+          <ul>{this.createResOptions()}</ul>
+        </div>
+        <button
+          ref={c => {
+            this.button = c
+          }}
+          className={'video-react-control video-react-button'}
+          style={{
+            backgroundImage:
+              'url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICAgPHBhdGggZD0iTTE5IDloLTRWM0g5djZINWw3IDcgNy03ek01IDE4djJoMTR2LTJINXoiLz4gICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==)',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+          }}
+          tabIndex="0"
+          onClick={this.toggleMenu.bind(this)}
+        />
+      </div>
     )
   }
 }
@@ -164,6 +206,16 @@ export default class VideoPlayer extends Component {
   componentDidMount = injectStyles
   getLevels() {
     console.log('available levels: ', this.source.getLevels())
+    return this.source.getLevels()
+  }
+
+  getCurrentLevel() {
+    let x = this.source.getCurrentLevel()
+    console.log('currentLevel: ', x)
+  }
+
+  loadLevel(level) {
+    this.source.loadLevel(level)
   }
 
   render() {
@@ -344,9 +396,22 @@ export class Source extends Component {
   }
 
   getLevels = (): void => {
-    let levels = this.hls.levels
-    // console.log('hlsjs: Levels: ', levels)
-    return levels
+    if (this.hls) {
+      let levels = this.hls.levels
+      // console.log('hlsjs: Levels: ', levels)
+      return levels
+    } else {
+      return []
+    }
+  }
+
+  getCurrentLevel = (): void => {
+    return this.hls.currentLevel
+  }
+
+  loadLevel = (level: Number): void => {
+    this.hls.loadLevel = level
+    return this.hls.currentLevel
   }
 
   /**
