@@ -91,8 +91,8 @@ export class QualityPicker extends Component {
   }
 
   handleQualityChange(ev) {
-    console.log('ev: ', ev.target)
-    console.log('ev: ', ev.target.dataset['id'])
+    // console.log('ev: ', ev.target)
+    // console.log('ev: ', ev.target.dataset['id'])
     if (this.video) {
       this.video.loadLevel(parseInt(ev.target.dataset['id']))
     } else {
@@ -146,6 +146,13 @@ export class QualityPicker extends Component {
       }
     }
     // console.log('res lvls: ', res)
+    res.push(
+      <li>
+        <button data-id={-1} onClick={this.handleQualityChange.bind(this)}>
+          auto
+        </button>
+      </li>,
+    )
     return res
   }
 
@@ -155,10 +162,10 @@ export class QualityPicker extends Component {
       if (this.video) {
         let lvls = this.video.getLevels()
         // console.log('lvls:', lvls, typeof lvls)
-        if (lvls && lvls.length && lvls[0]) {
-          console.log('lvl0:', lvls[0])
-          console.log('lvl0:', lvls[0].attrs.RESOLUTION)
-        }
+        // if (lvls && lvls.length && lvls[0]) {
+        //   console.log('lvl0:', lvls[0])
+        //   console.log('lvl0:', lvls[0].attrs.RESOLUTION)
+        // }
         this.setState({ levels: lvls })
         this.render()
       }
@@ -262,9 +269,9 @@ export default class VideoPlayer extends Component {
   }
 
   loadLevel(level) {
-    console.log('ev: current Level: ', this.getCurrentLevel())
+    // console.log('ev: current Level: ', this.getCurrentLevel())
     this.source.loadLevel(level)
-    console.log('ev: after Level: ', this.getCurrentLevel())
+    // console.log('ev: after Level: ', this.getCurrentLevel())
   }
 
   render() {
