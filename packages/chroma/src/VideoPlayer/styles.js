@@ -918,10 +918,21 @@ export default () => {
     display: block;
     background-color: #000;
     position: absolute;
-    top: -60px;
+    bottom: 100%;
     right: 0;
     min-width: 50px;
     min-height: 70px;
+  }
+
+  .menu-container > ul {
+    list-style: none;
+    padding-top: 15px;
+    padding-botom: 15px;
+  }
+
+  .menu-container > ul > li {
+    font-size: 16px;
+    padding: 4px 2px;
   }
 `
 }

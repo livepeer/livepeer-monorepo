@@ -90,6 +90,18 @@ export class QualityPicker extends Component {
     this.setState({ visible: !this.state.visible })
   }
 
+  handleQualityChange(ev) {
+    console.log('ev: ', ev.target)
+    console.log('ev: ', ev.target.dataset['id'])
+    if (this.video) {
+      this.video.loadLevel(parseInt(ev.target.dataset['id']))
+    } else {
+      console.error(`ev: this.video is null ${this.video}`)
+    }
+
+    this.render()
+  }
+
   // handleClick () {
   //   const { actions } = this.props
   //   actions.play()
@@ -100,22 +112,56 @@ export class QualityPicker extends Component {
     let levels = this.state.levels || []
     let res = []
     for (let i = 0; i < levels.length; i++) {
-      res.push(<li>{levels[i].attrs.RESOLUTION}</li>)
+      if (this.video) {
+        if (this.video.getCurrentLevel() === i) {
+          res.push(
+            <li>
+              <button
+                className={'active'}
+                style={{ fontWeight: 700 }}
+                data-id={i}
+                onClick={this.handleQualityChange.bind(this)}
+              >
+                {levels[i].attrs.RESOLUTION}
+              </button>
+            </li>,
+          )
+        } else {
+          res.push(
+            <li>
+              <button data-id={i} onClick={this.handleQualityChange.bind(this)}>
+                {levels[i].attrs.RESOLUTION}
+              </button>
+            </li>,
+          )
+        }
+      } else {
+        res.push(
+          <li>
+            <button data-id={i} onClick={this.handleQualityChange.bind(this)}>
+              {levels[i].attrs.RESOLUTION}
+            </button>
+          </li>,
+        )
+      }
     }
     // console.log('res lvls: ', res)
     return res
   }
 
   componentDidMount() {
+    this.video = this.props.video
     setInterval(() => {
-      let lvls = this.handleClick()
-      // console.log('lvls:', lvls, typeof lvls)
-      if (lvls && lvls.length && lvls[0]) {
-        console.log('lvl0:', lvls[0])
-        console.log('lvl0:', lvls[0].attrs.RESOLUTION)
+      if (this.video) {
+        let lvls = this.video.getLevels()
+        // console.log('lvls:', lvls, typeof lvls)
+        if (lvls && lvls.length && lvls[0]) {
+          console.log('lvl0:', lvls[0])
+          console.log('lvl0:', lvls[0].attrs.RESOLUTION)
+        }
+        this.setState({ levels: lvls })
+        this.render()
       }
-      this.setState({ levels: lvls })
-      this.render()
     }, 1000)
   }
 
@@ -212,10 +258,13 @@ export default class VideoPlayer extends Component {
   getCurrentLevel() {
     let x = this.source.getCurrentLevel()
     console.log('currentLevel: ', x)
+    return x
   }
 
   loadLevel(level) {
+    console.log('ev: current Level: ', this.getCurrentLevel())
     this.source.loadLevel(level)
+    console.log('ev: after Level: ', this.getCurrentLevel())
   }
 
   render() {
@@ -232,7 +281,11 @@ export default class VideoPlayer extends Component {
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
         <ControlBar autoHide={false}>
-          <QualityPicker order={7} handleClick={this.getLevels.bind(this)} />
+          <QualityPicker
+            order={7}
+            video={this}
+            handleClick={this.getLevels.bind(this)}
+          />
         </ControlBar>
         <Source
           ref={instance => {
@@ -410,8 +463,8 @@ export class Source extends Component {
   }
 
   loadLevel = (level: Number): void => {
-    this.hls.loadLevel = level
-    return this.hls.currentLevel
+    this.hls.currentLevel = level
+    console.log('ev: loaded level: ', this.getCurrentLevel())
   }
 
   /**
