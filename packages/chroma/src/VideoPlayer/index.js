@@ -72,13 +72,12 @@ export class QualityPicker extends Component {
   static propTypes = {
     actions: PropTypes.object,
     player: PropTypes.object,
+    video: PropTypes.object,
     className: PropTypes.string,
   }
 
   constructor(props, context) {
     super(props, context)
-    // this.handleClick = this.handleClick.bind(this)
-    this.handleClick = this.props.handleClick
     this.createResOptions = this.createResOptions.bind(this)
     this.state = {
       visible: false,
@@ -115,7 +114,7 @@ export class QualityPicker extends Component {
       if (this.video) {
         if (this.video.getCurrentLevel() === i) {
           res.push(
-            <li>
+            <li key={i}>
               <button
                 className={'active'}
                 style={{ fontWeight: 700 }}
@@ -128,7 +127,7 @@ export class QualityPicker extends Component {
           )
         } else {
           res.push(
-            <li>
+            <li key={i}>
               <button data-id={i} onClick={this.handleQualityChange.bind(this)}>
                 {levels[i].attrs.RESOLUTION}
               </button>
@@ -137,7 +136,7 @@ export class QualityPicker extends Component {
         }
       } else {
         res.push(
-          <li>
+          <li key={i}>
             <button data-id={i} onClick={this.handleQualityChange.bind(this)}>
               {levels[i].attrs.RESOLUTION}
             </button>
@@ -147,7 +146,7 @@ export class QualityPicker extends Component {
     }
     // console.log('res lvls: ', res)
     res.push(
-      <li>
+      <li key={-1}>
         <button data-id={-1} onClick={this.handleQualityChange.bind(this)}>
           auto
         </button>
@@ -177,7 +176,7 @@ export class QualityPicker extends Component {
     return (
       <div className={'video-react-control'}>
         <div
-          class={'menu-container'}
+          className={'menu-container'}
           style={{
             display: !this.state.visible ? 'none' : 'block',
           }}
@@ -254,13 +253,13 @@ export default class VideoPlayer extends Component {
   // Injects player css into the dom
   componentDidMount = injectStyles
   getLevels() {
-    console.log('available levels: ', this.source.getLevels())
+    // console.log('available levels: ', this.source.getLevels())
     return this.source.getLevels()
   }
 
   getCurrentLevel() {
     let x = this.source.getCurrentLevel()
-    console.log('currentLevel: ', x)
+    // console.log('currentLevel: ', x)
     return x
   }
 
@@ -284,11 +283,7 @@ export default class VideoPlayer extends Component {
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
         <ControlBar autoHide={false}>
-          <QualityPicker
-            order={7}
-            video={this}
-            handleClick={this.getLevels.bind(this)}
-          />
+          <QualityPicker order={7} video={this} />
         </ControlBar>
         <Source
           ref={instance => {
@@ -451,7 +446,7 @@ export class Source extends Component {
     }
   }
 
-  getLevels = (): void => {
+  getLevels = (): Array<Mixed> => {
     if (this.hls) {
       let levels = this.hls.levels
       // console.log('hlsjs: Levels: ', levels)
@@ -461,13 +456,13 @@ export class Source extends Component {
     }
   }
 
-  getCurrentLevel = (): void => {
+  getCurrentLevel = (): Number => {
     return this.hls.currentLevel
   }
 
   loadLevel = (level: Number): void => {
     this.hls.currentLevel = level
-    console.log('ev: loaded level: ', this.getCurrentLevel())
+    // console.log('ev: loaded level: ', this.getCurrentLevel())
   }
 
   /**
