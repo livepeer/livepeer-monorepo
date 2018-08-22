@@ -41,8 +41,14 @@ type Delegator {
   "The status of a delegator"
   status: DelegatorStatus!
 
+  "The amount of Livepeer Token to withdraw for a delegator"
+  withdrawAmount: String!
+
   "The round the delegator can withdraw its stake."
   withdrawRound: String!
+
+  "The ID of the delegator's next unbonding lock"
+  nextUnbondingLockId: String!
 
 }`
 

@@ -130,7 +130,9 @@ const ALL_DELEGATORS = {
     pendingStake: '0',
     startRound: '0',
     status: DELEGATOR_STATUS.Unbonded,
+    withdrawAmount: '0',
     withdrawRound: '0',
+    nextUnbondingLockId: '0',
   },
   [EMPTY_ADDRESS.replace(/00/g, '22')]: {
     address: EMPTY_ADDRESS.replace(/00/g, '22'),
@@ -144,7 +146,9 @@ const ALL_DELEGATORS = {
     pendingStake: '0',
     startRound: '0',
     status: DELEGATOR_STATUS.Unbonded,
+    withdrawAmount: '0',
     withdrawRound: '0',
+    nextUnbondingLockId: '0',
   },
 }
 

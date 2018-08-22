@@ -12,5 +12,7 @@ fragment DelegatorFragment on Delegator {
   pendingStake
   startRound
   status
+  withdrawAmount
   withdrawRound
+  nextUnbondingLockId
 }`

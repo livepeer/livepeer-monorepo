@@ -22,6 +22,7 @@ const AccountDelegatorQuery = gql`
     pendingFees
     pendingStake
     startRound
+    withdrawAmount
     withdrawRound
   }
 

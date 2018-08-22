@@ -105,7 +105,9 @@ export const mockDelegator = ({ id = '', ...delegator } = {}) => ({
   pendingStake: '0',
   startRound: '0',
   status: 'Unbonded',
+  withdrawAmount: '0',
   withdrawRound: '0',
+  nextUnbondingLockId: '0',
   ...delegator,
 })
 

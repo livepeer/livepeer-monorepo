@@ -240,10 +240,25 @@ test('should return object with correct shape from getDelegator()', async t => {
     pendingFees: string,
     startRound: string,
     status: oneOf(livepeer.constants.DELEGATOR_STATUS),
+    withdrawAmount: string,
     withdrawRound: string,
+    nextUnbondingLockId: string,
   })
   const { from } = livepeer.config.defaultTx
   const res = await livepeer.rpc.getDelegator('please.buymecoffee.eth')
+  schema.validateSync(res)
+  t.pass()
+})
+
+test('should return object with correct shape from getDelegatorUnbondingLock()', async t => {
+  const schema = object({
+    id: string,
+    delegator: string,
+    amount: string,
+    withdrawRound: string,
+  })
+  const { from } = livepeer.config.defaultTx
+  const res = await livepeer.rpc.getDelegatorUnbondingLock(from, '0')
   schema.validateSync(res)
   t.pass()
 })
