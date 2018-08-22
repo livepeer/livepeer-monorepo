@@ -68,6 +68,9 @@ const getSourceType = (src: string): string => {
  */
 const isHLS = (x: string): boolean => x === 'application/x-mpegURL'
 
+/**
+ * Quality picker controller for HLS multibitrate videos
+ */
 export class QualityPicker extends Component {
   static propTypes = {
     actions: PropTypes.object,
@@ -101,12 +104,10 @@ export class QualityPicker extends Component {
     this.render()
   }
 
-  // handleClick () {
-  //   const { actions } = this.props
-  //   actions.play()
-  //   console.log('clicked QualityPicker, this.props: ', this.props)
-  // }
-
+  /**
+   * create the single resolution items in the res list
+   * @return {Array} returns an array of items.
+   */
   createResOptions() {
     let levels = this.state.levels || []
     let res = []
@@ -252,17 +253,30 @@ export default class VideoPlayer extends Component {
   }
   // Injects player css into the dom
   componentDidMount = injectStyles
+
+  /**
+   * get all available bitrates
+   * @return {Array} array of res objects
+   */
   getLevels() {
     // console.log('available levels: ', this.source.getLevels())
     return this.source.getLevels()
   }
 
+  /**
+   * get Current level playing
+   * @return {Number} returns level index
+   */
   getCurrentLevel() {
     let x = this.source.getCurrentLevel()
     // console.log('currentLevel: ', x)
     return x
   }
 
+  /**
+   * immediate change to a new resolution
+   * @param  {Number} level index of the level
+   */
   loadLevel(level) {
     // console.log('ev: current Level: ', this.getCurrentLevel())
     this.source.loadLevel(level)
@@ -446,6 +460,9 @@ export class Source extends Component {
     }
   }
 
+  /**
+   * get HLS.js bitrate levels
+   */
   getLevels = (): Array<Mixed> => {
     if (this.hls) {
       let levels = this.hls.levels
@@ -456,10 +473,16 @@ export class Source extends Component {
     }
   }
 
+  /**
+   * get currentl playing resolution index
+   */
   getCurrentLevel = (): Number => {
     return this.hls.currentLevel
   }
 
+  /**
+   * change resolution
+   */
   loadLevel = (level: Number): void => {
     this.hls.currentLevel = level
     // console.log('ev: loaded level: ', this.getCurrentLevel())
