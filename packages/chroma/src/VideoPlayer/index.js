@@ -112,8 +112,8 @@ export class QualityPicker extends Component {
     let levels = this.state.levels || []
     let res = []
     for (let i = 0; i < levels.length; i++) {
-      if (this.video) {
-        if (this.video.getCurrentLevel() === i) {
+      if (levels && levels[i] && levels[i].attrs) {
+        if (this.video && this.video.getCurrentLevel() === i) {
           res.push(
             <li key={i}>
               <button
@@ -135,14 +135,6 @@ export class QualityPicker extends Component {
             </li>,
           )
         }
-      } else {
-        res.push(
-          <li key={i}>
-            <button data-id={i} onClick={this.handleQualityChange.bind(this)}>
-              {levels[i].attrs.RESOLUTION}
-            </button>
-          </li>,
-        )
       }
     }
     // console.log('res lvls: ', res)
@@ -582,6 +574,7 @@ export class Source extends Component {
     this.debug(
       'manifest loaded, found levels\n',
       data.levels.map(x => x.url.toString()).join('\n'),
+      data.levels,
     )
     // this.getLevels()
     this.debug('will load level', this.hls.loadLevel)
