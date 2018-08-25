@@ -93,8 +93,6 @@ export class QualityPicker extends Component {
   }
 
   handleQualityChange(ev) {
-    // console.log('ev: ', ev.target)
-    // console.log('ev: ', ev.target.dataset['id'])
     if (this.video) {
       this.video.loadLevel(parseInt(ev.target.dataset['id']))
     } else {
@@ -112,8 +110,8 @@ export class QualityPicker extends Component {
     if (!this.video) {
       return
     }
-    let levels = this.state.levels
-    let res = []
+    let levels = this.state.levels,
+      res = []
     let currentLevel = this.video.getCurrentLevel()
     if (levels.length >= 1 && levels[0].attrs) {
       for (let i = 0; i < levels.length; i++) {
