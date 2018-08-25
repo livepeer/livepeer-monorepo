@@ -115,30 +115,19 @@ export class QualityPicker extends Component {
     let levels = this.state.levels
     let res = []
     let currentLevel = this.video.getCurrentLevel()
-    if (levels && levels.length >= 1 && levels[0].attrs) {
+    if (levels.length >= 1 && levels[0].attrs) {
       for (let i = 0; i < levels.length; i++) {
-        if (currentLevel === i) {
-          res.push(
-            <li key={i}>
-              <button
-                className={'active'}
-                style={{ fontWeight: 700 }}
-                data-id={i}
-                onClick={this.handleQualityChange.bind(this)}
-              >
-                {levels[i].attrs.RESOLUTION}
-              </button>
-            </li>,
-          )
-        } else {
-          res.push(
-            <li key={i}>
-              <button data-id={i} onClick={this.handleQualityChange.bind(this)}>
-                {levels[i].attrs.RESOLUTION}
-              </button>
-            </li>,
-          )
-        }
+        res.push(
+          <li key={i}>
+            <button
+              className={currentLevel === i ? 'active' : ''}
+              data-id={i}
+              onClick={this.handleQualityChange.bind(this)}
+            >
+              {levels[i].attrs.RESOLUTION}
+            </button>
+          </li>,
+        )
       }
     }
     res.push(

@@ -934,5 +934,9 @@ export default () => {
     font-size: 16px;
     padding: 4px 2px;
   }
+
+  .active {
+    font-weight: 700;
+  }
 `
 }
