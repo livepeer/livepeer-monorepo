@@ -84,7 +84,7 @@ export class QualityPicker extends Component {
     this.createResOptions = this.createResOptions.bind(this)
     this.state = {
       visible: false,
-      levels: this.handleClick,
+      levels: [],
     }
   }
 
@@ -109,11 +109,15 @@ export class QualityPicker extends Component {
    * @return {Array} returns an array of items.
    */
   createResOptions() {
-    let levels = this.state.levels || []
+    if (!this.video) {
+      return
+    }
+    let levels = this.state.levels
     let res = []
-    for (let i = 0; i < levels.length; i++) {
-      if (levels && levels[i] && levels[i].attrs) {
-        if (this.video && this.video.getCurrentLevel() === i) {
+    let currentLevel = this.video.getCurrentLevel()
+    if (levels && levels.length >= 1 && levels[0].attrs) {
+      for (let i = 0; i < levels.length; i++) {
+        if (currentLevel === i) {
           res.push(
             <li key={i}>
               <button
@@ -137,7 +141,6 @@ export class QualityPicker extends Component {
         }
       }
     }
-    // console.log('res lvls: ', res)
     res.push(
       <li key={-1}>
         <button data-id={-1} onClick={this.handleQualityChange.bind(this)}>
@@ -469,6 +472,9 @@ export class Source extends Component {
    * get currentl playing resolution index
    */
   getCurrentLevel = (): Number => {
+    if (!this.hls) {
+      return -1
+    }
     return this.hls.currentLevel
   }
 
