@@ -68,9 +68,9 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
           >
             <h1 id="tokens">
               Tokens remaining:{' '}
-              {parseFloat(remainingTokens)
-                .toFixed(2)
-                .toLocaleString('en')}
+              {parseFloat(remainingTokens).toLocaleString('en', {
+                maximumFractionDigits: 2,
+              })}
             </h1>
             <div
               style={{
