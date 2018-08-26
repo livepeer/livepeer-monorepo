@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Form, Field } from 'react-final-form'
 import styled, { keyframes } from 'styled-components'
 import MerkleMiner from '@livepeer/merkle-miner'
+import TableData from './TableData'
 import { withProp } from '../../enhancers'
 import { Button } from '../../components'
 
@@ -106,80 +107,27 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
               <table>
                 <tbody>
                   <tr>
-                    <td>
-                      <label className="info-lbl">Account balance:</label>
-                      <div className="help-tip">
-                        <p>
-                          The balance on your web3 enabled browser or wallet
-                          plugin.
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <strong>{balance}</strong> Ether
-                    </td>
+                    <TableData
+                      tableData="Account balance:"
+                      help="The balance on your web3 enabled browser or wallet plugin."
+                    />
+                    <TableData beforeData={balance} tableData="Ether" />
                   </tr>
                   {lowBal && (
                     <tr>
-                      <td colSpan="2">
-                        You do not have sufficient funds in your web-3 wallet to
-                        mine LPT tokens.
-                      </td>
+                      <TableData
+                        tableData="You do not have sufficient funds in your web-3 wallet to mine LPT tokens."
+                        colSpan="2"
+                      />
                     </tr>
                   )}
                   <tr>
-                    <td>
-                      <label className="info-lbl">Gas price:</label>
-                      <div className="help-tip">
-                        <p>
-                          The current market price of 1 gas according to
-                          EthGasStation.
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      {editGas ? (
-                        <React.Fragment>
-                          <a onClick={handleCancel}>Cancel</a>
-                          <input
-                            placeholder="Gas price: 999"
-                            type="number"
-                            value={gas}
-                            onChange={handleGas}
-                          />
-                          <a
-                            onClick={handleSave}
-                            style={{
-                              backgroundColor: '#000000',
-                              color: '#FFFFFF',
-                            }}
-                          >
-                            Ok
-                          </a>
-                        </React.Fragment>
-                      ) : (
-                        <React.Fragment>
-                          <label>
-                            <strong>{gas}</strong>
-                            Gwei
-                          </label>
-                          <a style={{ display: 'none' }} onClick={handleEdit}>
-                            Edit
-                          </a>
-                        </React.Fragment>
-                      )}
-                    </td>
+                    <TableData
+                      tableData="Gas price:"
+                      help="The current market price of 1 gas according to EthGasStation."
+                    />
+                    <TableData tableData="Gas price" beforeData={gas} />
                   </tr>
-                  {gas_low && (
-                    <tr>
-                      <td colSpan="2">
-                        By submitting a price that is lower than the current
-                        market price of gas, you run the risk that your mining
-                        transaction takes too long or it might not be mined at
-                        all.
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
               <hr />
@@ -191,49 +139,29 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
               <table>
                 <tbody>
                   <tr>
-                    <td>
-                      <label>Estimated cost:</label>
-                      <div className="help-tip">
-                        <p>
-                          Total total cost of one round of mining and generating
-                          tokens for the 20 eligible ethereum addresses.
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <label>
-                        <strong>{estimCost}</strong>
-                        Ether
-                      </label>
-                    </td>
+                    <TableData
+                      tableData="Estimated cost:"
+                      help={`Total total cost of one round of mining and generating
+                          tokens for the 20 eligible ethereum addresses.`}
+                    />
+                    <TableData beforeData={estimCost} tableData="Ether" />
                   </tr>
                   <tr>
-                    <td>
-                      <label>Estimated time:</label>
-                      <div className="help-tip">
-                        <p>
-                          The time it takes to complete one round of mining.
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <strong>1 - 5</strong>
-                      Min
-                    </td>
+                    <TableData
+                      tableData="Estimated time:"
+                      help={`The time it takes to complete one round of mining.`}
+                    />
+                    <TableData beforeData="1 - 5" tableData="Min" />
                   </tr>
                   <tr>
-                    <td>
-                      Estimated number of LPT tokens you will earn:
-                      <div className="help-tip">
-                        <p>
-                          The portion of the LPT tokens that will be issued to
-                          you in one round of mining.
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <strong>{amtLpt}</strong> LPT
-                    </td>
+                    <TableData
+                      tableData="Estimated number of LPT tokens you will earn:"
+                      help={`The portion of the LPT tokens that will be issued to
+                          you in one round of mining.`}
+                    />
+                    <TableData beforeData={amtLpt} tableData="LPT">
+                      {' '}
+                    </TableData>
                   </tr>
                 </tbody>
               </table>
@@ -275,7 +203,8 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                     color: '#000',
                   }}
                 >
-                  {`${((100 * progressBar) / 3) | 0}%`}
+                  {' '}
+                  {`${((100 * progressBar) / 3) | 0}%`}{' '}
                 </ProgressBar>
               </div>
             )}
