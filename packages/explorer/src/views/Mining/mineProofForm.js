@@ -111,7 +111,10 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                       tableData="Account balance:"
                       help="The balance on your web3 enabled browser or wallet plugin."
                     />
-                    <TableData beforeData={balance} tableData="Ether" />
+                    <TableData
+                      beforeData={balance.toString()}
+                      tableData="Ether"
+                    />
                   </tr>
                   {lowBal && (
                     <tr>
@@ -159,9 +162,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                       help={`The portion of the LPT tokens that will be issued to
                           you in one round of mining.`}
                     />
-                    <TableData beforeData={amtLpt} tableData="LPT">
-                      {' '}
-                    </TableData>
+                    <TableData beforeData={amtLpt} tableData="LPT" />
                   </tr>
                 </tbody>
               </table>
