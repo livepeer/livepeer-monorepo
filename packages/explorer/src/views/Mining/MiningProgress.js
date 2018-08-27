@@ -3,10 +3,10 @@ import { ProgressBar } from './helpers'
 import { Button } from '../../components'
 
 const MiningProgress = ({
-  progressBar,
-  loading,
   done,
+  loading,
   progress,
+  progressBar,
   subProofs,
 }) => {
   return (
@@ -104,7 +104,7 @@ const MiningProgress = ({
                 several minutes.
               </p>
               <div style={{ textAlign: 'center' }}>
-                <Button
+                <a
                   className="primary-btn"
                   style={{
                     backgroundColor: 'rgba(48, 39, 38, 0.8)',
@@ -117,7 +117,7 @@ const MiningProgress = ({
                   {progressBar === 2
                     ? `Waiting for your action...`
                     : `Mining... Please Wait`}
-                </Button>
+                </a>
               </div>
             </React.Fragment>
           </React.Fragment>

@@ -14,24 +14,24 @@ const TokenABI = require('./Token.json')
 
 class TokenMiner extends React.Component {
   static defaultProps = {
-    defaultAddress: '',
     allowManualEntry: false,
+    defaultAddress: '',
   }
   state = {
     address: this.props.defaultAddress,
     addresses: [],
-    netAddresses: {},
-    tokensRemaining: 0,
-    done: false,
-    progressBar: -1,
-    ready: false,
-    error: '',
-    proof: '',
-    estimatedCost: 0,
-    gas: 0,
-    progress: null,
     balance: '',
     contract: '',
+    done: false,
+    error: '',
+    estimatedCost: 0,
+    gas: 0,
+    netAddresses: {},
+    progress: null,
+    progressBar: -1,
+    proof: '',
+    ready: false,
+    tokensRemaining: 0,
   }
 
   async componentDidMount() {
@@ -287,9 +287,9 @@ class TokenMiner extends React.Component {
    * to multi merkle mine of users behalf
    */
   getProof = async () => {
+    // Do nothing if balance is low
+    if (this.state.lowBal) return
     this.setState({ ready: true, progress: { tree: 0, download: 0 } })
-    // Do nothing if balance or gas is low
-    if (this.state.gas_low || this.state.lowBal) return
     // Set the state of the mining progress
     this.setState({ progressBar: 0 })
     // Get minable addresses from server
@@ -378,22 +378,6 @@ class TokenMiner extends React.Component {
     )
   }
 
-  handleGas = async e => {
-    e.preventDefault()
-    this.determineEstimatedCost()
-    this.setState({ prevGas: this.state.gas })
-    this.setState({ gas: parseFloat(e.target.value) })
-    try {
-      if (e.target.value * 100 < this.state.currGas * 100) {
-        this.setState({ gas_low: true })
-      } else {
-        this.setState({ gas_low: false })
-      }
-    } catch (err) {
-      this.setState({ gas_low: true })
-    }
-  }
-
   determineEstimatedCost = async () => {
     let cost = window.web3.fromWei(this.state.gas * 3200000, 'gwei')
     this.setState({ estimatedCost: cost })
@@ -434,13 +418,13 @@ class TokenMiner extends React.Component {
         done={done}
         estimCost={this.state.estimatedCost}
         gas={this.state.gas}
-        gas_low={this.state.gas_low}
         handleReset={this.reset}
         loading={!ready && address}
         lowBal={this.state.lowBal}
         onCancel={onCancel}
         onDone={onDone}
         onSubmit={this.getProof}
+        handleSubmit={this.getProof}
         progress={progress}
         progressBar={this.state.progressBar}
         proof={proof}
