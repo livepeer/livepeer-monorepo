@@ -4,45 +4,13 @@ import { Link } from 'react-router-dom'
 import MerkleMiner from '@livepeer/merkle-miner'
 import { Button } from '../../components'
 import { MineProofForm } from './mineProofForm'
+import { netAddresses, numAddresses } from './helpers'
 
 const BN = require('bn.js')
 
 const MerkleMineABI = require('./MerkleMine.json')
 const MultiMerkleMineABI = require('./MultiMerkleMine.json')
 const TokenABI = require('./Token.json')
-
-/**
- * Defines contract addresses for
- * MerkleMine, MultiMerkleMine and LPT
- * currently contracts are only deployed on
- * MainNet and Rinkeby which holds the positions
- * 1 and 4. If contracts gets deployed on ropsten = 2
- * or Kovan = 3, then those filed could be placed here
- */
-const netAddresses = {
-  '1': {
-    merkleMine: '0x8e306b005773bee6ba6a6e8972bc79d766cc15c8',
-    multiMerkleMine: '0x182ebf4c80b28efc45ad992ecbb9f730e31e8c7f',
-    token: '0x58b6a8a3302369daec383334672404ee733ab239',
-  },
-  '2': {
-    merkleMine: '',
-    multiMerkleMine: '',
-    token: '',
-  },
-  '3': {
-    merkleMine: '',
-    multiMerkleMine: '',
-    token: '',
-  },
-  '4': {
-    merkleMine: '0x3bb5c927b9dcf20c1dca97b93397d22fda4f5451',
-    multiMerkleMine: '0x2ec3202aaeff2d3f7dd8571fe4a0bfc195ef6a17',
-    token: '0x750809dbdb422e09dabb7429ffaa94e42021ea04',
-  },
-}
-
-const numAddresses = 20
 
 class TokenMiner extends React.Component {
   static defaultProps = {
@@ -52,6 +20,7 @@ class TokenMiner extends React.Component {
   state = {
     address: this.props.defaultAddress,
     addresses: [],
+    netAddresses: {},
     tokensRemaining: 0,
     done: false,
     progressBar: -1,
@@ -61,18 +30,20 @@ class TokenMiner extends React.Component {
     estimatedCost: 0,
     gas: 0,
     progress: null,
-    editGas: false,
     balance: '',
     contract: '',
   }
 
   async componentDidMount() {
-    await window.web3.version.getNetwork((err, res) => {
-      if (err === null) {
-        this.setState({ netAddresses: netAddresses[res] })
-        return
-      }
-      console.log(err)
+    try {
+      window.web3.version.getNetwork((err, res) => {
+        if (err === null) {
+          this.setState({ netAddresses: netAddresses[res] })
+          return
+        }
+        console.log(err)
+      })
+    } catch (err) {
       this.setState({
         netAddresses: {
           merkleMine: process.env.REACT_APP_MERKLE_MINE_CONTRACT,
@@ -80,7 +51,7 @@ class TokenMiner extends React.Component {
           token: process.env.REACT_APP_TOKEN_ADDRESS,
         },
       })
-    })
+    }
     try {
       window.onbeforeunload = () => true
       const { worker } = this.props
@@ -98,13 +69,18 @@ class TokenMiner extends React.Component {
       await this.determineEstimatedCost()
       await this.getAmountLpt()
     } catch (err) {
-      this.setState({
+      /*this.setState({
         error: err.message,
-      })
+      })*/
+      console.log(err)
     }
-    this.state.contract = window.web3.eth
-      .contract(MultiMerkleMineABI)
-      .at(this.state.netAddresses.multiMerkleMine)
+    try {
+      this.state.contract = window.web3.eth
+        .contract(MultiMerkleMineABI)
+        .at(this.state.netAddresses.multiMerkleMine)
+    } catch (err) {
+      console.log(err)
+    }
     this.getMerkleMineLPTBalance()
   }
 
@@ -179,18 +155,30 @@ class TokenMiner extends React.Component {
   }
 
   getMerkleMineLPTBalance = async () => {
-    let mkContract = window.web3.eth
-      .contract(TokenABI)
-      .at(this.state.netAddresses.token)
+    try {
+      let mkContract = window.web3.eth
+        .contract(TokenABI)
+        .at(this.state.netAddresses.token)
 
-    mkContract.balanceOf(this.state.netAddresses.merkleMine, (err, res) => {
-      if (err === null) {
-        const tokens = res.div(new BN(10).pow(new BN(18))).toString(10)
-        this.setState({ tokensRemaining: tokens })
-        return
-      }
+      mkContract.balanceOf(this.state.netAddresses.merkleMine, (err, res) => {
+        if (err === null) {
+          const tokens = res.div(new BN(10).pow(new BN(18))).toString(10)
+          this.setState({ tokensRemaining: tokens })
+          return
+        }
+        console.log(err)
+      })
+    } catch (err) {
+      const tokens =
+        (await window.livepeer.rpc.getTokenBalance(
+          '0x8e306b005773bee6ba6a6e8972bc79d766cc15c8',
+        )) / Math.pow(10, 18)
+      this.setState({ tokensRemaining: tokens })
       console.log(err)
-    })
+      console.log(
+        'You amy need to set contract addresses if on custom blockchain',
+      )
+    }
   }
 
   // Reset the app to  original state
@@ -206,7 +194,6 @@ class TokenMiner extends React.Component {
       progressBar: -1,
       proof: '',
       progress: null,
-      editGas: false,
     })
     this.getAmountLpt()
     this.getMerkleMineLPTBalance()
@@ -419,29 +406,6 @@ class TokenMiner extends React.Component {
     this.props.history.push('/transcoders')
   }
 
-  /**
-   * Controller for edit and cancel button in token
-   * miner
-   */
-  editGas = async e => {
-    e.preventDefault()
-    this.determineEstimatedCost()
-    this.setState({ editGas: !this.state.editGas })
-    this.setState({ prevGas: this.state.gas })
-  }
-
-  cancelEditGas = async e => {
-    e.preventDefault()
-    this.setState({ gas: this.state.prevGas })
-    this.determineEstimatedCost()
-    if (parseFloat(this.state.gas) * 100 < this.state.currGas * 100) {
-      this.setState({ gas_low: true })
-    } else {
-      this.setState({ gas_low: false })
-    }
-    this.setState({ editGas: !this.state.editGas })
-  }
-
   render() {
     const { allowManualEntry, renderError, onCancel, onDone } = this.props
     const { address, done, error, progress, proof, ready } = this.state
@@ -464,33 +428,25 @@ class TokenMiner extends React.Component {
       </React.Fragment>
     ) : (
       <MineProofForm
-        handleSave={() => {
-          this.setState({ editGas: false })
-        }}
-        lowBal={this.state.lowBal}
-        addressLocked={!allowManualEntry}
+        amtLpt={this.state.amtLpt}
+        balance={this.state.balance}
+        defaultAddress={this.props.defaultAddress}
         done={done}
-        editGas={this.state.editGas}
-        handleGas={this.handleGas}
-        gas_low={this.state.gas_low}
         estimCost={this.state.estimatedCost}
         gas={this.state.gas}
-        handleCancel={this.cancelEditGas}
-        handleEdit={this.editGas}
-        stakeTokens={this.stakeTokens}
-        initialValues={{ address }}
+        gas_low={this.state.gas_low}
+        handleReset={this.reset}
         loading={!ready && address}
+        lowBal={this.state.lowBal}
         onCancel={onCancel}
         onDone={onDone}
-        balance={this.state.balance}
         onSubmit={this.getProof}
         progress={progress}
-        handleReset={this.reset}
         progressBar={this.state.progressBar}
         proof={proof}
-        subProofs={this.state.subProofs}
-        amtLpt={this.state.amtLpt}
         remainingTokens={this.state.tokensRemaining}
+        stakeTokens={this.stakeTokens}
+        subProofs={this.state.subProofs}
       />
     )
   }

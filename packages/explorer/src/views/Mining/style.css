@@ -411,6 +411,12 @@ a {
 }
 
 @media only screen and (max-width: 768px) {
+  .center-div {
+    margin: 40px auto 10px;
+    max-width: 400px;
+    width: 80%;
+    text-align: center;
+  }
   .main-instruct h1,
   .token-area h1 {
     font-size: 22px;
@@ -425,16 +431,14 @@ a {
   .main {
     flex-direction: column-reverse;
   }
-  .token-area {
-    margin: 5px;
-  }
   .main-instruct,
   .token-area {
     display: block;
     width: 100%;
   }
-  .main-instruct {
-    margin: 5px;
+  .main-instruct,
+  .token-area {
+    margin: 5px 0;
   }
 }
 
