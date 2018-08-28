@@ -243,6 +243,7 @@ const NetworkBadge = styled.span`
       display: none !important;
     }
   }
+`
 
 export default compose(
   connectToasts,
