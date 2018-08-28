@@ -180,6 +180,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
     </Navbar>
   )
 }
+
 const Nav = styled.nav`
   display: flex;
   flex-flow: row;
@@ -242,51 +243,6 @@ const NetworkBadge = styled.span`
       display: none !important;
     }
   }
-`
-
-/*const NavSearchContainer = styled.div`
-  width: 320px;
-  padding-left: 16px;
-  position: relative;
-  @media (max-width: 640px) {
-    display: none;
-  }
-`
-
-const NavSearch = ({ onSearch }) => (
-  <NavSearchContainer>
-    {
-      <Search
-      color="#fff"
-      size={24}
-      style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
-      />
-    }
-    <input
-      type="search"
-      placeholder="Search accounts by ETH address"
-      style={{
-        width: '100%',
-        height: 32,
-        margin: 0,
-        padding: '0 16px',
-        background: 'rgba(255,255,255,.2)',
-        color: '#fff',
-        outline: 0,
-        border: 'none',
-        borderRadius: 0,
-        WebkitAppearance: 'textfield',
-      }}
-      onKeyDown={e => {
-        const { value } = e.target
-        if (e.keyCode !== 13) return
-        if (!value.startsWith('0x')) return
-        onSearch(value)
-        e.target.value = ''
-      }}
-    />
-  </NavSearchContainer>
-)*/
 
 export default compose(
   connectToasts,
