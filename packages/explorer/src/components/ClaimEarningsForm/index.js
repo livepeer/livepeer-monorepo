@@ -3,32 +3,11 @@ import * as React from 'react'
 import { Form, Field } from 'react-final-form'
 import { Link } from 'react-router-dom'
 import Confetti from 'react-dom-confetti'
-import { withProp } from '../enhancers'
-import { formatBalance, toBaseUnit, MathBN } from '../utils'
-import InlineAccount from './InlineAccount'
-import InlineHint from './InlineHint'
-import Button from './Button'
-
-export type ClaimEarningsFormProps = {
-  diff: string,
-  from: string,
-  handleSubmit: any => void,
-  loading: boolean,
-  max: string,
-  min: string,
-  onCancel: any => void,
-  pristine: boolean,
-  reset: any => void,
-  submitError: ?string,
-  submitFailed: boolean,
-  submitSucceeded: boolean,
-  submitting: boolean,
-  to: string,
-  valid: boolean,
-  values: {
-    numRounds: string,
-  },
-}
+import { withProp } from '../../enhancers'
+import { MathBN } from '../../utils'
+import InlineHint from '../InlineHint'
+import Button from '../Button'
+import type { ClaimEarningsFormProps } from './props'
 
 /**
  * Renders a form for claiming earnings

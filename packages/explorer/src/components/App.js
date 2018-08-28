@@ -1,14 +1,7 @@
 import React from 'react'
-import {
-  BrowserRouter,
-  HashRouter,
-  Redirect,
-  Route,
-  Switch,
-  matchPath,
-} from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import { Button, CTA, CTABanner, Modal } from '../components'
+import { Button, CTABanner } from '../components'
 import Account from '../views/Account'
 import Approve from '../views/Approve'
 import Bond from '../views/Bond'

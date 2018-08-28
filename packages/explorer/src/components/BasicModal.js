@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { X as XIcon } from 'react-feather'
 import Modal from './Modal'
 import Content from './Content'
 

@@ -1,12 +1,8 @@
 // @flow
 import * as React from 'react'
 import styled from 'styled-components'
-import Avatar from './Avatar'
-
-type InlineAccountProps = {
-  address: string,
-  truncate: number,
-}
+import Avatar from '../Avatar'
+import type { InlineAccountProps } from './props'
 
 const InlineAccount: React.ComponentType<InlineAccountProps> = styled(
   ({ address, border, className, truncate }) => (

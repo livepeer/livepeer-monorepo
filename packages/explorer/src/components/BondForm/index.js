@@ -1,29 +1,14 @@
 import * as React from 'react'
-import styled from 'styled-components'
 import { Form } from 'react-final-form'
 import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
 import Confetti from 'react-dom-confetti'
-import { withProp } from '../enhancers'
-import { formatBalance, toBaseUnit, MathBN } from '../utils'
-import InlineAccount from './InlineAccount'
-import InlineHint from './InlineHint'
-import Button from './Button'
-
-type BondFormProps = {
-  bondedAmount: string,
-  delegateAddress: string,
-  handleSubmit: any => void,
-  loading: boolean,
-  onCancel: any => void,
-  pristine: boolean,
-  tokenBalance: string,
-  valid: boolean,
-  values: {
-    amount: string,
-    to: string,
-  },
-}
+import { withProp } from '../../enhancers'
+import { formatBalance, toBaseUnit, MathBN } from '../../utils'
+import InlineAccount from '../InlineAccount'
+import InlineHint from '../InlineHint'
+import Button from '../Button'
+import type { BondFormProps } from './props'
 
 /**
  * Renders a form for token bonding.
@@ -63,7 +48,6 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   )
   const noAllowance = allowance === '0'
   const noBondedAmount = bondedAmount === '0'
-  const noTokens = tokenBalance === '0'
   const cannotBond =
     (noAllowance && noBondedAmount) ||
     (values.amount && MathBN.gt(toBaseUnit(values.amount), allowance))
