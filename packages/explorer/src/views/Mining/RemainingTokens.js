@@ -37,10 +37,13 @@ const RemainingTokens = ({ progressBar, remainingTokens }) => {
                 color: '#000',
                 margin: 0,
               }}
-            >{`${(
-              ((10000000 - parseInt(remainingTokens)) / 10000000) *
-              100
-            ).toFixed(2)}%`}</ProgressBar>
+            >
+              {`${(
+                ((10000000 - parseInt(remainingTokens)) / 10000000) *
+                100
+              ).toFixed(2)}% `}{' '}
+              of LTP distributed
+            </ProgressBar>
           </div>
         </div>
       )}
