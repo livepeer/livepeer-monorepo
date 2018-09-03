@@ -93,8 +93,9 @@ export class QualityPicker extends Component {
   }
 
   handleQualityChange(ev) {
-    if (this.video) {
-      this.video.loadLevel(parseInt(ev.target.dataset['id']))
+    let { video } = this.props
+    if (video) {
+      video.loadLevel(parseInt(ev.target.dataset['id']))
     } else {
       console.error(`ev: this.video is null ${this.video}`)
     }
@@ -106,14 +107,10 @@ export class QualityPicker extends Component {
    * create the single resolution items in the res list
    * @return {Array} returns an array of items.
    */
-  createResOptions(levels) {
-    this.video = this.props.video
-    if (!this.video) {
-      return
-    }
+  createResOptions(levels, video) {
     levels = levels || this.props.levels
     let res = []
-    let currentLevel = this.video.getCurrentLevel()
+    let currentLevel = video.getCurrentLevel() || -1
     if (levels && levels.length >= 1 && levels[0].attrs) {
       for (let i = levels.length - 1; i >= 0; i--) {
         res.push(
@@ -141,7 +138,7 @@ export class QualityPicker extends Component {
   }
 
   render() {
-    const { player, className, levels } = this.props
+    const { player, className, levels, video } = this.props
     return (
       <div className={'video-react-control'}>
         <div
@@ -150,7 +147,7 @@ export class QualityPicker extends Component {
             display: !this.state.visible ? 'none' : 'block',
           }}
         >
-          <ul>{this.createResOptions(levels)}</ul>
+          <ul>{this.createResOptions(levels, video)}</ul>
         </div>
         <button
           ref={c => {
