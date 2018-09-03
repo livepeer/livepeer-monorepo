@@ -77,6 +77,7 @@ export class QualityPicker extends Component {
     player: PropTypes.object,
     video: PropTypes.object,
     className: PropTypes.string,
+    levels: PropTypes.array,
   }
 
   constructor(props, context) {
@@ -84,7 +85,6 @@ export class QualityPicker extends Component {
     this.createResOptions = this.createResOptions.bind(this)
     this.state = {
       visible: false,
-      levels: [],
     }
   }
 
@@ -106,12 +106,13 @@ export class QualityPicker extends Component {
    * create the single resolution items in the res list
    * @return {Array} returns an array of items.
    */
-  createResOptions() {
+  createResOptions(levels) {
+    this.video = this.props.video
     if (!this.video) {
       return
     }
-    let levels = this.state.levels,
-      res = []
+    levels = levels || this.props.levels
+    let res = []
     let currentLevel = this.video.getCurrentLevel()
     if (levels && levels.length >= 1 && levels[0].attrs) {
       for (let i = levels.length - 1; i >= 0; i--) {
@@ -139,24 +140,8 @@ export class QualityPicker extends Component {
     )
   }
 
-  componentDidMount() {
-    this.video = this.props.video
-    setInterval(() => {
-      if (this.video) {
-        let lvls = this.video.getLevels()
-        // console.log('lvls:', lvls, typeof lvls)
-        // if (lvls && lvls.length && lvls[0]) {
-        //   console.log('lvl0:', lvls[0])
-        //   console.log('lvl0:', lvls[0].attrs.RESOLUTION)
-        // }
-        this.setState({ levels: lvls })
-        this.render()
-      }
-    }, 1000)
-  }
-
   render() {
-    const { player, className } = this.props
+    const { player, className, levels } = this.props
     return (
       <div className={'video-react-control'}>
         <div
@@ -165,7 +150,7 @@ export class QualityPicker extends Component {
             display: !this.state.visible ? 'none' : 'block',
           }}
         >
-          <ul>{this.createResOptions()}</ul>
+          <ul>{this.createResOptions(levels)}</ul>
         </div>
         <button
           ref={c => {
@@ -234,6 +219,17 @@ export default class VideoPlayer extends Component {
     onLive: () => {},
     onDead: () => {},
   }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      levels: [],
+    }
+
+    // this.onLevels = this.onLevels.bind(this)
+  }
+
   // Injects player css into the dom
   componentDidMount = injectStyles
 
@@ -242,8 +238,11 @@ export default class VideoPlayer extends Component {
    * @return {Array} array of res objects
    */
   getLevels() {
-    // console.log('available levels: ', this.source.getLevels())
-    return this.source.getLevels()
+    if (this.source) {
+      return this.source.getLevels()
+    } else {
+      return []
+    }
   }
 
   /**
@@ -251,9 +250,12 @@ export default class VideoPlayer extends Component {
    * @return {Number} returns level index
    */
   getCurrentLevel() {
-    let x = this.source.getCurrentLevel()
-    // console.log('currentLevel: ', x)
-    return x
+    if (this.source) {
+      let x = this.source.getCurrentLevel()
+      return x
+    } else {
+      return -1
+    }
   }
 
   /**
@@ -261,9 +263,17 @@ export default class VideoPlayer extends Component {
    * @param  {Number} level index of the level
    */
   loadLevel(level) {
-    // console.log('ev: current Level: ', this.getCurrentLevel())
-    this.source.loadLevel(level)
-    // console.log('ev: after Level: ', this.getCurrentLevel())
+    if (this.source) {
+      this.source.loadLevel(level)
+    }
+  }
+
+  onLive(...args) {
+    this.setState({
+      levels: args[0].levels,
+    })
+    // pass it along to onLive (check @livepeer/player/src/Channel/index.js)
+    this.props.onLive(...args)
   }
 
   render() {
@@ -280,14 +290,14 @@ export default class VideoPlayer extends Component {
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
         <ControlBar autoHide={false}>
-          <QualityPicker order={7} video={this} />
+          <QualityPicker order={7} video={this} levels={this.state.levels} />
         </ControlBar>
         <Source
           ref={instance => {
             this.source = instance
           }}
           isVideoChild
-          onLive={onLive}
+          onLive={this.onLive.bind(this)}
           onDead={onDead}
           autoPlay={autoPlay}
           src={src}
@@ -570,6 +580,7 @@ export class Source extends Component {
       data.levels.map(x => x.url.toString()).join('\n'),
       data.levels,
     )
+    // onLevels(data.levels)
     // this.getLevels()
     this.debug('will load level', this.hls.loadLevel)
     this.hls.startLoad()
