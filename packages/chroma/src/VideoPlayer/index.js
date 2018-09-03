@@ -78,6 +78,7 @@ export class QualityPicker extends Component {
     video: PropTypes.object,
     className: PropTypes.string,
     levels: PropTypes.array,
+    currentLevel: PropTypes.number,
   }
 
   constructor(props, context) {
@@ -110,7 +111,7 @@ export class QualityPicker extends Component {
   createResOptions(levels, video) {
     levels = levels || this.props.levels
     let res = []
-    let currentLevel = video.getCurrentLevel() || -1
+    let currentLevel = this.props.currentLevel || -1
     if (levels && levels.length >= 1 && levels[0].attrs) {
       for (let i = levels.length - 1; i >= 0; i--) {
         res.push(
@@ -222,6 +223,7 @@ export default class VideoPlayer extends Component {
 
     this.state = {
       levels: [],
+      currentLevel: -1,
     }
 
     // this.onLevels = this.onLevels.bind(this)
@@ -262,12 +264,14 @@ export default class VideoPlayer extends Component {
   loadLevel(level) {
     if (this.source) {
       this.source.loadLevel(level)
+      this.setState({ currentLevel: level })
     }
   }
 
   onLive(...args) {
     this.setState({
       levels: args[0].levels,
+      currentLevel: this.getCurrentLevel(),
     })
     // pass it along to onLive (check @livepeer/player/src/Channel/index.js)
     this.props.onLive(...args)
@@ -287,7 +291,12 @@ export default class VideoPlayer extends Component {
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
         <ControlBar autoHide={false}>
-          <QualityPicker order={7} video={this} levels={this.state.levels} />
+          <QualityPicker
+            order={7}
+            video={this}
+            levels={this.state.levels}
+            currentLevel={this.state.currentLevel}
+          />
         </ControlBar>
         <Source
           ref={instance => {
