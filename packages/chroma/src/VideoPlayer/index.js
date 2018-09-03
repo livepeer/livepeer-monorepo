@@ -76,7 +76,6 @@ export class QualityPicker extends Component {
     actions: PropTypes.object,
     player: PropTypes.object,
     video: PropTypes.object,
-    className: PropTypes.string,
     levels: PropTypes.array,
     currentLevel: PropTypes.number,
   }
@@ -88,11 +87,17 @@ export class QualityPicker extends Component {
       visible: false,
     }
   }
-
+  /**
+   * toggles menu visibility
+   */
   toggleMenu() {
     this.setState({ visible: !this.state.visible })
   }
 
+  /**
+   * change current Resolution
+   * @param  {event} ev button HTML event object
+   */
   handleQualityChange(ev) {
     let { video } = this.props
     if (video) {
@@ -100,8 +105,6 @@ export class QualityPicker extends Component {
     } else {
       console.error(`ev: this.video is null ${this.video}`)
     }
-
-    this.render()
   }
 
   /**
@@ -124,6 +127,13 @@ export class QualityPicker extends Component {
     return res
   }
 
+  /**
+   * generate a single item on the resolution menu
+   * @param  {Number} currentLevel index of the current level
+   * @param  {number} i            index of the level being generated
+   * @param  {string} resolution   resolution string (1920x1080 or 1080p .. whatever)
+   * @return {object}              HTML List element
+   */
   generateListItem(currentLevel, i, resolution) {
     return (
       <li key={i}>
@@ -139,7 +149,7 @@ export class QualityPicker extends Component {
   }
 
   render() {
-    const { player, className, levels, video } = this.props
+    const { levels, video } = this.props
     return (
       <div className={'video-react-control'}>
         <div
@@ -465,7 +475,6 @@ export class Source extends Component {
   getLevels = (): Array<Mixed> => {
     if (this.hls) {
       let levels = this.hls.levels
-      // console.log('hlsjs: Levels: ', levels)
       return levels
     } else {
       return []
@@ -487,7 +496,6 @@ export class Source extends Component {
    */
   loadLevel = (level: Number): void => {
     this.hls.currentLevel = level
-    // console.log('ev: loaded level: ', this.getCurrentLevel())
   }
 
   /**
