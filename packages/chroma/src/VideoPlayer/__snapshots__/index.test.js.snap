@@ -27,7 +27,7 @@ exports[`should render as expected 1`] = `
     </span>
   </button>
   <div
-    class="video-react-control-bar video-react-control-bar-auto-hide"
+    class="video-react-control-bar"
   >
     <button
       class="video-react-play-control video-react-control video-react-button video-react-paused"
@@ -140,6 +140,30 @@ exports[`should render as expected 1`] = `
           </span>
         </div>
       </div>
+    </div>
+    <div
+      class="video-react-control"
+    >
+      <div
+        class="menu-container"
+        style="display:none"
+      >
+        <ul>
+          <li>
+            <button
+              data-id="-1"
+            >
+              auto
+            </button>
+          </li>
+        </ul>
+      </div>
+      <button
+        class="video-react-icon video-react-control video-react-button video-react-icon-settings"
+        tabindex="0"
+      >
+        
+      </button>
     </div>
     <button
       class="video-react-icon-fullscreen video-react-fullscreen-control video-react-control video-react-button video-react-icon"

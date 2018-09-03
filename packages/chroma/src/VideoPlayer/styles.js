@@ -913,5 +913,30 @@ export default () => {
       transform: scale(2)
     }
   }
+
+  .menu-container {
+    display: block;
+    background: linear-gradient(to top,rgba(43,51,63,1) -25%,transparent);
+    text-align: center;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    min-width: 50px;
+    min-height: 70px;
+  }
+
+  .menu-container > ul {
+    list-style: none;
+    padding: 15px 5px;
+  }
+
+  .menu-container > ul > li {
+    font-size: 16px;
+    padding: 4px 2px;
+  }
+
+  .active {
+    font-weight: 700;
+  }
 `
 }

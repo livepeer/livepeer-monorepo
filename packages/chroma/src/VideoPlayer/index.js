@@ -1,6 +1,6 @@
 import React, { Component, ReactChildren, ReactElement } from 'react'
 import PropTypes from 'prop-types'
-import { Player, BigPlayButton } from 'video-react'
+import { Player, BigPlayButton, ControlBar } from 'video-react'
 import injectStyles from './styles'
 import Hls from 'hls.js'
 
@@ -69,6 +69,113 @@ const getSourceType = (src: string): string => {
 const isHLS = (x: string): boolean => x === 'application/x-mpegURL'
 
 /**
+ * Quality picker controller for HLS multibitrate videos
+ */
+export class QualityPicker extends Component {
+  static propTypes = {
+    actions: PropTypes.object,
+    player: PropTypes.object,
+    video: PropTypes.object,
+    levels: PropTypes.array,
+    currentLevel: PropTypes.number,
+  }
+
+  constructor(props, context) {
+    super(props, context)
+    this.createResOptions = this.createResOptions.bind(this)
+    this.state = {
+      visible: false,
+    }
+  }
+  /**
+   * toggles menu visibility
+   */
+  toggleMenu() {
+    this.setState({ visible: !this.state.visible })
+  }
+
+  /**
+   * change current Resolution
+   * @param  {event} ev button HTML event object
+   */
+  handleQualityChange(ev) {
+    let { video } = this.props
+    if (video) {
+      video.loadLevel(parseInt(ev.target.dataset['id']))
+    } else {
+      console.error(`ev: this.video is null ${this.video}`)
+    }
+  }
+
+  /**
+   * create the single resolution items in the res list
+   * @return {Array} returns an array of items.
+   */
+  createResOptions(levels, video) {
+    levels = levels || this.props.levels
+    let res = []
+    let currentLevel = this.props.currentLevel || -1
+    if (levels && levels.length >= 1 && levels[0].attrs) {
+      for (let i = levels.length - 1; i >= 0; i--) {
+        res.push(
+          this.generateListItem(currentLevel, i, levels[i].attrs.RESOLUTION),
+        )
+      }
+    }
+
+    res.push(this.generateListItem(currentLevel, -1, 'auto'))
+    return res
+  }
+
+  /**
+   * generate a single item on the resolution menu
+   * @param  {Number} currentLevel index of the current level
+   * @param  {number} i            index of the level being generated
+   * @param  {string} resolution   resolution string (1920x1080 or 1080p .. whatever)
+   * @return {object}              HTML List element
+   */
+  generateListItem(currentLevel, i, resolution) {
+    return (
+      <li key={i}>
+        <button
+          className={currentLevel === i ? 'active' : ''}
+          data-id={i}
+          onClick={this.handleQualityChange.bind(this)}
+        >
+          {resolution}
+        </button>
+      </li>
+    )
+  }
+
+  render() {
+    const { levels, video } = this.props
+    return (
+      <div className={'video-react-control'}>
+        <div
+          className={'menu-container'}
+          style={{
+            display: !this.state.visible ? 'none' : 'block',
+          }}
+        >
+          <ul>{this.createResOptions(levels, video)}</ul>
+        </div>
+        <button
+          ref={c => {
+            this.button = c
+          }}
+          className={
+            'video-react-icon video-react-control video-react-button video-react-icon-settings'
+          }
+          tabIndex="0"
+          onClick={this.toggleMenu.bind(this)}
+        />
+      </div>
+    )
+  }
+}
+
+/**
  * A VideoPlayer class that extends the functionality of `video-react`'s default player
  * Additional features include updated styles and HLS support
  */
@@ -120,8 +227,66 @@ export default class VideoPlayer extends Component {
     onLive: () => {},
     onDead: () => {},
   }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      levels: [],
+      currentLevel: -1,
+    }
+
+    // this.onLevels = this.onLevels.bind(this)
+  }
+
   // Injects player css into the dom
   componentDidMount = injectStyles
+
+  /**
+   * get all available bitrates
+   * @return {Array} array of res objects
+   */
+  getLevels() {
+    if (this.source) {
+      return this.source.getLevels()
+    } else {
+      return []
+    }
+  }
+
+  /**
+   * get Current level playing
+   * @return {Number} returns level index
+   */
+  getCurrentLevel() {
+    if (this.source) {
+      let x = this.source.getCurrentLevel()
+      return x
+    } else {
+      return -1
+    }
+  }
+
+  /**
+   * immediate change to a new resolution
+   * @param  {Number} level index of the level
+   */
+  loadLevel(level) {
+    if (this.source) {
+      this.source.loadLevel(level)
+      this.setState({ currentLevel: level })
+    }
+  }
+
+  onLive(...args) {
+    this.setState({
+      levels: args[0].levels,
+      currentLevel: this.getCurrentLevel(),
+    })
+    // pass it along to onLive (check @livepeer/player/src/Channel/index.js)
+    this.props.onLive(...args)
+  }
+
   render() {
     const {
       src,
@@ -135,9 +300,20 @@ export default class VideoPlayer extends Component {
     return (
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
+        <ControlBar autoHide={false}>
+          <QualityPicker
+            order={7}
+            video={this}
+            levels={this.state.levels}
+            currentLevel={this.state.currentLevel}
+          />
+        </ControlBar>
         <Source
+          ref={instance => {
+            this.source = instance
+          }}
           isVideoChild
-          onLive={onLive}
+          onLive={this.onLive.bind(this)}
           onDead={onDead}
           autoPlay={autoPlay}
           src={src}
@@ -278,6 +454,7 @@ export class Source extends Component {
       this.hls.on(Hls.Events.MEDIA_ATTACHED, this.onMediaAttached)
       this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed)
       this.hls.on(Hls.Events.ERROR, this.onError)
+      // console.info('modded chroma2')
       this.debug('attaching media')
       this.hls.attachMedia(video)
     } else if (canPlayHLS) {
@@ -291,6 +468,36 @@ export class Source extends Component {
       video.src = src
     }
   }
+
+  /**
+   * get HLS.js bitrate levels
+   */
+  getLevels = (): Array<Mixed> => {
+    if (this.hls) {
+      let levels = this.hls.levels
+      return levels
+    } else {
+      return []
+    }
+  }
+
+  /**
+   * get currentl playing resolution index
+   */
+  getCurrentLevel = (): Number => {
+    if (!this.hls) {
+      return -1
+    }
+    return this.hls.currentLevel
+  }
+
+  /**
+   * change resolution
+   */
+  loadLevel = (level: Number): void => {
+    this.hls.currentLevel = level
+  }
+
   /**
    * Event handler that is fired when native 'canplay' event is triggered on <video>
    * @note This handler is only bound when HLS is natively supported
@@ -385,7 +592,10 @@ export class Source extends Component {
     this.debug(
       'manifest loaded, found levels\n',
       data.levels.map(x => x.url.toString()).join('\n'),
+      data.levels,
     )
+    // onLevels(data.levels)
+    // this.getLevels()
     this.debug('will load level', this.hls.loadLevel)
     this.hls.startLoad()
     if (autoPlay) await video.play()
