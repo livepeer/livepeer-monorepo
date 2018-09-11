@@ -58,7 +58,7 @@ const MiningArea = ({
               </tr>
               <tr>
                 <TableData
-                  tableData={`Warning: Mining may not succeed is the offered gas price is too
+                  tableData={`Warning: Mining may not succeed if the offered gas price is too
                             low, as other miners may mine these accounts while your transaction is pending.
                             Offering a higher gas price may help get your transaction confirmed quickly.`}
                   colSpan="2"
