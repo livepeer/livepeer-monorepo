@@ -23,10 +23,13 @@ class TokenMiner extends React.Component {
     balance: '',
     contract: '',
     done: false,
+    edit: false,
     error: '',
     estimatedCost: 0,
     gas: 0,
+    gasModified: false,
     netAddresses: {},
+    prevGas: 0,
     progress: null,
     progressBar: -1,
     proof: '',
@@ -318,9 +321,7 @@ class TokenMiner extends React.Component {
       medium: response.data.average / 10,
       high: response.data.fast / 10,
     }
-    this.setState({ currGas: prices.medium })
-    this.setState({ gas: prices.medium })
-    this.setState({ prevGas: prices.medium })
+    this.setState({ gas: prices.medium + 0.5 })
   }
   /**
    * This method checks with EVM to determine if merkle mining is finished
@@ -386,6 +387,45 @@ class TokenMiner extends React.Component {
     }
   }
 
+  cancelEditGas = async e => {
+    e.preventDefault
+    if (!this.state.gasModified) {
+      this.getCurrentGasPrices()
+    } else {
+      this.setState({
+        gas: this.state.prevGas,
+      })
+    }
+    this.editGas(e)
+  }
+
+  editGas = async e => {
+    e.preventDefault
+    this.setState({
+      prevGas: this.state.gas,
+      edit: !this.state.edit,
+    })
+  }
+
+  saveGas = async e => {
+    e.preventDefault
+    this.setState({
+      edit: !this.state.edit,
+      gasModified: true,
+    })
+    await this.determineEstimatedCost()
+  }
+
+  updateGas = async e => {
+    e.preventDefault
+    let gas = parseFloat(e.target.value)
+    if (gas > 0) {
+      this.setState({ gas: gas })
+    } else {
+      this.setState({ gas: 0.001 })
+    }
+  }
+
   stakeTokens = async => {
     this.props.history.push('/transcoders')
   }
@@ -414,8 +454,12 @@ class TokenMiner extends React.Component {
       <MineProofForm
         amtLpt={this.state.amtLpt}
         balance={this.state.balance}
+        changeGas={this.updateGas}
+        cancelSave={this.cancelEditGas}
         defaultAddress={this.props.defaultAddress}
         done={done}
+        edit={this.state.edit}
+        editGas={this.editGas}
         estimCost={this.state.estimatedCost}
         gas={this.state.gas}
         handleReset={this.reset}
@@ -429,6 +473,7 @@ class TokenMiner extends React.Component {
         progressBar={this.state.progressBar}
         proof={proof}
         remainingTokens={this.state.tokensRemaining}
+        saveGas={this.saveGas}
         stakeTokens={this.stakeTokens}
         subProofs={this.state.subProofs}
       />

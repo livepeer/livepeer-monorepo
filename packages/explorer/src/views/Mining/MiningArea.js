@@ -5,12 +5,17 @@ import { Button } from '../../components'
 const MiningArea = ({
   amtLpt,
   balance,
+  cancelSave,
+  changeGas,
+  edit,
+  editGas,
   estimCost,
   gas,
   handleSubmit,
   loading,
   lowBal,
   progress,
+  saveGas,
 }) => {
   return (
     <React.Fragment>
@@ -39,7 +44,25 @@ const MiningArea = ({
                   tableData="Gas price:"
                   help="The current market price of 1 gas according to EthGasStation."
                 />
-                <TableData tableData="Gwei" beforeData={gas} />
+                <TableData
+                  beforeData={gas}
+                  btnVal="Edit"
+                  cancelSave={cancelSave}
+                  changeDataState={changeGas}
+                  edit={edit}
+                  save={saveGas}
+                  showBtn={true}
+                  tableData="Gwei"
+                  toggleForm={editGas}
+                />
+              </tr>
+              <tr>
+                <TableData
+                  tableData={`Warning: Mining may not succeed is the offered gas price is too
+                            low, as other miners may mine these accounts while your transaction is pending.
+                            Offering a higher gas price may help get your transaction confirmed quickly.`}
+                  colSpan="2"
+                />
               </tr>
             </tbody>
           </table>

@@ -37,7 +37,10 @@ const TokenView = ({ history, ...props }) => {
             fontFamily: 'monospace',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div
+            className="token-overview"
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
               <p style={{ margin: '2px auto' }}>
                 Scarcity:&nbsp;<span style={{ fontSize: '14px' }}>

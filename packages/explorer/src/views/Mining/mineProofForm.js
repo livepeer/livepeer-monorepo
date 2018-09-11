@@ -15,8 +15,12 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
   ({
     amtLpt,
     balance,
+    cancelSave,
+    changeGas,
     defaultAddress,
     done,
+    edit,
+    editGas,
     estimCost,
     gas,
     handleReset,
@@ -29,6 +33,7 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
     progressBar,
     proof,
     remainingTokens,
+    saveGas,
     stakeTokens,
     subProofs,
     ...props
@@ -68,12 +73,17 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
                   <MiningArea
                     amtLpt={amtLpt}
                     balance={balance}
+                    cancelSave={cancelSave}
+                    changeGas={changeGas}
+                    edit={edit}
+                    editGas={editGas}
                     estimCost={estimCost}
                     gas={gas}
                     handleSubmit={handleSubmit}
                     loading={loading}
                     lowBal={lowBal}
                     progress={progress}
+                    saveGas={saveGas}
                   />
 
                   <MiningProgress

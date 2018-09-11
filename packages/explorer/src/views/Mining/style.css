@@ -103,7 +103,7 @@ a {
 
 .center-div {
   margin: 40px auto 10px;
-  width: 300px;
+  text-align: center;
 }
 
 .chip {
@@ -410,11 +410,36 @@ a {
   background-color: #ffffff;
 }
 
+@media only screen and (max-width: 500px) {
+  .center-div {
+    margin: auto !important;
+    width: auto !important;
+  }
+
+  .mod-btn {
+    width: 25%;
+    margin-right: 0px;
+    font-size: xx-small;
+  }
+
+  .mod-btn:nth-child(3) {
+    width: 40%;
+  }
+
+  .token-overview div {
+    width: 100% !important;
+  }
+
+  .token-overview {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .center-div {
     margin: 40px auto 10px;
     max-width: 400px;
-    width: 80%;
     text-align: center;
   }
   .main-instruct h1,
@@ -440,9 +465,7 @@ a {
   .token-area {
     margin: 5px 0;
   }
-}
 
-@media only screen and (max-width: 768px) {
   .chip h2,
   .chip p {
     width: 80%;
