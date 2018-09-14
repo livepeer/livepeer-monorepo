@@ -321,7 +321,7 @@ class TokenMiner extends React.Component {
       medium: response.data.average / 10,
       high: response.data.fast / 10,
     }
-    this.setState({ gas: prices.medium + 0.5 })
+    this.setState({ gas: prices.medium * 1.5 })
   }
   /**
    * This method checks with EVM to determine if merkle mining is finished

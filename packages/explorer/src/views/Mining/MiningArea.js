@@ -100,6 +100,8 @@ const MiningArea = ({
               onClick={handleSubmit}
               style={{
                 backgroundColor: lowBal ? '#ccc' : '#000000',
+                color: 'white',
+                display: 'inline-block',
               }}
               className="primary-btn"
             >
