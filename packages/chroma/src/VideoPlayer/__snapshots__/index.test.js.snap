@@ -151,6 +151,7 @@ exports[`should render as expected 1`] = `
         <ul>
           <li>
             <button
+              class="active"
               data-id="-1"
             >
               auto
