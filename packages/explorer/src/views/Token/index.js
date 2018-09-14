@@ -37,7 +37,10 @@ const TokenView = ({ history, ...props }) => {
             fontFamily: 'monospace',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div
+            className="token-overview"
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
             <div style={{ width: '50%', paddingRight: 16, paddingTop: 32 }}>
               <p style={{ margin: '2px auto' }}>
                 Scarcity:&nbsp;<span style={{ fontSize: '14px' }}>
@@ -284,12 +287,10 @@ const TokenView = ({ history, ...props }) => {
           The estimated token generation over the next 36 months looks as
           follows:
         </p>
-        <p>
-          <img
-            src="https://livepeer-assets.s3.amazonaws.com/token-release.png"
-            alt="distribution"
-          />
-        </p>
+        <img
+          src="https://livepeer-assets.s3.amazonaws.com/token-release.png"
+          alt="distribution"
+        />
         <hr style={{ border: '1px solid #ccc', width: '100%' }} />
         <h3 style={{ fontWeight: '400' }} id="large-transaction-submition">
           How do I submit a larger number of transactions?

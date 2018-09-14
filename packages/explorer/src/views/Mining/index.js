@@ -63,42 +63,19 @@ const MiningView: React.ComponentType<MiningViewProps> = ({
               <p>Loading...</p>
             </div>
           )}
-          <div className="mining-area">
-            {defaultAddress.length === 0 ? (
-              <React.Fragment>
-                <div className="mining-area">
-                  <h2 className="instruct-heading">Mine livepeer token</h2>
-                  <p>
-                    In order to mine, you will need to log into your ETH account
-                    using the metamask plugin. If you are not sure how to do
-                    this, please read our guide:
-                  </p>
-                  <h3 style={{ margin: '30px' }}>
-                    <a
-                      href="https://forum.livepeer.org/t/how-to-install-metamask-on-chrome-browser-to-enable-web-3-0/272"
-                      target="_blank"
-                    >
-                      How to Install MetaMask &rarr;
-                    </a>
-                  </h3>
-                </div>
-              </React.Fragment>
-            ) : (
-              <TokenMiner
-                allowManualEntry={false}
-                contentLength={contentLength}
-                defaultAddress={defaultAddress}
-                renderError={renderError}
-                input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
-                history={history}
-                onDone={e => {
-                  e.preventDefault()
-                  history.push(`/me?tour=true`)
-                }}
-                worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
-              />
-            )}
-          </div>
+          <TokenMiner
+            allowManualEntry={false}
+            contentLength={contentLength}
+            defaultAddress={defaultAddress}
+            renderError={renderError}
+            input="QmQbvkaw5j8TFeeR7c5Cs2naDciUVq9cLWnV3iNEzE784r"
+            history={history}
+            onDone={e => {
+              e.preventDefault()
+              history.push(`/me?tour=true`)
+            }}
+            worker="QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY"
+          />
         </div>
       </div>
     </React.Fragment>
