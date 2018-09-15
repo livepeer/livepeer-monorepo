@@ -1628,6 +1628,7 @@ export default async function createLivepeerSDK(
     async getJob(id: string): Promise<Job> {
       const x = await JobsManager.getJob(id)
       const { hash } = await rpc.getBlock(x.creationBlock)
+      // Computer transcoder's address if none was returned
       x.transcoderAddress = x.transcoderAddress
         ? x.transcoderAddress
         : await BondingManager.electActiveTranscoder(
