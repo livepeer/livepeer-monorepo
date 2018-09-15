@@ -1627,12 +1627,19 @@ export default async function createLivepeerSDK(
      */
     async getJob(id: string): Promise<Job> {
       const x = await JobsManager.getJob(id)
+      const { hash } = await rpc.getBlock(x.creationBlock)
+      const transcoder = await BondingManager.electActiveTranscoder(
+        x.maxPricePerSegment,
+        hash,
+        x.creationRound,
+      )
       return {
         id: toString(id),
         streamId: x.streamId,
         transcodingOptions: utils.parseTranscodingOptions(x.transcodingOptions),
         transcoder: x.transcoderAddress,
         broadcaster: x.broadcasterAddress,
+        transcoder: transcoder,
       }
     },
 
