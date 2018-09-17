@@ -302,6 +302,22 @@ test('should return object with correct shape from getCurrentRoundInfo()', async
 
 // Jobs
 
+test('should return object with correct shape from getJob()', async t => {
+  const schema = object({
+    id: string,
+    streamId: string,
+    transcodingOptions: Array,
+    transcoder: string,
+    broadcaster: string,
+  })
+  const res = await livepeer.rpc.getJobs()
+  res.forEach(async x => {
+    const job = await livepeer.rpc.getJob(x.id)
+    schema.validateSync(job)
+  })
+  t.pass()
+})
+
 test('should return object with correct shape from getJobsInfo()', async t => {
   const schema = object({
     total: string,
