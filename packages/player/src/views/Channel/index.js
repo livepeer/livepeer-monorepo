@@ -194,7 +194,7 @@ class Channel extends Component {
     const [latestJob] = jobs
     const { streamId, broadcaster = id } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
-    const embedLink = `<iframe width="240" height="160" src="${
+    const embedLink = `<iframe width="640" height="360" src="${
       window.location.origin
     }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
     return (
