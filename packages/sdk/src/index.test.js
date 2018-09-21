@@ -306,7 +306,15 @@ test('should return object with correct shape from getJob()', async t => {
   const schema = object({
     id: string,
     streamId: string,
-    transcodingOptions: array,
+    transcodingOptions: array(
+      object({
+        hash: string,
+        name: string,
+        bitrate: string,
+        framerate: number,
+        resolution: string,
+      }),
+    ),
     transcoder: string,
     broadcaster: string,
   })
