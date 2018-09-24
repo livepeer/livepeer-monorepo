@@ -544,7 +544,7 @@ export async function initContracts(
  * })
  *
  */
-export default async function createLivepeerSDK(
+export async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
 ): Promise<LivepeerSDK> {
   const { ens, events, ...config } = await initContracts(opts)
@@ -2436,3 +2436,5 @@ export default async function createLivepeerSDK(
    * @prop {string} transcoderPoolMaxSize - transcoder pool max size
    */
 }
+
+export { createLivepeerSDK as LivepeerSDK, createLivepeerSDK as default }
