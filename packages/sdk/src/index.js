@@ -902,19 +902,10 @@ export default async function createLivepeerSDK(
           )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
       }
-      // approve address / amount with LivepeerToken...
-      await utils.getTxReceipt(
-        await LivepeerToken.approve(
-          await resolveAddress(rpc.getENSAddress, addr),
-          value,
-          tx,
-        ),
-        config.eth,
-      )
-      // ...aaaand transfer!
+
       return await utils.getTxReceipt(
         await LivepeerToken.transfer(
-          await resolveAddress(rpc.getENSAddress, addr),
+          await resolveAddress(rpc.getENSAddress, to),
           value,
           tx,
         ),
