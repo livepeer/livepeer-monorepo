@@ -12,9 +12,9 @@ A module for interacting with Livepeer's smart contracts. The SDK is a core depe
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Usage](#usage)
-* [API](#api)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
 
 <!-- hide-on-docup-stop -->
 
@@ -31,6 +31,9 @@ Here's a code snippet showing instantiation and basic usage of the Livepeer SDK.
 ```js
 import LivepeerSDK from '@livepeer/sdk'
 
+// Or if you prefer require
+// const { LivepeerSDK } = require('@livepeer/sdk')
+//
 // First, call the SDK factory function
 // pass it any configuration options
 LivepeerSDK({ ... }).then(async (sdk) => {
@@ -45,7 +48,9 @@ LivepeerSDK({ ... }).then(async (sdk) => {
   // => string representation of some absurdly high number, maybe "9999999999999999999999" or something like that :)
 })
 ```
+
 To use with a testnet please instantiate with the following params:
+
 ```js
 const provider = "https://rinkeby.infura.io" #or your testnet of choice
 const controllerAddress = "0x37dC71366Ec655093b9930bc816E16e6b587F968"
@@ -63,68 +68,68 @@ The following section details the rpc API's function signatures and typedefs.
 
 #### Table of Contents
 
-* [module~exports](#moduleexports)
-  * [default](#default)
-* [livepeer~rpc](#livepeerrpc)
-  * [getEthBalance](#getethbalance)
-  * [getTokenTotalSupply](#gettokentotalsupply)
-  * [getTokenBalance](#gettokenbalance)
-  * [getTokenInfo](#gettokeninfo)
-  * [transferToken](#transfertoken)
-  * [getFaucetAmount](#getfaucetamount)
-  * [getFaucetWait](#getfaucetwait)
-  * [getFaucetNext](#getfaucetnext)
-  * [getFaucetInfo](#getfaucetinfo)
-  * [getBroadcaster](#getbroadcaster)
-  * [getDelegatorStatus](#getdelegatorstatus)
-  * [getDelegatorStake](#getdelegatorstake)
-  * [getDelegator](#getdelegator)
-  * [getTranscoderIsActive](#gettranscoderisactive)
-  * [getTranscoderStatus](#gettranscoderstatus)
-  * [getTranscoderTotalStake](#gettranscodertotalstake)
-  * [getTranscoder](#gettranscoder)
-  * [getTranscoders](#gettranscoders)
-  * [getProtocolPaused](#getprotocolpaused)
-  * [getRoundLength](#getroundlength)
-  * [getRoundsPerYear](#getroundsperyear)
-  * [getCurrentRound](#getcurrentround)
-  * [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
-  * [getCurrentRoundStartBlock](#getcurrentroundstartblock)
-  * [getLastInitializedRound](#getlastinitializedround)
-  * [getCurrentRoundInfo](#getcurrentroundinfo)
-  * [getTotalJobs](#gettotaljobs)
-  * [getJobVerificationRate](#getjobverificationrate)
-  * [getJobVerificationPeriod](#getjobverificationperiod)
-  * [getJobVerificationSlashingPeriod](#getjobverificationslashingperiod)
-  * [getJobFinderFee](#getjobfinderfee)
-  * [getJobsInfo](#getjobsinfo)
-  * [getJob](#getjob)
-  * [getJobs](#getjobs)
-  * [tapFaucet](#tapfaucet)
-  * [initializeRound](#initializeround)
-  * [claimEarnings](#claimearnings)
-  * [unbond](#unbond)
-  * [setupTranscoder](#setuptranscoder)
-  * [deposit](#deposit)
-  * [withdraw](#withdraw)
-  * [withdrawStake](#withdrawstake)
-  * [withdrawFees](#withdrawfees)
-  * [createJob](#createjob)
-* [ABIPropDescriptor](#abipropdescriptor)
-* [ContractArtifact](#contractartifact)
-* [LivepeerSDKOptions](#livepeersdkoptions)
-* [LivepeerSDK](#livepeersdk)
-* [TokenInfo](#tokeninfo)
-* [TxConfig](#txconfig)
-* [Job](#job)
-* [Log](#log)
-* [FaucetInfo](#faucetinfo)
-* [Broadcaster](#broadcaster)
-* [Delegator](#delegator)
-* [Transcoder](#transcoder)
-* [RoundInfo](#roundinfo)
-* [JobsInfo](#jobsinfo)
-* [TxReceipt](#txreceipt)
+- [module~exports](#moduleexports)
+  - [default](#default)
+- [livepeer~rpc](#livepeerrpc)
+  - [getEthBalance](#getethbalance)
+  - [getTokenTotalSupply](#gettokentotalsupply)
+  - [getTokenBalance](#gettokenbalance)
+  - [getTokenInfo](#gettokeninfo)
+  - [transferToken](#transfertoken)
+  - [getFaucetAmount](#getfaucetamount)
+  - [getFaucetWait](#getfaucetwait)
+  - [getFaucetNext](#getfaucetnext)
+  - [getFaucetInfo](#getfaucetinfo)
+  - [getBroadcaster](#getbroadcaster)
+  - [getDelegatorStatus](#getdelegatorstatus)
+  - [getDelegatorStake](#getdelegatorstake)
+  - [getDelegator](#getdelegator)
+  - [getTranscoderIsActive](#gettranscoderisactive)
+  - [getTranscoderStatus](#gettranscoderstatus)
+  - [getTranscoderTotalStake](#gettranscodertotalstake)
+  - [getTranscoder](#gettranscoder)
+  - [getTranscoders](#gettranscoders)
+  - [getProtocolPaused](#getprotocolpaused)
+  - [getRoundLength](#getroundlength)
+  - [getRoundsPerYear](#getroundsperyear)
+  - [getCurrentRound](#getcurrentround)
+  - [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
+  - [getCurrentRoundStartBlock](#getcurrentroundstartblock)
+  - [getLastInitializedRound](#getlastinitializedround)
+  - [getCurrentRoundInfo](#getcurrentroundinfo)
+  - [getTotalJobs](#gettotaljobs)
+  - [getJobVerificationRate](#getjobverificationrate)
+  - [getJobVerificationPeriod](#getjobverificationperiod)
+  - [getJobVerificationSlashingPeriod](#getjobverificationslashingperiod)
+  - [getJobFinderFee](#getjobfinderfee)
+  - [getJobsInfo](#getjobsinfo)
+  - [getJob](#getjob)
+  - [getJobs](#getjobs)
+  - [tapFaucet](#tapfaucet)
+  - [initializeRound](#initializeround)
+  - [claimEarnings](#claimearnings)
+  - [unbond](#unbond)
+  - [setupTranscoder](#setuptranscoder)
+  - [deposit](#deposit)
+  - [withdraw](#withdraw)
+  - [withdrawStake](#withdrawstake)
+  - [withdrawFees](#withdrawfees)
+  - [createJob](#createjob)
+- [ABIPropDescriptor](#abipropdescriptor)
+- [ContractArtifact](#contractartifact)
+- [LivepeerSDKOptions](#livepeersdkoptions)
+- [LivepeerSDK](#livepeersdk)
+- [TokenInfo](#tokeninfo)
+- [TxConfig](#txconfig)
+- [Job](#job)
+- [Log](#log)
+- [FaucetInfo](#faucetinfo)
+- [Broadcaster](#broadcaster)
+- [Delegator](#delegator)
+- [Transcoder](#transcoder)
+- [RoundInfo](#roundinfo)
+- [JobsInfo](#jobsinfo)
+- [TxReceipt](#txreceipt)
 
 ### module~exports
 
@@ -136,7 +141,7 @@ Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an obj
 
 **Parameters**
 
-* `opts` **[LivepeerSDKOptions](#livepeersdkoptions)** SDK configuration options
+- `opts` **[LivepeerSDKOptions](#livepeersdkoptions)** SDK configuration options
 
 **Examples**
 
@@ -174,7 +179,7 @@ Gets the ETH balance for an account
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ETH account address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ETH account address
 
 **Examples**
 
@@ -204,7 +209,7 @@ Gets a user's token balance (LPTU)
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -221,7 +226,7 @@ Gets general information about tokens
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -238,9 +243,9 @@ Transfers tokens (LPTU) from one account to another
 
 **Parameters**
 
-* `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the account ETH address to send tokens to
-* `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of token to send (LPTU)
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the account ETH address to send tokens to
+- `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of token to send (LPTU)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -301,7 +306,7 @@ Next timestamp at which the given address will be allowed to tap the faucet
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -318,7 +323,7 @@ Info about the state of the LPT faucet
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -339,7 +344,7 @@ Info about a broadcaster
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -360,7 +365,7 @@ The delegator status of the given address
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -377,7 +382,7 @@ The delegator's stake
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -394,7 +399,7 @@ General info about a delegator
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -421,7 +426,7 @@ Whether or not the transcoder is active
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -438,7 +443,7 @@ Gets the status of a transcoder
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -455,7 +460,7 @@ Gets a transcoder's total stake
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -472,7 +477,7 @@ Gets info about a transcoder
 
 **Parameters**
 
-* `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
 
 **Examples**
 
@@ -708,7 +713,7 @@ Gets a job by id
 
 **Parameters**
 
-* `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job id
+- `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job id
 
 **Examples**
 
@@ -731,11 +736,11 @@ Gets a list of jobs
 
 **Parameters**
 
-* `$0` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** (optional, default `{}`)
-  * `$0.to`
-  * `$0.from`
-  * `$0.blocksAgo` (optional, default `100*10000`)
-  * `$0.filters` **...any**
+- `$0` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** (optional, default `{}`)
+  - `$0.to`
+  - `$0.from`
+  - `$0.blocksAgo` (optional, default `100*10000`)
+  - `$0.filters` **...any**
 
 **Examples**
 
@@ -752,7 +757,7 @@ Gets LPT from the faucet
 
 **Parameters**
 
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -787,7 +792,7 @@ Initializes the round
 
 **Parameters**
 
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -822,8 +827,8 @@ Claims token and eth earnings from the sender's `lastClaimRound + 1` through a g
 
 **Parameters**
 
-* `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round to claim earnings until
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round to claim earnings until
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -840,7 +845,7 @@ Unbonds LPT from an address
 
 **Parameters**
 
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -875,10 +880,10 @@ Sets transcoder parameters
 
 **Parameters**
 
-* `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the block reward cut you wish to set
-* `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the fee share you wish to set
-* `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the price per segment you wish to set
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the block reward cut you wish to set
+- `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the fee share you wish to set
+- `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the price per segment you wish to set
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -913,8 +918,8 @@ Deposits ETH for broadcasting
 
 **Parameters**
 
-* `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** amount of ETH to deposit
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** amount of ETH to deposit
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -949,7 +954,7 @@ Withdraws deposited ETH
 
 **Parameters**
 
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -984,7 +989,7 @@ Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their `
 
 **Parameters**
 
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -1019,7 +1024,7 @@ Withdraws earned fees (Transfers a sender's delegator `fees` to their `ethBalanc
 
 **Parameters**
 
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -1054,10 +1059,10 @@ Creates a job
 
 **Parameters**
 
-* `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the stream id for the job
-* `profiles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** a list of profiles to transcode the job into (optional, default `[// default profiles 'P240p30fps4x3','P360p30fps16x9']`)
-* `maxPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the maximum LPTU price the broadcaster is willing to pay per segment
-* `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the stream id for the job
+- `profiles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** a list of profiles to transcode the job into (optional, default `[// default profiles 'P240p30fps4x3','P360p30fps16x9']`)
+- `maxPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the maximum LPTU price the broadcaster is willing to pay per segment
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 **Examples**
 
@@ -1094,12 +1099,12 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `constants` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method constant?
-* `inputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** the method params
-* `outputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** method return values
-* `payable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method payable?
-* `stateMutability` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of state mutability
-* `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of contract property
+- `constants` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method constant?
+- `inputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** the method params
+- `outputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** method return values
+- `payable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method payable?
+- `stateMutability` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of state mutability
+- `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of contract property
 
 ### ContractArtifact
 
@@ -1109,8 +1114,8 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the contract
-* `abi` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[ABIPropDescriptor](#abipropdescriptor)>** lists info about contract properties
+- `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the contract
+- `abi` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[ABIPropDescriptor](#abipropdescriptor)>** lists info about contract properties
 
 ### LivepeerSDKOptions
 
@@ -1120,12 +1125,12 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `controllerAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The address of the delpoyed Controller contract
-* `provider` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The ETH http provider for rpc methods
-* `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** the amount of gas to include with transactions by default
-* `artifacts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [ContractArtifact](#contractartifact)>** an object containing contract name -> ContractArtifact mappings
-* `privateKeys` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** an object containing public -> private key mappings. Should be specified if using the SDK for transactions without MetaMask (via CLI, etc)
-* `account` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** the account that will be used for transacting and data-fetching. Can be one of the publicKeys specified in the `privateKeys` option or an index of an account available via MetaMask
+- `controllerAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The address of the delpoyed Controller contract
+- `provider` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The ETH http provider for rpc methods
+- `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** the amount of gas to include with transactions by default
+- `artifacts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [ContractArtifact](#contractartifact)>** an object containing contract name -> ContractArtifact mappings
+- `privateKeys` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** an object containing public -> private key mappings. Should be specified if using the SDK for transactions without MetaMask (via CLI, etc)
+- `account` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** the account that will be used for transacting and data-fetching. Can be one of the publicKeys specified in the `privateKeys` option or an index of an account available via MetaMask
 
 ### LivepeerSDK
 
@@ -1135,12 +1140,12 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `config` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** this prop is mostly for debugging purposes and could change a lot in the future. Currently, it contains the following props: `abis`, `accounts`, `contracts`, `defaultTx`, `eth`
-* `constants` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** Exposes some constant values. Currently, it contains the following props: `ADDRESS_PAD`, `DELEGATOR_STATUS`, `EMPTY_ADDRESS`, `TRANSCODER_STATUS`, `VIDEO_PROFILES`, `VIDEO_PROFILE_ID_SIZE`
-* `create` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** same as the `createLivepeerSDK` function
-* `events` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>** Object mapping an event name -> contract event descriptor object
-* `rpc` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>** contains all of the rpc methods available for interacting with the Livepeer protocol
-* `utils` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>** contains utility methods. Mostly here just because. Could possibly be removed or moved into its own module in the future
+- `config` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** this prop is mostly for debugging purposes and could change a lot in the future. Currently, it contains the following props: `abis`, `accounts`, `contracts`, `defaultTx`, `eth`
+- `constants` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** Exposes some constant values. Currently, it contains the following props: `ADDRESS_PAD`, `DELEGATOR_STATUS`, `EMPTY_ADDRESS`, `TRANSCODER_STATUS`, `VIDEO_PROFILES`, `VIDEO_PROFILE_ID_SIZE`
+- `create` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** same as the `createLivepeerSDK` function
+- `events` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>** Object mapping an event name -> contract event descriptor object
+- `rpc` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>** contains all of the rpc methods available for interacting with the Livepeer protocol
+- `utils` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>** contains utility methods. Mostly here just because. Could possibly be removed or moved into its own module in the future
 
 ### TokenInfo
 
@@ -1150,8 +1155,8 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `totalSupply` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total supply of token available in the protocol (LPTU)
-* `balance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's token balance (LPTU)
+- `totalSupply` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total supply of token available in the protocol (LPTU)
+- `balance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's token balance (LPTU)
 
 ### TxConfig
 
@@ -1161,8 +1166,8 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `from` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH account address to sign the transaction from
-* `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** the amount of gas to include in the transaction
+- `from` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH account address to sign the transaction from
+- `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** the amount of gas to include in the transaction
 
 ### Job
 
@@ -1172,11 +1177,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `jobId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the id of the job
-* `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job's stream id
-* `transcodingOptions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;TranscodingProfile>** transcoding profiles
-* `transcoder` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** the ETH address of the assigned transcoder
-* `broadcaster` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster who created the job
+- `jobId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the id of the job
+- `streamId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the job's stream id
+- `transcodingOptions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;TranscodingProfile>** transcoding profiles
+- `transcoder` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** the ETH address of the assigned transcoder
+- `broadcaster` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster who created the job
 
 ### Log
 
@@ -1186,14 +1191,14 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `logIndex` **BN** the log index
-* `blockNumber` **BN** the log block number
-* `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log block hash
-* `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's transaction hash
-* `transactionIndex` **BN** the log's transaction index
-* `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's address
-* `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's data
-* `topics` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the log's topics
+- `logIndex` **BN** the log index
+- `blockNumber` **BN** the log block number
+- `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log block hash
+- `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's transaction hash
+- `transactionIndex` **BN** the log's transaction index
+- `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's address
+- `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's data
+- `topics` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the log's topics
 
 ### FaucetInfo
 
@@ -1203,9 +1208,9 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount distributed by the faucet
-* `wait` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the faucet request cooldown time
-* `next` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next time a valid faucet request may be made
+- `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount distributed by the faucet
+- `wait` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the faucet request cooldown time
+- `next` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next time a valid faucet request may be made
 
 ### Broadcaster
 
@@ -1215,9 +1220,9 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster
-* `deposit` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPT the broadcaster has deposited
-* `withdrawBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next block at which a broadcaster may withdraw their deposit
+- `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster
+- `deposit` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPT the broadcaster has deposited
+- `withdrawBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next block at which a broadcaster may withdraw their deposit
 
 ### Delegator
 
@@ -1227,15 +1232,15 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's ETH address
-* `bondedAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The amount of LPTU a delegator has bonded
-* `delegateAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the delegator's delegate
-* `delegatedAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU the delegator has delegated
-* `fees` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU a delegator has collected
-* `lastClaimRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the last round that the delegator claimed reward and fee pool shares
-* `startRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round the delegator becomes bonded and delegated to its delegate
-* `status` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's status
-* `withdrawRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round the delegator can withdraw its stake
+- `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's ETH address
+- `bondedAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The amount of LPTU a delegator has bonded
+- `delegateAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the delegator's delegate
+- `delegatedAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU the delegator has delegated
+- `fees` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU a delegator has collected
+- `lastClaimRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the last round that the delegator claimed reward and fee pool shares
+- `startRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round the delegator becomes bonded and delegated to its delegate
+- `status` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's status
+- `withdrawRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round the delegator can withdraw its stake
 
 ### Transcoder
 
@@ -1245,17 +1250,17 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `active` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the transcoder is active
-* `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's ETH address
-* `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of block reward cut paid to transcoder by a delegator
-* `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of fees paid to delegators by transcoder
-* `lastRewardRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** last round that the transcoder called reward
-* `pendingRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending block reward cut for next round if the transcoder is active
-* `pendingFeeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending fee share for next round if the transcoder is active
-* `pendingPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending price per segment for next round if the transcoder is active
-* `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** price per segment for a stream (LPTU)
-* `status` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's status
-* `totalStake` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total tokens delegated toward a transcoder (including their own)
+- `active` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the transcoder is active
+- `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's ETH address
+- `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of block reward cut paid to transcoder by a delegator
+- `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of fees paid to delegators by transcoder
+- `lastRewardRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** last round that the transcoder called reward
+- `pendingRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending block reward cut for next round if the transcoder is active
+- `pendingFeeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending fee share for next round if the transcoder is active
+- `pendingPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending price per segment for next round if the transcoder is active
+- `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** price per segment for a stream (LPTU)
+- `status` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's status
+- `totalStake` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total tokens delegated toward a transcoder (including their own)
 
 ### RoundInfo
 
@@ -1265,11 +1270,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the number of the current round
-* `initialized` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the current round is initialized
-* `startBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the start block of the current round
-* `lastInitializedRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the last round that was initialized prior to the current
-* `length` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the length of rounds
+- `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the number of the current round
+- `initialized` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the current round is initialized
+- `startBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the start block of the current round
+- `lastInitializedRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the last round that was initialized prior to the current
+- `length` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the length of rounds
 
 ### JobsInfo
 
@@ -1279,11 +1284,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `total` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the total number of jobs created
-* `verificationRate` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** the verification rate for jobs
-* `verificationPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the verification period for jobs
-* `verificationSlashingPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the slashing period for jobs
-* `finderFee` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the finder fee for jobs
+- `total` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the total number of jobs created
+- `verificationRate` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** the verification rate for jobs
+- `verificationPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the verification period for jobs
+- `verificationSlashingPeriod` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the slashing period for jobs
+- `finderFee` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the finder fee for jobs
 
 ### TxReceipt
 
@@ -1293,11 +1298,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
-* `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
-* `transactionIndex` **BN** the transaction index
-* `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
-* `blockNumber` **BN** the transaction block number
-* `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
-* `gasUsed` **BN** the gas used in the transaction
-* `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
-* `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
+- `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
+- `transactionIndex` **BN** the transaction index
+- `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
+- `blockNumber` **BN** the transaction block number
+- `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
+- `gasUsed` **BN** the gas used in the transaction
+- `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
+- `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
