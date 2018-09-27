@@ -4,7 +4,7 @@ const NoTokensPage = () => {
   return (
     <React.Fragment>
       <h1>All tokens have been claimed.</h1>
-      <p>There is no remaining LPT to mine.</p>
+      <p>There are no remaining LPT to mine.</p>
       <p>
         If you are interested in obtaining LPT, visit the{' '}
         <a href="https://forum.livepeer.org">Livepeer Forum</a>
