@@ -2085,10 +2085,10 @@ export async function createLivepeerSDK(
         nextUnbondingLockId,
       } = await rpc.getDelegator(tx.from)
 
-      if (status !== DELEGATOR_STATUS.Unbonded && withdrawAmount !== '0') {
-        throw new Error(
-          'Delegator is not in the unbonded state with a withdraw amount',
-        )
+      if (status === DELEGATOR_STATUS.Unbonding) {
+        throw new Error('Delegator must wait through unbonding period')
+      } else if (withdrawAmount === '0') {
+        throw new Error('Delegator does not have anything to withdraw')
       } else {
         let unbondingLockId = toBN(nextUnbondingLockId)
         if (unbondingLockId.cmp(new BN(0)) > 0) {

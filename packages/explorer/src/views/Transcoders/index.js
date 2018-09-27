@@ -45,10 +45,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     tokenBalance,
   } = me.data
   const totalStake = MathBN.max(bondedAmount, pendingStake)
-  const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
   const isUnbonding = status === 'Unbonding'
-  const isUnbonded = status === 'Unbonded'
   const isTranscoder = me.data.transcoder.status === 'Registered'
   const searchParams = new URLSearchParams(history.location.search)
   const TOUR_ENABLED = !!searchParams.get('tour')
@@ -184,7 +182,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           const myId = me.data.id // delegator id
           const { id } = props // transcoder id
           const isMyDelegate = id === delegateAddress
-          const canRebond = isMyDelegate && (isBonded || isBonding)
           const canBond =
             myId && (!isTranscoder || (isTranscoder && id === myId))
           const canUnbond = myId && isBonded && isMyDelegate

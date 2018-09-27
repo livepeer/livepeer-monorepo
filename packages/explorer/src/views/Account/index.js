@@ -52,7 +52,6 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   const { delegateAddress, status } = me.data.delegator
   const isBonded = status === 'Bonded'
   const isBonding = status === 'Pending'
-  const isUnbonded = status === 'Unbonded'
   const isMyDelegate = accountAddress === delegateAddress
   const canRebond = isMyDelegate && (isBonded || isBonding)
   const canBond = !!userAddress

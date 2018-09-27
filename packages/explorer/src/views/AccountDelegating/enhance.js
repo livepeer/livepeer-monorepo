@@ -107,14 +107,21 @@ const mapMutationHandlers = withHandlers({
   withdrawStake: ({ currentRound, delegator, toasts }) => async () => {
     try {
       const isRoundInitialized = currentRound.data.initialized
-      const { status } = delegator.data
-      if (status !== 'Unbonded') {
+      const { status, withdrawAmount } = delegator.data
+      if (status === 'Unbonding') {
         return toasts.push({
           id: 'withdraw-stake',
           type: 'warn',
           title: 'Cannot withdraw stake',
-          body:
-            'First, you must unbond from your delegate and wait through the unbonding period.',
+          body: 'First, you must wait through the unbonding period.',
+        })
+      }
+      if (withdrawAmount === '0') {
+        return toasts.push({
+          id: 'withdraw-stake',
+          type: 'warn',
+          title: 'Cannot withdraw stake',
+          body: 'You have nothing to withdraw',
         })
       }
       if (!isRoundInitialized) {
