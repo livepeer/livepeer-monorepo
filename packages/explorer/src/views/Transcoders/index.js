@@ -57,6 +57,13 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const asc = order === 'asc'
   const total = transcoders.data.length
   const compareFn = createCompareFunction(asc, sort)
+  const numActive = (transcoders => {
+    let n = 0
+    for (const trans of transcoders.data) {
+      n += trans.active ? 1 : 0
+    }
+    return n
+  })(transcoders)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -191,6 +198,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           return (
             <TranscoderCard
               {...props}
+              numActive={numActive}
               key={id}
               bonded={isMyDelegate}
               bondedAmount={totalStake}
