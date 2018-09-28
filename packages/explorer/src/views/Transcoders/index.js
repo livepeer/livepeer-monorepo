@@ -142,8 +142,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     letterSpacing: 1,
                   }}
                 >
-                  {' '}
-                  sort by: &nbsp;{' '}
+                  sort by: &nbsp;
                 </span>
                 <select
                   defaultValue={sort}
