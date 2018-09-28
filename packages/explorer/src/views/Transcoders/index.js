@@ -142,7 +142,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     letterSpacing: 1,
                   }}
                 >
-                  sort by: &nbsp;
+                  {' '}
+                  sort by: &nbsp;{' '}
                 </span>
                 <select
                   defaultValue={sort}
@@ -211,11 +212,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       </Content>
       {TOUR_ENABLED && (
         <Tour
-          // callback={({ step }) => {
-          //   if (step && 'sortingOptions' === step.name) {
-          //     window.scrollTo(0, 0)
-          //   }
-          // }}
           continuous={true}
           locale={{
             back: 'Back',
