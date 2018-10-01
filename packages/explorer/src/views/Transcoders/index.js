@@ -90,8 +90,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                   window.open(
                     'https://github.com/livepeer/wiki/wiki/Delegating',
                   )
-                }
-              >
+                }>
                 Read the Delegator Guide
               </Button>
               <Button
@@ -100,8 +99,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                   window.open(
                     'https://forum.livepeer.org/c/transcoders/transcoder-campaign',
                   )
-                }
-              >
+                }>
                 View Transcoder Campaigns
               </Button>
             </p>
@@ -121,8 +119,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               marginBottom: 16,
               padding: '0 8px',
               borderBottom: '1px solid #ddd',
-            }}
-          >
+            }}>
             <p>
               Showing 1 - {total} of {total}
             </p>
@@ -132,16 +129,14 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 flexGrow: 1,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-              }}
-            >
+              }}>
               <div style={{ marginLeft: 16 }}>
                 <span
                   style={{
                     textTransform: 'uppercase',
                     fontSize: 11,
                     letterSpacing: 1,
-                  }}
-                >
+                  }}>
                   sort by: &nbsp;
                 </span>
                 <select
@@ -152,8 +147,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     const queryString = searchParams.toString()
                     const url = `${match.path}?${queryString}`
                     history.replace(url)
-                  }}
-                >
+                  }}>
                   <option value="totalStake">Total Stake</option>
                   <option value="pendingRewardCut">Reward Cut</option>
                   <option value="pendingFeeShare">Fee Share</option>
@@ -166,8 +160,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     textTransform: 'uppercase',
                     fontSize: 11,
                     letterSpacing: 1,
-                  }}
-                >
+                  }}>
                   order by: &nbsp;
                 </span>
                 <select
@@ -178,8 +171,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     const queryString = searchParams.toString()
                     const url = `${match.path}?${queryString}`
                     history.replace(url)
-                  }}
-                >
+                  }}>
                   <option value="desc">Desc</option>
                   <option value="asc">Asc</option>
                 </select>
