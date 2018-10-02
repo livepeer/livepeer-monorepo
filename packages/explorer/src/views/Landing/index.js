@@ -22,19 +22,15 @@ const Landing = ({ history, ...props }) => (
         <h3 style={{ letterSpacing: 8 }}>Protocol Explorer</h3>
         <br />
         <br />
-        <Video src="/static/media/landing.mp4" />
-        <br />
-        <br />
         <div style={{ display: 'flex' }}>
           <InfoBox>
             <h2>
               <Icon use="explore" />&nbsp;
-              {`Explore Protocol Activity`}
+              {`Explore Your Account`}
             </h2>
             <p>
-              The account view shows the recent Livepeer smart contract
-              transactions for any Ethereum address. It also gives you deep
-              insight into important protocol metrics.
+              Check your balance of Livepeer Tokens (LPT),
+              and learn what you can do with them.
             </p>
             <br />
             <form
@@ -50,7 +46,7 @@ const Landing = ({ history, ...props }) => (
                 name="address"
                 type="search"
                 pattern="^0x[a-fA-F0-9]{40}$"
-                placeholder="Enter an ETH account address"
+                placeholder="Enter your ETH account address"
                 onKeyDown={e => {
                   if (e.keyCode !== 13 || !e.target.value) return
                   document.getElementById('account-search-button').click()
@@ -66,11 +62,11 @@ const Landing = ({ history, ...props }) => (
           <InfoBox>
             <h2>
               <Icon use="how_to_vote" />&nbsp;
-              {`Play the Delegation Game`}
+              {`BOND your LPT to a Node`}
             </h2>
             <p>
-              Bond to delegates to earn newly minted token and fees from
-              transcoder activity, growing your total ownership in the network.
+              Bond to a Transcoder Node in the network to support
+              them, and also earn a share of their rewards and fees.
             </p>
             <br />
             <p style={{ textAlign: 'right', margin: 0 }}>
@@ -78,10 +74,10 @@ const Landing = ({ history, ...props }) => (
                 big
                 type="submit"
                 onClick={() => {
-                  history.push('/token')
+                  history.push('/transcoders')
                 }}
               >
-                Get Token
+                SEE OPTIONS
               </CTAButton>
             </p>
           </InfoBox>
