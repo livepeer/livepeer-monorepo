@@ -172,34 +172,34 @@ class Channel extends Component {
     }
 
     if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      return this.setState({
+      this.setState({
         live: true,
         url: `${
           process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
         }/${manifestId}.m3u8`,
       })
-    }
-    if (
+    } else if (
       address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
     ) {
-      return this.setState({
+      this.setState({
         live: true,
         url: `${
           process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
         }/${manifestId}.m3u8`,
       })
-    }
-    if (address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()) {
-      return this.setState({
+    } else if (
+      address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
+    ) {
+      this.setState({
         live: true,
         url: `${
           process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
         }/${manifestId}.m3u8`,
       })
+    } else {
+      let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
+      this.setState({ url })
     }
-
-    let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
-    this.setState({ url })
   }
 
   render() {
