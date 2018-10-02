@@ -64,9 +64,9 @@ const MineProofForm: React.ComponentType<MineProofFormProps> = withProp(
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {/* Before Mining... */}
+              {/* Before Mining... if there are fewer than 5 LPT remaining, show the NoTokens page */}
               {loading && <p>Initializing miner...</p>}
-              {parseInt(remainingTokens) <= 0 ? (
+              {parseInt(remainingTokens) <= 5 ? (
                 <NoTokensPage />
               ) : (
                 <React.Fragment>
