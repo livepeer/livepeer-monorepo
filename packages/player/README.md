@@ -11,9 +11,9 @@ A video player for the web. Lets you see what's live streaming on the network. O
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Developing](#developing)
-* [Building](#building)
+- [Installation](#installation)
+- [Developing](#developing)
+- [Building](#building)
 
 <!-- hide-on-docup-stop -->
 
@@ -47,3 +47,9 @@ Built files will be output to `./dist`
 | `REACT_APP_STREAM_ROOT_URL` |               | The root http url from which broadcaster m3u8 files will be served                                                                                                                                                                                                                                                                                                     |
 
 Need a new variable? Create a PR or [file an issue](https://github.com/livepeer/livepeerjs/issues/new?labels=player) 🍻
+
+### Changing Stream Route on the fly
+
+add `?source=<STREAM_ROOT_URL>/stream` to the player url
+
+**Example**: `https://media.livepeer.org/embed/0x0ddb225031ccb58ff42866f82d907f7766899014?source=http://localhost:8935/stream`

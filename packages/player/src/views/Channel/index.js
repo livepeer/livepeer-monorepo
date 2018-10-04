@@ -21,6 +21,11 @@ import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
+import * as qs from 'query-string'
+
+const parseQs = str => {
+  return qs.parse(str)
+}
 
 const { changeChannel } = routingActions
 
@@ -145,45 +150,61 @@ class Channel extends Component {
 
   async componentWillReceiveProps(nextProps) {
     const { data } = nextProps.account
+    const location = nextProps.location
     const address = data.id.toLowerCase()
     const [latestJob] = data.broadcaster.jobs
+    const manifestId = latestJob.streamId.substr(0, 68 + 64)
+
     if (!latestJob) {
       if (nextProps.loading === false) this.setState({ live: false })
       return
     }
-    const manifestId = latestJob.streamId.substr(0, 68 + 64)
+
+    if (location.search) {
+      let queryObject = parseQs(location.search)
+      if (queryObject && queryObject.source) {
+        console.log('using source qs')
+        return this.setState({
+          live: true,
+          url: `${queryObject.source}/${manifestId}.m3u8`,
+        })
+      }
+    }
+
     if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      return this.setState({
+      this.setState({
         live: true,
         url: `${
           process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
         }/${manifestId}.m3u8`,
       })
-    }
-    if (
+    } else if (
       address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
     ) {
-      return this.setState({
+      this.setState({
         live: true,
         url: `${
           process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
         }/${manifestId}.m3u8`,
       })
-    }
-    if (address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()) {
-      return this.setState({
+    } else if (
+      address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
+    ) {
+      this.setState({
         live: true,
         url: `${
           process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
         }/${manifestId}.m3u8`,
       })
+    } else {
+      let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
+      this.setState({ url })
     }
-    let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
-    this.setState({ url })
   }
 
   render() {
-    const { account, changeChannel } = this.props
+    const { account, changeChannel, location } = this.props
+    console.log('locaation: ', location)
     const { loading } = account
     const {
       id,
