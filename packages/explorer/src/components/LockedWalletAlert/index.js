@@ -16,6 +16,7 @@ const LockedWalletAlert = () => {
         >
           Metamask
         </a>
+        &nbsp;or another web 3 enabled wallet.
       </p>
     </div>
   )
