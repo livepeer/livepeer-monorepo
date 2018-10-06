@@ -53,7 +53,7 @@ export async function bond(
 ): Promise<TxReceipt> {
   const { to, amount } = args
   return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount, {
-    gas: 650000,
+    gas: 750000,
   })
 }
 
