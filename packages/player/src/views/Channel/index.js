@@ -116,7 +116,13 @@ class Channel extends Component {
     modal: '', // tip | link | embed
     tipAmount: 0,
     didCopy: false,
+    bannerOpen: true,
   }
+
+  closeBanner = () => {
+    this.setState({ bannerOpen: false })
+  }
+
   openModal = modal => {
     this.setState({ modal })
   }
@@ -211,7 +217,7 @@ class Channel extends Component {
       ensName: name,
       broadcaster: { jobs },
     } = account.data
-    const { live, url, modal, didCopy, tipAmount } = this.state
+    const { live, url, modal, didCopy, tipAmount, bannerOpen } = this.state
     const [latestJob] = jobs
     const { streamId, broadcaster = id } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
@@ -572,6 +578,7 @@ class Channel extends Component {
               background: '#00eb87',
               color: '#000',
               boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
+              display: bannerOpen ? 'block' : 'none',
             }}
           >
             <div
@@ -611,6 +618,15 @@ class Channel extends Component {
                     }}
                   >
                     Join the Alpha
+                  </Button>
+
+                  <Button
+                    style={{ margin: '0 16px 0 16px' }}
+                    onClick={() => {
+                      this.closeBanner()
+                    }}
+                  >
+                    x
                   </Button>
                 </p>
               </div>
