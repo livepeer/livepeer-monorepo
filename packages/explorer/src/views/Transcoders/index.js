@@ -55,6 +55,13 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const asc = order === 'asc'
   const total = transcoders.data.length
   const compareFn = createCompareFunction(asc, sort)
+  const numActive = (transcoders => {
+    let n = 0
+    for (const trans of transcoders.data) {
+      n += trans.active ? 1 : 0
+    }
+    return n
+  })(transcoders)
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -80,9 +87,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 onClick={() =>
                   window.open(
                     'https://github.com/livepeer/wiki/wiki/Delegating',
-                  )
-                }
-              >
+                  )}>
                 Read the Delegator Guide
               </Button>
               <Button
@@ -90,9 +95,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 onClick={() =>
                   window.open(
                     'https://forum.livepeer.org/c/transcoders/transcoder-campaign',
-                  )
-                }
-              >
+                  )}>
                 View Transcoder Campaigns
               </Button>
             </p>
@@ -112,8 +115,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               marginBottom: 16,
               padding: '0 8px',
               borderBottom: '1px solid #ddd',
-            }}
-          >
+            }}>
             <p>
               Showing 1 - {total} of {total}
             </p>
@@ -123,16 +125,14 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 flexGrow: 1,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-              }}
-            >
+              }}>
               <div style={{ marginLeft: 16 }}>
                 <span
                   style={{
                     textTransform: 'uppercase',
                     fontSize: 11,
                     letterSpacing: 1,
-                  }}
-                >
+                  }}>
                   sort by: &nbsp;
                 </span>
                 <select
@@ -143,8 +143,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     const queryString = searchParams.toString()
                     const url = `${match.path}?${queryString}`
                     history.replace(url)
-                  }}
-                >
+                  }}>
                   <option value="totalStake">Total Stake</option>
                   <option value="pendingRewardCut">Reward Cut</option>
                   <option value="pendingFeeShare">Fee Share</option>
@@ -157,8 +156,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     textTransform: 'uppercase',
                     fontSize: 11,
                     letterSpacing: 1,
-                  }}
-                >
+                  }}>
                   order by: &nbsp;
                 </span>
                 <select
@@ -169,8 +167,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     const queryString = searchParams.toString()
                     const url = `${match.path}?${queryString}`
                     history.replace(url)
-                  }}
-                >
+                  }}>
                   <option value="desc">Desc</option>
                   <option value="asc">Asc</option>
                 </select>
@@ -188,6 +185,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           return (
             <TranscoderCard
               {...props}
+              numActive={numActive}
               key={id}
               bonded={isMyDelegate}
               bondedAmount={totalStake}
@@ -200,11 +198,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       </Content>
       {TOUR_ENABLED && (
         <Tour
-          // callback={({ step }) => {
-          //   if (step && 'sortingOptions' === step.name) {
-          //     window.scrollTo(0, 0)
-          //   }
-          // }}
           continuous={true}
           locale={{
             back: 'Back',
