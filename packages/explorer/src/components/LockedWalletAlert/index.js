@@ -10,7 +10,7 @@ const LockedWalletAlert = () => {
           padding: "2px",
       }}>
       <p style={{margin: "0", color: "white"}}>
-        Web3 locked. Please unlock&nbsp;
+        Not connected to web3. Please unlock&nbsp;
         <a href="https://metamask.io/?utm_source=livepeer.org&utm_medium=referral"
           style={{color: "inherit"}}
         >
