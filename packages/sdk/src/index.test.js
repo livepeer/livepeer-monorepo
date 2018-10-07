@@ -326,6 +326,13 @@ test('should return object with correct shape from getJob()', async t => {
   t.pass()
 })
 
+test('should return number that signifies the estimated amount of ags to be used', async t => {
+  const toAddress = '0x087aa419fbd73ced700a2cf77a7bf19e6bc05f2e'
+  const amount = '10'
+  const res = await livepeer.rpc.estimateGas(toAddress, amount)
+  t.true(number.isValidSync(res))
+})
+
 test('should return object with correct shape from getJobsInfo()', async t => {
   const schema = object({
     total: string,

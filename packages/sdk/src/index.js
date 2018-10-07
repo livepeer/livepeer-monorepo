@@ -1844,6 +1844,39 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Gets the estimated amount of gas to be used by a smart contract
+     * method.
+     * @memberof livepeer~rpc
+     * @param object = {
+     *  smartContractName: string,
+     *  methodName: string,
+     *  toAddress: string,
+     *  amount: string
+     * }
+     */
+    async estimateGas(
+      to: string,
+      amount: string,
+      tx: TxObject,
+    ): Promise<number> {
+      const token = toBN(amount)
+      let amountGas = 0
+      amountGas = toNumber(
+        await config.eth.estimateGas(
+          BondingManager.bond(
+            token,
+            await resolveAddress(rpc.getENSAddress, to),
+            {
+              ...tx,
+              ...config.defaultTx,
+            },
+          ),
+        ),
+      )
+      return amountGas
+    },
+
+    /**
      * Unbonds LPT from an address
      * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
