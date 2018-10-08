@@ -11,6 +11,7 @@ import {
   Button,
   Content,
   InlineHint,
+  LockedWallet,
   PageHeading,
   ScrollToTopOnMount,
   TranscoderCard,
@@ -55,6 +56,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const asc = order === 'asc'
   const total = transcoders.data.length
   const compareFn = createCompareFunction(asc, sort)
+  const locked = window.livepeer.config.accounts.length <= 0
   const numActive = (transcoders => {
     let n = 0
     for (const trans of transcoders.data) {
@@ -62,6 +64,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     }
     return n
   })(transcoders)
+
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -71,6 +74,11 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           <CpuIcon size={32} />&nbsp;Transcoders
         </PageHeading>
       </Banner>
+    {
+      locked && (
+        <LockedWallet />
+      )
+    }
       <Content>
         {!total ? null : (
           <InlineHint flag="transcoders-list">
