@@ -15,7 +15,7 @@ const mapMutationHandlers = withHandlers({
         body: 'The current round is being initialized.',
       })
       // TODO: move into graphql schema as mutation
-      await window.livepeer.rpc.initializeRound({ gas: 2800000 })
+      await window.livepeer.rpc.initializeRound({ gas: 3200000 })
       toasts.push({
         id: 'initialize-round',
         type: 'success',

@@ -18,6 +18,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     className,
     ensName,
     id,
+    numActive,
     status,
     onBond,
     onUnbond,
@@ -42,7 +43,13 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
             </Link>
           </Tooltip>
         </div>
-        <Tooltip text="Today, only Transcoders with the top 10 most stake will be able to do work in the next round.">
+        <Tooltip
+          text={[
+            'Today, only Transcoders with the top',
+            numActive,
+            'most stake will be able to do work in the next round.',
+          ].join(' ')}
+        >
           <div className="status">{active ? 'active' : 'inactive'}</div>
         </Tooltip>
       </div>

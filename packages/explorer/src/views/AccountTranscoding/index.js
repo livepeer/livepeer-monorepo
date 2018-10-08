@@ -220,7 +220,7 @@ const AccountTranscodingView: React.ComponentType<
                 ? 'No rewards to claim while inactive'
                 : currentRoundNum === lastRewardRound
                   ? 'Transcoder claimed rewards this round'
-                  : 'Transcoder has not claimed rewards this round'
+                  : 'Transcoder has not claimed rewards for current round'
             }
           />
         </React.Fragment>

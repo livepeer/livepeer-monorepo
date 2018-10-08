@@ -46,10 +46,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     tokenBalance,
   } = me.data
   const totalStake = MathBN.max(bondedAmount, pendingStake)
-  const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
   const isUnbonding = status === 'Unbonding'
-  const isUnbonded = status === 'Unbonded'
   const isTranscoder = me.data.transcoder.status === 'Registered'
   const searchParams = new URLSearchParams(history.location.search)
   const TOUR_ENABLED = !!searchParams.get('tour')
@@ -59,6 +57,14 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const total = transcoders.data.length
   const compareFn = createCompareFunction(asc, sort)
   const locked = window.livepeer.config.accounts.length <= 0
+  const numActive = (transcoders => {
+    let n = 0
+    for (const trans of transcoders.data) {
+      n += trans.active ? 1 : 0
+    }
+    return n
+  })(transcoders)
+
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
@@ -89,8 +95,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 onClick={() =>
                   window.open(
                     'https://github.com/livepeer/wiki/wiki/Delegating',
-                  )
-                }>
+                  )}>
                 Read the Delegator Guide
               </Button>
               <Button
@@ -98,8 +103,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 onClick={() =>
                   window.open(
                     'https://forum.livepeer.org/c/transcoders/transcoder-campaign',
-                  )
-                }>
+                  )}>
                 View Transcoder Campaigns
               </Button>
             </p>
@@ -183,13 +187,13 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           const myId = me.data.id // delegator id
           const { id } = props // transcoder id
           const isMyDelegate = id === delegateAddress
-          const canRebond = isMyDelegate && (isBonded || isBonding)
           const canBond =
             myId && (!isTranscoder || (isTranscoder && id === myId))
           const canUnbond = myId && isBonded && isMyDelegate
           return (
             <TranscoderCard
               {...props}
+              numActive={numActive}
               key={id}
               bonded={isMyDelegate}
               bondedAmount={totalStake}
@@ -202,11 +206,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       </Content>
       {TOUR_ENABLED && (
         <Tour
-          // callback={({ step }) => {
-          //   if (step && 'sortingOptions' === step.name) {
-          //     window.scrollTo(0, 0)
-          //   }
-          // }}
           continuous={true}
           locale={{
             back: 'Back',

@@ -70,13 +70,12 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const earnedFees = hasUnclaimedRounds ? MathBN.sub(pendingFees, fees) : '0'
   const hasFees = fees !== '0'
   const isUnbonding = status === 'Unbonding'
-  const isUnbonded = status === 'Unbonded'
   const isBonding = status === 'Pending'
   const isBonded = status === 'Bonded'
   const roundsUntilUnbonded = isUnbonding
     ? MathBN.sub(withdrawRound, lastInitializedRound)
     : ''
-  const canWithdraw = isUnbonded && withdrawAmount !== '0'
+  const canWithdraw = !isUnbonding && withdrawAmount !== '0'
   return (
     <Wrapper>
       {/*<InlineHint flag="account-delegating">

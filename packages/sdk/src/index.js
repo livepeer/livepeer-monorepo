@@ -544,7 +544,7 @@ export async function initContracts(
  * })
  *
  */
-export default async function createLivepeerSDK(
+export async function createLivepeerSDK(
   opts: LivepeerSDKOptions,
 ): Promise<LivepeerSDK> {
   const { ens, events, ...config } = await initContracts(opts)
@@ -902,19 +902,10 @@ export default async function createLivepeerSDK(
           )} LPT because is it greater than your current balance (${balance} LPT).`,
         )
       }
-      // approve address / amount with LivepeerToken...
-      await utils.getTxReceipt(
-        await LivepeerToken.approve(
-          await resolveAddress(rpc.getENSAddress, addr),
-          value,
-          tx,
-        ),
-        config.eth,
-      )
-      // ...aaaand transfer!
+
       return await utils.getTxReceipt(
         await LivepeerToken.transfer(
-          await resolveAddress(rpc.getENSAddress, addr),
+          await resolveAddress(rpc.getENSAddress, to),
           value,
           tx,
         ),
@@ -2094,10 +2085,10 @@ export default async function createLivepeerSDK(
         nextUnbondingLockId,
       } = await rpc.getDelegator(tx.from)
 
-      if (status !== DELEGATOR_STATUS.Unbonded && withdrawAmount !== '0') {
-        throw new Error(
-          'Delegator is not in the unbonded state with a withdraw amount',
-        )
+      if (status === DELEGATOR_STATUS.Unbonding) {
+        throw new Error('Delegator must wait through unbonding period')
+      } else if (withdrawAmount === '0') {
+        throw new Error('Delegator does not have anything to withdraw')
       } else {
         let unbondingLockId = toBN(nextUnbondingLockId)
         if (unbondingLockId.cmp(new BN(0)) > 0) {
@@ -2436,3 +2427,5 @@ export default async function createLivepeerSDK(
    * @prop {string} transcoderPoolMaxSize - transcoder pool max size
    */
 }
+
+export { createLivepeerSDK as LivepeerSDK, createLivepeerSDK as default }
