@@ -79,10 +79,9 @@ export function formatPercentage(x: string, decimals = 2): string {
 
 export function formatBalance(
   x: string,
-  decimals: number = 0,
+  decimals: number = 6,
   unit: string = 'ether',
 ): string {
-  decimals = decimals ? decimals : x.length
   return !x
     ? ''
     : Big(x)
