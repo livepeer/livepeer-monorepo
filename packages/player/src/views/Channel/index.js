@@ -154,63 +154,109 @@ class Channel extends Component {
     this.setState({ tipAmount: e.target.value })
   }
 
+  getRootUrl(location, address) {
+    if (location.search && location.search.length > 0) {
+      let queryObject = parseQs(location.search)
+      if (queryObject && queryObject.source) {
+        console.log('using source qs', location)
+        return queryObject.source
+      }
+    } else {
+      let rootUrl = null
+      if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
+        rootUrl = process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
+      } else if (
+        address ===
+        process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
+      ) {
+        rootUrl = process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
+      } else if (
+        address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
+      ) {
+        rootUrl = process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
+      } else if (address === 'local') {
+        console.info('LOCAL ', address)
+        rootUrl = 'http://localhost:8935/stream'
+      } else {
+        rootUrl = process.env.REACT_APP_STREAM_ROOT_URL
+      }
+
+      return rootUrl
+    }
+  }
+
   async componentWillReceiveProps(nextProps) {
     const { data } = nextProps.account
     const location = nextProps.location
     const address = data.id.toLowerCase()
-    const [latestJob] = data.broadcaster.jobs
-    const manifestId = latestJob.streamId.substr(0, 68 + 64)
+    const match = nextProps.match
+    let rootUrl = this.getRootUrl(location, address)
 
-    if (!latestJob) {
-      if (nextProps.loading === false) this.setState({ live: false })
-      return
-    }
-
-    if (location.search) {
-      let queryObject = parseQs(location.search)
-      if (queryObject && queryObject.source) {
-        console.log('using source qs')
-        return this.setState({
-          live: true,
-          url: `${queryObject.source}/${manifestId}.m3u8`,
-        })
-      }
-    }
-
-    if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      this.setState({
+    if (match && match.params && match.params.channel === 'local') {
+      return this.setState({
         live: true,
-        url: `${
-          process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else if (
-      address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
-    ) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else if (
-      address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
-    ) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
+        url: `${rootUrl}/current.m3u8`,
       })
     } else {
-      let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
-      this.setState({ url })
+      const [latestJob] = data.broadcaster.jobs
+      const manifestId = latestJob.streamId.substr(0, 68 + 64)
+
+      if (!latestJob) {
+        if (nextProps.loading === false) this.setState({ live: false })
+        return
+      }
+
+      return this.setState({
+        live: true,
+        url: `${rootUrl}/${manifestId}.m3u8`,
+      })
     }
+
+    // if (location.search) {
+    //   let queryObject = parseQs(location.search)
+    //   if (queryObject && queryObject.source) {
+    //     console.log('using source qs', location)
+    //     return this.setState({
+    //       live: true,
+    //       url: `${queryObject.source}/${manifestId}.m3u8`,
+    //     })
+    //   }
+    // }
+    //
+    // if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
+    //   this.setState({
+    //     live: true,
+    //     url: `${
+    //       process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
+    //     }/${manifestId}.m3u8`,
+    //   })
+    // } else if (
+    //   address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
+    // ) {
+    //   this.setState({
+    //     live: true,
+    //     url: `${
+    //       process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
+    //     }/${manifestId}.m3u8`,
+    //   })
+    // } else if (
+    //   address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
+    // ) {
+    //   this.setState({
+    //     live: true,
+    //     url: `${
+    //       process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
+    //     }/${manifestId}.m3u8`,
+    //   })
+    // } else {
+    //   let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
+    //   this.setState({ url })
+    // }
   }
 
   render() {
-    const { account, changeChannel, location } = this.props
-    console.log('locaation: ', location)
+    const { account, changeChannel, location, match } = this.props
+    console.log('locaation: ', location, match)
     const { loading } = account
     const {
       id,
