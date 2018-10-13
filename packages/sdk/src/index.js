@@ -1847,33 +1847,45 @@ export async function createLivepeerSDK(
      * Gets the estimated amount of gas to be used by a smart contract
      * method.
      * @memberof livepeer~rpc
-     * @param object = {
-     *  smartContractName: string,
-     *  methodName: string,
-     *  toAddress: string,
-     *  amount: string
-     * }
+     * @param
+     *  contractName: string, -- name of contract containing method you wish to find gas price for
+     *  methodName: string, -- name of method on contract
+     *  methodArgs: Array, -- array of argument to be passed to the contract in specified order
+     *  tx: (optional) Object {
+     *    from: address - 0x...,
+     *    gas: number
+     *  },
+     *  value: (optional) number or string containing number
+     * @return {Promise<number>} containing estimated ges price
+     *
+     * @example await rpc.estimateGas(
+     *  'BondingManager',
+     *  'bond',
+     *  [10, '0x00.....']
+     * )
+     * // => 33454
      */
     async estimateGas(
-      to: string,
-      amount: string,
-      tx: TxObject,
+      contractName: string,
+      methodName: string,
+      methodArgs: Array,
+      tx = config.defaultTx,
+      value = '0',
     ): Promise<number> {
-      const token = toBN(amount)
-      let amountGas = 0
-      amountGas = toNumber(
-        await config.eth.estimateGas(
-          BondingManager.bond(
-            token,
-            await resolveAddress(rpc.getENSAddress, to),
-            {
-              ...tx,
-              ...config.defaultTx,
-            },
-          ),
-        ),
+      const percentage = 1.5
+      const contractABI = config.abis[contractName]
+      const methodABI = utils.findAbiByName(contractABI, methodName)
+      const encodedData = utils.encodeMethodParams(methodABI, methodArgs)
+      return (
+        toNumber(
+          await config.eth.estimateGas({
+            to: tx.from,
+            value: value,
+            gas: tx.gas,
+            data: encodedData,
+          }),
+        ) * percentage
       )
-      return amountGas
     },
 
     /**
