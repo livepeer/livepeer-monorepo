@@ -1853,9 +1853,9 @@ export async function createLivepeerSDK(
      *  methodArgs: Array, -- array of argument to be passed to the contract in specified order
      *  tx: (optional) Object {
      *    from: address - 0x...,
-     *    gas: number
+     *    gas: number,
+     *    value: (optional) number or string containing number
      *  },
-     *  value: (optional) number or string containing number
      * @return {Promise<number>} containing estimated ges price
      *
      * @example await rpc.estimateGas(
@@ -1870,22 +1870,17 @@ export async function createLivepeerSDK(
       methodName: string,
       methodArgs: Array,
       tx = config.defaultTx,
-      value = '0',
     ): Promise<number> {
-      const percentage = 1.5
+      tx.value = tx.value ? tx.value : '0'
       const contractABI = config.abis[contractName]
       const methodABI = utils.findAbiByName(contractABI, methodName)
       const encodedData = utils.encodeMethodParams(methodABI, methodArgs)
-      return (
-        toNumber(
-          await config.eth.estimateGas({
-            to: tx.from,
-            value: value,
-            gas: tx.gas,
-            data: encodedData,
-          }),
-        ) * percentage
-      )
+      return await config.eth.estimateGas({
+        to: tx.from,
+        value: tx.value,
+        gas: tx.gas,
+        data: encodedData,
+      })
     },
 
     /**
