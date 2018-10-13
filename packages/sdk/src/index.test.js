@@ -357,7 +357,6 @@ test('should return number that signifies the estimated amount of gas to be used
     )
     t.true(number.isValidSync(res))
     t.true(res > 0)
-    console.log(res)
   })
   t.pass()
 })
