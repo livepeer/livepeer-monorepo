@@ -90,7 +90,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           title="Livepeer Token Balance"
           suffix="LPT"
           value={formatBalance(tokenBalance)}
-          subvalue={formatBalance(tokenBalance, 18)}
+          subvalue={formatBalance(tokenBalance)}
         >
           {isMe && (
             <React.Fragment>
