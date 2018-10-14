@@ -1858,7 +1858,9 @@ export async function createLivepeerSDK(
      *  },
      * @return {Promise<number>} containing estimated ges price
      *
-     * @example await rpc.estimateGas(
+     * @example
+     *
+     * await rpc.estimateGas(
      *  'BondingManager',
      *  'bond',
      *  [10, '0x00.....']
