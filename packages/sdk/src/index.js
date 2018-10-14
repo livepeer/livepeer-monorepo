@@ -1848,14 +1848,15 @@ export async function createLivepeerSDK(
      * method.
      * @memberof livepeer~rpc
      * @param
-     *  {contractName: string} name of contract containing method you wish to find gas price for
-     *  {methodName: string} name of method on contract
-     *  {methodArgs: Array} array of argument to be passed to the contract in specified order
-     *  {tx: Object} (optioanl){
+     *  contractName: name of contract containing method you wish to find gas price for.
+     *  methodName: name of method on contract.
+     *  methodArgs: array of argument to be passed to the contract in specified order.
+     *  tx: (optioanl){
      *    from: address - 0x...,
      *    gas: number,
      *    value: (optional) number or string containing number
-     *  },
+     *  }
+     *
      * @return {Promise<number>} containing estimated gas price
      *
      * @example

@@ -1097,18 +1097,17 @@ method.
 
 **Parameters**
 
-- `contractName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-- `methodName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-- `methodArgs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
-- `tx` (optional, default `config.defaultTx`)
-- `null` {contractName: string} name of contract containing method you wish to find gas price for
-  {methodName: string} name of method on contract
-  {methodArgs: Array} array of argument to be passed to the contract in specified order
-  {tx: Object} (optioanl){
+- `contractName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : name of contract containing method you wish to find gas price for.
+  methodName: name of method on contract.
+  methodArgs: array of argument to be passed to the contract in specified order.
+  tx: (optioanl){
   from: address - 0x...,
   gas: number,
   value: (optional) number or string containing number
-  },
+  }
+- `methodName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `methodArgs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
+- `tx` (optional, default `config.defaultTx`)
 
 **Examples**
 
