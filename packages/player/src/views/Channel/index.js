@@ -155,33 +155,28 @@ class Channel extends Component {
   }
 
   getRootUrl(location, address) {
-    if (location.search && location.search.length > 0) {
-      let queryObject = parseQs(location.search)
-      if (queryObject && queryObject.source) {
-        console.log('using source qs', location)
-        return queryObject.source
-      }
+    let queryObject = parseQs(location.search)
+    if (queryObject && queryObject.source) {
+      console.log('using source qs', location)
+      return queryObject.source
     } else {
       let rootUrl = null
-      if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-        rootUrl = process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-      } else if (
-        address ===
-        process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
-      ) {
-        rootUrl = process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-      } else if (
-        address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
-      ) {
-        rootUrl = process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-      } else if (address === 'local') {
-        console.info('LOCAL ', address)
-        rootUrl = 'http://localhost:8935/stream'
-      } else {
-        rootUrl = process.env.REACT_APP_STREAM_ROOT_URL
+      switch (address) {
+        case process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase():
+          rootUrl = process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
+          break
+        case process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase():
+          rootUrl = process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
+          break
+        case process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase():
+          rootUrl = process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
+          break
+        case 'local':
+          rootUrl = 'http://localhost:8935/stream'
+        default:
+          rootUrl = process.env.REACT_APP_STREAM_ROOT_URL
+          return rootUrl
       }
-
-      return rootUrl
     }
   }
 
@@ -211,47 +206,6 @@ class Channel extends Component {
         url: `${rootUrl}/${manifestId}.m3u8`,
       })
     }
-
-    // if (location.search) {
-    //   let queryObject = parseQs(location.search)
-    //   if (queryObject && queryObject.source) {
-    //     console.log('using source qs', location)
-    //     return this.setState({
-    //       live: true,
-    //       url: `${queryObject.source}/${manifestId}.m3u8`,
-    //     })
-    //   }
-    // }
-    //
-    // if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-    //   this.setState({
-    //     live: true,
-    //     url: `${
-    //       process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-    //     }/${manifestId}.m3u8`,
-    //   })
-    // } else if (
-    //   address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
-    // ) {
-    //   this.setState({
-    //     live: true,
-    //     url: `${
-    //       process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-    //     }/${manifestId}.m3u8`,
-    //   })
-    // } else if (
-    //   address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
-    // ) {
-    //   this.setState({
-    //     live: true,
-    //     url: `${
-    //       process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-    //     }/${manifestId}.m3u8`,
-    //   })
-    // } else {
-    //   let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
-    //   this.setState({ url })
-    // }
   }
 
   render() {
