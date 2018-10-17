@@ -4,9 +4,6 @@ import {
   TransactionSubmitted,
 } from './Subscription'
 
-/** Constants **/
-const gasRate = 1.5
-
 /** Typedefs */
 
 type GQLContext = {
@@ -33,12 +30,11 @@ export async function approve(
   const { type, amount } = args
   switch (type) {
     case 'bond':
-      const gas =
-        (await ctx.livepeer.rpc.estimateGas(
-          'BondingManager',
-          'approveTokenBondAmount',
-          [amount],
-        )) * gasRate
+      const gas = await ctx.livepeer.rpc.estimateGas(
+        'LivepeerToken',
+        'approve',
+        [ctx.livepeer.config.defaultTx.from, amount],
+      )
       return await ctx.livepeer.rpc.approveTokenBondAmount(amount, {
         gas: gas,
       })
@@ -61,12 +57,10 @@ export async function bond(
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { to, amount } = args
-  const gas =
-    (await ctx.livepeer.rpc.estimateGas(
-      'BondingManager',
-      'bondApprovedTokenAmount',
-      [amount, to],
-    )) * gasRate
+  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'bond', [
+    amount,
+    to,
+  ])
   return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount, {
     gas: gas,
   })

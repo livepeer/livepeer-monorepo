@@ -1875,16 +1875,19 @@ export async function createLivepeerSDK(
       tx = config.defaultTx,
     ): Promise<number> {
       tx.value = tx.value ? tx.value : '0'
+      const gasRate = 1.2
       const contractABI = config.abis[contractName]
       const methodABI = utils.findAbiByName(contractABI, methodName)
       const encodedData = utils.encodeMethodParams(methodABI, methodArgs)
-      return toNumber(
-        await config.eth.estimateGas({
-          to: tx.from,
-          value: tx.value,
-          gas: tx.gas,
-          data: encodedData,
-        }),
+      return (
+        toNumber(
+          await config.eth.estimateGas({
+            to: tx.from,
+            value: tx.value,
+            gas: tx.gas,
+            data: encodedData,
+          }),
+        ) * gasRate
       )
     },
 

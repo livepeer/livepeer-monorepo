@@ -339,6 +339,11 @@ test('should return number that signifies the estimated amount of gas to be used
       methodArgs: [],
     },
     {
+      contractName: 'LivepeerToken',
+      methodName: 'approve',
+      methodArgs: [livepeer.config.defaultTx.from, 10],
+    },
+    {
       contractName: 'Minter',
       methodName: 'currentMintedTokens',
       methodArgs: [],

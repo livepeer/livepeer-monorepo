@@ -76,11 +76,8 @@ The following section details the rpc API's function signatures and typedefs.
   - [getBlock](#getblock)
   - [getEthBalance](#getethbalance)
   - [getUnbondingPeriod](#getunbondingperiod)
-  - [getUnbondingPeriod](#getunbondingperiod-1)
   - [getNumActiveTranscoders](#getnumactivetranscoders)
-  - [getNumActiveTranscoders](#getnumactivetranscoders-1)
   - [getMaxEarningsClaimsRounds](#getmaxearningsclaimsrounds)
-  - [getMaxEarningsClaimsRounds](#getmaxearningsclaimsrounds-1)
   - [getTotalBonded](#gettotalbonded)
   - [getTokenTotalSupply](#gettokentotalsupply)
   - [getTokenBalance](#gettokenbalance)
@@ -301,19 +298,6 @@ await rpc.getUnbondingPeriod()
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
-#### getUnbondingPeriod
-
-Gets the unbonding period for transcoders
-
-**Examples**
-
-```javascript
-await rpc.getUnbondingPeriod()
-// => string
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
-
 #### getNumActiveTranscoders
 
 Gets the number of active transcoders
@@ -322,32 +306,6 @@ Gets the number of active transcoders
 
 ```javascript
 await rpc.getNumActiveTranscoders()
-// => string
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
-
-#### getNumActiveTranscoders
-
-Gets the number of active transcoders
-
-**Examples**
-
-```javascript
-await rpc.getNumActiveTranscoders()
-// => string
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
-
-#### getMaxEarningsClaimsRounds
-
-Gets the maximum earnings for claims rounds
-
-**Examples**
-
-```javascript
-await rpc.getMaxEarningsClaimsRounds()
 // => string
 ```
 
