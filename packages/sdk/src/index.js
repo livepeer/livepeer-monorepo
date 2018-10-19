@@ -1873,13 +1873,21 @@ export async function createLivepeerSDK(
      * // }
      */
     async unbond(tx = config.defaultTx): Promise<TxReceipt> {
-      const { status, pendingStake } = await rpc.getDelegator(tx.from)
+      const { status, pendingStake, bondedAmount } = await rpc.getDelegator(
+        tx.from,
+      )
+      // pendingStake = 0 if delegator has claimed earnings through the current round
+      // In this case, bondedAmount is up to date
+      const totalStake =
+        toBN(pendingStake).cmp(toBN(bondedAmount)) < 0
+          ? bondedAmount
+          : pendingStake
       // Can only unbond successfully when not already "Unbonded"
       if (status === DELEGATOR_STATUS.Unbonded) {
         throw new Error('This account is already unbonded.')
       } else {
         return await utils.getTxReceipt(
-          await BondingManager.unbond(pendingStake),
+          await BondingManager.unbond(totalStake),
           config.eth,
         )
       }
