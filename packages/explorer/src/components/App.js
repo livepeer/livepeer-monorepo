@@ -20,10 +20,10 @@ const App = () => (
     <div>
       {/* Pages */}
       <Switch>
-        <Route exact path="/" component={Landing} />
+        <Route exact path="/about" component={Landing} />
+        <Route exact path="/transcoders" component={Transcoders} />
         <Route path="/mine" component={Mining} />
         <Route exact path="/token" component={Token} />
-        <Route exact path="/transcoders" component={Transcoders} />
         <Route path="/accounts/:accountId" component={Account} />
         <Route
           path="/me"
@@ -40,7 +40,7 @@ const App = () => (
             return <Redirect to={nextPath} />
           }}
         />
-        <Redirect to="/" />
+        <Redirect to="/transcoders" />
       </Switch>
       {/* Modals */}
       <Route

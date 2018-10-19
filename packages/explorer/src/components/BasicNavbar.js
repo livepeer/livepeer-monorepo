@@ -111,19 +111,49 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
         {/*onSearch && <NavSearch onSearch={onSearch} />*/}
 
         <NavbarLinks>
-          <NavbarLink exact to="/">
-            <HomeIcon size={16} />
-            <span>&nbsp;Overview</span>
-          </NavbarLink>
-          <NavbarLink exact to="/token">
-            <Icon
-              stategy="url"
-              use={`/static/images/lpt-${
-                window.location.pathname === '/token' ? 'green' : 'light'
-              }.svg`}
-              style={{ width: 16 }}
+          <form
+            style={{ maxWidth: '100%', width: 580 }}
+            onSubmit={e => {
+              e.preventDefault()
+              const data = new FormData(e.target)
+              history.push(`/accounts/${data.get('address')}`)
+            }}
+          >
+            <SearchBar
+              required
+              name="address"
+              id="address"
+              type="search"
+              pattern="^0x[a-fA-F0-9]{40}$"
+              placeholder="Enter an ETH account address"
+              onChange={e => {
+                const re = new RegExp(e.target.pattern)
+                const sub = document.getElementById('sub')
+                const invalidColor = '#868686'
+                if (re.test(e.target.value)) {
+                  e.target.style.color = '#FFFFFF'
+                  sub.style.color = '#00EA86'
+                } else {
+                  e.target.style.color = invalidColor
+                  sub.style.color = invalidColor
+                }
+              }}
             />
-            <span>&nbsp;Token</span>
+            <div
+              style={{
+                textAlign: 'center',
+                width: '5%',
+                display: 'inline-block',
+              }}
+            >
+              <CTAButton id="sub" type="submit">
+                <span>&rarr;</span>
+              </CTAButton>
+            </div>
+          </form>
+          <NavbarLink exact to="/about">
+            <HomeIcon size={16} />
+            <span>&nbsp;About</span>
           </NavbarLink>
           <NavbarLink to="/transcoders">
             <CpuIcon size={16} />
@@ -190,7 +220,7 @@ const Nav = styled.nav`
   display: flex;
   flex-flow: row;
   align-items: center;
-  height: 64px;
+  height: 90px;
   padding: 16px 24px;
   background: #000;
   & *::placeholder {
@@ -229,8 +259,8 @@ const NavbarLink = styled(NavLink).attrs({
   align-items: center;
   color: #fff;
   font-size: 12px;
-  margin-left: 24px;
-  height: 64px;
+  margin-left: 35px;
+  height: 90px;
   text-decoration: none;
   text-transform: uppercase;
   @media (max-width: 800px) {
@@ -248,6 +278,42 @@ const NetworkBadge = styled.span`
       display: none !important;
     }
   }
+`
+
+const placeHolderColor = '#868686'
+const SearchBar = styled.input`
+  width: 90%;
+  height: 25px;
+  margin: 0 10px;
+  padding: 16px;
+  background: #242424;
+  color: #868686;
+  border: none;
+  font-size: 16px;
+  outline: 0;
+  -webkit-appearance: textfield;
+  ::placeholder {
+    color: ${placeHolderColor};
+  }
+  :-ms-input-placeholder {
+    color: ${placeHolderColor};
+  }
+  ::-ms-input-placeholder {
+    color: ${placeHolderColor};
+  }
+`
+
+const CTAButton = styled.button`
+  background: none;
+  background: none;
+  border: none;
+  color: #868686;
+  cursor: pointer;
+  display: inline-block;
+  font-size: ${({ big }) => (big ? '26px' : '22px')};
+  letter-spacing: 2px;
+  outline: 0;
+  text-transform: uppercase;
 `
 
 export default compose(
