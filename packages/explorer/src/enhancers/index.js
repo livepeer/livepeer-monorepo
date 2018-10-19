@@ -239,6 +239,7 @@ const ProtocolQuery = gql`
     totalBondedToken
     targetBondingRate
     transcoderPoolMaxSize
+    maxEarningsClaimsRounds
   }
 
   query ProtocolQuery {

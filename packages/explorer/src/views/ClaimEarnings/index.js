@@ -7,6 +7,7 @@ import { MathBN } from '../../utils'
 
 export type ClaimEarningsViewProps = {
   currentRound: GraphQLProps<Round>,
+  protocol: GraphQLProps<Protocol>,
   history: History,
   me: GraphQLProps<Account>,
   claimEarnings: any => void,
@@ -16,6 +17,7 @@ export type ClaimEarningsViewProps = {
 const ClaimEarningsView: React.ComponentType<ClaimEarningsViewProps> = ({
   claimEarnings,
   currentRound,
+  protocol,
   history,
   me,
   onClose,
@@ -27,7 +29,7 @@ const ClaimEarningsView: React.ComponentType<ClaimEarningsViewProps> = ({
   const loading = currentRound.loading || me.loading
   const from = MathBN.add(lastClaimRound, '1')
   const diff = MathBN.sub(to, lastClaimRound)
-  const maxClaims = '20' // TODO: get maxClaims from the smart contract
+  const maxClaims = protocol.data.maxEarningsClaimsRounds
   const closeModal = () => history.push(history.location.pathname)
   return (
     <BasicModal title="Claim Your Earnings" onClose={closeModal}>

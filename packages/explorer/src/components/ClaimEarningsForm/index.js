@@ -34,6 +34,7 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
   const lastClaimRound = MathBN.sub(from, '1')
   const currentRound = MathBN.add(lastClaimRound, max)
   const endRound = MathBN.add(values.numRounds, lastClaimRound)
+  const remaining = MathBN.sub(diff, values.numRounds)
   const confetti = (
     <Confetti
       active={submitSucceeded}
@@ -84,7 +85,7 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
         {confetti}
         <p>
           Congratulations! You successfully claimed your earnings through round
-          #{lastClaimRound}. You now have {diff} rounds of earnings left to
+          #{endRound}. You now have {remaining} rounds of earnings left to
           claim.
         </p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
