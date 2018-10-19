@@ -1364,6 +1364,7 @@ export async function createLivepeerSDK(
         totalBondedToken
         targetBondingRate
         transcoderPoolMaxSize
+        maxEarningsClaimsRounds
      }
      */
     async getProtocol(): Promise<Protocol> {
@@ -1372,12 +1373,14 @@ export async function createLivepeerSDK(
       const totalBondedToken = await rpc.getTotalBonded()
       const targetBondingRate = await rpc.getTargetBondingRate()
       const transcoderPoolMaxSize = await rpc.getTranscoderPoolMaxSize()
+      const maxEarningsClaimsRounds = await rpc.getMaxEarningsClaimsRounds()
       return {
         paused,
         totalTokenSupply,
         totalBondedToken,
         targetBondingRate,
         transcoderPoolMaxSize,
+        maxEarningsClaimsRounds,
       }
     },
 

@@ -371,6 +371,7 @@ test('should return object with correct shape from getProtocol()', async t => {
     totalBondedToken: string,
     targetBondingRate: string,
     transcoderPoolMaxSize: string,
+    maxEarningsClaimsRounds: string,
   })
   const res = await livepeer.rpc.getProtocol()
   schema.validateSync(res)
