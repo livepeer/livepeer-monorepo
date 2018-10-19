@@ -10,147 +10,102 @@ import {
 
 const Landing = ({ history, ...props }) => (
   <React.Fragment>
-    <Container>
+    <Container
+      style={{
+        margin: 0,
+        flexFlow: 'row',
+      }}
+    >
       <ScrollToTopOnMount />
-      <BasicNavbar />
-      <LandingContent width="800px">
-        <img
-          src={`${process.env.PUBLIC_URL}/wordmark.svg`}
-          width="240"
-          alt="The glorious Livepeer wordmark"
-        />
-        <h3 style={{ letterSpacing: 8 }}>Protocol Explorer</h3>
-        <br />
-        <br />
-        <Video src="/static/media/landing.mp4" />
-        <br />
-        <br />
-        <div style={{ display: 'flex' }}>
+      <BasicNavbar history={history} />
+      <Content
+        style={{
+          backgroundImage: 'url("/static/images/overview.jpg")',
+          backgroundSize: 'cover',
+          flex: '1 1 auto',
+          minHeight: '93vh',
+          width: '50%',
+          margin: 0,
+          display: 'inline-block',
+        }}
+      >
+        <InfoBox style={{ margin: '100px', width: 400, color: '#FFF' }}>
+          <h1 style={{ color: '#FFFFFF' }}>How to Use the Explorer</h1>
+          <p>
+            What is a reward cut? What is a fee share?<br />
+            Watch this video to learn how to assess and<br />
+            bond to transcoders using the explorer
+          </p>
+          <CTAButton
+            href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
+            style={{
+              background: '#00EA86',
+              color: '#000',
+            }}
+          >
+            Watch the video
+          </CTAButton>
+        </InfoBox>
+      </Content>
+      <Content
+        style={{
+          flex: '1 1 auto',
+          minHeight: '93vh',
+          width: '50%',
+          display: 'inline-block',
+          margin: 0,
+          padding: '100px',
+        }}
+      >
+        <div
+          style={{
+            width: '50%',
+            height: '50%',
+            margin: 'auto auto',
+            textAlign: 'center',
+          }}
+        >
           <InfoBox>
-            <h2>
-              <Icon use="explore" />&nbsp;
-              {`Explore Protocol Activity`}
-            </h2>
+            <h2>Stats on the Livepeer Protocol</h2>
             <p>
-              The account view shows the recent Livepeer smart contract
-              transactions for any Ethereum address. It also gives you deep
-              insight into important protocol metrics.
+              Supermas ix a community-built analytics platform for smart
+              contracts that pulls and visualizes economic data to drive
+              actionable insights
             </p>
-            <br />
-            <form
-              style={{ maxWidth: '100%', width: 480 }}
-              onSubmit={e => {
-                e.preventDefault()
-                const data = new FormData(e.target)
-                history.push(`/accounts/${data.get('address')}`)
+            <CTAButton
+              href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
+              style={{
+                background: 'inherit',
+                color: '#000',
+                outline: 'solid 2px #000',
+                marginBottom: '80px',
               }}
             >
-              <SearchBar
-                required
-                name="address"
-                type="search"
-                pattern="^0x[a-fA-F0-9]{40}$"
-                placeholder="Enter an ETH account address"
-                onKeyDown={e => {
-                  if (e.keyCode !== 13 || !e.target.value) return
-                  document.getElementById('account-search-button').click()
-                }}
-              />
-              <br />
-              <br />
-              <div style={{ textAlign: 'right' }}>
-                <CTAButton type="submit">View Account</CTAButton>
-              </div>
-            </form>
+              Visit Supermax
+            </CTAButton>
           </InfoBox>
           <InfoBox>
-            <h2>
-              <Icon use="how_to_vote" />&nbsp;
-              {`Play the Delegation Game`}
-            </h2>
+            <h2>Livepeer Token Distribution</h2>
             <p>
-              Bond to delegates to earn newly minted token and fees from
-              transcoder activity, growing your total ownership in the network.
+              The initial token distribution was executed using a merklemine
+              mechanism to allocate 63% of all token to the community.
             </p>
-            <br />
-            <p style={{ textAlign: 'right', margin: 0 }}>
-              <CTAButton
-                big
-                type="submit"
-                onClick={() => {
-                  history.push('/token')
-                }}
-              >
-                Get Token
-              </CTAButton>
-            </p>
+            <CTAButton
+              href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
+              style={{
+                background: 'inherit',
+                color: '#000',
+                outline: 'solid 2px #000',
+              }}
+            >
+              Read More
+            </CTAButton>
           </InfoBox>
         </div>
-      </LandingContent>
-      <Footer />
+      </Content>
     </Container>
   </React.Fragment>
 )
-
-class Video extends React.Component {
-  state = { paused: true }
-  togglePlay = async e => {
-    const { target } = e
-    const attr = 'controls'
-    if (!target.paused) {
-      target.removeAttribute(attr)
-      await target.pause()
-      this.setState({ paused: true })
-    } else {
-      target.setAttribute(attr, attr)
-      await target.play()
-      this.setState({ paused: false })
-    }
-  }
-  render() {
-    return (
-      <div
-        style={{
-          position: 'relative',
-          // video is 1080 x 1728
-          paddingBottom: '62.5%',
-          height: 0,
-          boxShadow: '0 1px 20px 0px rgba(0, 0, 0, 0.5)',
-          cursor: 'pointer',
-        }}
-      >
-        <video
-          onClick={this.togglePlay}
-          onTouchStart={this.togglePlay}
-          src={this.props.src}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-          }}
-        />
-        <div
-          style={{
-            display: !this.state.paused ? 'none' : 'flex',
-            color: '#fff',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-          }}
-        >
-          <Icon use="play_circle_outline" style={{ fontSize: 48 }} />
-        </div>
-      </div>
-    )
-  }
-}
 
 const fadeIn = keyframes`
   from {
@@ -172,53 +127,46 @@ const Container = styled.div`
   flex-flow: column;
   align-items: center;
   justify-content: top;
-  min-height: 100vh;
-  padding: 80px 0;
-  background: linear-gradient(#000, #1b1b1b 320px);
-  color: #fff;
+  min-height: 90vh;
+  background: #fff;
+  @media (max-width: 1004px) {
+    flex-flow: column !important;
+    > div {
+      width: 100% !important;
+    }
+  }
 `
 
 const InfoBox = styled.div`
-  display: inline-block;
-  width: 50%;
-  :nth-child(1) {
-    margin-right: 1.5rem;
-  }
-  :nth-child(2) {
-    margin-left: 1.5rem;
-  }
   h2 {
     align-items: center;
+    text-align: center;
     display: inline-flex;
+    letter-spacing: 0.4em;
+    width: 100%;
+    margin: 0;
+  }
+  h1 {
+    letter-spacing: 0.4em;
+  }
+  p {
+    margin: 20px auto;
   }
 `
-
-const SearchBar = styled.input`
-  width: 100%;
-  height: 48px;
-  margin: 0;
-  padding: 16px;
-  border-radius: 4px;
-  border: none;
-  font-size: 16px;
-  outline: 0;
-  -webkit-appearance: textfield;
-`
-
-const CTAButton = styled.button`
+const CTAButton = styled.a`
   display: inline-block;
-  color: #fff;
-  padding: ${({ big }) => (big ? '15px 24px' : '8px 24px')};
-  font-size: ${({ big }) => (big ? '16px' : '12px')};
-  border-radius: 4px;
-  background: none;
+  padding: 20px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  box-shadow: 0 0 0 1px inset;
   background: none;
   outline: 0;
   border: none;
   cursor: pointer;
+  text-decoration: none;
+  font-size: 10px;
+  :visited {
+    text-decoration: none;
+  }
 `
 
 export default Landing
