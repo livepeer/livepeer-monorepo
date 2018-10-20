@@ -111,8 +111,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
         {/*onSearch && <NavSearch onSearch={onSearch} />*/}
 
         <NavbarLinks>
-          <form
-            style={{ maxWidth: '100%', width: 580 }}
+          <Form
             onSubmit={e => {
               e.preventDefault()
               const data = new FormData(e.target)
@@ -150,7 +149,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                 <span>&rarr;</span>
               </CTAButton>
             </div>
-          </form>
+          </Form>
           <NavbarLink exact to="/about">
             <HomeIcon size={16} />
             <span>&nbsp;About</span>
@@ -175,18 +174,24 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
             </NavbarLink>
           )}
           <SimpleMenu
+            style={{
+              width: 350,
+            }}
             handle={
-              <Button
+              <Btn
                 style={{
                   minWidth: 0,
                   width: 32,
                   height: 32,
                   color: '#fff',
                   marginLeft: 16,
+                  background: 'transparent',
+                  outline: 'none',
+                  border: 'none',
                 }}
               >
                 <Icon use="more_vert" />
-              </Button>
+              </Btn>
             }
             onSelected={async ({ detail }) => {
               const { action } = detail.item.dataset
@@ -197,6 +202,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                   )
                 case 'smart-contracts':
                   return (window.location.hash = '#/smart-contracts')
+                case 'search':
+                  break
                 default:
                   return ''
               }
@@ -208,6 +215,50 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
             <MenuItem data-action="smart-contracts">
               <Icon use="code" style={{ marginRight: 8 }} />Smart Contract
               Addresses
+            </MenuItem>
+            <MenuItem id="search" data-action="search">
+              <form
+                style={{
+                  width: '95%',
+                }}
+                onSubmit={e => {
+                  e.preventDefault()
+                  const data = new FormData(e.target)
+                  history.push(`/accounts/${data.get('address')}`)
+                }}
+              >
+                <SearchBar
+                  required
+                  name="address"
+                  id="address2"
+                  type="search"
+                  pattern="^0x[a-fA-F0-9]{40}$"
+                  placeholder="Enter an ETH account address"
+                  onChange={e => {
+                    const re = new RegExp(e.target.pattern)
+                    const sub = document.getElementById('sub2')
+                    const invalidColor = '#868686'
+                    if (re.test(e.target.value)) {
+                      e.target.style.color = '#FFFFFF'
+                      sub.style.color = '#00EA86'
+                    } else {
+                      e.target.style.color = invalidColor
+                      sub.style.color = invalidColor
+                    }
+                  }}
+                />
+                <div
+                  style={{
+                    textAlign: 'center',
+                    width: '5%',
+                    display: 'inline-block',
+                  }}
+                >
+                  <CTAButton id="sub2" type="submit">
+                    <span>&rarr;</span>
+                  </CTAButton>
+                </div>
+              </form>
             </MenuItem>
           </SimpleMenu>
         </NavbarLinks>
@@ -230,6 +281,11 @@ const Nav = styled.nav`
     text-decoration: none;
     font-size: 16px;
     color: #fff;
+  }
+  @media (min-width: 1147px) {
+    #search {
+      display: none;
+    }
   }
 `
 
@@ -268,12 +324,15 @@ const NavbarLink = styled(NavLink).attrs({
       display: none;
     }
   }
+  @media (max-width: 520px) {
+    margin-left: 10px;
+  }
 `
 
 const NetworkBadge = styled.span`
   display: inline-flex;
   align-items: center;
-  @media (max-width: 480px) {
+  @media (max-width: 520px) {
     > span:nth-child(2) {
       display: none !important;
     }
@@ -281,6 +340,7 @@ const NetworkBadge = styled.span`
 `
 
 const placeHolderColor = '#868686'
+
 const SearchBar = styled.input`
   width: 90%;
   height: 25px;
@@ -305,7 +365,6 @@ const SearchBar = styled.input`
 
 const CTAButton = styled.button`
   background: none;
-  background: none;
   border: none;
   color: #868686;
   cursor: pointer;
@@ -314,6 +373,24 @@ const CTAButton = styled.button`
   letter-spacing: 2px;
   outline: 0;
   text-transform: uppercase;
+`
+
+const Form = styled.form`
+  @media (min-width: 1440px) {
+    width: 500px;
+  }
+  @media (max-width: 1439px) {
+    width: 400px;
+  }
+  @media (max-width: 1146px) {
+    display: none;
+  }
+`
+
+const Btn = styled.button`
+  @media (max-width: 520px) {
+    margin: 0 10px !important;
+  }
 `
 
 export default compose(

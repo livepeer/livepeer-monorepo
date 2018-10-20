@@ -29,7 +29,10 @@ const Landing = ({ history, ...props }) => (
           display: 'inline-block',
         }}
       >
-        <InfoBox style={{ margin: '100px', width: 400, color: '#FFF' }}>
+        <InfoBox
+          className="main-content"
+          style={{ margin: '100px', width: 400, color: '#FFF' }}
+        >
           <h1 style={{ color: '#FFFFFF' }}>How to Use the Explorer</h1>
           <p>
             What is a reward cut? What is a fee share?<br />
@@ -56,6 +59,7 @@ const Landing = ({ history, ...props }) => (
           margin: 0,
           padding: '100px',
         }}
+        className="content"
       >
         <div
           style={{
@@ -64,16 +68,17 @@ const Landing = ({ history, ...props }) => (
             margin: 'auto auto',
             textAlign: 'center',
           }}
+          className="rightStat"
         >
-          <InfoBox>
+          <InfoBox className="secondary-content">
             <h2>Stats on the Livepeer Protocol</h2>
             <p>
-              Supermas ix a community-built analytics platform for smart
+              Supermas is a community-built analytics platform for smart
               contracts that pulls and visualizes economic data to drive
-              actionable insights
+              actionable insights.
             </p>
             <CTAButton
-              href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
+              href="https://supermax.cool/livepeer"
               style={{
                 background: 'inherit',
                 color: '#000',
@@ -84,7 +89,7 @@ const Landing = ({ history, ...props }) => (
               Visit Supermax
             </CTAButton>
           </InfoBox>
-          <InfoBox>
+          <InfoBox className="secondary-content">
             <h2>Livepeer Token Distribution</h2>
             <p>
               The initial token distribution was executed using a merklemine
@@ -124,20 +129,101 @@ const LandingContent = styled(Content)`
 
 const Container = styled.div`
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
   align-items: center;
   justify-content: top;
-  min-height: 90vh;
+  min-height: 92vh;
   background: #fff;
+  @media (min-width: 1440px) {
+    div.content {
+      padding: 60px 0 !important;
+    }
+    > div > div {
+      width: 50% !important;
+    }
+    .secondary-content {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: auto !important;
+    }
+  }
+  @media (max-width: 1439px) {
+    div.content {
+      padding: 60px !important;
+    }
+    div.rightStat {
+      width: 50% !important;
+      a {
+        margin-bottom: 30px !important;
+      }
+    }
+  }
+  @media (max-width: 1239px) {
+    div.content {
+      padding: 40px 0 !important;
+    }
+    div.rightStat {
+      width: 80% !important;
+      a {
+        margin-bottom: 30px !important;
+      }
+    }
+  }
   @media (max-width: 1004px) {
     flex-flow: column !important;
     > div {
       width: 100% !important;
     }
   }
+  @media (max-width: 995px) {
+    div {
+      padding: 5px 25px !important;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    > div > div {
+      margin: 10px !important;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    div.rightStat {
+      margin: auto !important;
+      width: 50% !important;
+      a {
+        margin-bottom: 30px !important;
+      }
+    }
+    div.main-content {
+      margin: 100px 10px !important;
+    }
+  }
+  @media (max-width: 768px) {
+    > div > div {
+      margin: 10px !important;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    div.rightStat {
+      margin: auto !important;
+      width: 70% !important;
+      a {
+        margin-bottom: 30px !important;
+      }
+    }
+  }
+  @media (max-width: 595px) {
+    div.rightStat {
+      margin: auto !important;
+      width: 95% !important;
+      a {
+        margin-bottom: 30px !important;
+      }
+    }
+  }
 `
 
 const InfoBox = styled.div`
+  width: 400px;
   h2 {
     align-items: center;
     text-align: center;
@@ -152,18 +238,32 @@ const InfoBox = styled.div`
   p {
     margin: 20px auto;
   }
+  @media (max-width: 525px) {
+    margin: 50px auto !important;
+    max-width: 100% !important;
+    h1 {
+      font-size: 22px !important;
+    }
+    h2 {
+      font-size: 18px !important;
+    }
+    p {
+      font-size: 14px !important;
+    }
+  }
 `
 const CTAButton = styled.a`
   display: inline-block;
   padding: 20px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   background: none;
   outline: 0;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  font-size: 10px;
+  font-size: 14px;
+  color: #00ea86;
   :visited {
     text-decoration: none;
   }
