@@ -40,6 +40,7 @@ const Landing = ({ history, ...props }) => (
             bond to transcoders using the explorer
           </p>
           <CTAButton
+            target="_blank"
             href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
             style={{
               background: '#00EA86',
@@ -78,6 +79,7 @@ const Landing = ({ history, ...props }) => (
               actionable insights.
             </p>
             <CTAButton
+              target="_blank"
               href="https://supermax.cool/livepeer"
               style={{
                 background: 'inherit',
@@ -96,7 +98,8 @@ const Landing = ({ history, ...props }) => (
               mechanism to allocate 63% of all token to the community.
             </p>
             <CTAButton
-              href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
+              target="_blank"
+              href="https://livepeer.org/#token"
               style={{
                 background: 'inherit',
                 color: '#000',
@@ -136,7 +139,7 @@ const Container = styled.div`
   background: #fff;
   @media (min-width: 1440px) {
     div.content {
-      padding: 60px 0 !important;
+      padding: 100px 0 !important;
     }
     > div > div {
       width: 50% !important;
@@ -149,7 +152,7 @@ const Container = styled.div`
   }
   @media (max-width: 1439px) {
     div.content {
-      padding: 60px !important;
+      padding: 80px !important;
     }
     div.rightStat {
       width: 50% !important;

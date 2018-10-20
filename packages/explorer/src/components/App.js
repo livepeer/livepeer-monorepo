@@ -22,8 +22,6 @@ const App = () => (
       <Switch>
         <Route exact path="/about" component={Landing} />
         <Route exact path="/transcoders" component={Transcoders} />
-        <Route path="/mine" component={Mining} />
-        <Route exact path="/token" component={Token} />
         <Route path="/accounts/:accountId" component={Account} />
         <Route
           path="/me"
@@ -83,12 +81,19 @@ const App = () => (
                 staking towards a transcoder to earn fees and LPT rewards.
               </div>
               <div>
-                <Button
-                  style={{ margin: 0 }}
-                  onClick={() => history.push('/token')}
+                <a
+                  style={{
+                    color: 'rgb(0, 235, 135)',
+                    background: 'rgb(0, 0, 0)',
+                    padding: '10px',
+                    margin: 'auto',
+                    textDecoration: 'none',
+                  }}
+                  target="_blank"
+                  href="https://livepeer.org/#token"
                 >
                   Get Livepeer Token
-                </Button>
+                </a>
               </div>
             </CTABanner>
           )}
