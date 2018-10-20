@@ -50,7 +50,7 @@ const Landing = ({ history, ...props }) => (
         >
           <h2>Stats on the Livepeer Protocol</h2>
           <p>
-            Supermas is a community-built analytics platform for smart contracts
+            Supermax is a community-built analytics platform for smart contracts
             that pulls and visualizes economic data to drive actionable
             insights.
           </p>
@@ -137,10 +137,11 @@ const Container = styled.div`
     }
     p {
       font-size: 14px;
+      letter-spacing: 0.09em;
     }
   }
   div.rightStat {
-    width: 80%;
+    width: 50%;
     margin: auto;
   }
   #content div {
@@ -148,7 +149,7 @@ const Container = styled.div`
   }
   @media (min-width: 1440px) {
     div.rightStat {
-      width: 50%;
+      width: 40%;
     }
   }
   @media (max-width: 1005px) {
