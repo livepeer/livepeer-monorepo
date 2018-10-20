@@ -18,17 +18,7 @@ const Landing = ({ history, ...props }) => (
     >
       <ScrollToTopOnMount />
       <BasicNavbar history={history} />
-      <Content
-        style={{
-          backgroundImage: 'url("/static/images/overview.jpg")',
-          backgroundSize: 'cover',
-          flex: '1 1 auto',
-          minHeight: '93vh',
-          width: '50%',
-          margin: 0,
-          display: 'inline-block',
-        }}
-      >
+      <Content id="left-content" className="content">
         <InfoBox
           className="main-content"
           style={{ margin: '100px', width: 400, color: '#FFF' }}
@@ -51,64 +41,47 @@ const Landing = ({ history, ...props }) => (
           </CTAButton>
         </InfoBox>
       </Content>
-      <Content
-        style={{
-          flex: '1 1 auto',
-          minHeight: '93vh',
-          width: '50%',
-          display: 'inline-block',
-          margin: 0,
-          padding: '100px',
-        }}
-        className="content"
-      >
+      <Content id="right-content" className="content">
         <div
           style={{
-            width: '50%',
-            height: '50%',
-            margin: 'auto auto',
             textAlign: 'center',
           }}
           className="rightStat"
         >
-          <InfoBox className="secondary-content">
-            <h2>Stats on the Livepeer Protocol</h2>
-            <p>
-              Supermas is a community-built analytics platform for smart
-              contracts that pulls and visualizes economic data to drive
-              actionable insights.
-            </p>
-            <CTAButton
-              target="_blank"
-              href="https://supermax.cool/livepeer"
-              style={{
-                background: 'inherit',
-                color: '#000',
-                outline: 'solid 2px #000',
-                marginBottom: '80px',
-              }}
-            >
-              Visit Supermax
-            </CTAButton>
-          </InfoBox>
-          <InfoBox className="secondary-content">
-            <h2>Livepeer Token Distribution</h2>
-            <p>
-              The initial token distribution was executed using a merklemine
-              mechanism to allocate 63% of all token to the community.
-            </p>
-            <CTAButton
-              target="_blank"
-              href="https://livepeer.org/#token"
-              style={{
-                background: 'inherit',
-                color: '#000',
-                outline: 'solid 2px #000',
-              }}
-            >
-              Read More
-            </CTAButton>
-          </InfoBox>
+          <h2>Stats on the Livepeer Protocol</h2>
+          <p>
+            Supermas is a community-built analytics platform for smart contracts
+            that pulls and visualizes economic data to drive actionable
+            insights.
+          </p>
+          <CTAButton
+            target="_blank"
+            href="https://supermax.cool/livepeer"
+            style={{
+              background: 'inherit',
+              color: '#000',
+              outline: 'solid 2px #000',
+              marginBottom: '80px',
+            }}
+          >
+            Visit Supermax
+          </CTAButton>
+          <h2>Livepeer Token Distribution</h2>
+          <p>
+            The initial token distribution was executed using a merklemine
+            mechanism to allocate 63% of all token to the community.
+          </p>
+          <CTAButton
+            target="_blank"
+            href="https://livepeer.org/#token"
+            style={{
+              background: 'inherit',
+              color: '#000',
+              outline: 'solid 2px #000',
+            }}
+          >
+            Read More
+          </CTAButton>
         </div>
       </Content>
     </Container>
@@ -137,90 +110,73 @@ const Container = styled.div`
   justify-content: top;
   min-height: 92vh;
   background: #fff;
+  div#left-content {
+    padding: 0;
+    background-image: url('/static/images/overview.jpg');
+    background-size: cover;
+    flex: 1 1 auto;
+    min-height: 93vh;
+    width: 50%;
+    margin: 0;
+    display: inline-block;
+  }
+  div#right-content {
+    flex: 1 1 auto;
+    minheight: 93vh;
+    display: inline-block;
+    margin: 0;
+  }
+  .content {
+    width: 50%;
+    h1 {
+      font-size: 50px;
+      letter-spacing: 0.025em;
+    }
+    h2 {
+      font-size: 22px;
+    }
+    p {
+      font-size: 14px;
+    }
+  }
+  div.rightStat {
+    width: 80%;
+    margin: auto;
+  }
+  #content div {
+    width: 50%;
+  }
   @media (min-width: 1440px) {
-    div.content {
-      padding: 100px 0 !important;
-    }
-    > div > div {
-      width: 50% !important;
-    }
-    .secondary-content {
-      max-width: 100% !important;
-      width: 100% !important;
-      margin: auto !important;
-    }
-  }
-  @media (max-width: 1439px) {
-    div.content {
-      padding: 80px !important;
-    }
     div.rightStat {
-      width: 50% !important;
-      a {
-        margin-bottom: 30px !important;
-      }
+      width: 50%;
     }
   }
-  @media (max-width: 1239px) {
-    div.content {
-      padding: 40px 0 !important;
-    }
-    div.rightStat {
-      width: 80% !important;
-      a {
-        margin-bottom: 30px !important;
-      }
-    }
-  }
-  @media (max-width: 1004px) {
+  @media (max-width: 1005px) {
     flex-flow: column !important;
-    > div {
+    #left-content {
       width: 100% !important;
-    }
-  }
-  @media (max-width: 995px) {
-    div {
-      padding: 5px 25px !important;
-      max-width: 100% !important;
-      width: 100% !important;
-    }
-    > div > div {
-      margin: 10px !important;
-      max-width: 100% !important;
-      width: 100% !important;
-    }
-    div.rightStat {
-      margin: auto !important;
-      width: 50% !important;
-      a {
-        margin-bottom: 30px !important;
-      }
     }
     div.main-content {
-      margin: 100px 10px !important;
+      margin: 100px 40px !important;
     }
-  }
-  @media (max-width: 768px) {
-    > div > div {
-      margin: 10px !important;
-      max-width: 100% !important;
-      width: 100% !important;
+    div.content {
+      width: 80% !important;
     }
     div.rightStat {
       margin: auto !important;
-      width: 70% !important;
-      a {
-        margin-bottom: 30px !important;
-      }
+      width: 90% !important;
     }
   }
   @media (max-width: 595px) {
     div.rightStat {
       margin: auto !important;
       width: 95% !important;
-      a {
-        margin-bottom: 30px !important;
-      }
+    }
+    div.main-content {
+      margin: 80px 10px !important;
+    }
+    div.content {
+      width: 100% !important;
     }
   }
 `
