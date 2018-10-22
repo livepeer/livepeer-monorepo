@@ -33,7 +33,7 @@ export async function approve(
       const gas = await ctx.livepeer.rpc.estimateGas(
         'LivepeerToken',
         'approve',
-        [ctx.livepeer.config.defaultTx.from, amount],
+        [ctx.livepeer.config.contracts.BondingManager.address, amount],
       )
       return await ctx.livepeer.rpc.approveTokenBondAmount(amount, {
         gas: gas,
@@ -80,7 +80,14 @@ export async function claimEarnings(
   const { utils, config } = ctx.livepeer
   const { eth } = config
   const { endRound } = args
-  const txHash = await ctx.livepeer.rpc.claimEarnings(endRound)
+  const gas = await ctx.livepeer.rpc.estimategas(
+    'BondingManager',
+    'claimEarnings',
+    [endround],
+  )
+  const txHash = await ctx.livepeer.rpc.claimEarnings(endRound, {
+    gas: gas,
+  })
   console.log(txHash)
   const mockTx = {
     blockNumber: '',
@@ -96,7 +103,7 @@ export async function claimEarnings(
     cumulativeGasUsed: '',
     confirmations: '0',
     contract: 'BondingManager',
-    gas: '',
+    gas: gas,
     gasUsed: '',
     gasPrice: '',
     id: txHash,
@@ -152,5 +159,11 @@ export async function unbond(
   args,
   ctx: GQLContext,
 ): Promise<TxReceipt> {
-  return await ctx.livepeer.rpc.unbond()
+  const gas = await ctx.livepeer.rpc.estimategas('BondingManager', 'unbond', [
+    10,
+  ])
+  return await ctx.livepeer.rpc.unbond({
+    ...ctx.config.defaultTx,
+    gas: gas,
+  })
 }

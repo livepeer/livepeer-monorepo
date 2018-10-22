@@ -339,9 +339,14 @@ test('should return number that signifies the estimated amount of gas to be used
       methodArgs: [],
     },
     {
+      contractName: 'BondingManager',
+      methodName: 'claimEarnings',
+      methodArgs: [1523],
+    },
+    {
       contractName: 'LivepeerToken',
       methodName: 'approve',
-      methodArgs: [livepeer.config.defaultTx.from, 10],
+      methodArgs: [livepeer.config.contracts.BondingManager.address, 10],
     },
     {
       contractName: 'Minter',
@@ -352,6 +357,11 @@ test('should return number that signifies the estimated amount of gas to be used
       contractName: 'LivepeerToken',
       methodName: 'mintingFinished',
       methodArgs: [],
+    },
+    {
+      contractName: 'BondingManager',
+      methodName: 'unbond',
+      methodArgs: [10],
     },
   ]
   cases.forEach(async x => {
