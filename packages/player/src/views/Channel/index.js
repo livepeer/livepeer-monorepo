@@ -173,10 +173,12 @@ class Channel extends Component {
           break
         case 'local':
           rootUrl = 'http://localhost:8935/stream'
+          break
         default:
           rootUrl = process.env.REACT_APP_STREAM_ROOT_URL
-          return rootUrl
       }
+
+      return rootUrl
     }
   }
 
@@ -194,12 +196,13 @@ class Channel extends Component {
       })
     } else {
       const [latestJob] = data.broadcaster.jobs
-      const manifestId = latestJob.streamId.substr(0, 68 + 64)
 
       if (!latestJob) {
         if (nextProps.loading === false) this.setState({ live: false })
         return
       }
+
+      const manifestId = latestJob.streamId.substr(0, 68 + 64)
 
       return this.setState({
         live: true,
