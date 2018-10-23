@@ -77,7 +77,7 @@ const Landing = ({ history, ...props }) => (
           </p>
           <CTAButton
             target="_blank"
-            href="https://livepeer.org/#token"
+            href="https://medium.com/livepeer-blog/the-end-of-the-initial-livepeer-token-distribution-6fa9894f0f16"
             style={{
               background: 'inherit',
               color: '#000',
