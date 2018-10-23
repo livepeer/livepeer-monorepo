@@ -24,7 +24,11 @@ const Landing = ({ history, ...props }) => (
           style={{ margin: '100px', width: 400, color: '#FFF' }}
         >
           <h1 style={{ color: '#FFFFFF' }}>How to Use the Explorer</h1>
-          <p>
+          <p
+            style={{
+              fontWeight: 'bold',
+            }}
+          >
             What is a reward cut? What is a fee share?<br />
             Watch this video to learn how to assess and<br />
             bond to transcoders using the explorer
@@ -50,9 +54,9 @@ const Landing = ({ history, ...props }) => (
         >
           <h2>Stats on the Livepeer Protocol</h2>
           <p>
-            Supermax is a community-built analytics platform for smart contracts
-            that pulls and visualizes economic data to drive actionable
-            insights.
+            Supermax is a community-built analytics platform for smart
+            contracts. Supermax pulls Livepeer data from the blockchain and
+            visualizes it to drive actionable insights.
           </p>
           <CTAButton
             target="_blank"
@@ -78,6 +82,7 @@ const Landing = ({ history, ...props }) => (
               background: 'inherit',
               color: '#000',
               outline: 'solid 2px #000',
+              margin: '0 0 20px',
             }}
           >
             Read More
@@ -115,14 +120,13 @@ const Container = styled.div`
     background-image: url('/static/images/overview.jpg');
     background-size: cover;
     flex: 1 1 auto;
-    min-height: 93vh;
+    min-height: 100vh;
     width: 50%;
     margin: 0;
     display: inline-block;
   }
   div#right-content {
     flex: 1 1 auto;
-    minheight: 93vh;
     display: inline-block;
     margin: 0;
   }
