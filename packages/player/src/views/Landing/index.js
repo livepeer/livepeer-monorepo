@@ -19,38 +19,33 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ changeChannel }, dispatch)
 
-const enhance = connect(mapStateToProps, mapDispatchToProps)
+const enhance = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)
 
 const Landing = ({ query, changeChannel }) => (
   <Container>
     <Navbar />
-    <img src="/wordmark.svg" width="240" alt="The glorious Livepeer wordmark" />
-    <h3 style={{ letterSpacing: 8 }}>Media Player</h3>
+    {/* <img src="/wordmark.svg" width="240" alt="The glorious Livepeer wordmark" /> */}
+    <h3 style={{ letterSpacing: 8 }}>Devcon4.tv</h3>
     <br />
     <br />
-    <p>{`Find a channel by entering a broadcaster's ETH address`}</p>
+    <p>{`Pick a channel`}</p>
     <div style={{ maxWidth: '100%', width: 480 }}>
-      <SearchBar
-        id="broadcaster"
-        type="search"
-        placeholder="example: 0x86a1405f3aede8e904dbd584971ff685e80418cc"
-        onKeyDown={e => {
-          if (e.keyCode !== 13 || !e.target.value) return
-          document.getElementById('broadcaster-search-button').click()
-        }}
-      />
       <br />
       <br />
-      <div style={{ textAlign: 'right' }}>
+      <div style={{ textAlign: 'center' }}>
         <SearchButton
           id="broadcaster-search-button"
           onClick={() => {
-            const { value } = document.getElementById('broadcaster')
-            if (!value) return
-            changeChannel(value)
+            changeChannel('0x1c644f23C3389679D1663F3D237df215014D2c41')
+            // const { value } = document.getElementById('broadcaster')
+            // if (!value) return
+            // changeChannel(value)
           }}
         >
-          search
+          Channel 1
         </SearchButton>
       </div>
     </div>
@@ -66,7 +61,7 @@ const Container = styled.div`
   height: 100vh;
   padding: 0 32px;
   padding-bottom: 33.33vh;
-  background: #000;
+  background: #11457e;
   color: #fff;
 `
 

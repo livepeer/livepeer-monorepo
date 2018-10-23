@@ -155,6 +155,7 @@ class Channel extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
+    console.log('nextProps: ', nextProps)
     const { data } = nextProps.account
     const location = nextProps.location
     const address = data.id.toLowerCase()
@@ -176,41 +177,15 @@ class Channel extends Component {
         })
       }
     }
-
-    if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else if (
-      address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
-    ) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else if (
-      address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
-    ) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else {
-      let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
-      this.setState({ url })
-    }
+    let url = `${
+      process.env.REACT_APP_DEVCON4_TV_STREAM_ROOT_URL
+    }/${manifestId}.m3u8`
+    this.setState({ url })
   }
 
   render() {
     const { account, changeChannel, location } = this.props
-    console.log('locaation: ', location)
+    console.log('location: ', location)
     const { loading } = account
     const {
       id,
@@ -226,7 +201,7 @@ class Channel extends Component {
     }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
     return (
       <div>
-        <BasicNavbar onSearch={changeChannel} />
+        {/* <BasicNavbar onSearch={changeChannel} /> */}
         {/*
           * Modals
           */}
@@ -379,7 +354,7 @@ class Channel extends Component {
           <Info>
             <Snapshot
               at={1}
-              defaultSrc="/static/images/snapshot-placeholder.svg"
+              defaultSrc="/static/images/snapshot-devcon4.png"
               url={live ? url : ''}
               width={128}
               height={128}
@@ -568,7 +543,7 @@ class Channel extends Component {
             </div>
           */}
         </Content>
-        <Footer>
+        {/* <Footer>
           <div
             style={{
               position: 'fixed',
@@ -632,14 +607,14 @@ class Channel extends Component {
               </div>
             </div>
           </div>
-        </Footer>
+        </Footer> */}
       </div>
     )
   }
 }
 
 const Button = styled.button`
-  background: ${({ inverted }) => (inverted ? 'var(--primary)' : '#000')};
+  background: ${({ inverted }) => (inverted ? 'var(--primary)' : '#11457E')};
   color: ${({ inverted }) => (!inverted ? 'var(--primary)' : '#000')};
   outline: 0;
   border: none;
@@ -660,7 +635,7 @@ const ChannelStatus = styled.span`
   text-transform: uppercase;
   color: var(--text);
   font-size: 11px;
-  background #000;
+  background #11457E;
   padding: 4px 8px;
   border-radius: 2px;
   letter-spacing: 1px;

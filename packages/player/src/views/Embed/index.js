@@ -95,35 +95,9 @@ class Channel extends Component {
       return
     }
     const manifestId = latestJob.streamId.substr(0, 68 + 64)
-    // Change cases of compared cdn and channel to match each case
-    if (channel.toLowerCase() === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      return this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    }
-    if (channel.toLowerCase() === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      return this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    }
-    if (
-      channel.toLowerCase() ===
-      process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
-    ) {
-      return this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    }
-    let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
+    let url = `${
+      process.env.REACT_APP_DEVCON4_TV_STREAM_ROOT_URL
+    }/${manifestId}.m3u8`
     this.setState({ url })
   }
   render() {
@@ -149,7 +123,7 @@ class Channel extends Component {
               display: 'inline-flex',
               justifyContent: 'center',
               alignItems: 'center',
-              background: '#000',
+              background: '#11457E',
               position: 'absolute',
               top: 0,
               bottom: 0,
