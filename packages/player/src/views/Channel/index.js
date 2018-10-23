@@ -295,7 +295,7 @@ class Channel extends Component {
           onClose={() => this.closeModal('tip')}
           center
         >
-          <h2>Contribute directly to a broadcaster</h2>
+          <h2>Contribute directly to this broadcaster</h2>
           <p
             style={{
               lineHeight: 1.5,
