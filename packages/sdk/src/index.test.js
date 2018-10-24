@@ -330,18 +330,8 @@ test('should return number that signifies the estimated amount of gas to be used
   const cases = [
     {
       contractName: 'BondingManager',
-      methodName: 'bond',
-      methodArgs: [10, livepeer.config.defaultTx.from],
-    },
-    {
-      contractName: 'BondingManager',
       methodName: 'maxEarningsClaimsRounds',
       methodArgs: [],
-    },
-    {
-      contractName: 'BondingManager',
-      methodName: 'claimEarnings',
-      methodArgs: [1523],
     },
     {
       contractName: 'LivepeerToken',
@@ -357,11 +347,6 @@ test('should return number that signifies the estimated amount of gas to be used
       contractName: 'LivepeerToken',
       methodName: 'mintingFinished',
       methodArgs: [],
-    },
-    {
-      contractName: 'BondingManager',
-      methodName: 'unbond',
-      methodArgs: [10],
     },
   ]
   cases.forEach(async x => {

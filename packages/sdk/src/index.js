@@ -1875,6 +1875,7 @@ export async function createLivepeerSDK(
       tx = config.defaultTx,
     ): Promise<number> {
       tx.value = tx.value ? tx.value : '0'
+      // Arbitrary amount of gas so that transaction doesn't fail because of gas
       const gasRate = 1.2
       const contractABI = config.abis[contractName]
       const methodABI = utils.findAbiByName(contractABI, methodName)
@@ -1883,9 +1884,9 @@ export async function createLivepeerSDK(
         toNumber(
           await config.eth.estimateGas({
             to: config.contracts[contractName].address,
-            from: tx.from,
+            from: config.defaultTx.from,
+            gas: config.defaultTx.gas,
             value: tx.value,
-            gas: tx.gas,
             data: encodedData,
           }),
         ) * gasRate,
