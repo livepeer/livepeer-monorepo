@@ -1879,15 +1879,16 @@ export async function createLivepeerSDK(
       const contractABI = config.abis[contractName]
       const methodABI = utils.findAbiByName(contractABI, methodName)
       const encodedData = utils.encodeMethodParams(methodABI, methodArgs)
-      return (
+      return Math.round(
         toNumber(
           await config.eth.estimateGas({
-            to: tx.from,
+            to: config.contracts[contractName].address,
+            from: tx.from,
             value: tx.value,
             gas: tx.gas,
             data: encodedData,
           }),
-        ) * gasRate
+        ) * gasRate,
       )
     },
 

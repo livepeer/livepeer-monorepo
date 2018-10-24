@@ -4,6 +4,7 @@ import {
   TransactionSubmitted,
 } from './Subscription'
 
+const BN = require('bn.js')
 /** Typedefs */
 
 type GQLContext = {
@@ -80,7 +81,7 @@ export async function claimEarnings(
   const { utils, config } = ctx.livepeer
   const { eth } = config
   const { endRound } = args
-  const gas = await ctx.livepeer.rpc.estimategas(
+  const gas = await ctx.livepeer.rpc.estimateGas(
     'BondingManager',
     'claimEarnings',
     [endround],
@@ -159,8 +160,16 @@ export async function unbond(
   args,
   ctx: GQLContext,
 ): Promise<TxReceipt> {
-  const gas = await ctx.livepeer.rpc.estimategas('BondingManager', 'unbond', [
-    10,
+  const { pendingStake, bondedAmount } = await ctx.livepeer.rpc.getDelegator(
+    ctx.config.defaultTx.from,
+  )
+  const totalStake =
+    new BN(pendingStake).cmp(new BN(bondedAmount)) < 0
+      ? bondedAmount
+      : pendingStake
+
+  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'unbond', [
+    totalStake,
   ])
   return await ctx.livepeer.rpc.unbond({
     ...ctx.config.defaultTx,
