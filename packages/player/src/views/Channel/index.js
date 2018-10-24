@@ -295,14 +295,14 @@ class Channel extends Component {
           onClose={() => this.closeModal('tip')}
           center
         >
-          <h2>Leave a tip</h2>
+          <h2>Contribute directly to this broadcaster</h2>
           <p
             style={{
               lineHeight: 1.5,
               color: '#555',
             }}
           >
-            Enter the amount of ETH you want to tip:
+            Enter the amount of ETH you want to contribute:
           </p>
           <div style={{ display: 'flex' }}>
             <input
@@ -324,10 +324,10 @@ class Channel extends Component {
               value={tipAmount}
             />
             <Button
-              style={{ width: 128 }}
+              style={{ width: 200 }}
               onClick={() => this.sendTip(broadcaster, tipAmount)}
             >
-              ♥ Send tip
+              ♥ Contribute
             </Button>
           </div>
         </Modal>
@@ -442,9 +442,10 @@ class Channel extends Component {
                   color: 'var(--text)',
                 }}
               >
-                Enjoying the show? Support your favorite broadcasters &nbsp;
+                Enjoying the show? Support your favorite broadcasters by
+                contributing directly&nbsp;
                 <Button onClick={() => this.openModal('tip')}>
-                  ♥ &nbsp;&nbsp;Leave a tip
+                  ♥ &nbsp;&nbsp;Contribute
                 </Button>
               </p>
             </div>
