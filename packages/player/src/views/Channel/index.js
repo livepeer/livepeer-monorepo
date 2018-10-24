@@ -22,6 +22,7 @@ import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 import * as qs from 'query-string'
+import { Switch } from 'rmwc/Switch'
 
 const parseQs = str => {
   return qs.parse(str)
@@ -117,6 +118,7 @@ class Channel extends Component {
     tipAmount: 0,
     didCopy: false,
     bannerOpen: true,
+    allowFullscreen: true,
   }
 
   closeBanner = () => {
@@ -220,11 +222,21 @@ class Channel extends Component {
       ensName: name,
       broadcaster: { jobs },
     } = account.data
-    const { live, url, modal, didCopy, tipAmount, bannerOpen } = this.state
+    const {
+      live,
+      url,
+      modal,
+      didCopy,
+      tipAmount,
+      bannerOpen,
+      allowFullscreen,
+    } = this.state
     const [latestJob] = jobs
     const { streamId, broadcaster = id } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
-    const embedLink = `<iframe width="640" height="360" src="${
+    const embedLink = `<iframe width="640" height="360"${
+      allowFullscreen ? ' allowfullscreen ' : ' '
+    }src="${
       window.location.origin
     }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
     return (
@@ -284,6 +296,16 @@ class Channel extends Component {
             onClick={this.copyToClipboard}
             value={embedLink}
           />
+
+          <Switch
+            checked={this.state.allowFullscreen}
+            onChange={evt =>
+              this.setState({ allowFullscreen: evt.target.checked })
+            }
+          >
+            Allow Fullscreen
+          </Switch>
+
           {document.queryCommandSupported('copy') && (
             <p style={{ textAlign: 'right' }}>
               <Button onClick={this.copyToClipboard}>
