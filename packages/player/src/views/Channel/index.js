@@ -154,7 +154,7 @@ class Channel extends Component {
     this.setState({ tipAmount: e.target.value })
   }
 
-  getRootUrl(location, address) {
+  getRootUrl = (location, address) => {
     let queryObject = parseQs(location.search)
     if (queryObject && queryObject.source) {
       console.log('using source qs', location)
