@@ -363,6 +363,6 @@ test('TranscodersQuery', async t => {
  */
 test('ProtocolQuery', async t => {
   const res = await graphql(schema, ProtocolQuery, null, { livepeer }, {})
-  //console.log(JSON.stringify(res, null, 2))
+  // console.log(JSON.stringify(res, null, 2))
   t.snapshot(res)
 })
