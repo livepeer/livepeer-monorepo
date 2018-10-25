@@ -84,7 +84,7 @@ export async function claimEarnings(
   const gas = await ctx.livepeer.rpc.estimateGas(
     'BondingManager',
     'claimEarnings',
-    [endround],
+    [endRound],
   )
   const txHash = await ctx.livepeer.rpc.claimEarnings(endRound, {
     gas: gas,
