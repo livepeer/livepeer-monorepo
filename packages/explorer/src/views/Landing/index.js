@@ -132,11 +132,19 @@ const Container = styled.div`
   }
   .content {
     width: 50%;
+    h1,
+    h2,
+    button {
+    }
     h1 {
       font-size: 50px;
+      font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
+        sans-serif;
       letter-spacing: 0.025em;
     }
     h2 {
+      font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
+        sans-serif;
       font-size: 22px;
     }
     p {
@@ -224,6 +232,7 @@ const CTAButton = styled.a`
   background: none;
   outline: 0;
   border: none;
+  font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial, sans-serif;
   cursor: pointer;
   text-decoration: none;
   font-size: 14px;
