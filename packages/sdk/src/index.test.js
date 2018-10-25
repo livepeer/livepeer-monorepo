@@ -326,6 +326,41 @@ test('should return object with correct shape from getJob()', async t => {
   t.pass()
 })
 
+test('should return number that signifies the estimated amount of gas to be used', async t => {
+  const cases = [
+    {
+      contractName: 'BondingManager',
+      methodName: 'maxEarningsClaimsRounds',
+      methodArgs: [],
+    },
+    {
+      contractName: 'LivepeerToken',
+      methodName: 'approve',
+      methodArgs: [livepeer.config.contracts.BondingManager.address, 10],
+    },
+    {
+      contractName: 'Minter',
+      methodName: 'currentMintedTokens',
+      methodArgs: [],
+    },
+    {
+      contractName: 'LivepeerToken',
+      methodName: 'mintingFinished',
+      methodArgs: [],
+    },
+  ]
+  cases.forEach(async x => {
+    const res = await livepeer.rpc.estimateGas(
+      x.contractName,
+      x.methodName,
+      x.methodArgs,
+    )
+    t.true(number.isValidSync(res))
+    t.true(res > 0)
+  })
+  t.pass()
+})
+
 test('should return object with correct shape from getJobsInfo()', async t => {
   const schema = object({
     total: string,
