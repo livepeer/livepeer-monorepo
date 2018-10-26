@@ -54,7 +54,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   const sort = searchParams.get('sort') || 'totalStake'
   const order = searchParams.get('order') || 'desc'
   const asc = order === 'asc'
-  const total = transcoders.data.length
+  const total = transcoders.data.filter(t => t.status === 'Registered').length
   const compareFn = createCompareFunction(asc, sort)
   const locked = window.livepeer.config.accounts.length <= 0
   const numActive = (transcoders => {
@@ -71,14 +71,11 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
       <BasicNavbar onSearch={x => history.push(`/accounts/${x}`)} />
       <Banner height="128px">
         <PageHeading className="page-heading">
-          <CpuIcon size={32} />&nbsp;Transcoders
+          <CpuIcon size={32} />
+          &nbsp;Transcoders
         </PageHeading>
       </Banner>
-    {
-      locked && (
-        <LockedWallet />
-      )
-    }
+      {locked && <LockedWallet />}
       <Content>
         {!total ? null : (
           <InlineHint flag="transcoders-list">
@@ -88,14 +85,17 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               towards a Transcoder and earn additional fees and LPT rewards.
               Read our Delegator Guide for a comprehensive overview, tutorials,
               and a FAQ. You can learn more about each transcoder on the forum
-              by checking out their social campaign on the Livepeer forum.<br />
+              by checking out their social campaign on the Livepeer forum.
+              <br />
               <br />
               <Button
                 style={{ margin: 0 }}
                 onClick={() =>
                   window.open(
                     'https://github.com/livepeer/wiki/wiki/Delegating',
-                  )}>
+                  )
+                }
+              >
                 Read the Delegator Guide
               </Button>
               <Button
@@ -103,7 +103,9 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 onClick={() =>
                   window.open(
                     'https://forum.livepeer.org/c/transcoders/transcoder-campaign',
-                  )}>
+                  )
+                }
+              >
                 View Transcoder Campaigns
               </Button>
             </p>
@@ -123,7 +125,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
               marginBottom: 16,
               padding: '0 8px',
               borderBottom: '1px solid #ddd',
-            }}>
+            }}
+          >
             <p>
               Showing 1 - {total} of {total}
             </p>
@@ -133,14 +136,16 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                 flexGrow: 1,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-              }}>
+              }}
+            >
               <div style={{ marginLeft: 16 }}>
                 <span
                   style={{
                     textTransform: 'uppercase',
                     fontSize: 11,
                     letterSpacing: 1,
-                  }}>
+                  }}
+                >
                   sort by: &nbsp;
                 </span>
                 <select
@@ -151,11 +156,13 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     const queryString = searchParams.toString()
                     const url = `${match.path}?${queryString}`
                     history.replace(url)
-                  }}>
+                  }}
+                >
                   <option value="totalStake">Total Stake</option>
                   <option value="pendingRewardCut">Reward Cut</option>
                   <option value="pendingFeeShare">Fee Share</option>
                   <option value="pendingPricePerSegment">Price</option>
+                  <option value="missedCalls">Missed Calls</option>
                 </select>
               </div>
               <div style={{ marginLeft: 16 }}>
@@ -164,7 +171,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     textTransform: 'uppercase',
                     fontSize: 11,
                     letterSpacing: 1,
-                  }}>
+                  }}
+                >
                   order by: &nbsp;
                 </span>
                 <select
@@ -175,7 +183,8 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                     const queryString = searchParams.toString()
                     const url = `${match.path}?${queryString}`
                     history.replace(url)
-                  }}>
+                  }}
+                >
                   <option value="desc">Desc</option>
                   <option value="asc">Asc</option>
                 </select>
@@ -256,8 +265,16 @@ const createCompareFunction = (asc: boolean, sort: string) => (
   a: Transcoder,
   b: Transcoder,
 ): number => {
-  const _a = new BN(a[sort], 10)
-  const _b = new BN(b[sort], 10)
+  let _a: number
+  let _b: number
+  if (sort === 'missedCalls') {
+    _a = new BN(a['rewards'].filter(r => r.rewardTokens === null).length, 10)
+    _b = new BN(b['rewards'].filter(r => r.rewardTokens === null).length, 10)
+  } else {
+    _a = new BN(a[sort], 10)
+    _b = new BN(b[sort], 10)
+  }
+
   const mul = asc ? 1 : -1
   return _a.cmp(_b) * mul
 }

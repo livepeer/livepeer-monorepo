@@ -31,6 +31,9 @@ const MeDelegatorTranscoderQuery = gql`
     pendingRewardCut
     pendingFeeShare
     pendingPricePerSegment
+    rewards {
+      rewardTokens
+    }
   }
 
   fragment AccountFragment on Account {
@@ -83,10 +86,13 @@ const TranscodersQuery = gql`
     pendingFeeShare
     pendingPricePerSegment
     totalStake
+    rewards {
+      rewardTokens
+    }
   }
 
-  query TranscodersQuery($skip: Int, $limit: Int) {
-    transcoders(skip: $skip, limit: $limit) {
+  query TranscodersQuery {
+    transcoders {
       ...TranscoderFragment
     }
   }
@@ -107,7 +113,7 @@ const connectTranscodersQuery = graphql(TranscodersQuery, {
     pollInterval: 10 * 1000,
     variables: {
       skip: 0,
-      limit: 100,
+      first: 100,
     },
     fetchPolicy: 'cache-and-network',
   }),

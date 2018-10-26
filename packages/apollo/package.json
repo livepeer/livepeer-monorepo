@@ -22,7 +22,7 @@
     "apollo-client": "2.2.6",
     "apollo-link": "1.2.1",
     "babel-runtime": "^6.26.0",
-    "graphql": "0.13.0"
+    "graphql": "14.0.0"
   },
   "devDependencies": {
     "ava": "0.25.0",
@@ -46,6 +46,9 @@
   "dependencies": {
     "apollo-cache-persist": "^0.1.1",
     "apollo-client": "2.2.6",
-    "apollo-link-state": "^0.4.1"
+    "apollo-link-http": "^1.5.5",
+    "apollo-link-state": "^0.4.1",
+    "graphql-tools": "^4.0.0",
+    "node-fetch": "^2.2.0"
   }
 }

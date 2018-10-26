@@ -54,7 +54,7 @@ type Query {
   transcoder(id: String!): Transcoder!
 
   "A list of Transcoders"
-  transcoders(skip: Int, limit: Int): [Transcoder!]!
+  transcoders(skip: Int, first: Int): [Transcoder!]!
 
   "The protocol as a whole"
   protocol: Protocol

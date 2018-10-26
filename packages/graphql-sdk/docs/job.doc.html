@@ -104,6 +104,11 @@
                 Account
             </a>
         </li>
+        <li  title="Block">
+            <a href="block.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Block
+            </a>
+        </li>
         <li  title="Broadcaster">
             <a href="broadcaster.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Broadcaster
@@ -223,7 +228,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Job</span> {</li><li></li><li><span class="tab"><span class="comment line">#   Unique identifer for job</span></span></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   Address of broadcaster that requested the transcoding job</span></span></li><li><span class="tab"><span class="meta">broadcaster</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   Transcoding profiles associated with the job</span></span></li><li><span class="tab"><span class="meta">profiles</span>: [<a class="support type" href="jobprofile.doc.html">JobProfile</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line">#   Unique identifier for the stream</span></span></li><li><span class="tab"><span class="meta">streamId</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Job</span> {</li><li></li><li><span class="tab"><span class="comment line">#   Unique identifer for job</span></span></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   Address of broadcaster that requested the transcoding job</span></span></li><li><span class="tab"><span class="meta">broadcaster</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   The broadcaster's ENS name</span></span></li><li><span class="tab"><span class="meta">broadcasterENSName</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   Transcoding profiles associated with the job</span></span></li><li><span class="tab"><span class="meta">profiles</span>: [<a class="support type" href="jobprofile.doc.html">JobProfile</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line">#   Unique identifier for the stream</span></span></li><li><span class="tab"><span class="meta">streamId</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>

@@ -34,6 +34,7 @@ yarn add @livepeer/graphql-sdk
 - [Query](#query)
 - [Objects](#objects)
   - [Account](#account)
+  - [Block](#block)
   - [Broadcaster](#broadcaster)
   - [Delegator](#delegator)
   - [Job](#job)
@@ -71,21 +72,21 @@ Contains all protocol data-fetching queries
 <tbody>
 <tr>
 <td colspan="2" valign="top"><strong>account</strong></td>
-<td valign="top"><a href="#account">Account</a></td>
+<td valign="top"><a href="#account">Account</a>!</td>
 <td>
 
-An Account by ETH address
+An Account by ETH address or ENS name
 
 </td>
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">id</td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>broadcaster</strong></td>
-<td valign="top"><a href="#broadcaster">Broadcaster</a></td>
+<td valign="top"><a href="#broadcaster">Broadcaster</a>!</td>
 <td>
 
 A Broadcaster by ETH address
@@ -107,17 +108,26 @@ The currently authenticated user's ETH address
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>currentRound</strong></td>
-<td valign="top"><a href="#round">Round</a></td>
+<td colspan="2" valign="top"><strong>currentBlock</strong></td>
+<td valign="top"><a href="#block">Block</a>!</td>
 <td>
 
-Gets the current round
+The current Ethereum block
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>currentRound</strong></td>
+<td valign="top"><a href="#round">Round</a>!</td>
+<td>
+
+The current round in the Livepeer protocol
 
 </td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>delegator</strong></td>
-<td valign="top"><a href="#delegator">Delegator</a></td>
+<td valign="top"><a href="#delegator">Delegator</a>!</td>
 <td>
 
 A Delegator by ETH address
@@ -131,7 +141,7 @@ A Delegator by ETH address
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>job</strong></td>
-<td valign="top"><a href="#job">Job</a></td>
+<td valign="top"><a href="#job">Job</a>!</td>
 <td>
 
 A Job by id
@@ -169,7 +179,7 @@ A list of Jobs
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>me</strong></td>
-<td valign="top"><a href="#account">Account</a></td>
+<td valign="top"><a href="#account">Account</a>!</td>
 <td>
 
 The currently selected account (usually set by something like MetaMask)
@@ -217,7 +227,7 @@ All transactions to or from an account between the given start block and end blo
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>transcoder</strong></td>
-<td valign="top"><a href="#transcoder">Transcoder</a></td>
+<td valign="top"><a href="#transcoder">Transcoder</a>!</td>
 <td>
 
 A Transcoder by ETH address
@@ -244,7 +254,7 @@ A list of Transcoders
 <td></td>
 </tr>
 <tr>
-<td colspan="2" align="right" valign="top">limit</td>
+<td colspan="2" align="right" valign="top">first</td>
 <td valign="top"><a href="#int">Int</a></td>
 <td></td>
 </tr>
@@ -282,6 +292,15 @@ A type that describes a Livepeer account
 <td>
 
 The ETH address for an account
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>ensName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The ENS name for an account
 
 </td>
 </tr>
@@ -333,6 +352,32 @@ The transcoder info for an account
 </tbody>
 </table>
 
+#### Block
+
+Info about an Ethereum block.
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The block number
+
+</td>
+</tr>
+</tbody>
+</table>
+
 #### Broadcaster
 
 Submit transcode jobs for live video streams.
@@ -353,6 +398,15 @@ Submit transcode jobs for live video streams.
 <td>
 
 The broadcaster's ETH address
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>ensName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The ENS name for an account
 
 </td>
 </tr>
@@ -420,11 +474,20 @@ The ETH address of a delegator
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>status</strong></td>
-<td valign="top"><a href="#delegatorstatus">DelegatorStatus</a>!</td>
+<td colspan="2" valign="top"><strong>ensName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td>
 
-The status of a delegator
+The ENS name for an account
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>allowance</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The delegator's token allowance
 
 </td>
 </tr>
@@ -474,6 +537,24 @@ The last round that the delegator claimed reward and fee pool shares
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>pendingFees</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The total amount of ETH the delegator has earned through the current round
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>pendingStake</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The total amount of tokens the delegator has earned through the current round
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>startRound</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td>
@@ -483,11 +564,38 @@ The round the delegator becomes bonded and delegated to its delegate
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>status</strong></td>
+<td valign="top"><a href="#delegatorstatus">DelegatorStatus</a>!</td>
+<td>
+
+The status of a delegator
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>withdrawAmount</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The amount of Livepeer Token to withdraw for a delegator
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>withdrawRound</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td>
 
 The round the delegator can withdraw its stake.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>nextUnbondingLockId</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The ID of the delegator's next unbonding lock
 
 </td>
 </tr>
@@ -523,6 +631,15 @@ Unique identifer for job
 <td>
 
 Address of broadcaster that requested the transcoding job
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>broadcasterENSName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The broadcaster's ENS name
 
 </td>
 </tr>
@@ -676,6 +793,20 @@ Claims earnings from your last claim round through specified round
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>sendTransaction</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a></td>
+<td>
+
+Sends a transaction based on an input object
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">options</td>
+<td valign="top"><a href="#json">JSON</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>unbond</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a></td>
 <td>
@@ -700,6 +831,15 @@ Submits a bond transaction for a previously approved amount
 </thead>
 <tbody>
 <tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Protocol id
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>paused</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
@@ -709,11 +849,38 @@ Protocol paused
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
+<td colspan="2" valign="top"><strong>totalTokenSupply</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td>
 
-Protocol id
+Protocol totalTokenSupply
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>totalBondedToken</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Protocol totalBondedToken
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>targetBondingRate</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Protocol targetBondingRate
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>transcoderPoolMaxSize</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Protocol transcoderPoolMaxSize
 
 </td>
 </tr>
@@ -974,6 +1141,15 @@ Whether or not the transcoder is active
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>ensName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The ENS name for an account
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>status</strong></td>
 <td valign="top"><a href="#transcoderstatus">TranscoderStatus</a>!</td>
 <td>
@@ -1078,11 +1254,11 @@ The possible statuses of a delegator
 <td></td>
 </tr>
 <tr>
-<td valign="top"><strong>Unbonding</strong></td>
+<td valign="top"><strong>Unbonded</strong></td>
 <td></td>
 </tr>
 <tr>
-<td valign="top"><strong>Unbonded</strong></td>
+<td valign="top"><strong>Unbonding</strong></td>
 <td></td>
 </tr>
 </tbody>

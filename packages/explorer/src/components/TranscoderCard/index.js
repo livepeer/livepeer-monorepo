@@ -26,101 +26,120 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     pendingPricePerSegment: pricePerSegment,
     pendingRewardCut: rewardCut,
     totalStake,
-  }) => (
-    <div className={className}>
-      {/* Basic Info */}
-      <div className="basic-info">
-        <Link to={`/accounts/${id}/transcoding`}>
-          <Avatar id={id} size={32} />
-        </Link>
-        <div className="address">
-          <Tooltip id={id} text={id} type="nowrap">
-            <Link
-              to={`/accounts/${id}/transcoding`}
-              style={{ color: '#000', textDecoration: 'none' }}
-            >
-              {ensName || `${id.substr(0, 10)}...`}
-            </Link>
+    rewards,
+  }) => {
+    let missedCalls: number = 0
+    if (rewards) {
+      missedCalls = rewards
+        .filter(reward => reward.rewardTokens === null)
+        .slice(-30).length
+    }
+    return (
+      <div className={className}>
+        {/* Basic Info */}
+        <div className="basic-info">
+          <Link to={`/accounts/${id}/transcoding`}>
+            <Avatar id={id} size={32} />
+          </Link>
+          <div className="address">
+            <Tooltip id={id} text={id} type="nowrap">
+              <Link
+                to={`/accounts/${id}/transcoding`}
+                style={{ color: '#000', textDecoration: 'none' }}
+              >
+                {ensName || `${id.substr(0, 10)}...`}
+              </Link>
+            </Tooltip>
+          </div>
+          <Tooltip
+            text={[
+              'Today, only Transcoders with the top',
+              numActive,
+              'most stake will be able to do work in the next round.',
+            ].join(' ')}
+          >
+            <div className="status">{active ? 'active' : 'inactive'}</div>
           </Tooltip>
         </div>
-        <Tooltip
-          text={[
-            'Today, only Transcoders with the top',
-            numActive,
-            'most stake will be able to do work in the next round.',
-          ].join(' ')}
-        >
-          <div className="status">{active ? 'active' : 'inactive'}</div>
-        </Tooltip>
-      </div>
-      {/* Stats */}
-      <div className="stats">
-        <TranscoderStat
-          decimals={2}
-          label="Reward Cut"
-          type="percentage"
-          value={rewardCut}
-          width="64px"
-          help="The percent of the newly minted token that the Transcoder will KEEP from the round’s inflation distribution. The remainder gets distributed across all bonded nodes by how much you bond relative to others."
-        />
-        <TranscoderStat
-          decimals={2}
-          label="Fee Share"
-          type="percentage"
-          value={feeShare}
-          width="64px"
-          help="How much you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
-        />
-        <TranscoderStat
-          label="Price"
-          symbol="GWEI"
-          type="token"
-          unit="gwei"
-          decimals={9}
-          value={pricePerSegment}
-          width="128px"
-          help="The amount the Transcoder will charge broadcasters per segment. Wei is the base unit of ethereum, which is 10^18 Wei = 1 ETH. The price illustrated is based on a segment of video, which is 4 seconds"
-        />
-        <TranscoderStat
-          decimals={2}
-          label="Total Stake"
-          symbol="LPT"
-          type="token"
-          unit="ether"
-          value={totalStake}
-          width="128px"
-          help="Total amount of LPT staked towards this node, including the transcoders own stake."
-        />
-        {bonded &&
-          bondedAmount && (
+        {/* Stats */}
+        <div className="stats">
+          <TranscoderStat
+            decimals={2}
+            label="Reward Cut"
+            type="percentage"
+            value={rewardCut}
+            width="64px"
+            help="The percent of the newly minted token that the Transcoder will KEEP from the round’s inflation distribution. The remainder gets distributed across all bonded nodes by how much you bond relative to others."
+          />
+          <TranscoderStat
+            decimals={2}
+            label="Fee Share"
+            type="percentage"
+            value={feeShare}
+            width="64px"
+            help="How much you as the delegator receive of the Price/segment. For example if Fee Share is 25%, If a transcoder were to charge 100WEI in fees per segment, they would pay 25WEI to the bonded nodes."
+          />
+          <TranscoderStat
+            label="Price"
+            symbol="GWEI"
+            type="token"
+            unit="gwei"
+            decimals={9}
+            value={pricePerSegment}
+            width="128px"
+            help="The amount the Transcoder will charge broadcasters per segment. Wei is the base unit of ethereum, which is 10^18 Wei = 1 ETH. The price illustrated is based on a segment of video, which is 4 seconds"
+          />
+          <TranscoderStat
+            decimals={2}
+            label="Total Stake"
+            symbol="LPT"
+            type="token"
+            unit="ether"
+            value={totalStake}
+            width="128px"
+            help="Total amount of LPT staked towards this node, including the transcoders own stake."
+          />
+          {rewards && (
             <TranscoderStat
               decimals={2}
-              label="Your Stake"
-              symbol="LPT"
-              type="token"
-              unit="ether"
-              value={bondedAmount}
-              append={
-                <span style={{ fontSize: 10 }}>{`(${MathBN.toBig(
-                  MathBN.div(bondedAmount + '00', totalStake),
-                ).toFixed(2)}%)`}</span>
-              }
+              label="Missed Calls"
+              type="number"
+              value={missedCalls}
               width="128px"
-              help="Amount of LPT you have staked towards this node."
+              help="Missed calls over last 30 eligible rounds."
             />
           )}
+          {bonded &&
+            bondedAmount && (
+              <TranscoderStat
+                decimals={2}
+                label="Your Stake"
+                symbol="LPT"
+                type="token"
+                unit="ether"
+                value={bondedAmount}
+                append={
+                  <span style={{ fontSize: 10 }}>{`(${MathBN.toBig(
+                    MathBN.div(bondedAmount + '00', totalStake),
+                  ).toFixed(2)}%)`}</span>
+                }
+                width="128px"
+                help="Amount of LPT you have staked towards this node."
+              />
+            )}
+        </div>
+        {/* Actions */}
+        {(onBond || onUnbond) && (
+          <React.Fragment>
+            <div className="actions-buttons">
+              {onBond && <Button onClick={onBond}>Bond</Button>}
+              {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
+            </div>
+          </React.Fragment>
+        )}
       </div>
-      {/* Actions */}
-      {(onBond || onUnbond) && (
-        <React.Fragment>
-          <div className="actions-buttons">
-            {onBond && <Button onClick={onBond}>Bond</Button>}
-            {onUnbond && <Button onClick={onUnbond}>Unbond</Button>}
-          </div>
-        </React.Fragment>
-      )}
-    </div>
-  ),
+    )
+  },
 )`
   position: relative;
   display: inline-flex;

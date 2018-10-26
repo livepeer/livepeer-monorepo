@@ -303,7 +303,7 @@ export async function transcoder(
  * @param {QueryTranscodersArgs} args
  * @param {string} [args.broadcaster] - ETH address
  * @param {number} [args.skip=0] - The number of Transcoders to skip
- * @param {number} [args.limit=100] - The max number onf Transcoders to return
+ * @param {number} [args.first=100] - The max number onf Transcoders to return
  * @param {GQLContext} ctx
  * @return {Array<Transcoder>}
  */
@@ -312,10 +312,10 @@ export async function transcoders(
   args: QueryTranscodersArgs,
   ctx: GQLContext,
 ): Array<Transcoder> {
-  const { skip = 0, limit = 100 } = args
+  const { skip = 0, first = 100 } = args
   const result = await ctx.livepeer.rpc.getTranscoders()
   const transcoders = result
-    .slice(skip, skip + limit)
+    .slice(skip, skip + first)
     .map(({ address: id, ...x }) => ({ ...x, id }))
   return transcoders
 }
