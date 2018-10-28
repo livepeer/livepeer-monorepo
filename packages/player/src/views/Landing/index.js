@@ -39,7 +39,7 @@ const Landing = ({ query, changeChannel }) => (
         <SearchButton
           id="broadcaster-search-button"
           onClick={() => {
-            changeChannel('0x1c644f23C3389679D1663F3D237df215014D2c41')
+            changeChannel(process.env.REACT_APP_DEVCON4_TV_ADDRESS)
             // const { value } = document.getElementById('broadcaster')
             // if (!value) return
             // changeChannel(value)
