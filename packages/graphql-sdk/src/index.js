@@ -126,6 +126,7 @@ export const mockProtocol = ({ id = '', ...protocol } = {}) => ({
   totalBondedToken: '0',
   targetBondingRate: '0',
   transcoderPoolMaxSize: '0',
+  maxEarningsClaimsRounds: '0',
   ...protocol,
 })
 

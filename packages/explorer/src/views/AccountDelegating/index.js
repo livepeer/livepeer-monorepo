@@ -125,15 +125,16 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         help="Total tokens earned from reward cuts each round. Includes unclaimed token rewards."
         title="Stake"
         suffix="LPT"
-        value={formatBalance(totalStake)}
+        value={formatBalance(totalStake, 18)}
         subvalue={
           withdrawRound === '0'
             ? ''
             : MathBN.lt(lastInitializedRound, withdrawRound)
               ? `${formatBalance(
                   withdrawAmount,
+                  18,
                 )} LPT may be withdrawn at round #${withdrawRound}`
-              : `${formatBalance(withdrawAmount)} LPT may be withdrawn`
+              : `${formatBalance(withdrawAmount, 18)} LPT may be withdrawn`
         }
       >
         {isMe && (
@@ -150,7 +151,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         help="Total ETH earned from fee shares each round"
         title="Fees"
         suffix="ETH"
-        value={formatBalance(fees)}
+        value={formatBalance(fees, 18)}
         subvalue={`${formatBalance(fees, 18, 'wei')} WEI`}
       >
         {isMe && (

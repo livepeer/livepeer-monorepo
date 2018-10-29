@@ -18,6 +18,8 @@ const Protocol = `
     "Protocol transcoderPoolMaxSize"
     transcoderPoolMaxSize: String!
 
+    "Protocol maxEarningsClaimsRounds"
+    maxEarningsClaimsRounds: String!
   }
 `
 

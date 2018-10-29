@@ -3,6 +3,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { FORM_ERROR } from 'final-form'
 import {
+  connectProtocolQuery,
   connectCurrentRoundQuery,
   connectClaimEarningsMutation,
   connectToasts,
@@ -96,6 +97,7 @@ export default compose(
   connectCurrentRoundQuery,
   connectClaimEarningsMutation,
   connectMeDelegatorQuery,
+  connectProtocolQuery,
   connectToasts,
   mapMutationHandlers,
 )

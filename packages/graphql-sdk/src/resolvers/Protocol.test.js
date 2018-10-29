@@ -9,6 +9,7 @@ test('Protocol resolved fields', async t => {
     totalBondedToken: '0',
     targetBondingRate: '0',
     transcoderPoolMaxSize: '0',
+    maxEarningsClaimsRounds: '0',
   }
   const args = {}
   const ctx = {}

@@ -53,3 +53,9 @@ Need a new variable? Create a PR or [file an issue](https://github.com/livepeer/
 add `?source=<STREAM_ROOT_URL>/stream` to the player url
 
 **Example**: `https://media.livepeer.org/embed/0x0ddb225031ccb58ff42866f82d907f7766899014?source=http://localhost:8935/stream`
+
+## Local Mode
+
+pull the local `current` stream. the local livepeer node has to have `-currentManifest` flag on.
+
+go to `http://localhost:3000/channels/local` . this sets the source to `http://localhost:8935/stream/current.m3u8`
