@@ -158,19 +158,33 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     // because at the moment the Mist provided web3 object does not have additional properties like `version`
     // As a result, if a web3 object with the `version` property is not available, we fallback
     // to using a default provider which should be the case when using Mist
-    if (window.web3 && window.web3.version) {
-      const { version } = window.web3
-      const controllers = {
-        1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
-        4: process.env.REACT_APP_RINKEBY_CONTROLLER_ADDRESS,
+    if (window.ethereum) {
+      // this is the new metamask way. details: https://bit.ly/2QQHXvF
+      window.web3 = new window.Web3(window.ethereum)
+      try {
+        await window.ethereum.enable()
+      } catch (e) {
+        console.log('METAMASK Rejected domain')
+        throw e
       }
-      while (version.network === null) {
-        console.log('waiting on web3 network version...')
-        await sleep(100)
-      }
-      opts.controllerAddress =
-        controllers[version.network] || process.env.REACT_APP_CONTROLLER_ADDRESS
+    } else if (window.web3 && window.web3.version) {
+      // this is the old way, accounts are always exposed.
     }
+
+    const { version } = window.web3
+    const controllers = {
+      1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
+      4: process.env.REACT_APP_RINKEBY_CONTROLLER_ADDRESS,
+    }
+    while (version.network === null) {
+      console.log('waiting on web3 network version...')
+      await sleep(100)
+    }
+    opts.controllerAddress =
+      controllers[version.network] || process.env.REACT_APP_CONTROLLER_ADDRESS
+
+    console.info('new metamask beta....., version: ', version)
+
     return opts
   })
 
