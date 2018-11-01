@@ -7,6 +7,8 @@ import gql from 'graphql-tag'
 import createApolloClient from '@livepeer/apollo'
 import Root from './components/Root'
 import App from './components/App'
+import BasicModal from './components/BasicModal'
+import Button from './components/Button'
 import { unregister } from './registerServiceWorker'
 import { sleep } from './utils'
 import { CTA } from './components'
@@ -144,6 +146,15 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
         return
       } catch (e) {
         console.log('METAMASK | Access to accounts denied')
+        render(
+          <BasicModal title={'Metamask is Locked'}>
+            <p>Please unlock metamask to be able to use Livepeer Explorer</p>
+            <Button className={'primary'} onClick={enableAccounts}>
+              Enable
+            </Button>
+          </BasicModal>,
+          document.getElementById('main-root'),
+        )
         return
       }
     } else if (window.web3 && window.web3.version) {
