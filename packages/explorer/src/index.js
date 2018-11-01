@@ -8,7 +8,7 @@ import createApolloClient from '@livepeer/apollo'
 import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
-import { sleep, notify } from './utils'
+import { sleep } from './utils'
 import { CTA } from './components'
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = process.env.NODE_ENV === 'development'
@@ -166,8 +166,6 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       } catch (e) {
         console.log('METAMASK | Access to accounts denied')
         // TODO handle this with a error modal.
-        // throw e
-        await notify('access to metamask accounts denied.')
       }
     } else if (window.web3 && window.web3.version) {
       // this is the old way, accounts are always exposed.
