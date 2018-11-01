@@ -134,6 +134,25 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       }
     }
   `
+
+  const enableAccounts = async () => {
+    if (window.ethereum) {
+      // this is the new metamask way. details: https://bit.ly/2QQHXvF
+      window.web3 = new window.Web3(window.ethereum)
+      try {
+        await window.ethereum.enable()
+        return
+      } catch (e) {
+        console.log('METAMASK | Access to accounts denied')
+        return
+      }
+    } else if (window.web3 && window.web3.version) {
+      // this is the old way, accounts are always exposed.
+    }
+
+    return
+  }
+
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
   // bootstrap the apollo client
   const client = await createApolloClient(async () => {
@@ -158,19 +177,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     // because at the moment the Mist provided web3 object does not have additional properties like `version`
     // As a result, if a web3 object with the `version` property is not available, we fallback
     // to using a default provider which should be the case when using Mist
-    if (window.ethereum) {
-      // this is the new metamask way. details: https://bit.ly/2QQHXvF
-      window.web3 = new window.Web3(window.ethereum)
-      try {
-        await window.ethereum.enable()
-      } catch (e) {
-        console.log('METAMASK | Access to accounts denied')
-        // TODO handle this with a error modal.
-      }
-    } else if (window.web3 && window.web3.version) {
-      // this is the old way, accounts are always exposed.
-    }
-
+    await enableAccounts()
     const { version } = window.web3
     const controllers = {
       1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
