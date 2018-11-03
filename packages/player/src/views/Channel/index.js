@@ -22,6 +22,7 @@ import Footer from '../../components/Footer'
 import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 import * as qs from 'query-string'
+import { Switch } from 'rmwc/Switch'
 
 const parseQs = str => {
   return qs.parse(str)
@@ -117,6 +118,7 @@ class Channel extends Component {
     tipAmount: 0,
     didCopy: false,
     bannerOpen: true,
+    allowFullscreen: true,
   }
 
   closeBanner = () => {
@@ -154,76 +156,89 @@ class Channel extends Component {
     this.setState({ tipAmount: e.target.value })
   }
 
+  getRootUrl = (location, address) => {
+    let queryObject = parseQs(location.search)
+    if (queryObject && queryObject.source) {
+      console.log('using source qs', location)
+      return queryObject.source
+    } else {
+      let rootUrl = null
+      switch (address) {
+        case process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase():
+          rootUrl = process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
+          break
+        case process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase():
+          rootUrl = process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
+          break
+        case process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase():
+          rootUrl = process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
+          break
+        case 'local':
+          rootUrl = 'http://localhost:8935/stream'
+          break
+        default:
+          rootUrl = process.env.REACT_APP_STREAM_ROOT_URL
+      }
+
+      return rootUrl
+    }
+  }
+
   async componentWillReceiveProps(nextProps) {
     const { data } = nextProps.account
     const location = nextProps.location
     const address = data.id.toLowerCase()
-    const [latestJob] = data.broadcaster.jobs
-    const manifestId = latestJob.streamId.substr(0, 68 + 64)
+    const match = nextProps.match
+    let rootUrl = this.getRootUrl(location, address)
 
-    if (!latestJob) {
-      if (nextProps.loading === false) this.setState({ live: false })
-      return
-    }
-
-    if (location.search) {
-      let queryObject = parseQs(location.search)
-      if (queryObject && queryObject.source) {
-        console.log('using source qs')
-        return this.setState({
-          live: true,
-          url: `${queryObject.source}/${manifestId}.m3u8`,
-        })
-      }
-    }
-
-    if (address === process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase()) {
-      this.setState({
+    if (match && match.params && match.params.channel === 'local') {
+      return this.setState({
         live: true,
-        url: `${
-          process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else if (
-      address === process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase()
-    ) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
-      })
-    } else if (
-      address === process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase()
-    ) {
-      this.setState({
-        live: true,
-        url: `${
-          process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-        }/${manifestId}.m3u8`,
+        url: `${rootUrl}/current.m3u8`,
       })
     } else {
-      let url = `${process.env.REACT_APP_STREAM_ROOT_URL}/${manifestId}.m3u8`
-      this.setState({ url })
+      const [latestJob] = data.broadcaster.jobs
+
+      if (!latestJob) {
+        if (nextProps.loading === false) this.setState({ live: false })
+        return
+      }
+
+      const manifestId = latestJob.streamId.substr(0, 68 + 64)
+
+      return this.setState({
+        live: true,
+        url: `${rootUrl}/${manifestId}.m3u8`,
+      })
     }
   }
 
   render() {
-    const { account, changeChannel, location } = this.props
-    console.log('locaation: ', location)
+    const { account, changeChannel, location, match } = this.props
+    console.log('locaation: ', location, match)
     const { loading } = account
     const {
       id,
       ensName: name,
       broadcaster: { jobs },
     } = account.data
-    const { live, url, modal, didCopy, tipAmount, bannerOpen } = this.state
+    const {
+      live,
+      url,
+      modal,
+      didCopy,
+      tipAmount,
+      bannerOpen,
+      allowFullscreen,
+    } = this.state
     const [latestJob] = jobs
     const { streamId, broadcaster = id } = latestJob || {}
     const web3IsEnabled = window.web3 && window.web3.eth.coinbase
     const embedLink = `<iframe width="640" height="360" src="${
       window.location.origin
-    }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9"></iframe>`
+    }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9" ${
+      allowFullscreen ? 'allowfullscreen' : ''
+    }></iframe>`
     return (
       <div>
         <BasicNavbar onSearch={changeChannel} />
@@ -281,6 +296,16 @@ class Channel extends Component {
             onClick={this.copyToClipboard}
             value={embedLink}
           />
+
+          <Switch
+            checked={this.state.allowFullscreen}
+            onChange={evt =>
+              this.setState({ allowFullscreen: evt.target.checked })
+            }
+          >
+            Allow Fullscreen
+          </Switch>
+
           {document.queryCommandSupported('copy') && (
             <p style={{ textAlign: 'right' }}>
               <Button onClick={this.copyToClipboard}>
@@ -295,14 +320,14 @@ class Channel extends Component {
           onClose={() => this.closeModal('tip')}
           center
         >
-          <h2>Leave a tip</h2>
+          <h2>Contribute directly to this broadcaster</h2>
           <p
             style={{
               lineHeight: 1.5,
               color: '#555',
             }}
           >
-            Enter the amount of ETH you want to tip:
+            Enter the amount of ETH you want to contribute:
           </p>
           <div style={{ display: 'flex' }}>
             <input
@@ -324,10 +349,10 @@ class Channel extends Component {
               value={tipAmount}
             />
             <Button
-              style={{ width: 128 }}
+              style={{ width: 200 }}
               onClick={() => this.sendTip(broadcaster, tipAmount)}
             >
-              ♥ Send tip
+              ♥ Contribute
             </Button>
           </div>
         </Modal>
@@ -442,9 +467,10 @@ class Channel extends Component {
                   color: 'var(--text)',
                 }}
               >
-                Enjoying the show? Support your favorite broadcasters &nbsp;
+                Enjoying the show? Support your favorite broadcasters by
+                contributing directly&nbsp;
                 <Button onClick={() => this.openModal('tip')}>
-                  ♥ &nbsp;&nbsp;Leave a tip
+                  ♥ &nbsp;&nbsp;Contribute
                 </Button>
               </p>
             </div>

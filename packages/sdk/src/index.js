@@ -1364,6 +1364,7 @@ export async function createLivepeerSDK(
         totalBondedToken
         targetBondingRate
         transcoderPoolMaxSize
+        maxEarningsClaimsRounds
      }
      */
     async getProtocol(): Promise<Protocol> {
@@ -1372,12 +1373,14 @@ export async function createLivepeerSDK(
       const totalBondedToken = await rpc.getTotalBonded()
       const targetBondingRate = await rpc.getTargetBondingRate()
       const transcoderPoolMaxSize = await rpc.getTranscoderPoolMaxSize()
+      const maxEarningsClaimsRounds = await rpc.getMaxEarningsClaimsRounds()
       return {
         paused,
         totalTokenSupply,
         totalBondedToken,
         targetBondingRate,
         transcoderPoolMaxSize,
+        maxEarningsClaimsRounds,
       }
     },
 
@@ -1844,6 +1847,55 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Gets the estimated amount of gas to be used by a smart contract
+     * method.
+     * @memberof livepeer~rpc
+     * @param
+     *  contractName: name of contract containing method you wish to find gas price for.
+     *  methodName: name of method on contract.
+     *  methodArgs: array of argument to be passed to the contract in specified order.
+     *  tx: (optioanl){
+     *    from: address - 0x...,
+     *    gas: number,
+     *    value: (optional) number or string containing number
+     *  }
+     *
+     * @return {Promise<number>} containing estimated gas price
+     *
+     * @example
+     *
+     * await rpc.estimateGas(
+     *  'BondingManager',
+     *  'bond',
+     *  [10, '0x00.....']
+     * )
+     * // => 33454
+     */
+    async estimateGas(
+      contractName: string,
+      methodName: string,
+      methodArgs: Array,
+      tx = config.defaultTx,
+    ): Promise<number> {
+      tx.value = tx.value ? tx.value : '0'
+      const gasRate = 1.2
+      const contractABI = config.abis[contractName]
+      const methodABI = utils.findAbiByName(contractABI, methodName)
+      const encodedData = utils.encodeMethodParams(methodABI, methodArgs)
+      return Math.round(
+        toNumber(
+          await config.eth.estimateGas({
+            to: config.contracts[contractName].address,
+            from: config.defaultTx.from,
+            gas: config.defaultTx.gas,
+            value: tx.value,
+            data: encodedData,
+          }),
+        ) * gasRate,
+      )
+    },
+
+    /**
      * Unbonds LPT from an address
      * @memberof livepeer~rpc
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1873,13 +1925,21 @@ export async function createLivepeerSDK(
      * // }
      */
     async unbond(tx = config.defaultTx): Promise<TxReceipt> {
-      const { status, pendingStake } = await rpc.getDelegator(tx.from)
+      const { status, pendingStake, bondedAmount } = await rpc.getDelegator(
+        tx.from,
+      )
+      // pendingStake = 0 if delegator has claimed earnings through the current round
+      // In this case, bondedAmount is up to date
+      const totalStake =
+        toBN(pendingStake).cmp(toBN(bondedAmount)) < 0
+          ? bondedAmount
+          : pendingStake
       // Can only unbond successfully when not already "Unbonded"
       if (status === DELEGATOR_STATUS.Unbonded) {
         throw new Error('This account is already unbonded.')
       } else {
         return await utils.getTxReceipt(
-          await BondingManager.unbond(pendingStake),
+          await BondingManager.unbond(totalStake),
           config.eth,
         )
       }

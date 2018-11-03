@@ -4,6 +4,7 @@ import {
   TransactionSubmitted,
 } from './Subscription'
 
+const BN = require('bn.js')
 /** Typedefs */
 
 type GQLContext = {
@@ -30,8 +31,13 @@ export async function approve(
   const { type, amount } = args
   switch (type) {
     case 'bond':
+      const gas = await ctx.livepeer.rpc.estimateGas(
+        'LivepeerToken',
+        'approve',
+        [ctx.livepeer.config.contracts.BondingManager.address, amount],
+      )
       return await ctx.livepeer.rpc.approveTokenBondAmount(amount, {
-        gas: 60000,
+        gas: gas,
       })
       break
     default:
@@ -52,8 +58,12 @@ export async function bond(
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { to, amount } = args
+  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'bond', [
+    amount,
+    to,
+  ])
   return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount, {
-    gas: 750000,
+    gas: gas,
   })
 }
 
@@ -71,7 +81,14 @@ export async function claimEarnings(
   const { utils, config } = ctx.livepeer
   const { eth } = config
   const { endRound } = args
-  const txHash = await ctx.livepeer.rpc.claimEarnings(endRound)
+  const gas = await ctx.livepeer.rpc.estimateGas(
+    'BondingManager',
+    'claimEarnings',
+    [endRound],
+  )
+  const txHash = await ctx.livepeer.rpc.claimEarnings(endRound, {
+    gas: gas,
+  })
   console.log(txHash)
   const mockTx = {
     blockNumber: '',
@@ -87,7 +104,7 @@ export async function claimEarnings(
     cumulativeGasUsed: '',
     confirmations: '0',
     contract: 'BondingManager',
-    gas: '',
+    gas: gas,
     gasUsed: '',
     gasPrice: '',
     id: txHash,
@@ -143,5 +160,19 @@ export async function unbond(
   args,
   ctx: GQLContext,
 ): Promise<TxReceipt> {
-  return await ctx.livepeer.rpc.unbond()
+  const { pendingStake, bondedAmount } = await ctx.livepeer.rpc.getDelegator(
+    ctx.config.defaultTx.from,
+  )
+  const totalStake =
+    new BN(pendingStake).cmp(new BN(bondedAmount)) < 0
+      ? bondedAmount
+      : pendingStake
+
+  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'unbond', [
+    totalStake,
+  ])
+  return await ctx.livepeer.rpc.unbond({
+    ...ctx.config.defaultTx,
+    gas: gas,
+  })
 }

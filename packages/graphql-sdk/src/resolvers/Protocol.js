@@ -68,3 +68,13 @@ export function targetBondingRate(obj: ProtocolObj): string {
 export function transcoderPoolMaxSize(obj: ProtocolObj): string {
   return obj.transcoderPoolMaxSize
 }
+
+/**
+ * Gets max earnings claims rounds for the protocol
+ * @param {Object} obj
+ * @param {string} obj.maxEarningsClaimsRounds - maxEarningsClaimsRounds for the protocol
+ * @return {string}
+ */
+export function maxEarningsClaimsRounds(obj: ProtocolObj): string {
+  return obj.maxEarningsClaimsRounds
+}

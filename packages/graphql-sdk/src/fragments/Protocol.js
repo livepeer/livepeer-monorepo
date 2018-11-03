@@ -5,5 +5,6 @@ export default `
     totalBondedToken
     targetBondingRate
     transcoderPoolMaxSize
+    maxEarningsClaimsRounds
   }
 `
