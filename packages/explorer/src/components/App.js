@@ -8,11 +8,9 @@ import Bond from '../views/Bond'
 import ClaimEarnings from '../views/ClaimEarnings'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
-import Mining from '../views/Mining'
 import SmartContracts from '../views/SmartContracts'
 import ProtocolStatus from '../views/ProtocolStatus'
 import ToastNotifications from '../views/ToastNotifications'
-import Token from '../views/Token'
 import Transcoders from '../views/Transcoders'
 
 const App = () => (
@@ -70,7 +68,6 @@ const App = () => (
       <Route component={ImportantMessage} />
       <ToastNotifications />
       <Switch>
-        <Route exact path="/token" component={() => null} />
         <Route exact path="/transcoders" component={() => null} />
         <Route
           path="*"
