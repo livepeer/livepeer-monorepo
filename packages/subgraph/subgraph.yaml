@@ -5,7 +5,7 @@ dataSources:
   - kind: ethereum/contract
     name: BondingManager
     source:
-      address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
+      address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
       abi: BondingManager
     mapping:
       kind: ethereum/events
@@ -14,6 +14,7 @@ dataSources:
       file: ./mappings/bondingManager.ts
       entities:
         - Transcoder
+        - Reward
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -39,7 +40,7 @@ dataSources:
   - kind: ethereum/contract
     name: RoundsManager
     source:
-      address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
+      address: "3984fc4ceeef1739135476f625d36d6c35c40dc3"
       abi: RoundsManager
     mapping:
       kind: ethereum/events

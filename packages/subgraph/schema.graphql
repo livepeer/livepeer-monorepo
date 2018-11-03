@@ -11,7 +11,7 @@ type Transcoder @entity {
   pendingFeeShare: BigInt
   pendingPricePerSegment: BigInt
   totalStake: BigInt
-  rewards: [Reward] @derivedFrom(field: "transcoder")
+  rewards: [Reward!] @derivedFrom(field: "transcoder")
 }
 
 type Reward @entity {
@@ -27,5 +27,5 @@ type Round @entity {
   length: BigInt
   lastInitializedRound: BigInt
   startBlock: BigInt
-  rewards: [Reward] @derivedFrom(field: "round")
+  rewards: [Reward!] @derivedFrom(field: "round")
 }

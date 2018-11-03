@@ -7,11 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  I128,
-  U128,
-  I256,
-  U256,
-  H256
+  BigInt
 } from "@graphprotocol/graph-ts";
 
 export class NewRound extends EthereumEvent {
@@ -27,8 +23,8 @@ export class NewRoundParams {
     this._event = event;
   }
 
-  get round(): U256 {
-    return this._event.parameters[0].value.toU256();
+  get round(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -37,9 +33,9 @@ export class RoundsManager extends SmartContract {
     return new RoundsManager("RoundsManager", address);
   }
 
-  lastRoundLengthUpdateRound(): U256 {
+  lastRoundLengthUpdateRound(): BigInt {
     let result = super.call("lastRoundLengthUpdateRound", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   targetContractId(): Bytes {
@@ -47,24 +43,24 @@ export class RoundsManager extends SmartContract {
     return result[0].toBytes();
   }
 
-  lastRoundLengthUpdateStartBlock(): U256 {
+  lastRoundLengthUpdateStartBlock(): BigInt {
     let result = super.call("lastRoundLengthUpdateStartBlock", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  lastInitializedRound(): U256 {
+  lastInitializedRound(): BigInt {
     let result = super.call("lastInitializedRound", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  roundLength(): U256 {
+  roundLength(): BigInt {
     let result = super.call("roundLength", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  roundLockAmount(): U256 {
+  roundLockAmount(): BigInt {
     let result = super.call("roundLockAmount", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   controller(): Address {
@@ -72,24 +68,26 @@ export class RoundsManager extends SmartContract {
     return result[0].toAddress();
   }
 
-  blockNum(): U256 {
+  blockNum(): BigInt {
     let result = super.call("blockNum", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  blockHash(_block: U256): Bytes {
-    let result = super.call("blockHash", [EthereumValue.fromU256(_block)]);
+  blockHash(_block: BigInt): Bytes {
+    let result = super.call("blockHash", [
+      EthereumValue.fromUnsignedBigInt(_block)
+    ]);
     return result[0].toBytes();
   }
 
-  currentRound(): U256 {
+  currentRound(): BigInt {
     let result = super.call("currentRound", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  currentRoundStartBlock(): U256 {
+  currentRoundStartBlock(): BigInt {
     let result = super.call("currentRoundStartBlock", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   currentRoundInitialized(): boolean {

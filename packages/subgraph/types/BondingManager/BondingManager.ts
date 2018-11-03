@@ -7,11 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  I128,
-  U128,
-  I256,
-  U256,
-  H256
+  BigInt
 } from "@graphprotocol/graph-ts";
 
 export class TranscoderUpdate extends EthereumEvent {
@@ -31,16 +27,16 @@ export class TranscoderUpdateParams {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get pendingRewardCut(): U256 {
-    return this._event.parameters[1].value.toU256();
+  get pendingRewardCut(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 
-  get pendingFeeShare(): U256 {
-    return this._event.parameters[2].value.toU256();
+  get pendingFeeShare(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 
-  get pendingPricePerSegment(): U256 {
-    return this._event.parameters[3].value.toU256();
+  get pendingPricePerSegment(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 
   get registered(): boolean {
@@ -105,12 +101,12 @@ export class TranscoderSlashedParams {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get penalty(): U256 {
-    return this._event.parameters[2].value.toU256();
+  get penalty(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 
-  get finderReward(): U256 {
-    return this._event.parameters[3].value.toU256();
+  get finderReward(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -131,8 +127,8 @@ export class RewardParams {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get amount(): U256 {
-    return this._event.parameters[1].value.toU256();
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
@@ -161,12 +157,12 @@ export class BondParams {
     return this._event.parameters[2].value.toAddress();
   }
 
-  get additionalAmount(): U256 {
-    return this._event.parameters[3].value.toU256();
+  get additionalAmount(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 
-  get bondedAmount(): U256 {
-    return this._event.parameters[4].value.toU256();
+  get bondedAmount(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
   }
 }
 
@@ -191,16 +187,16 @@ export class UnbondParams {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get unbondingLockId(): U256 {
-    return this._event.parameters[2].value.toU256();
+  get unbondingLockId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 
-  get amount(): U256 {
-    return this._event.parameters[3].value.toU256();
+  get amount(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 
-  get withdrawRound(): U256 {
-    return this._event.parameters[4].value.toU256();
+  get withdrawRound(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
   }
 }
 
@@ -225,12 +221,12 @@ export class RebondParams {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get unbondingLockId(): U256 {
-    return this._event.parameters[2].value.toU256();
+  get unbondingLockId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 
-  get amount(): U256 {
-    return this._event.parameters[3].value.toU256();
+  get amount(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -251,16 +247,16 @@ export class WithdrawStakeParams {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get unbondingLockId(): U256 {
-    return this._event.parameters[1].value.toU256();
+  get unbondingLockId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 
-  get amount(): U256 {
-    return this._event.parameters[2].value.toU256();
+  get amount(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 
-  get withdrawRound(): U256 {
-    return this._event.parameters[3].value.toU256();
+  get withdrawRound(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -319,25 +315,25 @@ export class ParameterUpdateParams {
 }
 
 export class BondingManager__getTranscoderEarningsPoolForRoundResult {
-  value0: U256;
-  value1: U256;
-  value2: U256;
-  value3: U256;
-  value4: U256;
-  value5: U256;
-  value6: U256;
-  value7: U256;
+  value0: BigInt;
+  value1: BigInt;
+  value2: BigInt;
+  value3: BigInt;
+  value4: BigInt;
+  value5: BigInt;
+  value6: BigInt;
+  value7: BigInt;
   value8: boolean;
 
   constructor(
-    value0: U256,
-    value1: U256,
-    value2: U256,
-    value3: U256,
-    value4: U256,
-    value5: U256,
-    value6: U256,
-    value7: U256,
+    value0: BigInt,
+    value1: BigInt,
+    value2: BigInt,
+    value3: BigInt,
+    value4: BigInt,
+    value5: BigInt,
+    value6: BigInt,
+    value7: BigInt,
     value8: boolean
   ) {
     this.value0 = value0;
@@ -353,53 +349,53 @@ export class BondingManager__getTranscoderEarningsPoolForRoundResult {
 
   toMap(): TypedMap<string, EthereumValue> {
     let map = new TypedMap<string, EthereumValue>();
-    map.set("value0", EthereumValue.fromU256(this.value0));
-    map.set("value1", EthereumValue.fromU256(this.value1));
-    map.set("value2", EthereumValue.fromU256(this.value2));
-    map.set("value3", EthereumValue.fromU256(this.value3));
-    map.set("value4", EthereumValue.fromU256(this.value4));
-    map.set("value5", EthereumValue.fromU256(this.value5));
-    map.set("value6", EthereumValue.fromU256(this.value6));
-    map.set("value7", EthereumValue.fromU256(this.value7));
+    map.set("value0", EthereumValue.fromUnsignedBigInt(this.value0));
+    map.set("value1", EthereumValue.fromUnsignedBigInt(this.value1));
+    map.set("value2", EthereumValue.fromUnsignedBigInt(this.value2));
+    map.set("value3", EthereumValue.fromUnsignedBigInt(this.value3));
+    map.set("value4", EthereumValue.fromUnsignedBigInt(this.value4));
+    map.set("value5", EthereumValue.fromUnsignedBigInt(this.value5));
+    map.set("value6", EthereumValue.fromUnsignedBigInt(this.value6));
+    map.set("value7", EthereumValue.fromUnsignedBigInt(this.value7));
     map.set("value8", EthereumValue.fromBoolean(this.value8));
     return map;
   }
 }
 
 export class BondingManager__getDelegatorUnbondingLockResult {
-  value0: U256;
-  value1: U256;
+  value0: BigInt;
+  value1: BigInt;
 
-  constructor(value0: U256, value1: U256) {
+  constructor(value0: BigInt, value1: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
   }
 
   toMap(): TypedMap<string, EthereumValue> {
     let map = new TypedMap<string, EthereumValue>();
-    map.set("value0", EthereumValue.fromU256(this.value0));
-    map.set("value1", EthereumValue.fromU256(this.value1));
+    map.set("value0", EthereumValue.fromUnsignedBigInt(this.value0));
+    map.set("value1", EthereumValue.fromUnsignedBigInt(this.value1));
     return map;
   }
 }
 
 export class BondingManager__getTranscoderResult {
-  value0: U256;
-  value1: U256;
-  value2: U256;
-  value3: U256;
-  value4: U256;
-  value5: U256;
-  value6: U256;
+  value0: BigInt;
+  value1: BigInt;
+  value2: BigInt;
+  value3: BigInt;
+  value4: BigInt;
+  value5: BigInt;
+  value6: BigInt;
 
   constructor(
-    value0: U256,
-    value1: U256,
-    value2: U256,
-    value3: U256,
-    value4: U256,
-    value5: U256,
-    value6: U256
+    value0: BigInt,
+    value1: BigInt,
+    value2: BigInt,
+    value3: BigInt,
+    value4: BigInt,
+    value5: BigInt,
+    value6: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -412,34 +408,34 @@ export class BondingManager__getTranscoderResult {
 
   toMap(): TypedMap<string, EthereumValue> {
     let map = new TypedMap<string, EthereumValue>();
-    map.set("value0", EthereumValue.fromU256(this.value0));
-    map.set("value1", EthereumValue.fromU256(this.value1));
-    map.set("value2", EthereumValue.fromU256(this.value2));
-    map.set("value3", EthereumValue.fromU256(this.value3));
-    map.set("value4", EthereumValue.fromU256(this.value4));
-    map.set("value5", EthereumValue.fromU256(this.value5));
-    map.set("value6", EthereumValue.fromU256(this.value6));
+    map.set("value0", EthereumValue.fromUnsignedBigInt(this.value0));
+    map.set("value1", EthereumValue.fromUnsignedBigInt(this.value1));
+    map.set("value2", EthereumValue.fromUnsignedBigInt(this.value2));
+    map.set("value3", EthereumValue.fromUnsignedBigInt(this.value3));
+    map.set("value4", EthereumValue.fromUnsignedBigInt(this.value4));
+    map.set("value5", EthereumValue.fromUnsignedBigInt(this.value5));
+    map.set("value6", EthereumValue.fromUnsignedBigInt(this.value6));
     return map;
   }
 }
 
 export class BondingManager__getDelegatorResult {
-  value0: U256;
-  value1: U256;
+  value0: BigInt;
+  value1: BigInt;
   value2: Address;
-  value3: U256;
-  value4: U256;
-  value5: U256;
-  value6: U256;
+  value3: BigInt;
+  value4: BigInt;
+  value5: BigInt;
+  value6: BigInt;
 
   constructor(
-    value0: U256,
-    value1: U256,
+    value0: BigInt,
+    value1: BigInt,
     value2: Address,
-    value3: U256,
-    value4: U256,
-    value5: U256,
-    value6: U256
+    value3: BigInt,
+    value4: BigInt,
+    value5: BigInt,
+    value6: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -452,13 +448,13 @@ export class BondingManager__getDelegatorResult {
 
   toMap(): TypedMap<string, EthereumValue> {
     let map = new TypedMap<string, EthereumValue>();
-    map.set("value0", EthereumValue.fromU256(this.value0));
-    map.set("value1", EthereumValue.fromU256(this.value1));
+    map.set("value0", EthereumValue.fromUnsignedBigInt(this.value0));
+    map.set("value1", EthereumValue.fromUnsignedBigInt(this.value1));
     map.set("value2", EthereumValue.fromAddress(this.value2));
-    map.set("value3", EthereumValue.fromU256(this.value3));
-    map.set("value4", EthereumValue.fromU256(this.value4));
-    map.set("value5", EthereumValue.fromU256(this.value5));
-    map.set("value6", EthereumValue.fromU256(this.value6));
+    map.set("value3", EthereumValue.fromUnsignedBigInt(this.value3));
+    map.set("value4", EthereumValue.fromUnsignedBigInt(this.value4));
+    map.set("value5", EthereumValue.fromUnsignedBigInt(this.value5));
+    map.set("value6", EthereumValue.fromUnsignedBigInt(this.value6));
     return map;
   }
 }
@@ -468,24 +464,24 @@ export class BondingManager extends SmartContract {
     return new BondingManager("BondingManager", address);
   }
 
-  maxEarningsClaimsRounds(): U256 {
+  maxEarningsClaimsRounds(): BigInt {
     let result = super.call("maxEarningsClaimsRounds", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  isValidUnbondingLock(_delegator: Address, _unbondingLockId: U256): boolean {
+  isValidUnbondingLock(_delegator: Address, _unbondingLockId: BigInt): boolean {
     let result = super.call("isValidUnbondingLock", [
       EthereumValue.fromAddress(_delegator),
-      EthereumValue.fromU256(_unbondingLockId)
+      EthereumValue.fromUnsignedBigInt(_unbondingLockId)
     ]);
     return result[0].toBoolean();
   }
 
-  delegatorStatus(_delegator: Address): u8 {
+  delegatorStatus(_delegator: Address): i32 {
     let result = super.call("delegatorStatus", [
       EthereumValue.fromAddress(_delegator)
     ]);
-    return result[0].toU8();
+    return result[0].toI32();
   }
 
   getNextTranscoderInPool(_transcoder: Address): Address {
@@ -497,48 +493,48 @@ export class BondingManager extends SmartContract {
 
   getTranscoderEarningsPoolForRound(
     _transcoder: Address,
-    _round: U256
+    _round: BigInt
   ): BondingManager__getTranscoderEarningsPoolForRoundResult {
     let result = super.call("getTranscoderEarningsPoolForRound", [
       EthereumValue.fromAddress(_transcoder),
-      EthereumValue.fromU256(_round)
+      EthereumValue.fromUnsignedBigInt(_round)
     ]);
     return new BondingManager__getTranscoderEarningsPoolForRoundResult(
-      result[0].toU256(),
-      result[1].toU256(),
-      result[2].toU256(),
-      result[3].toU256(),
-      result[4].toU256(),
-      result[5].toU256(),
-      result[6].toU256(),
-      result[7].toU256(),
+      result[0].toBigInt(),
+      result[1].toBigInt(),
+      result[2].toBigInt(),
+      result[3].toBigInt(),
+      result[4].toBigInt(),
+      result[5].toBigInt(),
+      result[6].toBigInt(),
+      result[7].toBigInt(),
       result[8].toBoolean()
     );
   }
 
-  getTranscoderPoolSize(): U256 {
+  getTranscoderPoolSize(): BigInt {
     let result = super.call("getTranscoderPoolSize", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  activeTranscoderSet(param0: U256): U256 {
+  activeTranscoderSet(param0: BigInt): BigInt {
     let result = super.call("activeTranscoderSet", [
-      EthereumValue.fromU256(param0)
+      EthereumValue.fromUnsignedBigInt(param0)
     ]);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   getDelegatorUnbondingLock(
     _delegator: Address,
-    _unbondingLockId: U256
+    _unbondingLockId: BigInt
   ): BondingManager__getDelegatorUnbondingLockResult {
     let result = super.call("getDelegatorUnbondingLock", [
       EthereumValue.fromAddress(_delegator),
-      EthereumValue.fromU256(_unbondingLockId)
+      EthereumValue.fromUnsignedBigInt(_unbondingLockId)
     ]);
     return new BondingManager__getDelegatorUnbondingLockResult(
-      result[0].toU256(),
-      result[1].toU256()
+      result[0].toBigInt(),
+      result[1].toBigInt()
     );
   }
 
@@ -547,14 +543,14 @@ export class BondingManager extends SmartContract {
     return result[0].toBytes();
   }
 
-  getTranscoderPoolMaxSize(): U256 {
+  getTranscoderPoolMaxSize(): BigInt {
     let result = super.call("getTranscoderPoolMaxSize", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  getTotalBonded(): U256 {
+  getTotalBonded(): BigInt {
     let result = super.call("getTotalBonded", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   getTranscoder(_transcoder: Address): BondingManager__getTranscoderResult {
@@ -562,19 +558,19 @@ export class BondingManager extends SmartContract {
       EthereumValue.fromAddress(_transcoder)
     ]);
     return new BondingManager__getTranscoderResult(
-      result[0].toU256(),
-      result[1].toU256(),
-      result[2].toU256(),
-      result[3].toU256(),
-      result[4].toU256(),
-      result[5].toU256(),
-      result[6].toU256()
+      result[0].toBigInt(),
+      result[1].toBigInt(),
+      result[2].toBigInt(),
+      result[3].toBigInt(),
+      result[4].toBigInt(),
+      result[5].toBigInt(),
+      result[6].toBigInt()
     );
   }
 
-  numActiveTranscoders(): U256 {
+  numActiveTranscoders(): BigInt {
     let result = super.call("numActiveTranscoders", []);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   isRegisteredTranscoder(_transcoder: Address): boolean {
@@ -584,22 +580,22 @@ export class BondingManager extends SmartContract {
     return result[0].toBoolean();
   }
 
-  unbondingPeriod(): u64 {
+  unbondingPeriod(): BigInt {
     let result = super.call("unbondingPeriod", []);
-    return result[0].toU64();
+    return result[0].toBigInt();
   }
 
-  getTotalActiveStake(_round: U256): U256 {
+  getTotalActiveStake(_round: BigInt): BigInt {
     let result = super.call("getTotalActiveStake", [
-      EthereumValue.fromU256(_round)
+      EthereumValue.fromUnsignedBigInt(_round)
     ]);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  isActiveTranscoder(_transcoder: Address, _round: U256): boolean {
+  isActiveTranscoder(_transcoder: Address, _round: BigInt): boolean {
     let result = super.call("isActiveTranscoder", [
       EthereumValue.fromAddress(_transcoder),
-      EthereumValue.fromU256(_round)
+      EthereumValue.fromUnsignedBigInt(_round)
     ]);
     return result[0].toBoolean();
   }
@@ -609,39 +605,39 @@ export class BondingManager extends SmartContract {
     return result[0].toAddress();
   }
 
-  transcoderStatus(_transcoder: Address): u8 {
+  transcoderStatus(_transcoder: Address): i32 {
     let result = super.call("transcoderStatus", [
       EthereumValue.fromAddress(_transcoder)
     ]);
-    return result[0].toU8();
+    return result[0].toI32();
   }
 
   electActiveTranscoder(
-    _maxPricePerSegment: U256,
+    _maxPricePerSegment: BigInt,
     _blockHash: Bytes,
-    _round: U256
+    _round: BigInt
   ): Address {
     let result = super.call("electActiveTranscoder", [
-      EthereumValue.fromU256(_maxPricePerSegment),
+      EthereumValue.fromUnsignedBigInt(_maxPricePerSegment),
       EthereumValue.fromFixedBytes(_blockHash),
-      EthereumValue.fromU256(_round)
+      EthereumValue.fromUnsignedBigInt(_round)
     ]);
     return result[0].toAddress();
   }
 
-  pendingStake(_delegator: Address, _endRound: U256): U256 {
+  pendingStake(_delegator: Address, _endRound: BigInt): BigInt {
     let result = super.call("pendingStake", [
       EthereumValue.fromAddress(_delegator),
-      EthereumValue.fromU256(_endRound)
+      EthereumValue.fromUnsignedBigInt(_endRound)
     ]);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  transcoderTotalStake(_transcoder: Address): U256 {
+  transcoderTotalStake(_transcoder: Address): BigInt {
     let result = super.call("transcoderTotalStake", [
       EthereumValue.fromAddress(_transcoder)
     ]);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   getDelegator(_delegator: Address): BondingManager__getDelegatorResult {
@@ -649,30 +645,30 @@ export class BondingManager extends SmartContract {
       EthereumValue.fromAddress(_delegator)
     ]);
     return new BondingManager__getDelegatorResult(
-      result[0].toU256(),
-      result[1].toU256(),
+      result[0].toBigInt(),
+      result[1].toBigInt(),
       result[2].toAddress(),
-      result[3].toU256(),
-      result[4].toU256(),
-      result[5].toU256(),
-      result[6].toU256()
+      result[3].toBigInt(),
+      result[4].toBigInt(),
+      result[5].toBigInt(),
+      result[6].toBigInt()
     );
   }
 
-  activeTranscoderTotalStake(_transcoder: Address, _round: U256): U256 {
+  activeTranscoderTotalStake(_transcoder: Address, _round: BigInt): BigInt {
     let result = super.call("activeTranscoderTotalStake", [
       EthereumValue.fromAddress(_transcoder),
-      EthereumValue.fromU256(_round)
+      EthereumValue.fromUnsignedBigInt(_round)
     ]);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
-  pendingFees(_delegator: Address, _endRound: U256): U256 {
+  pendingFees(_delegator: Address, _endRound: BigInt): BigInt {
     let result = super.call("pendingFees", [
       EthereumValue.fromAddress(_delegator),
-      EthereumValue.fromU256(_endRound)
+      EthereumValue.fromUnsignedBigInt(_endRound)
     ]);
-    return result[0].toU256();
+    return result[0].toBigInt();
   }
 
   controller(): Address {
