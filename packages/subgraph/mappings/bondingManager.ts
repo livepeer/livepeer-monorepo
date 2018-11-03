@@ -20,12 +20,20 @@ let roundsManager = RoundsManager.bind(
   Address.fromString("3984fc4ceeef1739135476f625d36d6c35c40dc3")
 );
 
-// Respond to transcoder added events
 export function transcoderUpdated(event: TranscoderUpdate): void {
   let bondingManager = BondingManager.bind(event.address);
-  let transcoder = new Transcoder();
   let currentRound = roundsManager.currentRound();
   let transcoderAddress = event.params.transcoder;
+
+  // Create transcoder if it does not yet exist
+  let transcoder = store.get(
+    "Transcoder",
+    transcoderAddress.toHex()
+  ) as Transcoder | null;
+  if (transcoder == null) {
+    transcoder = new Transcoder();
+  }
+
   let active = bondingManager.isActiveTranscoder(
     transcoderAddress,
     currentRound
@@ -40,7 +48,6 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   let feeShare = transcoderInfo.value2;
   let pricePerSegment = transcoderInfo.value3;
 
-  transcoder.id = transcoderAddress.toHex();
   transcoder.pendingRewardCut = pendingRewardCut;
   transcoder.pendingFeeShare = pendingFeeShare;
   transcoder.pendingPricePerSegment = pendingPricePerSegment;
@@ -51,93 +58,108 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   transcoder.active = active;
   transcoder.status = registered ? "Registered" : "NotRegistered";
 
-  store.set("Transcoder", transcoder.id, transcoder);
+  store.set("Transcoder", transcoderAddress.toHex(), transcoder as Transcoder);
 }
 
 export function transcoderResigned(event: TranscoderResigned): void {
   let transcoderAddress = event.params.transcoder;
-  let transcoder = new Transcoder();
-  transcoder.id = transcoderAddress.toHex();
+  let transcoder = store.get(
+    "Transcoder",
+    transcoderAddress.toHex()
+  ) as Transcoder;
+
   transcoder.active = false;
   transcoder.status = "NotRegistered";
-  store.set("Transcoder", transcoder.id, transcoder);
+  store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 }
 
 export function transcoderEvicted(event: TranscoderEvicted): void {
   let transcoderAddress = event.params.transcoder;
-  let transcoder = new Transcoder();
-  transcoder.id = transcoderAddress.toHex();
+  let transcoder = store.get(
+    "Transcoder",
+    transcoderAddress.toHex()
+  ) as Transcoder;
+
   transcoder.active = false;
   transcoder.status = "NotRegistered";
-  store.set("Transcoder", transcoder.id, transcoder);
+  store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 }
 
 export function transcoderSlashed(event: TranscoderSlashed): void {
-  let bondingManager = BondingManager.bind(event.address);
-  let transcoder = new Transcoder();
   let transcoderAddress = event.params.transcoder;
+  let transcoder = store.get(
+    "Transcoder",
+    transcoderAddress.toHex()
+  ) as Transcoder;
+  let bondingManager = BondingManager.bind(event.address);
   let totalStake = bondingManager.transcoderTotalStake(transcoderAddress);
-  transcoder.id = transcoderAddress.toHex();
+
+  // Update transcoder total stake
   transcoder.totalStake = totalStake;
-  store.set("Transcoder", transcoder.id, transcoder);
+  store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 }
 
 export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address);
-  let newDelegate = new Transcoder();
-  let oldDelegate = new Transcoder();
   let newDelegateAddress = event.params.newDelegate;
   let oldDelegateAddress = event.params.oldDelegate;
+  let newDelegate = store.get(
+    "Transcoder",
+    newDelegateAddress.toHex()
+  ) as Transcoder;
+  let oldDelegate = store.get(
+    "Transcoder",
+    oldDelegateAddress.toHex()
+  ) as Transcoder;
   let newDelegateTotalStake = bondingManager.transcoderTotalStake(
     newDelegateAddress
   );
   let oldDelegateTotalStake = bondingManager.transcoderTotalStake(
     oldDelegateAddress
   );
-  newDelegate.id = newDelegateAddress.toHex();
-  newDelegate.totalStake = newDelegateTotalStake;
-  store.set("Transcoder", newDelegate.id, newDelegate);
 
-  oldDelegate.id = oldDelegateAddress.toHex();
+  newDelegate.totalStake = newDelegateTotalStake;
+  store.set("Transcoder", newDelegateAddress.toHex(), newDelegate);
+
   oldDelegate.totalStake = oldDelegateTotalStake;
-  store.set("Transcoder", oldDelegate.id, oldDelegate);
+  store.set("Transcoder", oldDelegateAddress.toHex(), oldDelegate);
 }
 
 export function unbond(event: Unbond): void {
   let bondingManager = BondingManager.bind(event.address);
-  let delegate = new Transcoder();
   let delegateAddress = event.params.delegate;
+  let delegate = store.get("Transcoder", delegateAddress.toHex()) as Transcoder;
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress);
 
-  delegate.id = delegateAddress.toHex();
   delegate.totalStake = totalStake;
-  store.set("Transcoder", delegate.id, delegate);
+  store.set("Transcoder", delegateAddress.toHex(), delegate);
 }
 
 export function rebond(event: Rebond): void {
   let bondingManager = BondingManager.bind(event.address);
-  let delegate = new Transcoder();
   let delegateAddress = event.params.delegate;
+  let delegate = store.get("Transcoder", delegateAddress.toHex()) as Transcoder;
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress);
 
-  delegate.id = delegateAddress.toHex();
   delegate.totalStake = totalStake;
-  store.set("Transcoder", delegate.id, delegate);
+  store.set("Transcoder", delegateAddress.toHex(), delegate);
 }
 
 export function reward(event: RewardEvent): void {
   let bondingManager = BondingManager.bind(event.address);
-  let transcoder = new Transcoder();
-  let reward = new Reward();
   let transcoderAddress = event.params.transcoder;
+  let transcoder = store.get(
+    "Transcoder",
+    transcoderAddress.toHex()
+  ) as Transcoder;
   let totalStake = bondingManager.transcoderTotalStake(transcoderAddress);
   let currentRound = roundsManager.currentRound();
+  let rewardId = transcoderAddress.toHex() + "-" + currentRound.toString();
+  let reward = store.get("Reward", rewardId) as Reward;
 
-  transcoder.id = transcoderAddress.toHex();
   transcoder.totalStake = totalStake;
-  store.set("Transcoder", transcoder.id, transcoder);
+  store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 
-  reward.id = transcoderAddress.toHex() + "-" + currentRound.toString();
   reward.rewardTokens = event.params.amount;
-  store.set("Reward", reward.id, reward);
+  store.set("Reward", rewardId, reward);
 }

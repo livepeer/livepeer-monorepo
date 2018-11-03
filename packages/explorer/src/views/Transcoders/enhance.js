@@ -100,7 +100,12 @@ const TranscodersQuery = gql`
 
 const connectTranscodersQuery = graphql(TranscodersQuery, {
   props: ({ data, ownProps }) => {
-    const { transcoders, ...queryData } = data
+    let { transcoders, ...queryData } = data
+    // Filter by registered transcoders
+    // TODO: Use graphql variables instead when The Graph supports them
+    if (transcoders) {
+      transcoders = transcoders.filter(t => t.status === 'Registered')
+    }
     return {
       ...ownProps,
       transcoders: {
