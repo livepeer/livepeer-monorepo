@@ -148,7 +148,11 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
         console.log('METAMASK | Access to accounts denied')
         render(
           <BasicModal title={'Metamask is Locked'}>
-            <p>Please unlock metamask to be able to use Livepeer Explorer</p>
+            <p>
+              Not connected to web3. Please unlock Metamask or another web3
+              enabled wallet to be able to use full features in Livepeer
+              Explorer
+            </p>
             <Button className={'primary'} onClick={enableAccounts}>
               Enable
             </Button>
