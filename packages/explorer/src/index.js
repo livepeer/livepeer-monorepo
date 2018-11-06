@@ -143,29 +143,49 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       window.web3 = new window.Web3(window.ethereum)
       try {
         await window.ethereum.enable()
-        return
       } catch (e) {
         console.log('METAMASK | Access to accounts denied')
         render(
           <BasicModal title={'Metamask is Locked'}>
             <p>
-              Not connected to web3. Please unlock Metamask or another web3
-              enabled wallet to be able to use full features in Livepeer
+              Not connected to web3. Please enable Metamask or another web3
+              enabled browser to be able to use full features in Livepeer
               Explorer
             </p>
             <Button className={'primary'} onClick={enableAccounts}>
               Enable
             </Button>
+            <Button className={'primary'} onClick={limitedMode}>
+              Limited mode
+            </Button>
           </BasicModal>,
           document.getElementById('main-root'),
         )
-        return
       }
     } else if (window.web3 && window.web3.version) {
       // this is the old way, accounts are always exposed.
+      window.web3 = new window.Web3(window.web3.currentProvider)
+    } else {
+      // non dapp browser
+      render(
+        <BasicModal title={'Metamask is Locked'}>
+          <p>
+            Non-Ethereum browser detected. Livepeer requires Metamask or a dapp
+            browser like Mist
+          </p>
+        </BasicModal>,
+        document.getElementById('main-root'),
+      )
     }
 
     return
+  }
+
+  const limitedMode = () => {
+    console.log('limited mode')
+    window.web3 = new window.Web3(window.ethereum)
+
+    // window.web3 = new window.Web3(window.web3.currentProvider)
   }
 
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -200,7 +220,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     }
     while (version.network === null) {
       console.log('waiting on web3 network version...')
-      await sleep(100)
+      await sleep(1000)
     }
     opts.controllerAddress =
       controllers[version.network] || process.env.REACT_APP_CONTROLLER_ADDRESS
