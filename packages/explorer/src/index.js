@@ -145,47 +145,51 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
         await window.ethereum.enable()
       } catch (e) {
         console.log('METAMASK | Access to accounts denied')
-        render(
-          <BasicModal title={'Metamask is Locked'}>
-            <p>
-              Not connected to web3. Please enable Metamask or another web3
-              enabled browser to be able to use full features in Livepeer
-              Explorer
-            </p>
-            <Button className={'primary'} onClick={enableAccounts}>
-              Enable
-            </Button>
-            <Button className={'primary'} onClick={limitedMode}>
-              Limited mode
-            </Button>
-          </BasicModal>,
-          document.getElementById('main-root'),
-        )
+        renderLockedWarning()
+        return
       }
     } else if (window.web3 && window.web3.version) {
       // this is the old way, accounts are always exposed.
       window.web3 = new window.Web3(window.web3.currentProvider)
     } else {
       // non dapp browser
-      render(
-        <BasicModal title={'Metamask is Locked'}>
-          <p>
-            Non-Ethereum browser detected. Livepeer requires Metamask or a dapp
-            browser like Mist
-          </p>
-        </BasicModal>,
-        document.getElementById('main-root'),
-      )
+      renderNonDappBrowserWarning()
     }
-
     return
   }
 
   const limitedMode = () => {
-    console.log('limited mode')
     window.web3 = new window.Web3(window.ethereum)
+  }
 
-    // window.web3 = new window.Web3(window.web3.currentProvider)
+  const renderLockedWarning = () => {
+    render(
+      <BasicModal title={'Metamask is Locked'}>
+        <p>
+          Not connected to web3. Please enable Metamask or another web3 enabled
+          browser to be able to use full features in Livepeer Explorer
+        </p>
+        <Button className={'primary'} onClick={enableAccounts}>
+          Enable
+        </Button>
+        <Button className={'primary'} onClick={limitedMode}>
+          Limited mode
+        </Button>
+      </BasicModal>,
+      document.getElementById('main-root'),
+    )
+  }
+
+  const renderNonDappBrowserWarning = () => {
+    render(
+      <BasicModal title={'Non-Dapp Browser'}>
+        <p>
+          Non-Ethereum browser detected. Livepeer requires Metamask or a dapp
+          browser like Mist
+        </p>
+      </BasicModal>,
+      document.getElementById('main-root'),
+    )
   }
 
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
