@@ -2,41 +2,201 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
+aliases:
+  # Cache management
+  #
+  # Saves dependencies to cache
+  - &save-dependencies
+    paths:
+      - node_modules
+    key: v1-dependencies-{{ checksum "yarn.lock" }}
+
+  # Restores dependencies from cache
+  - &restore-dependencies
+    keys:
+    - v1-dependencies-{{ checksum "yarn.lock" }}
+    - v1-dependencies-
+
+  # Saves built explorer to cache
+  - &save-explorer
+    paths:
+      - packages/explorer/build
+    key: built-explorer-{{ .Revision }}
+
+  # Restores explorer from cache
+  - &restore-explorer
+    keys:
+    - built-explorer-{{ .Revision }}
+
+  # Commands
+
+  # Downloads and setup Code Climate reporter
+  - &reporter
+    name: Setup Code Climate test-reporter
+    command: |
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      chmod +x ./cc-test-reporter
+
+  # Runs LivepeerJs tests
+  - &tests
+    name: Run tests
+    command: |
+      yarn test
+
+  # Installs dependencies for packages
+  - &install-dependencies
+    name: Install dependencies
+    command: |
+      yarn install
+
+  # Runs reporter and shows test coverage
+  - &show-test-report
+    name: Report coverage
+    command: |
+      yarn coverage
+      ./cc-test-reporter after-build
+
+  # Builds the explorer
+  - &build-explorer
+    name: Build explorer
+    command: |
+      yarn
+      cd packages/explorer
+      ls -la
+      export CI=false
+      yarn build
+
+  # Installs AWS cli
+  - &install-aws-cli
+    name: Install awscli
+    command: sudo pip install awscli
+
+  # Extention of aws command
+  - &s3-cmd-flags-values
+
+  # Containers
+  - &node
+    - image: circleci/node:8.11
+
+  - &python
+    - image: circleci/python:2.7-jessie
+
+directory: &directory
+  working_directory: ~/repo
+
+python-env: &python-env
+  docker: *python
+  <<: *directory
+
+node-env: &node-env
+  docker: *node
+  <<: *directory
+
 version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/node:8.11
-    working_directory: ~/repo
+  build-test:
+    <<: *node-env
+
+    steps:
+      - checkout
+      - restore_cache: *restore-dependencies
+      - run: *install-dependencies
+      - save_cache: *save-dependencies
+      - run: *reporter
+      - run: *tests
+      - run: *show-test-report
+
+  build-explorer-staging:
+    <<: *node-env
+
+    steps:
+      - checkout
+      - restore_cache: *restore-dependencies
+      - run: *build-explorer
+      - save_cache: *save-explorer
+
+  deploy-explorer-staging:
+    <<: *python-env
+
+    steps:
+      - checkout
+      - restore_cache: *restore-explorer
+      - run: *install-aws-cli
+
+      - run:
+          name: Deploy to S3
+          command: |
+            aws s3 rm s3://$STAGING_BUCKET_NAME --recursive
+            aws s3 sync packages/explorer/build s3://$EXPLORER_STAGING_BUCKET_NAME \
+            --delete \
+            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
+
+  build-explorer-production:
+    <<: *node-env
+
+    steps:
+      - checkout
+      - run: *build-explorer
+
+      - save_cache:
+          paths:
+            - packages/explorer/build
+          key: production-explorer-{{ .Revision }}
+
+  deploy-explorer-production:
+    <<: *python-env
 
     steps:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "yarn.lock" }}
-          - v1-dependencies-
-      - run:
-          name: Install dependencies
-          command: |
-            yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
-      - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-      - run:
-          name: Run tests
-          command: |
-            yarn test
-      - run:
-          name: Report coverage
-          command: |
-            yarn coverage
-            ./cc-test-reporter after-build
+          - production-explorer-{{ .Revision }}
+      - run: *install-aws-cli
 
+      - run:
+          name: Deploy to S3
+          command: |
+            aws s3 rm s3://staging-livepeer-deployment/ --recursive
+            aws s3 sync packages/explorer/build s3://$EXPLORER_PRODUCTION_BUCKET_NAME \
+            --delete \
+            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
+workflows:
+  version: 2
+  staging-test-build-deploy:
+    jobs:
+      - build-test
+
+      # Staging workflow for the explorer
+      - hold-staging-explorer-deploy:
+          type: approval
+          requires:
+            - build-test
+      - build-explorer-staging:
+          requires:
+            - hold-staging-explorer-deploy
+      - deploy-explorer-staging:
+          requires:
+            - build-explorer-staging
+
+      # Production workflow for the explorer
+      - hold-production-explorer-deploy:
+          type: approval
+          requires:
+            - build-test
+          filters:
+            branches:
+              only: master
+      - build-explorer-production:
+          requires:
+            - hold-production-explorer-deploy
+          filters:
+            branches:
+              only: master
+      - deploy-explorer-production:
+          requires:
+            - build-explorer-production
+          filters:
+            branches:
+              only: master
 
