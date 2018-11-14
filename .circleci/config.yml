@@ -126,7 +126,7 @@ jobs:
       - run:
           name: Deploy to S3
           command: |
-            aws s3 rm s3://$STAGING_BUCKET_NAME --recursive
+            aws s3 rm s3://$EXPLORER_STAGING_BUCKET_NAME --recursive
             aws s3 sync packages/explorer/build s3://$EXPLORER_STAGING_BUCKET_NAME \
             --delete \
             --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
@@ -156,7 +156,7 @@ jobs:
       - run:
           name: Deploy to S3
           command: |
-            aws s3 rm s3://staging-livepeer-deployment/ --recursive
+            aws s3 rm s3://$EXPLORER_PRODUCTION_BUCKET_NAME --recursive
             aws s3 sync packages/explorer/build s3://$EXPLORER_PRODUCTION_BUCKET_NAME \
             --delete \
             --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
