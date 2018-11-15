@@ -46,19 +46,21 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     * {
       box-sizing: border-box;
       font-weight: 300;
-      // font-family: 'AkkuratMonoPro';
+      font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
     }
     strong, b {
       font-weight: 500;
     }
     html, body {
       margin: 0;
+      height: 100%;
       font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
       background: var(--bg-light);
     }
     a { color: #03a678; }
     p, ul {
       line-height: 1.5
+      font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
     }
     select {
       appearance: none;

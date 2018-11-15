@@ -63,7 +63,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
-      <BasicNavbar />
+      <BasicNavbar history={history} />
       <Banner>
         <PageHeading className="page-heading">
           <React.Fragment>

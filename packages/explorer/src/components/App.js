@@ -8,11 +8,9 @@ import Bond from '../views/Bond'
 import ClaimEarnings from '../views/ClaimEarnings'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
-import Mining from '../views/Mining'
 import SmartContracts from '../views/SmartContracts'
 import ProtocolStatus from '../views/ProtocolStatus'
 import ToastNotifications from '../views/ToastNotifications'
-import Token from '../views/Token'
 import Transcoders from '../views/Transcoders'
 
 const App = () => (
@@ -20,9 +18,7 @@ const App = () => (
     <div>
       {/* Pages */}
       <Switch>
-        <Route exact path="/" component={Landing} />
-        <Route path="/mine" component={Mining} />
-        <Route exact path="/token" component={Token} />
+        <Route exact path="/about" component={Landing} />
         <Route exact path="/transcoders" component={Transcoders} />
         <Route path="/accounts/:accountId" component={Account} />
         <Route
@@ -40,7 +36,7 @@ const App = () => (
             return <Redirect to={nextPath} />
           }}
         />
-        <Redirect to="/" />
+        <Redirect to="/transcoders" />
       </Switch>
       {/* Modals */}
       <Route
@@ -72,7 +68,6 @@ const App = () => (
       <Route component={ImportantMessage} />
       <ToastNotifications />
       <Switch>
-        <Route exact path="/token" component={() => null} />
         <Route exact path="/transcoders" component={() => null} />
         <Route
           path="*"
@@ -83,12 +78,19 @@ const App = () => (
                 staking towards a transcoder to earn fees and LPT rewards.
               </div>
               <div>
-                <Button
-                  style={{ margin: 0 }}
-                  onClick={() => history.push('/token')}
+                <a
+                  style={{
+                    color: 'rgb(0, 235, 135)',
+                    background: 'rgb(0, 0, 0)',
+                    padding: '10px',
+                    margin: 'auto',
+                    textDecoration: 'none',
+                  }}
+                  target="_blank"
+                  href="https://livepeer.org/#token"
                 >
                   Get Livepeer Token
-                </Button>
+                </a>
               </div>
             </CTABanner>
           )}

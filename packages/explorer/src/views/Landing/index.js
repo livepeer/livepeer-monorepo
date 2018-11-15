@@ -10,143 +10,88 @@ import {
 
 const Landing = ({ history, ...props }) => (
   <React.Fragment>
-    <Container>
+    <Container
+      style={{
+        margin: 0,
+        flexFlow: 'row',
+      }}
+    >
       <ScrollToTopOnMount />
-      <BasicNavbar />
-      <LandingContent width="800px">
-        <img
-          src={`${process.env.PUBLIC_URL}/wordmark.svg`}
-          width="240"
-          alt="The glorious Livepeer wordmark"
-        />
-        <h3 style={{ letterSpacing: 8 }}>Protocol Explorer</h3>
-        <br />
-        <br />
-        <div style={{ display: 'flex' }}>
-          <InfoBox>
-            <h2>
-              <Icon use="explore" />&nbsp;
-              {`Explore Your Account`}
-            </h2>
-            <p>
-              Check your balance of Livepeer Tokens (LPT),
-              and learn what you can do with them.
-            </p>
-            <br />
-            <form
-              style={{ maxWidth: '100%', width: 480 }}
-              onSubmit={e => {
-                e.preventDefault()
-                const data = new FormData(e.target)
-                history.push(`/accounts/${data.get('address')}`)
-              }}
-            >
-              <SearchBar
-                required
-                name="address"
-                type="search"
-                pattern="^0x[a-fA-F0-9]{40}$"
-                placeholder="Enter your ETH account address"
-                onKeyDown={e => {
-                  if (e.keyCode !== 13 || !e.target.value) return
-                  document.getElementById('account-search-button').click()
-                }}
-              />
-              <br />
-              <br />
-              <div style={{ textAlign: 'right' }}>
-                <CTAButton type="submit">View Account</CTAButton>
-              </div>
-            </form>
-          </InfoBox>
-          <InfoBox>
-            <h2>
-              <Icon use="how_to_vote" />&nbsp;
-              {`BOND your LPT to a Node`}
-            </h2>
-            <p>
-              Bond to a Transcoder Node in the network to support
-              them, and also earn a share of their rewards and fees.
-            </p>
-            <br />
-            <p style={{ textAlign: 'right', margin: 0 }}>
-              <CTAButton
-                big
-                type="submit"
-                onClick={() => {
-                  history.push('/transcoders')
-                }}
-              >
-                SEE OPTIONS
-              </CTAButton>
-            </p>
-          </InfoBox>
+      <BasicNavbar history={history} />
+      <Content id="left-content" className="content">
+        <InfoBox
+          className="main-content"
+          style={{ margin: '100px', width: 400, color: '#FFF' }}
+        >
+          <h1 style={{ color: '#FFFFFF' }}>How to Use the Explorer</h1>
+          <p
+            style={{
+              fontWeight: 'bold',
+            }}
+          >
+            What is a reward cut? What is a fee share?<br />
+            Watch this video to learn how to assess and<br />
+            bond to transcoders using the explorer
+          </p>
+          <CTAButton
+            target="_blank"
+            href="https://www.youtube.com/watch?v=2RUFH4qTU7o"
+            style={{
+              background: '#00EA86',
+              color: '#000',
+            }}
+          >
+            Watch the video
+          </CTAButton>
+        </InfoBox>
+      </Content>
+      <Content id="right-content" className="content">
+        <div
+          style={{
+            textAlign: 'center',
+          }}
+          className="rightStat"
+        >
+          <h2>Stats on the Livepeer Protocol</h2>
+          <p>
+            Supermax is a community-built analytics platform for smart
+            contracts. Supermax pulls Livepeer data from the blockchain and
+            visualizes it to drive actionable insights.
+          </p>
+          <CTAButton
+            target="_blank"
+            href="https://supermax.cool/livepeer"
+            style={{
+              background: 'inherit',
+              color: '#000',
+              outline: 'solid 2px #000',
+              marginBottom: '80px',
+            }}
+          >
+            Visit Supermax
+          </CTAButton>
+          <h2>Livepeer Token Distribution</h2>
+          <p>
+            The initial token distribution was executed using a merklemine
+            mechanism to allocate 63% of all token to the community.
+          </p>
+          <CTAButton
+            target="_blank"
+            href="https://medium.com/livepeer-blog/the-end-of-the-initial-livepeer-token-distribution-6fa9894f0f16"
+            style={{
+              background: 'inherit',
+              color: '#000',
+              outline: 'solid 2px #000',
+              margin: '0 0 20px',
+            }}
+          >
+            Read More
+          </CTAButton>
         </div>
-      </LandingContent>
-      <Footer />
+      </Content>
     </Container>
   </React.Fragment>
 )
-
-class Video extends React.Component {
-  state = { paused: true }
-  togglePlay = async e => {
-    const { target } = e
-    const attr = 'controls'
-    if (!target.paused) {
-      target.removeAttribute(attr)
-      await target.pause()
-      this.setState({ paused: true })
-    } else {
-      target.setAttribute(attr, attr)
-      await target.play()
-      this.setState({ paused: false })
-    }
-  }
-  render() {
-    return (
-      <div
-        style={{
-          position: 'relative',
-          // video is 1080 x 1728
-          paddingBottom: '62.5%',
-          height: 0,
-          boxShadow: '0 1px 20px 0px rgba(0, 0, 0, 0.5)',
-          cursor: 'pointer',
-        }}
-      >
-        <video
-          onClick={this.togglePlay}
-          onTouchStart={this.togglePlay}
-          src={this.props.src}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-          }}
-        />
-        <div
-          style={{
-            display: !this.state.paused ? 'none' : 'flex',
-            color: '#fff',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-          }}
-        >
-          <Icon use="play_circle_outline" style={{ fontSize: 48 }} />
-        </div>
-      </div>
-    )
-  }
-}
 
 const fadeIn = keyframes`
   from {
@@ -165,56 +110,136 @@ const LandingContent = styled(Content)`
 
 const Container = styled.div`
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
   align-items: center;
   justify-content: top;
-  min-height: 100vh;
-  padding: 80px 0;
-  background: linear-gradient(#000, #1b1b1b 320px);
-  color: #fff;
+  min-height: 92vh;
+  background: #fff;
+  div#left-content {
+    padding: 0;
+    background-image: url('/static/images/overview.jpg');
+    background-size: cover;
+    flex: 1 1 auto;
+    min-height: 100vh;
+    width: 50%;
+    margin: 0;
+    display: inline-block;
+  }
+  div#right-content {
+    flex: 1 1 auto;
+    display: inline-block;
+    margin: 0;
+  }
+  .content {
+    width: 50%;
+    h1,
+    h2,
+    button {
+    }
+    h1 {
+      font-size: 50px;
+      font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
+        sans-serif;
+      letter-spacing: 0.025em;
+    }
+    h2 {
+      font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
+        sans-serif;
+      font-size: 22px;
+    }
+    p {
+      font-size: 14px;
+      letter-spacing: 0.09em;
+    }
+  }
+  div.rightStat {
+    width: 50%;
+    margin: auto;
+  }
+  #content div {
+    width: 50%;
+  }
+  @media (min-width: 1440px) {
+    div.rightStat {
+      width: 40%;
+    }
+  }
+  @media (max-width: 1005px) {
+    flex-flow: column !important;
+    #left-content {
+      width: 100% !important;
+    }
+    div.main-content {
+      margin: 100px 40px !important;
+    }
+    div.content {
+      width: 80% !important;
+    }
+    div.rightStat {
+      margin: auto !important;
+      width: 90% !important;
+    }
+  }
+  @media (max-width: 595px) {
+    div.rightStat {
+      margin: auto !important;
+      width: 95% !important;
+    }
+    div.main-content {
+      margin: 80px 10px !important;
+    }
+    div.content {
+      width: 100% !important;
+    }
+  }
 `
 
 const InfoBox = styled.div`
-  display: inline-block;
-  width: 50%;
-  :nth-child(1) {
-    margin-right: 1.5rem;
-  }
-  :nth-child(2) {
-    margin-left: 1.5rem;
-  }
+  width: 400px;
   h2 {
     align-items: center;
+    text-align: center;
     display: inline-flex;
+    letter-spacing: 0.4em;
+    width: 100%;
+    margin: 0;
+  }
+  h1 {
+    letter-spacing: 0.4em;
+  }
+  p {
+    margin: 20px auto;
+  }
+  @media (max-width: 525px) {
+    margin: 50px auto !important;
+    max-width: 100% !important;
+    h1 {
+      font-size: 22px !important;
+    }
+    h2 {
+      font-size: 18px !important;
+    }
+    p {
+      font-size: 14px !important;
+    }
   }
 `
-
-const SearchBar = styled.input`
-  width: 100%;
-  height: 48px;
-  margin: 0;
-  padding: 16px;
-  border-radius: 4px;
-  border: none;
-  font-size: 16px;
-  outline: 0;
-  -webkit-appearance: textfield;
-`
-
-const CTAButton = styled.button`
+const CTAButton = styled.a`
   display: inline-block;
-  color: #fff;
-  padding: ${({ big }) => (big ? '15px 24px' : '8px 24px')};
-  font-size: ${({ big }) => (big ? '16px' : '12px')};
-  border-radius: 4px;
-  background: none;
+  padding: 20px;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  box-shadow: 0 0 0 1px inset;
+  letter-spacing: 3px;
   background: none;
   outline: 0;
   border: none;
+  font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial, sans-serif;
   cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+  color: #00ea86;
+  :visited {
+    text-decoration: none;
+  }
 `
 
 export default Landing
