@@ -1,7 +1,11 @@
+// Required for dynamic memory allocation in WASM / AssemblyScript
 import "allocator/arena";
 export { allocate_memory };
 
+// Import types and APIs from graph-ts
 import { store, Address } from "@graphprotocol/graph-ts";
+
+// Import event types from the registrar contract ABIs
 import {
   BondingManager,
   TranscoderUpdate,
@@ -11,25 +15,30 @@ import {
   Bond,
   Unbond,
   Rebond,
-  Reward as RewardEvent
+  Reward as RewardEvent // alias Reward event to avoid name collision with entity type
 } from "../types/BondingManager/BondingManager";
 import { RoundsManager } from "../types/RoundsManager/RoundsManager";
+
+// Import entity types generated from the GraphQL schema
 import { Transcoder, Reward } from "../types/schema";
 
+// Bind RoundsManager contract
 let roundsManager = RoundsManager.bind(
   Address.fromString("3984fc4ceeef1739135476f625d36d6c35c40dc3")
 );
 
+// Handler for TranscoderUpdate events
 export function transcoderUpdated(event: TranscoderUpdate): void {
+  // Bind BondingManager contract
   let bondingManager = BondingManager.bind(event.address);
   let currentRound = roundsManager.currentRound();
   let transcoderAddress = event.params.transcoder;
-
-  // Create transcoder if it does not yet exist
   let transcoder = store.get(
     "Transcoder",
     transcoderAddress.toHex()
   ) as Transcoder | null;
+
+  // Create transcoder if it does not yet exist
   if (transcoder == null) {
     transcoder = new Transcoder();
   }
@@ -38,16 +47,19 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
     transcoderAddress,
     currentRound
   );
-  let transcoderInfo = bondingManager.getTranscoder(transcoderAddress);
   let registered = event.params.registered;
   let pendingRewardCut = event.params.pendingRewardCut;
   let pendingFeeShare = event.params.pendingFeeShare;
   let pendingPricePerSegment = event.params.pendingPricePerSegment;
-  let lastRewardRound = transcoderInfo.value0;
-  let rewardCut = transcoderInfo.value1;
-  let feeShare = transcoderInfo.value2;
-  let pricePerSegment = transcoderInfo.value3;
 
+  // Get more transcoder fields from contract
+  let transcoderData = bondingManager.getTranscoder(transcoderAddress);
+  let lastRewardRound = transcoderData.value0;
+  let rewardCut = transcoderData.value1;
+  let feeShare = transcoderData.value2;
+  let pricePerSegment = transcoderData.value3;
+
+  // Update transcoder
   transcoder.pendingRewardCut = pendingRewardCut;
   transcoder.pendingFeeShare = pendingFeeShare;
   transcoder.pendingPricePerSegment = pendingPricePerSegment;
@@ -58,9 +70,11 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   transcoder.active = active;
   transcoder.status = registered ? "Registered" : "NotRegistered";
 
+  // Apply store updates
   store.set("Transcoder", transcoderAddress.toHex(), transcoder as Transcoder);
 }
 
+// Handler for TranscoderResigned events
 export function transcoderResigned(event: TranscoderResigned): void {
   let transcoderAddress = event.params.transcoder;
   let transcoder = store.get(
@@ -68,11 +82,15 @@ export function transcoderResigned(event: TranscoderResigned): void {
     transcoderAddress.toHex()
   ) as Transcoder;
 
+  // Update transcoder
   transcoder.active = false;
   transcoder.status = "NotRegistered";
+
+  // Apply store updates
   store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 }
 
+// Handler for TranscoderEvicted events
 export function transcoderEvicted(event: TranscoderEvicted): void {
   let transcoderAddress = event.params.transcoder;
   let transcoder = store.get(
@@ -80,11 +98,15 @@ export function transcoderEvicted(event: TranscoderEvicted): void {
     transcoderAddress.toHex()
   ) as Transcoder;
 
+  // Update transcoder
   transcoder.active = false;
   transcoder.status = "NotRegistered";
+
+  // Apply store updates
   store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 }
 
+// Handler for TranscoderSlashed events
 export function transcoderSlashed(event: TranscoderSlashed): void {
   let transcoderAddress = event.params.transcoder;
   let transcoder = store.get(
@@ -96,9 +118,12 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
 
   // Update transcoder total stake
   transcoder.totalStake = totalStake;
+
+  // Apply store updates
   store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 }
 
+// Handler for Bond events
 export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address);
   let newDelegateAddress = event.params.newDelegate;
@@ -118,33 +143,42 @@ export function bond(event: Bond): void {
     oldDelegateAddress
   );
 
+  // Update new and old delegate total stake
   newDelegate.totalStake = newDelegateTotalStake;
-  store.set("Transcoder", newDelegateAddress.toHex(), newDelegate);
-
   oldDelegate.totalStake = oldDelegateTotalStake;
+
+  // Apply store updates
+  store.set("Transcoder", newDelegateAddress.toHex(), newDelegate);
   store.set("Transcoder", oldDelegateAddress.toHex(), oldDelegate);
 }
 
+// Handler for Unbond events
 export function unbond(event: Unbond): void {
   let bondingManager = BondingManager.bind(event.address);
   let delegateAddress = event.params.delegate;
   let delegate = store.get("Transcoder", delegateAddress.toHex()) as Transcoder;
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress);
-
   delegate.totalStake = totalStake;
+
+  // Apply store updates
   store.set("Transcoder", delegateAddress.toHex(), delegate);
 }
 
+// Handler for Rebond events
 export function rebond(event: Rebond): void {
   let bondingManager = BondingManager.bind(event.address);
   let delegateAddress = event.params.delegate;
   let delegate = store.get("Transcoder", delegateAddress.toHex()) as Transcoder;
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress);
 
+  // Update transcoder total stake
   delegate.totalStake = totalStake;
+
+  // Apply store updates
   store.set("Transcoder", delegateAddress.toHex(), delegate);
 }
 
+// Handler for Reward events
 export function reward(event: RewardEvent): void {
   let bondingManager = BondingManager.bind(event.address);
   let transcoderAddress = event.params.transcoder;
@@ -154,12 +188,21 @@ export function reward(event: RewardEvent): void {
   ) as Transcoder;
   let totalStake = bondingManager.transcoderTotalStake(transcoderAddress);
   let currentRound = roundsManager.currentRound();
+
+  // Recreate unique id from transcoder address and round
+  // We use this to keep track of a transcoder's rewards for each round
   let rewardId = transcoderAddress.toHex() + "-" + currentRound.toString();
+
+  // Get reward
   let reward = store.get("Reward", rewardId) as Reward;
 
+  // Update transcoder total stake
   transcoder.totalStake = totalStake;
-  store.set("Transcoder", transcoderAddress.toHex(), transcoder);
 
+  // Update reward tokens
   reward.rewardTokens = event.params.amount;
+
+  // Apply store updates
+  store.set("Transcoder", transcoderAddress.toHex(), transcoder);
   store.set("Reward", rewardId, reward);
 }
