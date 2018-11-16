@@ -1,0 +1,61 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: BondingManager
+    source:
+      address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      file: ./mappings/bondingManager.ts
+      entities:
+        - Transcoder
+        - Reward
+      abis:
+        - name: BondingManager
+          file: ./abis/BondingManager.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: TranscoderUpdate(address, uint256, uint256, uint256, bool)
+          handler: transcoderUpdated
+        - event: TranscoderResigned(address)
+          handler: transcoderResigned
+        - event: TranscoderEvicted(address)
+          handler: transcoderEvicted
+        - event: TranscoderSlashed(address, address, uint256, uint256)
+          handler: transcoderSlashed
+        - event: Bond(address, address, address, uint256, uint256)
+          handler: bond
+        - event: Unbond(address, address, uint256, uint256, uint256)
+          handler: unbond
+        - event: Rebond(address, address, uint256, uint256)
+          handler: rebond
+        - event: Reward(address, uint256)
+          handler: reward
+  - kind: ethereum/contract
+    name: RoundsManager
+    source:
+      address: "3984fc4ceeef1739135476f625d36d6c35c40dc3"
+      abi: RoundsManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      file: ./mappings/roundsManager.ts
+      entities:
+        - Transcoder
+        - Reward
+        - Round
+      abis:
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+        - name: BondingManager
+          file: ./abis/BondingManager.json
+      eventHandlers:
+        - event: NewRound(uint256)
+          handler: newRound

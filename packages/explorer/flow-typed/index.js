@@ -69,6 +69,7 @@ declare type Transcoder = {
   rewardCut: string,
   status: string,
   totalStake: string,
+  rewards: Array,
 }
 
 declare type TxReceipt = {

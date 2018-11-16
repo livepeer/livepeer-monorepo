@@ -390,7 +390,7 @@
                   "defaultValue": null
                 },
                 {
-                  "name": "limit",
+                  "name": "first",
                   "description": "",
                   "type": {
                     "kind": "SCALAR",

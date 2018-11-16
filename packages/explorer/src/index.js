@@ -204,6 +204,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       defaultGas: 2.1 * 1000000,
       // Etherscan API Key
       etherscanApiKey: process.env.REACT_APP_ETHERSCAN_API_KEY,
+      // Livepeer Subgraph
+      livepeerSubgraph: process.env.REACT_APP_LIVEPEER_SUBGRAPH,
       // If user account changes while on /me, this will hard refresh the page
       onAccountChange: (currentAccount: string, nextAccount: string): void => {
         const path = window.location.pathname.toLowerCase()

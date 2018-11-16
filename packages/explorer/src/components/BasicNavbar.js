@@ -210,11 +210,12 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
             }}
           >
             <MenuItem data-action="feedback">
-              <Icon use="feedback" style={{ marginRight: 8 }} />Report an issue
+              <Icon use="feedback" style={{ marginRight: 8 }} />
+              Report an issue
             </MenuItem>
             <MenuItem data-action="smart-contracts">
-              <Icon use="code" style={{ marginRight: 8 }} />Smart Contract
-              Addresses
+              <Icon use="code" style={{ marginRight: 8 }} />
+              Smart Contract Addresses
             </MenuItem>
             <MenuItem id="search" data-action="search">
               <form

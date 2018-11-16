@@ -147,8 +147,8 @@ query TranscoderQuery($id: String!) {
 
 export const TranscodersQuery = `
 ${TranscoderFragment}
-query TranscodersQuery($skip: Int, $limit: Int) {
-  transcoders(skip: $skip, limit: $limit) {
+query TranscodersQuery($skip: Int, $first: Int) {
+  transcoders(skip: $skip, first: $first) {
     ...TranscoderFragment
   }
 }

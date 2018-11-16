@@ -9,6 +9,19 @@ import { ApolloClient } from 'apollo-client'
 import { graphql, parse, print, subscribe } from 'graphql'
 import Livepeer from '@livepeer/sdk'
 import { schema, introspectionQueryResultData } from '@livepeer/graphql-sdk'
+import {
+  makeExecutableSchema,
+  introspectSchema,
+  makeRemoteExecutableSchema,
+  mergeSchemas,
+  transformSchema,
+  RenameTypes,
+  RenameRootFields,
+} from 'graphql-tools'
+import { onError } from 'apollo-link-error'
+import { HttpLink } from 'apollo-link-http'
+import fetch from 'node-fetch'
+import axios from 'axios'
 
 type OnAccountChangeCallback = (
   currentAccount: string,
@@ -72,6 +85,74 @@ export default async function createApolloClient(
     ...initialState,
     updating: false,
     etherscanApiKey: options.etherscanApiKey,
+  }
+
+  /**
+   * Merges remote graphql schema with local one
+   * @return {Object}
+   */
+  async function createSchema() {
+    // If subgraph is unavailable return local schema without remote schema
+    if (!(await isSubgraphAvailable(options.livepeerSubgraph))) {
+      // Extend Transcoder type with rewards field to match remote schema
+      const linkTypeDefs = `
+        type Reward {
+          rewardTokens: String
+        }
+        extend type Transcoder {
+          rewards: [Reward]
+        }
+      `
+      return mergeSchemas({
+        schemas: [schema, linkTypeDefs],
+      })
+    }
+
+    const subgraphServiceLink = new HttpLink({
+      uri: options.livepeerSubgraph,
+      fetch,
+    })
+
+    const createSubgraphServiceSchema = async () => {
+      const executableSchema = makeRemoteExecutableSchema({
+        schema: await introspectSchema(subgraphServiceLink),
+        link: subgraphServiceLink,
+      })
+      return executableSchema
+    }
+
+    const subgraphSchema = await createSubgraphServiceSchema()
+
+    return mergeSchemas({
+      schemas: [schema, subgraphSchema],
+    })
+  }
+
+  /**
+   * Determines whether livepeer subgraph is available
+   * @param {string} url
+   * @return {boolean}
+   */
+  async function isSubgraphAvailable(url: string): boolean {
+    try {
+      await axios({
+        url,
+        method: 'post',
+        data: {
+          query: `
+            query TranscoderQuery {
+              transcoders(first: 1) {
+                id
+              }
+            }
+          `,
+        },
+      })
+      return true
+    } catch (e) {
+      console.log(e)
+      return false
+    }
   }
 
   /**
@@ -217,12 +298,13 @@ export default async function createApolloClient(
       : null
     const mainLink = new ApolloLink(
       operation =>
-        new Observable(observer => {
+        new Observable(async observer => {
           const { query, variables, operationName } = operation
           const [def] = query.definitions
+          const mergedSchema = await createSchema()
           if (def && def.operation === 'subscription') {
             subscribe(
-              schema,
+              mergedSchema,
               parse(print(query)),
               null,
               ctx,
@@ -240,7 +322,14 @@ export default async function createApolloClient(
                 observer.error(e)
               })
           } else {
-            graphql(schema, print(query), null, ctx, variables, operationName)
+            graphql(
+              mergedSchema,
+              print(query),
+              null,
+              ctx,
+              variables,
+              operationName,
+            )
               .then(value => {
                 observer.next(value)
                 observer.complete(value)

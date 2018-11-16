@@ -20,6 +20,10 @@ const TranscoderStat: React.ComponentType<TranscoderStatProps> = styled(
         formattedValue = formatBalance(value, decimals, unit) + ` ${symbol}`
         break
       }
+      case 'number': {
+        formattedValue = value
+        break
+      }
       default:
         formattedValue = 'NA'
         break
