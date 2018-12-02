@@ -9,9 +9,9 @@ A protocol explorer for the web. It allows users to see general information abou
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Developing](#developing)
-* [Building](#building)
+- [Installation](#installation)
+- [Developing](#developing)
+- [Building](#building)
 
 <!-- hide-on-docup-stop -->
 
@@ -61,7 +61,7 @@ This project is bootstrapped with [create-react-app](https://github.com/facebook
 
 | Directory                      | Description                                                                                                                                           |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.`                            | config files: .prettierrc, .gitignore, webpack.config.prod.js, package.json, README.md, etc                                                           |
+| `.`                            | config files: .prettierrc, .gitignore, package.json, README.md, etc                                                                                   |
 | `public/.`                     | assets (images, fonts, etc) go here                                                                                                                   |
 | `public/index.html`            | the app's html entrypoint                                                                                                                             |
 | `src/index.js`                 | the app's js entrypoint                                                                                                                               |
@@ -79,8 +79,8 @@ This project is bootstrapped with [create-react-app](https://github.com/facebook
 
 You can build this app as a website or as a desktop app (via `electron`).
 
-* **Website:** `yarn build:web` (outputs to `./build`)
-* **Desktop:** `yarn build:desktop` (outputs to `./dist`)
+- **Website:** `yarn build:web` (outputs to `./build`)
+- **Desktop:** `yarn build:desktop` (outputs to `./dist`)
 
 **Note:** Only the OSX desktop build has been configured. If you would like to add a configuration for linux or windows, please modify the config accordingly in [package.json](https://github.com/livepeer/livepeerjs/blob/master/packages/explorer/package.json#L45), and [file a PR](https://github.com/livepeer/livepeerjs/pulls) 🍻
 

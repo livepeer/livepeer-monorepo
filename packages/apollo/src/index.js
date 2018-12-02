@@ -10,17 +10,11 @@ import { graphql, parse, print, subscribe } from 'graphql'
 import Livepeer from '@livepeer/sdk'
 import { schema, introspectionQueryResultData } from '@livepeer/graphql-sdk'
 import {
-  makeExecutableSchema,
   introspectSchema,
   makeRemoteExecutableSchema,
   mergeSchemas,
-  transformSchema,
-  RenameTypes,
-  RenameRootFields,
 } from 'graphql-tools'
-import { onError } from 'apollo-link-error'
 import { HttpLink } from 'apollo-link-http'
-import fetch from 'node-fetch'
 import axios from 'axios'
 
 type OnAccountChangeCallback = (
@@ -110,7 +104,6 @@ export default async function createApolloClient(
 
     const subgraphServiceLink = new HttpLink({
       uri: options.livepeerSubgraph,
-      fetch,
     })
 
     const createSubgraphServiceSchema = async () => {
@@ -134,6 +127,9 @@ export default async function createApolloClient(
    * @return {boolean}
    */
   async function isSubgraphAvailable(url: string): boolean {
+    if (!url) {
+      return false
+    }
     try {
       await axios({
         url,
@@ -150,7 +146,6 @@ export default async function createApolloClient(
       })
       return true
     } catch (e) {
-      console.log(e)
       return false
     }
   }

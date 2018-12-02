@@ -61,7 +61,7 @@ This project is bootstrapped with [create-react-app](https://github.com/facebook
 
 | Directory                      | Description                                                                                                                                           |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.`                            | config files: .prettierrc, .gitignore, webpack.config.prod.js, package.json, README.md, etc                                                           |
+| `.`                            | config files: .prettierrc, .gitignore, package.json, README.md, etc                                                           |
 | `public/.`                     | assets (images, fonts, etc) go here                                                                                                                   |
 | `public/index.html`            | the app's html entrypoint                                                                                                                             |
 | `src/index.js`                 | the app's js entrypoint                                                                                                                               |

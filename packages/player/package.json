@@ -9,7 +9,7 @@
     "apollo-cache-inmemory": "1.1.10",
     "apollo-client": "2.2.6",
     "apollo-link": "1.2.1",
-    "graphql": "14.0.0",
+    "graphql": "^14.0.2",
     "graphql-tag": "2.8.0",
     "query-string": "^5.0.1",
     "react": "^16.2.0",
@@ -20,7 +20,7 @@
     "react-responsive-modal": "^3.0.1",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.8",
-    "react-scripts": "1.1.1",
+    "react-scripts": "^2.1.1",
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
@@ -34,10 +34,9 @@
     "copy-docs": "echo 'No copy-docs script specified'",
     "eject": "react-scripts eject",
     "deploy": "npx poosh",
-    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
-    "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
+    "postbuild": "cp build/index.html build/404.html",
     "serve": "npx serve -s build",
-    "test": "react-scripts test --env=jsdom"
+    "test": "react-scripts test"
   },
   "devDependencies": {
     "gh-pages": "^1.1.0",
