@@ -221,7 +221,14 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     // As a result, if a web3 object with the `version` property is not available, we fallback
     // to using a default provider which should be the case when using Mist
     await enableAccounts()
-    const { version } = window.web3
+    /**
+     * If web3 is not available then initialize version and default to mainnet
+     */
+    const { version } = window.web3 || {
+      version: {
+        network: 1,
+      },
+    }
     const controllers = {
       1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
       4: process.env.REACT_APP_RINKEBY_CONTROLLER_ADDRESS,
