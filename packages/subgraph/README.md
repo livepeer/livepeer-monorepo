@@ -24,7 +24,7 @@ The quickest way to run a Graph Node locally is to use the
 This will automatically provision a server with rust, postgres, and ipfs, and
 spin up a graph node with a GraphiQL interface at `http://127.0.0.1:8000/`.
 Congrats, you're now ready to build and deploy the Livepeer subgraph. You may
-skip ahead to [Building & deploying the Subgraph](#building-&-deploying-the-livepeer-subgraph)
+skip ahead to [Building & deploying the Subgraph](#building-and-deploying-the-livepeer-subgraph)
 
 ### Running a local Graph Node _without_ Docker
 
@@ -64,7 +64,7 @@ optional, it depends on your setup.
 
 This will also spin up a GraphiQL interface at `http://127.0.0.1:8000/`.
 
-### Building & deploying the Livepeer Subgraph
+### Building and Deploying the Livepeer Subgraph
 
 Back in our subgraph directory, run
 

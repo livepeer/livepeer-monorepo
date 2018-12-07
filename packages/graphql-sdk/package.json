@@ -23,7 +23,7 @@
     "@livepeer/sdk": "^1.0.0-alpha.5",
     "babel-runtime": "^6.26.0",
     "bn": "^1.0.1",
-    "graphql": "0.13.0",
+    "graphql": "^14.0.2",
     "graphql-subscriptions": "^0.5.8",
     "graphql-tools": "^2.19.0",
     "graphql-type-json": "^0.2.1"

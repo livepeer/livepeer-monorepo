@@ -16,8 +16,8 @@
     "big.js": "^5.0.3",
     "bn.js": "^4.11.8",
     "final-form": "^4.2.1",
-    "graphql": "14.0.0",
-    "graphql-tag": "2.8.0",
+    "graphql": "^14.0.2",
+    "graphql-tag": "^2.8.0",
     "qrcode-react": "^0.1.16",
     "query-string": "^5.0.1",
     "react": "^16.2.0",
@@ -31,7 +31,7 @@
     "react-redux": "5.0.7",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.8",
-    "react-scripts": "1.1.1",
+    "react-scripts": "^2.1.1",
     "react-tooltip": "^3.5.0",
     "react-transition-group": "^2.2.1",
     "recompose": "^0.26.0",
@@ -53,11 +53,10 @@
     "coverage": "npx react-scripts test --env=jsdom --coverage",
     "deploy": "npx poosh",
     "eject": "npx react-scripts eject",
-    "postbuild": "cp build/index.html build/404.html && npx uglify-es build/static/js/main.*.js -c -m -o build/static/js/$(ls build/static/js | head -n 1)",
-    "prebuild": "cp webpack.config.prod.js ../../node_modules/react-scripts/config",
+    "postbuild": "cp build/index.html build/404.html",
     "serve": "npx serve -s build",
     "start": "npx react-scripts start",
-    "test": "npx react-scripts test --env=jsdom"
+    "test": "npx react-scripts test"
   },
   "build": {
     "appId": "org.livepeer.livepeer-protocol-explorer",
@@ -77,7 +76,13 @@
     "gh-pages": "^1.1.0",
     "poosh-cli": "^2.0.0",
     "poosh-plugin-s3": "^2.0.0",
-    "serve": "6.5.3",
+    "serve": "^10.1.1",
     "uglify-es": "^3.2.0"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
