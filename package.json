@@ -27,7 +27,7 @@
     "release:alpha":
       "npx lerna publish --cd-version prerelease --conventional-commits --yes",
     "test":
-      "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player",
+      "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
     "updated": "npx lerna updated --json"
   },
   "devDependencies": {
