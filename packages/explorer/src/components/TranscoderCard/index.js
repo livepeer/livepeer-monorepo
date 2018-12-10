@@ -102,34 +102,33 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
           {rewards && (
             <TranscoderStat
               decimals={2}
-              label="Missed Calls"
+              label="Missed Reward Calls"
               type="number"
-              value={missedCalls}
+              value={`${missedCalls}/30`}
               width="128px"
-              help="Missed calls over last 30 eligible rounds."
+              help="Missed reward calls over last 30 eligible rounds."
             />
           )}
-          {bonded &&
-            bondedAmount && (
-              <TranscoderStat
-                decimals={2}
-                label="Your Stake"
-                symbol="LPT"
-                type="token"
-                unit="ether"
-                value={bondedAmount}
-                append={
-                  <span style={{ fontSize: 10 }}>{`(${MathBN.toBig(
-                    MathBN.div(bondedAmount + '00', totalStake),
-                  ).toFixed(2)}%)`}</span>
-                }
-                width="128px"
-                help="Amount of LPT you have staked towards this node."
-              />
-            )}
+          {bonded && bondedAmount && (
+            <TranscoderStat
+              decimals={2}
+              label="Your Stake"
+              symbol="LPT"
+              type="token"
+              unit="ether"
+              value={bondedAmount}
+              append={
+                <span style={{ fontSize: 10 }}>{`(${MathBN.toBig(
+                  MathBN.div(bondedAmount + '00', totalStake),
+                ).toFixed(2)}%)`}</span>
+              }
+              width="128px"
+              help="Amount of LPT you have staked towards this node."
+            />
+          )}
         </div>
         {/* Actions */}
-        {(onBond || onUnbond) && (
+        {!window.limitedWeb3Conn && (onBond || onUnbond) && (
           <React.Fragment>
             <div className="actions-buttons">
               {onBond && <Button onClick={onBond}>Bond</Button>}

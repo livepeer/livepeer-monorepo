@@ -1,12 +1,6 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
-import { Icon } from 'rmwc/Icon'
-import {
-  Content,
-  BasicNavbar,
-  Footer,
-  ScrollToTopOnMount,
-} from '../../components'
+import styled from 'styled-components'
+import { Content, BasicNavbar, ScrollToTopOnMount } from '../../components'
 
 const Landing = ({ history, ...props }) => (
   <React.Fragment>
@@ -29,8 +23,10 @@ const Landing = ({ history, ...props }) => (
               fontWeight: 'bold',
             }}
           >
-            What is a reward cut? What is a fee share?<br />
-            Watch this video to learn how to assess and<br />
+            What is a reward cut? What is a fee share?
+            <br />
+            Watch this video to learn how to assess and
+            <br />
             bond to transcoders using the explorer
           </p>
           <CTAButton
@@ -92,21 +88,6 @@ const Landing = ({ history, ...props }) => (
     </Container>
   </React.Fragment>
 )
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`
-
-const LandingContent = styled(Content)`
-  animation: ${fadeIn} 1s linear 1;
-`
 
 const Container = styled.div`
   display: flex;

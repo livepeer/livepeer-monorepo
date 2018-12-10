@@ -1,11 +1,9 @@
 // @flow
 import * as React from 'react'
-import { matchPath } from 'react-router-dom'
 import BN from 'bn.js'
 import { Cpu as CpuIcon } from 'react-feather'
 import Joyride from 'react-joyride'
 import {
-  Avatar,
   Banner,
   BasicNavbar,
   Button,
@@ -15,7 +13,6 @@ import {
   PageHeading,
   ScrollToTopOnMount,
   TranscoderCard,
-  Wrapper,
 } from '../../components'
 import { MathBN } from '../../utils'
 import enhance from './enhance'
@@ -43,11 +40,9 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
 }) => {
   const {
     delegator: { bondedAmount, delegateAddress, pendingStake, status },
-    tokenBalance,
   } = me.data
   const totalStake = MathBN.max(bondedAmount, pendingStake)
   const isBonded = status === 'Bonded'
-  const isUnbonding = status === 'Unbonding'
   const isTranscoder = me.data.transcoder.status === 'Registered'
   const searchParams = new URLSearchParams(history.location.search)
   const TOUR_ENABLED = !!searchParams.get('tour')
@@ -78,7 +73,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           &nbsp;Transcoders
         </PageHeading>
       </Banner>
-      {locked && <LockedWallet />}
+      {(locked || window.limitedWeb3Conn) && <LockedWallet />}
       <Content>
         {!total ? null : (
           <InlineHint flag="transcoders-list">
@@ -165,7 +160,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
                   <option value="pendingRewardCut">Reward Cut</option>
                   <option value="pendingFeeShare">Fee Share</option>
                   <option value="pendingPricePerSegment">Price</option>
-                  <option value="missedCalls">Missed Calls</option>
+                  <option value="missedCalls">Missed Reward Calls</option>
                 </select>
               </div>
               <div style={{ marginLeft: 16 }}>

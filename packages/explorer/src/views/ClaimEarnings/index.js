@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import { FORM_ERROR } from 'final-form'
 import { BasicModal, ClaimEarningsForm } from '../../components'
 import enhance from './enhance'
 import { MathBN } from '../../utils'

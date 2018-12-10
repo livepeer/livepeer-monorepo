@@ -7,7 +7,7 @@ import {
   connectBondMutation,
   connectToasts,
 } from '../../enhancers'
-import { sleep, toBaseUnit, wireTransactionToStatus } from '../../utils'
+import { toBaseUnit } from '../../utils'
 import { mockAccount } from '@livepeer/graphql-sdk'
 
 const MeDelegatorQuery = gql`

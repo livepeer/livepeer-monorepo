@@ -1,23 +1,9 @@
 // @flow
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import BN from 'bn.js'
-import { Minus as MinusIcon, Plus as PlusIcon } from 'react-feather'
-import {
-  formatBalance,
-  MathBN,
-  openSocket,
-  pathInfo,
-  promptForArgs,
-  toBaseUnit,
-} from '../../utils'
-import {
-  Button,
-  InlineAccount,
-  InlineHint,
-  MetricBox,
-  Wrapper,
-} from '../../components'
+import { Minus as MinusIcon } from 'react-feather'
+import { formatBalance, MathBN } from '../../utils'
+import { Button, InlineAccount, MetricBox, Wrapper } from '../../components'
 import enhance from './enhance'
 
 export type AccountDelegatingProps = {
@@ -44,7 +30,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
   const {
-    allowance,
     status,
     delegateAddress,
     bondedAmount,
@@ -93,10 +78,10 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           isBonded
             ? `Bonded to delegate at round #${startRound}`
             : isBonding
-              ? `Bonding will complete at round #${startRound}`
-              : isUnbonding
-                ? `${roundsUntilUnbonded} round(s) left in the unbonding period`
-                : ''
+            ? `Bonding will complete at round #${startRound}`
+            : isUnbonding
+            ? `${roundsUntilUnbonded} round(s) left in the unbonding period`
+            : ''
         }
       />
       <MetricBox
@@ -130,11 +115,11 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           withdrawRound === '0'
             ? ''
             : MathBN.lt(lastInitializedRound, withdrawRound)
-              ? `${formatBalance(
-                  withdrawAmount,
-                  18,
-                )} LPT may be withdrawn at round #${withdrawRound}`
-              : `${formatBalance(withdrawAmount, 18)} LPT may be withdrawn`
+            ? `${formatBalance(
+                withdrawAmount,
+                18,
+              )} LPT may be withdrawn at round #${withdrawRound}`
+            : `${formatBalance(withdrawAmount, 18)} LPT may be withdrawn`
         }
       >
         {isMe && (
@@ -198,19 +183,14 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           )
         }
       >
-        {isMe &&
-          delegateAddress &&
-          hasUnclaimedRounds && (
-            <React.Fragment>
-              {/** request */}
-              <Button
-                onClick={claimEarnings}
-                disabled={unclaimedRounds === '0'}
-              >
-                claim stake & fees
-              </Button>
-            </React.Fragment>
-          )}
+        {isMe && delegateAddress && hasUnclaimedRounds && (
+          <React.Fragment>
+            {/** request */}
+            <Button onClick={claimEarnings} disabled={unclaimedRounds === '0'}>
+              claim stake & fees
+            </Button>
+          </React.Fragment>
+        )}
       </MetricBox>
     </Wrapper>
   )

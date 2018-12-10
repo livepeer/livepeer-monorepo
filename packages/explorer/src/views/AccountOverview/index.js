@@ -3,25 +3,17 @@ import * as React from 'react'
 import Joyride from 'react-joyride'
 import {
   DownloadCloud as DownloadCloudIcon,
-  Plus as PlusIcon,
   Send as SendIcon,
 } from 'react-feather'
 import { Card } from 'rmwc/Card'
 import { Drawer, DrawerHeader, DrawerContent } from 'rmwc/Drawer'
 import { Icon } from 'rmwc/Icon'
-import {
-  List,
-  ListDivider,
-  ListItem,
-  ListItemText,
-  SimpleListItem,
-} from 'rmwc/List'
+import { List, ListDivider, ListItem, SimpleListItem } from 'rmwc/List'
 import { formatBalance } from '../../utils'
 import {
   Button,
   Content,
   EmptyMessage,
-  InlineHint,
   MetricBox,
   Wrapper,
 } from '../../components'
@@ -125,6 +117,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
             Recent Activity{' '}
             <a
               target="_blank"
+              rel="noopener noreferrer"
               href={`https://www.supermax.cool/livepeer/mainnet/activity?filter=%7B%22search%22%3A%22${
                 match.params.accountId
               }%22%7D`}
@@ -135,18 +128,16 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
               view full history
             </a>
           </h3>
-          {transactions.loading &&
-            !transactionData.length && (
-              <EmptyMessage>
-                <h2>Loading account activity...</h2>
-              </EmptyMessage>
-            )}
-          {!transactions.loading &&
-            !transactionData.length && (
-              <EmptyMessage>
-                <h2>This account has no recent activity</h2>
-              </EmptyMessage>
-            )}
+          {transactions.loading && !transactionData.length && (
+            <EmptyMessage>
+              <h2>Loading account activity...</h2>
+            </EmptyMessage>
+          )}
+          {!transactions.loading && !transactionData.length && (
+            <EmptyMessage>
+              <h2>This account has no recent activity</h2>
+            </EmptyMessage>
+          )}
           <div>
             {transactionData.map(props => (
               <div key={props.id} style={{ marginBottom: 16 }}>
@@ -156,53 +147,52 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           </div>
         </Content>
       </Wrapper>
-      {TOUR_ENABLED &&
-        isMe && (
-          <Tour
-            callback={({ action, index, type }) => {
-              console.log(action, index, type)
-              if (action === 'next' && type === 'tour:end') {
-                history.push(`/transcoders?tour=true`)
-              }
-            }}
-            continuous={true}
-            disableOverlay={false}
-            locale={{
-              back: 'Back',
-              close: 'Okay',
-              last: 'Get Started',
-              next: 'Next',
-              skip: 'Skip',
-            }}
-            run={!account.loading}
-            showProgress={true}
-            steps={[
-              {
-                content:
-                  'Welcome to your account page. This is where you can find important information about your Livepeer account.',
-                placement: 'right',
-                target: '.page-heading',
-              },
-              {
-                content:
-                  'This is the Ethereum wallet address that holds your Livepeer Token.',
-                placement: 'top',
-                target: '.eth-address',
-              },
-              {
-                content:
-                  'This is the amount of Livepeer Token you currently own.',
-                placement: 'top',
-                target: '.token-balance',
-              },
-              {
-                content: `You can bond these tokens to a transcoder to earn additional LPT and ETH every day. Bonding as soon as possible will help you maximize your earnings. Why not get started?`,
-                placement: 'bottom',
-                target: '.bond-token',
-              },
-            ]}
-          />
-        )}
+      {TOUR_ENABLED && isMe && (
+        <Tour
+          callback={({ action, index, type }) => {
+            console.log(action, index, type)
+            if (action === 'next' && type === 'tour:end') {
+              history.push(`/transcoders?tour=true`)
+            }
+          }}
+          continuous={true}
+          disableOverlay={false}
+          locale={{
+            back: 'Back',
+            close: 'Okay',
+            last: 'Get Started',
+            next: 'Next',
+            skip: 'Skip',
+          }}
+          run={!account.loading}
+          showProgress={true}
+          steps={[
+            {
+              content:
+                'Welcome to your account page. This is where you can find important information about your Livepeer account.',
+              placement: 'right',
+              target: '.page-heading',
+            },
+            {
+              content:
+                'This is the Ethereum wallet address that holds your Livepeer Token.',
+              placement: 'top',
+              target: '.eth-address',
+            },
+            {
+              content:
+                'This is the amount of Livepeer Token you currently own.',
+              placement: 'top',
+              target: '.token-balance',
+            },
+            {
+              content: `You can bond these tokens to a transcoder to earn additional LPT and ETH every day. Bonding as soon as possible will help you maximize your earnings. Why not get started?`,
+              placement: 'bottom',
+              target: '.bond-token',
+            },
+          ]}
+        />
+      )}
     </React.Fragment>
   )
 }
@@ -255,19 +245,21 @@ class TransactionCard extends React.Component {
               }}
             >
               <Icon
-                strategy="ligature"
-                use={
+                iconOptions={{ strategy: 'ligature' }}
+                icon={
                   pending
                     ? 'warning'
                     : failed
-                      ? 'error_outline'
-                      : 'check_circle_outline'
+                    ? 'error_outline'
+                    : 'check_circle_outline'
                 }
                 style={{
                   color: pending ? 'orange' : failed ? 'red' : `var(--primary)`,
                 }}
-              />&nbsp;
-              <Icon stategy="url" use={getActivityIcon(method)} />&nbsp;
+              />
+              &nbsp;
+              <Icon stategy="url" icon={getActivityIcon(method)} />
+              &nbsp;
               <span style={{ textDecoration: failed ? 'line-through' : '' }}>
                 {formatTransactionMethod(method)}
               </span>
@@ -297,7 +289,7 @@ class TransactionCard extends React.Component {
 
         <React.Fragment>
           <Drawer
-            temporary
+            temporary="true"
             open={expanded}
             onClose={() => this.setState(state => ({ expanded: false }))}
             style={{
@@ -332,27 +324,25 @@ class TransactionCard extends React.Component {
                       }}
                     >
                       <Icon
-                        strategy="ligature"
-                        use={
+                        iconOptions={{ strategy: 'ligature' }}
+                        icon={
                           pending
                             ? 'warning'
                             : failed
-                              ? 'error_outline'
-                              : 'check_circle_outline'
+                            ? 'error_outline'
+                            : 'check_circle_outline'
                         }
                         style={{
                           fontSize: 18,
                           color: pending
                             ? 'orange'
                             : failed
-                              ? 'red'
-                              : `var(--primary)`,
+                            ? 'red'
+                            : `var(--primary)`,
                         }}
-                      />&nbsp;{pending
-                        ? 'Pending'
-                        : failed
-                          ? 'Failed'
-                          : `Success`}
+                      />
+                      &nbsp;
+                      {pending ? 'Pending' : failed ? 'Failed' : `Success`}
                     </span>
                   }
                   meta=""
@@ -381,9 +371,10 @@ class TransactionCard extends React.Component {
                     >
                       <Icon
                         stategy="url"
-                        use={getActivityIcon(method)}
+                        icon={getActivityIcon(method)}
                         style={{ fontSize: 18 }}
-                      />&nbsp;{method}
+                      />
+                      &nbsp;{method}
                     </span>
                   }
                   meta=""

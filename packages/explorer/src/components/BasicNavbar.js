@@ -11,7 +11,6 @@ import {
   User as UserIcon,
 } from 'react-feather'
 import { MenuItem, SimpleMenu } from 'rmwc/Menu'
-import { Button } from 'rmwc/Button'
 import { Icon } from 'rmwc/Icon'
 import Navbar from './Navbar'
 import {
@@ -61,8 +60,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
               color: currentRound.loading
                 ? '#aaa'
                 : currentRound.data.initialized
-                  ? 'var(--primary)'
-                  : 'orange',
+                ? 'var(--primary)'
+                : 'orange',
               height: 24,
               marginLeft: 16,
               whiteSpace: 'nowrap',
@@ -72,8 +71,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                 currentRound.loading
                   ? '#aaa'
                   : currentRound.data.initialized
-                    ? 'var(--primary)'
-                    : 'orange'
+                  ? 'var(--primary)'
+                  : 'orange'
               }`,
             }}
           >
@@ -88,8 +87,8 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
               background: currentRound.loading
                 ? '#aaa'
                 : currentRound.data.initialized
-                  ? 'var(--primary)'
-                  : 'orange',
+                ? 'var(--primary)'
+                : 'orange',
               cursor: 'pointer',
               color: '#000',
               whiteSpace: 'nowrap',
@@ -158,7 +157,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
             <CpuIcon size={16} />
             <span>&nbsp;Transcoders</span>
           </NavbarLink>
-          {myAccountAddress && (
+          {!window.limitedWeb3Conn && myAccountAddress && (
             <NavbarLink
               to="/me"
               isActive={(match, location) => {
@@ -188,12 +187,13 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                   background: 'transparent',
                   outline: 'none',
                   border: 'none',
+                  cursor: 'pointer',
                 }}
               >
-                <Icon use="more_vert" />
+                <Icon icon="more_vert" />
               </Btn>
             }
-            onSelected={async ({ detail }) => {
+            onSelect={async ({ detail }) => {
               const { action } = detail.item.dataset
               switch (action) {
                 case 'feedback':
@@ -210,11 +210,11 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
             }}
           >
             <MenuItem data-action="feedback">
-              <Icon use="feedback" style={{ marginRight: 8 }} />
+              <Icon icon="feedback" style={{ marginRight: 8 }} />
               Report an issue
             </MenuItem>
             <MenuItem data-action="smart-contracts">
-              <Icon use="code" style={{ marginRight: 8 }} />
+              <Icon icon="code" style={{ marginRight: 8 }} />
               Smart Contract Addresses
             </MenuItem>
             <MenuItem id="search" data-action="search">

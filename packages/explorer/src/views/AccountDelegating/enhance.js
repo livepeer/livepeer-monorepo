@@ -1,5 +1,5 @@
-import { compose, lifecycle, mapProps, withHandlers } from 'recompose'
-import { graphql, withApollo } from 'react-apollo'
+import { compose, withHandlers } from 'recompose'
+import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockDelegator } from '@livepeer/graphql-sdk'
 import {
@@ -73,7 +73,6 @@ const mapMutationHandlers = withHandlers({
   },
   withdrawFees: ({ currentRound, delegator, toasts }) => async () => {
     try {
-      const isRoundInitialized = currentRound.data.initialized
       const currentRoundNum = currentRound.data.id
       const { status, lastClaimRound } = delegator.data
       const hasUnclaimedRounds =

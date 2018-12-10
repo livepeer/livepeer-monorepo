@@ -1,10 +1,6 @@
 // @flow
 import * as React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import QRCode from 'qrcode-react'
-import { MoreVertical as MoreVerticalIcon } from 'react-feather'
-import { Icon } from 'rmwc/Icon'
-import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import AccountOverview from '../AccountOverview'
 import AccountBroadcasting from '../AccountBroadcasting'
 import AccountDelegating from '../AccountDelegating'
@@ -15,7 +11,6 @@ import {
   BasicNavbar,
   Button,
   Content,
-  Footer,
   PageHeading,
   ScrollToTopOnMount,
   TabLink,
@@ -67,10 +62,10 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
       <Banner>
         <PageHeading className="page-heading">
           <React.Fragment>
-            <Avatar id={accountAddress} size={32} bg="#000" />&nbsp;
-            {isMe ? 'My Account' : 'Account'}&nbsp;<span
-              style={{ fontSize: 16, height: 26 }}
-            >
+            <Avatar id={accountAddress} size={32} bg="#000" />
+            &nbsp;
+            {isMe ? 'My Account' : 'Account'}&nbsp;
+            <span style={{ fontSize: 16, height: 26 }}>
               {ensName ? ensName : `${accountAddress.substr(0, 10)}...`}
             </span>
           </React.Fragment>
