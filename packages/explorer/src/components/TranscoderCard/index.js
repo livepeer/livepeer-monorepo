@@ -31,8 +31,8 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     let missedCalls: number = 0
     if (rewards) {
       missedCalls = rewards
-        .filter(reward => reward.rewardTokens === null)
-        .slice(-30).length
+        .slice(-30)
+        .filter(reward => reward.rewardTokens === null).length
     }
     return (
       <div className={className}>
