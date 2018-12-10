@@ -169,7 +169,7 @@ export async function enableAccounts() {
     // this is the new metamask way. details: https://bit.ly/2QQHXvF
     window.web3 = new window.Web3(window.ethereum)
     try {
-      window.ethereum.enable()
+      await window.ethereum.enable()
       window.limitedWeb3Conn = false
     } catch (e) {
       console.log('METAMASK | Access to accounts denied')
