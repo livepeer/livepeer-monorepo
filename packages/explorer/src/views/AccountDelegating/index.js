@@ -18,27 +18,27 @@ export type AccountDelegatingProps = {
 }
 
 const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
-  currentRound,
+  claimEarnings,
   coinbase,
+  currentRound,
   delegator,
   history,
   match,
-  claimEarnings,
-  withdrawStake,
   withdrawFees,
+  withdrawStake,
 }) => {
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
   const {
-    status,
-    delegateAddress,
     bondedAmount,
-    fees,
+    delegateAddress,
     delegatedAmount,
+    fees,
     lastClaimRound,
-    pendingStake,
     pendingFees,
+    pendingStake,
     startRound,
+    status,
     withdrawAmount,
     withdrawRound,
   } = delegator.data

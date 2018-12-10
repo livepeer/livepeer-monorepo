@@ -118,6 +118,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-dependencies
+      - run: *install-libsecret
       - run: *build-explorer
       - save_cache: *save-explorer
 
@@ -142,6 +143,7 @@ jobs:
 
     steps:
       - checkout
+      - run: *install-libsecret
       - run: *build-explorer
 
       - save_cache:

@@ -163,14 +163,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
         if (onMyAccountPage && accountChanged) window.location = '/me'
       },
     }
-    /**
-     * If web3 is not available then initialize version and default to mainnet
-     */
-    const { version } = window.web3 || {
-      version: {
-        network: 1,
-      },
-    }
+    // If web3 is not available then initialize version and default to mainnet
+    const { version } = window.web3 || { version: { network: 1 } }
     const controllers = {
       1: process.env.REACT_APP_MAINNET_CONTROLLER_ADDRESS,
       4: process.env.REACT_APP_RINKEBY_CONTROLLER_ADDRESS,
