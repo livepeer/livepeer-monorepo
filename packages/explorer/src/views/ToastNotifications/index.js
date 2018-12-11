@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import { compose, lifecycle } from 'recompose'
+import { lifecycle } from 'recompose'
 import styled from 'styled-components'
 import { Transition, TransitionGroup } from 'react-transition-group'
 // import { Toast } from '../../components'
@@ -12,9 +12,10 @@ export type ToastNotificiationsViewProps = {
   toasts: any,
 }
 
-const ToastNotificiationsView: React.ComponentType<
-  ToastNotificiationsViewProps,
-> = ({ toasts, ...props }) => {
+const ToastNotificiationsView: React.ComponentType<ToastNotificiationsViewProps> = ({
+  toasts,
+  ...props
+}) => {
   return (
     <ToastNotificationsSection>
       {[...toasts].map(props => (

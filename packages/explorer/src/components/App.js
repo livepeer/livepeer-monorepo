@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import { Button, CTABanner } from '../components'
+import { CTABanner } from '../components'
 import Account from '../views/Account'
 import Approve from '../views/Approve'
 import Bond from '../views/Bond'
@@ -87,6 +87,7 @@ const App = () => (
                     textDecoration: 'none',
                   }}
                   target="_blank"
+                  rel="noopener noreferrer"
                   href="https://livepeer.org/#token"
                 >
                   Get Livepeer Token

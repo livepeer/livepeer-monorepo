@@ -8,9 +8,14 @@ const ImportantMessage = ({ protocol }) => {
       <p style={{ lineHeight: 1.5 }}>
         The Livepeer protocol is currently paused for an upgrade. For more
         information, please visit the Livepeer{' '}
-        <a href="https://forum.livepeer.org/" target="_blank">
+        <a
+          href="https://forum.livepeer.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           forum
-        </a>.
+        </a>
+        .
       </p>
     </BasicModal>
   )

@@ -1,4 +1,4 @@
-import { compose, withHandlers, withStateHandlers } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { FORM_ERROR } from 'final-form'
@@ -7,9 +7,8 @@ import {
   connectCurrentRoundQuery,
   connectClaimEarningsMutation,
   connectToasts,
-  TransactionsQuery,
 } from '../../enhancers'
-import { MathBN, sleep, wireTransactionToStatus } from '../../utils'
+import { MathBN } from '../../utils'
 import { mockAccount } from '@livepeer/graphql-sdk'
 
 const MeDelegatorQuery = gql`

@@ -1,11 +1,10 @@
 // @flow
 import * as React from 'react'
 import { Icon } from 'rmwc/Icon'
-import { formatBalance, formatPercentage, MathBN } from '../../utils'
+import { formatBalance, formatPercentage } from '../../utils'
 import {
   Button,
   EmptyMessage,
-  InlineHint,
   MetricBox,
   Tooltip,
   Wrapper,
@@ -19,9 +18,12 @@ type AccountTranscodingViewProps = {
   match: Match,
 }
 
-const AccountTranscodingView: React.ComponentType<
-  AccountTranscodingViewProps,
-> = ({ coinbase, currentRound, transcoder, match }) => {
+const AccountTranscodingView: React.ComponentType<AccountTranscodingViewProps> = ({
+  coinbase,
+  currentRound,
+  transcoder,
+  match,
+}) => {
   const {
     active,
     status,
@@ -33,8 +35,6 @@ const AccountTranscodingView: React.ComponentType<
     pendingFeeShare,
     pendingPricePerSegment,
   } = transcoder.data
-  const isMe = match.params.accountId === coinbase.data.coinbase
-  const { accountId } = match.params
   const currentRoundNum = currentRound.data.id
   const notRegistered = status !== 'Registered'
   return (
@@ -94,7 +94,7 @@ const AccountTranscodingView: React.ComponentType<
                 {rewardCut !== pendingRewardCut && (
                   <Tooltip text="This value will change next round">
                     <Icon
-                      use="hourglass_empty"
+                      icon="hourglass_empty"
                       style={{ opacity: 0.75, cursor: 'help', color: 'orange' }}
                     />
                   </Tooltip>
@@ -128,7 +128,7 @@ const AccountTranscodingView: React.ComponentType<
                 {feeShare !== pendingFeeShare && (
                   <Tooltip text="This value will change next round">
                     <Icon
-                      use="hourglass_empty"
+                      icon="hourglass_empty"
                       style={{ opacity: 0.75, cursor: 'help', color: 'orange' }}
                     />
                   </Tooltip>
@@ -162,7 +162,7 @@ const AccountTranscodingView: React.ComponentType<
                 {pricePerSegment !== pendingPricePerSegment && (
                   <Tooltip text="This value will change next round">
                     <Icon
-                      use="hourglass_empty"
+                      icon="hourglass_empty"
                       style={{ opacity: 0.75, cursor: 'help', color: 'orange' }}
                     />
                   </Tooltip>
@@ -200,7 +200,7 @@ const AccountTranscodingView: React.ComponentType<
                   }}
                 >
                   {lastRewardRound}
-                  <Icon use="check" style={{ color: 'var(--primary)' }} />
+                  <Icon icon="check" style={{ color: 'var(--primary)' }} />
                 </span>
               ) : (
                 <span
@@ -211,7 +211,7 @@ const AccountTranscodingView: React.ComponentType<
                   }}
                 >
                   {lastRewardRound}
-                  <Icon use="close" style={{ color: 'var(--error)' }} />
+                  <Icon icon="close" style={{ color: 'var(--error)' }} />
                 </span>
               )
             }
@@ -219,8 +219,8 @@ const AccountTranscodingView: React.ComponentType<
               !active
                 ? 'No rewards to claim while inactive'
                 : currentRoundNum === lastRewardRound
-                  ? 'Transcoder claimed rewards this round'
-                  : 'Transcoder has not claimed rewards for current round'
+                ? 'Transcoder claimed rewards this round'
+                : 'Transcoder has not claimed rewards for current round'
             }
           />
         </React.Fragment>

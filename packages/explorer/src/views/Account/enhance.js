@@ -1,4 +1,3 @@
-import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -108,7 +107,7 @@ const connectMeDelegatorTranscoderQuery = graphql(MeDelegatorTranscoderQuery, {
 
 const mapMutationHandlers = withHandlers({
   bond: ({ currentRound, history, me, toasts }) => ({ id }) => {
-    const { id: currentRoundNum, lastInitializedRound } = currentRound.data
+    const { id: lastInitializedRound } = currentRound.data
     const { status, lastClaimRound } = me.data.delegator
     const isUnbonded = status === 'Unbonded'
     const unclaimedRounds = isUnbonded
@@ -134,14 +133,12 @@ const mapMutationHandlers = withHandlers({
   },
   unbond: ({ currentRound, me, toasts }) => async ({ id }) => {
     try {
-      const { id: currentRoundNum, lastInitializedRound } = currentRound.data
+      const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator
       const isUnbonded = status === 'Unbonded'
       const unclaimedRounds = isUnbonded
         ? ' 0'
         : MathBN.sub(lastInitializedRound, lastClaimRound)
-      const hasUnclaimedRounds =
-        !isUnbonded && currentRoundNum !== lastClaimRound
       if (!currentRound.data.initialized) {
         return toasts.push({
           id: 'unbond',

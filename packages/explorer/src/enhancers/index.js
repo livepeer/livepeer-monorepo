@@ -194,7 +194,7 @@ export const connectCurrentBlockQuery = graphql(CurrentBlockQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 15 * 1000,
+    pollInterval: 15000,
     variables: {},
   }),
 })
@@ -227,7 +227,7 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 10 * 1000,
+    pollInterval: 3000,
     variables: {},
   }),
 })
