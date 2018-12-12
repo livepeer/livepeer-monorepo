@@ -1,7 +1,3 @@
-// Required for dynamic memory allocation in WASM / AssemblyScript
-import "allocator/arena";
-export { allocate_memory };
-
 // Import types and APIs from graph-ts
 import { store, Address } from "@graphprotocol/graph-ts";
 
@@ -40,7 +36,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
 
   // Create transcoder if it does not yet exist
   if (transcoder == null) {
-    transcoder = new Transcoder();
+    transcoder = new Transcoder(transcoderAddress.toHex());
   }
 
   let active = bondingManager.isActiveTranscoder(

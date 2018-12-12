@@ -11,11 +11,16 @@
     "deploy": "graph deploy subgraph.yaml --verbosity debug --node http://127.0.0.1:8020/ --ipfs /ip4/127.0.0.1/tcp/5001 --subgraph-name livepeer"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.4.1",
-    "@graphprotocol/graph-ts": "^0.4.1"
+    "@graphprotocol/graph-cli": "graphprotocol/graph-cli#jannis/ipfs-auth",
+    "@graphprotocol/graph-ts": "0.5.0"
   },
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["@graphprotocol/graph-cli", "@graphprotocol/graph-ts"]
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "@graphprotocol/graph-cli",
+      "@graphprotocol/graph-ts"
+    ]
   }
 }
