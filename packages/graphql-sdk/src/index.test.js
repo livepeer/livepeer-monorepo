@@ -296,13 +296,13 @@ test('CurrentRoundQuery', async t => {
 test('TransactionsQuery', async t => {
   const args = {
     address: '0x0000000000000000000000000000000000000000',
-    limit: 2,
+    limit: '2',
     sort: 'desc',
     // this address has 3 txns in this range
     // (1 on 46423, 1 on 46421, and 1 on 46420)
     // this query should return the txns from the two more recent blocks
-    startBlock: 46420,
-    endBlock: 46423,
+    startBlock: '46420',
+    endBlock: '46423',
   }
   const res = await graphql(
     schema,

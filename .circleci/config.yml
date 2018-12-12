@@ -14,8 +14,8 @@ aliases:
   # Restores dependencies from cache
   - &restore-dependencies
     keys:
-    - v1-dependencies-{{ checksum "yarn.lock" }}
-    - v1-dependencies-
+      - v1-dependencies-{{ checksum "yarn.lock" }}
+      - v1-dependencies-
 
   # Saves built explorer to cache
   - &save-explorer
@@ -26,7 +26,7 @@ aliases:
   # Restores explorer from cache
   - &restore-explorer
     keys:
-    - built-explorer-{{ .Revision }}
+      - built-explorer-{{ .Revision }}
 
   # Commands
 
@@ -71,6 +71,11 @@ aliases:
     name: Install awscli
     command: sudo pip install awscli
 
+  # Install libsecret
+  - &install-libsecret
+    name: Install libsecret
+    command: sudo apt install libsecret-1-0
+
   # Extention of aws command
   - &s3-cmd-flags-values
 
@@ -100,6 +105,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-dependencies
+      - run: *install-libsecret
       - run: *install-dependencies
       - save_cache: *save-dependencies
       - run: *reporter
@@ -112,6 +118,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-dependencies
+      - run: *install-libsecret
       - run: *build-explorer
       - save_cache: *save-explorer
 
@@ -136,6 +143,7 @@ jobs:
 
     steps:
       - checkout
+      - run: *install-libsecret
       - run: *build-explorer
 
       - save_cache:
@@ -150,7 +158,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - production-explorer-{{ .Revision }}
+            - production-explorer-{{ .Revision }}
       - run: *install-aws-cli
 
       - run:
@@ -199,4 +207,3 @@ workflows:
           filters:
             branches:
               only: master
-

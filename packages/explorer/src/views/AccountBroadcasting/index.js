@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import styled, { keyframes } from 'styled-components'
 import {
   Zap as VideoIcon,
   Minus as MinusIcon,
@@ -11,7 +10,6 @@ import {
   Button,
   Content,
   EmptyMessage,
-  InlineHint,
   MetricBox,
   Wrapper,
 } from '../../components'
@@ -81,7 +79,11 @@ const AccountBroadcasting: React.ComponentType<AccountBroadcastingProps> = ({
             <h2>This account has no broadcast history</h2>
           </EmptyMessage>
         )}
-        <div>{jobs.map(props => <JobCard key={props.id} {...props} />)}</div>
+        <div>
+          {jobs.map(props => (
+            <JobCard key={props.id} {...props} />
+          ))}
+        </div>
       </Content>
     </Wrapper>
   )

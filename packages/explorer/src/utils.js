@@ -47,7 +47,12 @@ export const MathBN = {
   div: (a: string | BN, b: string | BN): string => {
     const aBN = new Big(a || '0')
     const bBN = new Big(b || '0')
-    return aBN.div(bBN).toString(10)
+    try {
+      return aBN.div(bBN).toString(10)
+    } catch (err) {
+      console.error(err)
+      return 0
+    }
   },
   min: (a: string | BN, b: string | BN): string => {
     const aBN = new BN(a || '0')
@@ -137,8 +142,8 @@ export const pathInfo = {
 }
 
 export function msToTime(duration: number): string {
-  let milliseconds = parseInt((duration % 1000) / 100),
-    seconds = parseInt((duration / 1000) % 60),
+  //let milliseconds = parseInt((duration % 1000) / 100),
+  let seconds = parseInt((duration / 1000) % 60),
     minutes = parseInt((duration / (1000 * 60)) % 60),
     hours = parseInt((duration / (1000 * 60 * 60)) % 24)
   hours = hours < 10 ? '0' + hours : hours
@@ -155,4 +160,29 @@ export function toRGBA(hex, opacity = 1) {
   const b = parseInt(x.substring((2 * len) / 3, (3 * len) / 3), 16)
   const a = Math.min(1, Math.max(0, opacity))
   return `rgba(${[r, g, b, a]})`
+}
+
+export async function enableAccounts() {
+  if (window.ethereum) {
+    // This variable will tell the rest of the application if we're in limited mode
+    window.limitedWeb3Conn = true
+    // this is the new metamask way. details: https://bit.ly/2QQHXvF
+    window.web3 = new window.Web3(window.ethereum)
+    try {
+      await window.ethereum.enable()
+      window.limitedWeb3Conn = false
+    } catch (e) {
+      console.log('METAMASK | Access to accounts denied')
+      limitedMode()
+    }
+  } else if (window.web3 && window.web3.version) {
+    // this is the old way, accounts are always exposed.
+    window.web3 = new window.Web3(window.web3.currentProvider)
+  }
+  return
+}
+
+const limitedMode = () => {
+  window.limitedWeb3Conn = true
+  window.web3 = new window.Web3(window.ethereum)
 }

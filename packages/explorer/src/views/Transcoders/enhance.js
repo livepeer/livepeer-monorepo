@@ -1,9 +1,9 @@
 import React from 'react'
-import { compose, mapProps, withHandlers } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { connectCurrentRoundQuery, connectToasts } from '../../enhancers'
-import { MathBN, sleep } from '../../utils'
+import { MathBN } from '../../utils'
 import { mockAccount } from '@livepeer/graphql-sdk'
 
 const MeDelegatorTranscoderQuery = gql`
@@ -126,7 +126,7 @@ const connectTranscodersQuery = graphql(TranscodersQuery, {
 
 const mapMutationHandlers = withHandlers({
   bond: ({ currentRound, history, me, toasts }) => ({ id }) => {
-    const { id: currentRoundNum, lastInitializedRound } = currentRound.data
+    const { id: lastInitializedRound } = currentRound.data
     const { status, lastClaimRound } = me.data.delegator
     const isUnbonded = status === 'Unbonded'
     const unclaimedRounds = isUnbonded
@@ -158,14 +158,12 @@ const mapMutationHandlers = withHandlers({
   },
   unbond: ({ currentRound, me, toasts }) => async ({ id }) => {
     try {
-      const { id: currentRoundNum, lastInitializedRound } = currentRound.data
+      const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator
       const isUnbonded = status === 'Unbonded'
       const unclaimedRounds = isUnbonded
         ? ' 0'
         : MathBN.sub(lastInitializedRound, lastClaimRound)
-      const hasUnclaimedRounds =
-        !isUnbonded && currentRoundNum !== lastClaimRound
       if (!currentRound.data.initialized) {
         return toasts.push({
           id: 'unbond',

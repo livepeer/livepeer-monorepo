@@ -1,7 +1,3 @@
-// Required for dynamic memory allocation in WASM / AssemblyScript
-import "allocator/arena";
-export { allocate_memory };
-
 // Import types and APIs from graph-ts
 import { store, Address } from "@graphprotocol/graph-ts";
 
@@ -44,8 +40,8 @@ export function newRound(event: NewRound): void {
     // "rewardTokens" is null for a given transcoder and round then we know
     // the transcoder failed to call reward()
     if (active) {
-      reward = new Reward();
       rewardId = currentTranscoder.toHex() + "-" + roundNumber.toString();
+      reward = new Reward(rewardId);
       reward.round = roundNumber.toString();
       reward.transcoder = currentTranscoder.toHex();
 
@@ -64,7 +60,7 @@ export function newRound(event: NewRound): void {
   }
 
   // Create new round
-  let round = new Round();
+  let round = new Round(roundNumber.toString());
   round.initialized = true;
   round.lastInitializedRound = roundsManager.lastInitializedRound();
   round.length = roundsManager.roundLength();
