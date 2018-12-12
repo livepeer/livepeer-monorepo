@@ -2,12 +2,34 @@ import {
   TypedMap,
   Entity,
   Value,
+  ValueKind,
+  store,
   Address,
   Bytes,
   BigInt
 } from "@graphprotocol/graph-ts";
 
 export class Transcoder extends Entity {
+  constructor(id: string) {
+    this.set("id", Value.fromString(id));
+    return this;
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Transcoder entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Transcoder entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Transcoder", id.toString(), this);
+  }
+
+  static load(id: string): Transcoder | null {
+    return store.get("Transcoder", id) as Transcoder | null;
+  }
+
   get id(): string {
     let value = this.get("id");
     if (value === null) {
@@ -231,6 +253,26 @@ export class Transcoder extends Entity {
 }
 
 export class Reward extends Entity {
+  constructor(id: string) {
+    this.set("id", Value.fromString(id));
+    return this;
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Reward entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Reward entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Reward", id.toString(), this);
+  }
+
+  static load(id: string): Reward | null {
+    return store.get("Reward", id) as Reward | null;
+  }
+
   get id(): string {
     let value = this.get("id");
     if (value === null) {
@@ -301,6 +343,26 @@ export class Reward extends Entity {
 }
 
 export class Round extends Entity {
+  constructor(id: string) {
+    this.set("id", Value.fromString(id));
+    return this;
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Round entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Round entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Round", id.toString(), this);
+  }
+
+  static load(id: string): Round | null {
+    return store.get("Round", id) as Round | null;
+  }
+
   get id(): string {
     let value = this.get("id");
     if (value === null) {

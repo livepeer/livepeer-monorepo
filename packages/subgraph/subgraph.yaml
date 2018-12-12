@@ -21,21 +21,21 @@ dataSources:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
       eventHandlers:
-        - event: TranscoderUpdate(address, uint256, uint256, uint256, bool)
+        - event: TranscoderUpdate(address,uint256,uint256,uint256,bool)
           handler: transcoderUpdated
         - event: TranscoderResigned(address)
           handler: transcoderResigned
         - event: TranscoderEvicted(address)
           handler: transcoderEvicted
-        - event: TranscoderSlashed(address, address, uint256, uint256)
+        - event: TranscoderSlashed(address,address,uint256,uint256)
           handler: transcoderSlashed
-        - event: Bond(address, address, address, uint256, uint256)
+        - event: Bond(address,address,address,uint256,uint256)
           handler: bond
-        - event: Unbond(address, address, uint256, uint256, uint256)
+        - event: Unbond(address,address,uint256,uint256,uint256)
           handler: unbond
-        - event: Rebond(address, address, uint256, uint256)
+        - event: Rebond(address,address,uint256,uint256)
           handler: rebond
-        - event: Reward(address, uint256)
+        - event: Reward(address,uint256)
           handler: reward
   - kind: ethereum/contract
     name: RoundsManager
