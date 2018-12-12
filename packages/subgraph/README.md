@@ -83,7 +83,7 @@ environment variable `REACT_APP_LIVEPEER_SUBGRAPH` inside `.env.development` to
 your graphql endpoint.
 
 For example:
-`REACT_APP_LIVEPEER_SUBGRAPH=http://localhost:8000/by-name/livepeer/graphql`
+`REACT_APP_LIVEPEER_SUBGRAPH=http://localhost:8000/subgraphs/name/livepeer/graphql`
 
 The explorer will begin quering indexed transcoder data from the Graph Node.
 Note that if you shutdown the Graph Node, the Explorer will gracefully fallback

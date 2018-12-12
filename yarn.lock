@@ -1132,12 +1132,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@graphprotocol/graph-cli@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-cli/-/graph-cli-0.4.1.tgz#22fade7b5f1d5455980e4ced284f14c0420fad36"
-  integrity sha512-dXAJBSqkoAVNj9haqI3tL+ECx1N28e3xV7Fbe3vCT/DWTekDyUAkkc65s9FG4PvFymHUzA2VwjJz8awlwY3zuA==
+"@graphprotocol/graph-cli@graphprotocol/graph-cli#jannis/ipfs-auth":
+  version "0.5.0"
+  resolved "https://codeload.github.com/graphprotocol/graph-cli/tar.gz/d364d17f7e6bccfc57d3c9a621782a2a9f566fdf"
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
     chalk "^2.4.1"
     chokidar "^2.0.4"
     commander "^2.18.0"
@@ -1155,12 +1154,12 @@
     request "^2.88.0"
     winston "^3.0.0"
 
-"@graphprotocol/graph-ts@^0.4.1":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.4.2.tgz#d111eb5b505a6ae5825ef976c40055056646383e"
-  integrity sha512-z19vLZ8fw04EcSu7alWdvvmNG05yFbfdJIAKBWDloctmCm56692S0X+QIuU92p7JmkW7XHcXf97uX5HCsEc9Zg==
+"@graphprotocol/graph-ts@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.5.0.tgz#e05310437ee29cd04401cc2e5ff31ac33f39cca5"
+  integrity sha512-KAb+moDMgAGjD9knxE7ac4q1XCaW0KN0kq2tHsDmFlmvUQvl8V3zwRdAIv4/SLnuoFna9klxnSQEWR4G/0cfbw==
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
 
 "@ladjs/time-require@^0.1.4":
   version "0.1.4"
@@ -2839,12 +2838,23 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
-"assemblyscript@https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11":
+"assemblyscript@git+https://github.com/AssemblyScript/assemblyscript.git#ced01216f88a3037d0657a45255dc6df646ff10c":
   version "0.5.0"
-  resolved "https://github.com/AssemblyScript/assemblyscript#c4ebc8c291c1068da73ddf1a381eab93e1f69e11"
+  resolved "git+https://github.com/AssemblyScript/assemblyscript.git#ced01216f88a3037d0657a45255dc6df646ff10c"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
-    binaryen "48.0.0-nightly.20180627"
+    binaryen "55.0.0-nightly.20181130"
+    glob "^7.1.3"
+    long "^4.0.0"
+
+"assemblyscript@https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c":
+  version "0.5.0"
+  uid ced01216f88a3037d0657a45255dc6df646ff10c
+  resolved "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+  dependencies:
+    "@protobufjs/utf8" "^1.1.0"
+    binaryen "55.0.0-nightly.20181130"
+    glob "^7.1.3"
     long "^4.0.0"
 
 assert-plus@1.0.0, assert-plus@^1.0.0:
@@ -4313,10 +4323,10 @@ binary-search-tree@0.2.5:
   dependencies:
     underscore "~1.4.4"
 
-binaryen@48.0.0-nightly.20180627:
-  version "48.0.0-nightly.20180627"
-  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-48.0.0-nightly.20180627.tgz#605e42c7db752922560d7f2582d5c9dcaa2f4822"
-  integrity sha512-ZBXSVMoXb+LDiPX3Epdis57KJIqhSkvC3y8i0SEMCkOtErrAlEiS//UBrXBDUaqB12h0qU9gjNSC9iD987w7QQ==
+binaryen@55.0.0-nightly.20181130:
+  version "55.0.0-nightly.20181130"
+  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-55.0.0-nightly.20181130.tgz#67159e12073d8195813057714754727320521b3d"
+  integrity sha512-RfMiI0vavw7Sy7KX8h1xOs4D3zp9nehmtE87DSfY6nXyd2EAdMwJ97tWdepuhOc6JWZsntOfzUA2fqu/sYTTLg==
 
 bindings@^1.2.1:
   version "1.3.1"
