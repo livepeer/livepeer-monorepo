@@ -127,7 +127,13 @@ export default async function createApolloClient(
    * @return {boolean}
    */
   async function isSubgraphAvailable(url: string): boolean {
-    if (!url) {
+    const IS_WEB3_AVAILABLE = window.web3
+    const IS_MAINNET =
+      IS_WEB3_AVAILABLE && `${window.web3.version.network}` === '1'
+
+    // If no subgraph endpoint is provided OR if web3 is available and not
+    // on mainnnet, do not use subgraph data
+    if ((IS_WEB3_AVAILABLE && !IS_MAINNET) || !url) {
       return false
     }
     try {
