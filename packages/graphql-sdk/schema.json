@@ -2098,7 +2098,7 @@
               ],
               "type": {
                 "kind": "SCALAR",
-                "name": "Boolean",
+                "name": "JSON",
                 "ofType": null
               },
               "isDeprecated": false,

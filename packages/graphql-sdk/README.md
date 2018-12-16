@@ -761,7 +761,7 @@ Approve an amount for an ERC20 token transfer
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>bond</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a></td>
+<td valign="top"><a href="#json">JSON</a></td>
 <td>
 
 Submits a bond transaction for a previously approved amount
@@ -881,6 +881,15 @@ Protocol targetBondingRate
 <td>
 
 Protocol transcoderPoolMaxSize
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>maxEarningsClaimsRounds</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Protocol maxEarningsClaimsRounds
 
 </td>
 </tr>
