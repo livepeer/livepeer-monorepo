@@ -94,7 +94,7 @@ const AccountTranscodingView: React.ComponentType<AccountTranscodingViewProps> =
                 {rewardCut !== pendingRewardCut && (
                   <Tooltip text="This value will change next round">
                     <Icon
-                      icon="hourglass_empty"
+                      use="hourglass_empty"
                       style={{ opacity: 0.75, cursor: 'help', color: 'orange' }}
                     />
                   </Tooltip>
@@ -128,7 +128,7 @@ const AccountTranscodingView: React.ComponentType<AccountTranscodingViewProps> =
                 {feeShare !== pendingFeeShare && (
                   <Tooltip text="This value will change next round">
                     <Icon
-                      icon="hourglass_empty"
+                      use="hourglass_empty"
                       style={{ opacity: 0.75, cursor: 'help', color: 'orange' }}
                     />
                   </Tooltip>
@@ -162,7 +162,7 @@ const AccountTranscodingView: React.ComponentType<AccountTranscodingViewProps> =
                 {pricePerSegment !== pendingPricePerSegment && (
                   <Tooltip text="This value will change next round">
                     <Icon
-                      icon="hourglass_empty"
+                      use="hourglass_empty"
                       style={{ opacity: 0.75, cursor: 'help', color: 'orange' }}
                     />
                   </Tooltip>
@@ -200,7 +200,7 @@ const AccountTranscodingView: React.ComponentType<AccountTranscodingViewProps> =
                   }}
                 >
                   {lastRewardRound}
-                  <Icon icon="check" style={{ color: 'var(--primary)' }} />
+                  <Icon use="check" style={{ color: 'var(--primary)' }} />
                 </span>
               ) : (
                 <span
@@ -211,7 +211,7 @@ const AccountTranscodingView: React.ComponentType<AccountTranscodingViewProps> =
                   }}
                 >
                   {lastRewardRound}
-                  <Icon icon="close" style={{ color: 'var(--error)' }} />
+                  <Icon use="close" style={{ color: 'var(--error)' }} />
                 </span>
               )
             }

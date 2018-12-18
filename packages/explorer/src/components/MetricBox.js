@@ -32,7 +32,7 @@ const MetricBox = ({
         {help && (
           <Tooltip text={help}>
             <Icon
-              icon="info"
+              use="info"
               style={{
                 opacity: 0.5,
                 fontSize: 17,

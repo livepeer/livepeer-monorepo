@@ -246,7 +246,7 @@ class TransactionCard extends React.Component {
             >
               <Icon
                 iconOptions={{ strategy: 'ligature' }}
-                icon={
+                use={
                   pending
                     ? 'warning'
                     : failed
@@ -258,7 +258,7 @@ class TransactionCard extends React.Component {
                 }}
               />
               &nbsp;
-              <Icon stategy="url" icon={getActivityIcon(method)} />
+              <Icon stategy="url" use={getActivityIcon(method)} />
               &nbsp;
               <span style={{ textDecoration: failed ? 'line-through' : '' }}>
                 {formatTransactionMethod(method)}
@@ -325,7 +325,7 @@ class TransactionCard extends React.Component {
                     >
                       <Icon
                         iconOptions={{ strategy: 'ligature' }}
-                        icon={
+                        use={
                           pending
                             ? 'warning'
                             : failed
@@ -371,7 +371,7 @@ class TransactionCard extends React.Component {
                     >
                       <Icon
                         stategy="url"
-                        icon={getActivityIcon(method)}
+                        use={getActivityIcon(method)}
                         style={{ fontSize: 18 }}
                       />
                       &nbsp;{method}
