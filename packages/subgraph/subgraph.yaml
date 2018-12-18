@@ -1,9 +1,12 @@
 specVersion: 0.0.1
+description: A protocol for affordable and reliable video encoding. Find transcoders, staking rounds, and rewards.
+repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: BondingManager
+    network: mainnet
     source:
       address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
       abi: BondingManager
