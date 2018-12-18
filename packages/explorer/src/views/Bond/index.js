@@ -13,6 +13,7 @@ type BondViewProps = {
   match: Match,
   me: GraphQLProps<Account>,
   onClose: any => void,
+  protocol: GraphQLProps<Protocol>,
 }
 
 const BondView: React.ComponentType<BondViewProps> = ({
@@ -24,6 +25,7 @@ const BondView: React.ComponentType<BondViewProps> = ({
   match,
   me,
   onClose,
+  protocol,
   ...props
 }) => {
   const { delegateAddress } = match.params
@@ -43,6 +45,7 @@ const BondView: React.ComponentType<BondViewProps> = ({
         }}
         loading={me.loading}
         max={max}
+        maxEarningsClaimsRounds={protocol.data.maxEarningsClaimsRounds}
         onSubmit={bond}
         onCancel={closeModal}
         onUpdateAllowance={goApprove}
