@@ -2,7 +2,11 @@ import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { connectCurrentRoundQuery, connectToasts } from '../../enhancers'
+import {
+  connectCurrentRoundQuery,
+  connectProtocolQuery,
+  connectToasts,
+} from '../../enhancers'
 import { MathBN } from '../../utils'
 import { mockAccount } from '@livepeer/graphql-sdk'
 
@@ -125,9 +129,10 @@ const connectTranscodersQuery = graphql(TranscodersQuery, {
 })
 
 const mapMutationHandlers = withHandlers({
-  bond: ({ currentRound, history, me, toasts }) => ({ id }) => {
+  bond: ({ currentRound, history, me, protocol, toasts }) => ({ id }) => {
     const { id: lastInitializedRound } = currentRound.data
     const { status, lastClaimRound } = me.data.delegator
+    const { maxEarningsClaimsRounds } = protocol.data
     const isUnbonded = status === 'Unbonded'
     const unclaimedRounds = isUnbonded
       ? ' 0'
@@ -140,15 +145,15 @@ const mapMutationHandlers = withHandlers({
         body: 'The current round is not initialized.',
       })
     }
-    if (MathBN.gt(unclaimedRounds, '20')) {
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
       return toasts.push({
         id: 'bond',
         type: 'warn',
         title: 'Unable to bond',
         body: (
           <span>
-            You have unclaimed earnings from more than 20 previous rounds.{' '}
-            <br />
+            You have unclaimed earnings from more than {maxEarningsClaimsRounds}{' '}
+            previous rounds. <br />
             <a href="/me/delegating">Claim Your Earnings</a>
           </span>
         ),
@@ -156,10 +161,11 @@ const mapMutationHandlers = withHandlers({
     }
     history.push(`#/bond/${id}`)
   },
-  unbond: ({ currentRound, me, toasts }) => async ({ id }) => {
+  unbond: ({ currentRound, me, protocol, toasts }) => async ({ id }) => {
     try {
       const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator
+      const { maxEarningsClaimsRounds } = protocol.data
       const isUnbonded = status === 'Unbonded'
       const unclaimedRounds = isUnbonded
         ? ' 0'
@@ -172,15 +178,15 @@ const mapMutationHandlers = withHandlers({
           body: 'The current round is not initialized.',
         })
       }
-      if (MathBN.gt(unclaimedRounds, '20')) {
+      if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
         return toasts.push({
           id: 'unbond',
           type: 'warn',
           title: 'Unable to unbond',
           body: (
             <span>
-              You have unclaimed earnings from more than 20 previous rounds.{' '}
-              <br />
+              You have unclaimed earnings from more than{' '}
+              {maxEarningsClaimsRounds} previous rounds. <br />
               <a href="/me/delegating">Claim Your Earnings</a>
             </span>
           ),
@@ -209,6 +215,7 @@ const mapMutationHandlers = withHandlers({
 export default compose(
   connectCurrentRoundQuery,
   connectMeDelegatorTranscoderQuery,
+  connectProtocolQuery,
   connectTranscodersQuery,
   connectToasts,
   mapMutationHandlers,

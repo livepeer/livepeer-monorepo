@@ -5,7 +5,6 @@ import { FORM_ERROR } from 'final-form'
 import {
   connectApproveMutation,
   connectBondMutation,
-  connectProtocolQuery,
   connectToasts,
 } from '../../enhancers'
 import { toBaseUnit } from '../../utils'
@@ -91,7 +90,6 @@ export default compose(
   connectApproveMutation,
   connectBondMutation,
   connectMeDelegatorQuery,
-  connectProtocolQuery,
   connectToasts,
   mapMutationHandlers,
 )

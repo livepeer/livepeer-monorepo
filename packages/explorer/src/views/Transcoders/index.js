@@ -35,6 +35,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   history,
   match,
   me,
+  protocol,
   transcoders,
   unbond,
 }) => {
