@@ -13,6 +13,7 @@ import type { TranscoderCardProps } from './props'
 const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
   ({
     active,
+    currentRound,
     bonded,
     bondedAmount,
     className,
@@ -31,8 +32,15 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     let missedCalls: number = 0
     if (rewards) {
       missedCalls = rewards
-        .slice(-30)
-        .filter(reward => reward.rewardTokens === null).length
+        // If transcoder is active and has participated in more than 30 rounds,
+        // slice the last 31 rounds since we're excluding the current round.
+        // Otherwise, slice the last 30
+        .slice(rewards.length > 30 && active ? -31 : -30)
+        .filter(
+          reward =>
+            reward.rewardTokens === null &&
+            reward.round.id !== currentRound.data.id,
+        ).length
     }
     return (
       <div className={className}>

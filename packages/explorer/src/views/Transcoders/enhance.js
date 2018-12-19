@@ -33,6 +33,9 @@ const MeDelegatorTranscoderQuery = gql`
     pendingPricePerSegment
     rewards {
       rewardTokens
+      round {
+        id
+      }
     }
   }
 
@@ -88,6 +91,9 @@ const TranscodersQuery = gql`
     totalStake
     rewards {
       rewardTokens
+      round {
+        id
+      }
     }
   }
 

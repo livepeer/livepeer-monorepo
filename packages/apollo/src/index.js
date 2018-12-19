@@ -91,7 +91,8 @@ export default async function createApolloClient(
       // Extend Transcoder type with rewards field to match remote schema
       const linkTypeDefs = `
         type Reward {
-          rewardTokens: String
+          rewardTokens: String,
+          round: Round
         }
         extend type Transcoder {
           rewards: [Reward]
