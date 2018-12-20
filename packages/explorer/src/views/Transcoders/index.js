@@ -32,6 +32,7 @@ type TranscodersViewProps = {
  */
 const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
   bond,
+  currentRound,
   history,
   match,
   me,
@@ -200,6 +201,7 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           return (
             <TranscoderCard
               {...props}
+              currentRound={currentRound}
               numActive={numActive}
               key={id}
               bonded={isMyDelegate}
