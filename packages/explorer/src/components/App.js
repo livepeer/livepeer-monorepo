@@ -13,6 +13,8 @@ import SmartContracts from '../views/SmartContracts'
 import ProtocolStatus from '../views/ProtocolStatus'
 import ToastNotifications from '../views/ToastNotifications'
 import Transcoders from '../views/Transcoders'
+import Withdraw from '../views/Withdraw'
+import Rebond from '../views/Rebond'
 
 const App = () => (
   <BrowserRouter>
@@ -62,6 +64,8 @@ const App = () => (
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
+                <Route path="/withdraw" component={Withdraw} />
+                <Route path="/rebond" component={Rebond} />
               </Switch>
             </CSSTransition>
           </TransitionGroup>

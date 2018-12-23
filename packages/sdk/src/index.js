@@ -1141,6 +1141,41 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Get all the unbonding locks for a delegator
+     * @param {string} addr - delegator's ETH address
+     * @return {Promise<UnbondingLock[]>}
+     *
+     * @example
+     *
+     * await rpc.getAllDelegatorUnbondingLocks('0xf00...')
+     * // => UnbondingLock [{
+     * //   id: string,
+     * //   delegator: string,
+     * //   amount: string,
+     * //   withdrawRound: string
+     * // }]
+     */
+    async getAllDelegatorUnbondingLocks(
+      addr: string,
+    ): Promise<UnbondingLock[]> {
+      let { nextUnbondingLockId } = await getDelegator(addr)
+      let result = []
+
+      if (nextUnbondingLockId == 0) return result
+
+      while (nextUnbondingLockId != 0) {
+        const unbond = await getDelegatorUnbondingLock(
+          addr,
+          nextUnbondingLockId,
+        )
+        result.push(unbond)
+        nextUnbondingLockId -= 1
+      }
+
+      return result
+    },
+
+    /**
      * Get an unbonding lock for a delegator
      * @param {string} addr - delegator's ETH address
      * @param {string} unbondingLockId - unbonding lock ID

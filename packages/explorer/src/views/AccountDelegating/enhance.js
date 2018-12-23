@@ -36,6 +36,12 @@ const AccountDelegatorQuery = gql`
   }
 `
 
+// const UnbondingLocksQuery = gql`
+//   query UnbondingLocksQuery($id: String!) {
+
+//   }
+// `
+
 const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
   props: ({ data, ownProps }) => {
     const { account, ...queryProps } = data

@@ -3,7 +3,13 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { Minus as MinusIcon } from 'react-feather'
 import { formatBalance, MathBN } from '../../utils'
-import { Button, InlineAccount, MetricBox, Wrapper } from '../../components'
+import {
+  Button,
+  InlineAccount,
+  MetricBox,
+  Wrapper,
+  Tooltip,
+} from '../../components'
 import enhance from './enhance'
 
 export type AccountDelegatingProps = {
@@ -160,6 +166,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
       <MetricBox
         help="Stake and fees earned since the last claimed round"
         title="Unclaimed Earnings"
+        width="100%"
         value={
           !delegateAddress
             ? 'N/A'
@@ -191,6 +198,108 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             </Button>
           </React.Fragment>
         )}
+      </MetricBox>
+      <MetricBox
+        help="Stake and fees earned since the last claimed round"
+        title="Unbonding Transactions"
+        width="100%"
+        value={''}
+        subvalue={''}
+      >
+        <div
+          style={{
+            display: 'flex',
+            margin: 0,
+            paddingLeft: 20,
+            textAlign: 'left',
+            minWidth: '100%',
+            justifyContent: 'flex-start',
+            flexFlow: 'row wrap',
+          }}
+        >
+          <div
+            style={{
+              textAlign: 'left',
+              minWidth: '60%',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <h3>
+              <strong>30 LPT</strong> <br />{' '}
+              <span style={{ fontSize: 12, marginTop: '-10px' }}>
+                request made at block number #1000000
+              </span>
+            </h3>
+          </div>
+          <div
+            style={{
+              minWidth: '40%',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <Tooltip text="Hello world">
+              <Button
+                onClick={e => {
+                  e.preventDefault()
+                  console.log('hellow')
+                  history.push('#/withdraw')
+                }}
+              >
+                Withdraw
+              </Button>
+            </Tooltip>
+            <Button
+              className="bond-token primary"
+              onClick={e => {
+                e.preventDefault()
+                history.push('#/rebond')
+              }}
+            >
+              <span>rebond</span>
+              <span style={{ marginLeft: 8 }}>&rarr;</span>
+            </Button>
+          </div>
+
+          <div
+            style={{
+              textAlign: 'left',
+              minWidth: '60%',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <h3>
+              <strong>60 LPT</strong> <br />{' '}
+              <span style={{ fontSize: 12, marginTop: '-10px' }}>
+                request made at block number #1000000
+              </span>
+            </h3>
+          </div>
+          <div
+            style={{
+              minWidth: '40%',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <Button
+              onClick={e => {
+                e.preventDefault()
+                history.push('#/withdraw')
+              }}
+            >
+              Withdraw
+            </Button>
+            <Button
+              className="bond-token primary"
+              onClick={e => {
+                e.preventDefault()
+                history.push('#/rebond')
+              }}
+            >
+              <span>rebond</span>
+              <span style={{ marginLeft: 8 }}>&rarr;</span>
+            </Button>
+          </div>
+        </div>
       </MetricBox>
     </Wrapper>
   )
