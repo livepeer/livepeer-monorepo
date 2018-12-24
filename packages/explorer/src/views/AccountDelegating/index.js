@@ -220,13 +220,14 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
       >
         {unbondlocks && unbondlocks.length > 0 && (
           <div style={{ display: 'block', width: '100%' }}>
-            {unbondlocks.map(item => (
+            {unbondlocks.map(({ id, amount, deletgator, withdrawRound }) => (
               <UnbondTxComponent
-                id={item['id']}
-                amount={item['amount']}
-                delegator={item['delegator']}
+                key={id}
+                accountId={accountId}
+                id={id}
+                amount={amount}
                 currentRound={lastInitializedRound}
-                withdrawRound={item['withdrawRound']}
+                withdrawRound={withdrawRound}
                 history={history}
               />
             ))}

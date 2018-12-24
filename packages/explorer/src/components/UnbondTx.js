@@ -7,7 +7,7 @@ const UnbondTxComponent = ({
   withdrawRound,
   history,
   id,
-  delegator,
+  accountId,
 }) => (
   <div
     style={{
@@ -45,7 +45,7 @@ const UnbondTxComponent = ({
           <Button
             onClick={e => {
               e.preventDefault()
-              history.push(`#/withdraw/${delegator}/${id}`)
+              history.push({ hash: `#/withdraw/${id}`, state: { accountId } })
             }}
           >
             Withdraw
@@ -61,7 +61,7 @@ const UnbondTxComponent = ({
         className="bond-token primary"
         onClick={e => {
           e.preventDefault()
-          history.push(`#/rebond/${delegator}/${id}`)
+          history.push({ hash: `#/rebond/${id}`, state: { accountId } })
         }}
       >
         <span>rebond</span>

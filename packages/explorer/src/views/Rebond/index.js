@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import { BasicModal, InlineAccount, Button } from '../../components'
+import { BasicModal, RebondForm } from '../../components'
 import { formatBalance } from '../../utils'
 import enhance from './enhance'
 
@@ -11,6 +11,9 @@ type RebondProps = {
   bond: () => void,
   transcoders: GraphQLProps<Transcoder>,
   delegator: GraphQLProps<Delegator>,
+  accountId: string,
+  state: object,
+  location: object,
 }
 
 const Rebond: React.ComponentType<RebondProps> = ({
@@ -21,11 +24,12 @@ const Rebond: React.ComponentType<RebondProps> = ({
   delegator,
 }) => {
   const closeModal = () => history.goBack()
-
+  console.log({ unbondlock })
+  console.log({ delegator })
   let { amount = 0 } = unbondlock || {}
   amount = formatBalance(amount)
 
-  let { delegateAddress } = delegator || {}
+  let { delegateAddress } = delegator['data'] || {}
 
   if (!delegateAddress && transcoders['data'][0]) {
     delegateAddress = transcoders['data'][0]['id']
@@ -34,21 +38,12 @@ const Rebond: React.ComponentType<RebondProps> = ({
   return (
     <React.Fragment>
       <BasicModal title="Rebond" onClose={closeModal}>
-        <p
-          style={{ textAlign: 'center' }}
-        >{`Rebond ${amount} LPT to the most recent transcoder`}</p>
-        <InlineAccount address={delegateAddress || ''} truncate={40} />
-        <p>
-          Note: You can only bond to one transcoder at a time. To bond to a
-          different transcoder, bond to this transcoder and then on the
-          transcoders page, bond all LPT to a different transcoder
-        </p>
-        <Button onClick={bond} className="primary">
-          Rebond
-        </Button>
-        <Button onClick={closeModal} className="primary">
-          Cancel
-        </Button>
+        <RebondForm
+          amount={amount}
+          delegateAddress={delegateAddress}
+          onSubmit={bond}
+          onCancel={closeModal}
+        />
       </BasicModal>
     </React.Fragment>
   )

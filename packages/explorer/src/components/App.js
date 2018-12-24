@@ -52,6 +52,9 @@ const App = () => (
             >
               <Switch
                 location={{
+                  get state() {
+                    return location.state
+                  },
                   get pathname() {
                     // use hash as pathname
                     return location.hash.substr(1)
@@ -64,14 +67,8 @@ const App = () => (
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
-                <Route
-                  path="/withdraw/:accountId/:lockId"
-                  component={Withdraw}
-                />
-                <Route
-                  path="/rebond/:delegateAddress/:lockId"
-                  component={Rebond}
-                />
+                <Route path="/withdraw/:lockId" component={Withdraw} />
+                <Route path="/rebond/:lockId" component={Rebond} />
               </Switch>
             </CSSTransition>
           </TransitionGroup>

@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react'
-import { BasicModal, Button } from '../../components'
-import { formatBalance } from '../../utils'
+import { BasicModal, WithdrawForm } from '../../components'
 import enhance from './enhance'
 
 type WithdrawProps = {
   history: History,
   amount: number,
+  location: object,
   withdrawStake: () => void,
 }
 
@@ -20,15 +20,12 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
   return (
     <React.Fragment>
       <BasicModal title="Withdraw your LPT" onClose={closeModal}>
-        <h1 style={{ textAlign: 'center' }}>
-          {formatBalance(amount || 0)} LPT
-        </h1>
-        <Button onClick={closeModal} className="mod-btn">
-          Cancel
-        </Button>
-        <Button onClick={withdrawStake} className="primary">
-          Withdraw
-        </Button>
+        <WithdrawForm
+          onSubmit={withdrawStake}
+          history={history}
+          onCancel={closeModal}
+          amount={amount}
+        />
       </BasicModal>
     </React.Fragment>
   )

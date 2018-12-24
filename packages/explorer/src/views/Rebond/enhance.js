@@ -120,11 +120,14 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
 
     return result
   },
-  options: ({ match }) => {
+  options: ({ match, location }) => {
+    const {
+      state: { accountId },
+    } = location
     return {
       // pollInterval: 60 * 1000,
       variables: {
-        id: match.params.delegateAddress,
+        id: accountId,
         lockId: match.params.lockId,
       },
       // ssr: false,
@@ -135,9 +138,8 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
 
 const mapMutationHandlers = withHandlers({
   bond: ({
-    bond,
-    rebondFromUnbonded,
     rebond,
+    rebondFromUnbonded,
     toasts,
     unbondlock,
     transcoders,
@@ -177,22 +179,37 @@ const mapMutationHandlers = withHandlers({
         })
       }
 
-      let { id, amount } = unbondlock
+      let { id, amount, withdrawRound } = unbondlock
       id = parseInt(id)
+      console.log(typeof withdrawRound)
+      withdrawRound = parseInt(withdrawRound)
 
       // check if the user is currently partially bonded to a delegator
-      let { delegateAddress } = delegator
-      let delegate = transcoders['data'][0]['id']
+      let { delegateAddress } = delegator['data'] || {}
 
+      let delegate = transcoders['data'][0]['id']
       if (delegateAddress) delegate = delegateAddress
 
       console.log('rebond', delegate, `${amount} LPT`)
       console.log('bonding...')
 
-      await rebondFromUnbonded({
-        variables: { delegate, unbondingLockId: id },
-        refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],
-      })
+      console.log({ withdrawRound })
+      console.log({ lastInitializedRound })
+
+      if (withdrawRound > lastInitializedRound) {
+        console.log('rebonding ... ')
+        await rebond({
+          variables: { unbondingLockId: id },
+          refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],
+        })
+      } else {
+        console.log('re bond bonding...')
+
+        await rebondFromUnbonded({
+          variables: { delegate, unbondingLockId: id },
+          refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],
+        })
+      }
 
       toasts.push({
         id: 'bond',

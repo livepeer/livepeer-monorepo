@@ -59,15 +59,21 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
 
     return result
   },
-  options: ({ match }) => ({
+  options: ({ match, location }) => {
     // pollInterval: 60 * 1000,
-    variables: {
-      id: match.params.accountId,
-      lockId: match.params.lockId,
-    },
-    // ssr: false,
-    fetchPolicy: 'network-only',
-  }),
+    const {
+      state: { accountId },
+    } = location
+
+    return {
+      variables: {
+        id: accountId,
+        lockId: match.params.lockId,
+      },
+      // ssr: false,
+      fetchPolicy: 'network-only',
+    }
+  },
 })
 
 const mapMutationHandlers = withHandlers({
