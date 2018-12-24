@@ -59,6 +59,11 @@ type Query {
   "The protocol as a whole"
   protocol: Protocol
 
+  "The unbonding locks for an account "
+  unbondlocks(id: String!): [UnbondLock]!
+
+  "An unbond lock for an account"
+  unbondlock(id: String!, lockId: String!): UnbondLock!
 }`
 
 export default () => [

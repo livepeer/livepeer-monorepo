@@ -32,27 +32,36 @@ const AccountDelegatorQuery = gql`
       delegator {
         ...DelegatorFragment
       }
+
+      unbondlocks {
+        id
+        amount
+        withdrawRound
+        delegator
+      }
     }
   }
 `
 
-// const UnbondingLocksQuery = gql`
-//   query UnbondingLocksQuery($id: String!) {
-
-//   }
-// `
-
 const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
   props: ({ data, ownProps }) => {
     const { account, ...queryProps } = data
-    const { delegator } = account || {}
-    return {
+    const { delegator, unbondlocks } = account || {}
+
+    console.log('Account delegating')
+    console.log({ delegator })
+    console.log({ unbondlocks })
+
+    let result = {
       ...ownProps,
       delegator: {
         ...queryProps,
         data: mockDelegator(delegator),
       },
+      unbondlocks,
     }
+
+    return result
   },
   options: ({ match }) => ({
     // pollInterval: 60 * 1000,

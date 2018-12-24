@@ -144,6 +144,39 @@ export const connectSendTransactionMutation = graphql(
   },
 )
 
+export const connectUnbondMutation = graphql(
+  gql`
+    mutation unbond {
+      unbond
+    }
+  `,
+  {
+    name: 'unbond',
+  },
+)
+
+export const connectRebondMutation = graphql(
+  gql`
+    mutation rebond($unbondingLockId: String!) {
+      rebond(unbondingLockId: $unbondingLockId)
+    }
+  `,
+  {
+    name: 'rebond',
+  },
+)
+
+export const connectRebondFromUnbondedMutation = graphql(
+  gql`
+    mutation rebondFromUnbonded($delegate: String!, $unbondingLockId: Int!) {
+      rebondFromUnbonded(delegate: $delegate, unbondingLockId: $unbondingLockId)
+    }
+  `,
+  {
+    name: 'rebondFromUnbonded',
+  },
+)
+
 const CoinbaseQuery = gql`
   query CoinbaseQuery {
     coinbase

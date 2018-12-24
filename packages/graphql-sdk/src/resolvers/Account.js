@@ -2,6 +2,8 @@ import {
   broadcaster as resolveBroadcaster,
   delegator as resolveDelegator,
   transcoder as resolveTranscoder,
+  unbondlocks as resolveUnbondLocks,
+  unbondlock as resolveUnbondLock,
 } from './Query'
 
 /** Typedefs */
@@ -105,4 +107,38 @@ export function transcoder(
   ctx: GQLContext,
 ): Transcoder {
   return resolveTranscoder({}, { id: obj.id }, ctx)
+}
+
+/**
+ * Gets unbonding locks by ETH address
+ * @param {QueryObj} obj
+ * @param {QueryUnbondingLockArgs} args
+ * @param {string} args.id - ETH address
+ * @param {GQLContext} ctx
+ * @return {Array<UnbondingLock>}
+ */
+export async function unbondlocks(
+  obj: AccountObj,
+  args: QueryUnbondingLockArgs,
+  ctx: GQLContext,
+): Array<UnbondingLock> {
+  return resolveUnbondLocks({}, { id: obj.id }, ctx)
+}
+
+/**
+ * Gets unbonding lock by ETH address and Id
+ * @param {QueryObj} obj
+ * @param {QueryUnbondingLockArgs} args
+ * @param {string} args.id - ETH address
+ * @param {GQLContext} ctx
+ * @return {UnbondingLock}
+ */
+export async function unbondlock(
+  obj: AccountObj,
+  args: QueryUnbondingLockArgs,
+  ctx: GQLContext,
+): UnbondingLock {
+  const { id } = obj
+  const { lockId } = args
+  return resolveUnbondLock({}, { id, lockId }, ctx)
 }

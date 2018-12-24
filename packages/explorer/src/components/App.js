@@ -64,8 +64,14 @@ const App = () => (
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
-                <Route path="/withdraw" component={Withdraw} />
-                <Route path="/rebond" component={Rebond} />
+                <Route
+                  path="/withdraw/:accountId/:lockId"
+                  component={Withdraw}
+                />
+                <Route
+                  path="/rebond/:delegateAddress/:lockId"
+                  component={Rebond}
+                />
               </Switch>
             </CSSTransition>
           </TransitionGroup>

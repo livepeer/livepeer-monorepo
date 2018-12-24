@@ -200,6 +200,51 @@ export async function unbond(
   console.log(`Amount: ${amount}`)
   return await ctx.livepeer.rpc.unbond(amount, {
     ...ctx.livepeer.config.defaultTx,
+
+/**
+ * Submits a rebond transaction
+ * @param {MutationObj} obj
+ * @return {Promise<TxReceipt>}
+ */
+export async function rebond(
+  obj: MutationObj,
+  args,
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const { unbondingLockId } = args
+
+  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'rebond', [
+    unbondingLockId,
+  ])
+
+  return await ctx.livepeer.rpc.rebond(unbondingLockId, {
+    ...ctx.config.defaultTx,
+    gas: gas,
+  })
+}
+
+/**
+ * Submits a rebond transaction
+ * @param {MutationObj} obj
+ * @return {Promise<TxReceipt>}
+ */
+export async function rebondFromUnbonded(
+  obj: MutationObj,
+  args,
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const { delegate, unbondingLockId } = args
+
+  const gas = await ctx.livepeer.rpc.estimateGas(
+    'BondingManager',
+    'rebondFromUnbonded',
+    [delegate, unbondingLockId],
+  )
+  console.log('In graphql sdk')
+  console.log({ delegate })
+  console.log({ unbondingLockId })
+
+  return await ctx.livepeer.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
     gas: gas,
   })
 }

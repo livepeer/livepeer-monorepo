@@ -1143,11 +1143,11 @@ export async function createLivepeerSDK(
     /**
      * Get all the unbonding locks for a delegator
      * @param {string} addr - delegator's ETH address
-     * @return {Promise<UnbondingLock[]>}
+     * @return {Promise<Array<UnbondingLock>>}
      *
      * @example
      *
-     * await rpc.getAllDelegatorUnbondingLocks('0xf00...')
+     * await rpc.getDelegatorUnbondingLocks('0xf00...')
      * // => UnbondingLock [{
      * //   id: string,
      * //   delegator: string,
@@ -1155,21 +1155,31 @@ export async function createLivepeerSDK(
      * //   withdrawRound: string
      * // }]
      */
-    async getAllDelegatorUnbondingLocks(
+    async getDelegatorUnbondingLocks(
       addr: string,
-    ): Promise<UnbondingLock[]> {
-      let { nextUnbondingLockId } = await getDelegator(addr)
+    ): Promise<Array<UnbondingLock>> {
+      let { nextUnbondingLockId } = await rpc.getDelegator(addr)
+
+      console.log('next unboding lock id')
+      console.log({ nextUnbondingLockId })
+
+      let unbondingLockId = toNumber(nextUnbondingLockId)
+      if (unbondingLockId > 0) {
+        unbondingLockId -= 1
+      }
+
+      console.log('unboding lock id')
+      console.log({ unbondingLockId })
+
       let result = []
 
-      if (nextUnbondingLockId == 0) return result
-
-      while (nextUnbondingLockId != 0) {
-        const unbond = await getDelegatorUnbondingLock(
+      while (unbondingLockId > 0) {
+        const unbond = await rpc.getDelegatorUnbondingLock(
           addr,
-          nextUnbondingLockId,
+          toString(unbondingLockId),
         )
         result.push(unbond)
-        nextUnbondingLockId -= 1
+        unbondingLockId -= 1
       }
 
       return result
@@ -1206,6 +1216,91 @@ export async function createLivepeerSDK(
         amount,
         withdrawRound,
       }
+    },
+
+    /**
+     * Rebonds LPT from an address
+     * @memberof livepeer~rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.rebond(0)
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async rebond(
+      unbondingLockId: string,
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      return await utils.getTxReceipt(
+        await BondingManager.rebond(unbondingLockId, {
+          ...config.defaultTx,
+          ...tx,
+        }),
+        config.eth,
+      )
+    },
+
+    /**
+     * Rebonds LPT from an address
+     * @memberof livepeer~rpc
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.rebondFromUnbonded("0x", 1)
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async rebondFromUnbonded(
+      addr: string,
+      unbondingLockId: number,
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      return await utils.getTxReceipt(
+        await BondingManager.rebondFromUnbonded(addr, unbondingLockId, {
+          ...config.defaultTx,
+          ...tx,
+        }),
+        config.eth,
+      )
     },
 
     /**

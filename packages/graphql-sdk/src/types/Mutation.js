@@ -18,6 +18,12 @@ type Mutation {
   "Submits a bond transaction for a previously approved amount"
   unbond(amount: String!): JSON
 
+  "Rebond tokens for an unbonding lock to a delegator's current delegate while a delegator is in the Bonded or Pending states"
+  rebond(unbondingLockId: Int!): JSON
+
+  "Rebond tokens for an unbonding lock to a delegate while a delegator is in the Unbonded state "
+  rebondFromUnbonded(delegate: String!, unbondingLockId: Int!): JSON
+
 }`
 
 export default () => [Mutation]

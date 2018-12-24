@@ -32,8 +32,8 @@ const livepeer = {
       number: /latest/.test(id)
         ? `${CURRENT_BLOCK++}`
         : /earliest/.test(id)
-          ? '0'
-          : `${id}`,
+        ? '0'
+        : `${id}`,
     }),
     getENSName: async id => ALL_ENS_NAMES[id] || '',
     getENSAddress: async name => ALL_ENS_ADDRESSES[name] || '',
@@ -66,6 +66,9 @@ const livepeer = {
     getTranscoders: async () => Object.values(ALL_TRANSCODERS),
     getProtocolPaused: async () => false,
     getProtocol: async () => PROTOCOL,
+    getDelegatorUnbondingLocks: async () => UNBONDINGLOCKS,
+    getDelegatorUnbondingLock: async (id, index) =>
+      UNBONDINGLOCKS[parseInt(index)],
   },
   utils: {
     ...utils,
@@ -235,5 +238,14 @@ const PROTOCOL = {
   transcoderPoolMaxSize: '0',
   maxEarningsClaimsRounds: '0',
 }
+
+const UNBONDINGLOCKS = [
+  {
+    id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    delegator: EMPTY_ADDRESS.replace(/00/g, '11'),
+    amount: '0',
+    withdrawRound: '0',
+  },
+]
 
 export default livepeer

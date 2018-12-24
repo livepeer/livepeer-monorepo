@@ -22,6 +22,8 @@ type QueryCurrentBlockArgs = {}
 
 type QueryCurrentRoundArgs = {}
 
+type QueryUnbondingLockArgs = {}
+
 type QueryDelegatorArgs = {
   id?: string,
 }
@@ -143,6 +145,42 @@ export async function delegator(
   const { address, ...data } = await ctx.livepeer.rpc.getDelegator(id)
   const delegator = { ...data, id }
   return delegator
+}
+
+/**
+ * Gets unbonding locks by ETH address
+ * @param {QueryObj} obj
+ * @param {QueryUnbondingLockArgs} args
+ * @param {string} args.id - ETH address
+ * @param {GQLContext} ctx
+ * @return {Array<UnbondingLock>}
+ */
+export async function unbondlocks(
+  obj: AccountObj,
+  args: QueryUnbondingLockArgs,
+  ctx: GQLContext,
+): Array<UnbondLock> {
+  const { id } = args
+  const result = await ctx.livepeer.rpc.getDelegatorUnbondingLocks(id)
+  return result
+}
+
+/**
+ * Gets unbonding locks by ETH address
+ * @param {QueryObj} obj
+ * @param {QueryUnbondingLockArgs} args
+ * @param {string} args.id - ETH address
+ * @param {GQLContext} ctx
+ * @return {Array<UnbondingLock>}
+ */
+export async function unbondlock(
+  obj: AccountObj,
+  args: QueryUnbondingLockArgs,
+  ctx: GQLContext,
+): Array<UnbondLock> {
+  const { id, lockId } = args
+  const result = await ctx.livepeer.rpc.getDelegatorUnbondingLock(id, lockId)
+  return result
 }
 
 /**

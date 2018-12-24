@@ -8,7 +8,7 @@ import {
   InlineAccount,
   MetricBox,
   Wrapper,
-  Tooltip,
+  UnbondTx as UnbondTxComponent,
 } from '../../components'
 import enhance from './enhance'
 
@@ -16,6 +16,7 @@ export type AccountDelegatingProps = {
   coinbase: GraphQLProps<Coinbase>,
   currentRound: GraphQLProps<Round>,
   delegator: GraphQLProps<Delegator>,
+  unbondlocks: GraphQLProps<UnbondLock>,
   history: History,
   match: Match,
   claimEarnings: () => void,
@@ -32,6 +33,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   match,
   withdrawFees,
   withdrawStake,
+  unbondlocks,
 }) => {
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
@@ -48,6 +50,12 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     withdrawAmount,
     withdrawRound,
   } = delegator.data
+
+  if (unbondlocks)
+    unbondlocks = unbondlocks.filter(item => item['withdrawRound'] !== '0')
+  console.log('in boding')
+  console.log({ unbondlocks })
+
   const totalStake = MathBN.max(bondedAmount, pendingStake)
   const { lastInitializedRound } = currentRound.data
   const unclaimedRounds =
@@ -67,6 +75,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     ? MathBN.sub(withdrawRound, lastInitializedRound)
     : ''
   const canWithdraw = !isUnbonding && withdrawAmount !== '0'
+
   return (
     <Wrapper>
       {/*<InlineHint flag="account-delegating">
@@ -200,106 +209,30 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         )}
       </MetricBox>
       <MetricBox
-        help="Stake and fees earned since the last claimed round"
+        help="List of unbonding transactions from delegators"
         title="Unbonding Transactions"
         width="100%"
-        value={''}
-        subvalue={''}
+        value={!unbondlocks || unbondlocks.length === 0 ? 'N/A' : ''}
+        subvalue={
+          !unbondlocks || unbondlocks.length === 0
+            ? 'No unbonding transactions'
+            : ''
+        }
       >
-        <div
-          style={{
-            display: 'flex',
-            margin: 0,
-            paddingLeft: 20,
-            textAlign: 'left',
-            minWidth: '100%',
-            justifyContent: 'flex-start',
-            flexFlow: 'row wrap',
-          }}
-        >
-          <div
-            style={{
-              textAlign: 'left',
-              minWidth: '60%',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <h3>
-              <strong>30 LPT</strong> <br />{' '}
-              <span style={{ fontSize: 12, marginTop: '-10px' }}>
-                request made at block number #1000000
-              </span>
-            </h3>
+        {unbondlocks && unbondlocks.length > 0 && (
+          <div style={{ display: 'block', width: '100%' }}>
+            {unbondlocks.map(item => (
+              <UnbondTxComponent
+                id={item['id']}
+                amount={item['amount']}
+                delegator={item['delegator']}
+                currentRound={lastInitializedRound}
+                withdrawRound={item['withdrawRound']}
+                history={history}
+              />
+            ))}
           </div>
-          <div
-            style={{
-              minWidth: '40%',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <Tooltip text="Hello world">
-              <Button
-                onClick={e => {
-                  e.preventDefault()
-                  console.log('hellow')
-                  history.push('#/withdraw')
-                }}
-              >
-                Withdraw
-              </Button>
-            </Tooltip>
-            <Button
-              className="bond-token primary"
-              onClick={e => {
-                e.preventDefault()
-                history.push('#/rebond')
-              }}
-            >
-              <span>rebond</span>
-              <span style={{ marginLeft: 8 }}>&rarr;</span>
-            </Button>
-          </div>
-
-          <div
-            style={{
-              textAlign: 'left',
-              minWidth: '60%',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <h3>
-              <strong>60 LPT</strong> <br />{' '}
-              <span style={{ fontSize: 12, marginTop: '-10px' }}>
-                request made at block number #1000000
-              </span>
-            </h3>
-          </div>
-          <div
-            style={{
-              minWidth: '40%',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <Button
-              onClick={e => {
-                e.preventDefault()
-                history.push('#/withdraw')
-              }}
-            >
-              Withdraw
-            </Button>
-            <Button
-              className="bond-token primary"
-              onClick={e => {
-                e.preventDefault()
-                history.push('#/rebond')
-              }}
-            >
-              <span>rebond</span>
-              <span style={{ marginLeft: 8 }}>&rarr;</span>
-            </Button>
-          </div>
-        </div>
+        )}
       </MetricBox>
     </Wrapper>
   )
