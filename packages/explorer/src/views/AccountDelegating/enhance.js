@@ -48,10 +48,6 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
     const { account, ...queryProps } = data
     const { delegator, unbondlocks } = account || {}
 
-    console.log('Account delegating')
-    console.log({ delegator })
-    console.log({ unbondlocks })
-
     let result = {
       ...ownProps,
       delegator: {

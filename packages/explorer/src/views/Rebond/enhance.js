@@ -106,12 +106,7 @@ const connectTranscodersQuery = graphql(TranscodersQuery, {
 
 const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
   props: ({ data, ownProps }) => {
-    console.log('in rebonding')
-
-    console.log({ data })
-    console.log({ ownProps })
     const { account, ...queryProps } = data
-    console.log({ account })
     const { delegator, unbondlock } = account || {}
 
     let result = {
@@ -122,13 +117,10 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
       },
       unbondlock,
     }
-    console.log('in rebonding')
-    console.log({ result })
+
     return result
   },
   options: ({ match }) => {
-    console.log('in rebonding match')
-    console.log({ match })
     return {
       // pollInterval: 60 * 1000,
       variables: {
@@ -194,16 +186,8 @@ const mapMutationHandlers = withHandlers({
 
       if (delegateAddress) delegate = delegateAddress
 
-      console.log('In bonding')
-      console.log({ amount })
-      console.log({ id })
-
-      // const hasAmount = amount && amount.replace(/0|\./g, '')
-      // const wei = hasAmount ? toBaseUnit(amount) : '0'
       console.log('rebond', delegate, `${amount} LPT`)
       console.log('bonding...')
-      console.log({ rebondFromUnbonded })
-      // await window.livepeer.rpc.rebondFromUnbonded(delegate, id, { gas: 3200000 })
 
       await rebondFromUnbonded({
         variables: { delegate, unbondingLockId: id },
@@ -217,8 +201,6 @@ const mapMutationHandlers = withHandlers({
         body: `Successfully bonded ${amount} LPT to ${delegate}`,
       })
     } catch (err) {
-      console.log('error bonding token')
-      console.log({ err })
       if (!/User denied/.test(err.message)) {
         // Push notification if error is not a user cancel error
         toasts.push({

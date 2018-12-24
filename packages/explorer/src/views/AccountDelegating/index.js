@@ -51,10 +51,9 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     withdrawRound,
   } = delegator.data
 
-  if (unbondlocks)
+  if (unbondlocks) {
     unbondlocks = unbondlocks.filter(item => item['withdrawRound'] !== '0')
-  console.log('in boding')
-  console.log({ unbondlocks })
+  }
 
   const totalStake = MathBN.max(bondedAmount, pendingStake)
   const { lastInitializedRound } = currentRound.data

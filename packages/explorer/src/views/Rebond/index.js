@@ -21,14 +21,15 @@ const Rebond: React.ComponentType<RebondProps> = ({
   delegator,
 }) => {
   const closeModal = () => history.goBack()
-  let { amount } = unbondlock || {}
+
+  let { amount = 0 } = unbondlock || {}
+  amount = formatBalance(amount)
+
   let { delegateAddress } = delegator || {}
+
   if (!delegateAddress && transcoders['data'][0]) {
     delegateAddress = transcoders['data'][0]['id']
   }
-  if (amount) amount = formatBalance(amount)
-  console.log('in transcoding work')
-  console.log({ transcoders })
 
   return (
     <React.Fragment>
