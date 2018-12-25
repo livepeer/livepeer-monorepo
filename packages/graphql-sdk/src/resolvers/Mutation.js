@@ -208,7 +208,7 @@ export async function unbond(
  */
 export async function rebond(
   obj: MutationObj,
-  args,
+  args: { unbondingLockId: number },
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { unbondingLockId } = args
@@ -229,7 +229,7 @@ export async function rebond(
  */
 export async function rebondFromUnbonded(
   obj: MutationObj,
-  args,
+  args: { delegate: string, unbondingLockId: number },
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { delegate, unbondingLockId } = args
