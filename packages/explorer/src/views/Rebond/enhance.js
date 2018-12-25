@@ -1,7 +1,5 @@
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
 import { FORM_ERROR } from 'final-form'
 import { MathBN } from '../../utils'
 import {
@@ -12,129 +10,9 @@ import {
   connectRebondFromUnbondedMutation,
   connectRebondMutation,
   connectToasts,
+  connectTranscodersQuery,
+  connectAccountDelegatorUnbondLockQuery,
 } from '../../enhancers'
-import { mockDelegator } from '@livepeer/graphql-sdk'
-
-const AccountDelegatorQuery = gql`
-  fragment DelegatorFragment on Delegator {
-    id
-    allowance
-    status
-    delegateAddress
-    bondedAmount
-    fees
-    delegatedAmount
-    lastClaimRound
-    pendingFees
-    pendingStake
-    startRound
-    withdrawAmount
-    withdrawRound
-  }
-
-  query AccountDelegatorQuery($id: String!, $lockId: String!) {
-    account(id: $id) {
-      id
-      delegator {
-        ...DelegatorFragment
-      }
-
-      unbondlock(lockId: $lockId) {
-        id
-        amount
-        withdrawRound
-        delegator
-      }
-    }
-  }
-`
-
-const TranscodersQuery = gql`
-  fragment TranscoderFragment on Transcoder {
-    id
-    active
-    ensName
-    status
-    lastRewardRound
-    rewardCut
-    feeShare
-    pricePerSegment
-    pendingRewardCut
-    pendingFeeShare
-    pendingPricePerSegment
-    totalStake
-    rewards {
-      rewardTokens
-      round {
-        id
-      }
-    }
-  }
-
-  query TranscodersQuery($skip: Int!, $first: Int!) {
-    transcoders(skip: $skip, first: $first) {
-      ...TranscoderFragment
-    }
-  }
-`
-
-const connectTranscodersQuery = graphql(TranscodersQuery, {
-  props: ({ data, ownProps }) => {
-    let { transcoders, ...queryData } = data
-    // Filter by registered transcoders
-    // TODO: Use graphql variables instead when The Graph supports them
-    if (transcoders) {
-      transcoders = transcoders.filter(t => t.status === 'Registered')
-    }
-    return {
-      ...ownProps,
-      transcoders: {
-        ...queryData,
-        data: transcoders || [],
-      },
-    }
-  },
-  options: ({ match }) => ({
-    pollInterval: 10 * 1000,
-    variables: {
-      skip: 0,
-      first: 2,
-    },
-    fetchPolicy: 'cache-and-network',
-  }),
-})
-
-const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
-  props: ({ data, ownProps }) => {
-    const { account, ...queryProps } = data
-    const { delegator, unbondlock } = account || {}
-
-    let result = {
-      ...ownProps,
-      delegator: {
-        ...queryProps,
-        data: mockDelegator(delegator),
-      },
-      unbondlock,
-    }
-
-    return result
-  },
-  options: ({ match, location }) => {
-    const {
-      state: { accountId },
-    } = location
-    return {
-      // pollInterval: 60 * 1000,
-      variables: {
-        id: accountId,
-        lockId: match.params.lockId,
-      },
-      // ssr: false,
-      fetchPolicy: 'network-only',
-    }
-  },
-})
 
 const mapMutationHandlers = withHandlers({
   bond: ({
@@ -157,7 +35,7 @@ const mapMutationHandlers = withHandlers({
       if (!currentRound.data.initialized) {
         history.goBack()
         toasts.push({
-          id: 'bond',
+          id: 'rebond',
           type: 'warn',
           title: 'Unable to bond',
           body: 'The current round is not initialized.',
@@ -169,7 +47,7 @@ const mapMutationHandlers = withHandlers({
       if (MathBN.gt(unclaimedRounds, '20')) {
         history.goBack()
         toasts.push({
-          id: 'bond',
+          id: 'rebond',
           type: 'warn',
           title: 'Unable to bond',
           body: (
@@ -211,7 +89,7 @@ const mapMutationHandlers = withHandlers({
       }
 
       toasts.push({
-        id: 'bond',
+        id: 'rebond',
         type: 'success',
         title: 'Bonded Token',
         body: `Successfully bonded ${amount} LPT to ${delegate}`,
@@ -220,7 +98,7 @@ const mapMutationHandlers = withHandlers({
       if (!/User denied/.test(err.message)) {
         // Push notification if error is not a user cancel error
         toasts.push({
-          id: 'bond',
+          id: 'rebond',
           type: 'error',
           title: 'Error Bonding',
           body: 'There was a problem bonding your token',
@@ -239,8 +117,8 @@ export default compose(
   connectCoinbaseQuery,
   connectCurrentBlockQuery,
   connectCurrentRoundQuery,
-  connectAccountDelegatorQuery,
   connectTranscodersQuery,
+  connectAccountDelegatorUnbondLockQuery,
   connectBondMutation,
   connectRebondFromUnbondedMutation,
   connectRebondMutation,

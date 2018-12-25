@@ -1,81 +1,12 @@
 import { compose, withHandlers } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
 import { FORM_ERROR } from 'final-form'
-import { mockDelegator } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectToasts,
   withTransactionHandlers,
+  connectAccountDelegatorUnbondLockQuery,
 } from '../../enhancers'
-
-const AccountDelegatorQuery = gql`
-  fragment DelegatorFragment on Delegator {
-    id
-    allowance
-    status
-    delegateAddress
-    bondedAmount
-    fees
-    delegatedAmount
-    lastClaimRound
-    pendingFees
-    pendingStake
-    startRound
-    withdrawAmount
-    withdrawRound
-  }
-
-  query AccountDelegatorQuery($id: String!, $lockId: String!) {
-    account(id: $id) {
-      id
-      delegator {
-        ...DelegatorFragment
-      }
-
-      unbondlock(lockId: $lockId) {
-        id
-        amount
-        withdrawRound
-        delegator
-      }
-    }
-  }
-`
-
-const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
-  props: ({ data, ownProps }) => {
-    const { account, ...queryProps } = data
-    const { delegator, unbondlock } = account || {}
-
-    let result = {
-      ...ownProps,
-      delegator: {
-        ...queryProps,
-        data: mockDelegator(delegator),
-      },
-      unbondlock,
-    }
-
-    return result
-  },
-  options: ({ match, location }) => {
-    // pollInterval: 60 * 1000,
-    const {
-      state: { accountId },
-    } = location
-
-    return {
-      variables: {
-        id: accountId,
-        lockId: match.params.lockId,
-      },
-      // ssr: false,
-      fetchPolicy: 'network-only',
-    }
-  },
-})
 
 const mapMutationHandlers = withHandlers({
   withdrawStake: ({ currentRound, delegator, toasts }) => async () => {
@@ -135,7 +66,7 @@ const mapMutationHandlers = withHandlers({
 export default compose(
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
-  connectAccountDelegatorQuery,
+  connectAccountDelegatorUnbondLockQuery,
   connectToasts,
   withTransactionHandlers,
   mapMutationHandlers,

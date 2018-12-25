@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Form } from 'react-final-form'
-import Confetti from 'react-dom-confetti'
+import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import { formatBalance } from '../../utils'
 import Button from '../Button'
@@ -16,31 +16,17 @@ const Withdraw: React.StatelessFunctionalComponent<WithdrawProps> = ({
   loading,
   onCancel,
   pristine,
-  reset,
   submitting,
   submitError,
   submitFailed,
   submitSucceeded,
   valid,
-  values,
   ...props
 }) => {
-  const confetti = (
-    <Confetti
-      active={submitSucceeded}
-      config={{
-        angle: 90,
-        spread: 197,
-        startVelocity: 45,
-        elementCount: 50,
-        decay: 0.9,
-      }}
-    />
-  )
   if (submitSucceeded) {
     return (
       <React.Fragment>
-        {confetti}
+        <Confetti active={submitSucceeded} />
         <p>{`Sucessfully withdrawn ${formatBalance(amount)} LPT`}</p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
