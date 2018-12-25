@@ -14,9 +14,13 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
   history,
   withdrawStake,
   unbondlock,
+  location,
 }) => {
   const closeModal = () => history.goBack()
   const { amount } = unbondlock || {}
+  const {
+    state: { accountId },
+  } = location || {}
   return (
     <React.Fragment>
       <BasicModal title="Withdraw your LPT" onClose={closeModal}>
@@ -25,6 +29,7 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
           history={history}
           onCancel={closeModal}
           amount={amount}
+          accountId={accountId}
         />
       </BasicModal>
     </React.Fragment>

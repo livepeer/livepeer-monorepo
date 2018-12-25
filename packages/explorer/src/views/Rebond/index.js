@@ -24,8 +24,6 @@ const Rebond: React.ComponentType<RebondProps> = ({
   delegator,
 }) => {
   const closeModal = () => history.goBack()
-  console.log({ unbondlock })
-  console.log({ delegator })
   let { amount = 0 } = unbondlock || {}
   amount = formatBalance(amount)
 

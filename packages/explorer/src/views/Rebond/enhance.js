@@ -156,16 +156,19 @@ const mapMutationHandlers = withHandlers({
         : MathBN.sub(lastInitializedRound, lastClaimRound)
       if (!currentRound.data.initialized) {
         history.goBack()
-        return toasts.push({
+        toasts.push({
           id: 'bond',
           type: 'warn',
           title: 'Unable to bond',
           body: 'The current round is not initialized.',
         })
+        return {
+          [FORM_ERROR]: 'The current round is not initialized.',
+        }
       }
       if (MathBN.gt(unclaimedRounds, '20')) {
         history.goBack()
-        return toasts.push({
+        toasts.push({
           id: 'bond',
           type: 'warn',
           title: 'Unable to bond',
@@ -177,15 +180,17 @@ const mapMutationHandlers = withHandlers({
             </span>
           ),
         })
+        return {
+          [FORM_ERROR]: 'Unable to bond',
+        }
       }
 
-      let { id, amount, withdrawRound } = unbondlock
+      let { id, amount } = unbondlock
       id = parseInt(id)
-      console.log(typeof withdrawRound)
-      withdrawRound = parseInt(withdrawRound)
 
       // check if the user is currently partially bonded to a delegator
-      let { delegateAddress } = delegator['data'] || {}
+      let { delegateAddress, bondedAmount } = delegator['data'] || {}
+      bondedAmount = parseInt(bondedAmount)
 
       let delegate = transcoders['data'][0]['id']
       if (delegateAddress) delegate = delegateAddress
@@ -193,18 +198,12 @@ const mapMutationHandlers = withHandlers({
       console.log('rebond', delegate, `${amount} LPT`)
       console.log('bonding...')
 
-      console.log({ withdrawRound })
-      console.log({ lastInitializedRound })
-
-      if (withdrawRound > lastInitializedRound) {
-        console.log('rebonding ... ')
+      if (bondedAmount > 0) {
         await rebond({
           variables: { unbondingLockId: id },
           refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],
         })
       } else {
-        console.log('re bond bonding...')
-
         await rebondFromUnbonded({
           variables: { delegate, unbondingLockId: id },
           refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],

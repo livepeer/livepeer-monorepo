@@ -9,6 +9,7 @@ import type { WithdrawProps } from './props'
 const Withdraw: React.StatelessFunctionalComponent<WithdrawProps> = ({
   amount,
   history,
+  accountId,
   delegateAddress,
   errors,
   handleSubmit,
@@ -40,13 +41,13 @@ const Withdraw: React.StatelessFunctionalComponent<WithdrawProps> = ({
     return (
       <React.Fragment>
         {confetti}
-        <p>{`Sucessfully withdrawn ${amount} LPT`}</p>
+        <p>{`Sucessfully withdrawn ${formatBalance(amount)} LPT`}</p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
             <Button
               className="primary"
               disabled={loading}
-              onClick={e => history.push('/overview')}
+              onClick={e => history.push(`/accounts/${accountId}/overview`)}
             >
               View
             </Button>
