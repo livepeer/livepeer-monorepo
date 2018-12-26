@@ -91,7 +91,7 @@ const mapMutationHandlers = withHandlers({
       toasts.push({
         id: 'rebond',
         type: 'success',
-        title: 'Bonded Token',
+        title: 'Rebonded Token',
         body: `Successfully rebonded ${amount} LPT to ${delegate}`,
       })
     } catch (err) {
