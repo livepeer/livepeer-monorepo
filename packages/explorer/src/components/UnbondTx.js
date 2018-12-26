@@ -8,7 +8,6 @@ const UnbondTxComponent = ({
   history,
   accountId,
   id,
-  goTo,
 }) => {
   const goTo = hash => e => {
     e.preventDefault()
