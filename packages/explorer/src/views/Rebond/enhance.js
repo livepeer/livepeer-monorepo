@@ -92,7 +92,7 @@ const mapMutationHandlers = withHandlers({
         id: 'rebond',
         type: 'success',
         title: 'Bonded Token',
-        body: `Successfully bonded ${amount} LPT to ${delegate}`,
+        body: `Successfully rebonded ${amount} LPT to ${delegate}`,
       })
     } catch (err) {
       if (!/User denied/.test(err.message)) {

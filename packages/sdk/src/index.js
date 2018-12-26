@@ -1160,16 +1160,10 @@ export async function createLivepeerSDK(
     ): Promise<Array<UnbondingLock>> {
       let { nextUnbondingLockId } = await rpc.getDelegator(addr)
 
-      console.log('next unboding lock id')
-      console.log({ nextUnbondingLockId })
-
       let unbondingLockId = toNumber(nextUnbondingLockId)
       if (unbondingLockId > 0) {
         unbondingLockId -= 1
       }
-
-      console.log('unboding lock id')
-      console.log({ unbondingLockId })
 
       let result = []
 
