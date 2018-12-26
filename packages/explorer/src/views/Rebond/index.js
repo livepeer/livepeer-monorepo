@@ -41,6 +41,7 @@ const Rebond: React.ComponentType<RebondProps> = ({
           delegateAddress={delegateAddress}
           onSubmit={bond}
           onCancel={closeModal}
+          loading={unbondlock.loading}
         />
       </BasicModal>
     </React.Fragment>

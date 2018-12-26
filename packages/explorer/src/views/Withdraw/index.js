@@ -5,9 +5,9 @@ import enhance from './enhance'
 
 type WithdrawProps = {
   history: History,
-  amount: number,
   location: object,
   withdrawStake: () => void,
+  unbondlock: GraphQLProps<UnbondLock>,
 }
 
 const Withdraw: React.ComponentType<WithdrawProps> = ({
@@ -27,6 +27,7 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
         <WithdrawForm
           onSubmit={withdrawStake}
           history={history}
+          loading={unbondlock.loading}
           onCancel={closeModal}
           amount={amount}
           accountId={accountId}
