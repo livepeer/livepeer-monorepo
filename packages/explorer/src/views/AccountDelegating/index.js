@@ -223,12 +223,12 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             {unbondlocks.map(({ id, amount, withdrawRound }) => (
               <UnbondTxComponent
                 key={id}
-                accountId={accountId}
                 id={id}
                 amount={amount}
                 currentRound={lastInitializedRound}
                 withdrawRound={withdrawRound}
                 history={history}
+                accountId={accountId}
               />
             ))}
           </div>
