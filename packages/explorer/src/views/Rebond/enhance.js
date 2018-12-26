@@ -32,34 +32,35 @@ const mapMutationHandlers = withHandlers({
       const unclaimedRounds = isUnbonded
         ? ' 0'
         : MathBN.sub(lastInitializedRound, lastClaimRound)
-      if (!currentRound.data.initialized) {
-        history.goBack()
-        toasts.push({
-          id: 'rebond',
-          type: 'warn',
-          title: 'Unable to bond',
-          body: 'The current round is not initialized.',
-        })
-        return {
-          [FORM_ERROR]: 'The current round is not initialized.',
-        }
+
+      let err = {
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to bond',
       }
+
+      let body = null
+
+      if (!currentRound.data.initialized) {
+        body = 'The current round is not initialized.'
+      }
+
       if (MathBN.gt(unclaimedRounds, '20')) {
+        body = (
+          <span>
+            You have unclaimed earnings from more than 20 previous rounds.{' '}
+            <br />
+            <a href="/me/delegating">Claim Your Earnings</a>
+          </span>
+        )
+      }
+
+      if (body) {
         history.goBack()
-        toasts.push({
-          id: 'rebond',
-          type: 'warn',
-          title: 'Unable to bond',
-          body: (
-            <span>
-              You have unclaimed earnings from more than 20 previous rounds.{' '}
-              <br />
-              <a href="/me/delegating">Claim Your Earnings</a>
-            </span>
-          ),
-        })
+        err = { body, ...err }
+        toasts.push(err)
         return {
-          [FORM_ERROR]: 'Unable to bond',
+          [FORM_ERROR]: body,
         }
       }
 
@@ -74,7 +75,7 @@ const mapMutationHandlers = withHandlers({
       if (delegateAddress) delegate = delegateAddress
 
       console.log('rebond', delegate, `${amount} LPT`)
-      console.log('bonding...')
+      console.log('rebonding...')
 
       if (bondedAmount > 0) {
         await rebond({

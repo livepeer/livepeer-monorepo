@@ -518,8 +518,7 @@ export const AccountDelegatorUnbondLockQuery = gql`
 export const connectAccountDelegatorUnbondLockQuery = graphql(
   AccountDelegatorUnbondLockQuery,
   {
-    props: ({ data, ownProps }) => {
-      const { account, ...queryProps } = data
+    props: ({ data: { account, ...queryProps }, ownProps }) => {
       const { delegator, unbondlock } = account || {}
 
       let result = {

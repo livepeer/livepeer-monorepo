@@ -202,28 +202,7 @@ export async function unbond(
     ...ctx.livepeer.config.defaultTx,
 
 /**
- * Submits a rebond transaction
- * @param {MutationObj} obj
- * @return {Promise<TxReceipt>}
- */
-export async function rebond(
-  obj: MutationObj,
-  args: { unbondingLockId: number },
-  ctx: GQLContext,
-): Promise<TxReceipt> {
-  const { unbondingLockId } = args
-
-  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'rebond', [
-    unbondingLockId,
-  ])
-
-  return await ctx.livepeer.rpc.rebond(unbondingLockId, {
-    gas: gas,
-  })
-}
-
-/**
- * Submits a rebond transaction
+ * Submits a rebondFromUnbonded transaction
  * @param {MutationObj} obj
  * @return {Promise<TxReceipt>}
  */
@@ -241,6 +220,27 @@ export async function rebondFromUnbonded(
   )
 
   return await ctx.livepeer.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
+    gas: gas,
+  })
+}
+
+/**
+ * Submits a rebond transaction
+ * @param {MutationObj} obj
+ * @return {Promise<TxReceipt>}
+ */
+export async function rebond(
+  obj: MutationObj,
+  args: { unbondingLockId: number },
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const { unbondingLockId } = args
+
+  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'rebond', [
+    unbondingLockId,
+  ])
+
+  return await ctx.livepeer.rpc.rebond(unbondingLockId, {
     gas: gas,
   })
 }
