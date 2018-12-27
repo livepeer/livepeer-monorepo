@@ -208,7 +208,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         )}
       </MetricBox>
       <MetricBox
-        help="List of unbonding transactions from delegators"
+        help="List of unbonding transactions from delegator"
         title="Unbonding Transactions"
         width="100%"
         value={!unbondlocks || unbondlocks.length === 0 ? 'N/A' : ''}

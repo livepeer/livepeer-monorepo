@@ -7,11 +7,6 @@ export type WithdrawProps = {
   loading: boolean,
   onCancel: any => void,
   pristine: boolean,
-  tokenBalance: string,
   valid: boolean,
   history: object,
-  values: {
-    amount: string,
-    to: string,
-  },
 }
