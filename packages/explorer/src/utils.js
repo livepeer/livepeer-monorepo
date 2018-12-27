@@ -99,7 +99,8 @@ export function formatBalance(
 export function formatRoundsToDate(round: number): string {
   let date = new Date()
   date.setDate(date.getDate() + round)
-  return date.toDateString()
+  const [weekDay, month, day, year] = date.toDateString().split(' ')
+  return `${weekDay}, ${month} ${day}, ${year}`
 }
 
 export function toBaseUnit(x: string) {

@@ -36,7 +36,7 @@ const UnbondTxComponent = ({
         {withdrawRound <= currentRound ? (
           <h3>
             <strong>{formatBalance(amount)} LPT</strong> <br />{' '}
-            <span style={{ fontSize: 12, marginTop: '-10px' }}>
+            <span style={{ fontSize: 12 }}>
               The unbonding period has completed and you can withdraw your LPT.
             </span>
           </h3>
@@ -45,7 +45,7 @@ const UnbondTxComponent = ({
             <strong>{formatBalance(amount)} LPT</strong> <br />{' '}
             <span style={{ fontSize: 12, marginTop: '-10px' }}>
               You will be able to unbond approximately on{' '}
-              {formatRoundsToDate(withdrawRound - currentRound)}
+              {formatRoundsToDate(withdrawRound - currentRound)}.
             </span>
           </h3>
         )}
