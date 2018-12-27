@@ -6,7 +6,6 @@ import {
   connectCoinbaseQuery,
   connectCurrentBlockQuery,
   connectCurrentRoundQuery,
-  connectBondMutation,
   connectRebondFromUnbondedMutation,
   connectRebondMutation,
   connectToasts,
@@ -80,12 +79,20 @@ const mapMutationHandlers = withHandlers({
       if (bondedAmount > 0) {
         await rebond({
           variables: { unbondingLockId: id },
-          refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],
+          refreshQueries: [
+            'AccountDelegatorQuery',
+            'TranscodersQuery',
+            'AccountDelegatorUnbondLockQuery',
+          ],
         })
       } else {
         await rebondFromUnbonded({
           variables: { delegate, unbondingLockId: id },
-          refreshQueries: ['AccountDelegatorQuery', 'TranscodersQuery'],
+          refreshQueries: [
+            'AccountDelegatorQuery',
+            'TranscodersQuery',
+            'AccountDelegatorUnbondLockQuery',
+          ],
         })
       }
 
@@ -120,7 +127,6 @@ export default compose(
   connectCurrentRoundQuery,
   connectTranscodersQuery,
   connectAccountDelegatorUnbondLockQuery,
-  connectBondMutation,
   connectRebondFromUnbondedMutation,
   connectRebondMutation,
   connectToasts,

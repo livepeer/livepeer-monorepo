@@ -7,7 +7,7 @@ import enhance from './enhance'
 type RebondProps = {
   history: History,
   amount: number,
-  unbondlock: object,
+  unbondlock: GraphQLProps<UnbondLock>,
   bond: () => void,
   transcoders: GraphQLProps<Transcoder>,
   delegator: GraphQLProps<Delegator>,
@@ -41,7 +41,7 @@ const Rebond: React.ComponentType<RebondProps> = ({
           delegateAddress={delegateAddress}
           onSubmit={bond}
           onCancel={closeModal}
-          loading={unbondlock.loading}
+          loading={delegator.loading}
         />
       </BasicModal>
     </React.Fragment>

@@ -8,6 +8,7 @@ type WithdrawProps = {
   location: object,
   withdrawStake: () => void,
   unbondlock: GraphQLProps<UnbondLock>,
+  delegator: GraphQLProps<Delegator>,
 }
 
 const Withdraw: React.ComponentType<WithdrawProps> = ({
@@ -15,6 +16,7 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
   withdrawStake,
   unbondlock,
   location,
+  delegator,
 }) => {
   const closeModal = () => history.goBack()
   const { amount } = unbondlock || {}
@@ -27,7 +29,7 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
         <WithdrawForm
           onSubmit={withdrawStake}
           history={history}
-          loading={unbondlock.loading}
+          loading={delegator.loading}
           onCancel={closeModal}
           amount={amount}
           accountId={accountId}

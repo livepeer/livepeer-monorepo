@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Button, Tooltip } from './index'
-
+import { formatBalance, formatRoundsToDate } from '../utils'
 const UnbondTxComponent = ({
   amount,
   currentRound,
@@ -33,12 +33,22 @@ const UnbondTxComponent = ({
           justifyContent: 'flex-start',
         }}
       >
-        <h3>
-          <strong>{amount / 10e17} LPT</strong> <br />{' '}
-          <span style={{ fontSize: 12, marginTop: '-10px' }}>
-            you can withdraw at round #{withdrawRound}
-          </span>
-        </h3>
+        {withdrawRound <= currentRound ? (
+          <h3>
+            <strong>{formatBalance(amount)} LPT</strong> <br />{' '}
+            <span style={{ fontSize: 12, marginTop: '-10px' }}>
+              The unbonding period has completed and you can withdraw your LPT.
+            </span>
+          </h3>
+        ) : (
+          <h3>
+            <strong>{formatBalance(amount)} LPT</strong> <br />{' '}
+            <span style={{ fontSize: 12, marginTop: '-10px' }}>
+              You will be able to unbond approximately on{' '}
+              {formatRoundsToDate(withdrawRound - currentRound)}
+            </span>
+          </h3>
+        )}
       </div>
       <div
         style={{
@@ -51,8 +61,15 @@ const UnbondTxComponent = ({
             <Button onClick={goTo(`#/withdraw/${id}`)}>Withdraw</Button>
           </Tooltip>
         ) : (
-          <Tooltip text="The unbonding period is 7 days you will be able to withdraw later">
-            <Button disabled>Withdraw</Button>
+          <Tooltip
+            text={`The unbonding period is 7 days. You will be 
+                          able to withdraw on ${formatRoundsToDate(
+                            withdrawRound - currentRound,
+                          )}`}
+          >
+            <span>
+              <Button className="disabled">Withdraw</Button>
+            </span>
           </Tooltip>
         )}
 

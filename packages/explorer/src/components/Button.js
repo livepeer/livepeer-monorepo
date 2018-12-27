@@ -18,6 +18,7 @@ const Button = styled.button`
   :disabled {
     cursor: not-allowed;
     opacity: 0.5;
+    background: rgba(0, 0, 0, 0.2);
   }
   &.primary {
     background: var(--bg-dark);
@@ -33,6 +34,11 @@ const Button = styled.button`
     color: var(--white);
     background: none;
     box-shadow: inset 0 0 0 1px var(--white);
+  }
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: rgba(0, 0, 0, 0.2);
   }
 `
 
