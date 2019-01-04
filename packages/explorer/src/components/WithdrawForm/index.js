@@ -10,18 +10,11 @@ const Withdraw: React.StatelessFunctionalComponent<WithdrawProps> = ({
   amount,
   history,
   accountId,
-  delegateAddress,
-  errors,
   handleSubmit,
   loading,
   onCancel,
-  pristine,
   submitting,
-  submitError,
-  submitFailed,
   submitSucceeded,
-  valid,
-  ...props
 }) => {
   if (submitSucceeded) {
     return (

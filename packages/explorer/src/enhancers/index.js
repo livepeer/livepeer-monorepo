@@ -472,7 +472,7 @@ export const connectTranscodersQuery = graphql(TranscodersQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 10 * 1000,
+    pollInterval: 10000,
     variables: {
       skip: 0,
       first: 100,

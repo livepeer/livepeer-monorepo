@@ -6,6 +6,7 @@ import {
   connectCoinbaseQuery,
   connectCurrentBlockQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectRebondFromUnbondedMutation,
   connectRebondMutation,
   connectToasts,
@@ -23,10 +24,12 @@ const mapMutationHandlers = withHandlers({
     currentRound,
     history,
     delegator,
+    protocol,
   }) => async () => {
     try {
       const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = delegator['data']
+      const { maxEarningsClaimsRounds } = protocol.data
       const isUnbonded = status === 'Unbonded'
       const unclaimedRounds = isUnbonded
         ? ' 0'
@@ -44,11 +47,11 @@ const mapMutationHandlers = withHandlers({
         body = 'The current round is not initialized.'
       }
 
-      if (MathBN.gt(unclaimedRounds, '20')) {
+      if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
         body = (
           <span>
-            You have unclaimed earnings from more than 20 previous rounds.{' '}
-            <br />
+            You have unclaimed earnings from more than $
+            {maxEarningsClaimsRounds} previous rounds. <br />
             <a href="/me/delegating">Claim Your Earnings</a>
           </span>
         )
@@ -125,6 +128,7 @@ export default compose(
   connectCoinbaseQuery,
   connectCurrentBlockQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectTranscodersQuery,
   connectAccountDelegatorUnbondLockQuery,
   connectRebondFromUnbondedMutation,

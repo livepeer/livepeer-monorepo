@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, Tooltip } from './index'
 import { formatBalance, formatRoundsToDate } from '../utils'
-const UnbondTxComponent = ({
+const UnbondTx = ({
   amount,
   currentRound,
   withdrawRound,
@@ -9,8 +9,7 @@ const UnbondTxComponent = ({
   accountId,
   id,
 }) => {
-  const goTo = hash => e => {
-    e.preventDefault()
+  const goTo = hash => () => {
     history.push({ hash, state: { accountId } })
   }
 
@@ -82,4 +81,4 @@ const UnbondTxComponent = ({
   )
 }
 
-export default UnbondTxComponent
+export default UnbondTx

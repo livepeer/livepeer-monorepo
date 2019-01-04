@@ -12,26 +12,18 @@ import type { RebondFormProps } from './props'
 const RebondForm: React.StatelessFunctionalComponent<RebondFormProps> = ({
   amount,
   delegateAddress,
-  errors,
   handleSubmit,
   loading,
   onCancel,
-  pristine,
-  reset,
   submitting,
-  submitError,
-  submitFailed,
   submitSucceeded,
-  valid,
-  values,
-  ...props
 }) => {
   if (submitSucceeded) {
     return (
       <React.Fragment>
         <Confetti active={submitSucceeded} />
         <p>
-          Sucess! {`${amount} LPT are now bonded back to ${delegateAddress}`}
+          Sucess {`${amount} LPT are now bonded back to ${delegateAddress}`}
         </p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (

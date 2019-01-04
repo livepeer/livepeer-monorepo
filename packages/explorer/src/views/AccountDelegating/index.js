@@ -8,7 +8,7 @@ import {
   InlineAccount,
   MetricBox,
   Wrapper,
-  UnbondTx as UnbondTxComponent,
+  UnbondTx,
 } from '../../components'
 import enhance from './enhance'
 
@@ -221,7 +221,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         {unbondlocks && unbondlocks.length > 0 && (
           <div style={{ display: 'block', width: '100%' }}>
             {unbondlocks.map(({ id, amount, withdrawRound }) => (
-              <UnbondTxComponent
+              <UnbondTx
                 key={id}
                 id={id}
                 amount={amount}
