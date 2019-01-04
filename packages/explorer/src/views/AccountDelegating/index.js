@@ -207,18 +207,13 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           </React.Fragment>
         )}
       </MetricBox>
-      <MetricBox
-        help="List of unbonding transactions from delegator"
-        title="Unbonding Transactions"
-        width="100%"
-        value={!unbondlocks || unbondlocks.length === 0 ? 'N/A' : ''}
-        subvalue={
-          !unbondlocks || unbondlocks.length === 0
-            ? 'No unbonding transactions'
-            : ''
-        }
-      >
-        {unbondlocks && unbondlocks.length > 0 && (
+
+      {unbondlocks && unbondlocks.length > 0 && (
+        <MetricBox
+          help="List of unbonding transactions from delegator"
+          title="Unbonding Transactions"
+          width="100%"
+        >
           <div style={{ display: 'block', width: '100%' }}>
             {unbondlocks.map(({ id, amount, withdrawRound }) => (
               <UnbondTx
@@ -232,8 +227,8 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
               />
             ))}
           </div>
-        )}
-      </MetricBox>
+        </MetricBox>
+      )}
     </Wrapper>
   )
 }
