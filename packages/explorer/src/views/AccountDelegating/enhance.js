@@ -60,7 +60,7 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
     return result
   },
   options: ({ match }) => ({
-    pollInterval: 60000,
+    pollInterval: 5000,
     variables: {
       id: match.params.accountId,
     },
