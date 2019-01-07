@@ -115,7 +115,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
             (the unbonding period) in order to be able to withdraw your token.
           </li>
           <li>
-            <strong>Amount.</strong> You may unbond ALL or PARTIAL amoiunt of
+            <strong>Amount.</strong> You may unbond ALL or PARTIAL amount of
             your LPT. Enter the amount of LPT you wish to unbond in the box
             below.
           </li>

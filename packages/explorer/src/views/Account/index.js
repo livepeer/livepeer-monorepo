@@ -97,7 +97,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
           <Tabs url={match.url}>
             <TabLink to={`${match.url}/overview`}>overview</TabLink>
             <TabLink to={`${match.url}/broadcasting`}>broadcasting</TabLink>
-            <TabLink to={`${match.url}/delegating`}>delegating</TabLink>
+            <TabLink to={`${match.url}/delegating`}>staking</TabLink>
             <TabLink to={`${match.url}/transcoding`}>transcoding</TabLink>
           </Tabs>
         </div>
