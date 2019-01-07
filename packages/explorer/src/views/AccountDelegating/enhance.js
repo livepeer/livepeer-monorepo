@@ -1,3 +1,4 @@
+import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -5,9 +6,11 @@ import { mockDelegator } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectToasts,
   withTransactionHandlers,
 } from '../../enhancers'
+import { MathBN } from '../../utils'
 
 const AccountDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {
@@ -70,6 +73,89 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
 })
 
 const mapMutationHandlers = withHandlers({
+  processLock: ({ currentRound, history, toasts, delegator, protocol }) => ({
+    accountId,
+    hash,
+  }) => {
+    const {
+      id: lastInitializedRound,
+      initialized: isRoundInitialized,
+    } = currentRound.data
+    const { maxEarningsClaimsRounds } = protocol.data
+    const { status, lastClaimRound } = delegator['data']
+    const isUnbonded = status === 'Unbonded'
+    const unclaimedRounds = isUnbonded
+      ? ' 0'
+      : MathBN.sub(lastInitializedRound, lastClaimRound)
+
+    if (!isRoundInitialized) {
+      return toasts.push({
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to rebond',
+        body: 'The current round is not initialized.',
+      })
+    }
+
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
+      return toasts.push({
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to rebond',
+        body: (
+          <span>
+            You have unclaimed earnings from more than
+            {maxEarningsClaimsRounds} previous rounds. <br />
+            <a href="/me/delegating">Claim Your Earnings</a>
+          </span>
+        ),
+      })
+    }
+
+    history.push({ hash, state: { accountId } })
+  },
+  withdrawLock: ({
+    currentRound,
+    history,
+    toasts,
+    delegator,
+    protocol,
+  }) => () => {
+    const {
+      id: lastInitializedRound,
+      initialized: isRoundInitialized,
+    } = currentRound.data
+    const { maxEarningsClaimsRounds } = protocol.data
+    const { status, lastClaimRound } = delegator['data']
+    const isUnbonded = status === 'Unbonded'
+    const unclaimedRounds = isUnbonded
+      ? ' 0'
+      : MathBN.sub(lastInitializedRound, lastClaimRound)
+
+    if (!isRoundInitialized) {
+      return toasts.push({
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to rebond',
+        body: 'The current round is not initialized.',
+      })
+    }
+
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
+      return toasts.push({
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to rebond',
+        body: (
+          <span>
+            You have unclaimed earnings from more than
+            {maxEarningsClaimsRounds} previous rounds. <br />
+            <a href="/me/delegating">Claim Your Earnings</a>
+          </span>
+        ),
+      })
+    }
+  },
   claimEarnings: ({ currentRound, history, toasts }) => () => {
     const isRoundInitialized = currentRound.data.initialized
     if (!isRoundInitialized) {
@@ -165,6 +251,7 @@ const mapMutationHandlers = withHandlers({
 export default compose(
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectAccountDelegatorQuery,
   connectToasts,
   withTransactionHandlers,

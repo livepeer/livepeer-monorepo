@@ -26,7 +26,7 @@ const Withdraw: React.StatelessFunctionalComponent<WithdrawProps> = ({
             <Button
               className="primary"
               disabled={loading}
-              onClick={e => history.push(`/accounts/${accountId}/overview`)}
+              onClick={() => history.push(`/accounts/${accountId}/overview`)}
             >
               View
             </Button>

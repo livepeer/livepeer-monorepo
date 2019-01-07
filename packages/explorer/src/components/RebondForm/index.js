@@ -23,7 +23,7 @@ const RebondForm: React.StatelessFunctionalComponent<RebondFormProps> = ({
       <React.Fragment>
         <Confetti active={submitSucceeded} />
         <p>
-          Sucess {`${amount} LPT are now bonded back to ${delegateAddress}`}
+          {`Sucess ${amount} LPT are now bonded back to ${delegateAddress}`}
         </p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (

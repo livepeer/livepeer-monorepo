@@ -50,7 +50,7 @@ const mapMutationHandlers = withHandlers({
       if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
         body = (
           <span>
-            You have unclaimed earnings from more than $
+            You have unclaimed earnings from more than
             {maxEarningsClaimsRounds} previous rounds. <br />
             <a href="/me/delegating">Claim Your Earnings</a>
           </span>
