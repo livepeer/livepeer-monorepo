@@ -16,7 +16,7 @@ type Mutation {
   sendTransaction(options: JSON!): Boolean
 
   "Submits a bond transaction for a previously approved amount"
-  unbond: Boolean
+  unbond(amount: String!): JSON
 
 }`
 

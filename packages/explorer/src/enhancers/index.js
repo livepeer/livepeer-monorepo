@@ -100,6 +100,17 @@ export const connectApproveMutation = graphql(
   },
 )
 
+export const connectUnbondMutation = graphql(
+  gql`
+    mutation bond($amount: String!) {
+      unbond(amount: $amount)
+    }
+  `,
+  {
+    name: 'unbond',
+  },
+)
+
 export const connectBondMutation = graphql(
   gql`
     mutation bond($to: String!, $amount: String!) {
@@ -130,17 +141,6 @@ export const connectSendTransactionMutation = graphql(
   `,
   {
     name: 'sendTransaction',
-  },
-)
-
-export const connectUnbondMutation = graphql(
-  gql`
-    mutation unbond {
-      unbond
-    }
-  `,
-  {
-    name: 'unbond',
   },
 )
 

@@ -175,8 +175,8 @@ export const utils = {
               [k]: Array.isArray(v)
                 ? v.map(_v => (BN.isBN(_v) ? toString(_v) : _v))
                 : BN.isBN(v)
-                  ? toString(v)
-                  : v,
+                ? toString(v)
+                : v,
             }
           },
           {},
@@ -250,11 +250,10 @@ export const utils = {
   serializeTranscodingProfiles: names => {
     return [
       ...new Set( // dedupe profiles
-        names.map(
-          x =>
-            VIDEO_PROFILES[x]
-              ? VIDEO_PROFILES[x].hash
-              : VIDEO_PROFILES.P240p30fps4x3.hash,
+        names.map(x =>
+          VIDEO_PROFILES[x]
+            ? VIDEO_PROFILES[x].hash
+            : VIDEO_PROFILES.P240p30fps4x3.hash,
         ),
       ),
     ].join('')
@@ -383,18 +382,18 @@ export async function initRPC({
     'object' === typeof provider && provider
       ? provider
       : usePrivateKeys
-        ? // Use provider-signer to locally sign transactions
-          new SignerProvider(provider, {
-            signTransaction: (rawTx, cb) => {
-              const tx = new EthereumTx(rawTx)
-              tx.sign(privateKeys[from])
-              cb(null, '0x' + tx.serialize().toString('hex'))
-            },
-            accounts: cb => cb(null, accounts),
-            timeout: 10 * 1000,
-          })
-        : // Use default signer
-          new Eth.HttpProvider(provider || DEFAULTS.provider)
+      ? // Use provider-signer to locally sign transactions
+        new SignerProvider(provider, {
+          signTransaction: (rawTx, cb) => {
+            const tx = new EthereumTx(rawTx)
+            tx.sign(privateKeys[from])
+            cb(null, '0x' + tx.serialize().toString('hex'))
+          },
+          accounts: cb => cb(null, accounts),
+          timeout: 10 * 1000,
+        })
+      : // Use default signer
+        new Eth.HttpProvider(provider || DEFAULTS.provider)
   const eth = new Eth(ethjsProvider)
   const ens = new ENS({
     provider: eth.currentProvider,
@@ -491,12 +490,14 @@ export async function initContracts(
   // Create a list of events in each contract
   const events = Object.entries(abis)
     .map(([contract, abi]) => {
-      return abi.filter(x => x.type === 'event').map(abi => ({
-        abi,
-        contract,
-        event: contracts[contract][abi.name],
-        name: abi.name,
-      }))
+      return abi
+        .filter(x => x.type === 'event')
+        .map(abi => ({
+          abi,
+          contract,
+          event: contracts[contract][abi.name],
+          name: abi.name,
+        }))
     })
     .reduce(
       (a, b) =>
@@ -1903,7 +1904,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.unbond()
+     * await rpc.unbond(amount)
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1924,7 +1925,7 @@ export async function createLivepeerSDK(
      * //   }>
      * // }
      */
-    async unbond(tx = config.defaultTx): Promise<TxReceipt> {
+    async unbond(amount: string, tx = config.defaultTx): Promise<TxReceipt> {
       const { status, pendingStake, bondedAmount } = await rpc.getDelegator(
         tx.from,
       )
@@ -1934,13 +1935,22 @@ export async function createLivepeerSDK(
         toBN(pendingStake).cmp(toBN(bondedAmount)) < 0
           ? bondedAmount
           : pendingStake
-      // Can only unbond successfully when not already "Unbonded"
-      if (status === DELEGATOR_STATUS.Unbonded) {
-        throw new Error('This account is already unbonded.')
+      // Only unbond if amount doesn't exceed your current stake
+      if (totalStake >= amount) {
+        // Unbond total stake if a zero or negative amount is passed
+        amount = amount <= 0 ? totalStake : amount
+        // Can only unbond successfully when not already "Unbonded"
+        if (status === DELEGATOR_STATUS.Unbonded) {
+          throw new Error('This account is already unbonded.')
+        } else {
+          return await utils.getTxReceipt(
+            await BondingManager.unbond(amount),
+            config.eth,
+          )
+        }
       } else {
-        return await utils.getTxReceipt(
-          await BondingManager.unbond(totalStake),
-          config.eth,
+        throw new Error(
+          `Cannot unbond a portion of tokens greater than your total stake of ${totalStake} LPT`,
         )
       }
     },

@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import { FORM_ERROR } from 'final-form'
 import {
   connectApproveMutation,
-  connectBondMutation,
+  connectUnbondMutation,
   connectToasts,
 } from '../../enhancers'
 import { toBaseUnit } from '../../utils'
@@ -17,7 +17,6 @@ const MeDelegatorQuery = gql`
     tokenBalance
     delegator {
       id
-      allowance
       delegateAddress
       bondedAmount
     }
@@ -42,36 +41,35 @@ const connectMeDelegatorQuery = graphql(MeDelegatorQuery, {
     }
   },
   options: ({ match }) => ({
-    pollInterval: 5000,
+    // pollInterval: 5 * 1000,
     variables: {},
   }),
 })
 
 export const mapMutationHandlers = withHandlers({
-  bond: ({ bond, toasts }) => async ({ to, amount }) => {
+  unbond: ({ unbond, toasts }) => async ({ amount }) => {
     try {
       const hasAmount = amount && amount.replace(/0|\./g, '')
       const wei = hasAmount ? toBaseUnit(amount) : '0'
-      console.log('bondAndApprove', to, `${amount} LPT`, `${wei} WEI`)
-      console.log('bonding...')
-      await bond({
-        variables: { to, amount: wei },
+      console.log('unbonding...')
+      await unbond({
+        variables: { amount: wei },
         refreshQueries: ['MeDelegatorQuery', 'TranscodersQuery'],
       })
       toasts.push({
-        id: 'bond',
+        id: 'unbond',
         type: 'success',
-        title: 'Bonded Token',
-        body: `Successfully bonded ${amount} LPT to ${to}`,
+        title: 'Unbonded Token',
+        body: `Successfully unbonded ${amount} LPT`,
       })
     } catch (err) {
       if (!/User denied/.test(err.message)) {
         // Push notification if error is not a user cancel error
         toasts.push({
-          id: 'bond',
+          id: 'unbond',
           type: 'error',
-          title: 'Error Bonding',
-          body: 'There was a problem bonding your token',
+          title: 'Error Unbonding',
+          body: 'There was a problem unbonding your token',
         })
       }
       // resolve the submitError -- do not throw!
@@ -81,14 +79,11 @@ export const mapMutationHandlers = withHandlers({
       }
     }
   },
-  goApprove: ({ history, match }) => () => {
-    window.location.hash = `#/approve/${match.params.delegateAddress}`
-  },
 })
 
 export default compose(
   connectApproveMutation,
-  connectBondMutation,
+  connectUnbondMutation,
   connectMeDelegatorQuery,
   connectToasts,
   mapMutationHandlers,
