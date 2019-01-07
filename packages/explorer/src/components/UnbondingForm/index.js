@@ -133,7 +133,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
             <strong>Change your mind?</strong> If you have initiated the
             Unbonding process but wish to rebond your LPT, you do not need to
             wait for the period to end. Go to the Staking page on your account
-            mand click "Rebond".
+            and click "Rebond".
           </li>
         </ul>
       </div>
