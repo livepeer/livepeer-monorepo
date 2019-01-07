@@ -8,7 +8,8 @@ const UnbondTx = ({
   history,
   accountId,
   id,
-  processLock,
+  processRebond,
+  processWithdraw,
 }) => {
   return (
     <div
@@ -56,7 +57,7 @@ const UnbondTx = ({
           <Tooltip text="You can withdraw now">
             <Button
               onClick={() =>
-                processLock({ hash: `#/withdraw/${id}`, accountId })
+                processWithdraw({ hash: `#/withdraw/${id}`, accountId })
               }
             >
               Withdraw
@@ -77,7 +78,7 @@ const UnbondTx = ({
 
         <Button
           className="bond-token primary"
-          onClick={() => processLock({ hash: `#/rebond/${id}`, accountId })}
+          onClick={() => processRebond({ hash: `#/rebond/${id}`, accountId })}
         >
           <span>rebond</span>
           <span style={{ marginLeft: 8 }}>&rarr;</span>

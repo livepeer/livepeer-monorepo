@@ -73,7 +73,7 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
 })
 
 const mapMutationHandlers = withHandlers({
-  processLock: ({ currentRound, history, toasts, delegator, protocol }) => ({
+  processRebond: ({ currentRound, history, toasts, delegator, protocol }) => ({
     accountId,
     hash,
   }) => {
@@ -102,6 +102,50 @@ const mapMutationHandlers = withHandlers({
         id: 'rebond',
         type: 'warn',
         title: 'Unable to rebond',
+        body: (
+          <span>
+            You have unclaimed earnings from more than
+            {maxEarningsClaimsRounds} previous rounds. <br />
+            <a href="/me/delegating">Claim Your Earnings</a>
+          </span>
+        ),
+      })
+    }
+
+    history.push({ hash, state: { accountId } })
+  },
+  processWithdraw: ({
+    currentRound,
+    history,
+    toasts,
+    delegator,
+    protocol,
+  }) => ({ accountId, hash }) => {
+    const {
+      id: lastInitializedRound,
+      initialized: isRoundInitialized,
+    } = currentRound.data
+    const { maxEarningsClaimsRounds } = protocol.data
+    const { status, lastClaimRound } = delegator['data']
+    const isUnbonded = status === 'Unbonded'
+    const unclaimedRounds = isUnbonded
+      ? ' 0'
+      : MathBN.sub(lastInitializedRound, lastClaimRound)
+
+    if (!isRoundInitialized) {
+      return toasts.push({
+        id: 'withdraw',
+        type: 'warn',
+        title: 'Unable to withdraw',
+        body: 'The current round is not initialized.',
+      })
+    }
+
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
+      return toasts.push({
+        id: 'withdraw',
+        type: 'warn',
+        title: 'Unable to withdraw',
         body: (
           <span>
             You have unclaimed earnings from more than

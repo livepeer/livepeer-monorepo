@@ -34,7 +34,8 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   withdrawFees,
   withdrawStake,
   unbondlocks,
-  processLock,
+  processRebond,
+  processWithdraw,
 }) => {
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
@@ -225,7 +226,8 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
                 withdrawRound={withdrawRound}
                 history={history}
                 accountId={accountId}
-                processLock={processLock}
+                processRebond={processRebond}
+                processWithdraw={processWithdraw}
                 initialValues={{
                   accountId,
                   hash: '',
