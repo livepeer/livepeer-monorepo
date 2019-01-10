@@ -91,7 +91,6 @@ The following section details the rpc API's function signatures and typedefs.
   - [getInflationChange](#getinflationchange)
   - [getBroadcaster](#getbroadcaster)
   - [getDelegatorStatus](#getdelegatorstatus)
-  - [getDelegatorStake](#getdelegatorstake)
   - [getDelegator](#getdelegator)
   - [getTranscoderIsActive](#gettranscoderisactive)
   - [getTranscoderStatus](#gettranscoderstatus)
@@ -545,23 +544,6 @@ The delegator status of the given address
 ```javascript
 await rpc.getDelegatorStatus('0xf00...')
 // => 'Pending' | 'Bonded' | 'Unbonded'
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
-
-#### getDelegatorStake
-
-The delegator's stake
-
-**Parameters**
-
-- `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
-
-**Examples**
-
-```javascript
-await rpc.getDelegatorStake('0xf00...')
-// => string
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
@@ -1070,11 +1052,7 @@ method.
 **Examples**
 
 ```javascript
-await rpc.estimateGas(
- 'BondingManager',
- 'bond',
- [10, '0x00.....']
-)
+await rpc.estimateGas('BondingManager', 'bond', [10, '0x00.....'])
 // => 33454
 ```
 
