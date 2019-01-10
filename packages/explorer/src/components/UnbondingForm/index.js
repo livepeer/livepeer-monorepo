@@ -6,12 +6,12 @@ import Confetti from 'react-dom-confetti'
 import { withProp } from '../../enhancers'
 import { formatBalance } from '../../utils'
 import Button from '../Button'
-import type { BondFormProps } from './props'
+import type { UnbondFormProps } from './props'
 
 /**
  * Renders a form for token bonding.
  */
-const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
+const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
   allowance,
   bondedAmount,
   delegateAddress,
@@ -77,7 +77,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
     return (
       <React.Fragment>
         {confetti}
-        <h3>Success: The Unbonding Process Has Begun</h3>
+        <h3>Success: The Unbonding Process Has Begun.</h3>
         <p>
           It will take 7 days (the unbonding period) in order to be able to
           withdraw your token.
@@ -86,7 +86,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           Go to Account &rarr; Delegating and scroll to "Pending LPT" to see
           pending requests.
         </p>
-        <p>After 7 days, the "Withdraw" Button will be clickable</p>
+        <p>After 7 days, the "Withdraw" Button will be clickable.</p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
             <Button disabled={loading} onClick={view}>
@@ -102,7 +102,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
       {confetti}
       <div>
         <p>
-          <strong>How to Unbond</strong>
+          <strong>How to Unbond.</strong>
         </p>
         <ul>
           <li>
@@ -139,7 +139,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
       </div>
       <hr />
       <p style={{ textAlign: 'center' }}>
-        You have {formatBalance(bondedAmount, 18)} LPT bonded
+        You have {formatBalance(bondedAmount, 18)} LPT bonded.
       </p>
       <hr />
       {noBondedAmount && noAllowance ? null : (
@@ -160,7 +160,7 @@ const UnbondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
               min="0"
               max={max}
               disabled={loading}
-              rangeOverflow={`This amount is too large. Either your token balance is too low or you need to approve a higher transfer allowance.`}
+              rangeOverflow={`This amount is too large. You have entered a value higher than your amount bonded.`}
               step="any"
               placeholder="Amount"
               style={{

@@ -4,7 +4,7 @@ import { BasicModal, UnbondForm } from '../../components'
 import enhance from './enhance'
 import { MathBN, fromBaseUnit } from '../../utils'
 
-type BondViewProps = {
+type UnbondViewProps = {
   bond: any => void,
   bondStatus: TransactionStatus,
   goApprove: any => void,
@@ -15,7 +15,7 @@ type BondViewProps = {
   onClose: any => void,
 }
 
-const UnbondView: React.ComponentType<BondViewProps> = ({
+const UnbondView: React.ComponentType<UnbondViewProps> = ({
   approve,
   unbond,
   goApprove,
