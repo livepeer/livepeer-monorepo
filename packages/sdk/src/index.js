@@ -2318,6 +2318,7 @@ export async function createLivepeerSDK(
 
       const currentRound = await rpc.getCurrentRound()
 
+      // ensure the unbonding period is over
       if (withdrawRound > currentRound) {
         throw new Error('Delegator must wait through unbonding period')
       } else if (amount === '0') {

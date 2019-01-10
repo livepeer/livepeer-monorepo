@@ -41,6 +41,7 @@ const mapMutationHandlers = withHandlers({
         throw new Error(body)
       }
 
+      // withdraw stake with unbondlock
       await window.livepeer.rpc.withdrawStakeWithUnbondLock(unbondlock)
 
       toasts.push({
