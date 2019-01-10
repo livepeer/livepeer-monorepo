@@ -2253,19 +2253,22 @@ export async function createLivepeerSDK(
      * //   }>
      * // }
      */
-    async withdrawStake(tx = config.defaultTx): Promise<TxReceipt> {
+    async withdrawStake(
+      tx = config.defaultTx,
+      unbondingLockId = null,
+    ): Promise<TxReceipt> {
       const {
         status,
         withdrawAmount,
         nextUnbondingLockId,
       } = await rpc.getDelegator(tx.from)
 
-      if (status === DELEGATOR_STATUS.Unbonding) {
+      if (status === DELEGATOR_STATUS.Unbonding && !unbondingLockId) {
         throw new Error('Delegator must wait through unbonding period')
       } else if (withdrawAmount === '0') {
         throw new Error('Delegator does not have anything to withdraw')
       } else {
-        let unbondingLockId = toBN(nextUnbondingLockId)
+        unbondingLockId = toBN(nextUnbondingLockId)
         if (unbondingLockId.cmp(new BN(0)) > 0) {
           unbondingLockId = unbondingLockId.sub(new BN(1))
         }
@@ -2274,6 +2277,59 @@ export async function createLivepeerSDK(
           config.eth,
         )
       }
+    },
+
+    /**
+     * Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their `tokenBalance`)
+     * @memberof livepeer~rpc
+     * @param {} [unbondlock] - an object specifying the unbondlock id, amount & withdrawRound
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {TxReceipt}
+     *
+     * @example
+     *
+     * await rpc.withdrawStakeWithUnbondLock(unbondlock)
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+
+    async withdrawStakeWithUnbondLock(
+      unbondlock: { id: string, amount: string, withdrawRound: string },
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      const { id, amount, withdrawRound } = unbondlock
+
+      const currentRound = await rpc.getCurrentRound()
+
+      if (withdrawRound > currentRound) {
+        throw new Error('Delegator must wait through unbonding period')
+      } else if (amount === '0') {
+        throw new Error('Delegator does not have anything to withdraw')
+      }
+
+      let unbondingLockId = toBN(id)
+
+      return await utils.getTxReceipt(
+        await BondingManager.withdrawStake(toString(unbondingLockId), tx),
+        config.eth,
+      )
     },
 
     /**

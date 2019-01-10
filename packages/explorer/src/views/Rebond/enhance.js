@@ -1,7 +1,7 @@
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { FORM_ERROR } from 'final-form'
-import { MathBN } from '../../utils'
+import { MathBN, formatBalance } from '../../utils'
 import {
   connectCoinbaseQuery,
   connectCurrentBlockQuery,
@@ -103,7 +103,9 @@ const mapMutationHandlers = withHandlers({
         id: 'rebond',
         type: 'success',
         title: 'Rebonded Token',
-        body: `Successfully rebonded ${amount} LPT to ${delegate}`,
+        body: `Successfully rebonded ${formatBalance(
+          amount,
+        )} LPT to ${delegate}`,
       })
     } catch (err) {
       if (!/User denied/.test(err.message)) {

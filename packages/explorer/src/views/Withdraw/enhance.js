@@ -9,24 +9,29 @@ import {
 } from '../../enhancers'
 
 const mapMutationHandlers = withHandlers({
-  withdrawStake: ({ currentRound, delegator, toasts }) => async () => {
+  withdrawStake: ({
+    currentRound,
+    delegator,
+    toasts,
+    unbondlock,
+  }) => async () => {
     try {
+      const currentRoundNum = currentRound.data.id
       const isRoundInitialized = currentRound.data.initialized
-      const { status, withdrawAmount } = delegator.data
+      const { withdrawRound, amount: withdrawAmount } = unbondlock
+      console.log('withdraw amount')
+      console.log({ withdrawAmount })
 
       let err = {
         id: 'withdraw-stake',
         type: 'warn',
         title: 'Cannot withdraw stake',
-        body: 'First, you must wait through the unbonding period.',
       }
 
       let body = null
 
-      if (status === 'Unbonding') {
+      if (withdrawRound > currentRoundNum)
         body = 'First, you must wait through the unbonding period.'
-      }
-
       if (withdrawAmount === '0') body = 'You have nothing to withdraw'
       if (!isRoundInitialized) body = 'The current round is not initialized.'
 
@@ -36,7 +41,8 @@ const mapMutationHandlers = withHandlers({
         throw new Error(body)
       }
 
-      await window.livepeer.rpc.withdrawStake()
+      await window.livepeer.rpc.withdrawStakeWithUnbondLock(unbondlock)
+
       toasts.push({
         id: 'withdraw-stake',
         type: 'success',

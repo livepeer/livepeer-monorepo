@@ -18,6 +18,8 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
   location,
   delegator,
 }) => {
+  console.log('withdraw')
+  console.log({ unbondlock })
   const closeModal = () => history.goBack()
   const { amount } = unbondlock || {}
   const {
