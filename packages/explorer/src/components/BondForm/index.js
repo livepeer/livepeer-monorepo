@@ -21,6 +21,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   handleSubmit,
   loading,
   max,
+  maxEarningsClaimsRounds,
   onCancel,
   onUpdateAllowance,
   pristine,
@@ -115,8 +116,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           <li>You may switch delegates any time.</li>
           <li>You do not need to unbond to switch delegates.</li>
           <li>
-            You will automatically claim up to 20 rounds of unclaimed earnings
-            when bonding.
+            You will automatically claim up to {maxEarningsClaimsRounds} rounds
+            of unclaimed earnings when bonding.
           </li>
         </ul>
       </div>
@@ -125,7 +126,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
         <InlineHint disableHide>
           <p>
             <strong>One last thing:</strong> In order to bond, first, you will
-            need to approve a non-zero amount of tokens for transfer:<br />
+            need to approve a non-zero amount of tokens for transfer:
+            <br />
             <br />
             <Button onClick={onUpdateAllowance} style={{ fontWeight: 400 }}>
               Update your transfer allowance
@@ -145,10 +147,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
         <div style={{ width: '50%' }}>
           <p>Your Transfer Allowance</p>
           <p style={{ fontWeight: 400, marginBottom: 0 }}>
-            {formatBalance(allowance)} LPT&nbsp;<Button
-              onClick={onUpdateAllowance}
-              style={{ marginTop: 0 }}
-            >
+            {formatBalance(allowance)} LPT&nbsp;
+            <Button onClick={onUpdateAllowance} style={{ marginTop: 0 }}>
               Edit
             </Button>
           </p>

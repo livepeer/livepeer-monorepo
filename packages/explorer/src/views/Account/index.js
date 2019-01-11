@@ -27,6 +27,7 @@ type AccountViewProps = {
   location: Location,
   match: Match,
   me: GraphQLProps<Account>,
+  protocol: GraphQLProps<Protocol>,
   unbond: ({ id: string }) => void,
 }
 
@@ -38,6 +39,7 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   location,
   match,
   me,
+  protocol,
   unbond,
 }) => {
   const accountAddress = account.data.id
