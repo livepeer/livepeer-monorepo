@@ -23,7 +23,7 @@ import livepeer from './mock-sdk'
 import { publish, TransactionSubmitted } from './resolvers/Subscription'
 
 // clears console
-// console.log('\x1Bc')
+console.log('\x1Bc')
 
 test(async t => {
   const res = await graphql(schema, introspectionQuery, null, { livepeer }, {})
@@ -73,6 +73,7 @@ test('Subscription', async t => {
 test('AccountQuery (with ID)', async t => {
   const args = {
     id: EMPTY_ADDRESS.replace(/00/g, '22'),
+    lockId: '0',
   }
   const res = await graphql(schema, AccountQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))
@@ -82,6 +83,7 @@ test('AccountQuery (with ID)', async t => {
 test('AccountQuery (with ENS name)', async t => {
   const args = {
     id: 'foo.test',
+    lockId: '0',
   }
   const res = await graphql(schema, AccountQuery, null, { livepeer }, args)
   // console.log(JSON.stringify(res, null, 2))

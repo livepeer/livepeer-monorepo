@@ -1,5 +1,5 @@
 export default `
-fragment UnbondLocksFragment on UnbondLocks {
+fragment UnbondLocksFragment on UnbondLock {
   id
   delegator
   amount

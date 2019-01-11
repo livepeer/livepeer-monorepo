@@ -16,7 +16,7 @@ fragment AccountFragment on Account {
   unbondlocks {
     ...UnbondLocksFragment
   }
-  unbondlock {
+  unbondlock(lockId: $lockId) {
     ...UnbondLocksFragment
   }
 }`

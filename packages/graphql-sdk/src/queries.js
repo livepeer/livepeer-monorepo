@@ -7,13 +7,15 @@ import { default as RoundFragment } from './fragments/Round'
 import { default as TransactionFragment } from './fragments/Transaction'
 import { default as TranscoderFragment } from './fragments/Transcoder'
 import { default as ProtocolFragment } from './fragments/Protocol'
+import { default as UnbondLocksFragment } from './fragments/UnbondLock'
 
 export const AccountQuery = `
 ${AccountFragment}
 ${BroadcasterFragment}
 ${DelegatorFragment}
 ${TranscoderFragment}
-query AccountQuery($id: String) {
+${UnbondLocksFragment}
+query AccountQuery($id: String, $lockId: String!) {
   account(id: $id) {
     ...AccountFragment
   }
