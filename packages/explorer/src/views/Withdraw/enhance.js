@@ -19,8 +19,6 @@ const mapMutationHandlers = withHandlers({
       const currentRoundNum = currentRound.data.id
       const isRoundInitialized = currentRound.data.initialized
       const { withdrawRound, amount: withdrawAmount } = unbondlock
-      console.log('withdraw amount')
-      console.log({ withdrawAmount })
 
       let err = {
         id: 'withdraw-stake',
