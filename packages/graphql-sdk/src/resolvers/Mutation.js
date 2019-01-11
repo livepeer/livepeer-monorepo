@@ -154,7 +154,6 @@ export async function sendTransaction(
  * Submits an unbond transaction
  * @param {MutationObj} obj
  * @return {Promise<TxReceipt>}
- */
 export async function unbond(
   obj: MutationObj,
   args,
@@ -173,6 +172,34 @@ export async function unbond(
   ])
   return await ctx.livepeer.rpc.unbond({
     ...ctx.config.defaultTx,
+    gas: gas,
+  })
+}
+*/
+
+/**
+ * Submits an unbond transaction for a previously approved amount
+ * @param {MutationObj} obj
+ * @param {string} amount - The amount to unbond
+ * @return {Promise<TxReceipt>}
+ */
+export async function unbond(
+  obj: MutationObj,
+  args: { amount: string },
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const { amount } = args
+  let gas = 0
+  try {
+    gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'unbond', [
+      parseInt(amount),
+    ])
+  } catch (err) {
+    console.log(err)
+  }
+  console.log(`Amount: ${amount}`)
+  return await ctx.livepeer.rpc.unbond(amount, {
+    ...ctx.livepeer.config.defaultTx,
     gas: gas,
   })
 }

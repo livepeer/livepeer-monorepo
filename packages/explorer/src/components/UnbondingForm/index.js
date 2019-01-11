@@ -4,24 +4,20 @@ import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
 import Confetti from 'react-dom-confetti'
 import { withProp } from '../../enhancers'
-import { formatBalance, toBaseUnit, MathBN } from '../../utils'
-import InlineAccount from '../InlineAccount'
-import InlineHint from '../InlineHint'
+import { formatBalance } from '../../utils'
 import Button from '../Button'
-import type { BondFormProps } from './props'
+import type { UnbondFormProps } from './props'
 
 /**
  * Renders a form for token bonding.
  */
-const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
+const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
   allowance,
   bondedAmount,
   delegateAddress,
   errors,
   handleSubmit,
   loading,
-  max,
-  maxEarningsClaimsRounds,
   onCancel,
   onUpdateAllowance,
   reset,
@@ -29,9 +25,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   submitError,
   submitFailed,
   submitSucceeded,
-  tokenBalance,
-  valid,
   values,
+  view,
   ...props
 }) => {
   const confetti = (
@@ -48,9 +43,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   )
   const noAllowance = allowance === '0'
   const noBondedAmount = bondedAmount === '0'
-  const cannotBond =
-    (noAllowance && noBondedAmount) ||
-    (values.amount && MathBN.gt(toBaseUnit(values.amount), allowance))
+  const max = formatBalance(bondedAmount, 18)
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
     return (
       <React.Fragment>
@@ -81,20 +74,23 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
     )
   }
   if (submitSucceeded) {
-    // console.log('rendering bond success')
     return (
       <React.Fragment>
         {confetti}
+        <h3>Success: The Unbonding Process Has Begun.</h3>
         <p>
-          Congratulations! You successfully bonded your tokens to{' '}
-          {delegateAddress}. You may{' '}
-          <Link to="/me/delegating">view your delegating dashboard</Link> to see
-          more information.
+          It will take 7 days (the unbonding period) in order to be able to
+          withdraw your token.
         </p>
+        <p>
+          Go to Account &rarr; Delegating and scroll to "Pending LPT" to see
+          pending requests.
+        </p>
+        <p>After 7 days, the "Withdraw" Button will be clickable.</p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
-            <Button disabled={loading} onClick={onCancel}>
-              Done
+            <Button disabled={loading} onClick={view}>
+              View
             </Button>
           )}
         </div>
@@ -106,73 +102,69 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
       {confetti}
       <div>
         <p>
-          <strong>Bonding Tips:</strong>
+          <strong>How to Unbond.</strong>
         </p>
         <ul>
-          <li>You may only bond to one delegate.</li>
-          <li>You may switch delegates any time.</li>
-          <li>You do not need to unbond to switch delegates.</li>
           <li>
-            You will automatically claim up to {maxEarningsClaimsRounds} rounds
-            of unclaimed earnings when bonding.
+            <strong>Unbonding Definition.</strong> Unbonding allows you to
+            withdraw your token by releasing the token from the deposit with its
+            Transcoder.
+          </li>
+          <li>
+            <strong>Unbonding Period.</strong> Once you unbond, it takes 7 days
+            (the unbonding period) in order to be able to withdraw your token.
+          </li>
+          <li>
+            <strong>Amount.</strong> You may unbond ALL or PARTIAL amount of
+            your LPT. Enter the amount of LPT you wish to unbond in the box
+            below.
+          </li>
+          <li>
+            <strong>View Unbonding Transactions.</strong> View unbonding
+            transactions on the Staking page. Go to Account &rarr; Staking and
+            scroll to "Pending LPT."
+          </li>
+          <li>
+            <strong>Multiple Unbonding Transactions.</strong> Each time you
+            Unbond a partial amount of token, a transaction is created and must
+            be withdrawn or rebonded separataely.
+          </li>
+          <li>
+            <strong>Change your mind?</strong> If you have initiated the
+            Unbonding process but wish to rebond your LPT, you do not need to
+            wait for the period to end. Go to the Staking page on your account
+            and click "Rebond".
           </li>
         </ul>
       </div>
       <hr />
-      {!(noBondedAmount && noAllowance) ? null : (
-        <InlineHint disableHide>
-          <p>
-            <strong>One last thing:</strong> In order to bond, first, you will
-            need to approve a non-zero amount of tokens for transfer:
-            <br />
-            <br />
-            <Button onClick={onUpdateAllowance} style={{ fontWeight: 400 }}>
-              Update your transfer allowance
-            </Button>
-          </p>
-        </InlineHint>
-      )}
-      <p>Delegate</p>
-      <InlineAccount border address={delegateAddress} />
-      <div style={{ display: 'flex' }}>
-        <div style={{ width: '50%' }}>
-          <p>Your Token Balance</p>
-          <p style={{ fontWeight: 400, marginBottom: 0 }}>
-            {formatBalance(tokenBalance)} LPT
-          </p>
-        </div>
-        <div style={{ width: '50%' }}>
-          <p>Your Transfer Allowance</p>
-          <p style={{ fontWeight: 400, marginBottom: 0 }}>
-            {formatBalance(allowance)} LPT&nbsp;
-            <Button onClick={onUpdateAllowance} style={{ marginTop: 0 }}>
-              Edit
-            </Button>
-          </p>
-        </div>
-      </div>
+      <p style={{ textAlign: 'center' }}>
+        You have {formatBalance(bondedAmount, 18)} LPT bonded.
+      </p>
+      <hr />
       {noBondedAmount && noAllowance ? null : (
         <React.Fragment>
-          <p style={{ marginTop: 0 }}>Amount to Bond</p>
-          {noBondedAmount ? null : (
-            <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-              <strong>Note:</strong> By entering 0 or leaving this field blank,
-              you will transfer your existing bonded amount of{' '}
-              {formatBalance(bondedAmount, 18)} LPT the selected delegate.
-            </p>
-          )}
           <div>
+            <label
+              style={{
+                width: '15%',
+              }}
+            >
+              <strong>Amount</strong>{' '}
+            </label>
             <Field
+              id="ubondTxt"
               name="amount"
               component="input"
               type="number"
               min="0"
               max={max}
               disabled={loading}
-              rangeOverflow={`This amount is too large. Either your token balance is too low or you need to approve a higher transfer allowance.`}
+              rangeOverflow={`This amount is too large. You have entered a value higher than your amount bonded.`}
               step="any"
+              placeholder="Amount"
               style={{
-                width: '90%',
+                width: '70%',
                 height: 48,
                 padding: 8,
                 fontSize: 16,
@@ -185,6 +177,13 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
               </p>
             )}
           </div>
+          {noBondedAmount ? null : (
+            <p style={{ fontSize: 14, lineHeight: 1.5 }}>
+              <strong>Note:</strong> By entering 0 or leaving this field blank,
+              you will unbond your existing bonded amount of{' '}
+              {formatBalance(bondedAmount, 18)} LPT.
+            </p>
+          )}
         </React.Fragment>
       )}
       <div style={{ textAlign: 'right', paddingTop: 24 }}>
@@ -196,10 +195,10 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
         {noBondedAmount && noAllowance ? null : (
           <Button
             className="primary"
-            disabled={loading || submitting || errors.amount || cannotBond}
+            disabled={loading || submitting || errors.amount}
             onClick={handleSubmit}
           >
-            {submitting ? 'Submitting...' : 'Submit'}
+            {submitting ? 'Submitting...' : 'Unbond'}
           </Button>
         )}
       </div>
@@ -207,4 +206,4 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   )
 }
 
-export default withProp('component', BondForm)(Form)
+export default withProp('component', UnbondForm)(Form)

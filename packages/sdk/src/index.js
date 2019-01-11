@@ -1885,7 +1885,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.unbond()
+     * await rpc.unbond(amount)
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1906,7 +1906,7 @@ export async function createLivepeerSDK(
      * //   }>
      * // }
      */
-    async unbond(tx = config.defaultTx): Promise<TxReceipt> {
+    async unbond(amount: string, tx = config.defaultTx): Promise<TxReceipt> {
       const { status, pendingStake, bondedAmount } = await rpc.getDelegator(
         tx.from,
       )
@@ -1916,13 +1916,22 @@ export async function createLivepeerSDK(
         toBN(pendingStake).cmp(toBN(bondedAmount)) < 0
           ? bondedAmount
           : pendingStake
-      // Can only unbond successfully when not already "Unbonded"
-      if (status === DELEGATOR_STATUS.Unbonded) {
-        throw new Error('This account is already unbonded.')
+      // Only unbond if amount doesn't exceed your current stake
+      if (totalStake >= amount) {
+        // Unbond total stake if a zero or negative amount is passed
+        amount = amount <= 0 ? totalStake : amount
+        // Can only unbond successfully when not already "Unbonded"
+        if (status === DELEGATOR_STATUS.Unbonded) {
+          throw new Error('This account is already unbonded.')
+        } else {
+          return await utils.getTxReceipt(
+            await BondingManager.unbond(amount),
+            config.eth,
+          )
+        }
       } else {
-        return await utils.getTxReceipt(
-          await BondingManager.unbond(totalStake),
-          config.eth,
+        throw new Error(
+          `Cannot unbond a portion of tokens greater than your total stake of ${totalStake} LPT`,
         )
       }
     },

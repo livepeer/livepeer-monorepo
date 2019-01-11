@@ -5,6 +5,7 @@ import { CTABanner } from '../components'
 import Account from '../views/Account'
 import Approve from '../views/Approve'
 import Bond from '../views/Bond'
+import Unbond from '../views/Unbond'
 import ClaimEarnings from '../views/ClaimEarnings'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
@@ -57,6 +58,7 @@ const App = () => (
               >
                 <Route path="/approve/:delegateAddress" component={Approve} />
                 <Route path="/bond/:delegateAddress" component={Bond} />
+                <Route path="/unbond/:delegateAddress" component={Unbond} />
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
