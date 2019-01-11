@@ -2041,7 +2041,7 @@ export async function createLivepeerSDK(
           ? bondedAmount
           : pendingStake
       // Only unbond if amount doesn't exceed your current stake
-      if (totalStake >= amount) {
+      if (toBN(totalStake).cmp(toBN(amount)) >= 0) {
         // Unbond total stake if a zero or negative amount is passed
         amount = amount <= 0 ? totalStake : amount
         // Can only unbond successfully when not already "Unbonded"
