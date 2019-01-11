@@ -149,17 +149,6 @@ export const connectSendTransactionMutation = graphql(
   },
 )
 
-export const connectUnbondMutation = graphql(
-  gql`
-    mutation unbond {
-      unbond
-    }
-  `,
-  {
-    name: 'unbond',
-  },
-)
-
 export const connectRebondMutation = graphql(
   gql`
     mutation rebond($unbondingLockId: Int!) {

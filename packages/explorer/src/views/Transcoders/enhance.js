@@ -113,7 +113,9 @@ const mapMutationHandlers = withHandlers({
     }
     history.push(`#/bond/${id}`)
   },
-  unbond: ({ currentRound, history, me, toasts }) => async ({ id }) => {
+  unbond: ({ currentRound, history, me, toasts, protocol }) => async ({
+    id,
+  }) => {
     try {
       const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator
