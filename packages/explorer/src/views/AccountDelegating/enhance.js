@@ -1,3 +1,4 @@
+import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -5,9 +6,11 @@ import { mockDelegator } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectToasts,
   withTransactionHandlers,
 } from '../../enhancers'
+import { MathBN } from '../../utils'
 
 const AccountDelegatorQuery = gql`
   fragment DelegatorFragment on Delegator {
@@ -32,6 +35,13 @@ const AccountDelegatorQuery = gql`
       delegator {
         ...DelegatorFragment
       }
+
+      unbondlocks {
+        id
+        amount
+        withdrawRound
+        delegator
+      }
     }
   }
 `
@@ -39,17 +49,21 @@ const AccountDelegatorQuery = gql`
 const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
   props: ({ data, ownProps }) => {
     const { account, ...queryProps } = data
-    const { delegator } = account || {}
-    return {
+    const { delegator, unbondlocks } = account || {}
+
+    let result = {
       ...ownProps,
       delegator: {
         ...queryProps,
         data: mockDelegator(delegator),
       },
+      unbondlocks,
     }
+
+    return result
   },
   options: ({ match }) => ({
-    // pollInterval: 60 * 1000,
+    pollInterval: 5000,
     variables: {
       id: match.params.accountId,
     },
@@ -59,6 +73,91 @@ const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
 })
 
 const mapMutationHandlers = withHandlers({
+  processRebond: ({ currentRound, history, toasts, delegator, protocol }) => ({
+    accountId,
+    hash,
+  }) => {
+    const {
+      id: lastInitializedRound,
+      initialized: isRoundInitialized,
+    } = currentRound.data
+    const { maxEarningsClaimsRounds } = protocol.data
+    const { status, lastClaimRound } = delegator['data']
+    const isUnbonded = status === 'Unbonded'
+    const unclaimedRounds = isUnbonded
+      ? ' 0'
+      : MathBN.sub(lastInitializedRound, lastClaimRound)
+
+    if (!isRoundInitialized) {
+      return toasts.push({
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to rebond',
+        body: 'The current round is not initialized.',
+      })
+    }
+
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
+      return toasts.push({
+        id: 'rebond',
+        type: 'warn',
+        title: 'Unable to rebond',
+        body: (
+          <span>
+            You have unclaimed earnings from more than
+            {maxEarningsClaimsRounds} previous rounds. <br />
+            <a href="/me/delegating">Claim Your Earnings</a>
+          </span>
+        ),
+      })
+    }
+
+    history.push({ hash, state: { accountId } })
+  },
+  processWithdraw: ({
+    currentRound,
+    history,
+    toasts,
+    delegator,
+    protocol,
+  }) => ({ accountId, hash }) => {
+    const {
+      id: lastInitializedRound,
+      initialized: isRoundInitialized,
+    } = currentRound.data
+    const { maxEarningsClaimsRounds } = protocol.data
+    const { status, lastClaimRound } = delegator['data']
+    const isUnbonded = status === 'Unbonded'
+    const unclaimedRounds = isUnbonded
+      ? ' 0'
+      : MathBN.sub(lastInitializedRound, lastClaimRound)
+
+    if (!isRoundInitialized) {
+      return toasts.push({
+        id: 'withdraw',
+        type: 'warn',
+        title: 'Unable to withdraw',
+        body: 'The current round is not initialized.',
+      })
+    }
+
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
+      return toasts.push({
+        id: 'withdraw',
+        type: 'warn',
+        title: 'Unable to withdraw',
+        body: (
+          <span>
+            You have unclaimed earnings from more than
+            {maxEarningsClaimsRounds} previous rounds. <br />
+            <a href="/me/delegating">Claim Your Earnings</a>
+          </span>
+        ),
+      })
+    }
+
+    history.push({ hash, state: { accountId } })
+  },
   claimEarnings: ({ currentRound, history, toasts }) => () => {
     const isRoundInitialized = currentRound.data.initialized
     if (!isRoundInitialized) {
@@ -154,6 +253,7 @@ const mapMutationHandlers = withHandlers({
 export default compose(
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectAccountDelegatorQuery,
   connectToasts,
   withTransactionHandlers,

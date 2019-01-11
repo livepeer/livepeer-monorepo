@@ -13,6 +13,8 @@ import SmartContracts from '../views/SmartContracts'
 import ProtocolStatus from '../views/ProtocolStatus'
 import ToastNotifications from '../views/ToastNotifications'
 import Transcoders from '../views/Transcoders'
+import Withdraw from '../views/Withdraw'
+import Rebond from '../views/Rebond'
 
 const App = () => (
   <BrowserRouter>
@@ -50,6 +52,9 @@ const App = () => (
             >
               <Switch
                 location={{
+                  get state() {
+                    return location.state
+                  },
                   get pathname() {
                     // use hash as pathname
                     return location.hash.substr(1)
@@ -62,6 +67,8 @@ const App = () => (
                 <Route path="/claim-earnings" component={ClaimEarnings} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
+                <Route path="/withdraw/:lockId" component={Withdraw} />
+                <Route path="/rebond/:lockId" component={Rebond} />
               </Switch>
             </CSSTransition>
           </TransitionGroup>

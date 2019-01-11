@@ -5,7 +5,12 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mapProps } from 'recompose'
 import { Subscribe } from 'unstated'
-import { mockBlock, mockRound, mockProtocol } from '@livepeer/graphql-sdk'
+import {
+  mockBlock,
+  mockRound,
+  mockProtocol,
+  mockDelegator,
+} from '@livepeer/graphql-sdk'
 import { ToastNotificationContainer } from '../containers'
 
 export { default as withTransactionHandlers } from './withTransactionHandlers'
@@ -141,6 +146,28 @@ export const connectSendTransactionMutation = graphql(
   `,
   {
     name: 'sendTransaction',
+  },
+)
+
+export const connectRebondMutation = graphql(
+  gql`
+    mutation rebond($unbondingLockId: Int!) {
+      rebond(unbondingLockId: $unbondingLockId)
+    }
+  `,
+  {
+    name: 'rebond',
+  },
+)
+
+export const connectRebondFromUnbondedMutation = graphql(
+  gql`
+    mutation rebondFromUnbonded($delegate: String!, $unbondingLockId: Int!) {
+      rebondFromUnbonded(delegate: $delegate, unbondingLockId: $unbondingLockId)
+    }
+  `,
+  {
+    name: 'rebondFromUnbonded',
   },
 )
 
@@ -387,3 +414,127 @@ export const connectTransactionsQuery = graphql(TransactionsQuery, {
     fetchPolicy: 'cache-and-network',
   }),
 })
+
+export const TranscodersQuery = gql`
+  fragment TranscoderFragment on Transcoder {
+    id
+    active
+    ensName
+    status
+    lastRewardRound
+    rewardCut
+    feeShare
+    pricePerSegment
+    pendingRewardCut
+    pendingFeeShare
+    pendingPricePerSegment
+    totalStake
+    rewards {
+      rewardTokens
+      round {
+        id
+      }
+    }
+  }
+
+  query TranscodersQuery {
+    transcoders {
+      ...TranscoderFragment
+    }
+  }
+`
+
+export const connectTranscodersQuery = graphql(TranscodersQuery, {
+  props: ({ data, ownProps }) => {
+    let { transcoders, ...queryData } = data
+    // Filter by registered transcoders
+    // TODO: Use graphql variables instead when The Graph supports them
+    if (transcoders) {
+      transcoders = transcoders.filter(t => t.status === 'Registered')
+    }
+    return {
+      ...ownProps,
+      transcoders: {
+        ...queryData,
+        data: transcoders || [],
+      },
+    }
+  },
+  options: ({ match }) => ({
+    pollInterval: 10000,
+    variables: {
+      skip: 0,
+      first: 100,
+    },
+    fetchPolicy: 'cache-and-network',
+  }),
+})
+
+export const AccountDelegatorUnbondLockQuery = gql`
+  fragment DelegatorFragment on Delegator {
+    id
+    allowance
+    status
+    delegateAddress
+    bondedAmount
+    fees
+    delegatedAmount
+    lastClaimRound
+    pendingFees
+    pendingStake
+    startRound
+    withdrawAmount
+    withdrawRound
+  }
+
+  query AccountDelegatorQuery($id: String!, $lockId: String!) {
+    account(id: $id) {
+      id
+      delegator {
+        ...DelegatorFragment
+      }
+
+      unbondlock(lockId: $lockId) {
+        id
+        amount
+        withdrawRound
+        delegator
+      }
+    }
+  }
+`
+
+export const connectAccountDelegatorUnbondLockQuery = graphql(
+  AccountDelegatorUnbondLockQuery,
+  {
+    props: ({ data: { account, ...queryProps }, ownProps }) => {
+      const { delegator, unbondlock } = account || {}
+
+      let result = {
+        ...ownProps,
+        delegator: {
+          ...queryProps,
+          data: mockDelegator(delegator),
+        },
+        unbondlock,
+      }
+
+      return result
+    },
+    options: ({ match, location }) => {
+      // pollInterval: 60 * 1000,
+      const {
+        state: { accountId },
+      } = location
+
+      return {
+        variables: {
+          id: accountId,
+          lockId: match.params.lockId,
+        },
+        // ssr: false,
+        fetchPolicy: 'network-only',
+      }
+    },
+  },
+)

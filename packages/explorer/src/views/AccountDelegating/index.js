@@ -3,13 +3,20 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { Minus as MinusIcon } from 'react-feather'
 import { formatBalance, MathBN } from '../../utils'
-import { Button, InlineAccount, MetricBox, Wrapper } from '../../components'
+import {
+  Button,
+  InlineAccount,
+  MetricBox,
+  Wrapper,
+  UnbondTx,
+} from '../../components'
 import enhance from './enhance'
 
 export type AccountDelegatingProps = {
   coinbase: GraphQLProps<Coinbase>,
   currentRound: GraphQLProps<Round>,
   delegator: GraphQLProps<Delegator>,
+  unbondlocks: GraphQLProps<UnbondLock>,
   history: History,
   match: Match,
   claimEarnings: () => void,
@@ -26,6 +33,9 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
   match,
   withdrawFees,
   withdrawStake,
+  unbondlocks,
+  processRebond,
+  processWithdraw,
 }) => {
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { accountId } = match.params
@@ -42,6 +52,11 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     withdrawAmount,
     withdrawRound,
   } = delegator.data
+
+  if (unbondlocks) {
+    unbondlocks = unbondlocks.filter(item => item['withdrawRound'] !== '0')
+  }
+
   const totalStake = MathBN.max(bondedAmount, pendingStake)
   const { lastInitializedRound } = currentRound.data
   const unclaimedRounds =
@@ -61,6 +76,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
     ? MathBN.sub(withdrawRound, lastInitializedRound)
     : ''
   const canWithdraw = !isUnbonding && withdrawAmount !== '0'
+
   return (
     <Wrapper>
       {/*<InlineHint flag="account-delegating">
@@ -160,6 +176,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
       <MetricBox
         help="Stake and fees earned since the last claimed round"
         title="Unclaimed Earnings"
+        width="100%"
         value={
           !delegateAddress
             ? 'N/A'
@@ -192,6 +209,34 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           </React.Fragment>
         )}
       </MetricBox>
+
+      {unbondlocks && unbondlocks.length > 0 && (
+        <MetricBox
+          help="List of unbonding transactions from delegator"
+          title="Unbonding Transactions"
+          width="100%"
+        >
+          <div style={{ display: 'block', width: '100%' }}>
+            {unbondlocks.map(({ id, amount, withdrawRound }) => (
+              <UnbondTx
+                key={id}
+                id={id}
+                amount={amount}
+                currentRound={lastInitializedRound}
+                withdrawRound={withdrawRound}
+                history={history}
+                accountId={accountId}
+                processRebond={processRebond}
+                processWithdraw={processWithdraw}
+                initialValues={{
+                  accountId,
+                  hash: '',
+                }}
+              />
+            ))}
+          </div>
+        </MetricBox>
+      )}
     </Wrapper>
   )
 }

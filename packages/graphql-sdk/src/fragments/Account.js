@@ -13,4 +13,10 @@ fragment AccountFragment on Account {
   transcoder {
     ...TranscoderFragment
   }
+  unbondlocks {
+    ...UnbondLocksFragment
+  }
+  unbondlock(lockId: $lockId) {
+    ...UnbondLocksFragment
+  }
 }`

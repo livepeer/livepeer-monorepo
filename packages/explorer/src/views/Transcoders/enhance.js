@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 import {
   connectCurrentRoundQuery,
   connectProtocolQuery,
+  connectTranscodersQuery,
   connectToasts,
 } from '../../enhancers'
 import { MathBN } from '../../utils'
@@ -79,61 +80,6 @@ const connectMeDelegatorTranscoderQuery = graphql(MeDelegatorTranscoderQuery, {
   }),
 })
 
-const TranscodersQuery = gql`
-  fragment TranscoderFragment on Transcoder {
-    id
-    active
-    ensName
-    status
-    lastRewardRound
-    rewardCut
-    feeShare
-    pricePerSegment
-    pendingRewardCut
-    pendingFeeShare
-    pendingPricePerSegment
-    totalStake
-    rewards {
-      rewardTokens
-      round {
-        id
-      }
-    }
-  }
-
-  query TranscodersQuery {
-    transcoders {
-      ...TranscoderFragment
-    }
-  }
-`
-
-const connectTranscodersQuery = graphql(TranscodersQuery, {
-  props: ({ data, ownProps }) => {
-    let { transcoders, ...queryData } = data
-    // Filter by registered transcoders
-    // TODO: Use graphql variables instead when The Graph supports them
-    if (transcoders) {
-      transcoders = transcoders.filter(t => t.status === 'Registered')
-    }
-    return {
-      ...ownProps,
-      transcoders: {
-        ...queryData,
-        data: transcoders || [],
-      },
-    }
-  },
-  options: ({ match }) => ({
-    pollInterval: 10 * 1000,
-    variables: {
-      skip: 0,
-      first: 100,
-    },
-    fetchPolicy: 'cache-and-network',
-  }),
-})
-
 const mapMutationHandlers = withHandlers({
   bond: ({ currentRound, history, me, protocol, toasts }) => ({ id }) => {
     const { id: lastInitializedRound } = currentRound.data
@@ -167,7 +113,9 @@ const mapMutationHandlers = withHandlers({
     }
     history.push(`#/bond/${id}`)
   },
-  unbond: ({ currentRound, history, me, toasts }) => async ({ id }) => {
+  unbond: ({ currentRound, history, me, toasts, protocol }) => async ({
+    id,
+  }) => {
     try {
       const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator

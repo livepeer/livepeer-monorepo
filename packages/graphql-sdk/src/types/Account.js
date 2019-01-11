@@ -1,9 +1,9 @@
 import Broadcaster from './Broadcaster'
 import Delegator from './Delegator'
 import Transcoder from './Transcoder'
+import UnbondLock from './UnbondLock'
 
 const Account = `
-
 "A type that describes a Livepeer account"
 type Account {
 
@@ -28,6 +28,11 @@ type Account {
   "The transcoder info for an account"
   transcoder: Transcoder!
 
+  "The unbonding locks for an account "
+  unbondlocks: [UnbondLock]!
+
+  "An unbond lock for an account"
+  unbondlock(lockId: String!): UnbondLock!
 }`
 
-export default () => [Account, Broadcaster, Delegator, Transcoder]
+export default () => [Account, Broadcaster, Delegator, Transcoder, UnbondLock]

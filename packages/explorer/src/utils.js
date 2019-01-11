@@ -96,6 +96,13 @@ export function formatBalance(
         .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')
 }
 
+export function formatRoundsToDate(round: number): string {
+  let date = new Date()
+  date.setDate(date.getDate() + round)
+  const [weekDay, month, day, year] = date.toDateString().split(' ')
+  return `${weekDay}, ${month} ${day}, ${year}`
+}
+
 export function toBaseUnit(x: string) {
   return !x ? '' : unit.toWei(x, 'ether').toString(10)
 }
