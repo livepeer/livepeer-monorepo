@@ -263,6 +263,21 @@ test('should return object with correct shape from getDelegatorUnbondingLock()',
   t.pass()
 })
 
+test('should return object with correct shape from getDelegatorUnbondingLocks()', async t => {
+  const schema = array(
+    object({
+      id: string,
+      delegator: string,
+      amount: string,
+      withdrawRound: string,
+    }),
+  )
+  const { from } = livepeer.config.defaultTx
+  const res = await livepeer.rpc.getDelegatorUnbondingLocks(from)
+  schema.validateSync(res)
+  t.pass()
+})
+
 // Transcoder
 
 test('should return object with correct shape from getTranscoder()', async t => {

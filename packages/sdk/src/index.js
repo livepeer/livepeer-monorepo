@@ -1167,7 +1167,7 @@ export async function createLivepeerSDK(
 
       let result = []
 
-      while (unbondingLockId > 0) {
+      while (unbondingLockId >= 0) {
         const unbond = await rpc.getDelegatorUnbondingLock(
           addr,
           toString(unbondingLockId),
@@ -2323,6 +2323,8 @@ export async function createLivepeerSDK(
         throw new Error('Delegator must wait through unbonding period')
       } else if (amount === '0') {
         throw new Error('Delegator does not have anything to withdraw')
+      } else if (amount < 0) {
+        throw new Error('Amount cannot be negative')
       }
 
       let unbondingLockId = toBN(id)
