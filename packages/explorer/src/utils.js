@@ -182,7 +182,7 @@ export async function enableAccounts() {
   return
 }
 
-const limitedMode = () => {
+export async function limitedMode() {
   window.limitedWeb3Conn = true
   window.web3 = new window.Web3(window.ethereum)
 }

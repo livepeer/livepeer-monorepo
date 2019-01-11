@@ -1060,25 +1060,6 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * The delegator's stake
-     * @memberof livepeer~rpc
-     * @param  {string} addr - user's ETH address
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getDelegatorStake('0xf00...')
-     * // => string
-     */
-    async getDelegatorStake(addr: string): Promise<string> {
-      return headToString(
-        await BondingManager.delegatorStake(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
-    },
-
-    /**
      * General info about a delegator
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address

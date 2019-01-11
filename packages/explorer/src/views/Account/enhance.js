@@ -6,6 +6,7 @@ import { mockAccount } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
+  connectProtocolQuery,
   connectToasts,
 } from '../../enhancers'
 
@@ -106,9 +107,10 @@ const connectMeDelegatorTranscoderQuery = graphql(MeDelegatorTranscoderQuery, {
 })
 
 const mapMutationHandlers = withHandlers({
-  bond: ({ currentRound, history, me, toasts }) => ({ id }) => {
+  bond: ({ currentRound, history, me, protocol, toasts }) => ({ id }) => {
     const { id: lastInitializedRound } = currentRound.data
     const { status, lastClaimRound } = me.data.delegator
+    const { maxEarningsClaimsRounds } = protocol.data
     const isUnbonded = status === 'Unbonded'
     const unclaimedRounds = isUnbonded
       ? ' 0'
@@ -121,20 +123,21 @@ const mapMutationHandlers = withHandlers({
         body: 'The current round is not initialized.',
       })
     }
-    if (MathBN.gt(unclaimedRounds, '20')) {
+    if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
       return toasts.push({
         id: 'bond',
         type: 'warn',
         title: 'Unable to bond',
-        body: 'You have unclaimed earnings from more than 20 previous rounds.',
+        body: `You have unclaimed earnings from more than ${maxEarningsClaimsRounds} previous rounds.`,
       })
     }
     history.push(`#/bond/${id}`)
   },
-  unbond: ({ currentRound, me, toasts }) => async ({ id }) => {
+  unbond: ({ currentRound, me, protocol, toasts }) => async ({ id }) => {
     try {
       const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator
+      const { maxEarningsClaimsRounds } = protocol.data
       const isUnbonded = status === 'Unbonded'
       const unclaimedRounds = isUnbonded
         ? ' 0'
@@ -147,13 +150,12 @@ const mapMutationHandlers = withHandlers({
           body: 'The current round is not initialized.',
         })
       }
-      if (MathBN.gt(unclaimedRounds, '20')) {
+      if (MathBN.gt(unclaimedRounds, maxEarningsClaimsRounds)) {
         return toasts.push({
           id: 'unbond',
           type: 'warn',
           title: 'Unable to unbond',
-          body:
-            'You have unclaimed earnings from more than 20 previous rounds.',
+          body: `You have unclaimed earnings from more than ${maxEarningsClaimsRounds} previous rounds.`,
         })
       }
       await window.livepeer.rpc.unbond()
@@ -181,6 +183,7 @@ export default compose(
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectMeDelegatorTranscoderQuery,
+  connectProtocolQuery,
   connectToasts,
   mapMutationHandlers,
 )

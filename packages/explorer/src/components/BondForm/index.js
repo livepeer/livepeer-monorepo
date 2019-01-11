@@ -21,6 +21,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   handleSubmit,
   loading,
   max,
+  maxEarningsClaimsRounds,
   onCancel,
   onUpdateAllowance,
   reset,
@@ -112,8 +113,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           <li>You may switch delegates any time.</li>
           <li>You do not need to unbond to switch delegates.</li>
           <li>
-            You will automatically claim up to 20 rounds of unclaimed earnings
-            when bonding.
+            You will automatically claim up to {maxEarningsClaimsRounds} rounds
+            of unclaimed earnings when bonding.
           </li>
         </ul>
       </div>

@@ -192,9 +192,6 @@ workflows:
           type: approval
           requires:
             - build-test
-          filters:
-            branches:
-              only: master
       - build-explorer-production:
           requires:
             - hold-production-explorer-deploy

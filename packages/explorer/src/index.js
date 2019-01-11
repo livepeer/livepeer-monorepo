@@ -7,7 +7,7 @@ import createApolloClient from '@livepeer/apollo'
 import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
-import { enableAccounts, sleep } from './utils'
+import { enableAccounts, limitedMode, sleep } from './utils'
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = process.env.NODE_ENV === 'development'
 const hot = module.hot && isDev
@@ -134,15 +134,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       }
     }
   `
-  /**
-   * The address of the deployed Controller contract
-   * Test if web3 is injected
-   * For Mist compatability we also check if the web3 object has the `version` property
-   * because at the moment the Mist provided web3 object does not have additional properties like `version`
-   * As a result, if a web3 object with the `version` property is not available, we fallback
-   * to using a default provider which should be the case when using Mist
-   */
-  await enableAccounts()
+
+  await limitedMode()
 
   // bootstrap the apollo client
   const client = await createApolloClient(async () => {
@@ -188,6 +181,16 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     )
 
   update()
+
+  /**
+   * The address of the deployed Controller contract
+   * Test if web3 is injected
+   * For Mist compatability we also check if the web3 object has the `version` property
+   * because at the moment the Mist provided web3 object does not have additional properties like `version`
+   * As a result, if a web3 object with the `version` property is not available, we fallback
+   * to using a default provider which should be the case when using Mist
+   */
+  enableAccounts()
 
   // Analytics
   if (isProd && trackingId) {
