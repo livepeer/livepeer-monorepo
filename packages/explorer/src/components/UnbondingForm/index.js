@@ -102,7 +102,7 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
       {confetti}
       <div>
         <p>
-          <strong>How to Unbond.</strong>
+          <strong>How to Unbond:</strong>
         </p>
         <ul>
           <li>
@@ -115,7 +115,7 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
             (the unbonding period) in order to be able to withdraw your token.
           </li>
           <li>
-            <strong>Amount.</strong> You may unbond ALL or PARTIAL amount of
+            <strong>Amount.</strong> You may unbond ALL or a PARTIAL amount of
             your LPT. Enter the amount of LPT you wish to unbond in the box
             below.
           </li>
@@ -127,13 +127,13 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
           <li>
             <strong>Multiple Unbonding Transactions.</strong> Each time you
             Unbond a partial amount of token, a transaction is created and must
-            be withdrawn or rebonded separataely.
+            be withdrawn or rebonded separately.
           </li>
           <li>
             <strong>Change your mind?</strong> If you have initiated the
             Unbonding process but wish to rebond your LPT, you do not need to
             wait for the period to end. Go to the Staking page on your account
-            and click "Rebond".
+            and click "Rebond."
           </li>
         </ul>
       </div>
