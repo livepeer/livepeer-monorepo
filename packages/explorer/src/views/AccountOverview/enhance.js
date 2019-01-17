@@ -3,6 +3,7 @@ import { graphql, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import { mockAccount } from '@livepeer/graphql-sdk'
 import {
+  connectAccountDelegatorQuery,
   connectCoinbaseQuery,
   connectTransactionsQuery,
   TransactionSubmittedSubscription,
@@ -54,6 +55,7 @@ const subscribeToTransactionSubmitted = lifecycle({
 })
 
 export default compose(
+  connectAccountDelegatorQuery,
   connectAccountQuery,
   connectCoinbaseQuery,
   connectTransactionsQuery,

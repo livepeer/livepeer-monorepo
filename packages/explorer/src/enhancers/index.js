@@ -538,3 +538,63 @@ export const connectAccountDelegatorUnbondLockQuery = graphql(
     },
   },
 )
+
+const AccountDelegatorQuery = gql`
+  fragment DelegatorFragment on Delegator {
+    id
+    allowance
+    status
+    delegateAddress
+    bondedAmount
+    fees
+    delegatedAmount
+    lastClaimRound
+    pendingFees
+    pendingStake
+    startRound
+    withdrawAmount
+    withdrawRound
+  }
+
+  query AccountDelegatorQuery($id: String!) {
+    account(id: $id) {
+      id
+      delegator {
+        ...DelegatorFragment
+      }
+
+      unbondlocks {
+        id
+        amount
+        withdrawRound
+        delegator
+      }
+    }
+  }
+`
+
+export const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
+  props: ({ data, ownProps }) => {
+    const { account, ...queryProps } = data
+    const { delegator, unbondlocks } = account || {}
+
+    let result = {
+      ...ownProps,
+      delegator: {
+        ...queryProps,
+        data: mockDelegator(delegator),
+      },
+      unbondlocks,
+    }
+
+    return result
+  },
+  options: ({ match }) => ({
+    pollInterval: 5000,
+    variables: {
+      id: match.params.accountId,
+    },
+    // ssr: false,
+    fetchPolicy: 'network-only',
+  }),
+})

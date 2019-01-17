@@ -148,6 +148,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           </React.Fragment>
         )}
       </MetricBox>
+      {console.log(fees)}
       <MetricBox
         help="Total ETH earned from fee shares each round"
         title="Fees"
@@ -157,7 +158,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
       >
         {isMe && (
           <React.Fragment>
-            {/** request */}
             <Button disabled={!hasFees} onClick={withdrawFees}>
               <MinusIcon size={12} />
               <span style={{ marginLeft: 8 }}>withdraw fees</span>
@@ -219,6 +219,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           <div style={{ display: 'block', width: '100%' }}>
             {unbondlocks.map(({ id, amount, withdrawRound }) => (
               <UnbondTx
+                isMe={isMe}
                 key={id}
                 id={id}
                 amount={amount}

@@ -182,14 +182,17 @@ export async function enableAccounts() {
       console.log('METAMASK | Access to accounts denied')
       limitedMode()
     }
-  } else if (window.web3 && window.web3.version) {
-    // this is the old way, accounts are always exposed.
-    window.web3 = new window.Web3(window.web3.currentProvider)
   }
   return
 }
 
 export async function limitedMode() {
-  window.limitedWeb3Conn = true
-  window.web3 = new window.Web3(window.ethereum)
+  // Enable limited mode if and only if window.Web3 exists
+  if (window.Web3) {
+    window.limitedWeb3Conn = true
+    window.web3 = new window.Web3(window.ethereum)
+  } else if (window.web3 && window.web3.version) {
+    // this is the old way, accounts are always exposed.
+    window.web3 = new window.Web3(window.web3.currentProvider)
+  }
 }

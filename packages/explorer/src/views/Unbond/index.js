@@ -33,7 +33,7 @@ const UnbondView: React.ComponentType<UnbondViewProps> = ({
   const view = () => history.push(`accounts/${id}/delegating`)
   const max = fromBaseUnit(MathBN.min(allowance, tokenBalance))
   return (
-    <BasicModal title="Unbond Your Token" onClose={closeModal}>
+    <BasicModal onClose={closeModal}>
       <UnbondForm
         allowance={allowance}
         bondedAmount={bondedAmount}

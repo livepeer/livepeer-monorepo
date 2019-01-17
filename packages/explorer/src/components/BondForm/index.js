@@ -2,12 +2,13 @@ import * as React from 'react'
 import { Form } from 'react-final-form'
 import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
-import Confetti from 'react-dom-confetti'
+import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import { formatBalance, toBaseUnit, MathBN } from '../../utils'
 import InlineAccount from '../InlineAccount'
 import InlineHint from '../InlineHint'
 import Button from '../Button'
+import { H1 } from '../HTags'
 import type { BondFormProps } from './props'
 
 /**
@@ -34,18 +35,6 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   values,
   ...props
 }) => {
-  const confetti = (
-    <Confetti
-      active={submitSucceeded}
-      config={{
-        angle: 90,
-        spread: 197,
-        startVelocity: 45,
-        elementCount: 50,
-        decay: 0.9,
-      }}
-    />
-  )
   const noAllowance = allowance === '0'
   const noBondedAmount = bondedAmount === '0'
   const cannotBond =
@@ -54,7 +43,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
     return (
       <React.Fragment>
-        {confetti}
+        <H1>Failed</H1>
         <p>
           There was an error submitting your transaction. See error message
           below for more details:
@@ -84,7 +73,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
     // console.log('rendering bond success')
     return (
       <React.Fragment>
-        {confetti}
+        <Confetti active={submitSucceeded} />
+        <H1>Success!</H1>
         <p>
           Congratulations! You successfully bonded your tokens to{' '}
           {delegateAddress}. You may{' '}
@@ -103,7 +93,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   }
   return (
     <React.Fragment>
-      {confetti}
+      <H1>Bond Your Token</H1>
       <div>
         <p>
           <strong>Bonding Tips:</strong>

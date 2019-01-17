@@ -169,7 +169,7 @@ export async function unbond(
   } catch (err) {
     console.log(err)
   }
-  console.log(`Amount: ${amount}`)
+
   return await ctx.livepeer.rpc.unbond(amount, {
     ...ctx.livepeer.config.defaultTx,
     gas: gas,
@@ -193,7 +193,7 @@ export async function rebond(
   ])
 
   return await ctx.livepeer.rpc.rebond(unbondingLockId, {
-    ...ctx.config.defaultTx,
+    ...ctx.livepeer.config.defaultTx,
     gas: gas,
   })
 }
@@ -215,9 +215,6 @@ export async function rebondFromUnbonded(
     'rebondFromUnbonded',
     [delegate, unbondingLockId],
   )
-  console.log('In graphql sdk')
-  console.log({ delegate })
-  console.log({ unbondingLockId })
 
   return await ctx.livepeer.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
     gas: gas,

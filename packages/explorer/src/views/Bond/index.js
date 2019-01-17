@@ -32,7 +32,7 @@ const BondView: React.ComponentType<BondViewProps> = ({
   const closeModal = () => history.push(history.location.pathname)
   const max = fromBaseUnit(MathBN.min(allowance, tokenBalance))
   return (
-    <BasicModal title="Bond Your Token" onClose={closeModal}>
+    <BasicModal onClose={closeModal}>
       <BondForm
         allowance={allowance}
         bondedAmount={bondedAmount}
