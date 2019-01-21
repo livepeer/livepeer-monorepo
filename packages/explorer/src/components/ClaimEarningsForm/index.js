@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { Form, Field } from 'react-final-form'
 import { Link } from 'react-router-dom'
-import Confetti from 'react-dom-confetti'
+import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import { MathBN } from '../../utils'
 import InlineHint from '../InlineHint'
@@ -19,6 +19,7 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
   loading,
   min,
   max,
+  maxEarningsClaimsRounds,
   onCancel,
   pristine,
   reset,
@@ -35,24 +36,9 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
   const currentRound = MathBN.add(lastClaimRound, max)
   const endRound = MathBN.add(values.numRounds, lastClaimRound)
   const remaining = MathBN.sub(diff, values.numRounds)
-  const confetti = (
-    <Confetti
-      active={submitSucceeded}
-      config={{
-        angle: 90,
-        spread: 197,
-        startVelocity: 45,
-        elementCount: 50,
-        decay: 0.9,
-      }}
-    />
-  )
-  // console.log(props)
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
-    // console.log('rendering claimEarnings fail')
     return (
       <React.Fragment>
-        {confetti}
         <p>
           There was an error submitting your transaction. See error message
           below for more details:
@@ -79,14 +65,13 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
     )
   }
   if (submitSucceeded) {
-    // console.log('rendering claimEarnings success')
     return (
       <React.Fragment>
-        {confetti}
+        <Confetti active={submitSucceeded} />
         <p>
           Congratulations! You successfully claimed your earnings through round
-          #{endRound}. You now have {remaining} rounds of earnings left to
-          claim.
+          #{endRound}. You now have {Math.abs(remaining)} rounds of earnings
+          left to claim.
         </p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
@@ -100,11 +85,11 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
   }
   return (
     <React.Fragment>
-      {confetti}
       {max === '20' && (
         <InlineHint flag="claim-earnings-max" disableHide>
           <p>
-            <strong>Note:</strong> You may claim up to 20 rounds at a time.
+            <strong>Note:</strong> You may claim up to {maxEarningsClaimsRounds}{' '}
+            rounds at a time.
           </p>
         </InlineHint>
       )}

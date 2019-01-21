@@ -43,6 +43,7 @@ const BondView: React.ComponentType<BondViewProps> = ({
         }}
         loading={me.loading}
         max={max}
+        me={me}
         onSubmit={bond}
         onCancel={closeModal}
         onUpdateAllowance={goApprove}

@@ -20,9 +20,11 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   delegateAddress,
   errors,
   handleSubmit,
+  handleChange,
   loading,
   max,
   maxEarningsClaimsRounds,
+  me,
   onCancel,
   onUpdateAllowance,
   reset,
@@ -35,11 +37,13 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   values,
   ...props
 }) => {
+  const { delegator } = me.data
   const noAllowance = allowance === '0'
   const noBondedAmount = bondedAmount === '0'
   const cannotBond =
     (noAllowance && noBondedAmount) ||
     (values.amount && MathBN.gt(toBaseUnit(values.amount), allowance))
+  const noZero = delegator.delegateAddress === delegateAddress
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
     return (
       <React.Fragment>
@@ -146,21 +150,29 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           <p style={{ marginTop: 0 }}>Amount to Bond</p>
           {noBondedAmount ? null : (
             <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-              <strong>Note:</strong> By entering 0 or leaving this field blank,
-              you will transfer your existing bonded amount of{' '}
-              {formatBalance(bondedAmount, 18)} LPT the selected delegate.
+              <strong>Note:</strong>
+              {noZero
+                ? ` You cannot bond 0 LPT to a delegate you are already bonded to.`
+                : ` By entering 0 or leaving this field blank,
+                  you will transfer your existing bonded amount of
+                  ${formatBalance(
+                    bondedAmount,
+                    18,
+                  )} LPT the selected delegate.`}
             </p>
           )}
           <div>
             <Field
-              name="amount"
               component="input"
-              type="number"
-              min="0"
-              max={max}
               disabled={loading}
+              max={max}
+              maxLength={20}
+              min={noZero ? Math.pow(10, -18).toString() : '0'}
+              minLength={1}
+              name="amount"
               rangeOverflow={`This amount is too large. Either your token balance is too low or you need to approve a higher transfer allowance.`}
               step="any"
+              type="number"
               style={{
                 width: '90%',
                 height: 48,

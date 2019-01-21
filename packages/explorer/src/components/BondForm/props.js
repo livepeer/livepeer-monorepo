@@ -9,6 +9,7 @@ export type BondFormProps = {
   pristine: boolean,
   tokenBalance: string,
   valid: boolean,
+  me: GraphQLProps<Account>,
   values: {
     amount: string,
     to: string,

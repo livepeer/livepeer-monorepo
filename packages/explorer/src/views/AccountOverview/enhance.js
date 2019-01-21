@@ -6,6 +6,7 @@ import {
   connectAccountDelegatorQuery,
   connectCoinbaseQuery,
   connectTransactionsQuery,
+  connectCurrentRoundQuery,
   TransactionSubmittedSubscription,
   withTransactionHandlers,
 } from '../../enhancers'
@@ -56,6 +57,7 @@ const subscribeToTransactionSubmitted = lifecycle({
 
 export default compose(
   connectAccountDelegatorQuery,
+  connectCurrentRoundQuery,
   connectAccountQuery,
   connectCoinbaseQuery,
   connectTransactionsQuery,

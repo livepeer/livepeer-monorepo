@@ -148,7 +148,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           </React.Fragment>
         )}
       </MetricBox>
-      {console.log(fees)}
       <MetricBox
         help="Total ETH earned from fee shares each round"
         title="Fees"
@@ -212,6 +211,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
 
       {unbondlocks && unbondlocks.length > 0 && (
         <MetricBox
+          id="unbondinglocks"
           help="List of unbonding transactions from delegator"
           title="Unbonding Transactions"
           width="100%"

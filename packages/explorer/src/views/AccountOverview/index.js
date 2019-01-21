@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import Joyride from 'react-joyride'
 import {
   DownloadCloud as DownloadCloudIcon,
@@ -14,7 +15,9 @@ import {
   Button,
   Content,
   EmptyMessage,
+  InlineAccount,
   MetricBox,
+  Tooltip,
   Wrapper,
 } from '../../components'
 import enhance from './enhance'
@@ -22,6 +25,7 @@ import enhance from './enhance'
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
   coinbase: GraphQLProps<Coinbase>,
+  currentRound: GraphQLProps<Round>,
   history: History,
   match: Match,
   onDepositETH: (e: Event) => void,
@@ -35,6 +39,8 @@ type AccountOverviewProps = {
 const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   account,
   coinbase,
+  currentRound,
+  delegator,
   history,
   match,
   onDepositETH,
@@ -49,15 +55,22 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { ethBalance, id, tokenBalance } = account.data
   const IS_MAINNET = window.web3 && `${window.web3.version.network}` === '1'
+  const { lastInitializedRound } = currentRound.data
   const transactionData = transactions.data
     // only livepeer transactions
     .filter(x => x.method)
 
+  let unlocked = []
   if (unbondlocks) {
     const reducer = (accumulator, itemNext) =>
       (accumulator = MathBN.add(accumulator, itemNext.amount))
     const filter = item => item['withdrawRound'] !== '0'
+    const filterUnlocked = item =>
+      item['withdrawRound'] !== 0 &&
+      item['withdrawRound'] <= lastInitializedRound
     unbondlocks = unbondlocks.filter(filter)
+    unlocked = unbondlocks.filter(filterUnlocked)
+    unlocked = unlocked.length
     unbondlocks = unbondlocks.reduce(reducer, 0)
   }
 
@@ -72,7 +85,13 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           className="eth-address"
           help="The Ethereum address representing this account"
           title="ETH Address"
-          value={id}
+          value={
+            <Tooltip text={id}>
+              <Link to={`/accounts/${id}`} style={{ textDecoration: 'none' }}>
+                <InlineAccount address={id} border truncate={22} />
+              </Link>
+            </Tooltip>
+          }
           valueSize="15px"
         />
         {/** ETH */}
@@ -128,24 +147,37 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
                 account that is in the unbonding state`}
           title="Pending Livepeer Token Balance"
           suffix="LPT"
-          value={formatBalance(unbondlocks) || '0'}
+          value={formatBalance(unbondlocks)}
           valueSize="1em"
         >
           {isMe && (
             <React.Fragment>
-              {/** transfer */}
-              <Button
-                onClick={e => {
-                  history.push(`/accounts/${id}/delegating#unbondinglocks`)
-                }}
+              {/*Withdraw*/}
+              <Tooltip
+                text={`You may withdraw your LPT after 7 days from unbonding.
+                      To check the status go to the Staking tab.`}
               >
-                <span style={{ marginLeft: 8 }}>Withdraw</span>
-              </Button>
+                <Button
+                  onClick={e => {
+                    if (unlocked)
+                      history.push(`/accounts/${id}/delegating#unbondinglocks`)
+                  }}
+                  className={unlocked ? '' : 'disabled'}
+                >
+                  <span style={{ marginLeft: 8 }}>Withdraw</span>
+                  {unlocked ? (
+                    <Icon use="check" style={{ color: 'var(--primary)' }} />
+                  ) : (
+                    <Icon use="close" style={{ color: 'var(--error)' }} />
+                  )}
+                </Button>
+              </Tooltip>
               {/** bond */}
               <Button
-                className="bond-token primary"
+                className={unbondlocks ? 'bond-token primary' : 'disabled'}
                 onClick={e => {
-                  history.push(`/accounts/${id}/delegating#unbondinglocks`)
+                  if (unbondlocks)
+                    history.push(`/accounts/${id}/delegating#unbondinglocks`)
                 }}
               >
                 <span>Rebond</span>

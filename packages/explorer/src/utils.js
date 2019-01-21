@@ -89,11 +89,13 @@ export function formatBalance(
 ): string {
   decimals = decimals ? decimals : unitMap[unit].length
   return !x
-    ? ''
-    : Big(x)
-        .div(unitMap[unit])
-        .toFixed(decimals)
-        .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')
+    ? '0'
+    : parseFloat(
+        Big(x)
+          .div(unitMap[unit])
+          .toFixed(decimals)
+          .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1'),
+      ).toString()
 }
 
 export function formatRoundsToDate(round: number): string {
@@ -104,7 +106,12 @@ export function formatRoundsToDate(round: number): string {
 }
 
 export function toBaseUnit(x: string) {
-  return !x ? '' : unit.toWei(x, 'ether').toString(10)
+  try {
+    return !x ? '' : unit.toWei(x, 'ether').toString(10)
+  } catch (err) {
+    console.warn(err)
+    return ''
+  }
 }
 
 export function fromBaseUnit(x: string) {
