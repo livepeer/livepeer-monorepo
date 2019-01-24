@@ -260,7 +260,21 @@ workflows:
             #  tags:
             #    only:
             #      - /^v.*/
+            #  branches:
+            #    only:
             #      - development
             #      - master
+            #    ignore: /.*/
+
+      - deploy-sdk-production:
+          requires:
+            - build-sdk-production
+            #filters:
+            #  tags:
+            #    only:
+            #      - /^v.*/
             #  branches:
+            #    only:
+            #      - development
+            #      - master
             #    ignore: /.*/
