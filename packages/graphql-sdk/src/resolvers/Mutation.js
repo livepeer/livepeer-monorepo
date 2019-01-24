@@ -216,9 +216,6 @@ export async function rebondFromUnbonded(
     'rebondFromUnbonded',
     [delegate, unbondingLockId],
   )
-  console.log('In graphql sdk')
-  console.log({ delegate })
-  console.log({ unbondingLockId })
 
   return await ctx.livepeer.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
     gas: gas,
