@@ -91,7 +91,7 @@ aliases:
       echo "$NPM_REGISTRY$NPM_TOKEN" > ~/repo/packages/sdk/.npmrc
 
   # Deploy SDK
-  - &deploy-sdk-production
+  - &deploy-sdk
     name: Deploy SDK to Registry
     command: |
       cd packages/sdk
@@ -250,12 +250,12 @@ workflows:
 
       # Production workflow for SDK deployment
       - hold-sdk-deployment:
-        type: approval
-        requires:
-          - build-test
+          type: approval
+          requires:
+            - build-test
       - build-sdk-production:
-        requires:
-          - hold-sdk-deployment
+          requires:
+            - hold-sdk-deployment
             #filters:
             #  tags:
             #    only:
@@ -264,4 +264,3 @@ workflows:
             #      - master
             #  branches:
             #    ignore: /.*/
-
