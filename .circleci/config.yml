@@ -76,6 +76,27 @@ aliases:
     name: Install libsecret
     command: sudo apt install libsecret-1-0
 
+  # Build SDK
+  - &build-livepeer-sdk
+    name: Build SDK
+    command: |
+      yarn
+      cd packages/sdk
+      yarn build
+
+  # Authenticate NPM Registry
+  - &authenticate-registry
+    name: Authenticate NPM registry token
+    command: |
+      echo "$NPM_REGISTRY$NPM_TOKEN" > ~/repo/packages/sdk/.npmrc
+
+  # Deploy SDK
+  - &deploy-sdk-production
+    name: Deploy SDK to Registry
+    command: |
+      cd packages/sdk
+      npm publish
+
   # Extention of aws command
   - &s3-cmd-flags-values
 
@@ -169,6 +190,28 @@ jobs:
             --delete \
             --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
+  build-sdk-production:
+    <<: *node-env
+
+    steps:
+      - checkout
+      - run: *build-livepeer-sdk
+      - save_cache:
+          paths:
+            - packages/sdk/
+          key: production-sdk-{{ .Revision }}
+
+  deploy-sdk-production:
+    <<: *node-env
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - production-sdk-{{ .Revision }}
+      - run: *authenticate-registry
+      - run: *deploy-sdk
+
 workflows:
   version: 2
   staging-test-build-deploy:
@@ -204,3 +247,21 @@ workflows:
           filters:
             branches:
               only: master
+
+      # Production workflow for SDK deployment
+      - hold-sdk-deployment:
+        type: approval
+        requires:
+          - build-test
+      - build-sdk-production:
+        requires:
+          - hold-sdk-deployment
+            #filters:
+            #  tags:
+            #    only:
+            #      - /^v.*/
+            #      - development
+            #      - master
+            #  branches:
+            #    ignore: /.*/
+
