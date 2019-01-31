@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import {
-  Github as GithubIcon,
+  GitHub as GitHubIcon,
   MessageCircle as MessageCircleIcon,
   // Search,
   Twitter as TwitterIcon,
@@ -28,7 +28,7 @@ const BasicNavbar = ({ onSearch }) => (
         }}
       >
         <NavSocialLink href="https://github.com/livepeer" target="_blank">
-          <GithubIcon color="#fff" size={16} />
+          <GitHubIcon color="#fff" size={16} />
           <span>&nbsp;Code</span>
         </NavSocialLink>
         <NavSocialLink href="https://discord.gg/7wRSUGX" target="_blank">

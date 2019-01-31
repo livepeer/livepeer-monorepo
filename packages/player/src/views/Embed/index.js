@@ -7,7 +7,7 @@ import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
   // Facebook as FacebookIcon,
-  // Github as GithubIcon,
+  // GitHub as GitHubIcon,
   // Link as LinkIcon,
   // Search as SearchIcon,
   // ThumbsUp as ThumbsUpIcon,
