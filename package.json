@@ -1,4 +1,4 @@
-     {
+{
   "private": true,
   "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
@@ -28,6 +28,8 @@
       "npx lerna publish --cd-version prerelease --conventional-commits --yes",
     "test":
       "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
+    "test:build-apps":
+      "npx lerna run build --stream --scope @livepeer/explorer --scope @livepeer/player",
     "updated": "npx lerna updated --json"
   },
   "devDependencies": {
