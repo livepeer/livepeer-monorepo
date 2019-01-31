@@ -46,9 +46,8 @@ const RebondForm: React.StatelessFunctionalComponent<RebondFormProps> = ({
       <p>
         Note: You may only bond to one transcoder at a time. If you want to bond
         to a different transcoder, rebond to this transcoder, and then on
-        transcoders page, bond all LPT to a different transcoder
+        transcoders page, bond all LPT to a different transcoder.
       </p>
-      <p>Note: This is only for PARTIAL unbonding.</p>
       <Button
         disabled={loading || submitting}
         onClick={handleSubmit}
