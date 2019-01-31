@@ -62,7 +62,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           help="The Ethereum address representing this account"
           title="ETH Address"
           width="100%"
-          subvalue={<code style={{ fontSize: 16 }}>{id}</code>}
+          value={<code style={{ fontSize: 16 }}>{id}</code>}
         />
       </Wrapper>
       <Wrapper>
