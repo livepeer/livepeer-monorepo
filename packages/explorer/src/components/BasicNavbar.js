@@ -193,7 +193,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                 <Icon use="more_vert" />
               </Btn>
             }
-            onSelect={async ({ detail }) => {
+            onSelected={({ detail }) => {
               const { action } = detail.item.dataset
               switch (action) {
                 case 'feedback':
