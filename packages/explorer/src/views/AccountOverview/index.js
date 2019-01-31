@@ -55,22 +55,15 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   const isMe = match.params.accountId === coinbase.data.coinbase
   const { ethBalance, id, tokenBalance } = account.data
   const IS_MAINNET = window.web3 && `${window.web3.version.network}` === '1'
-  const { lastInitializedRound } = currentRound.data
   const transactionData = transactions.data
     // only livepeer transactions
     .filter(x => x.method)
 
-  let unlocked = []
   if (unbondlocks) {
     const reducer = (accumulator, itemNext) =>
       (accumulator = MathBN.add(accumulator, itemNext.amount))
     const filter = item => item['withdrawRound'] !== '0'
-    const filterUnlocked = item =>
-      item['withdrawRound'] !== 0 &&
-      item['withdrawRound'] <= lastInitializedRound
     unbondlocks = unbondlocks.filter(filter)
-    unlocked = unbondlocks.filter(filterUnlocked)
-    unlocked = unlocked.length
     unbondlocks = unbondlocks.reduce(reducer, 0)
   }
 
@@ -152,27 +145,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
         >
           {isMe && (
             <React.Fragment>
-              {/*Withdraw*/}
-              <Tooltip
-                text={`You may withdraw your LPT after 7 days from unbonding.
-                      To check the status go to the Staking tab.`}
-              >
-                <Button
-                  onClick={e => {
-                    if (unlocked)
-                      history.push(`/accounts/${id}/delegating#unbondinglocks`)
-                  }}
-                  className={unlocked ? '' : 'disabled'}
-                >
-                  <span style={{ marginLeft: 8 }}>Withdraw</span>
-                  {unlocked ? (
-                    <Icon use="check" style={{ color: 'var(--primary)' }} />
-                  ) : (
-                    <Icon use="close" style={{ color: 'var(--error)' }} />
-                  )}
-                </Button>
-              </Tooltip>
-              {/** bond */}
+              {/** view locks*/}
               <Button
                 className={unbondlocks ? 'bond-token primary' : 'disabled'}
                 onClick={e => {
@@ -180,7 +153,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
                     history.push(`/accounts/${id}/delegating#unbondinglocks`)
                 }}
               >
-                <span>Rebond</span>
+                <span>View</span>
                 <span style={{ marginLeft: 8 }}>&rarr;</span>
               </Button>
             </React.Fragment>

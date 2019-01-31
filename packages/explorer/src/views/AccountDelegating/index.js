@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { Minus as MinusIcon } from 'react-feather'
-import { formatBalance, MathBN } from '../../utils'
+import { formatBalance, formatRoundsToDate, MathBN } from '../../utils'
 import {
   Button,
   InlineAccount,
@@ -134,10 +134,13 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             ? `${formatBalance(
                 withdrawAmount,
                 18,
-              )} LPT may be withdrawn at round #${withdrawRound}`
+              )} LPT may be withdraw approximately on ${formatRoundsToDate(
+                withdrawRound - lastInitializedRound,
+              )}`
             : `${formatBalance(withdrawAmount, 18)} LPT may be withdrawn`
         }
       >
+        {console.log(withdrawRound)}
         {isMe && (
           <React.Fragment>
             {/** request */}
