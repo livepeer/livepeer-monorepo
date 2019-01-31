@@ -9,7 +9,7 @@ export const types = {
 }
 
 export const actions = {
-  changeChannel: id => push(`/channels/${id}`),
+  changeURL: url => push(`/play?${qs.stringify({ url })}`),
 }
 
 export const initialState = {

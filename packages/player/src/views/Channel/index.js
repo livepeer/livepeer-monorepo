@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
 import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { mockAccount } from '@livepeer/graphql-sdk'
-import { lifecycle } from 'recompose'
 import styled, { keyframes } from 'styled-components'
 import {
   Code as CodeIcon,
-  Facebook as FacebookIcon,
+  // Facebook as FacebookIcon,
   // GitHub as GitHubIcon,
   Link as LinkIcon,
   // Search as SearchIcon,
@@ -24,16 +20,12 @@ import Modal from 'react-responsive-modal'
 import * as qs from 'query-string'
 import { Switch } from 'rmwc/Switch'
 
-const parseQs = str => {
-  return qs.parse(str)
-}
-
-const { changeChannel } = routingActions
+const { changeURL } = routingActions
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      changeChannel,
+      changeURL,
     },
     dispatch,
   )
@@ -43,82 +35,18 @@ const connectRedux = connect(
   mapDispatchToProps,
 )
 
-const AccountBroadcasterQuery = gql`
-  fragment BroadcasterFragment on Broadcaster {
-    id
-    deposit
-    withdrawBlock
-  }
-
-  fragment JobFragment on Job {
-    id
-    broadcaster
-    streamId
-    profiles {
-      id
-      name
-      bitrate
-      framerate
-      resolution
-    }
-  }
-
-  query AccountBroadcasterQuery(
-    $id: String
-    $jobs: Boolean!
-    $jobsSkip: Int
-    $jobsLimit: Int
-  ) {
-    account(id: $id) {
-      id
-      ensName
-      broadcaster {
-        ...BroadcasterFragment
-        jobs(skip: $jobsSkip, limit: $jobsLimit) @include(if: $jobs) {
-          ...JobFragment
-        }
-      }
-    }
-  }
-`
-
-const connectApollo = graphql(AccountBroadcasterQuery, {
-  props: ({ data, ownProps }, state) => {
-    const { account, ...queryProps } = data
-    return {
-      ...ownProps,
-      account: {
-        ...queryProps,
-        data: mockAccount(account),
-      },
-    }
-  },
-  options: ({ match }) => {
-    const { channel } = match.params
-    return {
-      pollInterval: 5000,
-      variables: {
-        id: channel,
-        jobs: true,
-      },
-    }
-  },
-})
-
-const enhance = compose(
-  connectRedux,
-  connectApollo,
-)
+const enhance = compose(connectRedux)
 
 class Channel extends Component {
-  state = {
-    url: '',
-    live: null,
-    modal: '', // tip | link | embed
-    tipAmount: 0,
-    didCopy: false,
-    bannerOpen: true,
-    allowFullscreen: true,
+  constructor(props) {
+    super(props)
+    this.state = {
+      live: null,
+      modal: '', // link | embed
+      didCopy: false,
+      bannerOpen: true,
+      allowFullscreen: true,
+    }
   }
 
   closeBanner = () => {
@@ -139,112 +67,22 @@ class Channel extends Component {
     this.setState({ didCopy: true })
   }
 
-  sendTip = (broadcaster, value) => {
-    window.web3.eth.sendTransaction(
-      {
-        from: window.web3.eth.coinbase,
-        to: broadcaster,
-        value: window.web3.toWei(value, 'ether'),
-      },
-      (error, result) => {
-        this.setState({ tippingOpen: false })
-      },
-    )
-  }
-
-  handleTipChange = e => {
-    this.setState({ tipAmount: e.target.value })
-  }
-
-  getRootUrl = (location, address) => {
-    let queryObject = parseQs(location.search)
-    if (queryObject && queryObject.source) {
-      console.log('using source qs', location)
-      return queryObject.source
-    } else {
-      let rootUrl = null
-      switch (address) {
-        case process.env.REACT_APP_LIVEPEER_TV_ADDRESS.toLowerCase():
-          rootUrl = process.env.REACT_APP_LIVEPEER_TV_STREAM_ROOT_URL
-          break
-        case process.env.REACT_APP_CRYPTO_LIVEPEER_TV_ADDRESS.toLowerCase():
-          rootUrl = process.env.REACT_APP_CRYPTO_LIVEPEER_TV_STREAM_ROOT_URL
-          break
-        case process.env.REACT_APP_INGEST2_ADDRESS.toLowerCase():
-          rootUrl = process.env.REACT_APP_INGEST2_STREAM_ROOT_URL
-          break
-        case 'local':
-          rootUrl = 'http://localhost:8935/stream'
-          break
-        default:
-          rootUrl = process.env.REACT_APP_STREAM_ROOT_URL
-      }
-
-      return rootUrl
-    }
-  }
-
-  async componentWillReceiveProps(nextProps) {
-    const { data } = nextProps.account
-    const location = nextProps.location
-    const address = data.id.toLowerCase()
-    const match = nextProps.match
-    let rootUrl = this.getRootUrl(location, address)
-
-    if (match && match.params && match.params.channel === 'local') {
-      return this.setState({
-        live: true,
-        url: `${rootUrl}/current.m3u8`,
-      })
-    } else {
-      const [latestJob] = data.broadcaster.jobs
-
-      if (!latestJob) {
-        if (nextProps.loading === false) this.setState({ live: false })
-        return
-      }
-
-      const manifestId = latestJob.streamId.substr(0, 68 + 64)
-
-      return this.setState({
-        live: true,
-        url: `${rootUrl}/${manifestId}.m3u8`,
-      })
-    }
-  }
-
   render() {
-    const { account, changeChannel, location, match } = this.props
-    console.log('locaation: ', location, match)
-    const { loading } = account
-    const {
-      id,
-      ensName: name,
-      broadcaster: { jobs },
-    } = account.data
-    const {
-      live,
-      url,
-      modal,
-      didCopy,
-      tipAmount,
-      bannerOpen,
-      allowFullscreen,
-    } = this.state
-    const [latestJob] = jobs
-    const { streamId, broadcaster = id } = latestJob || {}
-    const web3IsEnabled = window.web3 && window.web3.eth.coinbase
+    const { changeURL, url } = this.props
+    const { live, modal, didCopy, bannerOpen, allowFullscreen } = this.state
     const embedLink = `<iframe width="640" height="360" src="${
       window.location.origin
-    }/embed/${broadcaster}/?maxWidth=100%&aspectRatio=16:9" ${
-      allowFullscreen ? 'allowfullscreen' : ''
-    }></iframe>`
+    }/embed?${qs.stringify({
+      url,
+      maxWidth: '100%',
+      aspectRatio: '16:9',
+    })}" ${allowFullscreen ? 'allowfullscreen' : ''}></iframe>`
     return (
       <div>
-        <BasicNavbar onSearch={changeChannel} />
+        <BasicNavbar onSearch={changeURL} />
         {/*
-          * Modals
-          */}
+         * Modals
+         */}
         {/* Channel Link Url */}
         <Modal
           open={modal === 'link'}
@@ -254,6 +92,7 @@ class Channel extends Component {
           <h2>Copy Channel Link</h2>
           <div style={{ display: 'flex' }}>
             <input
+              readOnly
               ref={text => (this.text = text)}
               style={{
                 width: '100%',
@@ -284,6 +123,7 @@ class Channel extends Component {
         >
           <h2>Copy Embed Link</h2>
           <textarea
+            readOnly
             ref={text => (this.text = text)}
             style={{
               display: 'block',
@@ -314,53 +154,11 @@ class Channel extends Component {
             </p>
           )}
         </Modal>
-        {/* Broadcaster Tipping */}
-        <Modal
-          open={modal === 'tip'}
-          onClose={() => this.closeModal('tip')}
-          center
-        >
-          <h2>Contribute directly to this broadcaster</h2>
-          <p
-            style={{
-              lineHeight: 1.5,
-              color: '#555',
-            }}
-          >
-            Enter the amount of ETH you want to contribute:
-          </p>
-          <div style={{ display: 'flex' }}>
-            <input
-              style={{
-                width: '100%',
-                borderRadius: 0,
-                borderWidth: 2,
-                borderColor: 'var(--primary)',
-                borderStyle: 'solid',
-                padding: 5,
-                outline: 'none',
-                fontSize: 14,
-              }}
-              type="number"
-              placeholder="0.002"
-              step="0.001"
-              min="0"
-              onChange={this.handleTipChange}
-              value={tipAmount}
-            />
-            <Button
-              style={{ width: 200 }}
-              onClick={() => this.sendTip(broadcaster, tipAmount)}
-            >
-              ♥ Contribute
-            </Button>
-          </div>
-        </Modal>
         {/*
-          * Video Player
-          */}
+         * Video Player
+         */}
         <Media>
-          {(!live || loading) && (
+          {!live && (
             <div
               style={{
                 display: 'inline-flex',
@@ -377,9 +175,9 @@ class Channel extends Component {
                 zIndex: 2,
               }}
             >
-              <FadeInOut loading={loading || live === null}>
+              <FadeInOut loading={live === null}>
                 <p>
-                  {loading || live === null
+                  {live === null
                     ? 'L O A D I N G ...'
                     : 'This broadcaster is currently offline'}
                 </p>
@@ -425,59 +223,15 @@ class Channel extends Component {
                   overflow: 'hidden',
                 }}
               >
-                Broadcaster:<br />
-                <span>{name ? `${name} (${id})` : id || '...'}</span>
-              </p>
-              <p
-                style={{
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
-              >
-                Stream ID:<br />
-                <span title={url}>{streamId || 'N/A'}</span>
+                Stream URL:
+                <br />
+                <span title={url}>{url || 'N/A'}</span>
               </p>
             </div>
           </Info>
           {/*
-            * Tipping
-            */}
-          <div
-            style={{
-              display: web3IsEnabled ? 'block' : 'none',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexFlow: 'row-wrap',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                width: '100%',
-                margin: '0 auto',
-                padding: '16px 0',
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  paddingLeft: 16,
-                  lineHeight: 1.5,
-                  color: 'var(--text)',
-                }}
-              >
-                Enjoying the show? Support your favorite broadcasters by
-                contributing directly&nbsp;
-                <Button onClick={() => this.openModal('tip')}>
-                  ♥ &nbsp;&nbsp;Contribute
-                </Button>
-              </p>
-            </div>
-          </div>
-          {/*
-            * Share links
-            */}
+           * Share links
+           */}
           <div>
             <p
               style={{
@@ -505,9 +259,9 @@ class Channel extends Component {
                 size={18}
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-                  const message = `Check out ${broadcaster}'s live stream on the Livepeer Media Player DApp\n${
+                  const message = `Check out this live stream on the Livepeer Media Player\n${
                     window.location
-                  }\n#livepeer #eth #dapp #decentralized`
+                  }\n#livepeer #eth #decentralized`
                   window.open(
                     `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                       message,
@@ -533,66 +287,6 @@ class Channel extends Component {
           </div>
           <br />
           <br />
-          {/*
-            <div>
-              <h3 style={{ color: '#555' }}>Streaming Now</h3>
-              <hr style={{ border: 0, borderTop: '1px solid #eee' }} />
-              <div
-                style={{
-                  display: 'inline-flex',
-                  width: '100%',
-                  marginTop: -16,
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                {[
-                  'http://static.filehorse.com/screenshots-web/online-games/minecraft-screenshot-02.jpg',
-                  'http://catbordhi.com/wp-content/uploads/015.jpg',
-                  'https://i.ytimg.com/vi/sUStdzuKKL8/hqdefault.jpg',
-                  'https://ak3.picdn.net/shutterstock/videos/3818060/thumb/1.jpg',
-                  'http://www.iac.lu.se/wp-content/uploads/2015/06/video_studio.jpg',
-                  'https://i.ytimg.com/vi/hGE2EUiE7Oo/maxresdefault.jpg',
-                  'https://www.geek.com/wp-content/uploads/2016/03/video-game-streaming-625x350.jpg',
-                ].map((url, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      position: 'relative',
-                      display: 'inline-block',
-                      width: 'calc(100% / 7)',
-                      paddingBottom: 'calc(100% / 7)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        bottom: 16,
-                        left: 8,
-                        right: 8,
-                        margin: 'auto',
-                        backgroundColor: '#ccc',
-                        backgroundImage: `url(${url})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        borderRadius: 4,
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => {
-                        window.confirm(
-                          'Probably link to some hard-coded 24/7 streams here',
-                        )
-                      }}
-                    />
-                  </span>
-                ))}
-              </div>
-              <p style={{ textAlign: 'right', padding: '0 8px', fontSize: 12 }}>
-                <a href="#">See more</a>
-              </p>
-            </div>
-          */}
         </Content>
         <Footer>
           <div

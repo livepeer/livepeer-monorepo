@@ -60,11 +60,14 @@ const BasicNavbar = ({ onSearch }) => (
                 return window.open(
                   'https://github.com/livepeer/livepeerjs/issues',
                 )
+              default:
+                throw new Error(`unexpected action: ${action}`)
             }
           }}
         >
           <MenuItem data-action="feedback">
-            <Icon use="feedback" style={{ marginRight: 8 }} />Report an issue
+            <Icon use="feedback" style={{ marginRight: 8 }} />
+            Report an issue
           </MenuItem>
         </SimpleMenu>
       </div>
@@ -106,7 +109,8 @@ const NavSocialLink = styled.a`
   }
 `
 
-const NavSearchContainer = styled.div`
+const NavSearchContainer = styled.form`
+  display: block;
   width: 320px;
   padding-left: 16px;
   position: relative;
@@ -115,42 +119,46 @@ const NavSearchContainer = styled.div`
   }
 `
 
-const NavSearch = ({ onSearch }) => (
-  <NavSearchContainer>
-    {/*
+const NavSearchInput = styled.input`
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  outline: 0;
+  border: none;
+  border-radius: 1;
+`
+
+const NavSearch = ({ onSearch }) => {
+  let textRef
+  return (
+    <NavSearchContainer
+      onSubmit={e => {
+        e.preventDefault()
+        const value = textRef.value
+        if (!value) {
+          return
+        }
+        onSearch(value)
+        textRef.value = ''
+      }}
+    >
+      {/*
 <Search
 color="#fff"
 size={24}
 style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
 />
 */}
-    <input
-      type="search"
-      placeholder="Search channels by ETH address"
-      style={{
-        width: '100%',
-        height: 32,
-        margin: 0,
-        padding: '0 16px',
-        background: 'rgba(255,255,255,.2)',
-        color: '#fff',
-        outline: 0,
-        border: 'none',
-        borderRadius: 1,
-      }}
-      onKeyDown={e => {
-        const { value } = e.target
-        if (e.keyCode !== 13) return
-        const val =
-          'string' === typeof value && value.startsWith('0x')
-            ? value
-            : Number(value)
-        if (Number.isNaN(val)) return
-        onSearch(val)
-        e.target.value = ''
-      }}
-    />
-  </NavSearchContainer>
-)
+      <NavSearchInput
+        innerRef={ref => (textRef = ref)}
+        type="search"
+        placeholder="Enter stream URL"
+      />
+    </NavSearchContainer>
+  )
+}
 
 export default BasicNavbar
