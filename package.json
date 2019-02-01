@@ -1,6 +1,6 @@
      {
   "private": true,
-  "name": "lpjs-test",
+  "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
   "workspaces": ["packages/*"],
   "repository": {
