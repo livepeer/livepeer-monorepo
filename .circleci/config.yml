@@ -262,25 +262,23 @@ workflows:
       - build-sdk-production:
           requires:
             - hold-sdk-deployment
-            #filters:
-            #  tags:
-            #    only:
-            #      - /^v.*/
-            #  branches:
-            #    only:
-            #      - development
-            #      - master
-            #    ignore: /.*/
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              only:
+                - master
+              ignore: /.*/
 
       - deploy-sdk-production:
           requires:
             - build-sdk-production
-            #filters:
-            #  tags:
-            #    only:
-            #      - /^v.*/
-            #  branches:
-            #    only:
-            #      - development
-            #      - master
-            #    ignore: /.*/
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              only:
+                - master
+              ignore: /.*/
