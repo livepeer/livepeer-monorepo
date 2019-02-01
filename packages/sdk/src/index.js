@@ -1733,10 +1733,12 @@ export async function createLivepeerSDK(
         x.transcoderAddress === EMPTY_ADDRESS
       ) {
         const { hash } = await rpc.getBlock(x.creationBlock)
-        x.transcoderAddress = await BondingManager.electActiveTranscoder(
-          x.maxPricePerSegment,
-          hash,
-          x.creationRound,
+        x.transcoderAddress = headToString(
+          await BondingManager.electActiveTranscoder(
+            x.maxPricePerSegment,
+            hash,
+            x.creationRound,
+          ),
         )
       }
       return {
