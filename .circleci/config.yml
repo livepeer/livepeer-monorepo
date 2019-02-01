@@ -95,6 +95,8 @@ aliases:
     name: Deploy SDK to Registry
     command: |
       cd packages/sdk
+      npm uninstall -g babel
+      npm install --save-dev babel-cli
       npm publish
 
   # Extention of aws command
