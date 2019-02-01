@@ -259,6 +259,14 @@ workflows:
           type: approval
           requires:
             - build-test
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              only:
+                - master
+              ignore: /.*/
       - build-sdk-production:
           requires:
             - hold-sdk-deployment
