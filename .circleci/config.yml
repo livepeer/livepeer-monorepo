@@ -96,8 +96,8 @@ aliases:
     command: |
       cd packages/sdk
       npm uninstall -g babel
-      npm install --save-dev babel-cli
-      npm publish
+      npm install
+      npm publish --access public
 
   # Extention of aws command
   - &s3-cmd-flags-values
