@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators, compose } from 'redux'
 import { connect } from 'react-redux'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import {
   Code as CodeIcon,
   // Facebook as FacebookIcon,
@@ -19,6 +19,7 @@ import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 import * as qs from 'query-string'
 import { Switch } from 'rmwc/Switch'
+import LoadingOverlay from '../../components/LoadingOverlay'
 
 const { changeURL } = routingActions
 
@@ -158,32 +159,7 @@ class Channel extends Component {
          * Video Player
          */}
         <Media>
-          {!live && (
-            <div
-              style={{
-                display: 'inline-flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                background: '#000',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                margin: 0,
-                color: '#fff',
-                zIndex: 2,
-              }}
-            >
-              <FadeInOut loading={live === null}>
-                <p>
-                  {live === null
-                    ? 'L O A D I N G ...'
-                    : 'This broadcaster is currently offline'}
-                </p>
-              </FadeInOut>
-            </div>
-          )}
+          <LoadingOverlay live={live} />
           <VideoPlayer
             autoPlay={true}
             poster=""
@@ -429,16 +405,6 @@ const Info = styled.div`
       color: #aaa;
     }
   }
-`
-
-const fadeInOut = keyframes`
-  from { opacity: 1; }
-  to { opacity: .25; }
-`
-
-const FadeInOut = styled.div`
-  ${({ loading }) =>
-    !loading ? '' : `animation: ${fadeInOut} 2s linear infinite alternate;`};
 `
 
 export default enhance(Channel)
