@@ -195,6 +195,7 @@ jobs:
 
     steps:
       - checkout
+      - run: *install-libsecret
       - run: *build-livepeer-sdk
       - save_cache:
           paths:
