@@ -89,7 +89,6 @@ export async function claimEarnings(
   const txHash = await ctx.livepeer.rpc.claimEarnings(endRound, {
     gas: gas,
   })
-  console.log(txHash)
   const mockTx = {
     blockNumber: '',
     blockHash: '',
@@ -194,7 +193,7 @@ export async function rebond(
   ])
 
   return await ctx.livepeer.rpc.rebond(unbondingLockId, {
-    ...ctx.config.defaultTx,
+    ...ctx.livepeer.config.defaultTx,
     gas: gas,
   })
 }
