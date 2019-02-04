@@ -6,6 +6,7 @@ import {
   rebond,
   rebondFromUnbonded,
   sendTransaction,
+  unbond,
 } from './Mutation'
 
 const data = {
@@ -18,10 +19,12 @@ const data = {
     status: 'pending',
   },
   delegate: {
-    0xf1234d9987: {
+    '0xf1234d9987': {
       unbonds: {
         0: '300',
       },
+      pendingStake: 3000,
+      bondedAmount: 5000,
     },
   },
   gas: {
@@ -29,6 +32,7 @@ const data = {
     bond: '310',
     rebond: '300',
     rebondFromUnbonded: '30',
+    unbond: '500',
   },
 }
 
@@ -41,7 +45,7 @@ const mockSDK = {
         },
       },
       defaultTx: {
-        from: '0x3345F99',
+        from: '0xf1234d9987',
       },
       eth: {
         sendTransaction: async ({}) => {
@@ -71,6 +75,10 @@ const mockSDK = {
           ...args,
         }
       },
+      getDelegator: async delegator => {
+        console.log(data.delegate[delegator])
+        return data.delegate[delegator]
+      },
       rebondFromUnbonded: async (
         delegate: string,
         unbondingLockId: string,
@@ -81,6 +89,9 @@ const mockSDK = {
           gas: args['gas'],
         }
         return res
+      },
+      unbond: async args => {
+        return args
       },
     },
     utils: {
@@ -179,13 +190,13 @@ test('sendTransaction call correct methods', async t => {
 
 test('Mutation rebondFromUnbonded mutation calls correct function', async t => {
   const val = {
-    delegate: data.delegate[0xf1234d9987],
+    delegate: data.delegate['0xf1234d9987'],
     gas: data.gas['rebondFromUnbonded'],
   }
   const result = await rebondFromUnbonded(
     {},
     {
-      delegate: 0xf1234d9987,
+      delegate: '0xf1234d9987',
       unbondingLockId: '0',
     },
     mockSDK,
@@ -193,5 +204,13 @@ test('Mutation rebondFromUnbonded mutation calls correct function', async t => {
   t.deepEqual(val, result)
 })
 
-test.todo('unbond()')
+test('Unbond calls get Gas and rpc.unbond', async t => {
+  t.deepEqual(
+    {
+      ...mockSDK.livepeer.config.defaultTx,
+      gas: data.gas['unbond'],
+    },
+    await unbond({}, {}, mockSDK),
+  )
+})
 test.todo('claimEarnings()')
