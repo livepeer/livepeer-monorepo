@@ -12,7 +12,7 @@ const MetricBox = ({
   prefix,
   width,
   children,
-  valueSize,
+  textStyle,
   ...props
 }) => {
   return (
@@ -59,7 +59,8 @@ const MetricBox = ({
               textOverflow: 'ellipsis',
               overflow: 'hidden',
               whiteSpace: 'nowrap',
-              fontSize: valueSize || '1.17em',
+              fontSize: '1.17em',
+              ...(textStyle || {}),
             }}
           >
             {value}

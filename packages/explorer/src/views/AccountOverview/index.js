@@ -86,7 +86,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
               </Link>
             </Tooltip>
           }
-          valueSize="15px"
+          textStyle={{ fontSize: '15px' }}
         />
         {/** ETH */}
         <MetricBox
@@ -95,7 +95,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           title="ETH Balance"
           suffix="ETH"
           value={formatBalance(ethBalance)}
-          valueSize="1em"
+          textStyle={{ fontSize: '1em' }}
           subvalue={`${formatBalance(ethBalance, 18, 'wei')} WEI`}
         />
         {/** LPT */}
@@ -105,7 +105,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           title="Current Livepeer Token Balance"
           suffix="LPT"
           value={formatBalance(tokenBalance)}
-          valueSize="1em"
+          textStyle={{ fontSize: '1em' }}
         >
           {isMe && (
             <React.Fragment>
@@ -142,7 +142,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           title="Pending Livepeer Token Balance"
           suffix="LPT"
           value={formatBalance(unbondedAmount)}
-          valueSize="1em"
+          textStyle={{ fontSize: '1em' }}
         >
           {isMe && (
             <React.Fragment>
