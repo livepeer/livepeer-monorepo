@@ -552,8 +552,6 @@ const AccountDelegatorQuery = gql`
     pendingFees
     pendingStake
     startRound
-    withdrawAmount
-    withdrawRound
   }
 
   query AccountDelegatorQuery($id: String!) {
