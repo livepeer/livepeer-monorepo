@@ -70,8 +70,8 @@ const ClaimEarningsForm: React.ComponentType<ClaimEarningsFormProps> = ({
         <Confetti active={submitSucceeded} />
         <p>
           Congratulations! You successfully claimed your earnings through round
-          #{endRound}. You now have {Math.abs(remaining)} rounds of earnings
-          left to claim.
+          #{endRound}. You now have {remaining} rounds of earnings left to
+          claim.
         </p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
