@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import Joyride from 'react-joyride'
 import {
   DownloadCloud as DownloadCloudIcon,
@@ -9,12 +10,14 @@ import { Card } from 'rmwc/Card'
 import { Drawer, DrawerHeader, DrawerContent } from 'rmwc/Drawer'
 import { Icon } from 'rmwc/Icon'
 import { List, ListDivider, ListItem, SimpleListItem } from 'rmwc/List'
-import { formatBalance } from '../../utils'
+import { formatBalance, MathBN } from '../../utils'
 import {
   Button,
   Content,
   EmptyMessage,
+  InlineAccount,
   MetricBox,
+  Tooltip,
   Wrapper,
 } from '../../components'
 import enhance from './enhance'
@@ -22,6 +25,7 @@ import enhance from './enhance'
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
   coinbase: GraphQLProps<Coinbase>,
+  currentRound: GraphQLProps<Round>,
   history: History,
   match: Match,
   onDepositETH: (e: Event) => void,
@@ -29,11 +33,14 @@ type AccountOverviewProps = {
   onRequestLPT: (e: Event) => void,
   onTransferLPT: (e: Event) => void,
   transactions: GraphQLProps<Transaction>,
+  unbondlocks: GraphQLProps<UnbondLock>,
 }
 
 const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   account,
   coinbase,
+  currentRound,
+  delegator,
   history,
   match,
   onDepositETH,
@@ -41,6 +48,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   onRequestLPT,
   onTransferLPT,
   transactions,
+  unbondlocks,
 }) => {
   const searchParams = new URLSearchParams(history.location.search)
   const TOUR_ENABLED = !!searchParams.get('tour')
@@ -50,6 +58,16 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   const transactionData = transactions.data
     // only livepeer transactions
     .filter(x => x.method)
+
+  let unbondedAmount = 0
+  if (unbondlocks) {
+    const reducer = (accumulator, itemNext) =>
+      MathBN.add(accumulator, itemNext.amount)
+    const filter = item => item['withdrawRound'] !== '0'
+    unbondlocks = unbondlocks.filter(filter)
+    unbondedAmount = unbondlocks.reduce(reducer, 0)
+  }
+
   return (
     <React.Fragment>
       {/*<InlineHint flag="account-overview">
@@ -61,11 +79,15 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           className="eth-address"
           help="The Ethereum address representing this account"
           title="ETH Address"
-          width="100%"
-          subvalue={<code style={{ fontSize: 16 }}>{id}</code>}
+          value={
+            <Tooltip text={id}>
+              <Link to={`/accounts/${id}`} style={{ textDecoration: 'none' }}>
+                <InlineAccount address={id} border truncate={22} />
+              </Link>
+            </Tooltip>
+          }
+          textStyle={{ fontSize: '15px' }}
         />
-      </Wrapper>
-      <Wrapper>
         {/** ETH */}
         <MetricBox
           className="eth-balance"
@@ -73,16 +95,17 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           title="ETH Balance"
           suffix="ETH"
           value={formatBalance(ethBalance)}
+          textStyle={{ fontSize: '1em' }}
           subvalue={`${formatBalance(ethBalance, 18, 'wei')} WEI`}
         />
         {/** LPT */}
         <MetricBox
           className="token-balance"
           help="The amount of Livepeer Token (LPT) owned by this account"
-          title="Livepeer Token Balance"
+          title="Current Livepeer Token Balance"
           suffix="LPT"
           value={formatBalance(tokenBalance)}
-          subvalue={formatBalance(tokenBalance, 18)}
+          textStyle={{ fontSize: '1em' }}
         >
           {isMe && (
             <React.Fragment>
@@ -106,7 +129,32 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
                   history.push(`/transcoders?tour=true`)
                 }}
               >
-                <span>bond to a transcoder</span>
+                <span style={{ fontSize: '10px' }}>bond to a transcoder</span>
+                <span style={{ marginLeft: 8 }}>&rarr;</span>
+              </Button>
+            </React.Fragment>
+          )}
+        </MetricBox>
+        <MetricBox
+          className="eth-balance"
+          help={`The amount of Livepeer Token (LPT) owned by this
+                account that is in the unbonding state`}
+          title="Pending Livepeer Token Balance"
+          suffix="LPT"
+          value={formatBalance(unbondedAmount)}
+          textStyle={{ fontSize: '1em' }}
+        >
+          {isMe && (
+            <React.Fragment>
+              {/** view locks*/}
+              <Button
+                className={unbondedAmount ? 'bond-token primary' : 'disabled'}
+                onClick={e => {
+                  if (unbondlocks)
+                    history.push(`/accounts/${id}/delegating#unbondinglocks`)
+                }}
+              >
+                <span>View</span>
                 <span style={{ marginLeft: 8 }}>&rarr;</span>
               </Button>
             </React.Fragment>
@@ -245,7 +293,7 @@ class TransactionCard extends React.Component {
               }}
             >
               <Icon
-                iconOptions={{ strategy: 'ligature' }}
+                strategy="ligature"
                 use={
                   pending
                     ? 'warning'
@@ -324,7 +372,7 @@ class TransactionCard extends React.Component {
                       }}
                     >
                       <Icon
-                        iconOptions={{ strategy: 'ligature' }}
+                        strategy="ligature"
                         use={
                           pending
                             ? 'warning'

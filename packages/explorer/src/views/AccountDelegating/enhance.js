@@ -1,76 +1,14 @@
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { mockDelegator } from '@livepeer/graphql-sdk'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
   connectProtocolQuery,
   connectToasts,
   withTransactionHandlers,
+  connectAccountDelegatorQuery,
 } from '../../enhancers'
 import { MathBN } from '../../utils'
-
-const AccountDelegatorQuery = gql`
-  fragment DelegatorFragment on Delegator {
-    id
-    allowance
-    status
-    delegateAddress
-    bondedAmount
-    fees
-    delegatedAmount
-    lastClaimRound
-    pendingFees
-    pendingStake
-    startRound
-    withdrawAmount
-    withdrawRound
-  }
-
-  query AccountDelegatorQuery($id: String!) {
-    account(id: $id) {
-      id
-      delegator {
-        ...DelegatorFragment
-      }
-
-      unbondlocks {
-        id
-        amount
-        withdrawRound
-        delegator
-      }
-    }
-  }
-`
-
-const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
-  props: ({ data, ownProps }) => {
-    const { account, ...queryProps } = data
-    const { delegator, unbondlocks } = account || {}
-
-    let result = {
-      ...ownProps,
-      delegator: {
-        ...queryProps,
-        data: mockDelegator(delegator),
-      },
-      unbondlocks,
-    }
-
-    return result
-  },
-  options: ({ match }) => ({
-    pollInterval: 5000,
-    variables: {
-      id: match.params.accountId,
-    },
-    // ssr: false,
-    fetchPolicy: 'network-only',
-  }),
-})
 
 const mapMutationHandlers = withHandlers({
   processRebond: ({ currentRound, history, toasts, delegator, protocol }) => ({

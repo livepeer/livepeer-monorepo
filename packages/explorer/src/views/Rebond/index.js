@@ -35,7 +35,7 @@ const Rebond: React.ComponentType<RebondProps> = ({
 
   return (
     <React.Fragment>
-      <BasicModal title="Rebond" onClose={closeModal}>
+      <BasicModal onClose={closeModal}>
         <RebondForm
           amount={amount}
           delegateAddress={delegateAddress}

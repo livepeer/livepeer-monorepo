@@ -160,19 +160,13 @@ export async function unbond(
   args,
   ctx: GQLContext,
 ): Promise<TxReceipt> {
-  const { pendingStake, bondedAmount } = await ctx.livepeer.rpc.getDelegator(
-    ctx.config.defaultTx.from,
-  )
-  const totalStake =
-    new BN(pendingStake).cmp(new BN(bondedAmount)) < 0
-      ? bondedAmount
-      : pendingStake
-
+  const { amount } = args
   const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'unbond', [
-    totalStake,
+    amount,
   ])
-  return await ctx.livepeer.rpc.unbond({
-    ...ctx.config.defaultTx,
+
+  return await ctx.livepeer.rpc.unbond(amount, {
+    ...ctx.livepeer.config.defaultTx,
     gas: gas,
   })
 }
@@ -194,7 +188,7 @@ export async function rebond(
   ])
 
   return await ctx.livepeer.rpc.rebond(unbondingLockId, {
-    ...ctx.config.defaultTx,
+    ...ctx.livepeer.config.defaultTx,
     gas: gas,
   })
 }
@@ -216,9 +210,6 @@ export async function rebondFromUnbonded(
     'rebondFromUnbonded',
     [delegate, unbondingLockId],
   )
-  console.log('In graphql sdk')
-  console.log({ delegate })
-  console.log({ unbondingLockId })
 
   return await ctx.livepeer.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
     gas: gas,

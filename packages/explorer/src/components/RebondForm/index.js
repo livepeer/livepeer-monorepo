@@ -3,6 +3,7 @@ import { Form } from 'react-final-form'
 import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import Button from '../Button'
+import { H1 } from '../HTags'
 import InlineAccount from '../InlineAccount'
 import type { RebondFormProps } from './props'
 
@@ -22,9 +23,8 @@ const RebondForm: React.StatelessFunctionalComponent<RebondFormProps> = ({
     return (
       <React.Fragment>
         <Confetti active={submitSucceeded} />
-        <p>
-          {`Sucess ${amount} LPT are now bonded back to ${delegateAddress}`}
-        </p>
+        <H1>Success!</H1>
+        <p>{`${amount} LPT are now bonded back to ${delegateAddress}`}</p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (
             <Button disabled={loading} onClick={onCancel}>
@@ -38,14 +38,15 @@ const RebondForm: React.StatelessFunctionalComponent<RebondFormProps> = ({
 
   return (
     <React.Fragment>
+      <H1>Rebond</H1>
       <p style={{ textAlign: 'center' }}>
         {`Rebond ${amount} LPT to the most recent transcoder`}
       </p>
       <InlineAccount address={delegateAddress || ''} truncate={40} />
       <p>
-        Note: You can only bond to one transcoder at a time. To bond to a
-        different transcoder, bond to this transcoder and then on the
-        transcoders page, bond all LPT to a different transcoder
+        Note: You may only bond to one transcoder at a time. If you want to bond
+        to a different transcoder, rebond to this transcoder, and then on
+        transcoders page, bond all LPT to a different transcoder.
       </p>
       <Button
         disabled={loading || submitting}

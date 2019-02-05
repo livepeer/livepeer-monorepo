@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { Minus as MinusIcon } from 'react-feather'
-import { formatBalance, MathBN } from '../../utils'
+import { formatBalance, formatRoundsToDate, MathBN } from '../../utils'
 import {
   Button,
   InlineAccount,
@@ -134,7 +134,9 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             ? `${formatBalance(
                 withdrawAmount,
                 18,
-              )} LPT may be withdrawn at round #${withdrawRound}`
+              )} LPT may be withdraw approximately on ${formatRoundsToDate(
+                withdrawRound - lastInitializedRound,
+              )}`
             : `${formatBalance(withdrawAmount, 18)} LPT may be withdrawn`
         }
       >
@@ -157,7 +159,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
       >
         {isMe && (
           <React.Fragment>
-            {/** request */}
             <Button disabled={!hasFees} onClick={withdrawFees}>
               <MinusIcon size={12} />
               <span style={{ marginLeft: 8 }}>withdraw fees</span>
@@ -212,6 +213,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
 
       {unbondlocks && unbondlocks.length > 0 && (
         <MetricBox
+          id="unbondinglocks"
           help="List of unbonding transactions from delegator"
           title="Unbonding Transactions"
           width="100%"
@@ -219,6 +221,7 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
           <div style={{ display: 'block', width: '100%' }}>
             {unbondlocks.map(({ id, amount, withdrawRound }) => (
               <UnbondTx
+                isMe={isMe}
                 key={id}
                 id={id}
                 amount={amount}

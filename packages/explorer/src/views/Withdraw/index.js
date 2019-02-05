@@ -25,7 +25,7 @@ const Withdraw: React.ComponentType<WithdrawProps> = ({
   } = location || {}
   return (
     <React.Fragment>
-      <BasicModal title="Withdraw your LPT" onClose={closeModal}>
+      <BasicModal onClose={closeModal}>
         <WithdrawForm
           onSubmit={withdrawStake}
           history={history}

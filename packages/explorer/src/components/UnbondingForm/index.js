@@ -2,10 +2,11 @@ import * as React from 'react'
 import { Form } from 'react-final-form'
 import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
-import Confetti from 'react-dom-confetti'
+import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import { formatBalance } from '../../utils'
 import Button from '../Button'
+import { H1 } from '../HTags'
 import type { UnbondFormProps } from './props'
 
 /**
@@ -29,25 +30,13 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
   view,
   ...props
 }) => {
-  const confetti = (
-    <Confetti
-      active={submitSucceeded}
-      config={{
-        angle: 90,
-        spread: 197,
-        startVelocity: 45,
-        elementCount: 50,
-        decay: 0.9,
-      }}
-    />
-  )
   const noAllowance = allowance === '0'
   const noBondedAmount = bondedAmount === '0'
   const max = formatBalance(bondedAmount, 18)
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
     return (
       <React.Fragment>
-        {confetti}
+        <H1>Failed</H1>
         <p>
           There was an error submitting your transaction. See error message
           below for more details:
@@ -76,14 +65,15 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
   if (submitSucceeded) {
     return (
       <React.Fragment>
-        {confetti}
-        <h3>Success: The Unbonding Process Has Begun.</h3>
+        <Confetti active={submitSucceeded} />
+        <H1>Success!</H1>
+        <h3>The Unbonding Process Has Begun.</h3>
         <p>
           It will take 7 days (the unbonding period) in order to be able to
           withdraw your token.
         </p>
         <p>
-          Go to Account &rarr; Delegating and scroll to "Pending LPT" to see
+          Go to Account &rarr; Staking and scroll to "Pending LPT" to see
           pending requests.
         </p>
         <p>After 7 days, the "Withdraw" Button will be clickable.</p>
@@ -99,10 +89,10 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
   }
   return (
     <React.Fragment>
-      {confetti}
       <div>
+        <H1>Unbond Your Token</H1>
         <p>
-          <strong>How to Unbond.</strong>
+          <strong>How to Unbond:</strong>
         </p>
         <ul>
           <li>
@@ -115,7 +105,7 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
             (the unbonding period) in order to be able to withdraw your token.
           </li>
           <li>
-            <strong>Amount.</strong> You may unbond ALL or PARTIAL amount of
+            <strong>Amount.</strong> You may unbond ALL or a PARTIAL amount of
             your LPT. Enter the amount of LPT you wish to unbond in the box
             below.
           </li>
@@ -127,13 +117,13 @@ const UnbondForm: React.StatelessFunctionalComponent<UnbondFormProps> = ({
           <li>
             <strong>Multiple Unbonding Transactions.</strong> Each time you
             Unbond a partial amount of token, a transaction is created and must
-            be withdrawn or rebonded separataely.
+            be withdrawn or rebonded separately.
           </li>
           <li>
             <strong>Change your mind?</strong> If you have initiated the
             Unbonding process but wish to rebond your LPT, you do not need to
             wait for the period to end. Go to the Staking page on your account
-            and click "Rebond".
+            and click "Rebond."
           </li>
         </ul>
       </div>

@@ -89,11 +89,13 @@ export function formatBalance(
 ): string {
   decimals = decimals ? decimals : unitMap[unit].length
   return !x
-    ? ''
-    : Big(x)
-        .div(unitMap[unit])
-        .toFixed(decimals)
-        .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')
+    ? '0'
+    : parseFloat(
+        Big(x)
+          .div(unitMap[unit])
+          .toFixed(decimals)
+          .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1'),
+      ).toString()
 }
 
 export function formatRoundsToDate(round: number): string {
@@ -104,7 +106,12 @@ export function formatRoundsToDate(round: number): string {
 }
 
 export function toBaseUnit(x: string) {
-  return !x ? '' : unit.toWei(x, 'ether').toString(10)
+  try {
+    return !x ? '' : unit.toWei(x, 'ether').toString(10)
+  } catch (err) {
+    console.warn(err)
+    return ''
+  }
 }
 
 export function fromBaseUnit(x: string) {
@@ -182,14 +189,17 @@ export async function enableAccounts() {
       console.log('METAMASK | Access to accounts denied')
       limitedMode()
     }
-  } else if (window.web3 && window.web3.version) {
-    // this is the old way, accounts are always exposed.
-    window.web3 = new window.Web3(window.web3.currentProvider)
   }
   return
 }
 
 export async function limitedMode() {
-  window.limitedWeb3Conn = true
-  window.web3 = new window.Web3(window.ethereum)
+  // Enable limited mode if and only if window.Web3 exists
+  if (window.Web3 && window.ethereum) {
+    window.limitedWeb3Conn = true
+    window.web3 = new window.Web3(window.ethereum)
+  } else if (window.web3 && window.web3.version) {
+    // this is the old way, accounts are always exposed.
+    window.web3 = new window.Web3(window.web3.currentProvider)
+  }
 }

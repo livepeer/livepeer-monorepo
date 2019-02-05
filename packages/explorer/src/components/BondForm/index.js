@@ -2,12 +2,13 @@ import * as React from 'react'
 import { Form } from 'react-final-form'
 import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
-import Confetti from 'react-dom-confetti'
+import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import { formatBalance, toBaseUnit, MathBN } from '../../utils'
 import InlineAccount from '../InlineAccount'
 import InlineHint from '../InlineHint'
 import Button from '../Button'
+import { H1 } from '../HTags'
 import type { BondFormProps } from './props'
 
 /**
@@ -19,9 +20,11 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   delegateAddress,
   errors,
   handleSubmit,
+  handleChange,
   loading,
   max,
   maxEarningsClaimsRounds,
+  me,
   onCancel,
   onUpdateAllowance,
   reset,
@@ -34,27 +37,17 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   values,
   ...props
 }) => {
-  const confetti = (
-    <Confetti
-      active={submitSucceeded}
-      config={{
-        angle: 90,
-        spread: 197,
-        startVelocity: 45,
-        elementCount: 50,
-        decay: 0.9,
-      }}
-    />
-  )
+  const { delegator } = me.data
   const noAllowance = allowance === '0'
   const noBondedAmount = bondedAmount === '0'
   const cannotBond =
     (noAllowance && noBondedAmount) ||
     (values.amount && MathBN.gt(toBaseUnit(values.amount), allowance))
+  const noZero = delegator.delegateAddress === delegateAddress
   if (submitFailed && submitError && !/User denied/.test(submitError)) {
     return (
       <React.Fragment>
-        {confetti}
+        <H1>Failed</H1>
         <p>
           There was an error submitting your transaction. See error message
           below for more details:
@@ -84,7 +77,8 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
     // console.log('rendering bond success')
     return (
       <React.Fragment>
-        {confetti}
+        <Confetti active={submitSucceeded} />
+        <H1>Success!</H1>
         <p>
           Congratulations! You successfully bonded your tokens to{' '}
           {delegateAddress}. You may{' '}
@@ -103,7 +97,7 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
   }
   return (
     <React.Fragment>
-      {confetti}
+      <H1>Bond Your Token</H1>
       <div>
         <p>
           <strong>Bonding Tips:</strong>
@@ -156,21 +150,29 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           <p style={{ marginTop: 0 }}>Amount to Bond</p>
           {noBondedAmount ? null : (
             <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-              <strong>Note:</strong> By entering 0 or leaving this field blank,
-              you will transfer your existing bonded amount of{' '}
-              {formatBalance(bondedAmount, 18)} LPT the selected delegate.
+              <strong>Note:</strong>
+              {noZero
+                ? ` You cannot bond 0 LPT to a delegate you are already bonded to.`
+                : ` By entering 0 or leaving this field blank,
+                  you will transfer your existing bonded amount of
+                  ${formatBalance(
+                    bondedAmount,
+                    18,
+                  )} LPT the selected delegate.`}
             </p>
           )}
           <div>
             <Field
-              name="amount"
               component="input"
-              type="number"
-              min="0"
-              max={max}
               disabled={loading}
+              max={max}
+              maxLength={20}
+              min={noZero ? Math.pow(10, -18).toString() : '0'}
+              minLength={1}
+              name="amount"
               rangeOverflow={`This amount is too large. Either your token balance is too low or you need to approve a higher transfer allowance.`}
               step="any"
+              type="number"
               style={{
                 width: '90%',
                 height: 48,
