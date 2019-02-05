@@ -140,7 +140,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
             : `${formatBalance(withdrawAmount, 18)} LPT may be withdrawn`
         }
       >
-        {console.log(withdrawRound)}
         {isMe && (
           <React.Fragment>
             {/** request */}
