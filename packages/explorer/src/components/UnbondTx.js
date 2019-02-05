@@ -17,19 +17,20 @@ const UnbondTx = ({
     <div
       style={{
         display: 'flex',
+        flexFlow: 'row wrap',
+        justifyContent: 'flex-start',
         margin: 0,
+        minWidth: '100%',
         paddingLeft: 20,
         textAlign: 'left',
-        minWidth: '100%',
-        justifyContent: 'flex-start',
-        flexFlow: 'row wrap',
       }}
     >
       <div
         style={{
-          textAlign: 'left',
-          minWidth: '60%',
+          display: 'flex',
           justifyContent: 'flex-start',
+          minWidth: '60%',
+          textAlign: 'left',
         }}
       >
         <h3>
