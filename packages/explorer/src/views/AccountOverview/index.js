@@ -137,7 +137,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
         </MetricBox>
         <MetricBox
           className="eth-balance"
-          help={`The amount of Livepeer Token (LPT) owned  owned by this
+          help={`The amount of Livepeer Token (LPT) owned by this
                 account that is in the unbonding state`}
           title="Pending Livepeer Token Balance"
           suffix="LPT"
