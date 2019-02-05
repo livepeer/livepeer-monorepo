@@ -62,7 +62,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
   let unbondedAmount = 0
   if (unbondlocks) {
     const reducer = (accumulator, itemNext) =>
-      (accumulator = MathBN.add(accumulator, itemNext.amount))
+      MathBN.add(accumulator, itemNext.amount)
     const filter = item => item['withdrawRound'] !== '0'
     unbondlocks = unbondlocks.filter(filter)
     unbondedAmount = unbondlocks.reduce(reducer, 0)
