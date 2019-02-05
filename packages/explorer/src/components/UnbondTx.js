@@ -44,9 +44,9 @@ const UnbondTx = ({
                     : ' for this amount of LPT'
                 }.`
               : isMe
-              ? `You will be able to unbond approximately on
+              ? `You will be able to withdraw approximately on
                  ${formatRoundsToDate(withdrawRound - currentRound)}.`
-              : `This amount of LPT can be unbonded on
+              : `This amount of LPT can be withdrawn on
                   ${formatRoundsToDate(withdrawRound - currentRound)}.`}
           </span>
         </h3>
