@@ -76,7 +76,6 @@ const mockSDK = {
         }
       },
       getDelegator: async delegator => {
-        console.log(data.delegate[delegator])
         return data.delegate[delegator]
       },
       rebondFromUnbonded: async (
