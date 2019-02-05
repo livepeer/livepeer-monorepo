@@ -59,12 +59,13 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
     // only livepeer transactions
     .filter(x => x.method)
 
+  let unbondedAmount = 0
   if (unbondlocks) {
     const reducer = (accumulator, itemNext) =>
       (accumulator = MathBN.add(accumulator, itemNext.amount))
     const filter = item => item['withdrawRound'] !== '0'
     unbondlocks = unbondlocks.filter(filter)
-    unbondlocks = unbondlocks.reduce(reducer, 0)
+    unbondedAmount = unbondlocks.reduce(reducer, 0)
   }
 
   return (
@@ -140,14 +141,14 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
                 account that is in the unbonding state`}
           title="Pending Livepeer Token Balance"
           suffix="LPT"
-          value={formatBalance(unbondlocks)}
+          value={formatBalance(unbondedAmount)}
           valueSize="1em"
         >
           {isMe && (
             <React.Fragment>
               {/** view locks*/}
               <Button
-                className={unbondlocks ? 'bond-token primary' : 'disabled'}
+                className={unbondedAmount ? 'bond-token primary' : 'disabled'}
                 onClick={e => {
                   if (unbondlocks)
                     history.push(`/accounts/${id}/delegating#unbondinglocks`)
