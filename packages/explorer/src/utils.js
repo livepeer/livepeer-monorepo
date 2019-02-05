@@ -195,7 +195,7 @@ export async function enableAccounts() {
 
 export async function limitedMode() {
   // Enable limited mode if and only if window.Web3 exists
-  if (window.Web3) {
+  if (window.Web3 && window.ethereum) {
     window.limitedWeb3Conn = true
     window.web3 = new window.Web3(window.ethereum)
   } else if (window.web3 && window.web3.version) {
