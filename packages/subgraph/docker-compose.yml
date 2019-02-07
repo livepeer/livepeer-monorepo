@@ -1,7 +1,7 @@
 version: "3"
 services:
   graph-node:
-    image: graphprotocol/graph-node:v0.5.0
+    image: graphprotocol/graph-node:latest
     container_name: graph-node
     ports:
       - "8000:8000"
