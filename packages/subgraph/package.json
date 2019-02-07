@@ -1,18 +1,19 @@
 {
   "name": "@livepeer/subgraph",
-  "private": true,
   "version": "1.0.0-alpha.5",
+  "private": true,
   "license": "MIT",
   "scripts": {
-    "codegen": "graph codegen --output-dir types/ subgraph.yaml",
-    "build": "graph build subgraph.yaml",
-    "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
-    "build-wast": "graph build -t wast subgraph.yaml",
-    "deploy": "graph deploy subgraph.yaml --verbosity debug --node http://127.0.0.1:8020/ --ipfs /ip4/127.0.0.1/tcp/5001 --subgraph-name livepeer"
+    "create": "graph create livepeer/livepeer --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
+    "codegen": "graph codegen --debug --output-dir src/types/",
+    "build": "graph build --debug",
+    "deploy": "graph deploy livepeer/livepeer --debug --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy livepeer/livepeer --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "graphprotocol/graph-cli#jannis/ipfs-auth",
-    "@graphprotocol/graph-ts": "0.5.0"
+    "@graphprotocol/graph-cli": "^0.7.1",
+    "@graphprotocol/graph-ts": "^0.5.1"
   },
   "workspaces": {
     "packages": [

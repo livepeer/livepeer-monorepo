@@ -5,6 +5,28 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
+    name: BondingManager_deprecated
+    network: mainnet
+    source:
+      address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      file: ./src/mappings/bondingManager_deprecated.ts
+      entities:
+        - Transcoder
+        - Delegator
+      abis:
+        - name: BondingManager
+          file: ./abis/BondingManager_deprecated.json
+      eventHandlers:
+        - event: Bond(address,address)
+          handler: bond_deprecated
+        - event: Unbond(address,address)
+          handler: unbond_deprecated
+  - kind: ethereum/contract
     name: BondingManager
     network: mainnet
     source:
@@ -14,15 +36,19 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.1
       language: wasm/assemblyscript
-      file: ./mappings/bondingManager.ts
+      file: ./src/mappings/bondingManager.ts
       entities:
         - Transcoder
         - Reward
+        - Delegator
+        - Share
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
         - name: RoundsManager
           file: ./abis/RoundsManager.json
+        - name: Controller
+          file: ./abis/Controller.json
       eventHandlers:
         - event: TranscoderUpdate(address,uint256,uint256,uint256,bool)
           handler: transcoderUpdated
@@ -42,6 +68,7 @@ dataSources:
           handler: reward
   - kind: ethereum/contract
     name: RoundsManager
+    network: mainnet
     source:
       address: "3984fc4ceeef1739135476f625d36d6c35c40dc3"
       abi: RoundsManager
@@ -49,7 +76,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.1
       language: wasm/assemblyscript
-      file: ./mappings/roundsManager.ts
+      file: ./src/mappings/roundsManager.ts
       entities:
         - Transcoder
         - Reward
@@ -62,3 +89,30 @@ dataSources:
       eventHandlers:
         - event: NewRound(uint256)
           handler: newRound
+  - kind: ethereum/contract
+    name: JobsManager
+    network: mainnet
+    source:
+      address: "bf07ff45f14c9ff0571b9fbdc7e2b62d29931224"
+      abi: JobsManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      file: ./src/mappings/jobsManager.ts
+      entities:
+        - Transcoder
+        - Share
+        - Delegator
+      abis:
+        - name: JobsManager
+          file: ./abis/JobsManager.json
+        - name: BondingManager
+          file: ./abis/BondingManager.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+        - name: Controller
+          file: ./abis/Controller.json
+      eventHandlers:
+        - event: DistributeFees(address,uint256,uint256,uint256)
+          handler: distributeFees

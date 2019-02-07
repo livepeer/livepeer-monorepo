@@ -35,7 +35,6 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-dist/
 
 # TypeScript v1 declaration files
 typings/
@@ -60,3 +59,9 @@ typings/
 
 # next.js build output
 .next
+
+# subgraph dist output
+dist/
+
+# subgraph types output
+types/
