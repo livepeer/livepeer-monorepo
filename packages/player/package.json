@@ -23,7 +23,6 @@
     "react-scripts": "^2.1.1",
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
-    "redux-saga": "^0.16.0",
     "redux-thunk": "^2.2.0",
     "rmwc": "1.6.2",
     "styled-components": "3.2.1"
