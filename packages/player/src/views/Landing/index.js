@@ -9,7 +9,7 @@ import {
   selectors as routingSelectors,
 } from '../../services/routing'
 
-const { changeChannel } = routingActions
+const { changeURL } = routingActions
 const { getParsedQueryString } = routingSelectors
 
 const mapStateToProps = state => ({
@@ -17,46 +17,54 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ changeChannel }, dispatch)
+  bindActionCreators({ changeURL }, dispatch)
 
-const enhance = connect(mapStateToProps, mapDispatchToProps)
-
-const Landing = ({ query, changeChannel }) => (
-  <Container>
-    <Navbar />
-    <img src="/wordmark.svg" width="240" alt="The glorious Livepeer wordmark" />
-    <h3 style={{ letterSpacing: 8 }}>Media Player</h3>
-    <br />
-    <br />
-    <p>{`Find a channel by entering a broadcaster's ETH address`}</p>
-    <div style={{ maxWidth: '100%', width: 480 }}>
-      <SearchBar
-        id="broadcaster"
-        type="search"
-        placeholder="example: 0x86a1405f3aede8e904dbd584971ff685e80418cc"
-        onKeyDown={e => {
-          if (e.keyCode !== 13 || !e.target.value) return
-          document.getElementById('broadcaster-search-button').click()
-        }}
-      />
-      <br />
-      <br />
-      <div style={{ textAlign: 'right' }}>
-        <SearchButton
-          id="broadcaster-search-button"
-          onClick={() => {
-            const { value } = document.getElementById('broadcaster')
-            if (!value) return
-            changeChannel(value)
-          }}
-        >
-          search
-        </SearchButton>
-      </div>
-    </div>
-    <Footer />
-  </Container>
+const enhance = connect(
+  mapStateToProps,
+  mapDispatchToProps,
 )
+
+const Landing = ({ query, changeURL }) => {
+  let searchBarRef
+  return (
+    <Container>
+      <Navbar />
+      <img src="/wordmark.svg" width="240" alt="Livepeer logo" />
+      <h3 style={{ letterSpacing: 8 }}>Media Player</h3>
+      <br />
+      <br />
+      <p>Enter the URL of a video stream</p>
+      <SearchForm
+        onSubmit={e => {
+          e.preventDefault()
+          if (!searchBarRef || !searchBarRef.value) {
+            return
+          }
+          changeURL(searchBarRef.value)
+        }}
+      >
+        <SearchBar
+          id="broadcaster"
+          type="search"
+          placeholder="example: http://example.com/stream.m3u8"
+          innerRef={ref => (searchBarRef = ref)}
+        />
+        <br />
+        <br />
+        <div style={{ textAlign: 'right' }}>
+          <SearchButton>search</SearchButton>
+        </div>
+      </SearchForm>
+      <Footer />
+    </Container>
+  )
+}
+
+const SearchForm = styled.form`
+  display: block;
+  max-width: 100%;
+  width: 480px;
+`
 
 const Container = styled.div`
   display: flex;
