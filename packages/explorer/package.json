@@ -55,7 +55,7 @@
     "eject": "npx react-scripts eject",
     "postbuild": "cp build/index.html build/404.html",
     "serve": "npx serve -s build",
-    "start": "npx react-scripts start",
+    "start": "PORT=3001 react-scripts start",
     "test": "npx react-scripts test"
   },
   "build": {
