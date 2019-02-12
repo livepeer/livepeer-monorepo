@@ -6,10 +6,13 @@
   "main": "main/index.js",
   "module": "lib/index.js",
   "scripts": {
-    "build": "npm -s run build-module && npm -s run build-main",
+    "build": "run-p build-main build-module",
     "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
     "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "postbuild": "node generate-schema.js",
+    "start": "run-p start-**",
+    "start-babel": "run-p 'build-** -- --watch'",
+    "start-schema": "nodemon -w lib -x npm run postbuild",
     "copy-docs": "rm -rf ../../docs/graphql-sdk && mkdir ../../docs/graphql-sdk && cp -r docs/* ../../docs/graphql-sdk",
     "docs": "npx graphdoc --force && echo 'main .title { background: #000; }' >> ./docs/styles/graphdoc.css && npx graphql-markdown ./schema.json --update-file README.md --heading-level 2",
     "graphiql": "node ./server.js",
@@ -43,6 +46,7 @@
     "express-graphql": "0.6.12",
     "graphql-markdown": "^3.2.0",
     "lcov-badge": "^1.0.4",
+    "npm-run-all": "^4.1.5",
     "nyc": "^11.6.0"
   },
   "graphdoc": {

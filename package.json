@@ -26,6 +26,7 @@
       "npx lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
     "release:alpha":
       "npx lerna publish --cd-version prerelease --conventional-commits --yes",
+    "start": "lerna run --stream --no-sort --concurrency=999 --ignore @livepeer/merkle-miner start",
     "test":
       "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
     "test:build-apps":
