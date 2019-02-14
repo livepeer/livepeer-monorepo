@@ -41,13 +41,21 @@ This project requires `node >=8.0.0` and `yarn >=1.0.0`. A unix shell is also re
 
 ## Getting Started
 
-To get started, clone the repo and install its dependencies
+To get started, clone the repo and install its dependencies:
 
 ```bash
 git clone https://github.com/livepeer/livepeerjs.git
 cd livepeerjs
 yarn
 ```
+
+For development purposes there's a top-level `start` script that will watch and continiously compile all packages concurrently:
+
+```bash
+yarn start
+```
+
+You also can
 
 For next steps, take a look at documentation for the individual package(s) you want to run and/or develop.
 
@@ -78,7 +86,8 @@ We happily await your pull requests and/or involvement in our [issues page](http
 | [`@livepeer/explorer`](https://github.com/livepeer/livepeerjs/tree/master/packages/explorer)         | A protocol explorer for the web. It allows users to see general information about the protocol and specific information about Eth addresses within the protocol. See it live at [explorer.livepeer.org](https://explorer.livepeer.org) |
 | [`@livepeer/player`](https://github.com/livepeer/livepeerjs/tree/master/packages/player)             | A video player for the web. Lets you see what's live streaming on the network. Our hosted media player runs off of this project. See it live at [media.livepeer.org](https://media.livepeer.org)                                       |
 | [`@livepeer/merkle-miner`](https://github.com/livepeer/livepeerjs/tree/master/packages/merkle-miner) | Helpers for mining a merkle proof and generating Livepeer Token                                                                                                                                                                        |
-| [`@livepeer/subgraph`](https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph) | Subgraph manifest for The Graph                                                                                                                                                                        |
+| [`@livepeer/subgraph`](https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph)         | Subgraph manifest for The Graph                                                                                                                                                                                                        |
+
 ## Resources
 
 To get a full idea of what Livepeer is about, be sure to take a look at these other resources:

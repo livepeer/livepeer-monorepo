@@ -6,9 +6,10 @@
   "main": "main/index.js",
   "module": "lib/index.js",
   "scripts": {
-    "build": "npm -s run build-module && npm -s run build-main",
+    "build": "run-p build-**",
     "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
     "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "start": "run-p 'build-** -- --watch'",
     "copy-etc": "f(){ rm -rf etc; mkdir etc; printf 'Importing truffle artifacts...'; tput sc; for x in $@/*.json; do tput rc; tput el; echo \"$(basename $x)\"; node -e \"const {contractName,abi,networks}=require('$x');const [address]=Object.values(networks).sort((a, b) => b.updated_at - a.updated_at);console.log(JSON.stringify({name:contractName,abi,address: (address && address.address) || address}, null, 2));\" > etc/$(basename $x); done; tput rc; tput el; echo 'done! :)'; };f",
     "compile": "pushd ../../node_modules/protocol && rm -rf build && yarn && npx truffle version && yarn compile && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
     "deploy": "pushd ../../node_modules/protocol && rm -rf build && yarn && npx truffle version && npx truffle migrate --reset && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
@@ -40,6 +41,7 @@
     "babel-register": "^6.26.0",
     "documentation": "6.1.0",
     "lcov-badge": "^1.0.4",
+    "npm-run-all": "^4.1.5",
     "nyc": "^11.6.0",
     "protocol": "https://github.com/livepeer/protocol.git#65d6eaaa7875ee4f66029eee519f8c3fa9af89da",
     "yup": "0.24.1"
