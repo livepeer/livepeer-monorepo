@@ -55,8 +55,6 @@ For development purposes there's a top-level `start` script that will watch and 
 yarn start
 ```
 
-You also can
-
 For next steps, take a look at documentation for the individual package(s) you want to run and/or develop.
 
 ## Contributing
