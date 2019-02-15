@@ -6,14 +6,15 @@
   "main": "main/index.js",
   "module": "lib/index.js",
   "scripts": {
-    "build": "npm -s run build-module && npm -s run build-main",
-    "build-main": "NODE_ENV=production npx babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
-    "build-module": "NODE_ENV=production npx babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "build": "run-p build-main build-module",
+    "build-main": "NODE_ENV=production babel src --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
+    "build-module": "NODE_ENV=production babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "copy-docs": "echo 'No copy-docs script specified'",
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepack": "npm -s run build",
-    "test": "npx ava"
+    "start": "run-p 'build-** -- --watch'",
+    "test": "ava"
   },
   "devDependencies": {
     "ava": "0.25.0",
@@ -26,7 +27,8 @@
     "babel-register": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "express": "4.16.3",
-    "express-graphql": "0.6.12"
+    "express-graphql": "0.6.12",
+    "npm-run-all": "^4.1.5"
   },
   "ava": {
     "require": [

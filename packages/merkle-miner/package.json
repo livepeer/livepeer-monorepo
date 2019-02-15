@@ -9,14 +9,14 @@
     "dist"
   ],
   "scripts": {
-    "start": "npm -s run ipfs-add && npx parcel -d build index.html",
-    "build": "npx bili src/worker.js --format iife --filename worker.js --no-babel.babelrc && npx bili src/index.js --filename '[name][suffix].js' --no-babel.babelrc --format cjs,es",
+    "start": "npm -s run ipfs-add && parcel -d build index.html",
+    "build": "bili src/worker.js --format iife --filename worker.js --no-babel.babelrc && bili src/index.js --filename '[name][suffix].js' --no-babel.babelrc --format cjs,es",
     "ipfs-add": "npm -s run build && echo \"export default \\\"$(ipfs add -Q dist/worker.js)\\\"\" > hash.js",
     "prebuild": "rm -rf dist",
     "prepack": "npm -s run build",
-    "test": "npx nyc ava",
-    "coverage": "npx nyc report --reporter=lcov",
-    "lcov-badge": "npx lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
+    "test": "nyc ava",
+    "coverage": "nyc report --reporter=lcov",
+    "lcov-badge": "lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
   "dependencies": {
     "js-sha3": "^0.7.0",
