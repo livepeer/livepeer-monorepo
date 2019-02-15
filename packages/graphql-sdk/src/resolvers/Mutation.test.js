@@ -89,8 +89,11 @@ const mockSDK = {
         }
         return res
       },
-      unbond: async args => {
-        return args
+      unbond: async (args, ethDetails) => {
+        return {
+          amount: args,
+          ...ethDetails,
+        }
       },
     },
     utils: {
@@ -204,12 +207,15 @@ test('Mutation rebondFromUnbonded mutation calls correct function', async t => {
 })
 
 test('Unbond calls get Gas and rpc.unbond', async t => {
+  const res = await unbond({}, { amount: 300 }, mockSDK)
+  console.log(res)
   t.deepEqual(
     {
+      amount: 300,
       ...mockSDK.livepeer.config.defaultTx,
       gas: data.gas['unbond'],
     },
-    await unbond({}, {}, mockSDK),
+    res,
   )
 })
 test.todo('claimEarnings()')
