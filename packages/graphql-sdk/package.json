@@ -18,7 +18,7 @@
     "graphiql": "node ./server.js",
     "prebuild": "rm -rf lib && rm -rf main",
     "prepack": "npm -s run build",
-    "test": "nyc ava",
+    "test": "nyc ava --verbose --serial",
     "coverage": "nyc report --reporter=lcov",
     "lcov-badge": "lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
