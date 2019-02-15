@@ -194,6 +194,7 @@ export const connectCoinbaseQuery = graphql(CoinbaseQuery, {
     // this query doesn't touch the network, so we can run it often
     pollInterval: 1000,
     variables: {},
+    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -223,6 +224,7 @@ export const connectCurrentBlockQuery = graphql(CurrentBlockQuery, {
   options: ({ match }) => ({
     pollInterval: 15000,
     variables: {},
+    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -256,6 +258,7 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
   options: ({ match }) => ({
     pollInterval: 3000,
     variables: {},
+    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -290,6 +293,7 @@ export const connectProtocolQuery = graphql(ProtocolQuery, {
   options: ({ match }) => ({
     pollInterval: 5 * 1000,
     variables: {},
+    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -467,6 +471,7 @@ export const connectTranscodersQuery = graphql(TranscodersQuery, {
       first: 100,
     },
     fetchPolicy: 'cache-and-network',
+    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -528,6 +533,7 @@ export const connectAccountDelegatorUnbondLockQuery = graphql(
       } = location
 
       return {
+        notifyOnNetworkStatusChange: true,
         variables: {
           id: accountId,
           lockId: match.params.lockId,
@@ -538,3 +544,62 @@ export const connectAccountDelegatorUnbondLockQuery = graphql(
     },
   },
 )
+
+const AccountDelegatorQuery = gql`
+  fragment DelegatorFragment on Delegator {
+    id
+    allowance
+    status
+    delegateAddress
+    bondedAmount
+    fees
+    delegatedAmount
+    lastClaimRound
+    pendingFees
+    pendingStake
+    startRound
+  }
+
+  query AccountDelegatorQuery($id: String!) {
+    account(id: $id) {
+      id
+      delegator {
+        ...DelegatorFragment
+      }
+
+      unbondlocks {
+        id
+        amount
+        withdrawRound
+        delegator
+      }
+    }
+  }
+`
+
+export const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
+  props: ({ data, ownProps }) => {
+    const { account, ...queryProps } = data
+    const { delegator, unbondlocks } = account || {}
+
+    let result = {
+      ...ownProps,
+      delegator: {
+        ...queryProps,
+        data: mockDelegator(delegator),
+      },
+      unbondlocks,
+    }
+
+    return result
+  },
+  options: ({ match }) => ({
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 5000,
+    variables: {
+      id: match.params.accountId,
+    },
+    // ssr: false,
+    fetchPolicy: 'network-only',
+  }),
+})

@@ -7,7 +7,6 @@
     "@livepeer/apollo": "^1.0.0-alpha.5",
     "@livepeer/graphql-sdk": "^1.0.0-alpha.5",
     "@livepeer/merkle-miner": "^1.0.0-alpha.5",
-    "@livepeer/sdk": "^1.0.0-alpha.5",
     "apollo-cache-inmemory": "1.1.10",
     "apollo-client": "2.2.6",
     "apollo-link": "1.2.1",
@@ -47,16 +46,16 @@
   "scripts": {
     "build": "npm run -s build:web",
     "build:desktop": "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:electron",
-    "build:electron": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 npx build",
-    "build:web": "npx react-scripts build",
+    "build:electron": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 build",
+    "build:web": "react-scripts build",
     "copy-docs": "rm -rf ../../docs/explorer && mkdir ../../docs/explorer && cp docs/index.html ../../docs/explorer && cp README.md ../../docs/explorer",
-    "coverage": "npx react-scripts test --env=jsdom --coverage",
-    "deploy": "npx poosh",
-    "eject": "npx react-scripts eject",
+    "coverage": "react-scripts test --env=jsdom --coverage",
+    "deploy": "poosh",
+    "eject": "react-scripts eject",
     "postbuild": "cp build/index.html build/404.html",
-    "serve": "npx serve -s build",
-    "start": "npx react-scripts start",
-    "test": "npx react-scripts test"
+    "serve": "serve -s build",
+    "start": "PORT=3001 react-scripts start",
+    "test": "react-scripts test"
   },
   "build": {
     "appId": "org.livepeer.livepeer-protocol-explorer",

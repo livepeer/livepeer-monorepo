@@ -1733,10 +1733,12 @@ export async function createLivepeerSDK(
         x.transcoderAddress === EMPTY_ADDRESS
       ) {
         const { hash } = await rpc.getBlock(x.creationBlock)
-        x.transcoderAddress = await BondingManager.electActiveTranscoder(
-          x.maxPricePerSegment,
-          hash,
-          x.creationRound,
+        x.transcoderAddress = headToString(
+          await BondingManager.electActiveTranscoder(
+            x.maxPricePerSegment,
+            hash,
+            x.creationRound,
+          ),
         )
       }
       return {
@@ -2041,7 +2043,7 @@ export async function createLivepeerSDK(
           ? bondedAmount
           : pendingStake
       // Only unbond if amount doesn't exceed your current stake
-      if (totalStake >= amount) {
+      if (toBN(totalStake).cmp(toBN(amount)) >= 0) {
         // Unbond total stake if a zero or negative amount is passed
         amount = amount <= 0 ? totalStake : amount
         // Can only unbond successfully when not already "Unbonded"

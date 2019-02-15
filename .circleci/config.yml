@@ -42,6 +42,7 @@ aliases:
     name: Run tests
     command: |
       yarn test
+      yarn test:build-apps
 
   # Installs dependencies for packages
   - &install-dependencies

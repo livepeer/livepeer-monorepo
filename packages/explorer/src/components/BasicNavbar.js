@@ -18,6 +18,7 @@ import {
   connectCurrentRoundQuery,
   connectToasts,
 } from '../enhancers'
+import { NetworkStatus } from 'apollo-client'
 
 const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
   const myAccountAddress = coinbase.data.coinbase
@@ -35,7 +36,11 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
         1: 'Mainnet',
         4: 'Rinkeby',
       }[window.web3.version.network] || 'Custom RPC'
-
+  // We don't want to show our "loading" state for periodic polls, so:
+  const showLoading = !(
+    currentRound.networkStatus === NetworkStatus.ready ||
+    currentRound.networkStatus === NetworkStatus.poll
+  )
   return (
     <Navbar>
       <Nav>
@@ -57,7 +62,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
               padding: 8,
               background: 'none',
               cursor: 'pointer',
-              color: currentRound.loading
+              color: showLoading
                 ? '#aaa'
                 : currentRound.data.initialized
                 ? 'var(--primary)'
@@ -68,7 +73,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
               fontSize: 10,
               textTransform: 'uppercase',
               boxShadow: `inset 0 0 0 1px ${
-                currentRound.loading
+                showLoading
                   ? '#aaa'
                   : currentRound.data.initialized
                   ? 'var(--primary)'
@@ -84,7 +89,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
               alignItems: 'center',
               paddingRight: 24,
               padding: `4px 8px`,
-              background: currentRound.loading
+              background: showLoading
                 ? '#aaa'
                 : currentRound.data.initialized
                 ? 'var(--primary)'
@@ -94,7 +99,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            {currentRound.loading ? (
+            {showLoading ? (
               <MoreHorizontalIcon size={16} />
             ) : currentRound.data.initialized ? (
               <PlayIcon size={16} />
@@ -193,7 +198,7 @@ const BasicNavbar = ({ onSearch, currentRound, toasts, coinbase, history }) => {
                 <Icon use="more_vert" />
               </Btn>
             }
-            onSelect={async ({ detail }) => {
+            onSelected={({ detail }) => {
               const { action } = detail.item.dataset
               switch (action) {
                 case 'feedback':

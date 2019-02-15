@@ -1,5 +1,5 @@
 // @flow
-export type BondFormProps = {
+export type UnbondFormProps = {
   bondedAmount: string,
   delegateAddress: string,
   handleSubmit: any => void,

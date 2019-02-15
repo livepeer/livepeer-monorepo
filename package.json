@@ -1,4 +1,4 @@
-     {
+{
   "private": true,
   "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
@@ -10,31 +10,36 @@
   "bugs": "https://github.com/livepeer/livepeerjs/issues",
   "homepage": "https://livepeer.org",
   "scripts": {
-    "clean": "npx lerna clean --yes && rm -rf node_modules",
-    "cz": "npx git-cz",
-    "commitmsg": "npx commitlint -e $GIT_PARAMS",
+    "clean": "lerna clean --yes && rm -rf node_modules",
+    "cz": "git-cz",
+    "commitmsg": "commitlint -e $GIT_PARAMS",
     "coverage":
-      "npx lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && mkdir -p coverage && npx lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
+      "lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
+    "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
     "docs":
-      "npx lerna run docs && npx lerna run copy-docs && cp README.md docs/README.md",
-    "precommit": "npx pretty-quick --staged",
+      "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
+    "precommit": "pretty-quick --staged",
     "prepush": "yarn test",
     "prepare":
-      "npx lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
-    "release": "npx lerna publish --conventional-commits --yes",
+      "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
+    "release": "lerna publish --conventional-commits --yes",
     "release:dry-run":
-      "npx lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
+      "lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
     "release:alpha":
-      "npx lerna publish --cd-version prerelease --conventional-commits --yes",
+      "lerna publish --cd-version prerelease --conventional-commits --yes",
+    "start": "lerna run --stream --no-sort --concurrency=999 --ignore @livepeer/merkle-miner start",
     "test":
-      "npx lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
-    "updated": "npx lerna updated --json"
+      "lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
+    "test:build-apps":
+      "lerna run build --stream --scope @livepeer/explorer --scope @livepeer/player",
+    "updated": "lerna updated --json"
   },
   "devDependencies": {
     "@commitlint/cli": "^6.1.3",
     "@commitlint/config-conventional": "^6.1.3",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
+    "depcheck": "^0.7.1",
     "flow-bin": "^0.69.0",
     "husky": "^0.14.3",
     "lcov-result-merger": "^3.0.0",
@@ -49,7 +54,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npx pretty-quick --staged",
+      "pre-commit": "pretty-quick --staged",
       "pre-push": "yarn test"
     }
   }

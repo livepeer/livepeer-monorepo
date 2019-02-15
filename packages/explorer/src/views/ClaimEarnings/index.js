@@ -28,7 +28,7 @@ const ClaimEarningsView: React.ComponentType<ClaimEarningsViewProps> = ({
   const loading = currentRound.loading || me.loading
   const from = MathBN.add(lastClaimRound, '1')
   const diff = MathBN.sub(to, lastClaimRound)
-  const maxClaims = protocol.data.maxEarningsClaimsRounds
+  const { maxEarningsClaimsRounds } = protocol.data
   const closeModal = () => history.push(history.location.pathname)
   return (
     <BasicModal title="Claim Your Earnings" onClose={closeModal}>
@@ -37,7 +37,8 @@ const ClaimEarningsView: React.ComponentType<ClaimEarningsViewProps> = ({
         from={from}
         initialValues={{ numRounds: '1' }}
         loading={loading}
-        max={MathBN.min(diff, maxClaims)}
+        max={MathBN.min(diff, maxEarningsClaimsRounds)}
+        maxEarningsClaimsRounds={maxEarningsClaimsRounds}
         min="1"
         onCancel={closeModal}
         onSubmit={claimEarnings}

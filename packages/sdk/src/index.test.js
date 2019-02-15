@@ -30,7 +30,7 @@ const oneOf = x => yup.mixed().oneOf(x)
 
 let livepeer
 
-test.before(async t => {
+test.beforeEach(async t => {
   // create new sdk instance before each test
   livepeer = await Livepeer()
 })
@@ -334,10 +334,10 @@ test('should return object with correct shape from getJob()', async t => {
     broadcaster: string,
   })
   const res = await livepeer.rpc.getJobs()
-  res.forEach(async x => {
+  for (const x of res) {
     const job = await livepeer.rpc.getJob(x.id)
     schema.validateSync(job)
-  })
+  }
   t.pass()
 })
 
@@ -364,7 +364,7 @@ test('should return number that signifies the estimated amount of gas to be used
       methodArgs: [],
     },
   ]
-  cases.forEach(async x => {
+  for (const x of cases) {
     const res = await livepeer.rpc.estimateGas(
       x.contractName,
       x.methodName,
@@ -372,7 +372,7 @@ test('should return number that signifies the estimated amount of gas to be used
     )
     t.true(number.isValidSync(res))
     t.true(res > 0)
-  })
+  }
   t.pass()
 })
 
