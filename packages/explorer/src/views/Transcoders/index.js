@@ -16,7 +16,6 @@ import {
 } from '../../components'
 import { MathBN } from '../../utils'
 import enhance from './enhance'
-import styled from 'styled-components'
 
 type TranscodersViewProps = {
   bond: ({ id: string }) => void,
@@ -26,25 +25,6 @@ type TranscodersViewProps = {
   me: GraphQLProps<Account>,
   unbond: ({ id: string }) => void,
   transcoders: GraphQLProps<Array<Transcoder>>,
-}
-
-const TranscodersEmpty: React.ComponentType<{
-  transcoders: GraphQLProps<Array<Transcoder>>,
-}> = ({ transcoders }) => {
-  if (transcoders.loading) {
-    return <LoadingHeader>Loading transcoders...</LoadingHeader>
-  }
-  if (transcoders.error) {
-    return (
-      <React.Fragment>
-        <LoadingHeader>Error loading transcoders</LoadingHeader>
-        {transcoders.error.message.split('\n').map((txt, i) => (
-          <p key={i}>{txt}</p>
-        ))}
-      </React.Fragment>
-    )
-  }
-  return <LoadingHeader>There are no transcoders</LoadingHeader>
 }
 
 /**
@@ -132,7 +112,10 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
           </InlineHint>
         )}
         {/** Empty State */ !total && (
-          <TranscodersEmpty transcoders={transcoders} />
+          <div style={{ textAlign: 'center' }}>
+            {transcoders.loading && <h2>Loading transcoders...</h2>}
+            {!transcoders.loading && <h2>There are no transcoders</h2>}
+          </div>
         )}
         {/** Toolbar */ !total ? null : (
           <div
@@ -268,10 +251,6 @@ const TranscodersView: React.ComponentType<TranscodersViewProps> = ({
     </React.Fragment>
   )
 }
-
-const LoadingHeader = styled.h2`
-  text-align: center;
-`
 
 class Tour extends React.Component {
   shouldComponentUpdate(nextProps) {
