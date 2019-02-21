@@ -90,12 +90,11 @@ export function formatBalance(
   decimals = decimals ? decimals : unitMap[unit].length
   return !x
     ? '0'
-    : parseFloat(
-        Big(x)
-          .div(unitMap[unit])
-          .toFixed(decimals)
-          .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1'),
-      ).toString()
+    : Big(x)
+        .div(unitMap[unit])
+        .toFixed(decimals)
+        // Remove trailing zeroes
+        .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')
 }
 
 export function formatRoundsToDate(round: number): string {
