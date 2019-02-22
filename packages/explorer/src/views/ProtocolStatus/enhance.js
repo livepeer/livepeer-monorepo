@@ -15,7 +15,6 @@ const mapMutationHandlers = withHandlers({
         title: 'Initializing round...',
         body: 'The current round is being initialized.',
       })
-      // TODO: move into graphql schema as mutation
       await initializeRound()
       toasts.push({
         id: 'initialize-round',
