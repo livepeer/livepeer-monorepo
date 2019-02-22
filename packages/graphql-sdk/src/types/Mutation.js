@@ -24,6 +24,9 @@ type Mutation {
   "Rebond tokens for an unbonding lock to a delegate while a delegator is in the Unbonded state "
   rebondFromUnbonded(delegate: String!, unbondingLockId: Int!): JSON
 
+  "Submits a round initialization transaction"
+  initializeRound: JSON
+
 }`
 
 export default () => [Mutation]

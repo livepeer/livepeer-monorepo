@@ -1995,7 +1995,6 @@ export async function createLivepeerSDK(
           await config.eth.estimateGas({
             to: config.contracts[contractName].address,
             from: config.defaultTx.from,
-            gas: config.defaultTx.gas,
             value: tx.value,
             data: encodedData,
           }),
