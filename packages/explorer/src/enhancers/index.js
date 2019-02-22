@@ -171,6 +171,17 @@ export const connectRebondFromUnbondedMutation = graphql(
   },
 )
 
+export const connectInitializeRoundMutation = graphql(
+  gql`
+    mutation initializeRound {
+      initializeRound
+    }
+  `,
+  {
+    name: 'initializeRound',
+  },
+)
+
 const CoinbaseQuery = gql`
   query CoinbaseQuery {
     coinbase

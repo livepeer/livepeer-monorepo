@@ -215,3 +215,23 @@ export async function rebondFromUnbonded(
     gas: gas,
   })
 }
+
+/**
+ * Submits a round initialization transaction
+ * @param {MutationObj} obj
+ * @return {Promise<TxReceipt>}
+ */
+export async function initializeRound(
+  obj: MutationObj,
+  args,
+  ctx: GQLContext,
+): Promise<TxReceipt> {
+  const gas = await ctx.livepeer.rpc.estimateGas(
+    'RoundsManager',
+    'initializeRound',
+    [],
+  )
+  return await ctx.livepeer.rpc.initializeRound({
+    gas,
+  })
+}

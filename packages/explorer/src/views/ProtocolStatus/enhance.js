@@ -4,18 +4,18 @@ import {
   connectCurrentBlockQuery,
   connectCurrentRoundQuery,
   connectToasts,
+  connectInitializeRoundMutation,
 } from '../../enhancers'
 
 const mapMutationHandlers = withHandlers({
-  initializeRound: ({ toasts }) => async () => {
+  initializeRound: ({ toasts, initializeRound }) => async () => {
     try {
       toasts.push({
         id: 'initialize-round',
         title: 'Initializing round...',
         body: 'The current round is being initialized.',
       })
-      // TODO: move into graphql schema as mutation
-      await window.livepeer.rpc.initializeRound({ gas: 3200000 })
+      await initializeRound()
       toasts.push({
         id: 'initialize-round',
         type: 'success',
@@ -42,5 +42,6 @@ export default compose(
   connectCurrentBlockQuery,
   connectCurrentRoundQuery,
   connectToasts,
+  connectInitializeRoundMutation,
   mapMutationHandlers,
 )
