@@ -205,7 +205,6 @@ export const connectCoinbaseQuery = graphql(CoinbaseQuery, {
     // this query doesn't touch the network, so we can run it often
     pollInterval: 1000,
     variables: {},
-    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -235,7 +234,6 @@ export const connectCurrentBlockQuery = graphql(CurrentBlockQuery, {
   options: ({ match }) => ({
     pollInterval: 15000,
     variables: {},
-    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -269,7 +267,6 @@ export const connectCurrentRoundQuery = graphql(CurrentRoundQuery, {
   options: ({ match }) => ({
     pollInterval: 3000,
     variables: {},
-    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -304,7 +301,6 @@ export const connectProtocolQuery = graphql(ProtocolQuery, {
   options: ({ match }) => ({
     pollInterval: 5 * 1000,
     variables: {},
-    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -482,7 +478,6 @@ export const connectTranscodersQuery = graphql(TranscodersQuery, {
       first: 100,
     },
     fetchPolicy: 'cache-and-network',
-    notifyOnNetworkStatusChange: true,
   }),
 })
 
@@ -544,7 +539,6 @@ export const connectAccountDelegatorUnbondLockQuery = graphql(
       } = location
 
       return {
-        notifyOnNetworkStatusChange: true,
         variables: {
           id: accountId,
           lockId: match.params.lockId,
@@ -605,7 +599,6 @@ export const connectAccountDelegatorQuery = graphql(AccountDelegatorQuery, {
     return result
   },
   options: ({ match }) => ({
-    notifyOnNetworkStatusChange: true,
     pollInterval: 5000,
     variables: {
       id: match.params.accountId,
