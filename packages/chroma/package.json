@@ -18,8 +18,8 @@
   "dependencies": {
     "hls.js": "https://github.com/jozanza/hls.js.git#9f68d40971242b0d2216376ff7ff776299acf8fd",
     "prop-types": "15.6.1",
-    "react": "^16.1.0",
-    "react-dom": "^16.1.0",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
     "redux": "^3.7.2",
     "styled-components": "3.2.1",
     "video-react": "0.9.4"
