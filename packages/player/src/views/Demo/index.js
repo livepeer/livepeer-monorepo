@@ -39,6 +39,7 @@ const StatsPane = styled.div`
   flex-basis: 0px;
   flex-grow: 1;
   color: white;
+  padding: 20px;
 `
 
 const Media = styled.div`

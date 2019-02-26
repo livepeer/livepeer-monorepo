@@ -80,7 +80,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
   }
 
   // Hot module reloading
-  if (hot) module.hot.accept(update)
+  // if (hot) module.hot.accept(update)
 })()
 
 // registerServiceWorker()
