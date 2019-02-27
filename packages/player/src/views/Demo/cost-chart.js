@@ -1,47 +1,55 @@
 import React from 'react'
-import { axisBottom, axisLeft, scaleTime, select } from 'd3'
+import { axisBottom, axisLeft, scaleLinear, select, line } from 'd3'
+import styled from 'styled-components'
 
 export default () => {
   // These should be props or something
   const width = 600
   const height = 400
-  const xScale = scaleTime()
-    .domain([new Date(2000, 0, 1), new Date(2000, 0, 2)])
-    .range([0, 960])
+  const data = [...new Array(30)].map((_, i) => [i, i * 60])
+  const xScale = scaleLinear()
+    .domain([0, 30])
+    .range([0, 600])
+  const yScale = scaleLinear()
+    .domain([30 * 60, 0])
+    .range([0, 400])
+
   const xAxis = axisBottom(xScale)
-  const yAxis = axisLeft(xScale)
-  console.log(xAxis)
-  // var xScale = d3.time.scale().range([0, width])
-  // var xAxis = d3
-  //   .axis()
-  //   .scale(xScale)
-  //   .tickPadding(8)
-  //   .orient('bottom')
-  //   .ticks(6)
-  //   .tickFormat((_, i) => {
-  //     let secs = (i * 30) % 60
-  //     if (secs < 10) {
-  //       secs = `0${secs}`
-  //     }
-  //     let mins = Math.floor(i / 2)
-  //     if (mins < 10) {
-  //       mins = `0${mins}`
-  //     }
-  //     return `00:${mins}:${secs}`
-  //   })
-  const refCallback = ref => {
-    console.log('got ref', ref)
-  }
+  const yAxis = axisLeft(yScale)
+  const livepeerLine = line(data)
+    .x(d => xScale(d[0]))
+    .y(d => yScale(d[1]))
+
   const axisBottomRef = ref => {
     select(ref).call(xAxis)
   }
   const axisLeftRef = ref => {
     select(ref).call(yAxis)
   }
+  const livepeerLineRef = ref => {
+    select(ref)
+      .datum(data)
+      .attr('d', livepeerLine)
+  }
+
   return (
-    <svg viewBox="0 0 600 400" ref={refCallback}>
-      <g transform={`translate(20, 0)`} ref={axisLeftRef} />
-      <g transform={`translate(0, ${height - 20})`} ref={axisBottomRef} />
-    </svg>
+    <ChartSVG viewBox="0 0 600 400">
+      {/* "Padding" container */}
+      <g transform={`translate(50, 50), scale(0.8)`}>
+        <g ref={axisLeftRef} />
+        <g ref={axisBottomRef} transform={`translate(0, 400)`} />
+        <LinePath innerRef={livepeerLineRef} />
+      </g>
+    </ChartSVG>
   )
 }
+
+const ChartSVG = styled.svg`
+  user-select: none;
+`
+
+const LinePath = styled.path`
+  stroke: #005689;
+  stroke-width: 2px;
+  fill: none;
+`

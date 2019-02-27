@@ -37,7 +37,7 @@ const DemoBox = styled.div`
 
 const StatsPane = styled.div`
   flex-basis: 0px;
-  flex-grow: 1;
+  flex-grow: 5;
   color: white;
   padding: 20px;
 `
