@@ -12,25 +12,33 @@ const cachedSizes = new Map()
 export default async function scrapeStream(url) {
   const { playlists } = await fetchManifest(url)
 
+  const output = playlists.map(playlist => ({
+    resolution: playlist.attributes.RESOLUTION,
+    segments: [],
+  }))
+
   const manifests = await Promise.all(
     playlists.map(p => resolvePath(url, p.uri)).map(fetchManifest),
   )
 
-  const allFiles = []
-  for (const manifest of manifests) {
-    allFiles.push(...manifest.segments)
+  for (const [i, manifest] of Object.entries(manifests)) {
+    for (const { uri, duration } of manifest.segments) {
+      const size = await getResponseSize(resolvePath(url, uri))
+      output[i].segments.push({ uri, size, duration })
+    }
   }
-  for (const { uri } of allFiles) {
-    const size = await getResponseSize(resolvePath(url, uri))
-    console.log(size)
-  }
+
+  return output
 }
+
+// Takes the start url and relative path, returns the correct absolute URL
 export const resolvePath = (startUrl, newPath) => {
   const { protocol, host, pathname } = parseUrl(startUrl)
   const finalPath = path.resolve(pathname, '..', newPath)
   return `${protocol}//${host}${finalPath}`
 }
 
+// Wrapper around m3u8-parser's verbose-ass interface
 export const fetchManifest = async url => {
   const res = await fetch(url)
   const text = await res.text()
@@ -40,6 +48,7 @@ export const fetchManifest = async url => {
   return parser.manifest
 }
 
+// Get the size of a file. Streams the file in to save memory.
 async function getResponseSize(url) {
   if (cachedSizes.has(url)) {
     return cachedSizes.get(url)
