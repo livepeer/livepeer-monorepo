@@ -1,21 +1,59 @@
-import React from 'react'
-import { axisBottom, axisLeft, scaleLinear, select, line } from 'd3'
+import React, { useState, useEffect } from 'react'
+import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
 import styled from 'styled-components'
 
-export default () => {
+const AWS_COST = 3 / 60
+
+const VIEWBOX_DIMENSIONS = [300, 200]
+
+export default ({ currentTime }) => {
+  const [vWidth, vHeight] = VIEWBOX_DIMENSIONS
   // These should be props or something
-  const width = 600
-  const height = 400
-  const data = [...new Array(30)].map((_, i) => [i, i * 60])
+  const [count, setCount] = useState(0)
+  const data = [[0, 0], [currentTime, currentTime * AWS_COST]]
+  // useEffect(() => {
+  //   let next = () => {
+  //     if (next === null) {
+  //       return
+  //     }
+  //     requestAnimationFrame(next)
+  //   }
+  //   requestAnimationFrame(next)
+  //   return () => {
+  //     // Do nothing on the next requestAnimationFrame
+  //     next = null
+  //   }
+  // }, [])
+  const maxDomain = Math.max(30, data[data.length - 1][0])
   const xScale = scaleLinear()
-    .domain([0, 30])
-    .range([0, 600])
+    .domain([0, maxDomain])
+    .range([0, vWidth])
+
+  const maxRange = Math.max(2, data[data.length - 1][1])
   const yScale = scaleLinear()
-    .domain([30 * 60, 0])
-    .range([0, 400])
+    .domain([maxRange, 0])
+    .range([0, vHeight])
 
   const xAxis = axisBottom(xScale)
+    .ticks(4)
+    .tickFormat(sec => {
+      const m = Math.floor(sec / 60)
+      let s = `${sec - m * 60}`
+      while (s.length < 2) {
+        s = '0' + s
+      }
+      return `${m}:${s}`
+    })
   const yAxis = axisLeft(yScale)
+    .ticks(2)
+    .tickFormat(cents => {
+      const d = Math.floor(cents / 100)
+      let c = `${Math.floor(cents - d * 100)}`
+      while (c.length < 2) {
+        c = '0' + c
+      }
+      return `$${d}.${c}`
+    })
   const livepeerLine = line(data)
     .x(d => xScale(d[0]))
     .y(d => yScale(d[1]))
@@ -32,12 +70,15 @@ export default () => {
       .attr('d', livepeerLine)
   }
 
+  const padding = 50
+  const innerScale = (vWidth - padding * 2) / vWidth
   return (
-    <ChartSVG viewBox="0 0 600 400">
+    <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
       {/* "Padding" container */}
-      <g transform={`translate(50, 50), scale(0.8)`}>
+      {/* <rect width={vWidth} height={vHeight} /> */}
+      <g transform={`scale(${innerScale}), translate(${padding}, ${padding})`}>
         <g ref={axisLeftRef} />
-        <g ref={axisBottomRef} transform={`translate(0, 400)`} />
+        <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
         <LinePath innerRef={livepeerLineRef} />
       </g>
     </ChartSVG>
