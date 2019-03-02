@@ -7,7 +7,7 @@ import { withProp } from '../../enhancers'
 import { formatBalance, toBaseUnit, MathBN } from '../../utils'
 import InlineAccount from '../InlineAccount'
 import InlineHint from '../InlineHint'
-import Button from '../Button'
+import Button, { EditButton } from '../Button'
 import { H1 } from '../HTags'
 import type { BondFormProps } from './props'
 
@@ -139,9 +139,9 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
           <p>Your Transfer Allowance</p>
           <p style={{ fontWeight: 400, marginBottom: 0 }}>
             {formatBalance(allowance)} LPT&nbsp;
-            <Button onClick={onUpdateAllowance} style={{ marginTop: 0 }}>
+            <EditButton onClick={onUpdateAllowance} style={{ marginTop: 0 }}>
               Edit
-            </Button>
+            </EditButton>
           </p>
         </div>
       </div>
