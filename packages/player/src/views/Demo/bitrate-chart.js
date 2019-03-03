@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
 import styled from 'styled-components'
+import { timeFormat } from './shared-chart'
 
 const AWS_COST = 3 / 60
 
@@ -18,7 +19,7 @@ export default ({ bitrates, currentTime }) => {
     : bitrates[0].segments
         .map((segment, i) => {
           const myStart = totalDuration
-          totalDuration += segment.duration
+          totalDuration += segment.duration * 1000
           maxSize = Math.max(maxSize, segment.size)
           return [
             myStart,
@@ -29,19 +30,6 @@ export default ({ bitrates, currentTime }) => {
         })
         .filter(column => column.every(val => val !== undefined))
 
-  // useEffect(() => {
-  //   let next = () => {
-  //     if (next === null) {
-  //       return
-  //     }
-  //     requestAnimationFrame(next)
-  //   }
-  //   requestAnimationFrame(next)
-  //   return () => {
-  //     // Do nothing on the next requestAnimationFrame
-  //     next = null
-  //   }
-  // }, [])
   let maxDomain = Math.max(30, data[data.length - 1][0])
   if (maxDomain > currentTime) {
     maxDomain = currentTime
@@ -57,14 +45,7 @@ export default ({ bitrates, currentTime }) => {
 
   const xAxis = axisBottom(xScale)
     .ticks(4)
-    .tickFormat(sec => {
-      const m = Math.floor(sec / 60)
-      let s = `${sec - m * 60}`
-      while (s.length < 2) {
-        s = '0' + s
-      }
-      return `${m}:${s}`
-    })
+    .tickFormat(timeFormat)
   const yAxis = axisLeft(yScale)
     .ticks(2)
     .tickFormat(rate => `${Math.round(rate / 1024 / 1024)}mbps`)
@@ -103,8 +84,9 @@ export default ({ bitrates, currentTime }) => {
       >
         <g ref={axisLeftRef} />
         <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
-        {lines.map(line => (
+        {lines.map((line, i) => (
           <LinePath
+            key={i}
             innerRef={ref =>
               select(ref)
                 .datum(data)

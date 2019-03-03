@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
 import styled from 'styled-components'
+import { timeFormat } from './shared-chart'
 
 const AWS_COST = 3 / 60
 
@@ -10,21 +11,8 @@ export default ({ currentTime }) => {
   const [vWidth, vHeight] = VIEWBOX_DIMENSIONS
   // These should be props or something
   const [count, setCount] = useState(0)
-  const data = [[0, 0], [currentTime, currentTime * AWS_COST]]
-  // useEffect(() => {
-  //   let next = () => {
-  //     if (next === null) {
-  //       return
-  //     }
-  //     requestAnimationFrame(next)
-  //   }
-  //   requestAnimationFrame(next)
-  //   return () => {
-  //     // Do nothing on the next requestAnimationFrame
-  //     next = null
-  //   }
-  // }, [])
-  const maxDomain = Math.max(30, data[data.length - 1][0])
+  const data = [[0, 0], [currentTime, (currentTime * AWS_COST) / 1000]]
+  const maxDomain = Math.max(30000, data[data.length - 1][0])
   const xScale = scaleLinear()
     .domain([0, maxDomain])
     .range([0, vWidth])
@@ -36,14 +24,7 @@ export default ({ currentTime }) => {
 
   const xAxis = axisBottom(xScale)
     .ticks(4)
-    .tickFormat(sec => {
-      const m = Math.floor(sec / 60)
-      let s = `${sec - m * 60}`
-      while (s.length < 2) {
-        s = '0' + s
-      }
-      return `${m}:${s}`
-    })
+    .tickFormat(timeFormat)
   const yAxis = axisLeft(yScale)
     .ticks(2)
     .tickFormat(cents => {

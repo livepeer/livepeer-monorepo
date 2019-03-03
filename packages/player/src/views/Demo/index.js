@@ -15,6 +15,10 @@ export default ({
 }) => {
   const [live, setLive] = useState()
   const [currentTime, setCurrentTime] = useState(0)
+  const [lastUpdated, setLastUpdated] = useState(Date.now())
+  const [timeOffset, setTimeOffset] = useState(0)
+  const [pauseTime, setPauseTime] = useState(0)
+  const [playing, setPlaying] = useState(false)
   const [bitrates, setBitrates] = useState([])
 
   const updateBitrates = () => {
@@ -39,22 +43,54 @@ export default ({
     })
   }
 
+  useEffect(() => {
+    let next = () => {
+      if (next === null) {
+        return
+      }
+      setTimeOffset(Date.now())
+      requestAnimationFrame(next)
+    }
+    requestAnimationFrame(next)
+    return () => {
+      // Do nothing on the next requestAnimationFrame
+      next = null
+    }
+  }, [])
+
   useEffect(updateBitrates, [stream])
   useInterval(updateBitrates, 5000, true)
+
+  const updateCurrentTime = newTime => {
+    setCurrentTime(newTime)
+    setLastUpdated(Date.now())
+    setTimeOffset(Date.now())
+  }
+
+  let displayTime = playing ? currentTime - lastUpdated + timeOffset : pauseTime
+
+  const updatePlaying = play => {
+    setPlaying(play)
+    if (play) {
+      updateCurrentTime(pauseTime)
+    } else {
+      setPauseTime(displayTime)
+    }
+  }
 
   return (
     <div>
       <BasicNavbar />
       <DemoBox>
         <StatsPane>
-          <CostChart currentTime={currentTime} />
-          <BitrateChart currentTime={currentTime} bitrates={bitrates} />
+          <CostChart currentTime={displayTime} />
+          <BitrateChart currentTime={displayTime} bitrates={bitrates} />
         </StatsPane>
         <Media maxWidth={maxWidth}>
           <LoadingOverlay live={live} />
           <VideoPlayer
             autoPlay={true}
-            onTimeUpdate={e => setCurrentTime(e.target.currentTime)}
+            onTimeUpdate={e => updateCurrentTime(e.target.currentTime * 1000)}
             hlsOptions={{ debug: false }}
             poster=""
             muted={true}
@@ -62,6 +98,8 @@ export default ({
             aspectRatio={aspectRatio}
             onLive={() => setLive(true)}
             onDead={() => setLive(false)}
+            onPlaying={() => updatePlaying(true)}
+            onPause={() => updatePlaying(false)}
           />
         </Media>
       </DemoBox>
