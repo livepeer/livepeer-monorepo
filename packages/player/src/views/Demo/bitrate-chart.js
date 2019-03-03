@@ -15,12 +15,20 @@ export default ({ bitrates }) => {
   let maxSize = 0
   const data = !bitrates[0]
     ? [[0, 0]]
-    : bitrates[0].segments.map(segment => {
-        const myStart = totalDuration
-        totalDuration += segment.duration
-        maxSize = Math.max(maxSize, segment.size)
-        return [myStart, segment.size]
-      })
+    : bitrates[0].segments
+        .map((segment, i) => {
+          const myStart = totalDuration
+          totalDuration += segment.duration
+          maxSize = Math.max(maxSize, segment.size)
+          return [
+            myStart,
+            ...bitrates.map(
+              bitrate => bitrate.segments[i] && bitrate.segments[i].size,
+            ),
+          ]
+        })
+        .filter(column => column.every(val => val !== undefined))
+
   // useEffect(() => {
   //   let next = () => {
   //     if (next === null) {
@@ -64,9 +72,15 @@ export default ({ bitrates }) => {
       }
       return `$${d}.${c}`
     })
-  const livepeerLine = line(data)
-    .x(d => xScale(d[0]))
-    .y(d => yScale(d[1]))
+
+  const lines = data[0].slice(1).map((_, i) =>
+    line(data)
+      .x(d => xScale(d[0]))
+      .y(d => yScale(d[i + 1])),
+  )
+  // const livepeerLine = line(data)
+  // .x(d => xScale(d[0]))
+  // .y(d => yScale(d[1]))
 
   const axisBottomRef = ref => {
     select(ref).call(xAxis)
@@ -74,11 +88,11 @@ export default ({ bitrates }) => {
   const axisLeftRef = ref => {
     select(ref).call(yAxis)
   }
-  const livepeerLineRef = ref => {
-    select(ref)
-      .datum(data)
-      .attr('d', livepeerLine)
-  }
+  // const livepeerLineRef = (ref, line) => {
+  //   select(ref)
+  //     .datum(data)
+  //     .attr('d', livepeerLine)
+  // }
 
   const padding = 50
   const innerScale = (vWidth - padding * 2) / vWidth
@@ -89,7 +103,15 @@ export default ({ bitrates }) => {
       <g transform={`scale(${innerScale}), translate(${padding}, ${padding})`}>
         <g ref={axisLeftRef} />
         <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
-        <LinePath innerRef={livepeerLineRef} />
+        {lines.map(line => (
+          <LinePath
+            innerRef={ref =>
+              select(ref)
+                .datum(data)
+                .attr('d', line)
+            }
+          />
+        ))}
       </g>
     </ChartSVG>
   )

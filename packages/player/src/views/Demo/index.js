@@ -11,7 +11,7 @@ import scrapeStream from './scrape-stream'
 export default ({
   maxWidth = '100%',
   aspectRatio = '16:9',
-  stream = 'http://192.168.1.205:8935/stream/current.m3u8',
+  stream = 'http://192.168.1.225:8935/stream/current.m3u8',
 }) => {
   const [live, setLive] = useState()
   const [currentTime, setCurrentTime] = useState(0)
@@ -57,7 +57,7 @@ export default ({
             onTimeUpdate={e => setCurrentTime(e.target.currentTime)}
             hlsOptions={{ debug: false }}
             poster=""
-            muted={false}
+            muted={true}
             src={stream}
             aspectRatio={aspectRatio}
             onLive={() => setLive(true)}
@@ -75,7 +75,7 @@ const DemoBox = styled.div`
 
 const StatsPane = styled.div`
   flex-basis: 0px;
-  flex-grow: 10;
+  flex-grow: 2;
   color: white;
   padding: 20px;
 `
