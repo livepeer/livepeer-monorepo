@@ -6,7 +6,7 @@ const AWS_COST = 3 / 60
 
 const VIEWBOX_DIMENSIONS = [300, 200]
 
-export default ({ bitrates }) => {
+export default ({ bitrates, currentTime }) => {
   const [vWidth, vHeight] = VIEWBOX_DIMENSIONS
   // These should be props or something
   const [count, setCount] = useState(0)
@@ -42,7 +42,10 @@ export default ({ bitrates }) => {
   //     next = null
   //   }
   // }, [])
-  const maxDomain = Math.max(30, data[data.length - 1][0])
+  let maxDomain = Math.max(30, data[data.length - 1][0])
+  if (maxDomain > currentTime) {
+    maxDomain = currentTime
+  }
   const xScale = scaleLinear()
     .domain([0, maxDomain])
     .range([0, vWidth])
@@ -64,14 +67,7 @@ export default ({ bitrates }) => {
     })
   const yAxis = axisLeft(yScale)
     .ticks(2)
-    .tickFormat(cents => {
-      const d = Math.floor(cents / 100)
-      let c = `${Math.floor(cents - d * 100)}`
-      while (c.length < 2) {
-        c = '0' + c
-      }
-      return `$${d}.${c}`
-    })
+    .tickFormat(rate => `${Math.round(rate / 1024 / 1024)}mbps`)
 
   const lines = data[0].slice(1).map((_, i) =>
     line(data)
@@ -95,12 +91,16 @@ export default ({ bitrates }) => {
   // }
 
   const padding = 50
+  const clipPath = `polygon(0 0, 101% 0, 101% 100%, 0 100%)`
   const innerScale = (vWidth - padding * 2) / vWidth
   return (
     <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
       {/* "Padding" container */}
       {/* <rect width={vWidth} height={vHeight} /> */}
-      <g transform={`scale(${innerScale}), translate(${padding}, ${padding})`}>
+      <g
+        transform={`scale(${innerScale}), translate(${padding}, ${padding})`}
+        style={{ clipPath }}
+      >
         <g ref={axisLeftRef} />
         <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
         {lines.map(line => (
