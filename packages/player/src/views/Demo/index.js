@@ -109,11 +109,14 @@ export default ({
 
 const DemoBox = styled.div`
   display: flex;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 1920px;
 `
 
 const StatsPane = styled.div`
   flex-basis: 0px;
-  flex-grow: 2;
+  flex-grow: 1;
   color: white;
   padding: 20px;
 `
@@ -125,6 +128,5 @@ const Media = styled.div`
   display: block;
   width: 100%;
   max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : '100%')};
-  background: #000;
   overflow: hidden;
 `
