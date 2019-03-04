@@ -49,9 +49,9 @@ export default ({
         return
       }
       setTimeOffset(Date.now())
-      requestAnimationFrame(next)
+      setTimeout(next, 300)
     }
-    requestAnimationFrame(next)
+    setTimeout(next, 300)
     return () => {
       // Do nothing on the next requestAnimationFrame
       next = null
@@ -83,7 +83,7 @@ export default ({
       <BasicNavbar />
       <DemoBox>
         <StatsPane>
-          <CostChart currentTime={displayTime} />
+          <CostChart currentTime={displayTime} bitrates={bitrates} />
           <BitrateChart currentTime={displayTime} bitrates={bitrates} />
         </StatsPane>
         <Media maxWidth={maxWidth}>

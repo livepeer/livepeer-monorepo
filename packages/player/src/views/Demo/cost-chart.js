@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
 import styled from 'styled-components'
-import { timeFormat } from './shared-chart'
-
-const AWS_COST = 3 / 60
+import { timeFormat, getComparisons } from './shared-chart'
 
 const VIEWBOX_DIMENSIONS = [300, 200]
 
-export default ({ currentTime }) => {
+export default ({ currentTime, bitrates }) => {
   const [vWidth, vHeight] = VIEWBOX_DIMENSIONS
   // These should be props or something
   const [count, setCount] = useState(0)
-  const data = [[0, 0], [currentTime, (currentTime * AWS_COST) / 1000]]
+  const comparisons = getComparisons(bitrates)
+  const maxValues = comparisons.map(comp => {
+    return currentTime * comp.costPerMinute
+  })
+  const data = [[0, ...maxValues.map(() => 0)], [currentTime, ...maxValues]]
   const maxDomain = Math.max(30000, data[data.length - 1][0])
   const xScale = scaleLinear()
     .domain([0, maxDomain])
@@ -39,6 +41,12 @@ export default ({ currentTime }) => {
     .x(d => xScale(d[0]))
     .y(d => yScale(d[1]))
 
+  const lines = data[0].slice(1).map((_, i) =>
+    line(data)
+      .x(d => xScale(d[0]))
+      .y(d => yScale(d[i + 1])),
+  )
+
   const axisBottomRef = ref => {
     select(ref).call(xAxis)
   }
@@ -54,15 +62,28 @@ export default ({ currentTime }) => {
   const padding = 50
   const innerScale = (vWidth - padding * 2) / vWidth
   return (
-    <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
-      {/* "Padding" container */}
-      {/* <rect width={vWidth} height={vHeight} /> */}
-      <g transform={`scale(${innerScale}), translate(${padding}, ${padding})`}>
-        <g ref={axisLeftRef} />
-        <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
-        <LinePath innerRef={livepeerLineRef} />
-      </g>
-    </ChartSVG>
+    <div>
+      <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
+        {/* "Padding" container */}
+        {/* <rect width={vWidth} height={vHeight} /> */}
+        <g
+          transform={`scale(${innerScale}), translate(${padding}, ${padding})`}
+        >
+          <g ref={axisLeftRef} />
+          <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
+          {lines.map((line, i) => (
+            <LinePath
+              key={i}
+              innerRef={ref =>
+                select(ref)
+                  .datum(data)
+                  .attr('d', line)
+              }
+            />
+          ))}
+        </g>
+      </ChartSVG>
+    </div>
   )
 }
 
