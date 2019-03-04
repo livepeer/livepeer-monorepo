@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
 import styled from 'styled-components'
-import { timeFormat } from './shared-chart'
-
-const AWS_COST = 3 / 60
+import { timeFormat, kbpsFormat, mbpsFormat } from './shared-chart'
 
 const VIEWBOX_DIMENSIONS = [300, 200]
+const CHART_WIDTH = 30000 // 30 seconds
 
 export default ({ bitrates, currentTime }) => {
   const [vWidth, vHeight] = VIEWBOX_DIMENSIONS
@@ -35,7 +34,7 @@ export default ({ bitrates, currentTime }) => {
     maxDomain = currentTime
   }
   const xScale = scaleLinear()
-    .domain([0, maxDomain])
+    .domain([maxDomain - CHART_WIDTH, maxDomain])
     .range([0, vWidth])
 
   const maxRange = Math.max(2, maxSize)
@@ -48,7 +47,7 @@ export default ({ bitrates, currentTime }) => {
     .tickFormat(timeFormat)
   const yAxis = axisLeft(yScale)
     .ticks(2)
-    .tickFormat(rate => `${Math.round(rate / 1024 / 1024)}mbps`)
+    .tickFormat(mbpsFormat)
 
   const lines = data[0].slice(1).map((_, i) =>
     line(data)
@@ -74,28 +73,41 @@ export default ({ bitrates, currentTime }) => {
   const padding = 50
   const clipPath = `polygon(0 0, 101% 0, 101% 100%, 0 100%)`
   const innerScale = (vWidth - padding * 2) / vWidth
+  const lastDatum = data[data.length - 1]
   return (
-    <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
-      {/* "Padding" container */}
-      {/* <rect width={vWidth} height={vHeight} /> */}
-      <g
-        transform={`scale(${innerScale}), translate(${padding}, ${padding})`}
-        style={{ clipPath }}
-      >
-        <g ref={axisLeftRef} />
-        <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
-        {lines.map((line, i) => (
-          <LinePath
-            key={i}
-            innerRef={ref =>
-              select(ref)
-                .datum(data)
-                .attr('d', line)
-            }
-          />
-        ))}
-      </g>
-    </ChartSVG>
+    <div>
+      <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
+        {/* "Padding" container */}
+        {/* <rect width={vWidth} height={vHeight} /> */}
+        <g
+          transform={`scale(${innerScale}), translate(${padding}, ${padding})`}
+          style={{ clipPath }}
+        >
+          <g ref={axisLeftRef} />
+          <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
+          {lines.map((line, i) => (
+            <LinePath
+              key={i}
+              innerRef={ref =>
+                select(ref)
+                  .datum(data)
+                  .attr('d', line)
+              }
+            />
+          ))}
+        </g>
+      </ChartSVG>
+      <div>
+        {bitrates.map((bitrate, i) => {
+          const { width, height } = bitrate.resolution
+          return (
+            <div key={i}>
+              {width}x{height}: {kbpsFormat(lastDatum[i + 1])}
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 

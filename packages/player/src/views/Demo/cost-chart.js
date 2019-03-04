@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
 import styled from 'styled-components'
-import { timeFormat, getComparisons } from './shared-chart'
+import { timeFormat, dollarFormat, getComparisons } from './shared-chart'
 
 const VIEWBOX_DIMENSIONS = [300, 200]
 
@@ -10,8 +10,11 @@ export default ({ currentTime, bitrates }) => {
   // These should be props or something
   const [count, setCount] = useState(0)
   const comparisons = getComparisons(bitrates)
+  let maxCost = 0
   const maxValues = comparisons.map(comp => {
-    return currentTime * comp.costPerMinute
+    const cost = (currentTime / 1000 / 60) * comp.costPerMinute
+    maxCost = Math.max(cost, maxCost)
+    return cost
   })
   const data = [[0, ...maxValues.map(() => 0)], [currentTime, ...maxValues]]
   const maxDomain = Math.max(30000, data[data.length - 1][0])
@@ -19,7 +22,7 @@ export default ({ currentTime, bitrates }) => {
     .domain([0, maxDomain])
     .range([0, vWidth])
 
-  const maxRange = Math.max(2, data[data.length - 1][1])
+  const maxRange = Math.max(0.02, maxCost)
   const yScale = scaleLinear()
     .domain([maxRange, 0])
     .range([0, vHeight])
@@ -29,14 +32,7 @@ export default ({ currentTime, bitrates }) => {
     .tickFormat(timeFormat)
   const yAxis = axisLeft(yScale)
     .ticks(2)
-    .tickFormat(cents => {
-      const d = Math.floor(cents / 100)
-      let c = `${Math.floor(cents - d * 100)}`
-      while (c.length < 2) {
-        c = '0' + c
-      }
-      return `$${d}.${c}`
-    })
+    .tickFormat(dollarFormat)
   const livepeerLine = line(data)
     .x(d => xScale(d[0]))
     .y(d => yScale(d[1]))
@@ -83,6 +79,11 @@ export default ({ currentTime, bitrates }) => {
           ))}
         </g>
       </ChartSVG>
+      {comparisons.map(({ name }, i) => (
+        <div key={i}>
+          {name}: {dollarFormat(maxValues[i])}
+        </div>
+      ))}
     </div>
   )
 }

@@ -49,9 +49,9 @@ export default ({
         return
       }
       setTimeOffset(Date.now())
-      setTimeout(next, 300)
+      requestAnimationFrame(next)
     }
-    setTimeout(next, 300)
+    requestAnimationFrame(next)
     return () => {
       // Do nothing on the next requestAnimationFrame
       next = null

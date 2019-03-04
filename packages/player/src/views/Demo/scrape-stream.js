@@ -28,7 +28,12 @@ export default async function scrapeStream(url) {
     }
   }
 
-  return output
+  // Sort biggest to smallest resolutions
+  return output.sort(
+    (a, b) =>
+      b.resolution.width * b.resolution.height -
+      a.resolution.width * a.resolution.height,
+  )
 }
 
 // Takes the start url and relative path, returns the correct absolute URL

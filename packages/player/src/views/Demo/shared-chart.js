@@ -41,3 +41,17 @@ export const timeFormat = ms => {
   }
   return `${m}:${s}`
 }
+
+export const dollarFormat = dollars => {
+  const cents = dollars * 100
+  const d = Math.floor(cents / 100)
+  let c = `${Math.floor(cents - d * 100)}`
+  while (c.length < 2) {
+    c = '0' + c
+  }
+  return `$${d}.${c}`
+}
+
+export const kbpsFormat = bytes => `${Math.round(bytes / 1024)} kbps`
+
+export const mbpsFormat = bytes => `${Math.round(bytes / 1024 / 1024)} mbps`
