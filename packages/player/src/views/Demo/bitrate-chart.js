@@ -10,6 +10,7 @@ export default ({ bitrates, currentTime }) => {
   const [vWidth, vHeight] = VIEWBOX_DIMENSIONS
   // These should be props or something
   const [count, setCount] = useState(0)
+  const padding = 50
 
   let totalDuration = 0
   let maxSize = 0
@@ -35,12 +36,12 @@ export default ({ bitrates, currentTime }) => {
   }
   const xScale = scaleLinear()
     .domain([maxDomain - CHART_WIDTH, maxDomain])
-    .range([0, vWidth])
+    .range([0, vWidth - padding * 2])
 
   const maxRange = Math.max(2, maxSize)
   const yScale = scaleLinear()
     .domain([maxRange, 0])
-    .range([0, vHeight])
+    .range([0, vHeight - padding * 2])
 
   const xAxis = axisBottom(xScale)
     .ticks(4)
@@ -70,31 +71,44 @@ export default ({ bitrates, currentTime }) => {
   //     .attr('d', livepeerLine)
   // }
 
-  const padding = 50
   const clipPath = `polygon(0 0, 101% 0, 101% 100%, 0 100%)`
   const innerScale = (vWidth - padding * 2) / vWidth
   const lastDatum = data[data.length - 1]
   return (
     <div>
       <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
+        <defs>
+          <clipPath id="ChartClip">
+            <rect
+              x={0}
+              y={0}
+              width={vWidth - padding * 2}
+              height={vHeight - padding * 2}
+            />
+          </clipPath>
+        </defs>
         {/* "Padding" container */}
         {/* <rect width={vWidth} height={vHeight} /> */}
-        <g
-          transform={`scale(${innerScale}), translate(${padding}, ${padding})`}
-          style={{ clipPath }}
-        >
-          <g ref={axisLeftRef} />
-          <g ref={axisBottomRef} transform={`translate(0, ${vHeight})`} />
+        <g transform={`translate(${padding}, ${padding})`}>
           {lines.map((line, i) => (
-            <LinePath
-              key={i}
-              innerRef={ref =>
-                select(ref)
-                  .datum(data)
-                  .attr('d', line)
-              }
-            />
+            <React.Fragment key={i}>
+              <LinePath
+                id={`ChartPath${i}`}
+                clipPath="url(#ChartClip)"
+                key={i}
+                innerRef={ref =>
+                  select(ref)
+                    .datum(data)
+                    .attr('d', line)
+                }
+              />
+            </React.Fragment>
           ))}
+          <g ref={axisLeftRef} />
+          <g
+            ref={axisBottomRef}
+            transform={`translate(0, ${vHeight - padding * 2})`}
+          />
         </g>
       </ChartSVG>
       <div>
