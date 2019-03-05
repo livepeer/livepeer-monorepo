@@ -23,7 +23,7 @@ const BasicModal = ({ title, children, onOpen, onClose }) => {
             display: 'block',
             margin: 'auto',
             padding: 24,
-            width: 440,
+            width: 600,
           }}
           onClick={e => e.stopPropagation()}
         >
