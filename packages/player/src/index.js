@@ -79,8 +79,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`
   }
 
-  // Hot module reloading
-  // if (hot) module.hot.accept(update)
+  // Hot module reloading - disabled for now
+  if (hot && false) module.hot.accept(update)
 })()
 
 // registerServiceWorker()
