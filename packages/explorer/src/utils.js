@@ -126,6 +126,7 @@ export function promptForArgs(
   const args = []
   for (const prompt of prompts) {
     const val = window.prompt(prompt.ask)
+    if (!val) break
     args.push(prompt.format ? prompt.format(val) : val)
   }
   return args
