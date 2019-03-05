@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
-import styled from 'styled-components'
-import { timeFormat, dollarFormat, getComparisons } from './shared-chart'
+import React from 'react'
+import { scaleLinear } from 'd3'
+import { dollarFormat, getComparisons } from './shared-chart'
 import BaseChart from './base-chart'
 
 export default ({ currentTime, bitrates }) => {
@@ -34,13 +33,3 @@ export default ({ currentTime, bitrates }) => {
     </div>
   )
 }
-
-const ChartSVG = styled.svg`
-  user-select: none;
-`
-
-const LinePath = styled.path`
-  stroke: #005689;
-  stroke-width: 2px;
-  fill: none;
-`

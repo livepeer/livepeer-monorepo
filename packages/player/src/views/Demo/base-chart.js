@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
+import React from 'react'
+import { axisBottom, axisLeft, select, line } from 'd3'
 import styled from 'styled-components'
 import { timeFormat } from './shared-chart'
 
@@ -40,8 +40,6 @@ export default ({
     select(ref).call(yAxis)
   }
 
-  const innerScale = (vWidth - padding * 2) / vWidth
-  const lastDatum = data[data.length - 1]
   return (
     <ChartSVG viewBox={`0 0 ${vWidth} ${vHeight}`}>
       <defs>

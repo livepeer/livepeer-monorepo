@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { axisBottom, axisLeft, scaleLinear, select, line, max } from 'd3'
-import styled from 'styled-components'
+import React from 'react'
+import { scaleLinear } from 'd3'
 import BaseChart from './base-chart'
-import { timeFormat, kbpsFormat, mbpsFormat } from './shared-chart'
+import { kbpsFormat, mbpsFormat } from './shared-chart'
 
 const CHART_WIDTH = 30000 // 30 seconds
 export default ({ bitrates, currentTime }) => {
@@ -54,13 +53,3 @@ export default ({ bitrates, currentTime }) => {
     </div>
   )
 }
-
-const ChartSVG = styled.svg`
-  user-select: none;
-`
-
-const LinePath = styled.path`
-  stroke: #005689;
-  stroke-width: 2px;
-  fill: none;
-`
