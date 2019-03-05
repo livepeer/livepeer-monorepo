@@ -42,4 +42,12 @@ const Button = styled.button`
   }
 `
 
+export const EditButton = styled(Button)`
+  margin-top: 0;
+  margin-left: 0;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+`
+
 export default Button
