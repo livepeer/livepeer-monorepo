@@ -191,7 +191,7 @@ workflows:
             - build-test
       - build-apps-staging:
           requires:
-            - hold-staging-exapps-deploy
+            - hold-staging-apps-deploy
       - deploy-apps-staging:
           requires:
             - build-apps-staging
