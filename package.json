@@ -10,6 +10,7 @@
   "bugs": "https://github.com/livepeer/livepeerjs/issues",
   "homepage": "https://livepeer.org",
   "scripts": {
+    "build": "lerna run build --stream",
     "clean": "lerna clean --yes && rm -rf node_modules",
     "cz": "git-cz",
     "commitmsg": "commitlint -e $GIT_PARAMS",
