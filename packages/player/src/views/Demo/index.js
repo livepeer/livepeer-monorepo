@@ -11,7 +11,7 @@ import scrapeStream from './scrape-stream'
 export default ({
   maxWidth = '100%',
   aspectRatio = '16:9',
-  stream = 'http://192.168.1.225:8935/stream/current.m3u8',
+  stream = 'https://bbb.stream.town/stream/current.m3u8',
 }) => {
   const [live, setLive] = useState()
   const [currentTime, setCurrentTime] = useState(0)
@@ -24,6 +24,7 @@ export default ({
   const updateBitrates = () => {
     scrapeStream(stream).then(newBitrates => {
       setBitrates(oldBitrates => {
+        // A new transcoded bitrate was introduced - reset everything
         if (oldBitrates.length !== newBitrates.length) {
           return newBitrates
         }

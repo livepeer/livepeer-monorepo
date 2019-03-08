@@ -102,6 +102,7 @@ export class QualityPicker extends Component {
     let { video } = this.props
     if (video) {
       video.loadLevel(parseInt(ev.target.dataset['id']))
+      this.setState({ visible: false })
     } else {
       console.error(`ev: this.video is null ${this.video}`)
     }

@@ -12,6 +12,11 @@ const cachedSizes = new Map()
 export default async function scrapeStream(url) {
   const { playlists } = await fetchManifest(url)
 
+  if (!playlists) {
+    // No streams found.
+    return []
+  }
+
   const output = playlists.map(playlist => ({
     resolution: playlist.attributes.RESOLUTION,
     segments: [],
@@ -24,7 +29,12 @@ export default async function scrapeStream(url) {
   for (const [i, manifest] of Object.entries(manifests)) {
     for (const { uri, duration } of manifest.segments) {
       const size = await getResponseSize(resolvePath(url, uri))
-      output[i].segments.push({ uri, size, duration })
+      output[i].segments.push({
+        uri,
+        size,
+        duration,
+        rate: Math.round((size / duration) * 8),
+      })
     }
   }
 
@@ -58,17 +68,16 @@ async function getResponseSize(url) {
   if (cachedSizes.has(url)) {
     return cachedSizes.get(url)
   }
-  const response = await fetch(url)
-  const reader = response.body.getReader()
-  let total = 0
-
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) {
-      break
-    }
-    total += value.length
+  const response = await fetch(url, { method: 'HEAD' })
+  let total
+  try {
+    total = parseInt(response.headers.get('content-length'))
+    cachedSizes.set(url, total)
+  } catch (e) {
+    // Maybe an old LPMS that didn't give us this header? Nothing to be done.
+    console.error('error parsing header', e)
+    total = 0
   }
-  cachedSizes.set(url, total)
+
   return total
 }
