@@ -58,7 +58,6 @@ const getSourceType = (src: string): string => {
   for (const [end, type] of types) {
     if (src && src.endsWith(end)) return type
   }
-  console.warn(`Could not determine type for src "${src}"`)
   return ''
 }
 

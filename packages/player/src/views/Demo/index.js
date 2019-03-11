@@ -7,11 +7,14 @@ import CostChart from './cost-chart'
 import BitrateChart from './bitrate-chart'
 import { useInterval } from 'rooks'
 import scrapeStream from './scrape-stream'
+import { actions } from '../../services/routing'
+import { connect } from 'react-redux'
 
-export default ({
+export const Demo = ({
   maxWidth = '100%',
   aspectRatio = '16:9',
   url = 'https://bbb.stream.town/stream/current.m3u8',
+  dispatch,
 }) => {
   const [live, setLive] = useState()
   const [currentTime, setCurrentTime] = useState(0)
@@ -81,7 +84,7 @@ export default ({
 
   return (
     <div>
-      <BasicNavbar />
+      <BasicNavbar onSearch={url => dispatch(actions.changeDemo(url))} />
       <DemoBox>
         <StatsPane>
           <CostChart currentTime={displayTime} bitrates={bitrates} />
@@ -108,6 +111,11 @@ export default ({
   )
 }
 
+// This is a bit sloppy — force a full remount when the URL changes
+export const DemoWrapper = props => {
+  return <Demo key={props.url} {...props} />
+}
+
 const DemoBox = styled.div`
   display: flex;
   align-items: center;
@@ -131,3 +139,4 @@ const Media = styled.div`
   max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : '100%')};
   overflow: hidden;
 `
+export default connect()(DemoWrapper)

@@ -14,7 +14,7 @@ export default ({ bitrates, currentTime }) => {
   const [maxRate, setMaxRate] = useState(0)
   const [data, setData] = useState([[0, 0]])
   const [offset, setOffset] = useState(0)
-  const [, setMissingSegments] = useState(0)
+  const [missingSegments, setMissingSegments] = useState(0)
 
   useEffect(
     () => {
@@ -96,7 +96,8 @@ export default ({ bitrates, currentTime }) => {
             return [
               DEFAULT_COLORS[i],
               `${width}x${height}`,
-              kbpsFormat(lastDatum[i + 1]),
+              `${kbpsFormat(lastDatum[i + 1])}`,
+              `(${missingSegments[i]} drops)`,
             ]
           })}
         />

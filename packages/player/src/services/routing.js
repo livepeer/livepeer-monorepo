@@ -9,7 +9,18 @@ export const types = {
 }
 
 export const actions = {
-  changeURL: url => push(`/play?${qs.stringify({ url })}`),
+  changeURL: url =>
+    push(
+      `/play?${qs.stringify({
+        url,
+      })}`,
+    ),
+  changeDemo: url =>
+    push(
+      `/demo?${qs.stringify({
+        url,
+      })}`,
+    ),
 }
 
 export const initialState = {

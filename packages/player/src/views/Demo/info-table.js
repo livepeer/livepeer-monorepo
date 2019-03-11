@@ -25,7 +25,7 @@ export default ({ table }) => {
 
 export const TableBox = styled.div`
   display: grid;
-  grid-template-columns: 2.1em auto auto;
+  grid-template-columns: 2.1em repeat(${({ columns }) => columns - 1}, auto);
   grid-template-rows: 1fr 1fr 1fr;
   min-height: 0;
   min-width: 0;
