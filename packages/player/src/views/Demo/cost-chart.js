@@ -1,7 +1,9 @@
 import React from 'react'
 import { scaleLinear } from 'd3'
-import { dollarFormat, getComparisons } from './shared-chart'
+import { dollarFormat, getComparisons, ChartInfoBox } from './shared-chart'
 import BaseChart from './base-chart'
+import InfoTable from './info-table'
+import styled from 'styled-components'
 
 export default ({ currentTime, bitrates }) => {
   const comparisons = getComparisons(bitrates).sort(
@@ -20,7 +22,7 @@ export default ({ currentTime, bitrates }) => {
   const maxRange = Math.max(0.02, maxCost)
   const yScale = scaleLinear().domain([maxRange, 0])
   return (
-    <div>
+    <ChartInfoBox>
       <BaseChart
         xScale={xScale}
         yScale={yScale}
@@ -28,11 +30,18 @@ export default ({ currentTime, bitrates }) => {
         yTickFormat={dollarFormat}
         colors={comparisons.map(c => c.color)}
       />
-      {comparisons.map(({ name }, i) => (
+      {/* {comparisons.map(({ name }, i) => (
         <div key={i}>
           {name}: {dollarFormat(maxValues[i])}
         </div>
-      ))}
-    </div>
+      ))} */}
+      <InfoTable
+        table={comparisons.map((c, i) => [
+          c.color,
+          c.name,
+          dollarFormat(maxValues[i]),
+        ])}
+      />
+    </ChartInfoBox>
   )
 }

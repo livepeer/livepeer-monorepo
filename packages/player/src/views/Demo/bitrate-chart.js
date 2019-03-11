@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { scaleLinear } from 'd3'
 import BaseChart from './base-chart'
-import { kbpsFormat, mbpsFormat } from './shared-chart'
+import {
+  kbpsFormat,
+  mbpsFormat,
+  ChartInfoBox,
+  DEFAULT_COLORS,
+} from './shared-chart'
+import InfoTable from './info-table'
 
 const CHART_WIDTH = 30000 // 30 seconds
 export default ({ bitrates, currentTime }) => {
@@ -76,7 +82,7 @@ export default ({ bitrates, currentTime }) => {
   const yScale = scaleLinear().domain([maxRange, 0])
   const lastDatum = data[data.length - 1]
   return (
-    <div>
+    <ChartInfoBox>
       <BaseChart
         xScale={xScale}
         yScale={yScale}
@@ -84,16 +90,17 @@ export default ({ bitrates, currentTime }) => {
         yTickFormat={mbpsFormat}
       />
       <div>
-        {bitrates.map((bitrate, i) => {
-          const { width, height } = bitrate.resolution
-          return (
-            <div key={i}>
-              {width}x{height}: {kbpsFormat(lastDatum[i + 1])}{' '}
-              {missingSegments[i]}
-            </div>
-          )
-        })}
+        <InfoTable
+          table={bitrates.map((bitrate, i) => {
+            const { width, height } = bitrate.resolution
+            return [
+              DEFAULT_COLORS[i],
+              `${width}x${height}`,
+              kbpsFormat(lastDatum[i + 1]),
+            ]
+          })}
+        />
       </div>
-    </div>
+    </ChartInfoBox>
   )
 }

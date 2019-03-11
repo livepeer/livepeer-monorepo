@@ -1,7 +1,7 @@
 import React from 'react'
 import { axisBottom, axisLeft, select, line } from 'd3'
 import styled from 'styled-components'
-import { timeFormat } from './shared-chart'
+import { timeFormat, DEFAULT_COLORS } from './shared-chart'
 
 export default ({
   data,
@@ -12,7 +12,7 @@ export default ({
   padding = 50,
   xTickFormat = timeFormat,
   yTickFormat = x => x,
-  colors = ['#00890b', '#005689', '#89002d', '#895f00'],
+  colors = DEFAULT_COLORS,
 }) => {
   xScale.range([0, vWidth - padding * 2])
   yScale.range([0, vHeight - padding * 2])

@@ -1,3 +1,5 @@
+import styled from 'styled-components'
+
 // Return cost-per-hour
 const PROVIDERS = [
   {
@@ -37,6 +39,8 @@ const PROVIDERS = [
     color: '#00eb87',
   },
 ]
+
+export const DEFAULT_COLORS = ['#00890b', '#005689', '#89002d', '#895f00']
 
 // Assumes the first bitrate provided is the source
 export const getComparisons = bitrates => {
@@ -86,3 +90,10 @@ export const dollarFormat = dollars => {
 export const kbpsFormat = bytes => `${Math.round(bytes / 1024)} kbps`
 
 export const mbpsFormat = bytes => `${Math.round(bytes / 1024 / 1024)} mbps`
+
+export const ChartInfoBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
