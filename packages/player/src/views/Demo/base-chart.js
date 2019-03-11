@@ -12,6 +12,7 @@ export default ({
   padding = 50,
   xTickFormat = timeFormat,
   yTickFormat = x => x,
+  colors = ['#00890b', '#005689', '#89002d', '#895f00'],
 }) => {
   xScale.range([0, vWidth - padding * 2])
   yScale.range([0, vHeight - padding * 2])
@@ -60,6 +61,7 @@ export default ({
             <LinePath
               id={`ChartPath${i}`}
               clipPath="url(#ChartClip)"
+              color={colors[i % colors.length]}
               key={i}
               innerRef={ref =>
                 select(ref)
@@ -84,7 +86,7 @@ const ChartSVG = styled.svg`
 `
 
 const LinePath = styled.path`
-  stroke: #005689;
+  stroke: ${props => props.color || '#005689'};
   stroke-width: 2px;
   fill: none;
 `

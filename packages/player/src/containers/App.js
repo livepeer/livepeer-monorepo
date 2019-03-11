@@ -25,7 +25,12 @@ const App = ({ location }) => (
         exact
         path="/demo/:video?"
         render={props => (
-          <AsyncLoader component={import('../views/Demo')} {...props} />
+          <QueryHandler
+            {...props}
+            component={AsyncLoader}
+            asyncComponent={import('../views/Demo')}
+            {...props}
+          />
         )}
       />
       <Redirect to="/" />

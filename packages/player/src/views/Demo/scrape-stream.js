@@ -27,12 +27,24 @@ export default async function scrapeStream(url) {
   )
 
   for (const [i, manifest] of Object.entries(manifests)) {
+    let prevNum = null
+    let gapSize = 0
     for (const { uri, duration } of manifest.segments) {
+      try {
+        const num = parseInt(path.basename(uri, '.ts'))
+        if (prevNum !== null) {
+          gapSize = num - prevNum - 1
+        }
+        prevNum = num
+      } catch (e) {
+        // Discontinuity detection isn't essential
+      }
       const size = await getResponseSize(resolvePath(url, uri))
       output[i].segments.push({
         uri,
         size,
         duration,
+        gapSize,
         rate: Math.round((size / duration) * 8),
       })
     }

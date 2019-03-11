@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 export default props => {
-  const importPromise = props.component
+  const importPromise = props.asyncComponent
   const [Component, setComponent] = useState(null)
 
   // Use an effect hook so the subcomponent only loads when the import changes

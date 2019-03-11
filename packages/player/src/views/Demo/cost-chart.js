@@ -4,7 +4,9 @@ import { dollarFormat, getComparisons } from './shared-chart'
 import BaseChart from './base-chart'
 
 export default ({ currentTime, bitrates }) => {
-  const comparisons = getComparisons(bitrates)
+  const comparisons = getComparisons(bitrates).sort(
+    (a, b) => b.costPerMinute - a.costPerMinute,
+  )
   let maxCost = 0
   const maxValues = comparisons.map(comp => {
     const cost = (currentTime / 1000 / 60) * comp.costPerMinute
@@ -24,6 +26,7 @@ export default ({ currentTime, bitrates }) => {
         yScale={yScale}
         data={data}
         yTickFormat={dollarFormat}
+        colors={comparisons.map(c => c.color)}
       />
       {comparisons.map(({ name }, i) => (
         <div key={i}>

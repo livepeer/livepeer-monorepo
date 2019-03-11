@@ -8,11 +8,13 @@ export default ({ bitrates, currentTime }) => {
   const [maxRate, setMaxRate] = useState(0)
   const [data, setData] = useState([[0, 0]])
   const [offset, setOffset] = useState(0)
+  const [missingSegments, setMissingSegments] = useState(0)
 
   useEffect(
     () => {
       let totalDuration = 0
       let newMaxRate = 0
+      const missingSegments = []
       const data = !bitrates[0]
         ? [[0, 0]]
         : bitrates[0].segments
@@ -20,10 +22,15 @@ export default ({ bitrates, currentTime }) => {
               const myStart = totalDuration
               totalDuration += segment.duration * 1000
               newMaxRate = Math.max(newMaxRate, segment.rate)
+
               return [
                 myStart,
-                ...bitrates.map(bitrate => {
+                ...bitrates.map((bitrate, j) => {
+                  if (!missingSegments[j]) {
+                    missingSegments[j] = 0
+                  }
                   if (bitrate.segments[i]) {
+                    missingSegments[j] += bitrate.segments[i].gapSize
                     return bitrate.segments[i].rate
                   }
                   // If a segment is missing, return the segment to the left if we have one.
@@ -55,6 +62,7 @@ export default ({ bitrates, currentTime }) => {
         return data
       })
       setMaxRate(newMaxRate)
+      setMissingSegments(missingSegments)
     },
     [bitrates],
   )
@@ -80,7 +88,8 @@ export default ({ bitrates, currentTime }) => {
           const { width, height } = bitrate.resolution
           return (
             <div key={i}>
-              {width}x{height}: {kbpsFormat(lastDatum[i + 1])}
+              {width}x{height}: {kbpsFormat(lastDatum[i + 1])}{' '}
+              {missingSegments[i]}
             </div>
           )
         })}
