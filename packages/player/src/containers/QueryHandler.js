@@ -7,9 +7,9 @@ import * as qs from 'query-string'
 import { Redirect } from 'react-router-dom'
 
 export default props => {
-  const Child = props.component
+  const { required = true, component: Child } = props
   const parsed = qs.parse(document.location.search)
-  if (!parsed.url) {
+  if (!parsed.url && required) {
     return <Redirect to="/" />
   }
   return <Child {...props} {...parsed} />

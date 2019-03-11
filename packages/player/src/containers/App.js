@@ -28,6 +28,7 @@ const App = ({ location }) => (
           <QueryHandler
             {...props}
             component={AsyncLoader}
+            required={false}
             asyncComponent={import('../views/Demo')}
             {...props}
           />

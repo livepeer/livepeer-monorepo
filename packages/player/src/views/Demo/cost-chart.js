@@ -3,7 +3,6 @@ import { scaleLinear } from 'd3'
 import { dollarFormat, getComparisons, ChartInfoBox } from './shared-chart'
 import BaseChart from './base-chart'
 import InfoTable from './info-table'
-import styled from 'styled-components'
 
 export default ({ currentTime, bitrates }) => {
   const comparisons = getComparisons(bitrates).sort(
