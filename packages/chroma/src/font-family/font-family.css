@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'AkkuratMonoPro';
+  src: url('./lineto-akkuratmono-pro-regular.eot');
+  src: url('./lineto-akkuratmono-pro-regular.eot?#iefix')
+      format('embedded-opentype'),
+    url('./lineto-akkuratmono-pro-regular.woff2') format('woff2'),
+    url('./lineto-akkuratmono-pro-regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
