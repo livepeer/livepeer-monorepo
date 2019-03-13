@@ -29,16 +29,6 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       --mdc-theme-primary: var(--green);
       --mdc-theme-secondary: var(--black);
     }
-    @font-face {
-      font-family: 'AkkuratMonoPro';
-      src: url('/static/fonts/lineto-akkuratmono-pro-regular.eot');
-      src: url('/static/fonts/lineto-akkuratmono-pro-regular.eot?#iefix')
-          format('embedded-opentype'),
-        url('/static/fonts/lineto-akkuratmono-pro-regular.woff2') format('woff2'),
-        url('/static/fonts/lineto-akkuratmono-pro-regular.woff') format('woff');
-      font-weight: normal;
-      font-style: normal;
-    }
     * {
       box-sizing: border-box;
       font-weight: 300;
