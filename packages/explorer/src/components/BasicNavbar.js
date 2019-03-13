@@ -13,6 +13,7 @@ import {
 import { MenuItem, SimpleMenu } from 'rmwc/Menu'
 import { Icon } from 'rmwc/Icon'
 import Navbar from './Navbar'
+import { fontFamily } from '@livepeer/chroma'
 import {
   connectCoinbaseQuery,
   connectCurrentRoundQuery,
@@ -312,7 +313,7 @@ const NavbarLink = styled(NavLink).attrs({
       'linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,0) 0px,var(--primary) 0px,var(--primary) 4px,rgba(0,0,0,0) 4px)',
   }),
 })`
-  font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family: ${fontFamily};
   display: inline-flex;
   align-items: center;
   color: #fff;
@@ -322,8 +323,7 @@ const NavbarLink = styled(NavLink).attrs({
   text-decoration: none;
   text-transform: uppercase;
   > span {
-    font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
-      sans-serif;
+    font-family: ${fontFamily};
   }
   @media (max-width: 800px) {
     > span {
@@ -357,7 +357,7 @@ const SearchBar = styled.input`
   border: none;
   font-size: 16px;
   outline: 0;
-  font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family: ${fontFamily};
   -webkit-appearance: textfield;
   ::placeholder {
     color: ${placeHolderColor};
@@ -371,7 +371,7 @@ const SearchBar = styled.input`
 `
 
 const CTAButton = styled.button`
-  font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family: ${fontFamily};
   background: none;
   border: none;
   color: #868686;
