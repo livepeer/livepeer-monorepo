@@ -83,6 +83,8 @@ export default ({
 
 const ChartSVG = styled.svg`
   user-select: none;
+  margin-top: -80px;
+  margin-bottom: -30px;
 `
 
 const LinePath = styled.path`

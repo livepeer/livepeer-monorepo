@@ -16,7 +16,11 @@ export default ({ table }) => {
               </TableColor>
             )
           }
-          return <TableCell key={`${i}-${j}`}>{cell}</TableCell>
+          return (
+            <TableCell last={j === row.length - 1} key={`${i}-${j}`}>
+              {cell}
+            </TableCell>
+          )
         }),
       )}
     </TableBox>
@@ -25,19 +29,22 @@ export default ({ table }) => {
 
 export const TableBox = styled.div`
   display: grid;
-  grid-template-columns: 2.1em repeat(${({ columns }) => columns - 1}, auto);
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns:
+    2.1em repeat(${({ columns }) => columns - 1}, auto)
+    2.1em repeat(${({ columns }) => columns - 1}, auto);
   min-height: 0;
   min-width: 0;
   width: auto;
 `
 
 export const TableCell = styled.div`
-  font-size: 1.3em;
-  line-height: 1.3em;
+  font-size: 1em;
+  line-height: 1em;
   padding: 0.1em 0.3em;
   align-self: center;
+  ${({ last }) => last && 'margin-right: 1em'};
 `
+
 export const TableColor = styled.div`
   background-color: ${({ color }) => color};
   width: 2.1em;

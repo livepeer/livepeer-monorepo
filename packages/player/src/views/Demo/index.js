@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { VideoPlayer } from '@livepeer/chroma'
+import { VideoPlayer, fontFamily } from '@livepeer/chroma'
 import LoadingOverlay from '../../components/LoadingOverlay'
 import BasicNavbar from '../../components/BasicNavbar'
 import CostChart from './cost-chart'
@@ -90,22 +90,25 @@ export const Demo = ({
           <CostChart currentTime={displayTime} bitrates={bitrates} />
           <BitrateChart currentTime={displayTime} bitrates={bitrates} />
         </StatsPane>
-        <Media maxWidth={maxWidth}>
-          <LoadingOverlay live={live} />
-          <VideoPlayer
-            autoPlay={true}
-            onTimeUpdate={e => updateCurrentTime(e.target.currentTime * 1000)}
-            hlsOptions={{ debug: false }}
-            poster=""
-            muted={true}
-            src={url}
-            aspectRatio={aspectRatio}
-            onLive={() => setLive(true)}
-            onDead={() => setLive(false)}
-            onPlaying={() => updatePlaying(true)}
-            onPause={() => updatePlaying(false)}
-          />
-        </Media>
+        <VideoPane>
+          <BigTitle>Reliable and Afforable Transcoding</BigTitle>
+          <Media maxWidth={maxWidth}>
+            <LoadingOverlay live={live} />
+            <VideoPlayer
+              autoPlay={true}
+              onTimeUpdate={e => updateCurrentTime(e.target.currentTime * 1000)}
+              hlsOptions={{ debug: false }}
+              poster=""
+              muted={true}
+              src={url}
+              aspectRatio={aspectRatio}
+              onLive={() => setLive(true)}
+              onDead={() => setLive(false)}
+              onPlaying={() => updatePlaying(true)}
+              onPause={() => updatePlaying(false)}
+            />
+          </Media>
+        </VideoPane>
       </DemoBox>
     </div>
   )
@@ -126,17 +129,25 @@ const DemoBox = styled.div`
 const StatsPane = styled.div`
   flex-basis: 0px;
   flex-grow: 1;
-  color: white;
+  color: var(--black);
   padding: 20px;
+`
+
+const VideoPane = styled.div`
+  flex-grow: 2;
+  flex-basis: 0px;
 `
 
 const Media = styled.div`
   position: relative;
-  flex-grow: 2;
-  flex-basis: 0px;
   display: block;
   width: 100%;
   max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : '100%')};
   overflow: hidden;
+`
+
+const BigTitle = styled.h1`
+  font-family: ${fontFamily};
+  text-align: center;
 `
 export default connect()(DemoWrapper)

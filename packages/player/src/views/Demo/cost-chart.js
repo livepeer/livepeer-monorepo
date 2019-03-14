@@ -22,6 +22,7 @@ export default ({ currentTime, bitrates }) => {
   const yScale = scaleLinear().domain([maxRange, 0])
   return (
     <ChartInfoBox>
+      <h2>Cost Differentiation</h2>
       <BaseChart
         xScale={xScale}
         yScale={yScale}

@@ -83,6 +83,7 @@ export default ({ bitrates, currentTime }) => {
   const lastDatum = data[data.length - 1]
   return (
     <ChartInfoBox>
+      <h2>Resolution Comparison</h2>
       <BaseChart
         xScale={xScale}
         yScale={yScale}
@@ -97,7 +98,6 @@ export default ({ bitrates, currentTime }) => {
               DEFAULT_COLORS[i],
               `${width}x${height}`,
               `${kbpsFormat(lastDatum[i + 1])}`,
-              `(${missingSegments[i]} drops)`,
             ]
           })}
         />
