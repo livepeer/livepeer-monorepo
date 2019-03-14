@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
@@ -25,7 +25,7 @@ const enhance = connect(
 )
 
 const Landing = ({ query, changeURL }) => {
-  let searchBarRef
+  const [search, setSearch] = useState('')
   return (
     <Container>
       <Navbar />
@@ -37,17 +37,17 @@ const Landing = ({ query, changeURL }) => {
       <SearchForm
         onSubmit={e => {
           e.preventDefault()
-          if (!searchBarRef || !searchBarRef.value) {
+          if (!search) {
             return
           }
-          changeURL(searchBarRef.value)
+          changeURL(search)
         }}
       >
         <SearchBar
-          id="broadcaster"
           type="search"
           placeholder="example: http://example.com/stream.m3u8"
-          innerRef={ref => (searchBarRef = ref)}
+          value={search}
+          onChange={e => setSearch(e.target.value)}
         />
         <br />
         <br />
