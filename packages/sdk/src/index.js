@@ -100,7 +100,7 @@ export { TRANSCODER_STATUS }
 // Defaults
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
-  provider: 'https://mainnet.infura.io/srFaWg0SlljdJAoClX3B',
+  provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
   gas: 0,
@@ -175,8 +175,8 @@ export const utils = {
               [k]: Array.isArray(v)
                 ? v.map(_v => (BN.isBN(_v) ? toString(_v) : _v))
                 : BN.isBN(v)
-                ? toString(v)
-                : v,
+                  ? toString(v)
+                  : v,
             }
           },
           {},
@@ -250,10 +250,11 @@ export const utils = {
   serializeTranscodingProfiles: names => {
     return [
       ...new Set( // dedupe profiles
-        names.map(x =>
-          VIDEO_PROFILES[x]
-            ? VIDEO_PROFILES[x].hash
-            : VIDEO_PROFILES.P240p30fps4x3.hash,
+        names.map(
+          x =>
+            VIDEO_PROFILES[x]
+              ? VIDEO_PROFILES[x].hash
+              : VIDEO_PROFILES.P240p30fps4x3.hash,
         ),
       ),
     ].join('')
@@ -382,18 +383,18 @@ export async function initRPC({
     'object' === typeof provider && provider
       ? provider
       : usePrivateKeys
-      ? // Use provider-signer to locally sign transactions
-        new SignerProvider(provider, {
-          signTransaction: (rawTx, cb) => {
-            const tx = new EthereumTx(rawTx)
-            tx.sign(privateKeys[from])
-            cb(null, '0x' + tx.serialize().toString('hex'))
-          },
-          accounts: cb => cb(null, accounts),
-          timeout: 10 * 1000,
-        })
-      : // Use default signer
-        new Eth.HttpProvider(provider || DEFAULTS.provider)
+        ? // Use provider-signer to locally sign transactions
+          new SignerProvider(provider, {
+            signTransaction: (rawTx, cb) => {
+              const tx = new EthereumTx(rawTx)
+              tx.sign(privateKeys[from])
+              cb(null, '0x' + tx.serialize().toString('hex'))
+            },
+            accounts: cb => cb(null, accounts),
+            timeout: 10 * 1000,
+          })
+        : // Use default signer
+          new Eth.HttpProvider(provider || DEFAULTS.provider)
   const eth = new Eth(ethjsProvider)
   const ens = new ENS({
     provider: eth.currentProvider,
@@ -490,14 +491,12 @@ export async function initContracts(
   // Create a list of events in each contract
   const events = Object.entries(abis)
     .map(([contract, abi]) => {
-      return abi
-        .filter(x => x.type === 'event')
-        .map(abi => ({
-          abi,
-          contract,
-          event: contracts[contract][abi.name],
-          name: abi.name,
-        }))
+      return abi.filter(x => x.type === 'event').map(abi => ({
+        abi,
+        contract,
+        event: contracts[contract][abi.name],
+        name: abi.name,
+      }))
     })
     .reduce(
       (a, b) =>
