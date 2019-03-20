@@ -74,16 +74,21 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
     )
   }
   if (submitSucceeded) {
-    // console.log('rendering bond success')
     return (
       <React.Fragment>
         <Confetti active={submitSucceeded} />
-        <H1>Success!</H1>
+        <H1 style={{ marginTop: 0 }}>Success!</H1>
         <p>
           Congratulations! You successfully bonded your tokens to{' '}
-          {delegateAddress}. You may{' '}
+          {delegateAddress}.{' '}
+          <Link to={`/accounts/${delegator.id}/delegating#/staking-alerts`}>
+            Sign up
+          </Link>{' '}
+          to receive email alerts with your earnings and keep tabs on how your
+          transcoder is performing.
+          {/* You may{' '}
           <Link to="/me/delegating">view your delegating dashboard</Link> to see
-          more information.
+          more information. */}
         </p>
         <div style={{ textAlign: 'right', paddingTop: 24 }}>
           {onCancel && (

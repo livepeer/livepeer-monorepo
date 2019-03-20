@@ -27,7 +27,7 @@ const BasicModal = ({ title, children, onOpen, onClose }) => {
           }}
           onClick={e => e.stopPropagation()}
         >
-          <h2 style={{ textAlign: 'center' }}>{title}</h2>
+          {title && <h2 style={{ marginTop: 0 }}>{title}</h2>}
           {children}
         </Content>
       </Backdrop>

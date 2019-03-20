@@ -133,6 +133,9 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35) !important;
       }
     }
+    .grecaptcha-badge {
+      display: none;
+    }
   `
 
   await limitedMode()
