@@ -31,7 +31,6 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
   }) => {
     let missedCalls: number = 0
     if (rewards) {
-      console.log('hiii', currentRound.data.id)
       missedCalls = rewards
         // If transcoder is active and has participated in more than 30 rounds,
         // slice the last 31 rounds since we're excluding the current round.
