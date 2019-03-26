@@ -122,6 +122,32 @@ export default async function createApolloClient(
     })
   }
 
+  // Only poll subgraph periodically instead of on every request
+  let lastCheckedSubgraph = 0
+  let subgraphPromise = null
+  function pollSubgraph(url: string) {
+    if (
+      Date.now() - lastCheckedSubgraph > 10 * 1000 ||
+      subgraphPromise === null
+    ) {
+      lastCheckedSubgraph = Date.now()
+      subgraphPromise = axios({
+        url,
+        method: 'post',
+        data: {
+          query: `
+          query TranscoderQuery {
+            transcoders(first: 1) {
+              id
+            }
+          }
+        `,
+        },
+      })
+    }
+    return subgraphPromise
+  }
+
   /**
    * Determines whether livepeer subgraph is available
    * @param {string} url
@@ -138,20 +164,8 @@ export default async function createApolloClient(
       return false
     }
     try {
-      await axios({
-        url,
-        method: 'post',
-        data: {
-          query: `
-            query TranscoderQuery {
-              transcoders(first: 1) {
-                id
-              }
-            }
-          `,
-        },
-      })
-      return true
+      const res = await pollSubgraph(url)
+      return res.status === 200
     } catch (e) {
       return false
     }
