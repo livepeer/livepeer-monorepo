@@ -37,7 +37,7 @@ const StakingAlertsView: React.ComponentType<StakingAlertsViewProps> = ({
       return (
         <BasicModal
           closeIcon
-          title="Unbsubscription Successful"
+          title="Unsubscription Successful"
           onClose={closeModal}
         >
           <p style={{ lineHeight: '24px', marginBottom: 0 }}>
