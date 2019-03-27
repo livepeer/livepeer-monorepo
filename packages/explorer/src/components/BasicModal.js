@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { X as XIcon } from 'react-feather'
 import Modal from './Modal'
 import Content from './Content'
 
@@ -7,7 +8,7 @@ const ifEnter = f => ({ keyCode }) => {
   if (keyCode === 13) f && f()
 }
 
-const BasicModal = ({ title, children, onOpen, onClose }) => {
+const BasicModal = ({ closeIcon, title, children, onOpen, onClose }) => {
   return (
     <Modal>
       <Backdrop
@@ -27,6 +28,18 @@ const BasicModal = ({ title, children, onOpen, onClose }) => {
           }}
           onClick={e => e.stopPropagation()}
         >
+          {closeIcon && (
+            <XIcon
+              style={{
+                cursor: 'pointer',
+                position: 'absolute',
+                top: 16,
+                right: 16,
+              }}
+              onClick={() => onClose()}
+              size={24}
+            />
+          )}
           {title && <h2 style={{ marginTop: 0 }}>{title}</h2>}
           {children}
         </Content>

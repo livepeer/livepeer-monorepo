@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Form } from 'react-final-form'
 import { Field } from 'react-final-form-html5-validation'
 import { Link } from 'react-router-dom'
+import { X as XIcon } from 'react-feather'
 import Confetti from '../Confetti'
 import { withProp } from '../../enhancers'
 import { formatBalance, toBaseUnit, MathBN } from '../../utils'
@@ -80,21 +81,24 @@ const BondForm: React.StatelessFunctionalComponent<BondFormProps> = ({
         <H1 style={{ marginTop: 0 }}>Success!</H1>
         <p>
           Congratulations! You successfully bonded your tokens to{' '}
-          {delegateAddress}.{' '}
+          {delegateAddress}. <br /> <br />
+          👉
           <Link to={`/accounts/${delegator.id}/delegating#/staking-alerts`}>
             Sign up
           </Link>{' '}
           to receive email alerts with your earnings and keep tabs on how your
           transcoder is performing.
-          {/* You may{' '}
-          <Link to="/me/delegating">view your delegating dashboard</Link> to see
-          more information. */}
         </p>
-        <div style={{ textAlign: 'right', paddingTop: 24 }}>
+        <div
+          style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            right: 16,
+            top: 16,
+          }}
+        >
           {onCancel && (
-            <Button disabled={loading} onClick={onCancel}>
-              Done
-            </Button>
+            <XIcon disabled={loading} onClick={onCancel} size={24} />
           )}
         </div>
       </React.Fragment>

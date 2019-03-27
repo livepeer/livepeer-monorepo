@@ -24,14 +24,14 @@ const onSubmit = async values => {
       email: values.email,
       delegatorAddress: values.delegatorAddress.toLowerCase(),
       frequency: values.frequency,
-      senderEmail: values.senderEmail,
-      senderName: values.senderName,
-      optInRedirect: `https://explorer.livepeer.org?action=confirm&frequency=${
+      optInRedirect: `https://explorer.livepeer.org/accounts/${
+        values.delegatorAddress
+      }/delegating?action=confirm&frequency=${
         values.frequency
-      }`,
-      unsubscribeRedirect: `https://explorer.livepeer.org?action=unsubscribe&frequency=${
-        values.frequency
-      }`,
+      }#/staking-alerts`,
+      unsubscribeRedirect: `https://explorer.livepeer.org/accounts/${
+        values.delegatorAddress
+      }/delegating?action=unsubscribe#/staking-alerts`,
     })
   } catch (e) {
     console.log(e)
@@ -63,8 +63,6 @@ export default withRouter(({ accountId, history, closeModal }) => {
     initialValues: {
       frequency: 'weekly',
       delegatorAddress: accountId,
-      senderEmail: 'no-reply@livepeer.org',
-      senderName: 'Livepeer',
       optInRedirect: 'Livepeer',
       unsubscribeRedirect: 'Livepeer',
     },
@@ -73,15 +71,13 @@ export default withRouter(({ accountId, history, closeModal }) => {
   let email = useField('email', form)
   let delegatorAddress = useField('delegatorAddress', form)
   let frequency = useField('frequency', form)
-  let senderEmail = useField('senderEmail', form)
-  let senderName = useField('senderName', form)
   let optInRedirect = useField('optInRedirect', form)
   let unsubscribeRedirect = useField('unsubscribeRedirect', form)
 
   const emailError = !!(email.meta.touched && email.meta.error)
   if (submitSucceeded) {
     return (
-      <BasicModal title="Verify Your Email" onClose={closeModal}>
+      <BasicModal title="Verify Your Email" onClose={closeModal} closeIcon>
         <p style={{ lineHeight: '24px', marginBottom: 0 }}>
           A verification email has been sent to your email address. Please
           confirm it to complete the process.
@@ -90,14 +86,12 @@ export default withRouter(({ accountId, history, closeModal }) => {
     )
   } else {
     return (
-      <BasicModal title="Staking Alerts" onClose={closeModal}>
+      <BasicModal title="Staking Alerts" onClose={closeModal} closeIcon>
         <p style={{ lineHeight: '24px', marginBottom: 24 }}>
           Sign up to receive email alerts with your earnings and keep tabs on
           how your transcoder is performing.
         </p>
         <form noValidate onSubmit={handleSubmit}>
-          <input type="hidden" {...senderEmail.input} />
-          <input type="hidden" {...senderName.input} />
           <input type="hidden" {...delegatorAddress.input} />
           <input type="hidden" {...optInRedirect.input} />
           <input type="hidden" {...unsubscribeRedirect.input} />

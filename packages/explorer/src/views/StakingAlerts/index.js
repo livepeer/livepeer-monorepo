@@ -19,7 +19,11 @@ const StakingAlertsView: React.ComponentType<StakingAlertsViewProps> = ({
   switch (action) {
     case 'confirm':
       return (
-        <BasicModal title="Verification Successful" onClose={closeModal}>
+        <BasicModal
+          title="Verification Successful"
+          onClose={closeModal}
+          closeIcon
+        >
           <p style={{ lineHeight: '24px', marginBottom: 0 }}>
             {`Your email has been verified. We will send you an email with your earnings ${
               frequency === 'weekly'
@@ -31,7 +35,11 @@ const StakingAlertsView: React.ComponentType<StakingAlertsViewProps> = ({
       )
     case 'unsubscribe':
       return (
-        <BasicModal title="Unbsubscription Successful" onClose={closeModal}>
+        <BasicModal
+          closeIcon
+          title="Unbsubscription Successful"
+          onClose={closeModal}
+        >
           <p style={{ lineHeight: '24px', marginBottom: 0 }}>
             {`You've been successfully unsubscribed from the ${
               frequency === 'weekly' ? 'weekly' : 'monthly'
