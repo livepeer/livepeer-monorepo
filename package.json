@@ -2,7 +2,9 @@
   "private": true,
   "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeerjs.git"
@@ -13,25 +15,18 @@
     "clean": "lerna clean --yes && rm -rf node_modules",
     "cz": "git-cz",
     "commitmsg": "commitlint -e $GIT_PARAMS",
-    "coverage":
-      "lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
+    "coverage": "lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
     "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
-    "docs":
-      "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
+    "docs": "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
     "precommit": "pretty-quick --staged",
     "prepush": "yarn test",
-    "prepare":
-      "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
+    "prepare": "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
     "release": "lerna publish --conventional-commits --yes",
-    "release:dry-run":
-      "lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
-    "release:alpha":
-      "lerna publish --cd-version prerelease --conventional-commits --yes",
+    "release:dry-run": "lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
+    "release:alpha": "lerna publish --cd-version prerelease --conventional-commits --yes",
     "start": "lerna run --stream --no-sort --concurrency=999 --ignore @livepeer/merkle-miner start",
-    "test":
-      "lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
-    "test:build-apps":
-      "lerna run build --stream --scope @livepeer/explorer --scope @livepeer/player",
+    "test": "lerna run test --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
+    "test:build-apps": "lerna run build --stream --scope @livepeer/explorer --scope @livepeer/player",
     "updated": "lerna updated --json"
   },
   "devDependencies": {
@@ -57,5 +52,8 @@
       "pre-commit": "pretty-quick --staged",
       "pre-push": "yarn test"
     }
+  },
+  "dependencies": {
+    "cross-env": "^5.2.0"
   }
 }

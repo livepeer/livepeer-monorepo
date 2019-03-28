@@ -54,7 +54,7 @@
     "eject": "react-scripts eject",
     "postbuild": "cp build/index.html build/404.html",
     "serve": "serve -s build",
-    "start": "PORT=3001 react-scripts start",
+    "start": "cross-env PORT=3001 react-scripts start",
     "test": "react-scripts test"
   },
   "build": {

@@ -14,7 +14,7 @@
     "copy-docs": "echo 'No copy-docs script specified'",
     "prepack": "npm -s run build",
     "test": "ava",
-    "start": "run-p 'build -- --watch'"
+    "start": "run-p \"build -- --watch\""
   },
   "dependencies": {
     "@livepeer/sdk": "^1.0.0-alpha.5",
