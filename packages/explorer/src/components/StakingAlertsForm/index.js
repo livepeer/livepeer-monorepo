@@ -1,17 +1,23 @@
 import { TextField } from 'rmwc/TextField'
 import { useForm, useField } from 'react-final-form-hooks'
 import axios from 'axios'
-import EmailValidator from 'email-validator'
 import { Radio } from 'rmwc/Radio'
 import React from 'react'
+import { injectGlobal } from 'styled-components'
 import ReCAPTCHA from 'react-google-recaptcha'
 import styled from 'styled-components'
 import Button from '../Button'
 import { withRouter } from 'react-router-dom'
 import BasicModal from '../BasicModal'
+import { isValidEthereumAddress, isValidEmailAddress } from '../../utils'
+
+injectGlobal`
+  .grecaptcha-badge {
+    display: none;
+  }
+`
 
 const recaptchaRef = React.createRef()
-
 const StyledTextField = styled(TextField)`
   height: initial !important;
   padding-bottom: 8px;
@@ -35,22 +41,24 @@ const onSubmit = async values => {
     })
   } catch (e) {
     console.log(e)
+    alert(
+      'Oops. An error occurred while processing your request. Please try again.',
+    )
   }
 }
 
 const validate = values => {
-  const regex = /^0x[a-fA-F0-9]{40}$/g
   const errors = {}
+  // Check email address
   if (!values.email) {
     errors.email = 'Required'
-  } else if (!EmailValidator.validate(values.email)) {
+  } else if (!isValidEmailAddress(values.email)) {
     errors.email = 'Invalid email address'
   }
+  // Check ethereum address
   if (!values.delegatorAddress) {
     errors.delegatorAddress = 'Required'
-  }
-  // Check if delegator address is valid
-  else if (!regex.test(values.delegatorAddress)) {
+  } else if (!isValidEthereumAddress(values.delegatorAddress)) {
     errors.delegatorAddress = 'Invalid Ethereum Address'
   }
   return errors

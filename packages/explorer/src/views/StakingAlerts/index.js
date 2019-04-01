@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react'
 import { BasicModal, StakingAlertsForm } from '../../components'
+import { getAccountParam } from '../../utils'
 
 export type StakingAlertsViewProps = {
   history: History,
@@ -10,7 +11,7 @@ const StakingAlertsView: React.ComponentType<StakingAlertsViewProps> = ({
   history,
   ...props
 }) => {
-  const accountId = window.location.pathname.split('/')[2]
+  const accountId = getAccountParam(window.location.pathname)
   const searchParams = new URLSearchParams(document.location.search)
   const action = searchParams.get('action')
   const frequency = searchParams.get('frequency')

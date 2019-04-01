@@ -2,6 +2,7 @@ import { matchPath } from 'react-router'
 import Big from 'big.js'
 import BN from 'bn.js'
 import unit, { unitMap } from 'ethjs-unit'
+import EmailValidator from 'email-validator'
 
 export async function notify(title, options) {
   const permission = await Notification.requestPermission()
@@ -202,4 +203,13 @@ export async function limitedMode() {
     // this is the old way, accounts are always exposed.
     window.web3 = new window.Web3(window.web3.currentProvider)
   }
+}
+
+export function isValidEthereumAddress(address) {
+  const regex = /^0x[a-fA-F0-9]{40}$/g
+  return regex.test(address)
+}
+
+export function isValidEmailAddress(address) {
+  return EmailValidator.validate(address)
 }
