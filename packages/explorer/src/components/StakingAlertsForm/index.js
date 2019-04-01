@@ -3,21 +3,12 @@ import { useForm, useField } from 'react-final-form-hooks'
 import axios from 'axios'
 import { Radio } from 'rmwc/Radio'
 import React from 'react'
-import { injectGlobal } from 'styled-components'
-import ReCAPTCHA from 'react-google-recaptcha'
 import styled from 'styled-components'
 import Button from '../Button'
 import { withRouter } from 'react-router-dom'
 import BasicModal from '../BasicModal'
 import { isValidEthereumAddress, isValidEmailAddress } from '../../utils'
 
-injectGlobal`
-  .grecaptcha-badge {
-    display: none;
-  }
-`
-
-const recaptchaRef = React.createRef()
 const StyledTextField = styled(TextField)`
   height: initial !important;
   padding-bottom: 8px;
@@ -25,7 +16,6 @@ const StyledTextField = styled(TextField)`
 
 const onSubmit = async values => {
   try {
-    recaptchaRef.current.execute()
     await axios.post('https://livepeer.studio/confirmEmail', {
       email: values.email,
       delegatorAddress: values.delegatorAddress.toLowerCase(),
@@ -152,12 +142,6 @@ export default withRouter(({ accountId, history, closeModal }) => {
               />
             </div>
           </div>
-          <ReCAPTCHA
-            badget="inline"
-            ref={recaptchaRef}
-            size="invisible"
-            sitekey="6LeEfJMUAAAAADy6m3uGNTW0go3Qvp6zDQyuCr-X"
-          />
           <div>
             <Button style={{ margin: 0 }} disabled={submitting} type="submit">
               SIGN UP
