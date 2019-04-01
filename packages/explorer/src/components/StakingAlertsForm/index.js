@@ -93,6 +93,7 @@ export default withRouter(({ accountId, history, closeModal }) => {
           <input type="hidden" {...delegatorAddress.input} />
           <input type="hidden" {...optInRedirect.input} />
           <input type="hidden" {...unsubscribeRedirect.input} />
+          <input type="hidden" name="botField" />
           <div style={{ marginBottom: 24 }}>
             <label
               style={{ color: emailError ? '#b00020' : 'inherit' }}
