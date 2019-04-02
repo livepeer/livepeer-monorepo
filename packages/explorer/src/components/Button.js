@@ -4,7 +4,7 @@ const Button = styled.button`
   display: inline-flex;
   align-items: center;
   padding: 8px 12px;
-  margin: 8px;
+  margin: 0 8px;
   background-image: none !important;
   text-transform: uppercase;
   letter-spacing: 2px;
