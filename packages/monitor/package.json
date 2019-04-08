@@ -1,0 +1,23 @@
+{
+  "name": "@livepeer/monitor",
+  "version": "0.0.1",
+  "description": "Monitors Livepeer's infrastructure",
+  "main": "dist/monitor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build --target node --bundle-node-modules --no-minify src/monitor.js"
+  },
+  "author": "Livepeer",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^14.2.1",
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "browserslist": [
+    "node 10"
+  ],
+  "devDependencies": {
+    "esm": "^3.2.22",
+    "parcel": "^1.12.3"
+  }
+}
