@@ -8,12 +8,7 @@ import { BondingManager } from "../types/BondingManager/BondingManager";
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Reward, Round } from "../types/schema";
 
-export function leftPad(str: String, size: i32): String {
-  while (str.length < size) {
-    str = "0" + str;
-  }
-  return str;
-}
+import { makeRewardId } from "./util";
 
 // Handler for NewRound events
 export function newRound(event: NewRound): void {
@@ -48,8 +43,7 @@ export function newRound(event: NewRound): void {
     // the transcoder failed to call reward()
     if (active) {
       // Left-pad these round numbers so we can sort by round later on
-      rewardId =
-        currentTranscoder.toHex() + "-" + leftPad(roundNumber.toString(), 40);
+      rewardId = makeRewardId(currentTranscoder, roundNumber);
       reward = new Reward(rewardId);
       reward.round = roundNumber.toString();
       reward.transcoder = currentTranscoder.toHex();
