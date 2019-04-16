@@ -5,7 +5,7 @@
   "main": "dist/monitor.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build --target node --bundle-node-modules --no-minify src/monitor.js"
+    "deploy": "parcel build --target node --bundle-node-modules --no-minify --no-source-maps -o dist/index.js src/monitor.js && gcloud functions deploy livepeer-monitor-automatic --source dist --entry-point poll"
   },
   "author": "Livepeer",
   "license": "MIT",
