@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Content, BasicNavbar, ScrollToTopOnMount } from '../../components'
+import { fontFamily } from '@livepeer/chroma'
 
 const Landing = ({ history, ...props }) => (
   <React.Fragment>
@@ -119,13 +120,11 @@ const Container = styled.div`
     }
     h1 {
       font-size: 50px;
-      font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
-        sans-serif;
+      font-family: ${fontFamily};
       letter-spacing: 0.025em;
     }
     h2 {
-      font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial,
-        sans-serif;
+      font-family: ${fontFamily};
       font-size: 22px;
     }
     p {
@@ -213,7 +212,7 @@ const CTAButton = styled.a`
   background: none;
   outline: 0;
   border: none;
-  font-family: 'AkkuratMonoPro', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family: ${fontFamily};
   cursor: pointer;
   text-decoration: none;
   font-size: 14px;
