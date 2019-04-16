@@ -6,12 +6,17 @@
   "main": "dist/index.js",
   "module": "src/index.js",
   "scripts": {
-    "start": "node-dev -r esm src/index.js"
+    "start": "node-dev -r esm src/index.js",
+    "test": "jest --env node src"
   },
   "dependencies": {
+    "ajv": "^6.10.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "morgan": "^1.9.1"
+    "fs-extra": "^7.0.1",
+    "level": "^5.0.1",
+    "morgan": "^1.9.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
@@ -25,5 +30,13 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeerjs.git"
-  }
+  },
+  "babel": {
+    "presets": [
+      "@babel/env"
+    ]
+  },
+  "browserslist": [
+    "node 10"
+  ]
 }
