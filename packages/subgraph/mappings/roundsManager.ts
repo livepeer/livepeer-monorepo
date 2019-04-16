@@ -8,7 +8,7 @@ import { BondingManager } from "../types/BondingManager/BondingManager";
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Reward, Round } from "../types/schema";
 
-export function leftPad(str: String, size: Number): String {
+export function leftPad(str: String, size: i32): String {
   while (str.length < size) {
     str = "0" + str;
   }
