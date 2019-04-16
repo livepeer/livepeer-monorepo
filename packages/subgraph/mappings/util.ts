@@ -1,3 +1,5 @@
+import { Address, BigInt } from "@graphprotocol/graph-ts";
+
 // Make a number the specified number of digits
 export function leftPad(str: String, size: i32): String {
   while (str.length < size) {
