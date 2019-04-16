@@ -20,7 +20,6 @@
     "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
     "docs": "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
     "precommit": "pretty-quick --staged",
-    "prepush": "yarn test",
     "prepare": "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
     "release": "lerna publish --conventional-commits --yes",
     "release:dry-run": "lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
