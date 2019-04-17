@@ -49,7 +49,7 @@ query {
     lastRewardRound
     active
     status
-    rewards {
+    rewards (orderBy: id, orderDirection: desc) {
       rewardTokens
       round {
         id
@@ -65,7 +65,7 @@ Here's another example query for fetching rounds:
 query {
   rounds {
     id
-    rewards {
+    rewards (orderBy: id, orderDirection: desc) {
       rewardTokens
       transcoder {
         id

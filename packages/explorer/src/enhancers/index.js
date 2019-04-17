@@ -440,7 +440,7 @@ export const TranscodersQuery = gql`
     pendingFeeShare
     pendingPricePerSegment
     totalStake
-    rewards {
+    rewards(orderBy: id, orderDirection: desc) {
       rewardTokens
       round {
         id
