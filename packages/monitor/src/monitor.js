@@ -1,20 +1,19 @@
 import fetch from 'isomorphic-fetch'
-import {
-  SUBGRAPH_ID,
-  SUBGRAPH_URL,
-  DISCORD_NOTIFICATION_URL,
-  DISCORD_USER,
-} from './config'
+import { SUBGRAPH_URL, DISCORD_NOTIFICATION_URL, DISCORD_USER } from './config'
 
 const NOTIFICATION_THRESHOLD = 5
 
 const query = `
-  query deployment {
-    subgraphDeployment(id: "${SUBGRAPH_ID}") {
-      latestEthereumBlockHash
-      latestEthereumBlockNumber
+{
+	subgraphs(where: {name: "livepeer"}) {
+    currentVersion {
+      deployment {
+        latestEthereumBlockNumber
+        latestEthereumBlockHash
+      }
     }
   }
+}
 `
 
 export async function getGraphBlock() {
@@ -32,7 +31,7 @@ export async function getGraphBlock() {
   const {
     latestEthereumBlockHash,
     latestEthereumBlockNumber,
-  } = data.subgraphDeployment
+  } = data.subgraphs[0].currentVersion.deployment
   return [parseInt(latestEthereumBlockNumber), latestEthereumBlockHash]
 }
 
@@ -53,7 +52,7 @@ export async function discordNotification(content) {
 export async function getPublicBlock() {
   const res = await fetch('https://api.blockcypher.com/v1/eth/main')
   const { height, hash } = await res.json()
-  return [height, hash]
+  return [height + 500, hash]
 }
 
 export async function poll() {
@@ -61,7 +60,6 @@ export async function poll() {
   const [publicNumber, publicHash] = await getPublicBlock()
   const delta = publicNumber - lpNumber
   if (delta >= NOTIFICATION_THRESHOLD) {
-    const message = `testing`
     await discordNotification(
       `Livepeer subgraph is currently ${delta} blocks behind. <@${DISCORD_USER}>, you should look into that. Most recent block: https://etherscan.io/block/${lpNumber}`,
     )
@@ -69,3 +67,5 @@ export async function poll() {
     console.log(`Livepeer subgraph only ${delta} blocks behind, exiting.`)
   }
 }
+
+poll()
