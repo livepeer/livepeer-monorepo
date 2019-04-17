@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "run-s deploy:build deploy:push",
-    "deploy:build": "cross-env DISCORD_NOTIFICATION_URL=http://localhost:3006/different-hook parcel build --target node --bundle-node-modules --no-minify --no-source-maps -o dist/index.js src/monitor.js",
+    "deploy:build": "cross-env DISCORD_NOTIFICATION_URL=$(cat /keybase/team/livepeerjs/discord-notification-url.txt) parcel build --target node --bundle-node-modules --no-minify --no-source-maps -o dist/index.js src/monitor.js",
     "deploy:push": "gcloud functions deploy livepeer-monitor-automatic --source dist --entry-point poll"
   },
   "author": "Livepeer",
