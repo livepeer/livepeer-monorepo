@@ -279,7 +279,9 @@ For available commands, type 'help'.
               value = 'object' === typeof res ? toTable(res) : res
             } catch (err) {
               console.clear()
-              value = err.value ? JSON.stringify(err.value, null, 2) : err.message
+              value = err.value
+                ? JSON.stringify(err.value, null, 2)
+                : err.message
             }
           }
           const watcher = filter.watch(printData)
