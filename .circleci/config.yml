@@ -17,16 +17,17 @@ aliases:
       - v1-dependencies-{{ checksum "yarn.lock" }}
       - v1-dependencies-
 
-  # Saves built explorer to cache
-  - &save-explorer
+  # Saves built apps to cache
+  - &save-apps
     paths:
       - packages/explorer/build
-    key: built-explorer-{{ .Revision }}
+      - packages/player/build
+    key: built-apps-{{ .Revision }}
 
-  # Restores explorer from cache
-  - &restore-explorer
+  # Restores apps from cache
+  - &restore-apps
     keys:
-      - built-explorer-{{ .Revision }}
+      - built-apps-{{ .Revision }}
 
   # Commands
 
@@ -57,13 +58,11 @@ aliases:
       yarn coverage
       ./cc-test-reporter after-build
 
-  # Builds the explorer
-  - &build-explorer
-    name: Build explorer
+  - &build-apps
+    name: Build React applications
     command: |
       yarn
-      cd packages/explorer
-      ls -la
+      # TODO: Fix linting errors so this can be true
       export CI=false
       yarn build
 
@@ -113,22 +112,22 @@ jobs:
       - run: *tests
       - run: *show-test-report
 
-  build-explorer-staging:
+  build-apps-staging:
     <<: *node-env
 
     steps:
       - checkout
       - restore_cache: *restore-dependencies
       - run: *install-libsecret
-      - run: *build-explorer
-      - save_cache: *save-explorer
+      - run: *build-apps
+      - save_cache: *save-apps
 
-  deploy-explorer-staging:
+  deploy-apps-staging:
     <<: *python-env
 
     steps:
       - checkout
-      - restore_cache: *restore-explorer
+      - restore_cache: *restore-apps
       - run: *install-aws-cli
 
       - run:
@@ -138,28 +137,33 @@ jobs:
             aws s3 sync packages/explorer/build s3://$EXPLORER_STAGING_BUCKET_NAME \
             --delete \
             --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
+            aws s3 rm s3://$PLAYER_STAGING_BUCKET_NAME --recursive
+            aws s3 sync packages/player/build s3://$PLAYER_STAGING_BUCKET_NAME \
+            --delete \
+            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
-  build-explorer-production:
+  build-apps-production:
     <<: *node-env
 
     steps:
       - checkout
       - run: *install-libsecret
-      - run: *build-explorer
+      - run: *build-apps
 
       - save_cache:
           paths:
             - packages/explorer/build
-          key: production-explorer-{{ .Revision }}
+            - packages/player/build
+          key: production-apps-{{ .Revision }}
 
-  deploy-explorer-production:
+  deploy-apps-production:
     <<: *python-env
 
     steps:
       - checkout
       - restore_cache:
           keys:
-            - production-explorer-{{ .Revision }}
+            - production-apps-{{ .Revision }}
       - run: *install-aws-cli
 
       - run:
@@ -169,6 +173,10 @@ jobs:
             aws s3 sync packages/explorer/build s3://$EXPLORER_PRODUCTION_BUCKET_NAME \
             --delete \
             --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
+            aws s3 rm s3://$PLAYER_PRODUCTION_BUCKET_NAME --recursive
+            aws s3 sync packages/player/build s3://$PLAYER_PRODUCTION_BUCKET_NAME \
+            --delete \
+            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
 workflows:
   version: 2
@@ -176,32 +184,35 @@ workflows:
     jobs:
       - build-test
 
-      # Staging workflow for the explorer
-      - hold-staging-explorer-deploy:
+      # Staging workflow for the apps
+      - hold-staging-apps-deploy:
           type: approval
           requires:
             - build-test
-      - build-explorer-staging:
+      - build-apps-staging:
           requires:
-            - hold-staging-explorer-deploy
-      - deploy-explorer-staging:
+            - hold-staging-apps-deploy
+      - deploy-apps-staging:
           requires:
-            - build-explorer-staging
+            - build-apps-staging
 
-      # Production workflow for the explorer
-      - hold-production-explorer-deploy:
+      # Production workflow for the apps
+      - hold-production-apps-deploy:
           type: approval
           requires:
             - build-test
-      - build-explorer-production:
-          requires:
-            - hold-production-explorer-deploy
           filters:
             branches:
               only: master
-      - deploy-explorer-production:
+      - build-apps-production:
           requires:
-            - build-explorer-production
+            - hold-production-apps-deploy
+          filters:
+            branches:
+              only: master
+      - deploy-apps-production:
+          requires:
+            - build-apps-production
           filters:
             branches:
               only: master
