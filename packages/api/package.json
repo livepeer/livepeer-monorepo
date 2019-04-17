@@ -7,7 +7,7 @@
   "module": "src/index.js",
   "scripts": {
     "start": "node-dev -r esm src/index.js",
-    "test": "jest --env node src"
+    "test": "jest --env node --no-cache src"
   },
   "dependencies": {
     "ajv": "^6.10.0",

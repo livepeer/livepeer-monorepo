@@ -16,25 +16,31 @@ export default class LevelStore {
     return this.db.close()
   }
 
-  async list(prefix) {}
+  async *list() {
+    for await (const { key, value } of this.db.createReadStream()) {
+      yield JSON.parse(value)
+    }
+  }
 
-  async get(id) {}
+  async get(id) {
+    return JSON.parse(await this.db.get(id))
+  }
 
   async create(id, data) {
     if (typeof id !== 'string' || typeof data !== 'object') {
       throw new Error('invalid values')
     }
     await this.ready
+
     try {
       await this.db.get(id)
-      throw new Error('already exists')
-    } catch (e) {
-      if (err.type !== 'NotFoundError') {
-        throw e
+    } catch (err) {
+      if (!err.type === 'NotFoundError') {
+        throw err
       }
       // Not found - that's great!
     }
-    await db.put(id, data)
+    await this.db.put(id, JSON.stringify(data))
   }
 
   async update(id, data) {}

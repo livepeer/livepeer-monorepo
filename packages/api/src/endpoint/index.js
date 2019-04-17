@@ -3,11 +3,37 @@ import schema from './schema.json'
 import Ajv from 'ajv'
 import uuid from 'uuid/v4'
 
-var ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-var validate = ajv.compile(schema)
+const ajv = new Ajv()
+const validate = ajv.compile(schema)
 
 const router = Router()
-router.post('/', (req, res) => {
+
+router.get('/', async (req, res) => {
+  const output = []
+  for await (const doc of req.store.list()) {
+    output.push(doc)
+  }
+  res.status(200)
+  res.json(output)
+})
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params
+  let data
+  try {
+    data = await req.store.get(id)
+  } catch (err) {
+    if (err.type === 'NotFoundError') {
+      res.status(404)
+      return res.json({ errors: ['Not found'] })
+    }
+    throw err
+  }
+  res.status(200)
+  res.json(data)
+})
+
+router.post('/', async (req, res) => {
   const { body } = req
 
   if (body.id || body.streamKey) {
@@ -23,13 +49,15 @@ router.post('/', (req, res) => {
     ...body,
   }
 
-  var valid = validate(data)
+  const valid = validate(data)
   if (!valid) {
     res.status(422)
     return res.json({
       errors: validate.errors.map(({ message }) => message),
     })
   }
+
+  await req.store.create(data.id, data)
 
   res.status(201)
   res.json(data)
