@@ -9,10 +9,7 @@ const validate = ajv.compile(schema)
 const router = Router()
 
 router.get('/', async (req, res) => {
-  const output = []
-  for await (const doc of req.store.list()) {
-    output.push(doc)
-  }
+  const output = await req.store.list()
   res.status(200)
   res.json(output)
 })
@@ -61,6 +58,48 @@ router.post('/', async (req, res) => {
 
   res.status(201)
   res.json(data)
+})
+
+router.put('/:id', async (req, res) => {
+  const data = req.body
+
+  if (data.id !== req.params.id) {
+    res.status(409)
+    return res.json({ errors: ['id in URL and body must match'] })
+  }
+
+  const valid = validate(data)
+  if (!valid) {
+    res.status(422)
+    return res.json({
+      errors: validate.errors.map(({ message }) => message),
+    })
+  }
+
+  try {
+    await req.store.replace(data.id, data)
+  } catch (err) {
+    if (err.type === 'NotFoundError') {
+      res.status(404)
+      return res.json({ errors: ['Not found'] })
+    }
+    throw err
+  }
+  res.status(200)
+  res.json(data)
+})
+
+router.delete('/:id', async (req, res) => {
+  try {
+    await req.store.delete(req.params.id)
+  } catch (err) {
+    if (err.type === 'NotFoundError') {
+      res.status(404)
+      return res.json({ errors: ['Not found'] })
+    }
+    throw err
+  }
+  res.sendStatus(204)
 })
 
 export default router

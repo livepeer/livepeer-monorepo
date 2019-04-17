@@ -148,7 +148,7 @@ describe('Endpoint', function() {
   describe('GET /', () => {
     let testObjs
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testObjs = [...new Array(3)].map(() => ({
         id: uuid(),
         streamKey: uuid(),
@@ -161,17 +161,140 @@ describe('Endpoint', function() {
           },
         ],
       }))
-    })
-
-    it('should list streams', async () => {
       for (const obj of testObjs) {
         await server.store.create(obj.id, obj)
       }
+    })
+
+    it('should list streams', async () => {
       const res = await fetch(`/endpoints`)
       expect(res.status).toEqual(200)
       const data = await res.json()
       expect(data.length).toEqual(testObjs.length)
       expect(data).toEqual(expect.arrayContaining(testObjs))
+    })
+  })
+
+  describe('PUT /:id', () => {
+    let testObjs
+
+    const put = (id, body) =>
+      fetch(`/endpoints/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+          'content-type': 'application/json',
+        },
+      })
+
+    beforeEach(async () => {
+      testObjs = [...new Array(3)].map(() => ({
+        id: uuid(),
+        streamKey: uuid(),
+        outputs: [
+          {
+            width: 1920,
+            height: 1080,
+            fps: 30,
+            bitrate: 6000,
+          },
+        ],
+      }))
+      for (const obj of testObjs) {
+        await server.store.create(obj.id, obj)
+      }
+    })
+
+    it('should replace streams', async () => {
+      const newObj = {
+        ...testObjs[0],
+        outputs: [
+          ...testObjs[0].outputs,
+          {
+            width: 1280,
+            height: 720,
+            fps: 30,
+            bitrate: 3000,
+          },
+        ],
+      }
+      const res = await put(newObj.id, newObj)
+      expect(res.status).toEqual(200)
+      const data = await res.json()
+      expect(data).toEqual(newObj)
+      const newTestObjs = [newObj, ...testObjs.slice(1)]
+      const dbContents = await server.store.list()
+      expect(dbContents.length).toEqual(newTestObjs.length)
+      expect(dbContents).toEqual(expect.arrayContaining(newTestObjs))
+    })
+
+    it("should 404 for streams that don't exist", async () => {
+      const fakeId = uuid()
+      const res = await put(fakeId, { ...testObjs[0], id: fakeId })
+      expect(res.status).toEqual(404)
+      await res.json()
+    })
+
+    it('should fail on object id mismatch', async () => {
+      let res = await put(uuid(), testObjs[0])
+      expect(res.status).toEqual(409)
+      await res.json()
+      res = await put(testObjs[0].id, {
+        ...testObjs[0],
+        id: uuid(),
+      })
+      expect(res.status).toEqual(409)
+      await res.json()
+    })
+    it('should enforce the schema', async () => {
+      const res = await put(testObjs[0].id, {
+        ...testObjs[0],
+        extraField: 'nonsense data',
+      })
+      expect(res.status).toEqual(422)
+      await res.json()
+    })
+  })
+
+  describe('DELETE /:id', () => {
+    let testObjs
+
+    beforeEach(async () => {
+      testObjs = [...new Array(3)].map(() => ({
+        id: uuid(),
+        streamKey: uuid(),
+        outputs: [
+          {
+            width: 1920,
+            height: 1080,
+            fps: 30,
+            bitrate: 6000,
+          },
+        ],
+      }))
+      for (const obj of testObjs) {
+        await server.store.create(obj.id, obj)
+      }
+    })
+
+    it('should delete streams', async () => {
+      const res = await fetch(`/endpoints/${testObjs[0].id}`, {
+        method: 'DELETE',
+      })
+      expect(res.status).toEqual(204)
+      const text = await res.text()
+      expect(text).toEqual('')
+      const dbContents = await server.store.list()
+      expect(dbContents.length).toEqual(testObjs.length - 1)
+      expect(dbContents).toEqual(expect.arrayContaining(testObjs.slice(1)))
+    })
+
+    it("should 404 for endpoints that don't exist", async () => {
+      const res = await fetch(`/endpoints/${uuid()}`, {
+        method: 'DELETE',
+      })
+      expect(res.status).toEqual(404)
+      await res.json()
     })
   })
 })

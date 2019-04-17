@@ -16,13 +16,23 @@ export default class LevelStore {
     return this.db.close()
   }
 
-  async *list() {
-    for await (const { key, value } of this.db.createReadStream()) {
+  async *listStream() {
+    await this.ready
+    for await (const { value } of this.db.createReadStream()) {
       yield JSON.parse(value)
     }
   }
 
+  async list() {
+    const ret = []
+    for await (const val of this.listStream()) {
+      ret.push(val)
+    }
+    return ret
+  }
+
   async get(id) {
+    await this.ready
     return JSON.parse(await this.db.get(id))
   }
 
@@ -43,7 +53,20 @@ export default class LevelStore {
     await this.db.put(id, JSON.stringify(data))
   }
 
-  async update(id, data) {}
+  async replace(id, data) {
+    if (typeof id !== 'string' || typeof data !== 'object') {
+      throw new Error('invalid values')
+    }
+    await this.ready
 
-  async delete(id) {}
+    // Make sure it exists first, this throws if not
+    await this.db.get(id)
+    await this.db.put(id, JSON.stringify(data))
+  }
+
+  async delete(id) {
+    // Make sure it exists first, this throws if not
+    await this.db.get(id)
+    await this.db.del(id)
+  }
 }
