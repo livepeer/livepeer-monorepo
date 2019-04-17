@@ -52,7 +52,7 @@ export async function discordNotification(content) {
 export async function getPublicBlock() {
   const res = await fetch('https://api.blockcypher.com/v1/eth/main')
   const { height, hash } = await res.json()
-  return [height + 500, hash]
+  return [height, hash]
 }
 
 export async function poll() {
