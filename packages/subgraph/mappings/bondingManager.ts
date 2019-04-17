@@ -18,6 +18,8 @@ import { RoundsManager } from "../types/RoundsManager/RoundsManager";
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Reward } from "../types/schema";
 
+import { makeRewardId } from "./util";
+
 // Bind RoundsManager contract
 let roundsManager = RoundsManager.bind(
   Address.fromString("3984fc4ceeef1739135476f625d36d6c35c40dc3")
@@ -187,7 +189,7 @@ export function reward(event: RewardEvent): void {
 
   // Recreate unique id from transcoder address and round
   // We use this to keep track of a transcoder's rewards for each round
-  let rewardId = transcoderAddress.toHex() + "-" + currentRound.toString();
+  let rewardId = makeRewardId(transcoderAddress, currentRound);
 
   // Get reward
   let reward = store.get("Reward", rewardId) as Reward;

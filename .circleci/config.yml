@@ -81,7 +81,7 @@ aliases:
 
   # Containers
   - &node
-    - image: circleci/node:8.11
+    - image: circleci/node:10
 
   - &python
     - image: circleci/python:2.7-jessie
