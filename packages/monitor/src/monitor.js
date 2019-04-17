@@ -67,5 +67,3 @@ export async function poll() {
     console.log(`Livepeer subgraph only ${delta} blocks behind, exiting.`)
   }
 }
-
-poll()
