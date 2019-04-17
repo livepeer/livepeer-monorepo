@@ -1,5 +1,10 @@
 import fetch from 'isomorphic-fetch'
-import { SUBGRAPH_ID, SUBGRAPH_URL, DISCORD_URL } from './config'
+import {
+  SUBGRAPH_ID,
+  SUBGRAPH_URL,
+  DISCORD_NOTIFICATION_URL,
+  DISCORD_USER,
+} from './config'
 
 const NOTIFICATION_THRESHOLD = 5
 
@@ -32,8 +37,9 @@ export async function getGraphBlock() {
 }
 
 export async function discordNotification(content) {
-  // Note that DISCORD_URL should be Discord's "Slack" format messages
-  const res = await fetch(DISCORD_URL, {
+  console.log(`notifying: ${content}`)
+  // Note that DISCORD_NOTIFICATION_URL should be Discord's "Slack" format messages
+  const res = await fetch(DISCORD_NOTIFICATION_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -57,7 +63,9 @@ export async function poll() {
   if (delta >= NOTIFICATION_THRESHOLD) {
     const message = `testing`
     await discordNotification(
-      `Livepeer subgraph is currently ${delta} blocks behind. <${DISCORD_USER}>, you should look into that. Most recent block: https://etherscan.io/block/${lpNumber}`,
+      `Livepeer subgraph is currently ${delta} blocks behind. <@${DISCORD_USER}>, you should look into that. Most recent block: https://etherscan.io/block/${lpNumber}`,
     )
+  } else {
+    console.log(`Livepeer subgraph only ${delta} blocks behind, exiting.`)
   }
 }
