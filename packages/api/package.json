@@ -7,6 +7,7 @@
   "module": "src/index.js",
   "scripts": {
     "start": "node-dev -r esm src/index.js",
+    "build": "babel --out-dir=dist --source-maps=true src",
     "test": "jest --env node --no-cache src"
   },
   "dependencies": {
@@ -16,7 +17,9 @@
     "fs-extra": "^7.0.1",
     "level": "^5.0.1",
     "morgan": "^1.9.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "winston": "^3.2.1",
+    "yargs": "^13.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",

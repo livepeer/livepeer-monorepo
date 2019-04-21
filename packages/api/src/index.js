@@ -3,11 +3,12 @@ import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import { LevelStore } from './store'
 import path from 'path'
-
+import logger from './logger'
 import endpoint from './endpoint'
+import { reject } from 'bluebird-lst'
 
 export default async function makeApp(opts) {
-  const store = new LevelStore({ dataDir: opts.store })
+  const store = new LevelStore({ dbPath: opts.dbPath })
   const app = express()
   app.use(morgan('dev'))
   app.use(jsonParser())
@@ -21,10 +22,14 @@ export default async function makeApp(opts) {
   let listener
   let port
 
-  await new Promise(resolve => {
-    listener = app.listen(opts.port, () => {
+  await new Promise((resolve, reject) => {
+    listener = app.listen(opts.port, err => {
+      if (err) {
+        logger.error('Error starting server', err)
+        return reject(err)
+      }
       port = listener.address().port
-      console.log(`API server listening on ${port}`)
+      logger.info(`API server listening on ${port}`)
       resolve()
     })
   })
@@ -36,9 +41,8 @@ export default async function makeApp(opts) {
   return { app, listener, port, close, store }
 }
 
-if (!module.parent) {
-  makeApp({
-    port: process.env.PORT || 3004,
-    store: process.env.DATA_DIR || path.resolve(__dirname, '..', 'data'), // TODO FIXME
-  })
-}
+process.on('unhandledRejection', err => {
+  // Will print "unhandledRejection err is not defined"
+  logger.error('fatal, unhandled promise rejection', err)
+  process.exit(1)
+})

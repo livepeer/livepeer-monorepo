@@ -1,15 +1,18 @@
 import level from 'level'
-
+import fs from 'fs-extra'
 export default class LevelStore {
-  constructor({ dataDir }) {
-    this.ready = new Promise((resolve, reject) => {
-      this.db = level(dataDir, err => {
-        if (err) {
-          return reject(err)
-        }
-        resolve()
+  constructor({ dbPath }) {
+    this.ready = (async () => {
+      await fs.ensureDir(dbPath)
+      await new Promise((resolve, reject) => {
+        this.db = level(dbPath, err => {
+          if (err) {
+            return reject(err)
+          }
+          resolve()
+        })
       })
-    })
+    })()
   }
 
   async close() {
