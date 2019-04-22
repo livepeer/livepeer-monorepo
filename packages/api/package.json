@@ -1,12 +1,12 @@
 {
-  "name": "@livepeer/api",
+  "name": "livepeer-api-prototype",
   "description": "Livepeer API node for controlling streams",
   "version": "1.0.0-alpha.5",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "src/index.js",
   "bin": {
-    "@livepeer/api": "dist/cli.js"
+    "livepeer-api-prototype": "dist/cli.js"
   },
   "scripts": {
     "start": "node-dev -r esm src/cli.js",
