@@ -5,7 +5,6 @@ import { LevelStore } from './store'
 import path from 'path'
 import logger from './logger'
 import endpoint from './endpoint'
-import { reject } from 'bluebird-lst'
 
 export default async function makeApp(opts) {
   const store = new LevelStore({ dbPath: opts.dbPath })

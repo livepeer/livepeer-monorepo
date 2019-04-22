@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node-dev -r esm src/cli.js",
-    "prepare": "babel --out-dir=dist --source-maps=true src",
+    "prepare": "babel --out-dir=dist --copy-files --source-maps=true src",
     "build": "npm run prepare",
     "test": "jest --env node --no-cache src",
     "postgres": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres"
