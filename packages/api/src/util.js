@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto'
 import anyBase from 'any-base'
 
-const BASE_36 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+const BASE_36 = 'abcdefghijklmnopqrstuvwxyz0123456789'
 const SEGMENT_COUNT = 3
 const SEGMENT_LENGTH = 4
 const hexToBase36 = anyBase(anyBase.HEX, BASE_36)
