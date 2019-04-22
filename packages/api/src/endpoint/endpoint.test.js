@@ -18,7 +18,7 @@ describe('Endpoint', function() {
 
   beforeEach(async () => {
     dbPath = path.resolve(__dirname, '..', 'data', 'test', uuid())
-    server = await makeApp({ port: 0, dbPath })
+    server = await makeApp({ port: 0, dbPath, httpPrefix: '/' })
   })
 
   afterEach(async () => {

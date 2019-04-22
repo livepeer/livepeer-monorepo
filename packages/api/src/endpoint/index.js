@@ -2,6 +2,7 @@ import { Router } from 'express'
 import schema from './schema.json'
 import Ajv from 'ajv'
 import uuid from 'uuid/v4'
+import { generateStreamKey } from '../util'
 
 const ajv = new Ajv()
 const validate = ajv.compile(schema)
@@ -42,7 +43,7 @@ router.post('/', async (req, res) => {
 
   const data = {
     id: uuid(),
-    streamKey: uuid(),
+    streamKey: await generateStreamKey(),
     ...body,
   }
 
