@@ -27,6 +27,12 @@ const args = yargs
       demandOption: true,
       type: 'string',
     },
+    'http-prefix': {
+      describe: 'accept requests at this prefix',
+      default: '/api',
+      demandOption: true,
+      type: 'string',
+    },
   })
   .help().argv
 

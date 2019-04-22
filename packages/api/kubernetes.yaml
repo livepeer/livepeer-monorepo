@@ -25,7 +25,18 @@ spec:
 
       containers:
         - name: api-server
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /healthz
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /healthz
           image: iameli/livepeer-api-prototype:latest
+          ports:
+            - name: http
+              containerPort: 80
           imagePullPolicy: Always
           args:
             - --db-path=/data
