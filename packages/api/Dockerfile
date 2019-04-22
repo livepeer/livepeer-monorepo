@@ -16,4 +16,4 @@ ADD package.json .
 RUN yarn install
 COPY --from=builder /app/dist dist
 ENV LP_PORT 80
-CMD node dist/cli.js
+ENTRYPOINT ["node", "dist/cli.js"]
