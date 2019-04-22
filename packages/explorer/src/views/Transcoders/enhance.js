@@ -36,7 +36,7 @@ const MeDelegatorTranscoderQuery = gql`
     pendingRewardCut
     pendingFeeShare
     pendingPricePerSegment
-    rewards {
+    rewards(orderBy: id, orderDirection: desc) {
       rewardTokens
       round {
         id
