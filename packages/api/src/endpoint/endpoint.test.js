@@ -4,25 +4,26 @@ import uuid from 'uuid/v4'
 import fs from 'fs-extra'
 import schema from './schema.json'
 import Ajv from 'ajv'
+import path from 'path'
 
 describe('Endpoint', function() {
   const ajv = new Ajv()
   const validate = ajv.compile(schema)
 
   let server
-  let dataDir
+  let dbPath
 
   const fetch = (path, args) =>
     isoFetch(`http://localhost:${server.port}${path}`, args)
 
   beforeEach(async () => {
-    dataDir = uuid()
-    server = await makeApp({ port: 0, store: dataDir })
+    dbPath = path.resolve(__dirname, '..', 'data', 'test', uuid())
+    server = await makeApp({ port: 0, dbPath })
   })
 
   afterEach(async () => {
     await server.close()
-    await fs.remove(dataDir)
+    await fs.remove(dbPath)
   })
 
   describe('POST', () => {
