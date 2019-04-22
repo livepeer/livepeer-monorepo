@@ -5,10 +5,15 @@
   "license": "MIT",
   "main": "dist/index.js",
   "module": "src/index.js",
+  "bin": {
+    "@livepeer/api": "dist/cli.js"
+  },
   "scripts": {
-    "start": "node-dev -r esm src/index.js",
-    "build": "babel --out-dir=dist --source-maps=true src",
-    "test": "jest --env node --no-cache src"
+    "start": "node-dev -r esm src/cli.js",
+    "prepare": "babel --out-dir=dist --source-maps=true src",
+    "build": "npm run prepare",
+    "test": "jest --env node --no-cache src",
+    "postgres": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres"
   },
   "dependencies": {
     "ajv": "^6.10.0",
