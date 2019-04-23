@@ -1,1 +1,0 @@
-export default 'QmbiSa3PSXwRw6aoCRUcEDB4F2c9jvz2UMZJJbyetPA9aY'
