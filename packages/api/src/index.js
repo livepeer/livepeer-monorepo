@@ -5,6 +5,7 @@ import { LevelStore } from './store'
 import path from 'path'
 import logger from './logger'
 import endpoint from './endpoint'
+import stream from './stream'
 import winston from 'winston'
 
 export default async function makeApp({ dbPath, httpPrefix, port }) {
@@ -19,6 +20,7 @@ export default async function makeApp({ dbPath, httpPrefix, port }) {
 
   const prefixRouter = Router()
   prefixRouter.use('/endpoints', endpoint)
+  prefixRouter.use('/streams', stream)
   app.use(httpPrefix, prefixRouter)
 
   let listener

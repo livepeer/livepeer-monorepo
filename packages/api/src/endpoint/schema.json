@@ -1,10 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["id", "streamKey", "outputs"],
+  "required": ["id", "key", "streamKey", "outputs"],
   "additionalProperties": false,
   "properties": {
     "id": {
+      "type": "string"
+    },
+    "key": {
       "type": "string"
     },
     "streamKey": {

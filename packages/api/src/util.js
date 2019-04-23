@@ -31,5 +31,3 @@ export async function generateStreamKey() {
     })
   })
 }
-
-generateStreamKey().then(x => console.log(x))
