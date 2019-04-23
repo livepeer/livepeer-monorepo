@@ -84,6 +84,7 @@ describe('Endpoint', function() {
     beforeEach(async () => {
       testObj = {
         id: uuid(),
+        key: uuid(),
         streamKey: uuid(),
         outputs: [
           {
@@ -94,41 +95,7 @@ describe('Endpoint', function() {
           },
         ],
       }
-      await server.store.create(testObj.id, testObj)
-    })
-
-    it('should retrieve endpoints', async () => {
-      const res = await get(testObj.id)
-      expect(res.status).toBe(200)
-      const data = await res.json()
-      expect(data).toEqual(testObj)
-      expect(validate(data)).toBe(true)
-    })
-
-    it('should 404 if not exist', async () => {
-      const res = await get(uuid())
-      expect(res.status).toBe(404)
-      await res.json()
-    })
-  })
-
-  describe('GET /:id', () => {
-    const get = id => fetch(`/endpoints/${id}`)
-    let testObj
-    beforeEach(async () => {
-      testObj = {
-        id: uuid(),
-        streamKey: uuid(),
-        outputs: [
-          {
-            width: 1920,
-            height: 1080,
-            fps: 30,
-            bitrate: 6000,
-          },
-        ],
-      }
-      await server.store.create(testObj.id, testObj)
+      await server.store.create(testObj)
     })
 
     it('should retrieve endpoints', async () => {
@@ -163,7 +130,7 @@ describe('Endpoint', function() {
         ],
       }))
       for (const obj of testObjs) {
-        await server.store.create(obj.id, obj)
+        await server.store.create(obj)
       }
     })
 
@@ -192,6 +159,7 @@ describe('Endpoint', function() {
       testObjs = [...new Array(3)].map(() => ({
         id: uuid(),
         streamKey: uuid(),
+        key: uuid(),
         outputs: [
           {
             width: 1920,
@@ -202,7 +170,7 @@ describe('Endpoint', function() {
         ],
       }))
       for (const obj of testObjs) {
-        await server.store.create(obj.id, obj)
+        await server.store.create(obj)
       }
     })
 
@@ -274,7 +242,7 @@ describe('Endpoint', function() {
         ],
       }))
       for (const obj of testObjs) {
-        await server.store.create(obj.id, obj)
+        await server.store.create(obj)
       }
     })
 

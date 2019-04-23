@@ -39,10 +39,11 @@ export default class LevelStore {
     return JSON.parse(await this.db.get(id))
   }
 
-  async create(id, data) {
-    if (typeof id !== 'string' || typeof data !== 'object') {
-      throw new Error('invalid values')
+  async create(data) {
+    if (typeof data !== 'object' || typeof data.id !== 'string') {
+      throw new Error(`invalid values: ${JSON.stringify(data)}`)
     }
+    const { id } = data
     await this.ready
 
     try {
@@ -56,10 +57,11 @@ export default class LevelStore {
     await this.db.put(id, JSON.stringify(data))
   }
 
-  async replace(id, data) {
-    if (typeof id !== 'string' || typeof data !== 'object') {
-      throw new Error('invalid values')
+  async replace(data) {
+    if (typeof data !== 'object' || typeof data.id !== 'string') {
+      throw new Error(`invalid values: ${JSON.stringify(data)}`)
     }
+    const { id } = data
     await this.ready
 
     // Make sure it exists first, this throws if not

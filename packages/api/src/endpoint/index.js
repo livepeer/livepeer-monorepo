@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
     })
   }
 
-  await req.store.create(data.id, data)
+  await req.store.create(data)
 
   res.status(201)
   res.json(data)
@@ -82,7 +82,7 @@ router.put('/:id', async (req, res) => {
   }
 
   try {
-    await req.store.replace(data.id, data)
+    await req.store.replace(data)
   } catch (err) {
     if (err.type === 'NotFoundError') {
       res.status(404)
