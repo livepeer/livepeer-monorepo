@@ -7,8 +7,8 @@
   "module": "lib/index.js",
   "scripts": {
     "build": "run-p build-main build-module",
-    "build-main": "cross-env NODE_ENV=production babel src --out-dir main --ignore spec.js,test.js --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
-    "build-module": "cross-env NODE_ENV=production babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "build-main": "cross-env NODE_ENV=production babel src --out-dir main --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
+    "build-module": "cross-env NODE_ENV=production babel src --out-dir lib --source-maps inline",
     "postbuild": "node generate-schema.js",
     "start": "run-p start-**",
     "start-babel": "run-p \"build-** -- --watch\"",
@@ -18,7 +18,7 @@
     "graphiql": "node ./server.js",
     "prebuild": "rimraf lib && rimraf main",
     "prepack": "npm -s run build",
-    "test": "nyc ava",
+    "test": "cd main && nyc ava ./**/*.test.js",
     "coverage": "nyc report --reporter=lcov",
     "lcov-badge": "lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@2fd/graphdoc": "^2.4.0",
+    "@babel/cli": "^7.4.3",
     "ava": "1.4.1",
     "cross-env": "^5.2.0",
     "cross-fetch": "^3.0.2",
@@ -49,12 +50,6 @@
     "logo": "<a href=\"https://livepeer.github.io/livepeerjs/\" rel=\"nofollow\" style=\"\n    padding: 29px;\n    box-sizing: border-box;\n    display: block;\n\"><img src=\"https://github.com/livepeer/livepeerjs/raw/master/livepeer_js.png\" alt=\"LivepeerJS\" style=\"max-width:100%;image-rendering: -webkit-optimize-contrast;\"></a>",
     "output": "./docs",
     "schemaFile": "./schema.json"
-  },
-  "ava": {
-    "require": [
-      "@babel/register"
-    ],
-    "babel": "inherit"
   },
   "homepage": "https://livepeer.org",
   "repository": {

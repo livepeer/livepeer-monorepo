@@ -25,7 +25,7 @@ import { publish, TransactionSubmitted } from './resolvers/Subscription'
 // clears console
 console.log('\x1Bc')
 
-test(async t => {
+test('graphql init', async t => {
   const res = await graphql(schema, introspectionQuery, null, { livepeer }, {})
   // console.log(res)
   t.pass()

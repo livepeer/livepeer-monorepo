@@ -9,11 +9,11 @@
   "module": "src/index.js",
   "scripts": {
     "prebuild": "rimraf bin",
-    "build": "babel src --out-dir bin --ignore spec.js,test.js",
+    "build": "babel src --out-dir bin",
     "cmd": "f() { npm -s run build && node ./bin/index $@; };f",
     "copy-docs": "echo 'No copy-docs script specified'",
     "prepack": "npm -s run build",
-    "test": "ava",
+    "test": "ava bin/index.test.js",
     "start": "run-p \"build -- --watch\""
   },
   "dependencies": {
@@ -40,12 +40,6 @@
     "@babel/preset-react": "^7.0.0",
     "ava": "1.4.1",
     "rimraf": "^2.6.3"
-  },
-  "ava": {
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
   },
   "homepage": "https://livepeer.org",
   "repository": {
