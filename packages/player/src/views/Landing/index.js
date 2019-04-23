@@ -1,31 +1,15 @@
 import React, { useState } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
-import {
-  actions as routingActions,
-  selectors as routingSelectors,
-} from '../../services/routing'
 
-const { changeURL } = routingActions
-const { getParsedQueryString } = routingSelectors
-
-const mapStateToProps = state => ({
-  query: getParsedQueryString(state),
-})
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ changeURL }, dispatch)
-
-const enhance = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)
-
-const Landing = ({ query, changeURL }) => {
+export default ({ query, changeURL }) => {
   const [search, setSearch] = useState('')
+  const [redirect, setRedirect] = useState(null)
+  if (redirect) {
+    return <Redirect to={redirect} />
+  }
   return (
     <Container>
       <Navbar />
@@ -40,7 +24,7 @@ const Landing = ({ query, changeURL }) => {
           if (!search) {
             return
           }
-          changeURL(search)
+          setRedirect(`/play?url=${encodeURIComponent(search)}`)
         }}
       >
         <SearchBar
@@ -103,5 +87,3 @@ const SearchButton = styled.button`
   border: none;
   cursor: pointer;
 `
-
-export default enhance(Landing)

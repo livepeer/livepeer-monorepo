@@ -1,8 +1,7 @@
-import 'babel-polyfill'
 import 'url-search-params-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
-import { injectGlobal } from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 import createApolloClient from '@livepeer/apollo'
 import Root from './components/Root'
 import App from './components/App'
@@ -14,7 +13,7 @@ const hot = module.hot && isDev
 const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
   // dump global styles
-  injectGlobal`
+  const GlobalStyle = createGlobalStyle`
     :root {
       --black: #000000;
       --white: #ffffff;
@@ -165,6 +164,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
   const update = () =>
     render(
       <Root client={client}>
+        <GlobalStyle />
         <App />
       </Root>,
       document.getElementById('main-root'),

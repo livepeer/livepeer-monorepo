@@ -1,4 +1,3 @@
-require('babel-polyfill')
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const { schema } = require('./main')

@@ -33,8 +33,7 @@
   },
   "ava": {
     "require": [
-      "babel-register",
-      "babel-polyfill"
+      "babel-register"
     ],
     "babel": "inherit"
   },

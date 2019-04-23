@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import test from 'ava'
 import yup from 'yup'
 import Livepeer, { utils, initContracts } from './index'

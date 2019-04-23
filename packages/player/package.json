@@ -7,6 +7,7 @@
     "apollo-cache-inmemory": "1.5.1",
     "apollo-client": "2.5.1",
     "apollo-link": "1.2.11",
+    "cross-env": "^5.2.0",
     "graphql": "^14.0.2",
     "graphql-tag": "2.10.1",
     "query-string": "^6.4.2",
@@ -14,15 +15,11 @@
     "react-apollo": "^2.0.1",
     "react-dom": "^16.8.3",
     "react-feather": "^1.0.7",
-    "react-redux": "7.0.2",
     "react-responsive-modal": "^3.0.1",
     "react-router-dom": "^5.0.0",
-    "react-router-redux": "^5.0.0-alpha.8",
     "react-scripts": "^3.0.0",
     "recompose": "^0.30.0",
-    "redux": "^4.0.1",
-    "redux-thunk": "^2.2.0",
-    "rmwc": "5.3.1",
+    "rmwc": "1.6.2",
     "styled-components": "4.2.0"
   },
   "scripts": {
@@ -36,6 +33,7 @@
     "test": "react-scripts test"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "gh-pages": "^2.0.1",
     "poosh-cli": "^2.0.0",
     "poosh-plugin-s3": "^2.0.0",
