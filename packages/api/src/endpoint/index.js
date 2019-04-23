@@ -10,7 +10,7 @@ const validate = ajv.compile(schema)
 const router = Router()
 
 router.get('/', async (req, res) => {
-  const output = await req.store.list()
+  const output = await req.store.list('endpoint/')
   res.status(200)
   res.json(output)
 })
@@ -19,7 +19,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params
   let data
   try {
-    data = await req.store.get(id)
+    data = await req.store.get(`endpoint/${id}`)
   } catch (err) {
     if (err.type === 'NotFoundError') {
       res.status(404)
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
   const key = await generateStreamKey()
 
   const data = {
-    id,
+    id: `endpoint/${id}`,
     key,
     streamKey: `${id}?key=${key}`,
     ...body,
@@ -68,7 +68,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const data = req.body
 
-  if (data.id !== req.params.id) {
+  if (data.id !== `endpoint/${req.params.id}`) {
     res.status(409)
     return res.json({ errors: ['id in URL and body must match'] })
   }
@@ -96,7 +96,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    await req.store.delete(req.params.id)
+    await req.store.delete(`endpoint/${req.params.id}`)
   } catch (err) {
     if (err.type === 'NotFoundError') {
       res.status(404)

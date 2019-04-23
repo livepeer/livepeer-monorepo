@@ -19,8 +19,8 @@ export default async function makeApp({ dbPath, httpPrefix, port }) {
   })
 
   const prefixRouter = Router()
-  prefixRouter.use('/endpoints', endpoint)
-  prefixRouter.use('/streams', stream)
+  prefixRouter.use('/endpoint', endpoint)
+  prefixRouter.use('/stream', stream)
   app.use(httpPrefix, prefixRouter)
 
   let listener

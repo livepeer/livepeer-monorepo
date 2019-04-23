@@ -19,6 +19,9 @@ describe('Endpoint', function() {
   beforeEach(async () => {
     dbPath = path.resolve(__dirname, '..', 'data', 'test', uuid())
     server = await makeApp({ port: 0, dbPath, httpPrefix: '/' })
+    await server.store.create({
+      id: `unrelated/${uuid()}`,
+    })
   })
 
   afterEach(async () => {
@@ -28,7 +31,7 @@ describe('Endpoint', function() {
 
   describe('POST', () => {
     const post = body =>
-      fetch('/endpoints', {
+      fetch('/endpoint', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -79,11 +82,11 @@ describe('Endpoint', function() {
   })
 
   describe('GET /:id', () => {
-    const get = id => fetch(`/endpoints/${id}`)
+    const get = id => fetch(`/${id}`)
     let testObj
     beforeEach(async () => {
       testObj = {
-        id: uuid(),
+        id: `endpoint/${uuid()}`,
         key: uuid(),
         streamKey: uuid(),
         outputs: [
@@ -107,7 +110,7 @@ describe('Endpoint', function() {
     })
 
     it('should 404 if not exist', async () => {
-      const res = await get(uuid())
+      const res = await get(`endpoint/${uuid()}`)
       expect(res.status).toBe(404)
       await res.json()
     })
@@ -118,7 +121,7 @@ describe('Endpoint', function() {
 
     beforeEach(async () => {
       testObjs = [...new Array(3)].map(() => ({
-        id: uuid(),
+        id: `endpoint/${uuid()}`,
         streamKey: uuid(),
         outputs: [
           {
@@ -135,7 +138,7 @@ describe('Endpoint', function() {
     })
 
     it('should list streams', async () => {
-      const res = await fetch(`/endpoints`)
+      const res = await fetch(`/endpoint`)
       expect(res.status).toEqual(200)
       const data = await res.json()
       expect(data.length).toEqual(testObjs.length)
@@ -147,7 +150,7 @@ describe('Endpoint', function() {
     let testObjs
 
     const put = (id, body) =>
-      fetch(`/endpoints/${id}`, {
+      fetch(`/${id}`, {
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {
@@ -157,7 +160,7 @@ describe('Endpoint', function() {
 
     beforeEach(async () => {
       testObjs = [...new Array(3)].map(() => ({
-        id: uuid(),
+        id: `endpoint/${uuid()}`,
         streamKey: uuid(),
         key: uuid(),
         outputs: [
@@ -192,25 +195,28 @@ describe('Endpoint', function() {
       const data = await res.json()
       expect(data).toEqual(newObj)
       const newTestObjs = [newObj, ...testObjs.slice(1)]
-      const dbContents = await server.store.list()
+      const dbContents = await server.store.list('endpoint/')
       expect(dbContents.length).toEqual(newTestObjs.length)
       expect(dbContents).toEqual(expect.arrayContaining(newTestObjs))
     })
 
     it("should 404 for streams that don't exist", async () => {
-      const fakeId = uuid()
-      const res = await put(fakeId, { ...testObjs[0], id: fakeId })
+      const fakeId = `endpoint/${uuid()}`
+      const res = await put(fakeId, {
+        ...testObjs[0],
+        id: fakeId,
+      })
       expect(res.status).toEqual(404)
       await res.json()
     })
 
     it('should fail on object id mismatch', async () => {
-      let res = await put(uuid(), testObjs[0])
+      let res = await put(`endpoint/${uuid()}`, testObjs[0])
       expect(res.status).toEqual(409)
       await res.json()
       res = await put(testObjs[0].id, {
         ...testObjs[0],
-        id: uuid(),
+        id: `endpoint/${uuid()}`,
       })
       expect(res.status).toEqual(409)
       await res.json()
@@ -230,7 +236,8 @@ describe('Endpoint', function() {
 
     beforeEach(async () => {
       testObjs = [...new Array(3)].map(() => ({
-        id: uuid(),
+        id: `endpoint/${uuid()}`,
+        key: uuid(),
         streamKey: uuid(),
         outputs: [
           {
@@ -247,19 +254,19 @@ describe('Endpoint', function() {
     })
 
     it('should delete streams', async () => {
-      const res = await fetch(`/endpoints/${testObjs[0].id}`, {
+      const res = await fetch(`/${testObjs[0].id}`, {
         method: 'DELETE',
       })
       expect(res.status).toEqual(204)
       const text = await res.text()
       expect(text).toEqual('')
-      const dbContents = await server.store.list()
+      const dbContents = await server.store.list('endpoint/')
       expect(dbContents.length).toEqual(testObjs.length - 1)
       expect(dbContents).toEqual(expect.arrayContaining(testObjs.slice(1)))
     })
 
     it("should 404 for endpoints that don't exist", async () => {
-      const res = await fetch(`/endpoints/${uuid()}`, {
+      const res = await fetch(`/endpoint/${uuid()}`, {
         method: 'DELETE',
       })
       expect(res.status).toEqual(404)

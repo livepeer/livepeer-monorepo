@@ -18,10 +18,10 @@ app.post('/hook', async (req, res) => {
   const { name } = parsePath(pathname)
   let doc
   try {
-    doc = await req.store.get(name)
-  } catch (e) {
+    doc = await req.store.get(`endpoint/${name}`)
+  } catch (err) {
     if (err.type !== 'NotFoundError') {
-      throw e
+      throw err
     }
     res.status(404)
     return res.json({ errors: ['not found'] })

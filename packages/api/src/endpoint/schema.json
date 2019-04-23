@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "id": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^endpoint/"
     },
     "key": {
       "type": "string"
