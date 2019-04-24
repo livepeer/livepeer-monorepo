@@ -22,9 +22,6 @@ import {
 import livepeer from './mock-sdk'
 import { publish, TransactionSubmitted } from './resolvers/Subscription'
 
-// clears console
-console.log('\x1Bc')
-
 test('graphql init', async t => {
   const res = await graphql(schema, introspectionQuery, null, { livepeer }, {})
   // console.log(res)
@@ -51,6 +48,7 @@ test('Subscription', async t => {
   `
   const ast = parse(query)
   const subscription = await subscribe(schema, ast)
+  const prom = subscription.next()
   publish(TransactionSubmitted, {
     contract: 'BondingManager',
     gas: '',
@@ -63,7 +61,7 @@ test('Subscription', async t => {
     status: 'pending',
     timeStamp: `${Math.floor(Date.now() / 1000)}`,
   })
-  const res = await subscription.next()
+  await prom
   t.pass()
 })
 
