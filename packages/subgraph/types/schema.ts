@@ -11,6 +11,7 @@ import {
 
 export class Transcoder extends Entity {
   constructor(id: string) {
+    super();
     this.set("id", Value.fromString(id));
     return this;
   }
@@ -47,16 +48,16 @@ export class Transcoder extends Entity {
     }
   }
 
-  get active(): boolean | null {
+  get active(): boolean {
     let value = this.get("active");
     if (value === null) {
       return false;
     } else {
-      return value.toBoolean() as boolean | null;
+      return value.toBoolean() as boolean;
     }
   }
 
-  set active(value: boolean | null) {
+  set active(value: boolean) {
     if (value === null) {
       this.unset("active");
     } else {
@@ -254,6 +255,7 @@ export class Transcoder extends Entity {
 
 export class Reward extends Entity {
   constructor(id: string) {
+    super();
     this.set("id", Value.fromString(id));
     return this;
   }
@@ -344,6 +346,7 @@ export class Reward extends Entity {
 
 export class Round extends Entity {
   constructor(id: string) {
+    super();
     this.set("id", Value.fromString(id));
     return this;
   }
@@ -380,16 +383,16 @@ export class Round extends Entity {
     }
   }
 
-  get initialized(): boolean | null {
+  get initialized(): boolean {
     let value = this.get("initialized");
     if (value === null) {
       return false;
     } else {
-      return value.toBoolean() as boolean | null;
+      return value.toBoolean() as boolean;
     }
   }
 
-  set initialized(value: boolean | null) {
+  set initialized(value: boolean) {
     if (value === null) {
       this.unset("initialized");
     } else {

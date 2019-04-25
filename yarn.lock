@@ -1657,12 +1657,12 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.3.tgz#6310a047f12d21a1036fb031317219892440416f"
   integrity sha512-4zAPlpDEh2VwXswwr/t8xGNDGg8RQiPxtxZ3qQEXyQsBV39ptTdESCjuBvGze1nLMVrxmTIKmnO/nAV8Tqjjzg==
 
-"@graphprotocol/graph-cli@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-cli/-/graph-cli-0.9.0.tgz#0d0c0b7f23d07708a9f0df816a086ae85ef54b56"
-  integrity sha512-sl+TfWVmKd0gw9aHWJMDa4bRh75eDm+PhsdolDGBAQKARjxsOE7na3pJFOnimyk+0K/7yob8YzGgwkbuSmY7Xg==
+"@graphprotocol/graph-cli@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-cli/-/graph-cli-0.10.0.tgz#205ebabebdd8f3ce2f087f325d2b4553ca8671c6"
+  integrity sha512-4EZnIiv9Ejq8tZ1kuxJtPtkoFBe8HyYG2lgwGbvTNivjNC4o9u6TCWtipmaBz+3PGI1GcP1WdtlASVyouqhdMw==
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
     chalk "^2.4.1"
     chokidar "^2.0.4"
     debug "^3.1.0"
@@ -1674,18 +1674,19 @@
     ipfs-http-client "^28.1.2"
     jayson "^2.0.6"
     js-yaml "^3.12.0"
-    keytar "^4.3.0"
     node-fetch "^2.3.0"
     pkginfo "^0.4.1"
     prettier "^1.13.5"
     request "^2.88.0"
+  optionalDependencies:
+    keytar "^4.3.0"
 
-"@graphprotocol/graph-ts@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.9.0.tgz#78a15adf114f9ad343848011823edb219afa5527"
-  integrity sha512-zlUDYiwRNxyS3Z6/XjS9shgyOYXcFcT6N80j03XFV+LqgCs/gwBwqrl1r91NI+O/YwzpdytHOUH8b3noe5bVcg==
+"@graphprotocol/graph-ts@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.10.0.tgz#56b1c17ded12b46cff9abb7fec47ee2d662c8388"
+  integrity sha512-3IEdMs2ff4S56PoS8Gekh4PtyjZVDGuHBbf0fqyQOYVFK13syQ96HIutLJ2JNLY3r9u3z7Z6DWo7/oNVFRJYvw==
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+    assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
 
 "@iarna/toml@^2.2.0":
   version "2.2.3"
@@ -3976,14 +3977,16 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
-"assemblyscript@https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c":
-  version "0.5.0"
-  resolved "https://github.com/AssemblyScript/assemblyscript#ced01216f88a3037d0657a45255dc6df646ff10c"
+"assemblyscript@git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3":
+  version "0.6.0"
+  resolved "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
-    binaryen "55.0.0-nightly.20181130"
+    binaryen "77.0.0-nightly.20190407"
     glob "^7.1.3"
     long "^4.0.0"
+    opencollective-postinstall "^2.0.0"
+    source-map-support "^0.5.11"
 
 assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
@@ -4510,10 +4513,10 @@ binary-search-tree@0.2.5:
   dependencies:
     underscore "~1.4.4"
 
-binaryen@55.0.0-nightly.20181130:
-  version "55.0.0-nightly.20181130"
-  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-55.0.0-nightly.20181130.tgz#67159e12073d8195813057714754727320521b3d"
-  integrity sha512-RfMiI0vavw7Sy7KX8h1xOs4D3zp9nehmtE87DSfY6nXyd2EAdMwJ97tWdepuhOc6JWZsntOfzUA2fqu/sYTTLg==
+binaryen@77.0.0-nightly.20190407:
+  version "77.0.0-nightly.20190407"
+  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-77.0.0-nightly.20190407.tgz#fbe4f8ba0d6bd0809a84eb519d2d5b5ddff3a7d1"
+  integrity sha512-1mxYNvQ0xywMe582K7V6Vo2zzhZZxMTeGHH8aE/+/AND8f64D8Q1GThVY3RVRwGY/4p+p95ccw9Xbw2ovFXRIg==
 
 bindings@^1.2.1, bindings@^1.3.0:
   version "1.5.0"
@@ -14208,6 +14211,11 @@ onetime@^2.0.0:
   integrity sha1-BnQoIw/WdEOyeUsiu6UotoZ5YtQ=
   dependencies:
     mimic-fn "^1.0.0"
+
+opencollective-postinstall@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.2.tgz#5657f1bede69b6e33a45939b061eb53d3c6c3a89"
+  integrity sha512-pVOEP16TrAO2/fjej1IdOyupJY8KDUM1CvsaScRbw6oddvpQoOfGk4ywha0HKKVAD6RkW4x6Q+tNBwhf3Bgpuw==
 
 opn@5.4.0:
   version "5.4.0"
