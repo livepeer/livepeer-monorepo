@@ -15,11 +15,9 @@
     "build": "lerna run build --stream",
     "clean": "lerna clean --yes && rm -rf node_modules",
     "cz": "git-cz",
-    "commitmsg": "commitlint -e $GIT_PARAMS",
     "coverage": "lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
     "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
     "docs": "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
-    "precommit": "pretty-quick --staged",
     "prepare": "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
     "release": "lerna publish --conventional-commits --yes",
     "release:dry-run": "lerna publish --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
@@ -49,6 +47,7 @@
   },
   "husky": {
     "hooks": {
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS",
       "pre-commit": "pretty-quick --staged"
     }
   },
