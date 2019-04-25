@@ -1,12 +1,17 @@
 import React from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import {
+  Redirect,
+  Route,
+  Switch,
+  BrowserRouter as Router,
+} from 'react-router-dom'
 import Landing from '../views/Landing'
 import Channel from '../views/Channel'
 import Embed from '../views/Embed'
 import QueryHandler from './QueryHandler'
 
 const App = ({ location }) => (
-  <div>
+  <Router>
     <Switch>
       <Route exact path="/" component={Landing} />
       <Route
@@ -21,7 +26,7 @@ const App = ({ location }) => (
       />
       <Redirect to="/" />
     </Switch>
-  </div>
+  </Router>
 )
 
 export default App

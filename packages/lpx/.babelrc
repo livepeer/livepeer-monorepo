@@ -1,12 +1,16 @@
 {
   "presets": [
-    "react",
+    "@babel/preset-react",
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": { "node": "current" }
       }
     ]
   ],
-  "plugins": ["transform-runtime", "transform-flow-strip-types", "transform-object-rest-spread"]
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-transform-flow-strip-types",
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }
