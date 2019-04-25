@@ -4,26 +4,23 @@
   "private": true,
   "dependencies": {
     "@livepeer/apollo": "^1.0.0-alpha.5",
-    "apollo-cache-inmemory": "1.1.10",
-    "apollo-client": "2.2.6",
-    "apollo-link": "1.2.1",
+    "apollo-cache-inmemory": "1.5.1",
+    "apollo-client": "2.5.1",
+    "apollo-link": "1.2.11",
+    "cross-env": "^5.2.0",
     "graphql": "^14.0.2",
-    "graphql-tag": "2.8.0",
-    "query-string": "^5.0.1",
+    "graphql-tag": "2.10.1",
+    "query-string": "^6.4.2",
     "react": "^16.8.3",
     "react-apollo": "^2.0.1",
     "react-dom": "^16.8.3",
     "react-feather": "^1.0.7",
-    "react-redux": "5.0.7",
     "react-responsive-modal": "^3.0.1",
-    "react-router-dom": "^4.2.2",
-    "react-router-redux": "^5.0.0-alpha.8",
-    "react-scripts": "^2.1.1",
-    "recompose": "^0.26.0",
-    "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "^3.0.0",
+    "recompose": "^0.30.0",
     "rmwc": "1.6.2",
-    "styled-components": "3.2.1"
+    "styled-components": "4.2.0"
   },
   "scripts": {
     "start": "cross-env PORT=3002 react-scripts start",
@@ -36,10 +33,11 @@
     "test": "react-scripts test"
   },
   "devDependencies": {
-    "gh-pages": "^1.1.0",
+    "cross-env": "^5.2.0",
+    "gh-pages": "^2.0.1",
     "poosh-cli": "^2.0.0",
     "poosh-plugin-s3": "^2.0.0",
-    "serve": "6.5.3",
+    "serve": "11.0.0",
     "uglify-es": "^3.2.0"
   },
   "browserslist": [

@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes, css } from 'styled-components'
 
 // Pass `true` for no overlay, `false` for "currently ofline", `null` for "loading"
 export default function LoadingOverlay({ live }) {
@@ -41,5 +41,9 @@ const fadeInOut = keyframes`
 
 const FadeInOut = styled.div`
   ${({ loading }) =>
-    !loading ? '' : `animation: ${fadeInOut} 2s linear infinite alternate;`};
+    !loading
+      ? ''
+      : css`
+          animation: ${fadeInOut} 2s linear infinite alternate;
+        `};
 `
