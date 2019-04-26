@@ -2,6 +2,9 @@ import level from 'level'
 import fs from 'fs-extra'
 export default class LevelStore {
   constructor({ dbPath }) {
+    if (!dbPath) {
+      throw new Error('no database path provided')
+    }
     this.ready = (async () => {
       await fs.ensureDir(dbPath)
       await new Promise((resolve, reject) => {
@@ -62,6 +65,7 @@ export default class LevelStore {
 
     try {
       await this.db.get(id)
+      throw new Error(`${id} already exists`)
     } catch (err) {
       if (!err.type === 'NotFoundError') {
         throw err

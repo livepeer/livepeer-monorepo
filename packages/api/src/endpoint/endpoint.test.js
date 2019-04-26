@@ -18,13 +18,21 @@ describe('Endpoint', function() {
 
   beforeEach(async () => {
     dbPath = path.resolve(__dirname, '..', 'data', 'test', uuid())
-    server = await makeApp({ port: 0, dbPath, httpPrefix: '/' })
+    server = await makeApp({
+      port: 0,
+      httpPrefix: '/',
+      storage: 'postgres',
+      postgresUrl: 'postgresql://postgres@localhost/livepeerapi',
+    })
     await server.store.create({
       id: `unrelated/${uuid()}`,
     })
   })
 
   afterEach(async () => {
+    for (const doc of await server.store.list()) {
+      await server.store.delete(doc.id)
+    }
     await server.close()
     await fs.remove(dbPath)
   })

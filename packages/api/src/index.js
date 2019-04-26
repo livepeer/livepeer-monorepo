@@ -1,15 +1,26 @@
 import express, { Router } from 'express'
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
-import { LevelStore } from './store'
+import { LevelStore, PostgresStore } from './store'
 import path from 'path'
 import logger from './logger'
 import endpoint from './endpoint'
 import stream from './stream'
 import winston from 'winston'
 
-export default async function makeApp({ dbPath, httpPrefix, port }) {
-  const store = new LevelStore({ dbPath })
+export default async function makeApp({
+  storage,
+  dbPath,
+  httpPrefix,
+  port,
+  postgresUrl,
+}) {
+  let store
+  if (storage === 'level') {
+    store = new LevelStore({ dbPath })
+  } else if (storage === 'postgres') {
+    store = new PostgresStore({ postgresUrl })
+  }
   const app = express()
   app.use(morgan('dev'))
   app.use(jsonParser())

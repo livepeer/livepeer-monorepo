@@ -26,6 +26,7 @@
     "fs-extra": "^7.0.1",
     "level": "^5.0.1",
     "morgan": "^1.9.1",
+    "pg": "^7.10.0",
     "uuid": "^3.3.2",
     "winston": "^3.2.1",
     "yargs": "^13.2.2"
@@ -46,7 +47,7 @@
   },
   "babel": {
     "presets": [
-      "@babel/env"
+      "@babel/preset-env"
     ]
   },
   "browserslist": [

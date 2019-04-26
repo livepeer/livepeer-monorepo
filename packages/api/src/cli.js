@@ -21,10 +21,20 @@ const args = yargs
       demandOption: true,
       type: 'number',
     },
+    storage: {
+      describe: 'storage engine to use',
+      default: 'level',
+      demandOption: true,
+      type: 'string',
+      choices: ['level', 'postgres'],
+    },
     'db-path': {
       describe: 'path to LevelDB database',
       default: path.resolve(os.homedir(), '.livepeer', 'api'),
-      demandOption: true,
+      type: 'string',
+    },
+    'postgres-url': {
+      describe: 'url of a postgres database',
       type: 'string',
     },
     'http-prefix': {
