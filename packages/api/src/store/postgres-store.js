@@ -18,10 +18,10 @@ export default class PostgresStore {
       const res = await this.pool.query(`
         SELECT EXISTS (
           SELECT 1 
-          FROM   pg_tables
+          FROM pg_tables
           WHERE  schemaname = 'public'
-          AND    tablename = '${TABLE_NAME}'
-        );
+          AND tablename = '${TABLE_NAME}'
+        )
       `)
       const { exists } = res.rows[0]
       if (!exists) {
@@ -43,7 +43,7 @@ export default class PostgresStore {
 
   async list(prefix = '') {
     const res = await this.pool.query(
-      `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1;`,
+      `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1`,
       [`${prefix}%`],
     )
     return res.rows.map(({ data }) => data)
@@ -51,7 +51,7 @@ export default class PostgresStore {
 
   async get(id) {
     const res = await this.pool.query(
-      `SELECT data FROM ${TABLE_NAME} WHERE id=$1;`,
+      `SELECT data FROM ${TABLE_NAME} WHERE id=$1`,
       [id],
     )
 
@@ -64,7 +64,7 @@ export default class PostgresStore {
   async create(data) {
     try {
       await this.pool.query(
-        `INSERT INTO ${TABLE_NAME} VALUES ($1, $2);`, //p
+        `INSERT INTO ${TABLE_NAME} VALUES ($1, $2)`, //p
         [data.id, JSON.stringify(data)], //p
       )
     } catch (e) {
