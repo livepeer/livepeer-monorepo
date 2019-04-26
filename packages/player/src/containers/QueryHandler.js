@@ -12,5 +12,5 @@ export default props => {
   if (!parsed.url) {
     return <Redirect to="/" />
   }
-  return <Child {...parsed} />
+  return <Child key={parsed.url} {...parsed} />
 }

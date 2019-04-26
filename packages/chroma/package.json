@@ -7,34 +7,37 @@
   "license": "MIT",
   "scripts": {
     "build": "npm -s run build-module && npm -s run build-main",
-    "build-main": "cross-env NODE_ENV=production babel src --copy-files --out-dir main --ignore spec.js,test.js --plugins=transform-es2015-modules-commonjs --source-maps inline",
+    "build-main": "cross-env NODE_ENV=production babel src --copy-files --out-dir main --ignore spec.js,test.js --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
     "build-module": "cross-env NODE_ENV=production babel src --copy-files --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "copy-docs": "echo 'No copy-docs script specified'",
-    "prebuild": "rm -rf lib && rm -rf main",
+    "prebuild": "rimraf lib && rimraf main",
     "prepack": "npm -s run build",
     "start": "run-p \"build-** -- --watch\"",
     "test": "jest"
   },
   "dependencies": {
+    "cross-env": "^5.2.0",
     "hls.js": "https://github.com/jozanza/hls.js.git#9f68d40971242b0d2216376ff7ff776299acf8fd",
-    "prop-types": "15.6.1",
+    "prop-types": "15.7.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
-    "redux": "^3.7.2",
-    "styled-components": "3.2.1",
-    "video-react": "0.9.4"
+    "redux": "^4.0.1",
+    "styled-components": "4.2.0",
+    "video-react": "0.13.6"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-preset-react-app": "^3.1.0",
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "babel-preset-react-app": "^8.0.0",
     "enzyme": "^3.1.1",
     "enzyme-adapter-react-16": "^1.1.0",
     "enzyme-to-json": "^3.2.2",
     "npm-run-all": "^4.1.5",
     "raf": "^3.4.0",
     "react-addons-test-utils": "^15.6.2",
-    "react-test-renderer": "^16.1.0"
+    "react-test-renderer": "^16.1.0",
+    "rimraf": "^2.6.3"
   },
   "homepage": "https://livepeer.org",
   "repository": {

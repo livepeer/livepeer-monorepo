@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { bindActionCreators, compose } from 'redux'
-import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import {
   Code as CodeIcon,
@@ -15,30 +14,12 @@ import {
 import { VideoPlayer, Snapshot } from '@livepeer/chroma'
 import BasicNavbar from '../../components/BasicNavbar'
 import Footer from '../../components/Footer'
-import { actions as routingActions } from '../../services/routing'
 import Modal from 'react-responsive-modal'
 import * as qs from 'query-string'
 import { Switch } from 'rmwc/Switch'
 import LoadingOverlay from '../../components/LoadingOverlay'
 
-const { changeURL } = routingActions
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      changeURL,
-    },
-    dispatch,
-  )
-
-const connectRedux = connect(
-  null,
-  mapDispatchToProps,
-)
-
-const enhance = compose(connectRedux)
-
-class Channel extends Component {
+export default class Channel extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -47,6 +28,7 @@ class Channel extends Component {
       didCopy: false,
       bannerOpen: true,
       allowFullscreen: true,
+      redirect: null,
     }
   }
 
@@ -69,8 +51,18 @@ class Channel extends Component {
   }
 
   render() {
-    const { changeURL, url } = this.props
-    const { live, modal, didCopy, bannerOpen, allowFullscreen } = this.state
+    const { url } = this.props
+    const {
+      live,
+      modal,
+      didCopy,
+      bannerOpen,
+      allowFullscreen,
+      redirect,
+    } = this.state
+    if (redirect) {
+      return <Redirect to={`/play?url=${encodeURIComponent(redirect)}`} />
+    }
     const embedLink = `<iframe width="640" height="360" src="${
       window.location.origin
     }/embed?${qs.stringify({
@@ -80,7 +72,7 @@ class Channel extends Component {
     })}" ${allowFullscreen ? 'allowfullscreen' : ''}></iframe>`
     return (
       <div>
-        <BasicNavbar onSearch={changeURL} />
+        <BasicNavbar onSearch={url => this.setState({ redirect: url })} />
         {/*
          * Modals
          */}
@@ -406,5 +398,3 @@ const Info = styled.div`
     }
   }
 `
-
-export default enhance(Channel)

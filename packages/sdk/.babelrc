@@ -1,11 +1,17 @@
 {
   "presets": [
     [
-      "env", {
-      "targets": {
-        "browsers": ["last 2 versions", "safari >= 7"]
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions", "safari >= 7"]
+        }
       }
-    }]
+    ]
   ],
-  "plugins": ["transform-runtime", "transform-flow-strip-types", "transform-object-rest-spread"]
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-transform-flow-strip-types",
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }
