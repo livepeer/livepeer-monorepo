@@ -1,4 +1,5 @@
 import express, { Router } from 'express'
+import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import { LevelStore, PostgresStore } from './store'
@@ -83,11 +84,19 @@ export default async function makeApp({
   app.get('/healthz', healthcheck)
   app.get('/', healthcheck)
 
+  app.use((err, req, res, next) => {
+    if (typeof err.status === 'number') {
+      res.status(err.status)
+      res.json({ errors: [err.message] })
+    }
+
+    next(err)
+  })
+
   return { app, listener, port: listenPort, close, store }
 }
 
 process.on('unhandledRejection', err => {
-  // Will print "unhandledRejection err is not defined"
   logger.error('fatal, unhandled promise rejection', err)
   process.exit(1)
 })

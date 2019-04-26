@@ -17,16 +17,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params
-  let data
-  try {
-    data = await req.store.get(`endpoint/${id}`)
-  } catch (err) {
-    if (err.type === 'NotFoundError') {
-      res.status(404)
-      return res.json({ errors: ['Not found'] })
-    }
-    throw err
-  }
+  const data = await req.store.get(`endpoint/${id}`)
   res.status(200)
   res.json(data)
 })
@@ -81,29 +72,13 @@ router.put('/:id', async (req, res) => {
     })
   }
 
-  try {
-    await req.store.replace(data)
-  } catch (err) {
-    if (err.type === 'NotFoundError') {
-      res.status(404)
-      return res.json({ errors: ['Not found'] })
-    }
-    throw err
-  }
+  await req.store.replace(data)
   res.status(200)
   res.json(data)
 })
 
 router.delete('/:id', async (req, res) => {
-  try {
-    await req.store.delete(`endpoint/${req.params.id}`)
-  } catch (err) {
-    if (err.type === 'NotFoundError') {
-      res.status(404)
-      return res.json({ errors: ['Not found'] })
-    }
-    throw err
-  }
+  await req.store.delete(`endpoint/${req.params.id}`)
   res.sendStatus(204)
 })
 
