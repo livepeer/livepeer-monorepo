@@ -8,6 +8,8 @@ import logger from './logger'
 import endpoint from './endpoint'
 import stream from './stream'
 import winston from 'winston'
+import fetch from 'isomorphic-fetch'
+import { timeout } from './util'
 
 export default async function makeApp({
   storage,
@@ -15,7 +17,11 @@ export default async function makeApp({
   httpPrefix,
   port,
   postgresUrl,
+  listen = true,
 }) {
+  await timeout(1000, async () => {
+    await fetch('https://1.1.1.1')
+  })
   let store
   if (storage === 'level') {
     store = new LevelStore({ dbPath })
@@ -38,19 +44,21 @@ export default async function makeApp({
   let listener
   let listenPort
 
-  await new Promise((resolve, reject) => {
-    listener = app.listen(port, err => {
-      if (err) {
-        logger.error('Error starting server', err)
-        return reject(err)
-      }
-      listenPort = listener.address().port
-      logger.info(
-        `API server listening on http://0.0.0.0:${listenPort}${httpPrefix}`,
-      )
-      resolve()
+  if (listen) {
+    await new Promise((resolve, reject) => {
+      listener = app.listen(port, err => {
+        if (err) {
+          logger.error('Error starting server', err)
+          return reject(err)
+        }
+        listenPort = listener.address().port
+        logger.info(
+          `API server listening on http://0.0.0.0:${listenPort}${httpPrefix}`,
+        )
+        resolve()
+      })
     })
-  })
+  }
 
   const close = async () => {
     listener.close()

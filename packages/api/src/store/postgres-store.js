@@ -1,9 +1,11 @@
 import { Pool } from 'pg'
 import logger from '../logger'
 import { NotFoundError } from './errors'
+import { timeout } from '../util'
 
 // Should be configurable, perhaps?
 const TABLE_NAME = 'api'
+const CONNECT_TIMEOUT = 5000
 
 export default class PostgresStore {
   constructor({ postgresUrl }) {
@@ -14,10 +16,12 @@ export default class PostgresStore {
       connectionString: postgresUrl,
     })
     this.ready = (async () => {
-      await this.pool.query('SELECT NOW()')
+      await timeout(CONNECT_TIMEOUT, async () => {
+        await this.pool.query('SELECT NOW()')
+      })
       const res = await this.pool.query(`
         SELECT EXISTS (
-          SELECT 1 
+          SELECT 1
           FROM pg_tables
           WHERE  schemaname = 'public'
           AND tablename = '${TABLE_NAME}'
@@ -33,6 +37,7 @@ export default class PostgresStore {
         `)
         logger.info(`Created table ${TABLE_NAME}`)
       }
+      logger.info('done')
     })()
   }
 
