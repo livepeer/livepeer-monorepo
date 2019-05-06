@@ -161,13 +161,9 @@ export async function unbond(
   ctx: GQLContext,
 ): Promise<TxReceipt> {
   const { amount } = args
-  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'unbond', [
-    amount,
-  ])
 
   return await ctx.livepeer.rpc.unbond(amount, {
     ...ctx.livepeer.config.defaultTx,
-    gas: gas,
   })
 }
 
