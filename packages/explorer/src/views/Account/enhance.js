@@ -133,7 +133,9 @@ const mapMutationHandlers = withHandlers({
     }
     history.push(`#/bond/${id}`)
   },
-  unbond: ({ currentRound, me, protocol, toasts }) => async ({ id }) => {
+  unbond: ({ currentRound, history, me, protocol, toasts }) => async ({
+    id,
+  }) => {
     try {
       const { id: lastInitializedRound } = currentRound.data
       const { status, lastClaimRound } = me.data.delegator
@@ -158,13 +160,7 @@ const mapMutationHandlers = withHandlers({
           body: `You have unclaimed earnings from more than ${maxEarningsClaimsRounds} previous rounds.`,
         })
       }
-      await window.livepeer.rpc.unbond()
-      toasts.push({
-        id: 'unbond',
-        type: 'success',
-        title: 'Unbonding Complete',
-        body: `Successfully unbonded from ${id}`,
-      })
+      history.push(`#/unbond/${id}`)
     } catch (err) {
       if (!/User denied/.test(err.message)) {
         toasts.push({
