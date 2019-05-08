@@ -26,6 +26,7 @@
     "test": "jest --env node --coverage --no-cache src"
   },
   "dependencies": {
+    "@cloudflare/json-schema-walker": "^0.1.1",
     "ajv": "^6.10.0",
     "any-base": "^1.1.0",
     "aws-serverless-express": "^3.3.6",
