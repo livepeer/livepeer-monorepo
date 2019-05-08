@@ -3,13 +3,11 @@ import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import { LevelStore, PostgresStore } from './store'
-import path from 'path'
 import logger from './logger'
-import endpoint from './endpoint'
+import ingress from './ingress'
 import stream from './stream'
-import winston from 'winston'
-import fetch from 'isomorphic-fetch'
-import { timeout } from './util'
+import Ajv from 'ajv'
+import schema from './schema'
 
 export default async function makeApp({
   storage,
@@ -19,9 +17,7 @@ export default async function makeApp({
   postgresUrl,
   listen = true,
 }) {
-  await timeout(1000, async () => {
-    await fetch('https://1.1.1.1')
-  })
+  const ajv = new Ajv()
   let store
   if (storage === 'level') {
     store = new LevelStore({ dbPath })
@@ -31,14 +27,21 @@ export default async function makeApp({
   const app = express()
   app.use(morgan('dev'))
   app.use(jsonParser())
+  const prefixRouter = Router()
+  const validators = {}
+  const routes = { ingress, stream }
+  for (const [name, route] of Object.entries(routes)) {
+    validators[name] = ajv.compile(schema.components.schemas[name])
+    prefixRouter.use(`/${name}`, route)
+  }
   app.use((req, res, next) => {
     req.store = store
+    req.validators = validators
     next()
   })
 
-  const prefixRouter = Router()
-  prefixRouter.use('/endpoint', endpoint)
-  prefixRouter.use('/stream', stream)
+  // prefixRouter.use('/endpoint', endpoint)
+  // prefixRouter.use('/stream', stream)
   app.use(httpPrefix, prefixRouter)
 
   let listener
@@ -106,5 +109,6 @@ export default async function makeApp({
 
 process.on('unhandledRejection', err => {
   logger.error('fatal, unhandled promise rejection', err)
+  err.stack && logger.error(err.stack)
   process.exit(1)
 })

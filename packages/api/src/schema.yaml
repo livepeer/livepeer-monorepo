@@ -1,0 +1,110 @@
+openapi: 3.0.1
+info:
+  title: Livepeer API
+  version: 0.0.1-alpha.0
+
+tags:
+  - name: ingress
+    description: RTMP Ingress Endpoints
+
+components:
+  schemas:
+    ingress:
+      required:
+        - id
+        - key
+        - outputs
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          pattern: ^ingress/
+          type: string
+          readOnly: true
+        key:
+          type: string
+          readOnly: true
+        outputs:
+          type: array
+          items:
+            type: object
+            required:
+              - bitrate
+              - fps
+              - height
+              - width
+            additionalProperties: false
+            properties:
+              width:
+                minimum: 1
+                type: integer
+              fps:
+                minimum: 1
+                type: integer
+              bitrate:
+                minimum: 1
+                type: integer
+                description: bitrate in kbps
+              height:
+                minimum: 1
+                type: integer
+
+    stream:
+      type: object
+
+    error:
+      required:
+        - errors
+      type: object
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          items:
+            type: string
+
+paths:
+  /ingress:
+    tags:
+      - ingress
+    get:
+      description: list ingresses
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ingress'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /ingress/{id}:
+    tags:
+      - ingress
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ingress'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'

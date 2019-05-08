@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs-extra'
-import endpointTest from './endpoint/endpoint.test-helper'
+import ingressTest from './ingress/ingress.test-helper'
 import uuid from 'uuid/v4'
 
 describe('leveldb store', () => {
@@ -14,14 +14,14 @@ describe('leveldb store', () => {
     await fs.remove(dbPath)
   })
 
-  endpointTest({
+  ingressTest({
     storage: 'level',
     dbPath,
   })
 })
 
 describe('postgres store', () => {
-  endpointTest({
+  ingressTest({
     storage: 'postgres',
     postgresUrl: 'postgresql://postgres@localhost/livepeerapi',
   })
