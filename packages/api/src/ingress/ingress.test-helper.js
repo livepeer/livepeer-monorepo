@@ -11,8 +11,13 @@ export default function ingressTest(params) {
 
     let server
 
-    const fetch = (path, args) =>
-      isoFetch(`http://localhost:${server.port}${path}`, args)
+    const fetch = async (path, args) => {
+      const res = await isoFetch(`http://localhost:${server.port}${path}`, args)
+      if (res.status === 500) {
+        throw new Error(await res.text())
+      }
+      return res
+    }
 
     beforeEach(async () => {
       server = await makeApp({

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import uuid from 'uuid/v4'
 import { generateStreamKey } from '../util'
-import { validatePost } from '../middleware'
+import { validatePost, validatePut } from '../middleware'
 
 const router = Router()
 
@@ -33,24 +33,8 @@ router.post('/', validatePost('ingress'), async (req, res) => {
   res.json(data)
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validatePut('ingress'), async (req, res) => {
   const data = req.body
-
-  if (data.id !== `ingress/${req.params.id}`) {
-    res.status(409)
-    return res.json({ errors: ['id in URL and body must match'] })
-  }
-
-  const validate = req.validators.ingress
-
-  const valid = validate(data)
-  if (!valid) {
-    res.status(422)
-    return res.json({
-      errors: validate.errors.map(({ message }) => message),
-    })
-  }
-
   await req.store.replace(data)
   res.status(200)
   res.json(data)
