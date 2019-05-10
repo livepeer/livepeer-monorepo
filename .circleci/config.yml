@@ -82,6 +82,7 @@ aliases:
   # Containers
   - &node
     - image: circleci/node:10
+    - image: circleci/postgres:9.6.2-alpine
 
   - &python
     - image: circleci/python:2.7-jessie
