@@ -1,12 +1,12 @@
 {
-  "name": "livepeer-api-prototype",
+  "name": "@livepeer/api",
   "description": "Livepeer API node for controlling streams",
   "version": "0.0.1-alpha-0",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "src/index.js",
   "bin": {
-    "livepeer-api-prototype": "dist/cli.js"
+    "livepeer-api": "dist/cli.js"
   },
   "scripts": {
     "build:lambda": "parcel build --no-minify --bundle-node-modules -t node src/lambda.js",
