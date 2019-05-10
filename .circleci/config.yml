@@ -3,19 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 aliases:
-  # Cache management
-  #
-  # Saves dependencies to cache
-  - &save-dependencies
-    paths:
-      - node_modules
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
-
-  # Restores dependencies from cache
-  - &restore-dependencies
-    keys:
-      - v1-dependencies-{{ checksum "yarn.lock" }}
-      - v1-dependencies-
 
   # Saves built apps to cache
   - &save-apps
@@ -105,10 +92,8 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache: *restore-dependencies
       - run: *install-libsecret
       - run: *install-dependencies
-      - save_cache: *save-dependencies
       - run: *reporter
       - run: *tests
       - run: *show-test-report
@@ -118,8 +103,8 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache: *restore-dependencies
       - run: *install-libsecret
+      - run: *install-dependencies
       - run: *build-apps
       - save_cache: *save-apps
 
