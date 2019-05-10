@@ -2,6 +2,7 @@ import { Pool } from 'pg'
 import logger from '../logger'
 import { NotFoundError } from './errors'
 import { timeout } from '../util'
+import { parse as parseUrl, format as stringifyUrl } from 'url'
 
 // Should be configurable, perhaps?
 const TABLE_NAME = 'api'
@@ -12,31 +13,15 @@ export default class PostgresStore {
     if (!postgresUrl) {
       throw new Error('no postgres url provided')
     }
-    this.pool = new Pool({
-      connectionString: postgresUrl,
-    })
     this.ready = (async () => {
       await timeout(CONNECT_TIMEOUT, async () => {
+        await ensureDatabase(postgresUrl)
+        await ensureTable(postgresUrl)
+        this.pool = new Pool({
+          connectionString: postgresUrl,
+        })
         await this.pool.query('SELECT NOW()')
       })
-      const res = await this.pool.query(`
-        SELECT EXISTS (
-          SELECT 1
-          FROM pg_tables
-          WHERE  schemaname = 'public'
-          AND tablename = '${TABLE_NAME}'
-        )
-      `)
-      const { exists } = res.rows[0]
-      if (!exists) {
-        await this.pool.query(`
-          CREATE TABLE ${TABLE_NAME}(
-            id VARCHAR(128) PRIMARY KEY,
-            data JSONB
-          )
-        `)
-        logger.info(`Created table ${TABLE_NAME}`)
-      }
       logger.info('done')
     })()
   }
@@ -100,4 +85,61 @@ export default class PostgresStore {
       throw new NotFoundError()
     }
   }
+}
+
+// Auto-create database if it doesn't exist
+async function ensureDatabase(postgresUrl) {
+  const pool = new Pool({
+    connectionString: postgresUrl,
+  })
+  try {
+    await pool.query('SELECT NOW()')
+    // If we made it down here, the database exists. Cool.
+    pool.end()
+    return
+  } catch (e) {
+    // We only know how to handle one error...
+    if (!e.message.includes('does not exist')) {
+      throw e
+    }
+  }
+  const parsed = parseUrl(postgresUrl)
+  const dbName = parsed.pathname.slice(1)
+  parsed.pathname = '/postgres'
+  const adminUrl = stringifyUrl(parsed)
+  const adminPool = new Pool({
+    connectionString: adminUrl,
+  })
+  await adminPool.query('SELECT NOW()')
+  await adminPool.query(`CREATE DATABASE ${dbName}`)
+  logger.info(`Created database ${dbName}`)
+  pool.end()
+  adminPool.end()
+  // const adminPool = n
+}
+
+// Auto-create table if it doesn't exist
+async function ensureTable(postgresUrl) {
+  const pool = new Pool({
+    connectionString: postgresUrl,
+  })
+  const res = await pool.query(`
+    SELECT EXISTS (
+      SELECT 1
+      FROM pg_tables
+      WHERE  schemaname = 'public'
+      AND tablename = '${TABLE_NAME}'
+    )
+  `)
+  const { exists } = res.rows[0]
+  if (!exists) {
+    await pool.query(`
+      CREATE TABLE ${TABLE_NAME}(
+        id VARCHAR(128) PRIMARY KEY,
+        data JSONB
+      )
+    `)
+    logger.info(`Created table ${TABLE_NAME}`)
+  }
+  pool.end()
 }

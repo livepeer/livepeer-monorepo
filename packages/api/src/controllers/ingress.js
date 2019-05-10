@@ -6,7 +6,7 @@ import { validatePost, validatePut } from '../middleware'
 const router = Router()
 
 router.get('/', async (req, res) => {
-  const output = await req.store.list('ingress/')
+  const output = await req.store.list('ingress')
   res.status(200)
   res.json(output)
 })

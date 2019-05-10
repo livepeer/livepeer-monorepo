@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs-extra'
-import ingressTest from './ingress/ingress.test-helper'
+import ingressTest from './controllers/controllers.test-helper'
 import uuid from 'uuid/v4'
 
 describe('leveldb store', () => {
