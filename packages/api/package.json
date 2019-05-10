@@ -17,10 +17,10 @@
     "postgres": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "postinstall": "mkdirp docs",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
-    "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema.yaml",
+    "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare": "run-p \"prepare:**\"",
     "start:live-server": "live-server --port=3005 docs",
-    "start:redoc": "nodemon -w src/schema.yaml -x npm run prepare:redoc",
+    "start:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "start:server": "nodemon -w src -x node -r esm src/cli.js",
     "start": "run-p \"start:**\"",
     "test": "jest --env node --coverage --no-cache src"
