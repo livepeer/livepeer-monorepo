@@ -20,9 +20,12 @@ describe('leveldb store', () => {
   })
 })
 
-describe('postgres store', () => {
-  ingressTest({
-    storage: 'postgres',
-    postgresUrl: 'postgresql://postgres@localhost/livepeerapi',
+// Can't get Postgres running on Windows, sadly - disable in Appveyor CI
+if (!process.env.APPVEYOR) {
+  describe('postgres store', () => {
+    ingressTest({
+      storage: 'postgres',
+      postgresUrl: 'postgresql://postgres@localhost/livepeerapi',
+    })
   })
-})
+}

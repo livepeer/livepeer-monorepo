@@ -16,7 +16,6 @@ install:
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
-  - docker run -d --name postgres-test -p 5432:5432 -u %USERNAME% iameli/postgres-windows
   - npm run test
   - npm run test:build-apps
   - docker rm -f postgres-test
