@@ -13,7 +13,8 @@
   "dependencies": {
     "cross-env": "^5.2.0",
     "graphql": "^14.2.1",
-    "isomorphic-fetch": "^2.2.1"
+    "isomorphic-fetch": "^2.2.1",
+    "ms": "^2.1.1"
   },
   "browserslist": [
     "node 10"
