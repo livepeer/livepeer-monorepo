@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/lpx",
   "description": "A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "license": "MIT",
   "bin": {
     "lpx": "bin/index.js"
@@ -17,7 +17,7 @@
     "start": "run-p \"build -- --watch\""
   },
   "dependencies": {
-    "@livepeer/sdk": "^1.0.0-alpha.5",
+    "@livepeer/sdk": "1.0.0-alpha.6",
     "as-table": "^1.0.31",
     "cli-spinner": "0.2.10",
     "cli-table": "^0.3.1",

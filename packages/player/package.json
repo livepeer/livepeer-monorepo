@@ -1,9 +1,9 @@
 {
   "name": "@livepeer/player",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "private": true,
   "dependencies": {
-    "@livepeer/apollo": "^1.0.0-alpha.5",
+    "@livepeer/apollo": "1.0.0-alpha.6",
     "apollo-cache-inmemory": "1.5.1",
     "apollo-client": "2.5.1",
     "apollo-link": "1.2.11",

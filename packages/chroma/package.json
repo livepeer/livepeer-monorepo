@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/chroma",
   "description": "A component library that contains some UI building blocks for livestreaming video applications.",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "main": "main/index.js",
   "module": "lib/index.js",
   "license": "MIT",

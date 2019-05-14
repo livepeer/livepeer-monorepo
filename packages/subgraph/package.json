@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/subgraph",
   "private": true,
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "license": "MIT",
   "scripts": {
     "codegen": "graph codegen --output-dir types/ subgraph.yaml",

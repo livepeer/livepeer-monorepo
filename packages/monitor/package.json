@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/monitor",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.6",
   "description": "Monitors Livepeer's infrastructure",
   "main": "dist/monitor.js",
   "scripts": {
