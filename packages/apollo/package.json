@@ -6,7 +6,7 @@
   "main": "main/index.js",
   "module": "lib/index.js",
   "scripts": {
-    "build": "run-p build-main build-module",
+    "build": "run-p --npm-path npm build-**",
     "build-main": "cross-env NODE_ENV=production babel src --out-dir main --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
     "build-module": "cross-env NODE_ENV=production babel src --out-dir lib --source-maps inline",
     "copy-docs": "echo 'No copy-docs script specified'",
