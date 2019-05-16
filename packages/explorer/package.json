@@ -1,11 +1,11 @@
 {
   "name": "@livepeer/explorer",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "private": true,
   "main": "src/electron/main.js",
   "dependencies": {
-    "@livepeer/apollo": "^1.0.0-alpha.5",
-    "@livepeer/graphql-sdk": "^1.0.0-alpha.5",
+    "@livepeer/apollo": "1.0.0-alpha.6",
+    "@livepeer/graphql-sdk": "1.0.0-alpha.6",
     "apollo-cache-inmemory": "1.5.1",
     "apollo-client": "2.5.1",
     "apollo-link": "1.2.11",
@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "documentation": "^10.0.0",
-    "electron": "1.8.3",
+    "electron": "^5.0.1",
     "electron-builder": "20.4.1",
     "flow-bin": "0.97.0",
     "gh-pages": "^2.0.1",

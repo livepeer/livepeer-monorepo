@@ -1,12 +1,12 @@
 {
   "name": "@livepeer/chroma",
   "description": "A component library that contains some UI building blocks for livestreaming video applications.",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "main": "main/index.js",
   "module": "lib/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "npm -s run build-module && npm -s run build-main",
+    "build": "run-p --npm-path npm build-module build-main",
     "build-main": "cross-env NODE_ENV=production babel src --copy-files --out-dir main --ignore spec.js,test.js --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
     "build-module": "cross-env NODE_ENV=production babel src --copy-files --out-dir lib --ignore spec.js,test.js --source-maps inline",
     "copy-docs": "echo 'No copy-docs script specified'",
