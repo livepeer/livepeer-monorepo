@@ -60,3 +60,12 @@ typings/
 
 # next.js build output
 .next
+
+# subgraph dist output
+dist/
+
+# subgraph types output
+types/
+
+# docker-compose data directory
+data/

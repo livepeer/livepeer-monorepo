@@ -4,6 +4,7 @@
   "version": "1.0.0-alpha.6",
   "license": "MIT",
   "scripts": {
+    "postinstall": "npm run codegen",
     "codegen": "graph codegen --output-dir types/ subgraph.yaml",
     "build": "graph build subgraph.yaml",
     "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
@@ -11,8 +12,8 @@
     "deploy": "graph deploy subgraph.yaml --verbosity debug --node http://127.0.0.1:8020/ --ipfs /ip4/127.0.0.1/tcp/5001 --subgraph-name livepeer"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.9.0",
-    "@graphprotocol/graph-ts": "^0.9.0"
+    "@graphprotocol/graph-cli": "^0.12.0",
+    "@graphprotocol/graph-ts": "^0.12.0"
   },
   "workspaces": {
     "packages": [
