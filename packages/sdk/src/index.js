@@ -1925,7 +1925,7 @@ export async function createLivepeerSDK(
     ): Promise<TxReceipt> {
       const token = toBN(amount)
       // TODO: - check token balance
-      await utils.getTxReceipt(
+      return await utils.getTxReceipt(
         await LivepeerToken.approve(BondingManager.address, token, {
           ...config.defaultTx,
           ...tx,
