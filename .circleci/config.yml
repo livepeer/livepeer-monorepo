@@ -3,7 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 aliases:
-
   # Saves built apps to cache
   - &save-apps
     paths:
@@ -58,6 +57,24 @@ aliases:
     name: Install awscli
     command: sudo pip install awscli
 
+  - &install-gcloud
+    name: Install Google Cloud SDK
+    command: |
+      export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+      if [ ! -d $HOME/google-cloud-sdk/bin ]; then
+        # The install script errors if this directory already exists,
+        # but Travis already creates it when we mark it as cached.
+        rm -rf $HOME/google-cloud-sdk;
+        # The install script is overly verbose, which sometimes causes
+        # problems on Travis, so ignore stdout.
+        curl https://sdk.cloud.google.com | bash > /dev/null;
+      fi
+      source $HOME/google-cloud-sdk/path.bash.inc
+      gcloud version
+      echo $GCLOUD_TOKEN | base64 --decode > /tmp/token.json
+      gcloud auth activate-service-account --key-file=/tmp/token.json
+      rm /tmp/token.json
+
   # Install libsecret
   - &install-libsecret
     name: Install libsecret
@@ -95,6 +112,7 @@ jobs:
       - run: *install-libsecret
       - run: *install-dependencies
       - run: *reporter
+      - run: *install-gcloud
       - run: *tests
       - run: *show-test-report
 
