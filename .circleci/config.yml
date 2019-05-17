@@ -69,11 +69,6 @@ aliases:
         # problems on Travis, so ignore stdout.
         curl https://sdk.cloud.google.com | bash > /dev/null;
       fi
-      source $HOME/google-cloud-sdk/path.bash.inc
-      gcloud version
-      echo $GCLOUD_TOKEN | base64 --decode > /tmp/token.json
-      gcloud auth activate-service-account --key-file=/tmp/token.json
-      rm /tmp/token.json
 
   # Install libsecret
   - &install-libsecret
@@ -115,7 +110,13 @@ jobs:
       - run: *install-gcloud
       - run: *tests
       - run: *show-test-report
-      - run: yarn run deploy:prerelease
+      - run: |
+          source $HOME/google-cloud-sdk/path.bash.inc
+          gcloud version
+          echo $GCLOUD_TOKEN | base64 --decode > /tmp/token.json
+          gcloud auth activate-service-account --key-file=/tmp/token.json
+          rm /tmp/token.json
+          npm run deploy:prerelease
 
   build-apps-staging:
     <<: *node-env
