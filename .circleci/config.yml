@@ -115,6 +115,7 @@ jobs:
       - run: *install-gcloud
       - run: *tests
       - run: *show-test-report
+      - run: yarn run deploy:prerelease
 
   build-apps-staging:
     <<: *node-env
@@ -187,9 +188,6 @@ workflows:
   staging-test-build-deploy:
     jobs:
       - build-test
-      - deploy-prerelease:
-          requires:
-            - build-test
 
       # Staging workflow for the apps
       - hold-staging-apps-deploy:
