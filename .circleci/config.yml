@@ -187,6 +187,9 @@ workflows:
   staging-test-build-deploy:
     jobs:
       - build-test
+      - deploy-prerelease:
+          requires:
+            - build-test
 
       # Staging workflow for the apps
       - hold-staging-apps-deploy:

@@ -18,6 +18,7 @@
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare": "run-p \"prepare:**\"",
+    "deploy:prerelease": "gsutil rsync ./docs gs://docs.livepeer.live",
     "start:live-server": "live-server --port=3005 docs",
     "start:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "start:server": "nodemon -w src -x node -r esm src/cli.js",
