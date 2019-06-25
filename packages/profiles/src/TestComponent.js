@@ -15,5 +15,5 @@ export default () => {
         setJsonText(json.title);
       });
   });
-  return <div>{jsontext}</div>;
+  return <TestComponent>{jsontext}</TestComponent>;
 };
