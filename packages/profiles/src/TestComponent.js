@@ -1,19 +1,43 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+const Box = require("3box");
 
 const TestComponent = styled.div`
   color: red;
 `;
 
 export default () => {
-  console.log("hello");
   const [jsontext, setJsonText] = useState("Loading...");
+  const [boxStatus, setBoxStatus] = useState("Loading status...");
+  const [boxName, setBoxName] = useState("Loading name...");
+
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/todos/1")
-      .then(response => response.json())
-      .then(json => {
-        setJsonText(json.title);
+    setJsonText(window.web3.eth.defaultAccount);
+    Box.getProfile(window.web3.eth.defaultAccount).then(p => {
+      setBoxStatus(p.status);
+      setBoxName(p.name);
+      console.log(p);
+    });
+    const update = () => {
+      setJsonText(window.web3.eth.defaultAccount);
+      Box.getProfile(window.web3.eth.defaultAccount).then(p => {
+        setBoxStatus(p.status);
+        setBoxName(p.name);
+        console.log(p);
       });
+    };
+    web3.currentProvider.publicConfigStore.addListener("update", update);
+    return () => {
+      web3.currentProvider.publicConfigStore.removeListener("update", update);
+    };
   });
-  return <TestComponent>{jsontext}</TestComponent>;
+  return (
+    <TestComponent>
+      <span>Your Ethereum Address:</span> {jsontext}
+      <br />
+      <span>status: {boxStatus}</span>
+      <br />
+      <span>name: {boxName}</span>
+    </TestComponent>
+  );
 };

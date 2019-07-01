@@ -17,6 +17,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "3box": "^1.9.1",
     "@babel/runtime": "^7.4.3",
     "cross-env": "^5.2.0",
     "prop-types": "15.7.2",
