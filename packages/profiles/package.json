@@ -1,0 +1,46 @@
+{
+  "name": "@livepeer/profiles",
+  "description": "A component library containing shared code for decentralized profile management.",
+  "version": "1.0.0-alpha.6",
+  "main": "main/index.js",
+  "module": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "run-p --npm-path npm build-module build-main",
+    "build-main": "cross-env NODE_ENV=production babel src --copy-files --out-dir main --ignore spec.js,test.js --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
+    "build-module": "cross-env NODE_ENV=production babel src --copy-files --out-dir lib --ignore spec.js,test.js --source-maps inline",
+    "parcel": "parcel serve src/index.html",
+    "copy-docs": "echo 'No copy-docs script specified'",
+    "prebuild": "rimraf lib && rimraf main",
+    "prepack": "npm -s run build",
+    "start": "run-p \"build-** -- --watch\" parcel",
+    "test": "jest"
+  },
+  "dependencies": {
+    "3box": "^1.9.1",
+    "@babel/runtime": "^7.4.3",
+    "cross-env": "^5.2.0",
+    "prop-types": "15.7.2",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "styled-components": "4.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-preset-react-app": "^8.0.0",
+    "npm-run-all": "^4.1.5",
+    "parcel": "^1.12.3",
+    "rimraf": "^2.6.3"
+  },
+  "homepage": "https://livepeer.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeerjs.git"
+  },
+  "browserslist": [
+    "last 2 chrome versions"
+  ]
+}

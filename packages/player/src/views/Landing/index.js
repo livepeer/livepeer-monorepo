@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
+import { TestComponent } from '@livepeer/profiles'
 
 export default ({ query, changeURL }) => {
   const [search, setSearch] = useState('')
@@ -14,6 +15,8 @@ export default ({ query, changeURL }) => {
     <Container>
       <Navbar />
       <img src="/wordmark.svg" width="240" alt="Livepeer logo" />
+      <br />
+      <TestComponent />
       <h3 style={{ letterSpacing: 8 }}>Media Player</h3>
       <br />
       <br />
