@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/profiles",
   "description": "A component library containing shared code for decentralized profile management.",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.6",
   "main": "main/index.js",
   "module": "lib/index.js",
   "license": "MIT",
