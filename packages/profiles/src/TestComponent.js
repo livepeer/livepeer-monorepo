@@ -12,12 +12,14 @@ export default () => {
   const [boxName, setBoxName] = useState('Loading name...')
 
   useEffect(() => {
-    const update = () => {
+    const update = async () => {
       setJsonText(window.web3.eth.defaultAccount)
       Box.getProfile(window.web3.eth.defaultAccount).then(p => {
         setBoxStatus(p.status)
         setBoxName(p.name)
       })
+      var space = await Box.getSpace(window.web3.eth.defaultAccount, '3box')
+      console.log(space)
     }
     update()
     web3.currentProvider.publicConfigStore.addListener('update', update)
