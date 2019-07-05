@@ -7,7 +7,7 @@ import Box from '3box'
 export default () => {
   const [content, setContent] = useState(Loading())
 
-  function EmptyProfile() {
+  const EmptyProfile = () => {
     return (
       <div>
         <ProfilePicture />
@@ -25,20 +25,19 @@ export default () => {
     const update = async () => {
       const livepeerSpace = await Box.getSpace(
         window.web3.eth.defaultAccount,
-        'livepeer' /*, blocklist stuff */,
+        'livepeer',
       )
       if (livepeerSpace.defaultProfile == undefined) {
-        setContent(EmptyProfile())
+        setContent(EmptyProfile)
       }
+      console.log('update called')
     }
-
     update()
-
     web3.currentProvider.publicConfigStore.addListener('update', update)
 
     return () => {
       web3.currentProvider.publicConfigStore.removeListener('update', update)
     }
-  })
+  }, [content])
   return content
 }
