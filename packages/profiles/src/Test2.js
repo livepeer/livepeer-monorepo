@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Box from '3box'
 import Button from './Button'
 import ProfilePicture from './ProfilePicture'
+import LoadingAnimation from './LoadingAnimation'
 
 const Test2 = styled.div``
 
@@ -11,6 +12,7 @@ export default () => {
   const [content, setContent] = useState('Loading...')
 
   async function get3box() {
+    setContent(AnimatedLoading)
     const box = await Box.openBox(
       window.web3.eth.defaultAccount,
       window.web3.currentProvider,
@@ -25,6 +27,7 @@ export default () => {
     await boxSyncPromise
     await spaceSyncPromise
     console.log('Got some 3box stuff')
+    setContent('We got 3box stuff lol')
     return 0
   }
 
@@ -40,6 +43,14 @@ export default () => {
 
   const Loading = () => {
     return <span>Loading profile...</span>
+  }
+
+  const AnimatedLoading = () => {
+    return (
+      <div>
+        <LoadingAnimation />
+      </div>
+    )
   }
 
   useEffect(() => {
