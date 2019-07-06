@@ -44,15 +44,23 @@ export default () => {
 
   useEffect(() => {
     const update = async () => {
-      setAccount(window.web3.eth.defaultAccount)
       console.log('Update called')
-      setContent(Loading)
+      if (window.web3.eth.defaultAccount != undefined) {
+        setAccount(window.web3.eth.defaultAccount)
+        setContent(Loading)
+      } else {
+        setAccount('Loading...')
+        setContent(Loading)
+      }
       const livepeerSpace = await Box.getSpace(
         window.web3.eth.defaultAccount,
         'livepeer',
       )
       console.log('checking...')
-      if (livepeerSpace.defaultAccount == undefined) {
+      if (
+        livepeerSpace.defaultAccount == undefined &&
+        window.web3.eth.defaultAccount != undefined
+      ) {
         setContent(EmptyProfile)
       }
     }
