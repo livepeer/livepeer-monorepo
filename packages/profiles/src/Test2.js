@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Box from '3box'
+//import { Button, CTAButton } from './Button'
 import Button from './Button'
 import ProfilePicture from './ProfilePicture'
 import LoadingAnimation from './LoadingAnimation'
+import ProfileForm from './ProfileForm'
 
 const Test2 = styled.div``
 
@@ -27,7 +29,10 @@ export default () => {
     await boxSyncPromise
     await spaceSyncPromise
     console.log('Got some 3box stuff')
-    setContent('We got 3box stuff lol')
+    Box.getProfile(web3.eth.defaultAccount, web3.currentProvider).then(p => {
+      console.log(p.name)
+    })
+    setContent(ProfileForm)
     return 0
   }
 
