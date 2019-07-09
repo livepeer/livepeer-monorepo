@@ -6,8 +6,20 @@ import Button from './Button'
 import ProfilePicture from './ProfilePicture'
 import LoadingAnimation from './LoadingAnimation'
 import ProfileForm from './ProfileForm'
+import Popup from 'reactjs-popup'
 
 const Test2 = styled.div``
+
+const InAlertBox = styled.div`
+  margin: 0 auto;
+  display: block;
+  width: 90%;
+  text-align: center;
+  padding: 10px;
+`
+const ButtonContainer = styled.div`
+  margin-top: 10px;
+`
 
 export default () => {
   const [account, setAccount] = useState('Loading...')
@@ -30,9 +42,17 @@ export default () => {
     await spaceSyncPromise
     console.log('Got some 3box stuff')
     Box.getProfile(web3.eth.defaultAccount, web3.currentProvider).then(p => {
-      console.log(p.name)
+      console.log(p)
+      setContent(() => {
+        return (
+          <ProfileForm
+            name={p.name}
+            description={p.description}
+            url={p.website}
+          />
+        )
+      })
     })
-    setContent(ProfileForm)
     return 0
   }
 

@@ -4,7 +4,7 @@ import Button from './Button'
 
 const ProfileForm = styled.div``
 
-export default () => {
+export default ({ name = '', description = '', url = '' }) => {
   return (
     <div>
       <label>Upload profile picture: </label>
@@ -13,15 +13,15 @@ export default () => {
       <br />
       <label>Name: </label>
       <br />
-      <input type="text" />
+      <input type="text" defaultValue={name} />
       <br />
       <label>Bio / Description</label>
       <br />
-      <textarea />
+      <textarea defaultValue={description} />
       <br />
       <label>URL:</label>
       <br />
-      <input type="url" />
+      <input type="url" defaultValue={url} />
       <br />
       <Button>Cancel</Button>
       <Button>Save</Button>
