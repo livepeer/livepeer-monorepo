@@ -23,6 +23,7 @@ const ButtonContainer = styled.div`
 
 export default () => {
   const [account, setAccount] = useState('Loading...')
+  const [popupOpen, setPopupOpen] = useState(false)
   const [content, setContent] = useState('Loading...')
 
   async function get3box() {
@@ -43,18 +44,45 @@ export default () => {
     console.log('Got some 3box stuff')
     Box.getProfile(web3.eth.defaultAccount, web3.currentProvider).then(p => {
       console.log(p)
-      setContent(() => {
-        return (
-          <ProfileForm
-            name={p.name}
-            description={p.description}
-            url={p.website}
-          />
-        )
-      })
+      if (p.name != undefined) {
+        setPopupOpen(true)
+      } else {
+        setContent(() => {
+          return (
+            <ProfileForm
+              name={p.name}
+              description={p.description}
+              url={p.website}
+            />
+          )
+        })
+      }
     })
     return 0
   }
+
+  const AskUse3Box = () => {
+    return (
+      <div
+        style={{
+          textAlign: 'center',
+        }}
+      >
+        It looks like you have an existing 3Box profile, would you like to use
+        it?
+        <div
+          style={{
+            marginTop: '20px',
+          }}
+        >
+          <Button>Yes</Button>
+          <Button>No</Button>
+        </div>
+      </div>
+    )
+  }
+
+  const [popupContent, setPopupContent] = useState(AskUse3Box)
 
   const EmptyProfile = () => {
     return (
@@ -109,6 +137,7 @@ export default () => {
   }, [account])
   return (
     <Test2>
+      <Popup open={popupOpen}>{popupContent}</Popup>
       <span>account: {account}</span>
       <br />
       {content}
