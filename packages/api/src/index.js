@@ -27,6 +27,7 @@ export default async function makeApp({
 
   // Logging, JSON parsing, store injection
   const app = express()
+  app.use(healthCheck)
   app.use(morgan('dev'))
   app.use(jsonParser())
   app.use((req, res, next) => {

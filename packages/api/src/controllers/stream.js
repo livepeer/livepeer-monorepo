@@ -9,9 +9,16 @@ const app = Router()
 app.post('/hook', async (req, res) => {
   if (!req.body || !req.body.url) {
     res.status(422)
-    return res.json({ errors: ['missing rtmp url'] })
+    return res.json({ errors: ['missing url'] })
   }
   logger.info(`got webhook: ${JSON.stringify(req.body)}`)
+  // These are of the form /live/:manifestId/:segmentNum.ts
+  const manifestId = req.body.url.split('/')[2]
+
+  res.json({ manifestId })
+
+  // xxx fixme, this was the logic for RTMP handling
+  return
 
   const { query, pathname } = parseUrl(req.body.url)
   const { key } = parseQS(query)
