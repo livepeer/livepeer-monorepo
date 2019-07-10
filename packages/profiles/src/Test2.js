@@ -36,7 +36,25 @@ export default () => {
     )
   }
 
-  const AskUse3Box = () => {
+  const PopulatedProfile = (image, name, description, url) => {
+    return (
+      <div>
+        <img
+          style={{
+            width: '100px',
+          }}
+          src={image}
+        />
+        <br />
+        <span>{name}</span>
+        <br />
+        <p>{description}</p>
+        <a href={url}>{url}</a>
+      </div>
+    )
+  }
+
+  const AskUse3Box = livepeerSpace => {
     return (
       <div
         style={{
@@ -57,6 +75,8 @@ export default () => {
             onClick={() => {
               setContent(EmptyProfile)
               setPopupOpen(false)
+              console.log(livepeerSpace)
+              livepeerSpace.public.set('defaultProfile', '3box')
             }}
           >
             Use existing
@@ -78,7 +98,7 @@ export default () => {
     )
   }
 
-  const [popupContent, setPopupContent] = useState(AskUse3Box)
+  const [popupContent, setPopupContent] = useState('error')
 
   async function get3box() {
     setContent(AnimatedLoading)
@@ -99,9 +119,8 @@ export default () => {
     Box.getProfile(web3.eth.defaultAccount, web3.currentProvider).then(p => {
       console.log(p)
       if (p.name != undefined) {
-        console.log('popupOpen: ' + popupOpen)
+        setPopupContent(AskUse3Box(livepeerSpace))
         setPopupOpen(true)
-        console.log('popupOpen: ' + popupOpen)
       } else {
         setContent(() => {
           return (
@@ -132,10 +151,24 @@ export default () => {
         'livepeer',
       )
       console.log('checking...')
-      if (
-        livepeerSpace.defaultAccount == undefined &&
-        window.web3.eth.defaultAccount != undefined
-      ) {
+      if (livepeerSpace.defaultProfile == '3box') {
+        setContent(AnimatedLoading)
+        Box.getProfile(
+          window.web3.eth.defaultAccount,
+          window.web3.currentProvider,
+        ).then(p => {
+          setContent(
+            PopulatedProfile(
+              'https://ipfs.infura.io/ipfs/' + p.image[0].contentUrl['/'],
+              p.name,
+              p.description,
+              p.website,
+            ),
+          )
+        })
+      } else if (livepeerSpace.defaultProfile == 'livepeer') {
+        setContent('You have a livepeer account')
+      } else {
         setContent(EmptyProfile)
       }
     }
