@@ -26,6 +26,60 @@ export default () => {
   const [popupOpen, setPopupOpen] = useState(false)
   const [content, setContent] = useState('Loading...')
 
+  const EmptyProfile = () => {
+    return (
+      <div>
+        <ProfilePicture />
+        <br />
+        <Button onClick={get3box}>Set Up My Profile</Button>
+      </div>
+    )
+  }
+
+  const AskUse3Box = () => {
+    return (
+      <div
+        style={{
+          textAlign: 'center',
+        }}
+      >
+        <h2>Use existing profile?</h2>
+        We recognize you already have a 3box profile.
+        <br />
+        Use it on Livepeer?
+        <div
+          style={{
+            marginTop: '20px',
+          }}
+        >
+          <Button>Create new</Button>
+          <Button
+            onClick={() => {
+              setContent(EmptyProfile)
+              setPopupOpen(false)
+            }}
+          >
+            Use existing
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const Loading = () => {
+    return <span>Loading profile...</span>
+  }
+
+  const AnimatedLoading = () => {
+    return (
+      <div>
+        <LoadingAnimation />
+      </div>
+    )
+  }
+
+  const [popupContent, setPopupContent] = useState(AskUse3Box)
+
   async function get3box() {
     setContent(AnimatedLoading)
     const box = await Box.openBox(
@@ -45,7 +99,9 @@ export default () => {
     Box.getProfile(web3.eth.defaultAccount, web3.currentProvider).then(p => {
       console.log(p)
       if (p.name != undefined) {
+        console.log('popupOpen: ' + popupOpen)
         setPopupOpen(true)
+        console.log('popupOpen: ' + popupOpen)
       } else {
         setContent(() => {
           return (
@@ -59,51 +115,6 @@ export default () => {
       }
     })
     return 0
-  }
-
-  const AskUse3Box = () => {
-    return (
-      <div
-        style={{
-          textAlign: 'center',
-        }}
-      >
-        It looks like you have an existing 3Box profile, would you like to use
-        it?
-        <div
-          style={{
-            marginTop: '20px',
-          }}
-        >
-          <Button>Yes</Button>
-          <Button>No</Button>
-        </div>
-      </div>
-    )
-  }
-
-  const [popupContent, setPopupContent] = useState(AskUse3Box)
-
-  const EmptyProfile = () => {
-    return (
-      <div>
-        <ProfilePicture />
-        <br />
-        <Button onClick={get3box}>Set Up My Profile</Button>
-      </div>
-    )
-  }
-
-  const Loading = () => {
-    return <span>Loading profile...</span>
-  }
-
-  const AnimatedLoading = () => {
-    return (
-      <div>
-        <LoadingAnimation />
-      </div>
-    )
   }
 
   useEffect(() => {
