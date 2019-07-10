@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Button from './Button'
 
@@ -7,35 +7,54 @@ const ProfileForm = styled.div``
 export default ({ name = '', description = '', url = '' }) => {
   const [formName, setFormName] = useState('')
   const [content, setContent] = useState('')
+  const nameVal = useRef(null)
+  const descVal = useRef(null)
+  const urlVal = useRef(null)
+  const fileVal = useRef(null)
 
-  useEffect(() => {
-    console.log('use effect triggered in prof form')
-    setContent(
-      <div>
-        <label>Upload profile picture: </label>
-        <br />
-        <input type="file" />
-        <br />
-        <label>Name: </label>
-        <br />
-        /* * Probably going to want this: *
-        https://stackoverflow.com/questions/37266411/react-stateless-component-this-refs-value
-        */
-        <input type="text" defaultValue={name} />
-        <br />
-        <label>Bio / Description</label>
-        <br />
-        <textarea defaultValue={description} />
-        <br />
-        <label>URL:</label>
-        <br />
-        <input type="url" defaultValue={url} />
-        <br />
-        <Button>Cancel</Button>
-        <Button>Save</Button>
-      </div>,
-    )
-  })
+  const saveTo3box = async (file, name) => {
+    const formData = new window.FormData()
+    formData.append('path', file)
+    let resp
+    resp = await window.fetch('https://ipfs.infura.io:5001/api/v0/add', {
+      method: 'post',
+      'Content-Type': 'multipart/form-data',
+      body: formData,
+    })
+    console.log(await resp.json())
+  }
 
-  return content
+  return (
+    <div>
+      <label>Upload profile picture: </label>
+      <br />
+      <input type="file" ref={fileVal} />
+      <br />
+      <label>Name: </label>
+      <br />
+      <input type="text" ref={nameVal} defaultValue={name} />
+      <br />
+      <label>Bio / Description</label>
+      <br />
+      <textarea defaultValue={description} ref={descVal} />
+      <br />
+      <label>URL:</label>
+      <br />
+      <input type="url" defaultValue={url} ref={urlVal} />
+      <br />
+      <Button
+        onClick={() => {
+          console.log(fileVal)
+          console.log('Name: ' + nameVal.current.value)
+          console.log('Description: ' + descVal.current.value)
+          console.log('URL: ' + urlVal.current.value)
+          console.log(fileVal.current.files[0])
+          saveTo3box(fileVal.current.files[0], nameVal.current.value)
+        }}
+      >
+        Cancel
+      </Button>
+      <Button>Save</Button>
+    </div>
+  )
 }
