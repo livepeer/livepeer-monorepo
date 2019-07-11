@@ -50,6 +50,13 @@ export default () => {
         <br />
         <p>{description}</p>
         <a href={url}>{url}</a>
+        <Button
+          onClick={() => {
+            resetProf()
+          }}
+        >
+          Reset Profile
+        </Button>
       </div>
     )
   }
@@ -134,6 +141,28 @@ export default () => {
       }
     })
     return 0
+  }
+
+  /*
+   * just for testing purposes
+   */
+  async function resetProf() {
+    setContent('reseting')
+    const box = await Box.openBox(
+      window.web3.eth.defaultAccount,
+      window.web3.currentProvider,
+    )
+    const boxSyncPromise = new Promise((resolve, reject) =>
+      box.onSyncDone(resolve),
+    )
+    box.openSpace('livepeer').then(async p => {
+      await p.public.remove('defaultProfile')
+      await p.public.remove('description')
+      await p.public.remove('website')
+      await p.public.remove('image')
+      await p.public.remove('name')
+    })
+    setContent('profile reset')
   }
 
   useEffect(() => {

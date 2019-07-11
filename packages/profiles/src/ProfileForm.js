@@ -32,22 +32,16 @@ export default ({ name = '', description = '', url = '' }) => {
     const boxSyncPromise = new Promise((resolve, reject) =>
       box.onSyncDone(resolve),
     )
-    let livepeerSpace
-    const spaceSyncPromise = new Promise(async (resolve, reject) => {
-      livepeerSpace = await box.openSpace('livepeer', { onSyncDone: resolve })
-    })
-    await boxSyncPromise
-    await spaceSyncPromise
-    try {
-      await livepeerSpace.public.set('defaultProfile', 'livepeer')
-      await livepeerSpace.public.set('name', name)
-      await livepeerSpace.public.set('description', desc)
-      await livepeerSpace.public.set('website', website)
-      await livepeerSpace.public.set('image', hash)
+    box.openSpace('livepeer').then(async p => {
+      console.log('p: ' + p)
+      await p.public.set('defaultProfile', 'livepeer')
+      await p.public.set('name', name)
+      await p.public.set('description', desc)
+      await p.public.set('website', website)
+      await p.public.set('image', hash)
       return true
-    } catch (err) {
-      return false
-    }
+    })
+    return false
   }
 
   const DefaultForm = () => {
