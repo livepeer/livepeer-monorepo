@@ -151,6 +151,7 @@ export default () => {
         'livepeer',
       )
       console.log('checking...')
+      console.log(livepeerSpace)
       if (livepeerSpace.defaultProfile == '3box') {
         setContent(AnimatedLoading)
         Box.getProfile(
@@ -167,7 +168,14 @@ export default () => {
           )
         })
       } else if (livepeerSpace.defaultProfile == 'livepeer') {
-        setContent('You have a livepeer account')
+        setContent(
+          PopulatedProfile(
+            'https://ipfs.infura.io/ipfs/' + livepeerSpace.image,
+            livepeerSpace.name,
+            livepeerSpace.description,
+            livepeerSpace.website,
+          ),
+        )
       } else {
         setContent(EmptyProfile)
       }
