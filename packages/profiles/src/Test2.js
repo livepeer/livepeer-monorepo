@@ -9,6 +9,7 @@ import ProfileForm from './ProfileForm'
 import Popup from 'reactjs-popup'
 import EmptyProfile from './EmptyProfile'
 import PopulatedProfile from './PopulatedProfile'
+import { printHello, getSpace } from './Lib'
 
 const Test2 = styled.div``
 
@@ -28,41 +29,6 @@ export default () => {
   const [popupOpen, setPopupOpen] = useState(false)
   const [content, setContent] = useState('loading')
 
-  let livepeerSpace
-
-  const AskUse3Box = livepeerSpace => {
-    return (
-      <div
-        style={{
-          textAlign: 'center',
-        }}
-      >
-        <h2>Use existing profile?</h2>
-        We recognize you already have a 3box profile.
-        <br />
-        Use it on Livepeer?
-        <div
-          style={{
-            marginTop: '20px',
-          }}
-        >
-          <Button>Create new</Button>
-          <Button
-            onClick={() => {
-              //content = EmptyProfile
-              setContent('empty_profile')
-              setPopupOpen(false)
-              console.log(livepeerSpace)
-              livepeerSpace.public.set('defaultProfile', '3box')
-            }}
-          >
-            Use existing
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
   const [popupContent, setPopupContent] = useState('error')
 
   useEffect(() => {
@@ -74,13 +40,10 @@ export default () => {
       } else {
         setAccount('Loading...')
       }
-      livepeerSpace = await Box.getSpace(
-        window.web3.eth.defaultAccount,
-        'livepeer',
-      )
+      let lpSpace = await getSpace(window.web3.eth.defaultAccount, 'livepeer')
       console.log('checking...')
-      console.log(livepeerSpace)
-      if (livepeerSpace.defaultProfile == '3box') {
+      console.log(lpSpace)
+      if (lpSpace.defaultProfile == '3box') {
         console.log('defaultProfile: 3box')
         //content= <LoadingAnimation/>
         setContent('loading')
@@ -91,7 +54,7 @@ export default () => {
           //content = <PopulatedProfile/>
           setContent('populated_3box')
         })
-      } else if (livepeerSpace.defaultProfile == 'livepeer') {
+      } else if (lpSpace.defaultProfile == 'livepeer') {
         console.log('defaultProfile: livepeer')
         setContent('populated_livepeer')
         console.log('content: ' + content)
