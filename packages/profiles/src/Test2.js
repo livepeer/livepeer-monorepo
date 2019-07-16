@@ -9,7 +9,7 @@ import ProfileForm from './ProfileForm'
 import Popup from 'reactjs-popup'
 import EmptyProfile from './EmptyProfile'
 import PopulatedProfile from './PopulatedProfile'
-import { printHello, getSpace } from './Lib'
+import { printHello, getSpace, getProfile } from './Lib'
 
 const Test2 = styled.div``
 
@@ -28,6 +28,7 @@ export default () => {
   const [account, setAccount] = useState('Loading...')
   const [popupOpen, setPopupOpen] = useState(false)
   const [content, setContent] = useState('loading')
+  const [profile, setProfile] = useState(0)
 
   const [popupContent, setPopupContent] = useState('error')
 
@@ -40,24 +41,33 @@ export default () => {
       } else {
         setAccount('Loading...')
       }
-      let lpSpace = await getSpace(window.web3.eth.defaultAccount, 'livepeer')
       console.log('checking...')
+      let lpSpace = await getSpace(window.web3.eth.defaultAccount)
       console.log(lpSpace)
       if (lpSpace.defaultProfile == '3box') {
-        console.log('defaultProfile: 3box')
-        //content= <LoadingAnimation/>
-        setContent('loading')
-        Box.getProfile(
+        setContent('loading_animation')
+        let boxProfile = await getProfile(
           window.web3.eth.defaultAccount,
-          window.web3.currentProvider,
-        ).then(p => {
-          //content = <PopulatedProfile/>
-          setContent('populated_3box')
+          window.web3.provider,
+        )
+        console.log(boxProfile)
+        setProfile({
+          name: boxProfile.name,
+          description: boxProfile.description,
+          url: boxProfile.website,
+          image:
+            'https://ipfs.infura.io/ipfs/' +
+            boxProfile.image[0].contentUrl['/'],
         })
+        setContent('populated_profile')
       } else if (lpSpace.defaultProfile == 'livepeer') {
-        console.log('defaultProfile: livepeer')
-        setContent('populated_livepeer')
-        console.log('content: ' + content)
+        setContent('populated_profile')
+        setProfile({
+          name: lpSpace.name,
+          description: lpSpace.description,
+          url: lpSpace.website,
+          image: 'https://ipfs.infura.io/ipfs/' + lpSpace.image,
+        })
       } else {
         setContent('empty_profile')
       }
@@ -68,6 +78,7 @@ export default () => {
       web3.currentProvider.publicConfigStore.removeListener('update', update)
     }
   }, [account])
+
   return (
     <Test2>
       <Popup open={popupOpen}>{popupContent}</Popup>
@@ -75,23 +86,22 @@ export default () => {
       <br />
       {(() => {
         switch (content) {
-          case 'populated_3box':
+          case 'populated_profile':
             //return <Info text={text} />;
             return (
               <PopulatedProfile
-                name="fakename"
-                description="fakedescription"
-                image="image"
-                url="fakeurl.com"
+                name={profile.name}
+                description={profile.description}
+                image={profile.image}
+                url={profile.url}
               />
             )
-          case 'populated_livepeer':
-            //return <Info text={text} />;
-            return 'you have a livepeer profile'
           case 'empty_profile':
-            return 'No profile'
+            return <EmptyProfile />
           case 'loading':
             return 'loading...'
+          case 'loading_animation':
+            return <LoadingAnimation />
           default:
             return null
         }

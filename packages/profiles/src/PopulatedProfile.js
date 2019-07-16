@@ -10,7 +10,6 @@ export default ({ image, name, description, url }) => {
         src={image}
       />
       <br />
-      <span>test text</span>
       <span>{name}</span>
       <br />
       <p>{description}</p>

@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from './Button'
 import ProfilePicture from './ProfilePicture'
+//import ProfileForm from './ProfileForm'
 
 export default () => {
   return (
