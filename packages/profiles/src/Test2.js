@@ -7,6 +7,7 @@ import ProfilePicture from './ProfilePicture'
 import LoadingAnimation from './LoadingAnimation'
 import ProfileForm from './ProfileForm'
 import Popup from 'reactjs-popup'
+import printHello from './Lib'
 
 const Test2 = styled.div``
 
@@ -166,6 +167,7 @@ export default () => {
   }
 
   useEffect(() => {
+    console.log('Hlelo' + printHello)
     const update = async () => {
       console.log('Update called')
       if (window.web3.eth.defaultAccount != undefined) {
