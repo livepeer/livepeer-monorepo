@@ -7,7 +7,8 @@ import ProfilePicture from './ProfilePicture'
 import LoadingAnimation from './LoadingAnimation'
 import ProfileForm from './ProfileForm'
 import Popup from 'reactjs-popup'
-import printHello from './Lib'
+import EmptyProfile from './EmptyProfile'
+import PopulatedProfile from './PopulatedProfile'
 
 const Test2 = styled.div``
 
@@ -25,42 +26,9 @@ const ButtonContainer = styled.div`
 export default () => {
   const [account, setAccount] = useState('Loading...')
   const [popupOpen, setPopupOpen] = useState(false)
-  const [content, setContent] = useState('Loading...')
+  const [content, setContent] = useState('loading')
 
-  const EmptyProfile = () => {
-    return (
-      <div>
-        <ProfilePicture />
-        <br />
-        <Button onClick={get3box}>Set Up My Profile</Button>
-      </div>
-    )
-  }
-
-  const PopulatedProfile = (image, name, description, url) => {
-    return (
-      <div>
-        <img
-          style={{
-            width: '100px',
-          }}
-          src={image}
-        />
-        <br />
-        <span>{name}</span>
-        <br />
-        <p>{description}</p>
-        <a href={url}>{url}</a>
-        <Button
-          onClick={() => {
-            resetProf()
-          }}
-        >
-          Reset Profile
-        </Button>
-      </div>
-    )
-  }
+  let livepeerSpace
 
   const AskUse3Box = livepeerSpace => {
     return (
@@ -81,7 +49,8 @@ export default () => {
           <Button>Create new</Button>
           <Button
             onClick={() => {
-              setContent(EmptyProfile)
+              //content = EmptyProfile
+              setContent('empty_profile')
               setPopupOpen(false)
               console.log(livepeerSpace)
               livepeerSpace.public.set('defaultProfile', '3box')
@@ -94,126 +63,44 @@ export default () => {
     )
   }
 
-  const Loading = () => {
-    return <span>Loading profile...</span>
-  }
-
-  const AnimatedLoading = () => {
-    return (
-      <div>
-        <LoadingAnimation />
-      </div>
-    )
-  }
-
   const [popupContent, setPopupContent] = useState('error')
 
-  async function get3box() {
-    setContent(AnimatedLoading)
-    const box = await Box.openBox(
-      window.web3.eth.defaultAccount,
-      window.web3.currentProvider,
-    )
-    const boxSyncPromise = new Promise((resolve, reject) =>
-      box.onSyncDone(resolve),
-    )
-    let livepeerSpace
-    const spaceSyncPromise = new Promise(async (resolve, reject) => {
-      livepeerSpace = await box.openSpace('livepeer', { onSyncDone: resolve })
-    })
-    await boxSyncPromise
-    await spaceSyncPromise
-    console.log('Got some 3box stuff')
-    Box.getProfile(web3.eth.defaultAccount, web3.currentProvider).then(p => {
-      console.log(p)
-      if (p.name != undefined) {
-        setPopupContent(AskUse3Box(livepeerSpace))
-        setPopupOpen(true)
-      } else {
-        setContent(() => {
-          return (
-            <ProfileForm
-              name={p.name}
-              description={p.description}
-              url={p.website}
-            />
-          )
-        })
-      }
-    })
-    return 0
-  }
-
-  /*
-   * just for testing purposes
-   */
-  async function resetProf() {
-    setContent('reseting')
-    const box = await Box.openBox(
-      window.web3.eth.defaultAccount,
-      window.web3.currentProvider,
-    )
-    const boxSyncPromise = new Promise((resolve, reject) =>
-      box.onSyncDone(resolve),
-    )
-    box.openSpace('livepeer').then(async p => {
-      await p.public.remove('defaultProfile')
-      await p.public.remove('description')
-      await p.public.remove('website')
-      await p.public.remove('image')
-      await p.public.remove('name')
-    })
-    setContent('profile reset')
-  }
-
   useEffect(() => {
-    console.log('Hlelo' + printHello)
+    console.log('Use Effect triggered')
     const update = async () => {
       console.log('Update called')
       if (window.web3.eth.defaultAccount != undefined) {
         setAccount(window.web3.eth.defaultAccount)
-        setContent(Loading)
       } else {
         setAccount('Loading...')
-        setContent(Loading)
       }
-      const livepeerSpace = await Box.getSpace(
+      livepeerSpace = await Box.getSpace(
         window.web3.eth.defaultAccount,
         'livepeer',
       )
       console.log('checking...')
       console.log(livepeerSpace)
       if (livepeerSpace.defaultProfile == '3box') {
-        setContent(AnimatedLoading)
+        console.log('defaultProfile: 3box')
+        //content= <LoadingAnimation/>
+        setContent('loading')
         Box.getProfile(
           window.web3.eth.defaultAccount,
           window.web3.currentProvider,
         ).then(p => {
-          setContent(
-            PopulatedProfile(
-              'https://ipfs.infura.io/ipfs/' + p.image[0].contentUrl['/'],
-              p.name,
-              p.description,
-              p.website,
-            ),
-          )
+          //content = <PopulatedProfile/>
+          setContent('populated_3box')
         })
       } else if (livepeerSpace.defaultProfile == 'livepeer') {
-        setContent(
-          PopulatedProfile(
-            'https://ipfs.infura.io/ipfs/' + livepeerSpace.image,
-            livepeerSpace.name,
-            livepeerSpace.description,
-            livepeerSpace.website,
-          ),
-        )
+        console.log('defaultProfile: livepeer')
+        setContent('populated_livepeer')
+        console.log('content: ' + content)
       } else {
-        setContent(EmptyProfile)
+        setContent('empty_profile')
       }
     }
     update()
     web3.currentProvider.publicConfigStore.addListener('update', update)
-    console.log('Use Effect triggered')
     return () => {
       web3.currentProvider.publicConfigStore.removeListener('update', update)
     }
@@ -223,7 +110,29 @@ export default () => {
       <Popup open={popupOpen}>{popupContent}</Popup>
       <span>account: {account}</span>
       <br />
-      {content}
+      {(() => {
+        switch (content) {
+          case 'populated_3box':
+            //return <Info text={text} />;
+            return (
+              <PopulatedProfile
+                name="fakename"
+                description="fakedescription"
+                image="image"
+                url="fakeurl.com"
+              />
+            )
+          case 'populated_livepeer':
+            //return <Info text={text} />;
+            return 'you have a livepeer profile'
+          case 'empty_profile':
+            return 'No profile'
+          case 'loading':
+            return 'loading...'
+          default:
+            return null
+        }
+      })()}
     </Test2>
   )
 }

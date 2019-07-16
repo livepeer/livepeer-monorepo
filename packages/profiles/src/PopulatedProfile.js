@@ -1,4 +1,6 @@
-const PopulatedProfile = (image, name, description, url) => {
+import React from 'react'
+
+export default ({ image, name, description, url }) => {
   return (
     <div>
       <img
@@ -8,17 +10,11 @@ const PopulatedProfile = (image, name, description, url) => {
         src={image}
       />
       <br />
+      <span>test text</span>
       <span>{name}</span>
       <br />
       <p>{description}</p>
       <a href={url}>{url}</a>
-      <Button
-        onClick={() => {
-          resetProf()
-        }}
-      >
-        Reset Profile
-      </Button>
     </div>
   )
 }
