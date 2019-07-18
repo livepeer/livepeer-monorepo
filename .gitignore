@@ -2,7 +2,10 @@
 node_modules
 lerna-debug.log
 package-lock.json
-**/*/lib
+**/sdk/lib
+**/apollo/lib
+**/graphql-sdk/lib
+**/chroma/lib
 **/*/main
 **/*/dist
 **/*/bin
