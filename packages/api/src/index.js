@@ -7,6 +7,7 @@ import { healthCheck } from './middleware'
 import logger from './logger'
 import schema from './schema'
 import * as controllers from './controllers'
+import * as k8s from '@kubernetes/client-node'
 
 export default async function makeApp({
   storage,
@@ -15,6 +16,8 @@ export default async function makeApp({
   port,
   postgresUrl,
   listen = true,
+  kubeNamespace,
+  kubeBroadcasterService,
 }) {
   // Storage init
   let store
@@ -34,6 +37,19 @@ export default async function makeApp({
     req.store = store
     next()
   })
+
+  if (kubeNamespace && kubeBroadcasterService) {
+    const kc = new k8s.KubeConfig()
+    kc.loadFromDefault()
+
+    const kubeApi = kc.makeApiClient(k8s.CoreV1Api)
+    app.use((req, res, next) => {
+      req.kubeApi = kubeApi
+      req.kubeNamespace = kubeNamespace
+      req.kubeBroadcasterService = kubeBroadcasterService
+      next()
+    })
+  }
 
   // Add a controller for each route at the /${httpPrefix} route
   const prefixRouter = Router()
@@ -92,20 +108,18 @@ process.on('unhandledRejection', err => {
 
 const handleSigterm = close => async () => {
   // Handle SIGTERM gracefully. It's polite, and Kubernetes likes it.
-  process.on('SIGTERM', async function onSigterm() {
-    logger.info('Got SIGTERM. Graceful shutdown start')
-    let timeout = setTimeout(() => {
-      logger.warn("Didn't gracefully exit in 5s, forcing")
-      process.exit(1)
-    }, 5000)
-    try {
-      await close()
-    } catch (err) {
-      logger.error('Error closing store', err)
-      process.exit(1)
-    }
-    clearTimeout(timeout)
-    logger.info('Graceful shutdown complete, exiting cleanly')
-    process.exit(0)
-  })
+  logger.info('Got SIGTERM. Graceful shutdown start')
+  let timeout = setTimeout(() => {
+    logger.warn("Didn't gracefully exit in 5s, forcing")
+    process.exit(1)
+  }, 5000)
+  try {
+    await close()
+  } catch (err) {
+    logger.error('Error closing store', err)
+    process.exit(1)
+  }
+  clearTimeout(timeout)
+  logger.info('Graceful shutdown complete, exiting cleanly')
+  process.exit(0)
 }

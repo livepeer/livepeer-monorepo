@@ -13,7 +13,7 @@ app.get('/', async (req, res) => {
 app.post('/', async (req, res) => {
   const id = `wowza/${uuid()}`
   const doc = {
-    ...req.body,
+    ...(req.body || {}),
     id,
   }
   await req.store.create(doc)

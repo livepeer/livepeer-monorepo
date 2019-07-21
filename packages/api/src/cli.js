@@ -37,6 +37,15 @@ const args = yargs
       describe: 'url of a postgres database',
       type: 'string',
     },
+    'kube-namespace': {
+      describe:
+        "namespace of the Kubernetes cluster we're in. required for Kubernetes service discovery.",
+      type: 'string',
+    },
+    'kube-broadcaster-service': {
+      describe: 'name of the service we should look at for broadcasters.',
+      type: 'string',
+    },
     'http-prefix': {
       describe: 'accept requests at this prefix',
       default: '/api',

@@ -32,11 +32,15 @@ export async function generateStreamKey() {
   })
 }
 
-export const timeout = async (ms, fn) => {
-  const handle = setTimeout(() => {
-    throw new Error('timed out')
-  }, ms)
-  const ret = await fn()
-  clearTimeout(handle)
-  return ret
+export const timeout = (ms, fn) => {
+  return new Promise((resolve, reject) => {
+    const handle = setTimeout(() => {
+      reject(Error('timed out'))
+    }, ms)
+
+    fn().then((...ret) => {
+      clearTimeout(handle)
+      resolve(...ret)
+    })
+  })
 }

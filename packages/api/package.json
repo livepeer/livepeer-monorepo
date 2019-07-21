@@ -11,7 +11,7 @@
   "scripts": {
     "build:lambda": "parcel build --no-minify --bundle-node-modules -t node src/lambda.js",
     "build": "npm run prepare",
-    "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && kubectl logs -f deployment/prod-livepeer-api-server --pod-running-timeout=30s",
+    "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && kubectl logs -f --pod-running-timeout=30s deployment/prod-livepeer-api-server ",
     "docker:build": "docker build -t iameli/livepeer-api-prototype .",
     "docker:push": "docker push iameli/livepeer-api-prototype",
     "docker": "run-s docker:build docker:push",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@cloudflare/json-schema-walker": "^0.1.1",
+    "@kubernetes/client-node": "^0.10.2",
     "ajv": "^6.10.0",
     "any-base": "^1.1.0",
     "aws-serverless-express": "^3.3.6",
