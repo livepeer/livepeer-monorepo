@@ -5,7 +5,13 @@ import Box from '3box'
 
 const ProfileForm = styled.div``
 
-export default ({ name = '', description = '', url = '' }) => {
+export default ({
+  name = '',
+  description = '',
+  url = '',
+  saveAction,
+  cancelAction,
+}) => {
   const [formName, setFormName] = useState('')
   const nameVal = useRef(null)
   const descVal = useRef(null)
@@ -64,30 +70,18 @@ export default ({ name = '', description = '', url = '' }) => {
         <input type="url" defaultValue={url} ref={urlVal} />
         <br />
         <Button
-          onClick={async () => {
-            console.log(fileVal)
-            console.log('Name: ' + nameVal.current.value)
-            console.log('Description: ' + descVal.current.value)
-            console.log('URL: ' + urlVal.current.value)
-            console.log(fileVal.current.files[0])
-            setContent('Saving to livepeer space...')
-            if (
-              await saveTo3box(
-                fileVal.current.files[0],
-                nameVal.current.value,
-                descVal.current.value,
-                urlVal.current.value,
-              )
-            ) {
-              setContent('Succesfully saved profile')
-            } else {
-              setContent('Failed to save profile')
-            }
+          onClick={() => {
+            saveAction(
+              nameVal.current.value,
+              descVal.current.value,
+              urlVal.current.value,
+              fileVal,
+            )
           }}
         >
           Save
         </Button>
-        <Button>Cancel</Button>
+        <Button onClick={cancelAction}>Cancel</Button>
       </div>
     )
   }

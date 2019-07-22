@@ -31,6 +31,68 @@ export const getProfile = async (address, provider) => {
   return profiles[address]
 }
 
+export const resetProf = async (address, provider) => {
+  const box = await Box.openBox(address)
+  const boxSyncPromise = new Promise((resolve, reject) =>
+    box.onSyncDone(resolve),
+  )
+  let livepeerSpace
+  const spaceSyncPromise = new Promise((resolve, reject) => {
+    livepeerSpace = box.openSpace('livepeer', { onSyncDone: resolve })
+  })
+  await boxSyncPromise
+  await spaceSyncPromise
+  livepeerSpace = await livepeerSpace
+  await livepeerSpace.public.remove('defaultProfile')
+  await livepeerSpace.public.remove('name')
+  await livepeerSpace.public.remove('description')
+  await livepeerSpace.public.remove('website')
+  await livepeerSpace.public.remove('image')
+}
+
+export const saveProfileToLivepeerSpace = async (
+  address,
+  provider,
+  name,
+  desc,
+  url,
+  image,
+) => {
+  const formData = new window.FormData()
+  formData.append('path', image.current.files[0])
+  let resp
+  resp = await window.fetch('https://ipfs.infura.io:5001/api/v0/add', {
+    method: 'post',
+    'Content-Type': 'multipart/form-data',
+    body: formData,
+  })
+  const infuraResponse = await resp.json()
+  const hash = infuraResponse['Hash']
+  console.log(hash)
+  const box = await Box.openBox(address)
+  const boxSyncPromise = new Promise((resolve, reject) =>
+    box.onSyncDone(resolve),
+  )
+  let livepeerSpace
+  const spaceSyncPromise = new Promise((resolve, reject) => {
+    livepeerSpace = box.openSpace('livepeer', { onSyncDone: resolve })
+  })
+  await boxSyncPromise
+  await spaceSyncPromise
+  livepeerSpace = await livepeerSpace
+  await livepeerSpace.public.set('defaultProfile', 'livepeer')
+  await livepeerSpace.public.set('name', name)
+  await livepeerSpace.public.set('description', desc)
+  await livepeerSpace.public.set('website', url)
+  await livepeerSpace.public.set('image', hash)
+  return {
+    name: name,
+    description: desc,
+    url: url,
+    image: 'https://ipfs.infura.io/ipfs/' + hash,
+  }
+}
+
 export const printHello = () => {
   console.log('Hello im imported library')
 }
