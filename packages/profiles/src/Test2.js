@@ -163,11 +163,18 @@ export default () => {
                       'livepeer',
                     )
                     if (lpSpace.defaultProfile == '3box') {
-                      setEditProfileType('3box')
-                      setEditPopupOpen(true)
+                      window.open('https://3box.io/hub')
                     } else if (lpSpace.defaultProfile == 'livepeer') {
-                      setEditProfileType('livepeer')
-                      setEditPopupOpen(true)
+                      Box.getProfile(
+                        window.web3.eth.defaultAccount,
+                        web3.currentProvider,
+                      ).then(p => {
+                        console.log(p)
+                        if (p.name != undefined) {
+                          setPopupOpen(true)
+                        }
+                      })
+                      setContent('profile_form')
                     } else {
                       alert('error retrieving profile settings')
                     }
@@ -217,6 +224,9 @@ export default () => {
                   //update()
                 }}
                 cancelAction={update}
+                name={profile.name || ''}
+                description={profile.description || ''}
+                url={profile.url || ''}
               />
             )
           default:
