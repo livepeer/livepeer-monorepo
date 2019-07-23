@@ -142,7 +142,6 @@ export default () => {
       <Popup open={editPopupOpen}>
         <SwitchDefaultProfile currentProf={editProfileType} />
       </Popup>
-      <span>account: {account}</span>
       <br />
       {(() => {
         switch (content) {
