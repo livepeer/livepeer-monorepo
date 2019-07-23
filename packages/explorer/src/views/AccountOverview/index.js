@@ -22,6 +22,8 @@ import {
 } from '../../components'
 import enhance from './enhance'
 
+import { Test2 } from '@livepeer/profiles'
+
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
   coinbase: GraphQLProps<Coinbase>,
@@ -74,6 +76,15 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
         <h3>Account Overview</h3>
         <p>The overview shows ETH and LPT balances in an account's wallet</p>
   </InlineHint>*/}
+      <div
+        style={{
+          margin: '0 auto',
+          textAlign: 'center',
+        }}
+      >
+        <Test2 />
+      </div>
+      <br />
       <Wrapper>
         <MetricBox
           className="eth-address"
