@@ -9,6 +9,10 @@ import ProfileForm from './ProfileForm'
 import Popup from 'reactjs-popup'
 import EmptyProfile from './EmptyProfile'
 import PopulatedProfile from './PopulatedProfile'
+
+import ThreeBoxPrompt from './ThreeBoxPrompt'
+import SwitchDefaultProfile from './SwitchDefaultProfile'
+
 import {
   printHello,
   getSpace,
@@ -37,10 +41,10 @@ const ButtonContainer = styled.div`
 export default () => {
   const [account, setAccount] = useState('Loading...')
   const [popupOpen, setPopupOpen] = useState(false)
+  const [editPopupOpen, setEditPopupOpen] = useState(false)
+  const [editProfileType, setEditProfileType] = useState(false)
   const [content, setContent] = useState('loading')
   const [profile, setProfile] = useState(0)
-
-  const [popupContent, setPopupContent] = useState('error')
 
   const update = async () => {
     console.log('Update called')
@@ -54,6 +58,7 @@ export default () => {
      * It's conceavable that 3box already has some kind of caching system
      */
     //let lpSpace = await getSpace(window.web3.eth.defaultAccount)
+    //let lpSpace = await Box.getSpace(window.web3.eth.defaultAccount, 'livepeer')
     let lpSpace = await Box.getSpace(window.web3.eth.defaultAccount, 'livepeer')
     console.log(lpSpace)
     if (lpSpace.defaultProfile == '3box') {
@@ -94,7 +99,49 @@ export default () => {
 
   return (
     <Test2>
-      <Popup open={popupOpen}>{popupContent}</Popup>
+      <Popup open={popupOpen}>
+        <ThreeBoxPrompt
+          useExistingAction={async () => {
+            setContent('loading_animation')
+            setPopupOpen(false)
+            const box = await Box.openBox(
+              window.web3.eth.defaultAccount,
+              window.web3.provider,
+            )
+            const boxSyncPromise = new Promise((resolve, reject) =>
+              box.onSyncDone(resolve),
+            )
+            let livepeerSpace
+            const spaceSyncPromise = new Promise((resolve, reject) => {
+              livepeerSpace = box.openSpace('livepeer', { onSyncDone: resolve })
+            })
+            await boxSyncPromise
+            await spaceSyncPromise
+            livepeerSpace = await livepeerSpace
+            await livepeerSpace.public.set('defaultProfile', '3box')
+            let boxProfile = await Box.getProfile(
+              window.web3.eth.defaultAccount,
+              window.web3.currentProvider,
+            )
+            console.log(boxProfile)
+            setProfile({
+              name: boxProfile.name,
+              description: boxProfile.description,
+              url: boxProfile.website,
+              image:
+                'https://ipfs.infura.io/ipfs/' +
+                boxProfile.image[0].contentUrl['/'],
+            })
+            setContent('populated_profile')
+          }}
+          createNewAction={() => {
+            setPopupOpen(false)
+          }}
+        />
+      </Popup>
+      <Popup open={editPopupOpen}>
+        <SwitchDefaultProfile currentProf={editProfileType} />
+      </Popup>
       <span>account: {account}</span>
       <br />
       {(() => {
@@ -102,17 +149,47 @@ export default () => {
           case 'populated_profile':
             //return <Info text={text} />;
             return (
-              <PopulatedProfile
-                name={profile.name}
-                description={profile.description}
-                image={profile.image}
-                url={profile.url}
-              />
+              <>
+                <PopulatedProfile
+                  name={profile.name}
+                  description={profile.description}
+                  image={profile.image}
+                  url={profile.url}
+                />
+                <Button
+                  onClick={async () => {
+                    let lpSpace = await Box.getSpace(
+                      window.web3.eth.defaultAccount,
+                      'livepeer',
+                    )
+                    if (lpSpace.defaultProfile == '3box') {
+                      setEditProfileType('3box')
+                      setEditPopupOpen(true)
+                    } else if (lpSpace.defaultProfile == 'livepeer') {
+                      setEditProfileType('livepeer')
+                      setEditPopupOpen(true)
+                    } else {
+                      alert('error retrieving profile settings')
+                    }
+                  }}
+                >
+                  Edit Profile
+                </Button>
+              </>
             )
           case 'empty_profile':
             return (
               <EmptyProfile
                 setupAction={() => {
+                  Box.getProfile(
+                    window.web3.eth.defaultAccount,
+                    web3.currentProvider,
+                  ).then(p => {
+                    console.log(p)
+                    if (p.name != undefined) {
+                      setPopupOpen(true)
+                    }
+                  })
                   setContent('profile_form')
                 }}
               />
