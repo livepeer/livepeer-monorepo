@@ -449,7 +449,7 @@ export const TranscodersQuery = gql`
   }
 
   query TranscodersQuery {
-    transcoders {
+    transcoders(where: { status: "Registered" }) {
       ...TranscoderFragment
     }
   }
