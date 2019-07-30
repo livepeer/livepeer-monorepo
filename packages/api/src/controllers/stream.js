@@ -1,10 +1,28 @@
-import { Router } from 'express'
-import { parse as parseUrl } from 'url'
 import { parse as parsePath } from 'path'
 import { parse as parseQS } from 'querystring'
+import { parse as parseUrl } from 'url'
+import { Router } from 'express'
 import logger from '../logger'
+import uuid from 'uuid/v4'
 
 const app = Router()
+
+app.get('/:id', async (req, res) => {
+  const output = await req.store.get(`stream/${id}`)
+  res.status(200)
+  res.json(output)
+})
+
+app.post('/', async (req, res) => {
+  const id = `stream/${uuid()}`
+  const doc = {
+    ...(req.body || {}),
+    id,
+  }
+  await req.store.create(doc)
+  res.status(201)
+  res.json(doc)
+})
 
 app.post('/hook', async (req, res) => {
   if (!req.body || !req.body.url) {
