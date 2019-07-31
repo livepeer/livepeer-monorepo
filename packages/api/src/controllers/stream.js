@@ -78,10 +78,7 @@ app.post('/hook', async (req, res) => {
     return res.json({ errors: ['ingest url must start with /live/'] })
   }
 
-  console.log(`searching for stream/${streamId}`)
   const stream = await req.store.get(`stream/${streamId}`)
-
-  console.log(JSON.stringify(stream, null, 2))
 
   res.json({
     manifestId: streamId,
