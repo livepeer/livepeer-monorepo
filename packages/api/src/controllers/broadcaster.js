@@ -12,7 +12,6 @@ app.get('/', async (req, res, next) => {
     res.status(502)
     return res.json({ errors: ['not yet implemented outside of kubernetes'] })
   }
-  console.log('hi?')
   const endpoints = await timeout(5000, () =>
     req.kubeApi.readNamespacedEndpoints(
       req.kubeBroadcasterService,

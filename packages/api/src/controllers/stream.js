@@ -7,6 +7,12 @@ import uuid from 'uuid/v4'
 
 const app = Router()
 
+app.get('/', async (req, res) => {
+  const output = await req.store.list(`stream/`)
+  res.status(200)
+  res.json(output)
+})
+
 app.get('/:id', async (req, res) => {
   const output = await req.store.get(`stream/${id}`)
   res.status(200)
@@ -14,9 +20,10 @@ app.get('/:id', async (req, res) => {
 })
 
 app.post('/', async (req, res) => {
-  const id = `stream/${uuid()}`
+  const id = uuid()
   const doc = {
     ...(req.body || {}),
+    kind: 'stream',
     id,
   }
   await req.store.create(doc)
@@ -27,39 +34,57 @@ app.post('/', async (req, res) => {
 app.post('/hook', async (req, res) => {
   if (!req.body || !req.body.url) {
     res.status(422)
-    return res.json({ errors: ['missing url'] })
+    return res.json({
+      errors: ['missing url'],
+    })
   }
   logger.info(`got webhook: ${JSON.stringify(req.body)}`)
   // These are of the form /live/:manifestId/:segmentNum.ts
-  const manifestId = req.body.url.split('/')[2]
+  let { query, pathname, protocol } = parseUrl(req.body.url)
+  // Protocol is sometimes undefined, due to https://github.com/livepeer/go-livepeer/issues/1006
+  if (!protocol) {
+    protocol = 'http:'
+  }
+  if (protocol === 'https:') {
+    protocol = 'http:'
+  }
+  if (protocol !== 'http:' && protocol !== 'rtmp:') {
+    res.status(422)
+    return res.json({ errors: [`unknown protocol: ${protocol}`] })
+  }
 
-  res.json({ manifestId })
+  // Allowed patterns, for now:
+  // http(s)://broadcaster.example.com/live/:streamId/:segNum.ts
+  // rtmp://broadcaster.example.com/live/:streamId
+  const [live, streamId, ...rest] = pathname.split('/').filter(x => !!x)
+  if (protocol === 'rtmp:' && rest.length > 0) {
+    res.status(422)
+    return res.json({
+      errors: [
+        'RTMP address should be rtmp://example.com/live. Stream key should be a UUID.',
+      ],
+    })
+  } else if (protocol === 'http:' && rest.length > 1) {
+    res.status(422)
+    return res.json({
+      errors: [
+        'acceptable URL format: http://example.com/live/:streamId/:number.ts',
+      ],
+    })
+  }
 
-  // xxx fixme, this was the logic for RTMP handling
-  return
-
-  const { query, pathname } = parseUrl(req.body.url)
-  const { key } = parseQS(query)
-  const { name } = parsePath(pathname)
-  let doc
-  try {
-    doc = await req.store.get(`endpoint/${name}`)
-  } catch (err) {
-    if (err.type !== 'NotFoundError') {
-      throw err
-    }
+  if (live !== 'live') {
     res.status(404)
-    return res.json({ errors: ['not found'] })
+    return res.json({ errors: ['ingest url must start with /live/'] })
   }
 
-  if (key !== doc.key) {
-    res.status(403)
-    return res.json({ errors: ['incorrect stream key'] })
-  }
-  // rtmp://localhost/180064f3-c148-4cdc-a160-4b1bb00dae52?key=bsg6-zc46-dltu
+  console.log(`searching for stream/${streamId}`)
+  const stream = await req.store.get(`stream/${streamId}`)
+
+  console.log(JSON.stringify(stream, null, 2))
+
   res.json({
-    manifestId: doc.id,
-    outputs: doc.outputs,
+    manifestId: streamId,
   })
 })
 

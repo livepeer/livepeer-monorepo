@@ -51,16 +51,19 @@ export default class LevelStore {
     return ret
   }
 
-  async get(id) {
+  async get(key) {
     await this.ready
-    return JSON.parse(await this.db.get(id))
+    return JSON.parse(await this.db.get(key))
   }
 
   async create(data) {
     if (typeof data !== 'object' || typeof data.id !== 'string') {
       throw new Error(`invalid values: ${JSON.stringify(data)}`)
     }
-    const { id } = data
+    const { id, kind } = data
+    if (!id || !kind) {
+      throw new Error(`Missing required values: id, kind`)
+    }
     await this.ready
 
     try {
@@ -72,19 +75,22 @@ export default class LevelStore {
       }
       // Not found - that's great!
     }
-    await this.db.put(id, JSON.stringify(data))
+    await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }
 
   async replace(data) {
     if (typeof data !== 'object' || typeof data.id !== 'string') {
       throw new Error(`invalid values: ${JSON.stringify(data)}`)
     }
-    const { id } = data
+    const { id, kind } = data
+    if (!id || !kind) {
+      throw new Error('missing id, kind')
+    }
     await this.ready
 
     // Make sure it exists first, this throws if not
-    await this.db.get(id)
-    await this.db.put(id, JSON.stringify(data))
+    await this.db.get(`${kind}/${id}`)
+    await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }
 
   async delete(id) {

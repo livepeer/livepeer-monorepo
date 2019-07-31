@@ -52,10 +52,15 @@ export default class PostgresStore {
   }
 
   async create(data) {
+    const { id, kind } = data
+    if (!id || !kind) {
+      throw new Error("object missing 'id' and/or 'kind'")
+    }
+    const key = `${kind}/${id}`
     try {
       await this.pool.query(
         `INSERT INTO ${TABLE_NAME} VALUES ($1, $2)`, //p
-        [data.id, JSON.stringify(data)], //p
+        [key, JSON.stringify(data)], //p
       )
     } catch (e) {
       if (e.message.includes('duplicate key value')) {
@@ -67,9 +72,14 @@ export default class PostgresStore {
   }
 
   async replace(data) {
+    const { id, kind } = data
+    if (!id || !kind) {
+      throw new Error("object missing 'id' and/or 'kind'")
+    }
+    const key = `${kind}/${id}`
     const res = await this.pool.query(
       `UPDATE ${TABLE_NAME} SET data = $1 WHERE id = $2`,
-      [JSON.stringify(data), data.id],
+      [JSON.stringify(data), key],
     )
     if (res.rowCount < 1) {
       throw new NotFoundError()
