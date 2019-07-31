@@ -22,7 +22,7 @@ import {
 } from '../../components'
 import enhance from './enhance'
 
-import { Test2 } from '@livepeer/profiles'
+import { Profile } from '@livepeer/profiles'
 
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
@@ -82,7 +82,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           textAlign: 'center',
         }}
       >
-        <Test2 />
+        <Profile />
       </div>
       <br />
       <Wrapper>
