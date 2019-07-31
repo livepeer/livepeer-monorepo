@@ -22,7 +22,7 @@ import {
 } from '../../components'
 import enhance from './enhance'
 
-import { Profile } from '@livepeer/profiles'
+import { UserProfile, Profile } from '@livepeer/profiles'
 
 type AccountOverviewProps = {
   account: GraphQLProps<Account>,
@@ -82,7 +82,16 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
           textAlign: 'center',
         }}
       >
-        <Profile />
+        {(() => {
+          console.log('account:')
+          console.log(account.data.id)
+          console.log(window.web3.eth.defaultAccount)
+          if (account == window.web3.eth.defaultAccount) {
+            return <UserProfile />
+          } else {
+            return <Profile address={account.data.id} />
+          }
+        })()}
       </div>
       <br />
       <Wrapper>

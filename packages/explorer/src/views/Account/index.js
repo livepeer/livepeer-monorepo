@@ -57,6 +57,8 @@ const AccountView: React.ComponentType<AccountViewProps> = ({
   const showBondButtons =
     (canBond || canRebond || canUnbond) &&
     ((isTranscoder && isMe) || (!isTranscoder && !isMe))
+
+  console.log('This is the page!')
   return (
     <React.Fragment>
       <ScrollToTopOnMount />
