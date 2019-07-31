@@ -8,5 +8,5 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 import AlertDialog from './AlertDialog'
 
-const element = <Profile address="0x075A8e26b12461acf8B60A32c6943A27d3ed09D0" />
+const element = <UserProfile />
 ReactDOM.render(element, document.querySelector('#react-div'))

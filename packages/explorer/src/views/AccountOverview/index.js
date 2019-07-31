@@ -83,10 +83,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
         }}
       >
         {(() => {
-          console.log('account:')
-          console.log(account.data.id)
-          console.log(window.web3.eth.defaultAccount)
-          if (account == window.web3.eth.defaultAccount) {
+          if (account.data.id == window.web3.eth.defaultAccount) {
             return <UserProfile />
           } else {
             return <Profile address={account.data.id} />
