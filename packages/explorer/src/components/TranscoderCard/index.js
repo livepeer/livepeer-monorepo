@@ -1,5 +1,5 @@
 // @flow
-import * as React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MathBN } from '../../utils'
@@ -8,6 +8,12 @@ import Button from '../Button'
 import Tooltip from '../Tooltip'
 import TranscoderStat from '../TranscoderStat'
 import type { TranscoderCardProps } from './props'
+import Box from '3box'
+import { BoxInfo } from '@livepeer/profiles'
+
+const blocklist = address => {
+  return false
+}
 
 /** Used when displaying Transcoder struct data in a list */
 const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
@@ -30,6 +36,7 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
     rewards,
   }) => {
     let missedCalls: number = 0
+
     if (rewards) {
       missedCalls = rewards
         .sort((a, b) => b.round.id - a.round.id)
@@ -44,19 +51,20 @@ const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(
       <div className={className}>
         {/* Basic Info */}
         <div className="basic-info">
-          <Link to={`/accounts/${id}/transcoding`}>
-            <Avatar id={id} size={32} />
-          </Link>
-          <div className="address">
-            <Tooltip id={id} text={id} type="nowrap">
-              <Link
-                to={`/accounts/${id}/transcoding`}
-                style={{ color: '#000', textDecoration: 'none' }}
-              >
-                {ensName || `${id.substr(0, 10)}...`}
-              </Link>
-            </Tooltip>
-          </div>
+          {/*<Link to={`/accounts/${id}/transcoding`}>
+			<Avatar id={id} size={32} />
+		  </Link>
+		  <div className="address">
+			<Tooltip id={id} text={id} type="nowrap">
+			  <Link
+				to={`/accounts/${id}/transcoding`}
+				style={{ color: '#000', textDecoration: 'none' }}
+			  >
+				{ensName || `${id.substr(0, 10)}...`}
+			  </Link>
+			</Tooltip>
+		  </div>*/}
+          <BoxInfo id={id} ensName={ensName} />
           <Tooltip
             text={[
               'Today, only Transcoders with the top',
