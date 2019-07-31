@@ -21,7 +21,7 @@ import {
   resetProf,
 } from './Lib'
 
-const Test2 = styled.div``
+const Profile = styled.div``
 
 const InAlertBox = styled.div`
   margin: 0 auto;
@@ -98,7 +98,7 @@ export default () => {
   }, [account])
 
   return (
-    <Test2>
+    <Profile>
       <Popup open={popupOpen}>
         <ThreeBoxPrompt
           useExistingAction={async () => {
@@ -246,6 +246,6 @@ export default () => {
       >
         Reset
       </Button>
-    </Test2>
+    </Profile>
   )
 }
