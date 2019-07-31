@@ -22,7 +22,6 @@ export default class PostgresStore {
         })
         await this.pool.query('SELECT NOW()')
       })
-      logger.info('done')
     })()
   }
 
