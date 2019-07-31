@@ -14,7 +14,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/:id', async (req, res) => {
-  const output = await req.store.get(`stream/${id}`)
+  const output = await req.store.get(`stream/${req.params.id}`)
   res.status(200)
   res.json(output)
 })
