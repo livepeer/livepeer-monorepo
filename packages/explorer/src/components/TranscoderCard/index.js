@@ -1,9 +1,7 @@
 // @flow
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { MathBN } from '../../utils'
-import Avatar from '../Avatar'
 import Button from '../Button'
 import Tooltip from '../Tooltip'
 import TranscoderStat from '../TranscoderStat'
