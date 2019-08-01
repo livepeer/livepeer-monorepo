@@ -4,6 +4,7 @@ import { parse as parseUrl } from 'url'
 import { Router } from 'express'
 import logger from '../logger'
 import uuid from 'uuid/v4'
+import wowzaHydrate from './wowza-hydrate'
 
 const app = Router()
 
@@ -24,9 +25,11 @@ app.post('/', async (req, res) => {
   const doc = {
     ...(req.body || {}),
     kind: 'stream',
+    presets: [],
+    renditions: {},
     id,
   }
-  await req.store.create(doc)
+  await req.store.create(wowzaHydrate(doc))
   res.status(201)
   res.json(doc)
 })
@@ -82,6 +85,7 @@ app.post('/hook', async (req, res) => {
 
   res.json({
     manifestId: streamId,
+    presets: stream.presets,
   })
 })
 
