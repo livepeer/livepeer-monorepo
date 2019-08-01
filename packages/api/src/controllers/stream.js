@@ -22,14 +22,14 @@ app.get('/:id', async (req, res) => {
 
 app.post('/', async (req, res) => {
   const id = uuid()
-  const doc = {
+  const doc = wowzaHydrate({
     ...(req.body || {}),
     kind: 'stream',
     presets: [],
     renditions: {},
     id,
-  }
-  await req.store.create(wowzaHydrate(doc))
+  })
+  await req.store.create(doc)
   res.status(201)
   res.json(doc)
 })
