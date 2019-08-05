@@ -1,0 +1,16 @@
+{
+  "name": "@livepeerjs/graphql-api",
+  "version": "1.0.0-alpha.6",
+  "private": true,
+  "scripts": {
+    "start": "nodemon index.js localhost 4000"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.7.2",
+    "graphql": "^14.4.2"
+  }
+}

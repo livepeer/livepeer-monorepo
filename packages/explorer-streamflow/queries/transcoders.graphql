@@ -1,0 +1,14 @@
+query {
+  transcoders(where: { status: Registered }) {
+    id
+    active
+    feeShare
+    rewardCut
+    status
+    totalStake
+    pricePerSegment
+    pools {
+      rewardTokens
+    }
+  }
+}
