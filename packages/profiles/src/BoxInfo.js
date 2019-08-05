@@ -12,36 +12,48 @@ const BoxInfo = ({ id, ensName }) => {
   const [accountName, setAccountName] = useState(null)
   const [accountImage, setAccountImage] = useState(null)
 
-  Box.getSpace(id, 'livepeer', { blocklist }).then(s => {
-    if (s.defaultProfile == 'livepeer') {
-      if (s.image != null && s.image != undefined) {
-        setAccountImage('https://ipfs.infura.io/ipfs/' + s.image)
+  const update = async id => {
+    let resp = await window.fetch('https://graph.livepeer.org/blocklist.json')
+    resp = await resp.json()
+    let blocked = resp.blocked
+    blocked = blocked.map(x => x.toLowerCase())
+    let space = await Box.getSpace(id, 'livepeer', {
+      blocklist: address => {
+        return blocked.includes(address.toLowerCase())
+      },
+    })
+    if (space.defaultProfile == 'livepeer') {
+      if (space.name != null && space.name != undefined) {
+        setAccountName(space.name)
       }
-      if (s.name != null && s.image != null) {
-        setAccountName(s.name)
+      if (space.image != null && space.image != undefined) {
+        setAccountImage('https://ipfs.infura.io/ipfs/' + space.image)
       }
-    } else if (s.defaultProfile == '3box') {
-      Box.getProfile(id, { blocklist }).then(p => {
-        if (
-          p.image[0].contentUrl['/'] != null &&
-          p.image[0].contentUrl['/'] != undefined
-        ) {
-          setAccountImage(
-            'https://ipfs.infura.io/ipfs/' + p.image[0].contentUrl['/'],
-          )
-        }
-        if (p.name != null && p.name != undefined) {
-          setAccountName(p.name)
-        }
-      })
     }
-  })
+    if (space.defaultProfile == '3box') {
+      let profile = await Box.getProfile(id, {
+        blocklist: id => {
+          return blocked.includes(address.toLowerCase())
+        },
+      })
+      if (profile.name != null && profile.name != undefined) {
+        setAccountName(profile.name)
+      }
+      if (profile.image != null && profile.image != undefined) {
+        setAccountImage(
+          'https://ipfs.infura.io/ipfs/' + profile.image[0].contentUrl['/'],
+        )
+      }
+    }
+  }
+
+  update(id)
 
   return (
     <>
       <a href={`/accounts/${id}/transcoding`}>
         {(() => {
-          if (accountImage == null) {
+          if (accountImage == null || accountImage == undefined) {
             return <Avatar id={id} size={32} />
           } else {
             return (
@@ -76,7 +88,7 @@ const BoxInfo = ({ id, ensName }) => {
             style={{ color: '#000', textDecoration: 'none' }}
           >
             {(() => {
-              if (accountName == null) {
+              if (accountName == null || accountName == undefined) {
                 return ensName || `${id.substr(0, 10)}...`
               } else {
                 return accountName
