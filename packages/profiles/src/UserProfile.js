@@ -106,7 +106,7 @@ export default () => {
             setPopupOpen(false)
             const box = await Box.openBox(
               window.web3.eth.defaultAccount,
-              window.web3.provider,
+              window.web3.currentProvider,
             )
             const boxSyncPromise = new Promise((resolve, reject) =>
               box.onSyncDone(resolve),
@@ -186,6 +186,7 @@ export default () => {
           case 'empty_profile':
             return (
               <EmptyProfile
+                address={window.web3.eth.defaultAccount}
                 setupAction={() => {
                   Box.getProfile(
                     window.web3.eth.defaultAccount,

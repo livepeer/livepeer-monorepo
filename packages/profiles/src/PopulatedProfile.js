@@ -5,13 +5,12 @@ export default ({ image, name, description, url }) => {
     <div>
       <img
         style={{
-          width: '100px',
+          width: '120px',
         }}
         src={image}
       />
       <br />
-      <span>{name}</span>
-      <br />
+      <h3>{name}</h3>
       <p>{description}</p>
       <a href={url}>{url}</a>
     </div>

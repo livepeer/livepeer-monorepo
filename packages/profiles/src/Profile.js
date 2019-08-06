@@ -12,6 +12,7 @@ import PopulatedProfile from './PopulatedProfile'
 
 import ThreeBoxPrompt from './ThreeBoxPrompt'
 import SwitchDefaultProfile from './SwitchDefaultProfile'
+import Avatar from './Avatar'
 
 import {
   printHello,
@@ -41,29 +42,43 @@ const ButtonContainer = styled.div`
 export default ({ address }) => {
   const [profile, setProfile] = useState(null)
 
-  const blocklist = address => {
-    return false
-  }
-
-  Box.getSpace(address, 'livepeer', { blocklist }).then(s => {
-    if (s.defaultProfile == '3box') {
-      Box.getProfile(address).then(p => {
-        setProfile({
-          image: 'https://ipfs.infura.io/ipfs/' + p.image[0].contentUrl['/'],
-          name: p.name,
-          description: p.description,
-          url: p.website,
-        })
+  const update = async address => {
+    let resp = await window.fetch('https://graph.livepeer.org/blocklist.json')
+    resp = await resp.json()
+    let blocked = resp.blocked
+    blocked = blocked.map(x => x.toLowerCase())
+    let space = await Box.getSpace(address, 'livepeer', {
+      blocklist: address => {
+        return blocked.includes(address.toLowerCase())
+      },
+    })
+    console.log(space)
+    if (space.defaultProfile == '3box') {
+      let profile = await Box.getProfile(address, {
+        blocklist: address => {
+          return blocked.includes(address.toLowerCase())
+        },
       })
-    } else if (s.defaultProfile == 'livepeer') {
       setProfile({
-        image: 'https://ipfs.infura.io/ipfs/' + s.image,
-        name: s.name,
-        description: s.description,
-        url: s.website,
+        image:
+          'https://ipfs.infura.io/ipfs/' + profile.image[0].contentUrl['/'],
+        name: profile.name,
+        description: profile.description,
+        url: profile.website,
+      })
+    } else if (space.defaultProfile == 'livepeer') {
+      setProfile({
+        image: 'https://ipfs.infura.io/ipfs/' + space.image,
+        name: space.name,
+        description: space.description,
+        url: space.website,
       })
     }
-  })
+  }
+
+  useEffect(() => {
+    update(address)
+  }, [address])
 
   return (
     <Profile>
@@ -80,7 +95,8 @@ export default ({ address }) => {
         } else {
           return (
             <div>
-              <ProfilePicture />
+              {/*<ProfilePicture />*/}
+              <Avatar id={address} size={120} />
               <br />
               <span>{address}</span>
               <br />

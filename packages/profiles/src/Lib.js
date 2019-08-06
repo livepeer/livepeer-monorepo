@@ -32,7 +32,7 @@ export const getProfile = async (address, provider) => {
 }
 
 export const resetProf = async (address, provider) => {
-  const box = await Box.openBox(address)
+  const box = await Box.openBox(address, window.web3.currentProvider)
   const boxSyncPromise = new Promise((resolve, reject) =>
     box.onSyncDone(resolve),
   )
@@ -68,8 +68,7 @@ export const saveProfileToLivepeerSpace = async (
   })
   const infuraResponse = await resp.json()
   const hash = infuraResponse['Hash']
-  console.log(hash)
-  const box = await Box.openBox(address)
+  const box = await Box.openBox(address, window.web3.currentProvider)
   const boxSyncPromise = new Promise((resolve, reject) =>
     box.onSyncDone(resolve),
   )
@@ -85,6 +84,7 @@ export const saveProfileToLivepeerSpace = async (
   await livepeerSpace.public.set('description', desc)
   await livepeerSpace.public.set('website', url)
   await livepeerSpace.public.set('image', hash)
+
   return {
     name: name,
     description: desc,

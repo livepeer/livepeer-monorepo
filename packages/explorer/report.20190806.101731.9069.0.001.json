@@ -1,0 +1,503 @@
+
+{
+  "header": {
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20190806.101731.9069.0.001.json",
+    "dumpEventTime": "2019-08-06T10:17:31Z",
+    "dumpEventTimeStamp": "1565101051655",
+    "processId": 9069,
+    "cwd": "/home/s1nus/livepeer/livepeerjs/packages/explorer",
+    "commandLine": [
+      "/usr/bin/node",
+      "/home/s1nus/livepeer/livepeerjs/node_modules/worker-farm/lib/child/index.js",
+      "/usr/bin/node",
+      "/home/s1nus/livepeer/livepeerjs/node_modules/react-scripts/scripts/build.js"
+    ],
+    "nodejsVersion": "v11.14.0",
+    "glibcVersionRuntime": "2.29",
+    "glibcVersionCompiler": "2.29",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "linux",
+    "componentVersions": {
+      "node": "11.14.0",
+      "v8": "7.0.276.38-node.18",
+      "uv": "1.28.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "67",
+      "nghttp2": "1.37.0",
+      "napi": "4",
+      "llhttp": "1.1.1",
+      "http_parser": "2.9.1",
+      "openssl": "1.1.1b",
+      "cldr": "34.0",
+      "icu": "63.1",
+      "tz": "2018e",
+      "unicode": "11.0"
+    },
+    "release": {
+      "name": "node",
+      "headersUrl": "https://nodejs.org/download/release/v11.14.0/node-v11.14.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v11.14.0/node-v11.14.0.tar.gz"
+    },
+    "osName": "Linux",
+    "osRelease": "4.19.32_1",
+    "osVersion": "#1 SMP PREEMPT Wed Mar 27 20:41:38 UTC 2019",
+    "osMachine": "x86_64",
+    "host": "s1nus-void"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x0000559d933c4479",
+      "symbol": "report::TriggerNodeReport(v8::Isolate*, node::Environment*, char const*, char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, v8::Local<v8::String>) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d932bad8c",
+      "symbol": "node::OnFatalError(char const*, char const*) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d934579f2",
+      "symbol": "v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d93457c61",
+      "symbol": "v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937e2672",
+      "symbol": " [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937e27b4",
+      "symbol": " [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937f24c4",
+      "symbol": "v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937f2e6a",
+      "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937f585d",
+      "symbol": "v8::internal::Heap::AllocateRawWithLightRetry(int, v8::internal::AllocationSpace, v8::internal::AllocationAlignment) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937f58b2",
+      "symbol": "v8::internal::Heap::AllocateRawWithRetryOrFail(int, v8::internal::AllocationSpace, v8::internal::AllocationAlignment) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d937c3d44",
+      "symbol": "v8::internal::Factory::NewFillerObject(int, bool, v8::internal::AllocationSpace) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x0000559d93a2cf5e",
+      "symbol": "v8::internal::Runtime_AllocateInNewSpace(int, v8::internal::Object**, v8::internal::Isolate*) [/usr/bin/node]"
+    },
+    {
+      "pc": "0x000038ea0504fc5d",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 1527074816,
+    "totalCommittedMemory": 1526374432,
+    "usedMemory": 1400400496,
+    "availableMemory": 74766104,
+    "memoryLimit": 1526909922,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 524288,
+        "committedMemory": 42224,
+        "capacity": 515584,
+        "used": 33520,
+        "available": 482064
+      },
+      "new_space": {
+        "memorySize": 33554432,
+        "committedMemory": 33554184,
+        "capacity": 16498688,
+        "used": 13744616,
+        "available": 2754072
+      },
+      "old_space": {
+        "memorySize": 1305677824,
+        "committedMemory": 1305607048,
+        "capacity": 1283199840,
+        "used": 1211669872,
+        "available": 71529968
+      },
+      "code_space": {
+        "memorySize": 2097152,
+        "committedMemory": 1951264,
+        "capacity": 1659392,
+        "used": 1659392,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 11022336,
+        "committedMemory": 11020928,
+        "capacity": 553120,
+        "used": 553120,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 174198784,
+        "committedMemory": 174198784,
+        "capacity": 172739976,
+        "used": 172739976,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 0,
+        "used": 0,
+        "available": 0
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 128.369,
+    "kernelCpuSeconds": 1.89189,
+    "cpuConsumptionPercent": 92.3834,
+    "maxRss": 1626390528,
+    "pageFaults": {
+      "IORequired": 0,
+      "IONotRequired": 675786
+    },
+    "fsActivity": {
+      "reads": 16,
+      "writes": 0
+    }
+  },
+  "uvthreadResourceUsage": {
+    "userCpuSeconds": 74.6924,
+    "kernelCpuSeconds": 0.805604,
+    "cpuConsumptionPercent": 53.5447,
+    "fsActivity": {
+      "reads": 16,
+      "writes": 0
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "npm_package_dependencies_email_validator": "^2.0.4",
+    "npm_package_dependencies_react_apollo": "2.5.5",
+    "npm_config_cache_lock_stale": "60000",
+    "npm_config_ham_it_up": "",
+    "npm_config_legacy_bundling": "",
+    "npm_config_sign_git_tag": "",
+    "MAIL": "/var/mail/s1nus",
+    "USER": "s1nus",
+    "npm_config_user_agent": "npm/6.7.0 node/v11.14.0 linux x64",
+    "npm_config_always_auth": "",
+    "npm_config_bin_links": "true",
+    "npm_config_key": "",
+    "npm_package_dependencies_react_dom_confetti": "^0.1.0",
+    "npm_package_devDependencies_gh_pages": "^2.0.1",
+    "npm_config_description": "true",
+    "npm_config_fetch_retries": "2",
+    "npm_config_heading": "npm",
+    "npm_config_init_version": "1.0.0",
+    "npm_config_allow_same_version": "",
+    "npm_config_if_present": "",
+    "npm_config_user": "",
+    "npm_node_execpath": "/usr/bin/node",
+    "GREP_COLOR": "1;33",
+    "SHLVL": "2",
+    "npm_config_prefer_online": "",
+    "npm_config_noproxy": "",
+    "HOME": "/home/s1nus",
+    "LESS": "-R",
+    "OLDPWD": "/home/s1nus/livepeer/livepeerjs/packages/explorer/public",
+    "npm_package_dependencies_apollo_link_error": "^1.1.1",
+    "npm_config_force": "",
+    "npm_package_build_mac_category": "public.app-category.developer-tools",
+    "npm_config_only": "",
+    "npm_config_read_only": "",
+    "LSCOLORS": "exfxcxdxbxegedabagacad",
+    "ZSH": "/home/s1nus/.oh-my-zsh",
+    "npm_package_dependencies_react_final_form_html5_validation": "^1.0.0",
+    "npm_package_scripts_build_electron": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 build",
+    "npm_config_cache_min": "10",
+    "npm_config_init_license": "ISC",
+    "PAGER": "less",
+    "npm_config_editor": "vi",
+    "npm_config_rollback": "true",
+    "npm_config_tag_version_prefix": "v",
+    "LC_CTYPE": "en_US.UTF-8",
+    "npm_package_dependencies_graphql_tag": "^2.8.0",
+    "npm_package_dependencies_react_feather": "^1.0.8",
+    "npm_package_dependencies_redux_thunk": "^2.2.0",
+    "npm_package_scripts_serve": "serve -s build",
+    "npm_config_cache_max": "Infinity",
+    "npm_config_userconfig": "/home/s1nus/.npmrc",
+    "npm_config_timing": "",
+    "npm_config_tmp": "/tmp",
+    "npm_config_engine_strict": "",
+    "npm_config_init_author_name": "",
+    "npm_config_init_author_url": "",
+    "npm_config_preid": "",
+    "COLORTERM": "truecolor",
+    "npm_package_dependencies_apollo_cache_inmemory": "1.5.1",
+    "npm_package_dependencies_react_router_dom": "^5.0.0",
+    "npm_package_dependencies_react_scripts": "^3.0.0",
+    "npm_package_dependencies_react_transition_group": "^4.0.0",
+    "npm_package_scripts_build_web": "react-scripts build",
+    "npm_package_description": "[![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX) [![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/explorer.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/explorer)",
+    "npm_config_depth": "Infinity",
+    "npm_config_package_lock_only": "",
+    "npm_config_save_dev": "",
+    "npm_config_usage": "",
+    "npm_package_dependencies__livepeer_graphql_sdk": "1.0.0-alpha.6",
+    "npm_package_readmeFilename": "README.md",
+    "npm_config_metrics_registry": "https://registry.npmjs.org/",
+    "npm_config_package_lock": "true",
+    "npm_config_progress": "true",
+    "npm_config_cafile": "",
+    "npm_config_otp": "",
+    "npm_config_https_proxy": "",
+    "npm_config_save_prod": "",
+    "MOZ_PLUGIN_PATH": "/usr/lib/mozilla/plugins",
+    "npm_package_scripts_postbuild": "cp build/index.html build/404.html",
+    "npm_package_devDependencies_electron_builder": "20.4.1",
+    "npm_config_audit": "true",
+    "npm_config_sso_type": "oauth",
+    "npm_config_cidr": "",
+    "npm_config_onload_script": "",
+    "LOGNAME": "s1nus",
+    "npm_package_dependencies_react_tooltip": "^3.5.0",
+    "npm_config_rebuild_bundle": "true",
+    "npm_config_shell": "/bin/zsh",
+    "npm_config_save_bundle": "",
+    "WINDOWID": "12582915",
+    "_": "/bin/npm",
+    "npm_package_private": "true",
+    "npm_package_dependencies_big_js": "^5.0.3",
+    "npm_package_dependencies_query_string": "^6.4.2",
+    "npm_package_dependencies_react_final_form": "^4.1.0",
+    "npm_package_dependencies_recompose": "^0.30.0",
+    "npm_package_build_productName": "Livepeer Protocol Explorer",
+    "npm_config_prefix": "/usr",
+    "npm_config_dry_run": "",
+    "npm_package_devDependencies_poosh_cli": "^2.0.0",
+    "npm_config_scope": "",
+    "npm_config_cache_lock_wait": "10000",
+    "npm_config_registry": "https://registry.npmjs.org/",
+    "npm_config_browser": "",
+    "npm_config_ignore_prepublish": "",
+    "npm_config_save_optional": "",
+    "npm_config_searchopts": "",
+    "npm_config_versions": "",
+    "ALACRITTY_LOG": "/tmp/Alacritty-1442.log",
+    "TERM": "alacritty",
+    "npm_package_dependencies_final_form": "^4.2.1",
+    "npm_config_cache": "/home/s1nus/.npm",
+    "npm_config_proxy": "",
+    "npm_config_send_metrics": "",
+    "npm_package_scripts_start": "cross-env PORT=3001 react-scripts start",
+    "npm_package_build_appId": "org.livepeer.livepeer-protocol-explorer",
+    "npm_config_global_style": "",
+    "npm_config_ignore_scripts": "",
+    "npm_config_version": "",
+    "LC_COLLATE": "C",
+    "WINDOWPATH": "1",
+    "npm_package_dependencies_apollo_link": "1.2.11",
+    "npm_package_dependencies_axios": "^0.18.0",
+    "npm_config_viewer": "man",
+    "npm_config_node_gyp": "/usr/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+    "npm_config_local_address": "",
+    "PATH": "/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/home/s1nus/livepeer/livepeerjs/packages/explorer/node_modules/.bin:/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/home/s1nus/livepeer/livepeerjs/packages/explorer/node_modules/.bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/texlive/2019/bin/x86_64-linux:/opt/texlive/2019/bin/x86_64-linux/:/opt/texlive/2019/bin/x86_64-linux/",
+    "NODE": "/usr/bin/node",
+    "npm_package_name": "@livepeer/explorer",
+    "npm_config_audit_level": "low",
+    "npm_config_prefer_offline": "",
+    "npm_package_dependencies_react_redux": "7.0.2",
+    "npm_package_dependencies_url_search_params_polyfill": "5.1.0",
+    "npm_package_build_directories_buildResources": "public",
+    "npm_package_devDependencies_flow_bin": "0.97.0",
+    "npm_config_color": "true",
+    "npm_config_sign_git_commit": "",
+    "DISPLAY": ":0",
+    "npm_package_scripts_eject": "react-scripts eject",
+    "npm_config_fetch_retry_mintimeout": "10000",
+    "npm_config_maxsockets": "50",
+    "npm_config_sso_poll_frequency": "500",
+    "npm_config_offline": "",
+    "DESKTOP_STARTUP_ID": "i3/alacritty/1428-2-s1nus-void_TIME29004",
+    "LANG": "en_US.UTF-8",
+    "npm_package_dependencies_react_dom": "^16.8.3",
+    "npm_package_dependencies_redux": "^4.0.1",
+    "npm_package_dependencies_redux_saga": "^1.0.2",
+    "npm_package_devDependencies_uglify_es": "^3.2.0",
+    "npm_config_umask": "0022",
+    "LS_COLORS": "di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:",
+    "XAUTHORITY": "/home/s1nus/.Xauthority",
+    "npm_package_main": "src/electron/main.js",
+    "npm_package_browserslist_0": ">0.2%",
+    "npm_config_loglevel": "silent",
+    "npm_config_fetch_retry_maxtimeout": "60000",
+    "npm_config_logs_max": "10",
+    "npm_config_message": "%s",
+    "npm_lifecycle_script": "react-scripts build",
+    "npm_package_scripts_test": "react-scripts test",
+    "npm_package_browserslist_1": "not dead",
+    "npm_config_ca": "",
+    "npm_config_cert": "",
+    "npm_config_global": "",
+    "npm_config_link": "",
+    "SHELL": "/bin/zsh",
+    "npm_package_version": "1.0.0-alpha.6",
+    "npm_package_scripts_build_desktop": "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:electron",
+    "npm_package_browserslist_2": "not ie <= 11",
+    "npm_config_save": "true",
+    "npm_config_unicode": "true",
+    "npm_config_access": "",
+    "npm_config_also": "",
+    "npm_lifecycle_event": "build:web",
+    "npm_package_dependencies_graphql": "^14.0.2",
+    "npm_package_scripts_build": "npm run -s build:web",
+    "npm_package_browserslist_3": "not op_mini all",
+    "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"--loglevel\",\"silent\",\"build:web\"],\"original\":[\"run\",\"-s\",\"build:web\"]}",
+    "npm_config_searchlimit": "20",
+    "npm_config_unsafe_perm": "true",
+    "npm_config_update_notifier": "true",
+    "npm_config_long": "",
+    "npm_config_production": "",
+    "npm_config_auth_type": "legacy",
+    "npm_config_node_version": "11.14.0",
+    "npm_config_tag": "latest",
+    "npm_package_dependencies_qrcode_react": "^0.1.16",
+    "npm_package_dependencies_rmwc": "1.6.2",
+    "npm_package_devDependencies_documentation": "^10.0.0",
+    "npm_config_git_tag_version": "true",
+    "npm_config_commit_hooks": "true",
+    "npm_config_shrinkwrap": "true",
+    "npm_config_script_shell": "",
+    "npm_config_fetch_retry_factor": "10",
+    "npm_config_strict_ssl": "true",
+    "npm_config_save_exact": "",
+    "npm_package_dependencies_unstated": "2.1.1",
+    "npm_package_scripts_coverage": "react-scripts test --env=jsdom --coverage",
+    "npm_config_globalconfig": "/usr/etc/npmrc",
+    "npm_config_init_module": "/home/s1nus/.npm-init.js",
+    "npm_config_dev": "",
+    "npm_config_parseable": "",
+    "JAVA_HOME": "/usr/lib/jvm/openjdk-1.8.0_202/jre",
+    "PWD": "/home/s1nus/livepeer/livepeerjs/packages/explorer",
+    "npm_package_dependencies_react_joyride": "^2.0.0-11",
+    "npm_config_globalignorefile": "/usr/etc/npmignore",
+    "npm_execpath": "/usr/lib/node_modules/npm/bin/npm-cli.js",
+    "KEYTIMEOUT": "10",
+    "npm_package_dependencies_apollo_client": "2.5.1",
+    "npm_package_scripts_copy_docs": "rm -rf ../../docs/explorer && mkdir ../../docs/explorer && cp docs/index.html ../../docs/explorer && cp README.md ../../docs/explorer",
+    "npm_package_devDependencies_electron": "^5.0.1",
+    "npm_config_cache_lock_retries": "10",
+    "npm_config_searchstaleness": "900",
+    "npm_package_dependencies_bn_js": "^4.11.8",
+    "npm_package_dependencies_react_final_form_hooks": "^1.0.1",
+    "npm_package_dependencies_styled_components": "4.2.0",
+    "npm_package_devDependencies_serve": "^11.0.0",
+    "npm_config_save_prefix": "^",
+    "npm_config_scripts_prepend_node_path": "warn-only",
+    "npm_config_node_options": "",
+    "npm_package_dependencies_web3": "github:ethereum/web3.js",
+    "npm_package_scripts_deploy": "poosh",
+    "npm_package_devDependencies_poosh_plugin_s3": "^2.0.0",
+    "npm_config_group": "1000",
+    "npm_config_init_author_email": "",
+    "npm_config_searchexclude": "",
+    "npm_config_git": "git",
+    "npm_config_optional": "true",
+    "INIT_CWD": "/home/s1nus/livepeer/livepeerjs/packages/explorer",
+    "npm_package_dependencies__livepeer_apollo": "1.0.0-alpha.6",
+    "npm_package_dependencies_react": "^16.8.3",
+    "npm_config_json": "",
+    "BABEL_ENV": "production",
+    "NODE_ENV": "production",
+    "REACT_APP_HTTP_PROVIDER": "",
+    "REACT_APP_GA_TRACKING_ID": "UA-111259858-1",
+    "REACT_APP_MAINNET_CONTROLLER_ADDRESS": "0xf96d54e490317c557a967abfa5d6e33006be69b3",
+    "REACT_APP_RINKEBY_CONTROLLER_ADDRESS": "0x37dC71366Ec655093b9930bc816E16e6b587F968",
+    "REACT_APP_LIVEPEER_SUBGRAPH": "https://graph.livepeer.org/subgraphs/name/livepeer",
+    "REACT_APP_LAMBDA_API": "",
+    "REACT_APP_GAS_PRICE_API": "https://ethgasstation.info/json/ethgasAPI.json",
+    "REACT_APP_ETHERSCAN_API_KEY": "",
+    "NODE_PATH": ""
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": 0,
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": 65536,
+      "hard": 65536
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 4096,
+      "hard": 4096
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": "unlimited"
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": 31648,
+      "hard": 31648
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "linux-vdso.so.1",
+    "/usr/lib/libdl.so.2",
+    "/usr/lib/libz.so.1",
+    "/usr/lib/libhttp_parser.so.2.9",
+    "/usr/lib/libllhttp.so.1",
+    "/usr/lib/libuv.so.1",
+    "/usr/lib/libcares.so.2",
+    "/usr/lib/libnghttp2.so.14",
+    "/usr/lib/libicui18n.so.63",
+    "/usr/lib/libicuuc.so.63",
+    "/usr/lib/librt.so.1",
+    "/usr/lib/libstdc++.so.6",
+    "/usr/lib/libm.so.6",
+    "/usr/lib/libgcc_s.so.1",
+    "/usr/lib/libpthread.so.0",
+    "/usr/lib/libc.so.6",
+    "/lib/ld-linux-x86-64.so.2",
+    "/usr/lib/libnsl.so.1",
+    "/usr/lib/libicudata.so.63"
+  ]
+}
