@@ -12,7 +12,7 @@ dataSources:
       abi: BondingManager
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.3
       language: wasm/assemblyscript
       file: ./mappings/bondingManager.ts
       entities:
@@ -24,30 +24,31 @@ dataSources:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
       eventHandlers:
-        - event: TranscoderUpdate(address,uint256,uint256,uint256,bool)
+        - event: TranscoderUpdate(indexed address,uint256,uint256,uint256,bool)
           handler: transcoderUpdated
-        - event: TranscoderResigned(address)
+        - event: TranscoderResigned(indexed address)
           handler: transcoderResigned
-        - event: TranscoderEvicted(address)
+        - event: TranscoderEvicted(indexed address)
           handler: transcoderEvicted
-        - event: TranscoderSlashed(address,address,uint256,uint256)
+        - event: TranscoderSlashed(indexed address,address,uint256,uint256)
           handler: transcoderSlashed
-        - event: Bond(address,address,address,uint256,uint256)
+        - event: Bond(indexed address,indexed address,indexed address,uint256,uint256)
           handler: bond
-        - event: Unbond(address,address,uint256,uint256,uint256)
+        - event: Unbond(indexed address,indexed address,uint256,uint256,uint256)
           handler: unbond
-        - event: Rebond(address,address,uint256,uint256)
+        - event: Rebond(indexed address,indexed address,uint256,uint256)
           handler: rebond
-        - event: Reward(address,uint256)
+        - event: Reward(indexed address,uint256)
           handler: reward
   - kind: ethereum/contract
     name: RoundsManager
+    network: mainnet
     source:
       address: "3984fc4ceeef1739135476f625d36d6c35c40dc3"
       abi: RoundsManager
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.3
       language: wasm/assemblyscript
       file: ./mappings/roundsManager.ts
       entities:
