@@ -94,7 +94,7 @@ export default stream => {
   for (const encode of enabledEncodes) {
     const { width, height, name, videoCodec } = encode
     if (videoCodec === 'PassThru') {
-      renditions[name] = `/stream/${stream.id}.m3u8`
+      renditions[name] = `/stream/${stream.id}/source.m3u8`
       continue
     }
     const wowzaSize = width * height
