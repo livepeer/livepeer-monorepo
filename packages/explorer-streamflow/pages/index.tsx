@@ -1,12 +1,13 @@
+/** @jsx jsx */
 import gql from "graphql-tag";
 import { useContext, useEffect, useState } from "react";
 import * as React from "react";
 import MetaMaskContext from "../lib/metamask";
 import PageTitle from "../components/PageTitle";
 import { useQuery } from "@apollo/react-hooks";
+import { jsx, Flex } from "theme-ui";
 import Reset from "../lib/reset";
-import { jsx, Layout, Header, Main, Container, Footer } from "theme-ui";
-import Test from "../components/Test";
+import Layout from "../components/Layout";
 import Table from "../components/Table";
 
 const GET_TRANSCODERS = require("../queries/transcoders.graphql");
@@ -21,19 +22,24 @@ export default () => {
 
   const { data, loading } = useQuery(GET_TRANSCODERS, {
     notifyOnNetworkStatusChange: true,
-    ssr: false
+    ssr: true
   });
 
   return (
     <Layout>
       <Reset />
-      <Main>
-        I am a sidebar
-        <Container>
-          {loading ? "Loading" : <Table transcoders={data.transcoders} />}
-        </Container>
-      </Main>
-      <Footer />
+      <Flex sx={{ marginTop: 5, width: "calc(100% - 268px)" }}>
+        {loading ? (
+          "Loading"
+        ) : (
+          <>
+            <Flex sx={{ width: "60%" }}>
+              <Table transcoders={data.transcoders} />
+            </Flex>
+            <Flex sx={{ width: "40%" }}>calculator</Flex>
+          </>
+        )}
+      </Flex>
     </Layout>
   );
 };
