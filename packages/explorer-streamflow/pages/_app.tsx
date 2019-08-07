@@ -19,8 +19,12 @@ class MyApp extends App<IProps> {
         <Head>
           <title>Livepeer Explorer</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          />
         </Head>
-        <MetaMaskContext.Provider immediate={true} value={null}>
+        <MetaMaskContext.Provider immediate={false} value={null}>
           <ApolloProvider client={apollo}>
             <ThemeProvider theme={theme}>
               <ColorMode />
