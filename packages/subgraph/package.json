@@ -9,11 +9,11 @@
     "build": "graph build subgraph.yaml",
     "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
     "build-wast": "graph build -t wast subgraph.yaml",
-    "deploy": "graph deploy subgraph.yaml --verbosity debug --node http://127.0.0.1:8020/ --ipfs /ip4/127.0.0.1/tcp/5001 --subgraph-name livepeer"
+    "deploy": "graph deploy livepeer --verbosity debug --node http://127.0.0.1:8020/ --ipfs http://127.0.0.1:5001 subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.12.0",
-    "@graphprotocol/graph-ts": "^0.12.0"
+    "@graphprotocol/graph-cli": "0.14.0",
+    "@graphprotocol/graph-ts": "0.14.0"
   },
   "workspaces": {
     "packages": [
@@ -25,3 +25,4 @@
     ]
   }
 }
+
