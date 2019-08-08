@@ -82,7 +82,11 @@ export default () => {
         name: lpSpace.name,
         description: lpSpace.description,
         url: lpSpace.website,
-        image: 'https://ipfs.infura.io/ipfs/' + lpSpace.image,
+        /*image: 'https://ipfs.infura.io/ipfs/' + lpSpace.image,*/
+        image:
+          lpSpace.image == ''
+            ? ''
+            : 'https://ipfs.infura.io/ipfs/' + lpSpace.image,
       })
     } else {
       setContent('empty_profile')
@@ -154,6 +158,7 @@ export default () => {
                   description={profile.description}
                   image={profile.image}
                   url={profile.url}
+                  address={web3.eth.defaultAccount}
                 />
                 <Button
                   onClick={async () => {
@@ -219,6 +224,8 @@ export default () => {
                     image,
                   )
                   console.log('done')
+                  console.log(prof.image)
+                  prof.image = 'https://ipfs.infura.io/ipfs/' + prof.image
                   setProfile(prof)
                   setContent('populated_profile')
                   //update()

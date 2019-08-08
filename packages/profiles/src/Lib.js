@@ -58,16 +58,21 @@ export const saveProfileToLivepeerSpace = async (
   url,
   image,
 ) => {
-  const formData = new window.FormData()
-  formData.append('path', image.current.files[0])
-  let resp
-  resp = await window.fetch('https://ipfs.infura.io:5001/api/v0/add', {
-    method: 'post',
-    'Content-Type': 'multipart/form-data',
-    body: formData,
-  })
-  const infuraResponse = await resp.json()
-  const hash = infuraResponse['Hash']
+  let hash
+  if (image.current.files[0] != undefined && image.current.files[0] != null) {
+    const formData = new window.FormData()
+    formData.append('path', image.current.files[0])
+    let resp
+    resp = await window.fetch('https://ipfs.infura.io:5001/api/v0/add', {
+      method: 'post',
+      'Content-Type': 'multipart/form-data',
+      body: formData,
+    })
+    const infuraResponse = await resp.json()
+    hash = infuraResponse['Hash']
+  } else {
+    hash = ''
+  }
   const box = await Box.openBox(address, window.web3.currentProvider)
   const boxSyncPromise = new Promise((resolve, reject) =>
     box.onSyncDone(resolve),
@@ -83,13 +88,14 @@ export const saveProfileToLivepeerSpace = async (
   await livepeerSpace.public.set('name', name)
   await livepeerSpace.public.set('description', desc)
   await livepeerSpace.public.set('website', url)
+  console.log(hash)
   await livepeerSpace.public.set('image', hash)
 
   return {
     name: name,
     description: desc,
     url: url,
-    image: 'https://ipfs.infura.io/ipfs/' + hash,
+    image: hash,
   }
 }
 
