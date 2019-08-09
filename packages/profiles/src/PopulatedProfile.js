@@ -9,12 +9,28 @@ export default ({ image, name, description, url, address }) => {
           console.log('image defined')
           console.log(image)
           return (
-            <img
-              style={{
-                width: '120px',
-              }}
-              src={image}
-            />
+            <>
+              <div
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  borderRadius: '50%',
+                }}
+              >
+                <img
+                  src={image}
+                  width={120}
+                  style={{
+                    display: 'inline',
+                    margin: '0 auto',
+                    height: '100%',
+                    width: 'auto',
+                  }}
+                />
+              </div>
+            </>
           )
         } else {
           console.log('image undefined')
