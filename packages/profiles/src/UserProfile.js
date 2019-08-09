@@ -155,6 +155,9 @@ export default () => {
                   address={web3.eth.defaultAccount}
                 />
                 <Button
+                  style={{
+                    marginTop: '10px',
+                  }}
                   onClick={async () => {
                     let lpSpace = await Box.getSpace(
                       window.web3.eth.defaultAccount,
@@ -235,7 +238,11 @@ export default () => {
             return null
         }
       })()}
+      <br />
       <Button
+        style={{
+          marginTop: '10px',
+        }}
         onClick={async () => {
           setContent('loading_animation')
           await resetProf(

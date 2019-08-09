@@ -17,6 +17,8 @@ export default ({ image, name, description, url, address }) => {
                   position: 'relative',
                   overflow: 'hidden',
                   borderRadius: '50%',
+                  display: 'block',
+                  margin: '0 auto',
                 }}
               >
                 <img

@@ -70,6 +70,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
     unbondedAmount = unbondlocks.reduce(reducer, 0)
   }
 
+  console.log('Hello there')
   return (
     <React.Fragment>
       {/*<InlineHint flag="account-overview">
@@ -84,8 +85,10 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
       >
         {(() => {
           if (account.data.id == window.web3.eth.defaultAccount) {
+            console.log('account address not equal to web3 address')
             return <UserProfile />
           } else {
+            console.log('account different')
             return <Profile address={account.data.id} />
           }
         })()}

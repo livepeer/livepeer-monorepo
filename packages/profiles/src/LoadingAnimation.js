@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import LoadingGif from './Ellipsis-3s-200px.gif'
 
 const LoadingAnimation = styled.img`
+  display: block;
   margin: 0 auto;
   width: 100px;
 `
