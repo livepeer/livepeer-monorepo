@@ -5,6 +5,17 @@ import Box from '3box'
 
 const ProfileForm = styled.div``
 
+const inputStyle = {
+  width: '90%',
+  marginTop: '10px',
+}
+
+const labelStyle = {
+  float: 'left',
+  marginLeft: '23px',
+  marginTop: '10px',
+}
+
 export default ({
   name = '',
   description = '',
@@ -53,35 +64,46 @@ export default ({
   const DefaultForm = () => {
     return (
       <div>
-        <label>Upload profile picture: </label>
+        <label style={labelStyle}>Upload profile picture: </label>
         <br />
-        <input type="file" ref={fileVal} />
+        <input style={inputStyle} type="file" ref={fileVal} />
         <br />
-        <label>Name: </label>
+        <label style={labelStyle}>Name: </label>
         <br />
-        <input type="text" ref={nameVal} defaultValue={name} />
+        <input
+          style={inputStyle}
+          type="text"
+          ref={nameVal}
+          defaultValue={name}
+        />
         <br />
-        <label>Bio / Description</label>
+        <label style={labelStyle}>Bio / Description</label>
         <br />
-        <textarea defaultValue={description} ref={descVal} />
+        <textarea style={inputStyle} defaultValue={description} ref={descVal} />
         <br />
-        <label>URL:</label>
+        <label style={labelStyle}>URL:</label>
         <br />
-        <input type="url" defaultValue={url} ref={urlVal} />
+        <input style={inputStyle} type="url" defaultValue={url} ref={urlVal} />
         <br />
-        <Button
-          onClick={() => {
-            saveAction(
-              nameVal.current.value,
-              descVal.current.value,
-              urlVal.current.value,
-              fileVal,
-            )
+        <div
+          style={{
+            marginTop: '10px',
           }}
         >
-          Save
-        </Button>
-        <Button onClick={cancelAction}>Cancel</Button>
+          <Button
+            onClick={() => {
+              saveAction(
+                nameVal.current.value,
+                descVal.current.value,
+                urlVal.current.value,
+                fileVal,
+              )
+            }}
+          >
+            Save
+          </Button>
+          <Button onClick={cancelAction}>Cancel</Button>
+        </div>
       </div>
     )
   }

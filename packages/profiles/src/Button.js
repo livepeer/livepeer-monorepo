@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const Button = styled.button`
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 16px 17px;
   margin: 0 8px;
   background-image: none !important;
   text-transform: uppercase;
@@ -12,8 +12,8 @@ const Button = styled.button`
   outline: none;
   border: none;
   cursor: pointer;
-  background: none;
-  color: #000;
+  background-color: black;
+  color: white;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
   :disabled {
     cursor: not-allowed;

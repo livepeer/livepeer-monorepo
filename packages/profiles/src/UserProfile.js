@@ -12,6 +12,7 @@ import PopulatedProfile from './PopulatedProfile'
 
 import ThreeBoxPrompt from './ThreeBoxPrompt'
 import SwitchDefaultProfile from './SwitchDefaultProfile'
+import ConnectImage from './connect.png'
 
 import {
   printHello,
@@ -21,7 +22,12 @@ import {
   resetProf,
 } from './Lib'
 
-const UserProfile = styled.div``
+const UserProfile = styled.div`
+  width: 70%;
+  display: block;
+  margin: 0 auto;
+  position: relative;
+`
 
 const InAlertBox = styled.div`
   margin: 0 auto;
@@ -156,7 +162,9 @@ export default () => {
                 />
                 <Button
                   style={{
-                    marginTop: '10px',
+                    position: 'absolute',
+                    top: 10,
+                    right: 0,
                   }}
                   onClick={async () => {
                     let lpSpace = await Box.getSpace(
@@ -239,7 +247,28 @@ export default () => {
         }
       })()}
       <br />
-      <Button
+      <div
+        style={{
+          display: 'block',
+          width: '60%',
+          margin: '10px auto',
+          padding: '8px',
+          borderRadius: '5px',
+          backgroundColor: '#EADEBA',
+        }}
+      >
+        <img
+          src={ConnectImage}
+          width={20}
+          style={{
+            marginLeft: '3px',
+            marginRight: '3px',
+          }}
+        />
+        Connect External Transcoder Account
+      </div>
+      <br />
+      {/*<Button
         style={{
           marginTop: '10px',
         }}
@@ -254,7 +283,7 @@ export default () => {
         }}
       >
         Reset
-      </Button>
+      </Button>*/}
     </UserProfile>
   )
 }
