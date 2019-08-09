@@ -47,27 +47,23 @@ export default () => {
   const [profile, setProfile] = useState(0)
 
   const update = async () => {
-    console.log('Update called')
     if (window.web3.eth.defaultAccount != undefined) {
       setAccount(window.web3.eth.defaultAccount)
     } else {
       setAccount('Loading...')
     }
-    console.log('checking...')
     /* Taking out the cached spaces stuff because it was causing problems.
      * It's conceavable that 3box already has some kind of caching system
      */
     //let lpSpace = await getSpace(window.web3.eth.defaultAccount)
     //let lpSpace = await Box.getSpace(window.web3.eth.defaultAccount, 'livepeer')
     let lpSpace = await Box.getSpace(window.web3.eth.defaultAccount, 'livepeer')
-    console.log(lpSpace)
     if (lpSpace.defaultProfile == '3box') {
       setContent('loading_animation')
       let boxProfile = await Box.getProfile(
         window.web3.eth.defaultAccount,
         window.web3.currentProvider,
       )
-      console.log(boxProfile)
       setProfile({
         name: boxProfile.name,
         description: boxProfile.description,
@@ -93,7 +89,6 @@ export default () => {
     }
   }
   useEffect(() => {
-    console.log('Use Effect triggered')
     update()
     web3.currentProvider.publicConfigStore.addListener('update', update)
     return () => {
@@ -127,7 +122,6 @@ export default () => {
               window.web3.eth.defaultAccount,
               window.web3.currentProvider,
             )
-            console.log(boxProfile)
             setProfile({
               name: boxProfile.name,
               description: boxProfile.description,
@@ -173,7 +167,6 @@ export default () => {
                         window.web3.eth.defaultAccount,
                         web3.currentProvider,
                       ).then(p => {
-                        console.log(p)
                         if (p.name != undefined) {
                           setPopupOpen(true)
                         }
@@ -197,7 +190,6 @@ export default () => {
                     window.web3.eth.defaultAccount,
                     web3.currentProvider,
                   ).then(p => {
-                    console.log(p)
                     if (p.name != undefined) {
                       setPopupOpen(true)
                     }
@@ -223,9 +215,12 @@ export default () => {
                     url,
                     image,
                   )
-                  console.log('done')
-                  console.log(prof.image)
-                  prof.image = 'https://ipfs.infura.io/ipfs/' + prof.image
+                  console.log('Appears to have finished saving')
+                  console.log('Profile:')
+                  console.log(prof)
+                  if (prof.image != '') {
+                    prof.image = 'https://ipfs.infura.io/ipfs/' + prof.image
+                  }
                   setProfile(prof)
                   setContent('populated_profile')
                   //update()
@@ -247,7 +242,6 @@ export default () => {
             window.web3.eth.defaultAccount,
             window.web3.currentProvider,
           )
-          console.log('done')
           setContent('empty_profile')
           //update()
         }}
