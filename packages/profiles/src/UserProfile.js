@@ -238,16 +238,27 @@ export default () => {
             return (
               <EmptyProfile
                 address={window.web3.eth.defaultAccount}
-                setupAction={() => {
-                  Box.getProfile(
+                setupAction={async () => {
+                  setContent('loading_animation')
+                  console.log('we getting space')
+                  let livepeerSpace
+                  const box = await Box.openBox(
                     window.web3.eth.defaultAccount,
-                    web3.currentProvider,
-                  ).then(p => {
-                    if (p.name != undefined) {
-                      setPopupOpen(true)
-                    }
+                    window.web3.currentProvider,
+                  )
+                  const boxSyncPromise = new Promise((resolve, reject) =>
+                    box.onSyncDone(resolve),
+                  )
+                  const spaceSyncPromise = new Promise((resolve, reject) => {
+                    livepeerSpace = box.openSpace('livepeer', {
+                      onSyncDone: resolve,
+                    })
                   })
+                  await boxSyncPromise
+                  await spaceSyncPromise
+                  livepeerSpace = await livepeerSpace
                   setContent('profile_form')
+                  livepeerSpace = null
                 }}
               />
             )
@@ -319,7 +330,7 @@ export default () => {
         </div>
       </a>
       <br />
-      {/*<Button
+      <Button
         style={{
           marginTop: '10px',
         }}
@@ -334,7 +345,7 @@ export default () => {
         }}
       >
         Reset
-      </Button>*/}
+      </Button>
     </UserProfile>
   )
 }

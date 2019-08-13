@@ -57,6 +57,7 @@ export const saveProfileToLivepeerSpace = async (
   desc,
   url,
   image,
+  space = null,
 ) => {
   let hash
   if (image.current.files[0] != undefined && image.current.files[0] != null) {
@@ -73,17 +74,21 @@ export const saveProfileToLivepeerSpace = async (
   } else {
     hash = ''
   }
-  const box = await Box.openBox(address, window.web3.currentProvider)
-  const boxSyncPromise = new Promise((resolve, reject) =>
-    box.onSyncDone(resolve),
-  )
   let livepeerSpace
-  const spaceSyncPromise = new Promise((resolve, reject) => {
-    livepeerSpace = box.openSpace('livepeer', { onSyncDone: resolve })
-  })
-  await boxSyncPromise
-  await spaceSyncPromise
-  livepeerSpace = await livepeerSpace
+  if (space == null || space == undefined) {
+    const box = await Box.openBox(address, window.web3.currentProvider)
+    const boxSyncPromise = new Promise((resolve, reject) =>
+      box.onSyncDone(resolve),
+    )
+    const spaceSyncPromise = new Promise((resolve, reject) => {
+      livepeerSpace = box.openSpace('livepeer', { onSyncDone: resolve })
+    })
+    await boxSyncPromise
+    await spaceSyncPromise
+    livepeerSpace = await livepeerSpace
+  } else {
+    livepeerSpace = space
+  }
   await livepeerSpace.public.set('defaultProfile', 'livepeer')
   await livepeerSpace.public.set('name', name)
   await livepeerSpace.public.set('description', desc)
