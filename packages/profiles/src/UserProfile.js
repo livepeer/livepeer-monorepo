@@ -48,6 +48,7 @@ export default () => {
   const [account, setAccount] = useState('Loading...')
   const [popupOpen, setPopupOpen] = useState(false)
   const [editPopupOpen, setEditPopupOpen] = useState(false)
+  const [linkPopupOpen, setLinkPopupOpen] = useState(false)
   const [editProfileType, setEditProfileType] = useState(false)
   const [content, setContent] = useState('loading')
   const [profile, setProfile] = useState(0)
@@ -145,6 +146,47 @@ export default () => {
       </Popup>
       <Popup open={editPopupOpen}>
         <SwitchDefaultProfile currentProf={editProfileType} />
+      </Popup>
+      <Popup
+        open={linkPopupOpen}
+        onClose={() => {
+          setLinkPopupOpen(false)
+        }}
+      >
+        <>
+          <h3>Connect External Transcoder Account</h3>
+          This action is required for transcoders that wish to use their profile
+          with an external{' '}
+          <span style={{ fontFamily: 'Courier' }}>livepeer-cli</span> account.
+          <ol>
+            <li>Copy and enter this command into your livepeer-cli</li>
+            <br />
+            <div
+              style={{
+                backgroundColor: 'black',
+                color: 'limegreen',
+                display: 'block',
+                margin: '0 auto',
+                width: '70%',
+              }}
+            >
+              $ livepeer-cli link-profile &lt;did&gt;
+            </div>
+            <br />
+            <li>Paste the hex signature output here.</li>
+          </ol>
+          <input type="text" />
+          <br />
+          <div
+            style={{
+              marginTop: '10px',
+              padding: '0',
+            }}
+          >
+            <Button>Cancel</Button>
+            <Button>Connect Account</Button>
+          </div>
+        </>
       </Popup>
       <br />
       {(() => {
@@ -247,26 +289,35 @@ export default () => {
         }
       })()}
       <br />
-      <div
-        style={{
-          display: 'block',
-          width: '60%',
-          margin: '10px auto',
-          padding: '8px',
-          borderRadius: '5px',
-          backgroundColor: '#EADEBA',
+      <a
+        onClick={() => {
+          setLinkPopupOpen(true)
         }}
       >
-        <img
-          src={ConnectImage}
-          width={20}
+        <div
           style={{
-            marginLeft: '3px',
-            marginRight: '3px',
+            textDecoration: 'none',
+            color: 'black',
+            cursor: 'pointer',
+            display: 'block',
+            width: '60%',
+            margin: '10px auto',
+            padding: '8px',
+            borderRadius: '5px',
+            backgroundColor: '#EADEBA',
           }}
-        />
-        Connect External Transcoder Account
-      </div>
+        >
+          <img
+            src={ConnectImage}
+            width={20}
+            style={{
+              marginLeft: '3px',
+              marginRight: '3px',
+            }}
+          />
+          Connect External Transcoder Account
+        </div>
+      </a>
       <br />
       {/*<Button
         style={{
