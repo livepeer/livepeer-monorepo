@@ -251,7 +251,6 @@ export default () => {
                 address={window.web3.eth.defaultAccount}
                 setupAction={async () => {
                   setContent('loading_animation')
-                  console.log('we getting space')
                   const prof = await Box.getProfile(
                     window.web3.eth.defaultAccount,
                     window.web3.currentProvider,

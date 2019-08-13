@@ -32,16 +32,21 @@ export const getProfile = async (address, provider) => {
 }
 
 export const resetProf = async (address, provider) => {
+  console.log('resetProf called')
+  console.log('step one: get box')
   const box = await Box.openBox(address, window.web3.currentProvider)
+  console.log('step two: get boxsyncpromise')
   const boxSyncPromise = new Promise((resolve, reject) =>
     box.onSyncDone(resolve),
   )
   let livepeerSpace
+  console.log('step three: get spacesync promise')
   const spaceSyncPromise = new Promise((resolve, reject) => {
     livepeerSpace = box.openSpace('livepeer', { onSyncDone: resolve })
   })
   await boxSyncPromise
   await spaceSyncPromise
+  console.log('step four: promises done, now to save stuff')
   livepeerSpace = await livepeerSpace
   await livepeerSpace.public.remove('defaultProfile')
   await livepeerSpace.public.remove('name')
