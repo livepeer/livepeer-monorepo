@@ -76,7 +76,11 @@ export default () => {
         description: boxProfile.description,
         url: boxProfile.website,
         image:
-          'https://ipfs.infura.io/ipfs/' + boxProfile.image[0].contentUrl['/'],
+          boxProfile.image == undefined
+            ? ''
+            : boxProfile.image +
+              'https://ipfs.infura.io/ipfs/' +
+              boxProfile.image[0].contentUrl['/'],
       })
       setContent('populated_profile')
     } else if (lpSpace.defaultProfile == 'livepeer') {
@@ -94,6 +98,9 @@ export default () => {
     } else {
       setContent('empty_profile')
     }
+    /*let box = await Box.openBox(window.web3.eth.defaultAccount)
+	console.log("DID:")
+	console.log(box)*/
   }
   useEffect(() => {
     update()
@@ -134,12 +141,16 @@ export default () => {
               description: boxProfile.description,
               url: boxProfile.website,
               image:
-                'https://ipfs.infura.io/ipfs/' +
-                boxProfile.image[0].contentUrl['/'],
+                boxProfile.image == undefined ||
+                boxProfile.image[0] == undefined
+                  ? ''
+                  : 'https://ipfs.infura.io/ipfs/' +
+                    boxProfile.image[0].contentUrl['/'],
             })
             setContent('populated_profile')
           }}
           createNewAction={() => {
+            setContent('profile_form')
             setPopupOpen(false)
           }}
         />
@@ -170,7 +181,7 @@ export default () => {
                 width: '70%',
               }}
             >
-              $ livepeer-cli link-profile &lt;did&gt;
+              $ livepeer-cli link-profile &lt; &gt;
             </div>
             <br />
             <li>Paste the hex signature output here.</li>
@@ -241,24 +252,33 @@ export default () => {
                 setupAction={async () => {
                   setContent('loading_animation')
                   console.log('we getting space')
-                  let livepeerSpace
-                  const box = await Box.openBox(
+                  const prof = await Box.getProfile(
                     window.web3.eth.defaultAccount,
                     window.web3.currentProvider,
                   )
-                  const boxSyncPromise = new Promise((resolve, reject) =>
-                    box.onSyncDone(resolve),
-                  )
-                  const spaceSyncPromise = new Promise((resolve, reject) => {
-                    livepeerSpace = box.openSpace('livepeer', {
-                      onSyncDone: resolve,
+                  if (prof.name != undefined) {
+                    setPopupOpen(true)
+                    setContent('empty_profile')
+                  } else {
+                    let livepeerSpace
+                    const box = await Box.openBox(
+                      window.web3.eth.defaultAccount,
+                      window.web3.currentProvider,
+                    )
+                    const boxSyncPromise = new Promise((resolve, reject) =>
+                      box.onSyncDone(resolve),
+                    )
+                    const spaceSyncPromise = new Promise((resolve, reject) => {
+                      livepeerSpace = box.openSpace('livepeer', {
+                        onSyncDone: resolve,
+                      })
                     })
-                  })
-                  await boxSyncPromise
-                  await spaceSyncPromise
-                  livepeerSpace = await livepeerSpace
-                  setContent('profile_form')
-                  livepeerSpace = null
+                    await boxSyncPromise
+                    await spaceSyncPromise
+                    livepeerSpace = await livepeerSpace
+                    setContent('profile_form')
+                    livepeerSpace = null
+                  }
                 }}
               />
             )
