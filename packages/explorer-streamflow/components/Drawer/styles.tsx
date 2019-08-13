@@ -12,17 +12,17 @@ export const StyledLink = (props: any) => (
       alignItems: "center",
       p: 3,
       fontWeight: "bold",
-      backgroundColor: !props.i ? "rgba(107, 230, 145, .1)" : "transparent",
-      borderRadius: 4,
+      backgroundColor: "transparent",
+      borderRadius: 1000,
       mb: 2,
-      transition: "backgroundColor .3s, color .3s",
+      transition: "background-color .2s, color .2s",
       ":nth-last-of-type": {
         mb: 0
       },
       ":hover": {
         backgroundColor: "rgba(107, 230, 145, .1)",
         color: "primary",
-        transition: "backgroundColor .3s, color .3s"
+        transition: "background-color .2s, color .2s"
       }
     }}
   >

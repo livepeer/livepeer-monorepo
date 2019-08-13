@@ -3,8 +3,10 @@ import * as Utils from "web3-utils";
 import { Flex } from "rebass";
 import MaterialTable, { MTableToolbar, MTableCell } from "material-table";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { useThemeUI } from "theme-ui";
+import { Styled, useThemeUI } from "theme-ui";
 import Orchestrators from "../../static/img/orchestrators.svg";
+import QRCode from "qrcode.react";
+import { AvatarGroup } from "./styles";
 
 export default ({ transcoders }) => {
   const context = useThemeUI();
@@ -35,25 +37,55 @@ export default ({ transcoders }) => {
     },
     overrides: {
       MuiToolbar: {
+        regular: {
+          paddingRight: "0",
+          paddingLeft: "0",
+          minHeight: "initial",
+          width: "100%",
+          ["@media (min-width: 600px)"]: {
+            minHeight: "initial"
+          },
+          ["@media (min-width: 0px) and (orientation: landscape)"]: {
+            minHeight: "initial"
+          }
+        }
+      },
+      MuiInput: {
+        underline: {
+          "&:before": {
+            borderBottom: "1px solid rgba(255, 255, 255, 0.42)"
+          }
+        }
+      },
+      MuiTableRow: {
         root: {
-          paddingRight: "0 !important",
-          paddingLeft: "0 !important",
-          minHeight: "initial !important"
+          "&:hover": {
+            backgroundColor: "rgba(107, 230, 145, .1)",
+            transition: "background-color .2s, color .2s"
+          }
+        },
+        footer: {
+          "&:hover": {
+            backgroundColor: "initial"
+          }
         }
       },
       MuiTableCell: {
         root: {
           borderBottom: 0,
-          padding: "14px 40px 14px 40px",
+          padding: "14px 20px 14px 20px",
           "&:first-child": {
-            paddingLeft: 64
+            paddingLeft: 32
           },
           "&:last-child": {
-            paddingRight: 64
+            paddingRight: 32
           }
         }
       },
       MuiPaper: {
+        root: {
+          width: "100%"
+        },
         elevation2: {
           boxShadow: "none"
         }
@@ -62,7 +94,7 @@ export default ({ transcoders }) => {
   });
 
   const Toolbar = (props: any) => (
-    <Flex px={5} alignItems="center">
+    <Flex px={4} alignItems="center">
       <Orchestrators
         style={{
           color: context.theme.colors.primary,
@@ -78,6 +110,23 @@ export default ({ transcoders }) => {
   const Cell = (props: any) => {
     let cellValue: any;
     switch (props.columnDef.field) {
+      case "id":
+        cellValue = (
+          <AvatarGroup>
+            <QRCode
+              style={{
+                borderRadius: 1000,
+                width: 32,
+                height: 32,
+                marginRight: 10
+              }}
+              fgColor={`#${props.value.substr(2, 6)}`}
+              value={props.value}
+            />
+            {props.value.substring(0, 10)}...
+          </AvatarGroup>
+        );
+        break;
       case "totalStake":
         cellValue = (+parseFloat(Utils.fromWei(props.value)).toFixed(
           2
@@ -100,6 +149,10 @@ export default ({ transcoders }) => {
       <MaterialTable
         columns={[
           {
+            title: "Name",
+            field: "id"
+          },
+          {
             title: "Fee Cut",
             field: "feeShare"
           },
@@ -108,7 +161,7 @@ export default ({ transcoders }) => {
             field: "rewardCut"
           },
           {
-            title: "Total Stake",
+            title: "Stake",
             field: "totalStake"
           }
         ]}
@@ -116,8 +169,12 @@ export default ({ transcoders }) => {
         title="ORCHESTRATORS"
         options={{
           doubleHorizontalScroll: true,
-          pageSize: 10,
-          search: false
+          paging: false,
+          search: true,
+          draggable: false,
+          showTextRowsSelected: false,
+          headerStyle: { position: "sticky", top: 0 },
+          maxBodyHeight: "calc(100vh - 126px)"
         }}
         components={{
           Toolbar: props => <Toolbar {...props} />,

@@ -4,6 +4,9 @@ import { Global } from '@emotion/core'
 const Reset = () =>
   React.createElement(Global, {
     styles: {
+      '*': {
+        boxSizing: 'border-box'
+      },
       body: {
         margin: '0',
       },
