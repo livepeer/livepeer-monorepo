@@ -15,20 +15,23 @@ const items = [
 ];
 export default () => {
   return (
-    <Flex sx={{ width: 268, flexDirection: "column", height: "100vh" }}>
+    <Flex sx={{ width: 256, flexDirection: "column", height: "100vh" }}>
       <Flex
         sx={{
           flexDirection: "column",
           alignItems: "center",
           height: "100%",
-          width: 268,
+          width: 256,
           borderRight: "1px solid",
           borderColor: "grey.8",
-          marginTop: 5
+          paddingTop: 5
         }}
       >
         <Box>
-          <Styled.img sx={{ mb: 5 }} src="/static/img/logo.svg" />
+          <Styled.img
+            sx={{ pl: 3, width: 130, mb: 4 }}
+            src="/static/img/logo.svg"
+          />
           <Box>
             {items.map((item, i) => (
               <StyledLink key={i} i={i}>

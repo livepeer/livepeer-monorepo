@@ -9,6 +9,7 @@ import { jsx, Flex } from "theme-ui";
 import Reset from "../lib/reset";
 import Layout from "../components/Layout";
 import Table from "../components/Table";
+import ROICalculator from "../components/ROICalculator";
 
 const GET_TRANSCODERS = require("../queries/transcoders.graphql");
 
@@ -28,15 +29,27 @@ export default () => {
   return (
     <Layout>
       <Reset />
-      <Flex sx={{ marginTop: 5, width: "calc(100% - 268px)" }}>
+      <Flex sx={{ width: "calc(100% - 256px)" }}>
         {loading ? (
           "Loading"
         ) : (
           <>
-            <Flex sx={{ width: "60%" }}>
+            <Flex sx={{ paddingTop: 5, width: "calc(100% - 472px)" }}>
               <Table transcoders={data.transcoders} />
             </Flex>
-            <Flex sx={{ width: "40%" }}>calculator</Flex>
+            <Flex
+              sx={{
+                paddingTop: 5,
+                backgroundColor: "#1E2026",
+                maxWidth: 472,
+                position: "absolute",
+                right: 0,
+                height: "100%",
+                width: "40%"
+              }}
+            >
+              <ROICalculator />
+            </Flex>
           </>
         )}
       </Flex>

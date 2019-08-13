@@ -8,3 +8,8 @@ export const CardRow = styled.div({
     marginBottom: 0
   }
 });
+
+export const AvatarGroup = styled.div({
+  display: "flex",
+  alignItems: "center"
+});

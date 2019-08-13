@@ -16,7 +16,7 @@ const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
     body: 'Akkurat, sans-serif',
-    heading: '"Akkurat-Bold", sans-serif',
+    heading: '"Akkurat", sans-serif',
     monospace: 'Akkurat-Mono, monospace'
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
@@ -33,7 +33,6 @@ const theme = {
     text: '#fff',
     background: '#131418',
     primary: '#6BE691',
-
     accent: '#6BE691',
     muted: greyArr[4],
     grey: greyArr,
