@@ -1098,7 +1098,7 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-jsx" "^7.2.0"
 
-"@babel/plugin-transform-react-jsx@^7.0.0", "@babel/plugin-transform-react-jsx@^7.0.0 <7.4.0":
+"@babel/plugin-transform-react-jsx@^7.0.0", "@babel/plugin-transform-react-jsx@^7.0.0 <7.4.0", "@babel/plugin-transform-react-jsx@^7.3.0":
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.3.0.tgz#f2cab99026631c767e2745a5368b331cfe8f5290"
   integrity sha512-a/+aRb7R06WcKvQLOu4/TpjKOdvVEKRLWFpKcNuHhiREPgGRB4TQJxq07+EZLS8LFVYpfq1a5lDUnuMdcCpBKg==
@@ -2866,7 +2866,7 @@
   dependencies:
     "@babel/runtime" "^7.2.0"
 
-"@material-ui/pickers@^3.2.2":
+"@material-ui/pickers@^3.0.0":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@material-ui/pickers/-/pickers-3.2.2.tgz#9b7a67f5a8f21f8183853ebc1848e5d8dd680d4c"
   integrity sha512-on/J1yyKeJ4CkLnItpf/jPDKMZVWvHDklkh5FS7wkZ0s1OPoqTsPubLWfA7eND6xREnVRyLFzVTlE3VlWYdQWw==
@@ -6930,17 +6930,7 @@ concat-stream@1.6.2, concat-stream@^1.5.0, concat-stream@^1.6.0, concat-stream@~
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concat-stream@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-2.0.0.tgz#414cf5af790a48c60ab9be4527d56d5e41133cb1"
-  integrity sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==
-  dependencies:
-    buffer-from "^1.0.0"
-    inherits "^2.0.3"
-    readable-stream "^3.0.2"
-    typedarray "^0.0.6"
-
-"concat-stream@github:hugomrdias/concat-stream#feat/smaller":
+concat-stream@^2.0.0, "concat-stream@github:hugomrdias/concat-stream#feat/smaller":
   version "2.0.0"
   resolved "https://codeload.github.com/hugomrdias/concat-stream/tar.gz/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034"
   dependencies:
@@ -14798,13 +14788,13 @@ material-components-web@^0.35.1:
     "@material/top-app-bar" "^0.35.2"
     "@material/typography" "^0.35.0"
 
-material-table@^1.48.0:
-  version "1.48.0"
-  resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.48.0.tgz#3a4baffc915ffd700caf26cb3b272e238cc9cfe1"
-  integrity sha512-OXI8gotPGtFtcSLLXkFzrmPMO8DK5irUd24vq+siTwYPp+kInOM1T5Vrb/pqbR6wQOA2bgWTmwxKGe4GZ1xVcw==
+material-table@1.47.0:
+  version "1.47.0"
+  resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.47.0.tgz#756d2af191cd0fb291eb29e99bdb07a4ade764cc"
+  integrity sha512-Kx9IyMcatw4GeTB9hEUayA/AFIYb6ut62Asf1qK0OCXeAFf+PYB3vReYKNPk1FgnXY7EsxtNtrcmuGVdnBdHrQ==
   dependencies:
     "@date-io/date-fns" "^1.1.0"
-    "@material-ui/pickers" "^3.2.2"
+    "@material-ui/pickers" "^3.0.0"
     classnames "^2.2.6"
     date-fns "^2.0.0-alpha.27"
     debounce "^1.2.0"
@@ -18806,12 +18796,25 @@ react-floater@^0.6.5:
     react-proptype-conditional-require "^1.0.4"
     tree-changes "^0.4.0"
 
+react-from-dom@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/react-from-dom/-/react-from-dom-0.2.3.tgz#33f176684daa518cf083a527805830a87bce9574"
+  integrity sha512-ApFBEi/Ksd9d4X51EP9xwmLz+hJvizw/voBfXhIY696Oy7GmkC5uIOjddYJ3i12xEDRxPmIMzOjiVdEXVGaH2w==
+
 react-icons@*, react-icons@^3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-3.7.0.tgz#64fe46231fabfeea27895edeae6c3b78114b8c8f"
   integrity sha512-7MyPwjIhuyW0D2N3s4DEd0hGPGFf0sK+IIRKhc1FvSpZNVmnUoGvHbmAwzGJU+3my+fvihVWgwU5SDtlAri56Q==
   dependencies:
     camelcase "^5.0.0"
+
+react-inlinesvg@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/react-inlinesvg/-/react-inlinesvg-1.1.5.tgz#5208a5d990891f35fd5a4a676014fa8351e0da00"
+  integrity sha512-5BQD1910ZhSjfwiqC0L/M1NSCsiB7DJN2uVQOZwmhou70JRhEeK48GU88/WgAFhBbNjuIq8bgkajCuvdNhjjLA==
+  dependencies:
+    exenv "^1.2.2"
+    react-from-dom "^0.2.3"
 
 react-input-autosize@^2.2.1:
   version "2.2.1"
@@ -22164,7 +22167,7 @@ typescript-tuple@^2.1.0:
   dependencies:
     typescript-compare "^0.0.2"
 
-typescript@^3.2.2, typescript@^3.5.1:
+typescript@^3.2.2, typescript@^3.5.3:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.3.tgz#c830f657f93f1ea846819e929092f5fe5983e977"
   integrity sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==
