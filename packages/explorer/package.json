@@ -47,7 +47,7 @@
     "build": "npm run -s build:web",
     "build:desktop": "PUBLIC_URL=./ npm run -s build:web && rm -rf dist && npm run -s build:electron",
     "build:electron": "ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=1 build",
-    "build:web": "react-scripts build",
+    "build:web": "react-scripts --max_old_space_size=4096 build",
     "copy-docs": "rm -rf ../../docs/explorer && mkdir ../../docs/explorer && cp docs/index.html ../../docs/explorer && cp README.md ../../docs/explorer",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "deploy": "poosh",

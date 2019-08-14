@@ -16,7 +16,7 @@
     "clean": "lerna clean --yes && rm -rf node_modules",
     "cz": "git-cz",
     "coverage": "lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
-    "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
+    "depcheck": "lerna exec --no-sort --stream 'depcheck --specials=bin --ignores='babel-*' .'",
     "docs": "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
     "prepare": "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
     "release:dry-run": "lerna publish --exact --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
