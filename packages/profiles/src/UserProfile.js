@@ -78,8 +78,7 @@ export default () => {
         image:
           boxProfile.image == undefined
             ? ''
-            : boxProfile.image +
-              'https://ipfs.infura.io/ipfs/' +
+            : 'https://ipfs.infura.io/ipfs/' +
               boxProfile.image[0].contentUrl['/'],
       })
       setContent('populated_profile')
@@ -104,10 +103,10 @@ export default () => {
   }
   useEffect(() => {
     update()
-    web3.currentProvider.publicConfigStore.addListener('update', update)
+    /*web3.currentProvider.publicConfigStore.addListener('update', update)
     return () => {
       web3.currentProvider.publicConfigStore.removeListener('update', update)
-    }
+    }*/
   }, [account])
 
   return (
