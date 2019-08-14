@@ -6,12 +6,7 @@ import Button from '../Button'
 import Tooltip from '../Tooltip'
 import TranscoderStat from '../TranscoderStat'
 import type { TranscoderCardProps } from './props'
-import Box from '3box'
 import { BoxInfo } from '@livepeer/profiles'
-
-const blocklist = address => {
-  return false
-}
 
 /** Used when displaying Transcoder struct data in a list */
 const TranscoderCard: React.ComponentType<TranscoderCardProps> = styled(

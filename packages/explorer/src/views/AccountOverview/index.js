@@ -84,7 +84,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
         }}
       >
         {(() => {
-          if (account.data.id == window.web3.eth.defaultAccount) {
+          if (account.data.id === window.web3.eth.defaultAccount) {
             console.log('account address not equal to web3 address')
             return <UserProfile />
           } else {
