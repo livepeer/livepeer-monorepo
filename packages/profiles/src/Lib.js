@@ -63,6 +63,7 @@ export const saveProfileToLivepeerSpace = async (
   url,
   image,
   space = null,
+  _oldPic = null,
 ) => {
   let hash
   if (image.current.files[0] != undefined && image.current.files[0] != null) {
@@ -99,8 +100,12 @@ export const saveProfileToLivepeerSpace = async (
   await livepeerSpace.public.set('description', desc)
   await livepeerSpace.public.set('website', url)
   console.log(hash)
-  await livepeerSpace.public.set('image', hash)
-
+  if (hash != '') {
+    await livepeerSpace.public.set('image', hash)
+  }
+  if (hash == '' && _oldPic != null && _oldPic != '') {
+    hash = _oldPic.split('/')[_oldPic.split('/').length - 1]
+  }
   return {
     name: name,
     description: desc,

@@ -288,6 +288,7 @@ export default () => {
             return (
               <ProfileForm
                 saveAction={async (name, desc, url, image) => {
+                  const oldPic = profile.image
                   setContent('loading_animation')
                   const prof = await saveProfileToLivepeerSpace(
                     window.web3.eth.defaultAccount,
@@ -296,6 +297,8 @@ export default () => {
                     desc,
                     url,
                     image,
+                    null,
+                    oldPic,
                   )
                   console.log('Appears to have finished saving')
                   console.log('Profile:')
