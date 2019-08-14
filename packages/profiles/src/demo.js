@@ -11,7 +11,7 @@ import BoxAvatar from './BoxAvatar'
 import BoxInfo from './BoxInfo'
 import Metatest from './Metatest'
 
-const element = <Metatest />
+const element = <UserProfile />
 //const element = <BoxInfo id={window.web3.eth.defaultAccount} />
 //const element = <Profile address={window.web3.eth.defaultAccount} />
 ReactDOM.render(element, document.querySelector('#react-div'))
