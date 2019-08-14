@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@types/graphql": "^14.2.0",
     "@types/next": "^6.1.7",
     "@types/node": "^12.6.8",
@@ -17,7 +18,7 @@
     "@types/styled-jsx": "^2.2.8",
     "babel-plugin-inline-react-svg": "^1.1.0",
     "babel-plugin-styled-system": "^0.0.5",
-    "typescript": "^3.5.1"
+    "typescript": "^3.5.3"
   },
   "license": "ISC",
   "dependencies": {
@@ -47,7 +48,7 @@
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.4",
     "isomorphic-unfetch": "^3.0.0",
-    "material-table": "^1.48.0",
+    "material-table": "1.47.0",
     "next": "^9.0.3",
     "next-mui-helper": "3.0.2",
     "next-transpile-modules": "^2.3.1",
@@ -56,6 +57,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-icons": "^3.7.0",
+    "react-inlinesvg": "^1.1.5",
     "react-select": "^3.0.3",
     "rebass": "^4.0.1",
     "styled-jsx": "^3.2.1",

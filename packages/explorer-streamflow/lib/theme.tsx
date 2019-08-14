@@ -15,14 +15,14 @@ const heading = {
 const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fonts: {
-    body: 'Akkurat, sans-serif',
-    heading: '"Akkurat", sans-serif',
+    body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     monospace: 'Akkurat-Mono, monospace'
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
     body: 400,
-    heading: 700,
+    heading: 500,
     bold: 700
   },
   lineHeights: {
@@ -37,6 +37,7 @@ const theme = {
     muted: greyArr[4],
     grey: greyArr,
     blueGrey: blueGreyArr,
+    border: greyArr[8],
     modes: {
       light: {
         text: '#fff',
@@ -44,6 +45,20 @@ const theme = {
         primary: '#6BE691'
       }
     }
+  },
+  buttons: {
+    primary: {
+      color: 'background',
+      bg: 'primary',
+    },
+    secondary: {
+      color: 'background',
+      bg: 'secondary',
+    },
+    gray: {
+      color: 'background',
+      bg: 'gray',
+    },
   },
   layout: {
     Drawer: {
