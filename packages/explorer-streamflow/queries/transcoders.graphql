@@ -1,5 +1,5 @@
 query {
-  transcoders(where: { status: Registered }) {
+  transcoders(where: { status: "Registered" }) {
     id
     active
     feeShare
@@ -7,7 +7,7 @@ query {
     status
     totalStake
     pricePerSegment
-    pools {
+    rewards {
       rewardTokens
     }
   }

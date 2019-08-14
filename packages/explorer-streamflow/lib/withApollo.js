@@ -18,7 +18,7 @@ import {schema} from '@livepeer/graphql-sdk'
 //const globalAny: any = global
 const isBrowser = typeof window !== 'undefined'
 const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/id/QmWgv8QvKw1thHCTGhnhhjG4UvfwBrXULNphZekyFwYJgC'
+  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 
 // Polyfill fetch() on the server (used by apollo-client)
