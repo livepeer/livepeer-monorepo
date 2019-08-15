@@ -23,7 +23,7 @@
     "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
     "start": "lerna run --stream --no-sort --concurrency=999 start",
-    "test:build-apps": "lerna run build --stream --scope @livepeer/explorer --scope @livepeer/player",
+    "test:build-apps": "lerna run build --concurrency=1 --stream --scope @livepeer/explorer --scope @livepeer/player",
     "updated": "lerna updated --json"
   },
   "devDependencies": {
