@@ -25,6 +25,12 @@ const Reset = () =>
         fontSize: '100%',
         backgroundColor: 'transparent',
       },
+      '.MuiPaper-root div:nth-of-type(2)': {
+        overflow: 'initial !important'
+      },
+      '.MuiPaper-root div:nth-of-type(2) > div > div': {
+        overflow: 'initial !important'
+      }
     },
   })
 

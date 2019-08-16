@@ -1,19 +1,19 @@
-import React from 'react'
-import * as Utils from 'web3-utils'
-import { Flex } from 'rebass'
-import MaterialTable, { MTableToolbar, MTableCell } from 'material-table'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { Styled, useThemeUI } from 'theme-ui'
-import Orchestrators from '../../static/img/orchestrators.svg'
-import QRCode from 'qrcode.react'
-import { AvatarGroup } from './styles'
+import React from "react";
+import * as Utils from "web3-utils";
+import { Flex } from "rebass";
+import MaterialTable, { MTableToolbar, MTableCell } from "material-table";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { Styled, useThemeUI } from "theme-ui";
+import Orchestrators from "../../static/img/orchestrators.svg";
+import QRCode from "qrcode.react";
+import { AvatarGroup } from "./styles";
 
 function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export default ({ transcoders }) => {
-  const context = useThemeUI()
+  const context = useThemeUI();
 
   // Apply theme-ui settings to material-ui component
   const muiTheme = createMuiTheme({
@@ -55,64 +55,64 @@ export default ({ transcoders }) => {
       },
       MuiToolbar: {
         regular: {
-          paddingRight: '0',
-          paddingLeft: '0',
-          minHeight: 'initial',
-          width: '100%',
-          ['@media (min-width: 600px)']: {
-            minHeight: 'initial'
+          paddingRight: "0",
+          paddingLeft: "0",
+          minHeight: "initial",
+          width: "100%",
+          ["@media (min-width: 600px)"]: {
+            minHeight: "initial"
           },
-          ['@media (min-width: 0px) and (orientation: landscape)']: {
-            minHeight: 'initial'
+          ["@media (min-width: 0px) and (orientation: landscape)"]: {
+            minHeight: "initial"
           }
         }
       },
       MuiInput: {
         underline: {
-          '&:before': {
-            borderBottom: '1px solid rgba(255, 255, 255, 0.42)'
+          "&:before": {
+            borderBottom: "1px solid rgba(255, 255, 255, 0.42)"
           }
         }
       },
       MuiTableRow: {
         root: {
-          '&:hover': {
-            backgroundColor: 'rgba(107, 230, 145, .1)',
-            transition: 'background-color .2s, color .2s'
+          "&:hover": {
+            backgroundColor: context.theme.colors.surface,
+            transition: "background-color .2s, color .2s"
           }
         },
         footer: {
-          '&:hover': {
-            backgroundColor: 'initial'
+          "&:hover": {
+            backgroundColor: "initial"
           }
         }
       },
       MuiTableCell: {
         root: {
           borderBottom: 0,
-          padding: '14px 20px 14px 20px',
+          padding: "14px 20px 14px 20px",
           fontSize: 14,
-          '&:first-child': {
-            paddingLeft: 64
+          "&:first-child": {
+            paddingLeft: 32
           },
-          '&:last-child': {
-            paddingRight: 64
+          "&:last-child": {
+            paddingRight: 32
           }
         }
       },
       MuiPaper: {
         root: {
-          width: '100%'
+          width: "100%"
         },
         elevation2: {
-          boxShadow: 'none'
+          boxShadow: "none"
         }
       }
     }
-  })
+  });
 
   const Toolbar = (props: any) => (
-    <Flex px={5} alignItems="center">
+    <Flex px={4} mb={3} alignItems="center">
       <Orchestrators
         style={{
           color: context.theme.colors.primary,
@@ -123,12 +123,12 @@ export default ({ transcoders }) => {
       />
       <MTableToolbar {...props} />
     </Flex>
-  )
+  );
 
   const Cell = (props: any) => {
-    let cellValue: any
+    let cellValue: any;
     switch (props.columnDef.field) {
-      case 'id':
+      case "id":
         cellValue = (
           <AvatarGroup>
             <QRCode
@@ -143,72 +143,72 @@ export default ({ transcoders }) => {
             />
             {props.value.substring(0, 10)}...
           </AvatarGroup>
-        )
-        break
-      case 'totalStake':
-        let num = Number(Utils.fromWei(props.value)).toFixed(2)
+        );
+        break;
+      case "totalStake":
+        let num = Number(Utils.fromWei(props.value)).toFixed(2);
         cellValue = (
-          <span style={{ fontFamily: 'Akkurat-Mono' }}>
+          <span style={{ fontFamily: "Akkurat-Mono" }}>
             {numberWithCommas(num)}
           </span>
-        )
-        break
+        );
+        break;
 
-      case 'rewardCut':
+      case "rewardCut":
         cellValue = (
-          <span style={{ fontFamily: 'Akkurat-Mono' }}>
+          <span style={{ fontFamily: "Akkurat-Mono" }}>
             {props.value / 10000}%
           </span>
-        )
-        break
-      case 'feeShare':
+        );
+        break;
+      case "feeShare":
         cellValue = (
-          <span style={{ fontFamily: 'Akkurat-Mono' }}>
+          <span style={{ fontFamily: "Akkurat-Mono" }}>
             {props.value / 10000}%
           </span>
-        )
-        break
+        );
+        break;
       default:
-        cellValue = props.value
+        cellValue = props.value;
     }
-    return <MTableCell {...props} value={cellValue} />
-  }
+    return <MTableCell {...props} value={cellValue} />;
+  };
 
   return (
     <MuiThemeProvider theme={muiTheme}>
       <MaterialTable
         columns={[
           {
-            title: 'Name',
-            field: 'id'
+            title: "Name",
+            field: "id"
           },
           {
-            title: 'Fee Cut',
-            field: 'feeShare',
-            type: 'numeric'
+            title: "Fee Cut",
+            field: "feeShare",
+            type: "numeric"
           },
           {
-            title: 'Reward Cut',
-            field: 'rewardCut',
-            type: 'numeric'
+            title: "Reward Cut",
+            field: "rewardCut",
+            type: "numeric"
           },
           {
-            title: 'Stake',
-            field: 'totalStake',
-            defaultSort: 'desc',
-            type: 'numeric'
+            title: "Stake",
+            field: "totalStake",
+            defaultSort: "desc",
+            type: "numeric"
           }
         ]}
         data={transcoders}
         title="ORCHESTRATORS"
         options={{
-          doubleHorizontalScroll: true,
+          // doubleHorizontalScroll: true,
           paging: false,
           search: true,
           draggable: false,
           showTextRowsSelected: false,
-          headerStyle: { position: 'sticky', top: 0 },
-          maxBodyHeight: 'calc(100vh - 126px)'
+          headerStyle: { position: "sticky", top: 0 }
+          // maxBodyHeight: 'calc(100vh - 126px)'
         }}
         components={{
           Toolbar: props => <Toolbar {...props} />,
@@ -216,5 +216,5 @@ export default ({ transcoders }) => {
         }}
       />
     </MuiThemeProvider>
-  )
-}
+  );
+};

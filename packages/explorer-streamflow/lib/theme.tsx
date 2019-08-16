@@ -33,11 +33,14 @@ const theme = {
     text: '#fff',
     background: '#131418',
     primary: '#6BE691',
+    surface: '#1E2026',
     accent: '#6BE691',
+    red: '#FB4343',
+    yellow: '#D3AC1E',
     muted: greyArr[4],
     grey: greyArr,
     blueGrey: blueGreyArr,
-    border: greyArr[8],
+    border: '#272931',
     modes: {
       light: {
         text: '#fff',
