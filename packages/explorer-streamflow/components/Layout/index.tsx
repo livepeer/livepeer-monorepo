@@ -1,7 +1,8 @@
 import * as React from "react";
 import Head from "next/head";
 import Drawer from "../Drawer";
-import { Styled, Flex, Box } from "theme-ui";
+import Reset from "../../lib/reset";
+import { Styled, Flex } from "theme-ui";
 
 const Layout = ({ children, title = "Livepeer Explorer" }: any) => (
   <Styled.root>
@@ -10,6 +11,7 @@ const Layout = ({ children, title = "Livepeer Explorer" }: any) => (
       <meta charSet="utf-8" />
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
+    <Reset />
     <Flex>
       <Drawer />
       {children}
