@@ -30,7 +30,7 @@ const theme = {
     heading: 1.125
   },
   colors: {
-    text: '#fff',
+    text: '#d9d9d9',
     background: '#131418',
     primary: '#6BE691',
     surface: '#1E2026',
