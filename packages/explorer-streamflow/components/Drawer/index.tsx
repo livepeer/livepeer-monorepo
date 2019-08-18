@@ -6,13 +6,15 @@ import Orchestrators from "../../static/img/orchestrators.svg";
 import Stake from "../../static/img/stake.svg";
 import Network from "../../static/img/network.svg";
 import Account from "../../static/img/account.svg";
+import Search from "../../static/img/search.svg";
 import { StyledLink } from "./styles";
 import MetaMaskContext from "../../lib/metamask";
 
 const items = [
   { name: "Orchestrators", icon: Orchestrators },
-  { name: "Stake", icon: Stake },
   { name: "Network", icon: Network },
+  { name: "Search", icon: Search },
+  { name: "Transactions", icon: Search },
   { name: "Account", icon: Account }
 ];
 export default () => {
@@ -39,13 +41,13 @@ export default () => {
       >
         <Box>
           <Styled.img
-            sx={{ pl: 3, width: 150, mb: 4 }}
+            sx={{ pl: 3, width: 140, mb: 4 }}
             src="/static/img/logo.svg"
           />
           <Box>
             {items.map((item, i) => (
               <StyledLink key={i} i={i}>
-                <item.icon sx={{ mr: 3 }} />
+                <item.icon sx={{ width: 16, mr: 3 }} />
                 {item.name}
               </StyledLink>
             ))}
