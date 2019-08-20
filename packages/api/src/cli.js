@@ -46,6 +46,12 @@ const args = yargs
       describe: 'name of the service we should look at for broadcasters.',
       type: 'string',
     },
+    'kube-broadcaster-template': {
+      describe:
+        'template string of the form https://{nodeName}.example.com to give broadcasters external identity.',
+      type: 'string',
+      default: 'https://{nodeName}.livepeer.live',
+    },
     'http-prefix': {
       describe: 'accept requests at this prefix',
       default: '/api',

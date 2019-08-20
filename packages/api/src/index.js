@@ -18,6 +18,7 @@ export default async function makeApp({
   listen = true,
   kubeNamespace,
   kubeBroadcasterService,
+  kubeBroadcasterTemplate,
 }) {
   // Storage init
   let store
@@ -47,6 +48,7 @@ export default async function makeApp({
       req.kubeApi = kubeApi
       req.kubeNamespace = kubeNamespace
       req.kubeBroadcasterService = kubeBroadcasterService
+      req.kubeBroadcasterTemplate = kubeBroadcasterTemplate
       next()
     })
   }

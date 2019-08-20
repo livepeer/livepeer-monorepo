@@ -1,7 +1,6 @@
 import { Router } from 'express'
-import uuid from 'uuid/v4'
-import logger from '../logger'
 import { timeout } from '../util'
+import format from 'string-template'
 
 const app = Router()
 
@@ -21,8 +20,9 @@ app.get('/', async (req, res, next) => {
   const broadcasters = new Set()
   for (const subset of endpoints.body.subsets) {
     for (const address of subset.addresses) {
-      // xxx TODO FIXME hardcoded address here
-      broadcasters.add(`https://${address.nodeName}.livepeer.live`)
+      broadcasters.add(
+        format(req.kubeBroadcasterTemplate, { nodeName: address.nodeName }),
+      )
     }
   }
   return res.json([...broadcasters].map(address => ({ address })))
