@@ -1,7 +1,7 @@
 import React, { Component, ReactChildren, ReactElement } from 'react'
 import PropTypes from 'prop-types'
 import { Player, BigPlayButton, ControlBar } from 'video-react'
-import injectStyles from './styles'
+import GlobalStyles from './styles'
 import Hls from 'hls.js'
 
 /**
@@ -58,6 +58,7 @@ const getSourceType = (src: string): string => {
   for (const [end, type] of types) {
     if (src && src.endsWith(end)) return type
   }
+  console.warn(`Could not determine type for src "${src}"`)
   return ''
 }
 
@@ -101,7 +102,6 @@ export class QualityPicker extends Component {
     let { video } = this.props
     if (video) {
       video.loadLevel(parseInt(ev.target.dataset['id']))
-      this.setState({ visible: false })
     } else {
       console.error(`ev: this.video is null ${this.video}`)
     }
@@ -238,9 +238,6 @@ export default class VideoPlayer extends Component {
 
     // this.onLevels = this.onLevels.bind(this)
   }
-
-  // Injects player css into the dom
-  componentDidMount = injectStyles
 
   /**
    * get all available bitrates
@@ -657,6 +654,11 @@ export class Source extends Component {
    */
   render(): ReactElement {
     const { src, type } = this.props
-    return <source src={src} type={type} />
+    return (
+      <React.Fragment>
+        <GlobalStyles />
+        <source src={src} type={type} />
+      </React.Fragment>
+    )
   }
 }

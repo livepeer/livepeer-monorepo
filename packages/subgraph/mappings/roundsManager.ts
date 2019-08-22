@@ -8,6 +8,8 @@ import { BondingManager } from "../types/BondingManager/BondingManager";
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Reward, Round } from "../types/schema";
 
+import { makeRewardId } from "./util";
+
 // Handler for NewRound events
 export function newRound(event: NewRound): void {
   let roundsManager = RoundsManager.bind(event.address);
@@ -40,7 +42,8 @@ export function newRound(event: NewRound): void {
     // "rewardTokens" is null for a given transcoder and round then we know
     // the transcoder failed to call reward()
     if (active) {
-      rewardId = currentTranscoder.toHex() + "-" + roundNumber.toString();
+      // Left-pad these round numbers so we can sort by round later on
+      rewardId = makeRewardId(currentTranscoder, roundNumber);
       reward = new Reward(rewardId);
       reward.round = roundNumber.toString();
       reward.transcoder = currentTranscoder.toHex();

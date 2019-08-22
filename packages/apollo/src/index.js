@@ -94,8 +94,27 @@ export default async function createApolloClient(
           rewardTokens: String,
           round: Round
         }
+        enum Transcoder_orderBy {
+          id
+          active
+          ensName
+          status
+          lastRewardRound
+          rewardCut
+          feeShare
+          pricePerSegment
+          pendingRewardCut
+          pendingFeeShare
+          pendingPricePerSegment
+          totalStake
+          rewards
+        }
+        enum OrderDirection {
+          asc
+          desc
+        }
         extend type Transcoder {
-          rewards: [Reward]
+          rewards(orderBy: Transcoder_orderBy, orderDirection: OrderDirection): [Reward]
         }
       `
       return mergeSchemas({

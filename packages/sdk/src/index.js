@@ -100,7 +100,7 @@ export { TRANSCODER_STATUS }
 // Defaults
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
-  provider: 'https://mainnet.infura.io/srFaWg0SlljdJAoClX3B',
+  provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
   gas: 0,
@@ -2042,23 +2042,29 @@ export async function createLivepeerSDK(
           ? bondedAmount
           : pendingStake
       // Only unbond if amount doesn't exceed your current stake
-      if (toBN(totalStake).cmp(toBN(amount)) >= 0) {
-        // Unbond total stake if a zero or negative amount is passed
-        amount = amount <= 0 ? totalStake : amount
-        // Can only unbond successfully when not already "Unbonded"
-        if (status === DELEGATOR_STATUS.Unbonded) {
-          throw new Error('This account is already unbonded.')
-        } else {
-          return await utils.getTxReceipt(
-            await BondingManager.unbond(amount),
-            config.eth,
-          )
-        }
-      } else {
+      if (toBN(totalStake).cmp(toBN(amount)) < 0) {
         throw new Error(
           `Cannot unbond a portion of tokens greater than your total stake of ${totalStake} LPT`,
         )
       }
+
+      // Unbond total stake if a zero or negative amount is passed
+      amount = amount <= 0 ? totalStake : amount
+
+      // Can only unbond successfully when not already "Unbonded"
+      if (status === DELEGATOR_STATUS.Unbonded) {
+        throw new Error('This account is already unbonded.')
+      }
+
+      tx.gas = await rpc.estimateGas('BondingManager', 'unbond', [amount])
+
+      return await utils.getTxReceipt(
+        await BondingManager.unbond(amount, {
+          ...config.defaultTx,
+          ...tx,
+        }),
+        config.eth,
+      )
     },
 
     /**

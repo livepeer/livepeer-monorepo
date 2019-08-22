@@ -7,14 +7,11 @@ import CostChart from './cost-chart'
 import BitrateChart from './bitrate-chart'
 import { useInterval } from 'rooks'
 import scrapeStream from './scrape-stream'
-import { actions } from '../../services/routing'
-import { connect } from 'react-redux'
 
 export const Demo = ({
   maxWidth = '100%',
   aspectRatio = '16:9',
   url = 'https://bbb.stream.town/stream/current.m3u8',
-  dispatch,
 }) => {
   const [live, setLive] = useState()
   const [currentTime, setCurrentTime] = useState(0)
@@ -84,7 +81,7 @@ export const Demo = ({
 
   return (
     <div>
-      <BasicNavbar onSearch={url => dispatch(actions.changeDemo(url))} />
+      <BasicNavbar onSearch={url => console.log(url)} />
       <DemoBox>
         <StatsPane>
           <CostChart currentTime={displayTime} bitrates={bitrates} />
@@ -150,4 +147,5 @@ const BigTitle = styled.h1`
   font-family: ${fontFamily};
   text-align: center;
 `
-export default connect()(DemoWrapper)
+
+export default Demo

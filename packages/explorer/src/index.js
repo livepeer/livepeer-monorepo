@@ -1,10 +1,8 @@
-import 'babel-polyfill'
 import 'url-search-params-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
-import { injectGlobal } from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 import createApolloClient from '@livepeer/apollo'
-import { injectBaseStyles } from '@livepeer/chroma'
 import Root from './components/Root'
 import App from './components/App'
 import { unregister } from './registerServiceWorker'
@@ -15,8 +13,40 @@ const hot = module.hot && isDev
 const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 ;(async () => {
   // dump global styles
-  injectBaseStyles()
-  injectGlobal`
+  const GlobalStyle = createGlobalStyle`
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --green: #00eb87;
+      --tan: #faf5ef;
+      --grey: #cfcfcf;
+      --red: #f00;
+      --primary: var(--green);
+      --error: var(--red);
+      --bg-dark: var(--black);
+      --bg-light: var(--tan);
+      --mdc-theme-primary: var(--green);
+      --mdc-theme-secondary: var(--black);
+    }
+    * {
+      box-sizing: border-box;
+      font-weight: 300;
+      font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+    }
+    strong, b {
+      font-weight: 500;
+    }
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+      background: var(--bg-light);
+    }
+    a { color: #03a678; }
+    p, ul {
+      line-height: 1.5
+      font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+    }
     select {
       appearance: none;
       background: none;
@@ -134,6 +164,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
   const update = () =>
     render(
       <Root client={client}>
+        <GlobalStyle />
         <App />
       </Root>,
       document.getElementById('main-root'),

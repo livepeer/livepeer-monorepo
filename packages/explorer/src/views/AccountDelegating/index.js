@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { Minus as MinusIcon } from 'react-feather'
+import { Minus as MinusIcon, Bell as BellIcon } from 'react-feather'
 import { formatBalance, formatRoundsToDate, MathBN } from '../../utils'
 import {
   Button,
@@ -79,13 +79,6 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
 
   return (
     <Wrapper>
-      {/*<InlineHint flag="account-delegating">
-        <h3>Lorem Ipsum</h3>
-        <p>
-          Lorem ipsum dolor sit amet, et arcu viverra elit. Velit sapien odio
-          sollicitudin, in neque magna, orci pede, vel eleifend urna.
-        </p>
-  </InlineHint>*/}
       <MetricBox
         help="A delegator can be in one of the following states: Pending, Bonded, Unbonding or Unbonded"
         title="Status"
@@ -121,7 +114,12 @@ const AccountDelegating: React.ComponentType<AccountDelegatingProps> = ({
         subvalue={
           !delegateAddress ? 'Not currently bonded to any delegate' : ''
         }
-      />
+      >
+        <Button onClick={() => history.push('#/staking-alerts')}>
+          <BellIcon size={12} />
+          <span style={{ marginLeft: 8 }}>Track performance</span>
+        </Button>
+      </MetricBox>
       <MetricBox
         help="Total tokens earned from reward cuts each round. Includes unclaimed token rewards."
         title="Stake"

@@ -32,6 +32,7 @@ const CTABanner = styled(
   position: fixed;
   bottom: 0;
   display: flex;
+  align-items: center;
   width: 100%;
   padding: 16px;
   background: var(--primary);

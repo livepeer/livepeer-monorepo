@@ -7,6 +7,7 @@ import Approve from '../views/Approve'
 import Bond from '../views/Bond'
 import Unbond from '../views/Unbond'
 import ClaimEarnings from '../views/ClaimEarnings'
+import StakingAlerts from '../views/StakingAlerts'
 import ImportantMessage from '../views/ImportantMessage'
 import Landing from '../views/Landing'
 import SmartContracts from '../views/SmartContracts'
@@ -65,6 +66,7 @@ const App = () => (
                 <Route path="/bond/:delegateAddress" component={Bond} />
                 <Route path="/unbond/:delegateAddress" component={Unbond} />
                 <Route path="/claim-earnings" component={ClaimEarnings} />
+                <Route path="/staking-alerts*" component={StakingAlerts} />
                 <Route path="/smart-contracts" component={SmartContracts} />
                 <Route path="/protocol-status" component={ProtocolStatus} />
                 <Route path="/withdraw/:lockId" component={Withdraw} />

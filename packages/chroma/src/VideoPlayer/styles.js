@@ -1,9 +1,6 @@
-import { injectGlobal } from 'styled-components'
-let injected = false
-export default () => {
-  if (injected) return
-  injected = true
-  injectGlobal`
+import { createGlobalStyle } from 'styled-components'
+
+export default createGlobalStyle`
   .video-react .video-react-big-play-button:before, .video-react .video-react-control:before {
     position: absolute;
     top: 0;
@@ -939,4 +936,3 @@ export default () => {
     font-weight: 700;
   }
 `
-}

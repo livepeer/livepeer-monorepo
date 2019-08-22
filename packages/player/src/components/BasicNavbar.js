@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import {
   GitHub as GitHubIcon,
@@ -132,17 +132,16 @@ const NavSearchInput = styled.input`
 `
 
 const NavSearch = ({ onSearch }) => {
-  let textRef
+  const [search, setSearch] = useState('')
   return (
     <NavSearchContainer
       onSubmit={e => {
         e.preventDefault()
-        const value = textRef.value
-        if (!value) {
+        if (!search) {
           return
         }
-        onSearch(value)
-        textRef.value = ''
+        onSearch(search)
+        setSearch('')
       }}
     >
       {/*
@@ -153,7 +152,8 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
 />
 */}
       <NavSearchInput
-        innerRef={ref => (textRef = ref)}
+        onChange={e => setSearch(e.target.value)}
+        value={search}
         type="search"
         placeholder="Enter stream URL"
       />

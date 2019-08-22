@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
 export const H1 = styled.h1`
-  text-align: center;
+  margin-top: 0;
   font-variant: all-petite-caps;
 `
