@@ -18,11 +18,16 @@ app.get('/', async (req, res, next) => {
     ),
   )
   const broadcasters = new Set()
-  for (const subset of endpoints.body.subsets) {
-    for (const address of subset.addresses) {
-      broadcasters.add(
-        format(req.kubeBroadcasterTemplate, { nodeName: address.nodeName }),
-      )
+  if (endpoints.body && endpoints.body.subsets) {
+    for (const subset of endpoints.body.subsets) {
+      for (const address of subset.addresses) {
+        broadcasters.add(
+          format(req.kubeBroadcasterTemplate, {
+            nodeName: address.nodeName,
+            ip: address.ip,
+          }),
+        )
+      }
     }
   }
   return res.json([...broadcasters].map(address => ({ address })))
