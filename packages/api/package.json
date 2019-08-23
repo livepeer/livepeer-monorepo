@@ -11,9 +11,9 @@
   "scripts": {
     "build:lambda": "parcel build --no-minify --bundle-node-modules -t node src/lambda.js",
     "build": "npm run prepare",
-    "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && kubectl logs -f --pod-running-timeout=30s deployment/prod-livepeer-api-server ",
-    "docker:build": "docker build -t iameli/livepeer-api-prototype .",
-    "docker:push": "docker push iameli/livepeer-api-prototype",
+    "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && kubectl logs -f --pod-running-timeout=30s -l $(kubectl get pods -o name -l app.kubernetes.io/name=livepeer-api-server)",
+    "docker:build": "docker build -t iameli/livepeer-api-prototype:eli-dev .",
+    "docker:push": "docker push iameli/livepeer-api-prototype:eli-dev",
     "docker": "run-s docker:build docker:push",
     "postgres": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
