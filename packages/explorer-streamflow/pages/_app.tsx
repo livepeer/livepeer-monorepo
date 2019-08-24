@@ -1,18 +1,21 @@
-import App, { Container } from "next/app";
-import Head from "next/head";
-import React from "react";
-import { ApolloProvider } from "@apollo/react-hooks";
-import { ThemeProvider, ColorMode } from "theme-ui";
-import withApolloClient from "../lib/withApollo";
-import theme from "../lib/theme";
+import App, { Container } from 'next/app'
+import Head from 'next/head'
+import React from 'react'
+import { ApolloProvider } from '@apollo/react-hooks'
+import { ThemeProvider, ColorMode } from 'theme-ui'
+import theme from '../lib/theme'
+import withApolloClient from '../lib/withApolloClient'
+import connectors from '../lib/connectors'
+import Web3Provider from 'web3-react'
+import { ethers } from 'ethers'
 
 interface IProps {
-  apollo: any;
+  apolloClient: any
 }
 
 class MyApp extends App<IProps> {
   render() {
-    const { Component, pageProps, apollo } = this.props;
+    const { Component, pageProps, apolloClient } = this.props
     return (
       <Container>
         <Head>
@@ -23,15 +26,17 @@ class MyApp extends App<IProps> {
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
           />
         </Head>
-
-        <ApolloProvider client={apollo}>
+        <ApolloProvider client={apolloClient}>
           <ThemeProvider theme={theme}>
             <ColorMode />
-            <Component {...pageProps} />
+            <Web3Provider connectors={connectors} libraryName={'ethers.js'}>
+              <Component {...pageProps} />
+            </Web3Provider>
           </ThemeProvider>
         </ApolloProvider>
       </Container>
-    );
+    )
   }
 }
-export default withApolloClient(MyApp);
+
+export default withApolloClient(MyApp)

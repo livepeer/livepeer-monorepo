@@ -1,11 +1,12 @@
 {
   "name": "@livepeerjs/explorer-streamflow",
-  "version": "1.0.0-alpha.6",
+  "version": "2.0.0-alpha.1",
   "private": true,
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "now-build": "next build"
   },
   "devDependencies": {
     "@babel/plugin-transform-react-jsx": "^7.3.0",
@@ -22,19 +23,19 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@apollo/react-hooks": "0.1.0-beta.11",
+    "@apollo/react-hooks": "^3.0.1",
+    "@apollo/react-ssr": "^3.0.1",
     "@emotion/core": "^10.0.14",
     "@emotion/styled": "^10.0.11",
     "@livepeer/graphql-sdk": "^1.0.0-alpha.6",
-    "@material-ui/core": "^4.0.1",
-    "@material-ui/icons": "^4.2.1",
-    "@material-ui/styles": "^4.0.1",
-    "@material-ui/system": "^4.0.1",
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "latest",
+    "@material-ui/styles": "latest",
     "@mdx-js/react": "^1.0.27",
     "@portis/web3": "^2.0.0-beta.37",
+    "@theme-ui/style-guide": "^0.2.36",
     "@theme-ui/typography": "^0.2.29",
-    "@tokenfoundry/react-metamask": "^0.4.0",
-    "apollo-boost": "^0.4.3",
+    "apollo-boost": "^0.4.4",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",
     "apollo-link": "^1.2.11",
@@ -45,12 +46,13 @@
     "apollo-link-state": "^0.4.2",
     "axios": "^0.19.0",
     "emotion-theming": "^10.0.10",
+    "ethers": "^4.0.33",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.4",
     "isomorphic-unfetch": "^3.0.0",
     "material-table": "1.47.0",
-    "next": "^9.0.3",
+    "next": "^9.0.5-canary.1",
     "next-mui-helper": "3.0.2",
     "next-transpile-modules": "^2.3.1",
     "next-with-apollo": "4.0.0",
@@ -65,8 +67,12 @@
     "styled-system": "^5.0.16",
     "styled-theming": "^2.2.0",
     "theme-ui": "^0.2.18",
-    "typography-theme-github": "^0.16.19",
-    "web3": "=1.0.0-beta.37",
+    "web3-react": "^5.0.4",
     "web3-utils": "^1.0.0-beta.55"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   }
 }
