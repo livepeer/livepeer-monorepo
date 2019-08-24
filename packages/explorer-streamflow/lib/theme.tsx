@@ -13,7 +13,7 @@ const heading = {
 
 // Create a theme instance.
 const theme = {
-  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+  space: [0, 8, 16, 24, 32, 40, 48, 56, 64],
   fonts: {
     body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
@@ -30,7 +30,7 @@ const theme = {
     heading: 1.125
   },
   colors: {
-    text: '#d9d9d9',
+    text: 'rgba(255, 255, 255, .87)',
     background: '#131418',
     primary: '#6BE691',
     surface: '#1E2026',

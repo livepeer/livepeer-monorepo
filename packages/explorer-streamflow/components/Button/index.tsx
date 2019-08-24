@@ -16,9 +16,9 @@ export default ({ variant = 'primary', ...props }) => (
       textTransform: 'uppercase',
       m: 0,
       px: 3,
-      py: 2,
+      py: 1,
       border: 0,
-      borderRadius: 5,
+      borderRadius: 4,
       // pass variant prop to sx
       variant: `buttons.${variant}`
     }}

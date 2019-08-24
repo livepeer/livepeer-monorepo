@@ -3,11 +3,12 @@ import * as Utils from 'web3-utils'
 import { Flex } from 'rebass'
 import MaterialTable, { MTableToolbar, MTableCell } from 'material-table'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { Styled, useThemeUI } from 'theme-ui'
+import { useThemeUI } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
 import QRCode from 'qrcode.react'
-import { AvatarGroup } from './styles'
+import { AvatarGroup, OrchestratorName } from './styles'
 import { useApolloClient } from '@apollo/react-hooks'
+import Link from 'next/link'
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -44,7 +45,10 @@ export default ({ transcoders }) => {
     overrides: {
       MuiTypography: {
         h6: {
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          fontSize: 26
+          // textTransform: 'uppercase'
+          // fontStyle: 'italic'
         }
       },
       MuiTableSortLabel: {
@@ -77,10 +81,14 @@ export default ({ transcoders }) => {
         }
       },
       MuiTableRow: {
-        root: {
+        hover: {
           '&:hover': {
-            backgroundColor: context.theme.colors.surface,
+            cursor: 'initial !important',
+            backgroundColor: `${context.theme.colors.surface} !important`,
             transition: 'background-color .2s, color .2s'
+          },
+          '&:hover a': {
+            borderBottom: '1px solid rgba(255, 255, 255, .4)'
           }
         },
         footer: {
@@ -117,7 +125,7 @@ export default ({ transcoders }) => {
   })
 
   const Toolbar = (props: any) => (
-    <Flex px={4} mb={4} alignItems="center">
+    <Flex px={4} mb={3} alignItems="center">
       <Orchestrators
         style={{
           color: context.theme.colors.primary,
@@ -146,7 +154,14 @@ export default ({ transcoders }) => {
               fgColor={`#${props.value.substr(2, 6)}`}
               value={props.value}
             />
-            {props.value.substring(0, 10)}...
+            <Link
+              href="/account/[address]"
+              as={`/account/${props.value}`}
+              passHref>
+              <OrchestratorName>
+                {props.value.substring(0, 10)}...
+              </OrchestratorName>
+            </Link>
           </AvatarGroup>
         )
         break
@@ -207,16 +222,31 @@ export default ({ transcoders }) => {
         data={transcoders}
         title="Orchestrators"
         onRowClick={(_event, rowData) =>
-          client.writeData({ data: { selectedOrchestrator: rowData } })
+          client.writeData({
+            data: {
+              selectedOrchestrator: rowData
+            }
+          })
         }
+        localization={{
+          toolbar: {
+            searchPlaceholder: 'Filter'
+          }
+        }}
         options={{
-          // doubleHorizontalScroll: true,
           paging: false,
           search: true,
           draggable: false,
           showTextRowsSelected: false,
-          headerStyle: { position: 'sticky', top: 0 }
-          // maxBodyHeight: 'calc(100vh - 126px)'
+          headerStyle: { position: 'sticky', top: 0 },
+          rowStyle: rowData => {
+            return {
+              backgroundColor:
+                rowData.id == '0xe9e284277648fcdb09b8efc1832c73c09b5ecf59'
+                  ? '#1E2026'
+                  : 'transparent'
+            }
+          }
         }}
         components={{
           Toolbar: props => <Toolbar {...props} />,
