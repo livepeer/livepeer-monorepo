@@ -41,6 +41,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "gh-pages": "^1.1.0",
     "poosh-cli": "^2.0.0",
     "poosh-plugin-s3": "^2.0.0",

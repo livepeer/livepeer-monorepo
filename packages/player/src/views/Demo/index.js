@@ -82,6 +82,12 @@ export const Demo = ({
     }
   }
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     document.querySelector('video').play()
+  //   }, 5000)
+  // }, [])
+
   return (
     <div>
       <BasicNavbar onSearch={url => dispatch(actions.changeDemo(url))} />
