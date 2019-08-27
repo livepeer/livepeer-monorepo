@@ -16,7 +16,7 @@
     "start": "run-p \"build-** -- --watch\" parcel"
   },
   "dependencies": {
-    "3box": "^1.9.1",
+    "3box": "^1.10.7",
     "@babel/runtime": "^7.4.3",
     "cross-env": "^5.2.0",
     "prop-types": "15.7.2",

@@ -52,6 +52,7 @@ export default () => {
   const [editProfileType, setEditProfileType] = useState(false)
   const [content, setContent] = useState('loading')
   const [profile, setProfile] = useState(0)
+  const [userDid, setUserDid] = useState('loading DID...')
 
   const update = async () => {
     if (window.web3.eth.defaultAccount != undefined) {
@@ -97,9 +98,8 @@ export default () => {
     } else {
       setContent('empty_profile')
     }
-    /*let box = await Box.openBox(window.web3.eth.defaultAccount)
-	console.log("DID:")
-	console.log(box)*/
+    const box = await Box.openBox(window.web3.eth.defaultAccount)
+    setUserDid(box.DID)
   }
   useEffect(() => {
     update()
@@ -169,18 +169,30 @@ export default () => {
           with an external{' '}
           <span style={{ fontFamily: 'Courier' }}>livepeer-cli</span> account.
           <ol>
-            <li>Copy and enter this command into your livepeer-cli</li>
+            <li>
+              Run <span style={{ fontFamily: 'Courier' }}>livepeer-cli</span>{' '}
+              and select option #20
+            </li>
+            <li>When prompted for the message to sign, paste this:</li>
             <br />
             <div
               style={{
                 backgroundColor: 'black',
                 color: 'limegreen',
+                width: '350px',
                 display: 'block',
                 margin: '0 auto',
-                width: '70%',
+                overflow: 'scroll',
               }}
             >
-              $ livepeer-cli link-profile &lt; &gt;
+              Create a new 3Box profile
+              <br />
+              <br />
+              -
+              <br />
+              Your unique profile ID is {userDid}
+              <br />
+              Timestamp: {Math.floor(Date.now() / 1000)}
             </div>
             <br />
             <li>Paste the hex signature output here.</li>

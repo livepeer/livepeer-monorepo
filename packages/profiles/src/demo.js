@@ -10,6 +10,7 @@ import AlertDialog from './AlertDialog'
 import BoxAvatar from './BoxAvatar'
 import BoxInfo from './BoxInfo'
 import Metatest from './Metatest'
+import BoxManagerTest from './BoxManagerTest'
 
 const element = <UserProfile />
 //const element = <BoxInfo id={window.web3.eth.defaultAccount} />
