@@ -66,6 +66,12 @@ export const PRESETS = [
 ]
 
 /**
+ * Replace a string containing "${SourceStreamName}" with the appropriate stream name
+ */
+const replaceStreamName = (str, name) =>
+  str.replace('${SourceStreamName}', name)
+
+/**
  * Take a data blob from Wowza and return the appropriate presets and names
  */
 export default stream => {
@@ -121,8 +127,22 @@ export default stream => {
     renditions[name] = `/stream/${stream.id}/${foundPreset}.m3u8`
     presets.push(foundPreset)
   }
+  const enabledEncodeNames = new Set(enabledEncodes.map(encode => encode.name))
+  const streamNameGroups = transcoderConfig.streamNameGroups.map(
+    streamNameGroup => {
+      const name = replaceStreamName(streamNameGroup.streamName, stream.name)
+      const renditions = streamNameGroup.Members.map(m => m.encodeName).filter(
+        name => enabledEncodeNames.has(name),
+      )
+      return { name, renditions }
+    },
+  )
   return {
     ...stream,
+    wowza: {
+      ...stream.wowza,
+      streamNameGroups,
+    },
     renditions,
     presets,
   }
