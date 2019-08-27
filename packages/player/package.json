@@ -29,12 +29,13 @@
     "styled-components": "3.2.1"
   },
   "scripts": {
-    "start": "PORT=3002 react-scripts start",
+    "start": "cross-env PORT=3002 react-scripts start",
+    "prebuild": "rimraf build && rimraf livepeer-player",
     "build": "react-scripts build",
+    "postbuild": "cp build/index.html build/404.html && cp -R build livepeer-player && tar -czvf build/livepeer-player.tar.gz livepeer-player && rimraf livepeer-player",
     "copy-docs": "echo 'No copy-docs script specified'",
     "eject": "react-scripts eject",
     "deploy": "poosh",
-    "postbuild": "cp build/index.html build/404.html",
     "serve": "serve -s build",
     "test": "react-scripts test",
     "lint": "eslint ."
@@ -43,7 +44,8 @@
     "gh-pages": "^1.1.0",
     "poosh-cli": "^2.0.0",
     "poosh-plugin-s3": "^2.0.0",
-    "serve": "6.5.3",
+    "rimraf": "^3.0.0",
+    "serve": "11.0.0",
     "uglify-es": "^3.2.0"
   },
   "browserslist": [
