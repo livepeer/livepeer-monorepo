@@ -28,7 +28,7 @@ app.post('/', async (req, res) => {
   const doc = wowzaHydrate({
     ...(req.body || {}),
     kind: 'stream',
-    presets: [],
+    presets: req.body.presets || [],
     renditions: {},
     id,
   })
