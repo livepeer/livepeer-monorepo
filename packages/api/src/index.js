@@ -7,6 +7,7 @@ import { healthCheck } from './middleware'
 import logger from './logger'
 import schema from './schema'
 import * as controllers from './controllers'
+import streamProxy from './controllers/stream-proxy'
 import * as k8s from '@kubernetes/client-node'
 
 export default async function makeApp({
@@ -59,6 +60,8 @@ export default async function makeApp({
     prefixRouter.use(`/${name}`, controller)
   }
   app.use(httpPrefix, prefixRouter)
+  // Special case: handle /stream proxies off that endpoint
+  app.use('/stream', streamProxy)
 
   let listener
   let listenPort
