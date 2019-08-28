@@ -33,6 +33,8 @@ app.get('/*', async (req, res) => {
       errors: ['file not found'],
     })
   }
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET')
   const getUrl = `${broadcasterUrl}/stream/${file}`
   if (file.endsWith(M3U8)) {
     const innerRes = await fetch(getUrl)
