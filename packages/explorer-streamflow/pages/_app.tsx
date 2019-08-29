@@ -8,6 +8,7 @@ import withApolloClient from '../lib/withApolloClient'
 import connectors from '../lib/connectors'
 import Web3Provider from 'web3-react'
 import { ethers } from 'ethers'
+import Web3 from 'web3'
 
 interface IProps {
   apolloClient: any
@@ -29,7 +30,10 @@ class MyApp extends App<IProps> {
         <ApolloProvider client={apolloClient}>
           <ThemeProvider theme={theme}>
             <ColorMode />
-            <Web3Provider connectors={connectors} libraryName={'ethers.js'}>
+            <Web3Provider
+              connectors={connectors}
+              libraryName={'web3.js'}
+              web3Api={Web3}>
               <Component {...pageProps} />
             </Web3Provider>
           </ThemeProvider>

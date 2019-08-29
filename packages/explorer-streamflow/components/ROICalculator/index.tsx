@@ -1,14 +1,13 @@
 /** @jsx jsx */
+import React from 'react'
 import { Styled, jsx, Flex, Box } from 'theme-ui'
 import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
 import Button from '../Button'
 import QRCode from 'qrcode.react'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
-import React from 'react'
-import { useWeb3Context, Web3Consumer } from 'web3-react'
+import { useWeb3Context } from 'web3-react'
 import Trending from '../../static/img/trending.svg'
-import { ethers } from 'ethers'
 
 let hoursPerYear = 8760
 let averageHoursPerRound = 21
@@ -140,7 +139,12 @@ export default ({ protocol }) => {
   `
 
   const { data } = useQuery(GET_ROI)
-  const context = useWeb3Context()
+  let context = useWeb3Context()
+
+  if (!context.active) {
+    context.setConnector('Portis')
+  }
+  console.log('context', context)
 
   const [approve, { error, data: bondData }] = useMutation(APPROVE, {
     variables: {
@@ -148,7 +152,9 @@ export default ({ protocol }) => {
       amount: Utils.toWei('1', 'ether')
     },
     context: {
-      provider: (window as any).web3.currentProvider,
+      provider: context.active
+        ? context.library.currentProvider
+        : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
       account: context.account ? context.account.toLowerCase() : ''
     }
   })
@@ -233,7 +239,6 @@ export default ({ protocol }) => {
                 justifyContent: 'space-between',
                 display: 'flex',
                 alignItems: 'center',
-                // textTransform: 'uppercase',
                 fontWeight: 'bold'
               }}>
               Projected ROI

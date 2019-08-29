@@ -36,7 +36,7 @@ export default () => {
       <Flex
         sx={{
           width: 'calc(100% - 256px)',
-          px: 4
+          px: 5
         }}>
         <>
           <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
