@@ -22,8 +22,7 @@ const theme = {
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
     body: 400,
-    heading: 500,
-    bold: 700
+    heading: 700
   },
   lineHeights: {
     body: 1.5,
@@ -103,7 +102,8 @@ const theme = {
       color: 'text',
       fontFamily: 'body',
       fontWeight: 'body',
-      lineHeight: 'body'
+      lineHeight: 'body',
+      margin: 0
     },
     a: {
       color: 'primary'

@@ -1,20 +1,26 @@
 /** @jsx jsx */
-import React from 'react'
+import React, { useState } from 'react'
 import { Styled, jsx, Flex, Box } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
 import Network from '../../static/img/network.svg'
 import Account from '../../static/img/account.svg'
+import Wallet from '../../static/img/wallet.svg'
 import Search from '../../static/img/search.svg'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const items = [
   { name: 'Orchestrators', link: '/', icon: Orchestrators },
   { name: 'Network', link: '/network', icon: Network },
   { name: 'Search', link: '/search', icon: Search },
-  { name: 'Account', link: '/account', icon: Account },
-  { name: 'Connect Wallet', link: '/wallet', icon: Search }
+  // { name: 'Account', link: '/account', icon: Account },
+  { name: 'Connect Wallet', link: '/connect-wallet', icon: Wallet }
 ]
+
 export default () => {
+  const router = useRouter()
+  const { pathname } = router
+
   return (
     <Flex
       sx={{
@@ -44,7 +50,7 @@ export default () => {
               <Link key={i} href={item.link} passHref>
                 <Styled.div
                   sx={{
-                    color: !i ? 'primary' : 'muted',
+                    color: pathname === item.link ? 'primary' : 'muted',
                     lineHeight: 'initial',
                     display: 'flex',
                     fontSize: 20,
@@ -63,40 +69,12 @@ export default () => {
                   as="a"
                   key={i}
                   i={i}>
-                  <item.icon sx={{ width: 16, mr: 3 }} />
+                  <item.icon sx={{ width: 20, mr: 2 }} />
                   {item.name}
                 </Styled.div>
               </Link>
             ))}
           </Box>
-        </Box>
-        <Box
-          sx={{
-            width: '100%'
-          }}>
-          {/* <Box
-            sx={{
-              py: 4,
-              borderTop: '1px solid',
-              borderColor: 'border',
-              mx: 3
-            }}>
-            <Web3Consumer>
-              {context => {
-                const { active, connectorName, account, networkId } = context
-                return (
-                  active && (
-                    <>
-                      <p>Active Connector: {connectorName}</p>
-                      <p>Account: {account || 'None'}</p>
-                      <p>Network ID: {networkId}</p>
-                    </>
-                  )
-                )
-              }}
-            </Web3Consumer>
-            Connect Wallet
-          </Box> */}
         </Box>
       </Flex>
     </Flex>

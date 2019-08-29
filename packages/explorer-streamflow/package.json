@@ -17,6 +17,7 @@
     "@types/react-dom": "^16.8.5",
     "@types/react-icons": "^3.0.0",
     "@types/styled-jsx": "^2.2.8",
+    "@types/web3": "^1.0.19",
     "babel-plugin-inline-react-svg": "^1.1.0",
     "babel-plugin-styled-system": "^0.0.5",
     "typescript": "^3.5.3"
@@ -47,6 +48,8 @@
     "axios": "^0.19.0",
     "emotion-theming": "^10.0.10",
     "ethers": "^4.0.33",
+    "ethers-web3-bridge": "^0.0.1",
+    "fortmatic": "^0.8.2",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.4",
@@ -67,6 +70,7 @@
     "styled-system": "^5.0.16",
     "styled-theming": "^2.2.0",
     "theme-ui": "^0.2.18",
+    "web3": "^1.2.1",
     "web3-react": "^5.0.4",
     "web3-utils": "^1.0.0-beta.55"
   },

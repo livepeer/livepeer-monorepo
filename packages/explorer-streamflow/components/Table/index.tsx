@@ -46,9 +46,8 @@ export default ({ transcoders }) => {
       MuiTypography: {
         h6: {
           fontWeight: 'bold',
-          fontSize: 26
-          // textTransform: 'uppercase'
-          // fontStyle: 'italic'
+          lineHeight: 'initial',
+          fontSize: 32
         }
       },
       MuiTableSortLabel: {
@@ -125,13 +124,13 @@ export default ({ transcoders }) => {
   })
 
   const Toolbar = (props: any) => (
-    <Flex px={4} mb={3} alignItems="center">
+    <Flex mb={3} alignItems="center">
       <Orchestrators
         style={{
           color: context.theme.colors.primary,
           width: 36,
           height: 36,
-          marginRight: 18
+          marginRight: 10
         }}
       />
       <MTableToolbar {...props} />
