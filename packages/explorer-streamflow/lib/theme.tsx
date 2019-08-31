@@ -39,7 +39,7 @@ const theme = {
     muted: greyArr[4],
     grey: greyArr,
     blueGrey: blueGreyArr,
-    border: '#272931',
+    border: 'rgba(255, 255, 255, .10)',
     modes: {
       light: {
         text: '#fff',
