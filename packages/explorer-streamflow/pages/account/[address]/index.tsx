@@ -34,7 +34,7 @@ export default withApollo(() => {
   const { address } = router.query
   const { data, loading } = useQuery(GET_PROTOCOL_DATA, {
     notifyOnNetworkStatusChange: true,
-    ssr: false
+    ssr: false,
   })
 
   const views = [
@@ -42,7 +42,7 @@ export default withApollo(() => {
     { name: 'Staking', slug: 'staking' },
     { name: 'Earned Fees' },
     { name: 'History' },
-    { name: 'Settings' }
+    { name: 'Settings' },
   ]
 
   return (
@@ -52,10 +52,12 @@ export default withApollo(() => {
           width: 'calc(100% - 256px)',
           maxWidth: 1300,
           margin: '0 auto',
-          px: 4
-        }}>
+          px: 4,
+        }}
+      >
         <Flex
-          sx={{ paddingTop: 5, flexDirection: 'column', pr: 6, width: '70%' }}>
+          sx={{ paddingTop: 5, flexDirection: 'column', pr: 6, width: '70%' }}
+        >
           <Profile address={address} styles={{ mb: 4 }} />
           <Tabs tabs={views} address={address} />
         </Flex>

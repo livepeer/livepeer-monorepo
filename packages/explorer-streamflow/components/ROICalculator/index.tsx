@@ -90,8 +90,9 @@ const Input = ({ variant = 'primary', ...props }) => (
       alignItems: 'center',
       width: '100%',
       mb: 3,
-      position: 'relative'
-    }}>
+      position: 'relative',
+    }}
+  >
     <Styled.div
       as="input"
       {...props}
@@ -110,11 +111,11 @@ const Input = ({ variant = 'primary', ...props }) => (
         fontSize: 26,
         fontFamily: 'monospace',
         '&::-webkit-inner-spin-button': {
-          WebkitAppearance: 'none'
+          WebkitAppearance: 'none',
         },
         '&::-webkit-outer-spin-button': {
-          WebkitAppearance: 'none'
-        }
+          WebkitAppearance: 'none',
+        },
       }}
     />
     <Styled.div sx={{ fontWeight: 'bold', right: 0, position: 'absolute' }}>
@@ -132,12 +133,12 @@ const SubmitButton = (props: any) => {
   const [approve] = useMutation(APPROVE, {
     variables: {
       type: 'bond',
-      amount: Utils.toWei('1', 'ether')
+      amount: Utils.toWei('1', 'ether'),
     },
     context: {
       provider: props.context.library.currentProvider,
-      account: props.context.account.toLowerCase()
-    }
+      account: props.context.account.toLowerCase(),
+    },
   })
 
   return (
@@ -145,7 +146,8 @@ const SubmitButton = (props: any) => {
       onClick={async () => {
         approve()
       }}
-      sx={{ width: '100%' }}>
+      sx={{ width: '100%' }}
+    >
       Bond
     </Button>
   )
@@ -163,9 +165,9 @@ export default ({ protocol }) => {
   const { data } = useQuery(GET_ROI)
   let context = useWeb3Context()
 
-  if (!context.active) {
-    context.setConnector('Portis')
-  }
+  // if (!context.active) {
+  //   context.setConnector('Portis')
+  // }
 
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
   const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
@@ -179,15 +181,17 @@ export default ({ protocol }) => {
         position: 'sticky',
         alignSelf: 'flex-start',
         top: 4,
-        width: '30%'
-      }}>
+        width: '30%',
+      }}
+    >
       <Box
         sx={{
           width: '100%',
           boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
           borderRadius: 5,
-          backgroundColor: '#1E2026'
-        }}>
+          backgroundColor: '#1E2026',
+        }}
+      >
         <Styled.h4
           as="h3"
           sx={{
@@ -197,18 +201,19 @@ export default ({ protocol }) => {
             borderBottom: '1px solid',
             borderColor: 'border',
             fontWeight: 'bold',
-            fontSize: 20
-          }}>
+            fontSize: 20,
+          }}
+        >
           <QRCode
             style={{
               borderRadius: 1000,
               width: 44,
               height: 44,
-              marginRight: 16
+              marginRight: 16,
             }}
             fgColor={`#${'0x58b6a8a3302369daec383334672404ee733ab239'.substr(
               2,
-              6
+              6,
             )}`}
             value={'0x58b6a8a3302369daec383334672404ee733ab239'}
           />
@@ -220,8 +225,9 @@ export default ({ protocol }) => {
                 color: 'muted',
                 fontSize: 1,
                 lineHeight: 1.5,
-                textTransform: 'initial'
-              }}>
+                textTransform: 'initial',
+              }}
+            >
               0xe9e...28427
             </Styled.div>
           </Flex>
@@ -232,8 +238,9 @@ export default ({ protocol }) => {
               borderRadius: 5,
               width: '100%',
               bg: 'background',
-              mb: 3
-            }}>
+              mb: 3,
+            }}
+          >
             <Styled.h4
               sx={{
                 p: 2,
@@ -243,8 +250,9 @@ export default ({ protocol }) => {
                 justifyContent: 'space-between',
                 display: 'flex',
                 alignItems: 'center',
-                fontWeight: 'bold'
-              }}>
+                fontWeight: 'bold',
+              }}
+            >
               Projected ROI
               <Trending
                 sx={{ width: 16, height: 16, ml: 1, color: 'primary' }}
@@ -274,13 +282,13 @@ export default ({ protocol }) => {
               roi = calculateAnnualROI({
                 principle,
                 totalSupply,
-                totalStaked
+                totalStaked,
               })
               client.writeData({
                 data: {
                   principle,
-                  roi
-                }
+                  roi,
+                },
               })
             }}
           />
