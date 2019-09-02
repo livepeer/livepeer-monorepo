@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-// /** @jsx jsx */
-import gql from 'graphql-tag'
-import { useContext, useEffect, useState } from 'react'
-=======
 /** @jsx jsx */
->>>>>>> Abstract next-apollo integration; add styleguide;
 import * as React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { jsx, Styled, Flex } from 'theme-ui'
@@ -29,18 +23,12 @@ export default withApollo(() => {
           sx={{
             width: '100%',
             justifyContent: 'center',
-<<<<<<< HEAD
             alignItems: 'center',
           }}
         >
-          Loading...
-=======
-            alignItems: 'center'
-          }}>
           <Styled.div sx={{ color: 'primary' }}>
             <CircularProgress size={24} color="inherit" />
           </Styled.div>
->>>>>>> Abstract next-apollo integration; add styleguide;
         </Flex>
       </Layout>
     )

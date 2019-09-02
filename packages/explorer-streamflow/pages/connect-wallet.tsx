@@ -18,30 +18,31 @@ export default () => {
   if (context.error) {
     console.error('Error!')
   }
-  context.setConnector('Portis')
 
-  console.log(context)
+  context.setConnector('Portis')
 
   return (
     <Layout>
       <Box
         sx={{
           width: 'calc(100% - 256px)',
-          p: 5
-        }}>
+          p: 5,
+        }}
+      >
         <Styled.h1
           sx={{
             display: 'flex',
             alignItems: 'center',
             fontWeight: 'bold',
-            mb: 6
-          }}>
+            mb: 6,
+          }}
+        >
           <Wallet
             sx={{
               color: 'primary',
               width: 30,
               height: 30,
-              marginRight: 2
+              marginRight: 2,
             }}
           />
           Connect Wallet
@@ -67,7 +68,8 @@ export default () => {
         </Flex>
         <Button
           sx={{ mb: 4 }}
-          onClick={() => context.setConnector(selectedProvider)}>
+          onClick={() => context.setConnector(selectedProvider)}
+        >
           Connect
         </Button>
         <Flex>
@@ -93,7 +95,8 @@ export default () => {
           <button
             key={connectorName}
             disabled={context.connectorName === connectorName}
-            onClick={() => context.setConnector(connectorName)}>
+            onClick={() => context.setConnector(connectorName)}
+          >
             Activate {connectorName}
           </button>
         ))}

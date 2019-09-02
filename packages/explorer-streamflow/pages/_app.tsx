@@ -21,40 +21,20 @@ class MyApp extends App {
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
           />
         </Head>
-<<<<<<< HEAD
-        <ApolloProvider client={apolloClient}>
-          <ThemeProvider theme={theme}>
-            <ColorMode />
-            <Web3Provider
-              connectors={connectors}
-              libraryName={'web3.js'}
-              web3Api={Web3}
-            >
-              <Component {...pageProps} />
-            </Web3Provider>
-          </ThemeProvider>
-        </ApolloProvider>
-      </Container>
-=======
 
         <ThemeProvider theme={theme}>
           <ColorMode />
           <Web3Provider
             connectors={connectors}
             libraryName={'web3.js'}
-            web3Api={Web3}>
+            web3Api={Web3}
+          >
             <Component {...pageProps} />
           </Web3Provider>
         </ThemeProvider>
       </>
->>>>>>> Abstract next-apollo integration; add styleguide;
     )
   }
 }
 
-<<<<<<< HEAD
-export default withApolloClient(MyApp)
-console.log('hi')
-=======
 export default MyApp
->>>>>>> Abstract next-apollo integration; add styleguide;
