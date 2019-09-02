@@ -271,7 +271,7 @@
     imurmurhash "^0.1.4"
     slide "^1.1.5"
 
-"@babel/cli@^7.4.3":
+"@babel/cli@^7.4.3", "@babel/cli@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.5.5.tgz#bdb6d9169e93e241a08f5f7b0265195bf38ef5ec"
   integrity sha512-UHI+7pHv/tk9g6WXQKYz+kmXTI77YtuY3vqC59KIqcoWEjsJJSG6rAxKaLsgj3LDyadsPrCB929gVOKM6Hui0w==
@@ -342,7 +342,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@7.5.5", "@babel/core@^7.1.0", "@babel/core@^7.1.2", "@babel/core@^7.4.0", "@babel/core@^7.4.3", "@babel/core@^7.4.5":
+"@babel/core@7.5.5", "@babel/core@^7.1.0", "@babel/core@^7.1.2", "@babel/core@^7.4.0", "@babel/core@^7.4.3", "@babel/core@^7.4.5", "@babel/core@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.5.5.tgz#17b2686ef0d6bc58f963dddd68ab669755582c30"
   integrity sha512-i4qoSr2KTtce0DmkuuQBV4AuQgGPUcPXMr9L5MyYAtk06z068lQ10a4O009fe5OB/DfNV+h+qqT7ddNV8UnRjg==
@@ -1625,6 +1625,13 @@
     core-js "^2.6.5"
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@7.3.4", "@babel/runtime@^7.0.0 <7.4.0":
+  version "7.3.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.3.4.tgz#73d12ba819e365fcf7fd152aed56d6df97d21c83"
+  integrity sha512-IvfvnMdSaLBateu0jfsYIpZTxAc2cKEXEMiezGGN75QcBcecDUKd3PgLAncT0oOgxKy8dd8hrJKj9MfzgfZd6g==
+  dependencies:
+    regenerator-runtime "^0.12.0"
+
 "@babel/runtime@7.4.3":
   version "7.4.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.4.3.tgz#79888e452034223ad9609187a0ad1fe0d2ad4bdc"
@@ -1645,13 +1652,6 @@
   integrity sha512-28QvEGyQyNkB0/m2B4FU7IEZGK2NUrcMtT6BZEFALTguLk+AUT6ofsHtPk5QyjAdUkpMJ+/Em+quwz4HOt30AQ==
   dependencies:
     regenerator-runtime "^0.13.2"
-
-"@babel/runtime@^7.0.0 <7.4.0":
-  version "7.3.4"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.3.4.tgz#73d12ba819e365fcf7fd152aed56d6df97d21c83"
-  integrity sha512-IvfvnMdSaLBateu0jfsYIpZTxAc2cKEXEMiezGGN75QcBcecDUKd3PgLAncT0oOgxKy8dd8hrJKj9MfzgfZd6g==
-  dependencies:
-    regenerator-runtime "^0.12.0"
 
 "@babel/template@^7.0.0 <7.4.0":
   version "7.2.2"
@@ -4022,14 +4022,6 @@
     modularscale "^2.0.1"
     object-assign "^4.1.1"
 
-"@tokenfoundry/react-metamask@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@tokenfoundry/react-metamask/-/react-metamask-0.4.0.tgz#0231c30de95f13b4e5dd01283f8bbb8b3b38f102"
-  integrity sha512-SZ2zXeNtmW4bBk7CZwuzodOSx8knVXsCn8H0k5c10SiSf/OmIjGIW0HV+V2jNV6ya/B142lfq9/898hG+EPghw==
-  dependencies:
-    lodash "^4.17.11"
-    prop-types "^15.7.2"
-
 "@types/babel__core@^7.1.0":
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.2.tgz#608c74f55928033fce18b99b213c16be4b3d114f"
@@ -4063,7 +4055,7 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/bn.js@^4.11.0":
+"@types/bn.js@*", "@types/bn.js@^4.11.0":
   version "4.11.5"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-4.11.5.tgz#40e36197433f78f807524ec623afcf0169ac81dc"
   integrity sha512-AEAZcIZga0JgVMHNtl1CprA/hXX7/wPt79AgR4XqaDt7jyj3QWYw6LPoOiznPtugDmlubUnAahMs2PFxGcQrng==
@@ -4224,6 +4216,11 @@
   dependencies:
     "@types/react" "*"
 
+"@types/underscore@*":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@types/underscore/-/underscore-1.9.2.tgz#2c4f7743287218f5c2d9a83db3806672aa48530d"
+  integrity sha512-KgOKTAD+9X+qvZnB5S1+onqKc4E+PZ+T6CM/NA5ohRPLHJXb+yCJMVf8pWOnvuBuKFNUAJW8N97IA6lba6mZGg==
+
 "@types/unist@^2.0.2":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
@@ -4235,6 +4232,14 @@
   integrity sha512-yHr8mX2SoX3JNyfqdLXdO1UobsGhfiwSgtekbVxKLQrzD7vtpPkKbkIVsPFOhvekvNbPsCmDyeDCLkpeI9gSmA==
   dependencies:
     "@types/ethereum-protocol" "*"
+
+"@types/web3@^1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@types/web3/-/web3-1.0.19.tgz#46b85d91d398ded9ab7c85a5dd57cb33ac558924"
+  integrity sha512-fhZ9DyvDYDwHZUp5/STa9XW2re0E8GxoioYJ4pEUZ13YHpApSagixj7IAdoYH5uAK+UalGq6Ml8LYzmgRA/q+A==
+  dependencies:
+    "@types/bn.js" "*"
+    "@types/underscore" "*"
 
 "@types/yargs-parser@*":
   version "13.0.0"
@@ -11149,6 +11154,33 @@ ethereumjs-wallet@0.6.3:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
+ethers-providers@^2.1.19:
+  version "2.1.19"
+  resolved "https://registry.yarnpkg.com/ethers-providers/-/ethers-providers-2.1.19.tgz#d597e298f70cfbf8da207c303af0a5cbed5b4cd2"
+  integrity sha512-usjJ5qyGO84kMmIYImwGhJo12nnG5uzqpZlViYQFEfwBzqoj7b9e55xnc7fP6XWcnPrrbMqIa0KrW8BKy9bYpg==
+  dependencies:
+    ethers-utils "^2.1.0"
+    inherits "2.0.1"
+    xmlhttprequest "1.8.0"
+
+ethers-utils@^2.1.0, ethers-utils@^2.1.11:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/ethers-utils/-/ethers-utils-2.1.11.tgz#b27535ca3226118be300211c39c896b1e5e21641"
+  integrity sha512-BfkGStBmmLjhTldmp5lifiwUeDjx/yowoWfmUnnvPNsix5PFE8IXQdY5VT/Qo1SXMgxzCe8m0Z8ysUw6Q9OmAw==
+  dependencies:
+    bn.js "^4.4.0"
+    hash.js "^1.0.0"
+    js-sha3 "0.5.7"
+    xmlhttprequest "1.8.0"
+
+ethers-web3-bridge@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/ethers-web3-bridge/-/ethers-web3-bridge-0.0.1.tgz#bdd5792ecad08609abecd8055acc085cdf388588"
+  integrity sha512-dnLJxFtO1BmgkmPM2v7JqiUuvcYapiKLXJKq2QcAREyKDnIUAsFeh/Hb80cn9ABJNFK9EYToqee/Ry0c1s7w/Q==
+  dependencies:
+    ethers-providers "^2.1.19"
+    ethers-utils "^2.1.11"
+
 ethers@4.0.0-beta.3:
   version "4.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.0-beta.3.tgz#15bef14e57e94ecbeb7f9b39dd0a4bd435bc9066"
@@ -12271,6 +12303,13 @@ form-data@~2.3.2:
     asynckit "^0.4.0"
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
+
+fortmatic@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/fortmatic/-/fortmatic-0.8.2.tgz#a93fc97d1a1808faf82210d6554e1ebdcb6c5379"
+  integrity sha512-eIuoTpDzK0CN92yOQyEbKoFuaBgxqXjmNMmUbvTphirKPkufSyYkqgHHuAJzgFe3HC5JFuWb/IlrMvqWoe/gKQ==
+  dependencies:
+    "@babel/runtime" "7.3.4"
 
 forwarded@~0.1.2:
   version "0.1.2"
