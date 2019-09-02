@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Styled, jsx, Flex, Box } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
+import Logo from '../../static/img/logo.svg'
 import Network from '../../static/img/network.svg'
 import Account from '../../static/img/account.svg'
 import Wallet from '../../static/img/wallet.svg'
@@ -9,15 +10,15 @@ import Search from '../../static/img/search.svg'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-const items = [
+const DEFAULT_ITEMS = [
   { name: 'Orchestrators', link: '/', icon: Orchestrators },
   { name: 'Network', link: '/network', icon: Network },
   { name: 'Search', link: '/search', icon: Search },
   // { name: 'Account', link: '/account', icon: Account },
-  { name: 'Connect Wallet', link: '/connect-wallet', icon: Wallet }
+  { name: 'Connect Wallet', link: '/connect-wallet', icon: Wallet },
 ]
 
-export default () => {
+export default ({ items = DEFAULT_ITEMS }) => {
   const router = useRouter()
   const { pathname } = router
 
@@ -26,8 +27,9 @@ export default () => {
       sx={{
         width: 256,
         flexDirection: 'column',
-        height: '100vh'
-      }}>
+        height: '100vh',
+      }}
+    >
       <Flex
         sx={{
           position: 'fixed',
@@ -38,13 +40,11 @@ export default () => {
           width: 256,
           borderRight: '1px solid',
           borderColor: 'border',
-          paddingTop: 5
-        }}>
+          paddingTop: 5,
+        }}
+      >
         <Box>
-          <Styled.img
-            sx={{ pl: 3, width: 160, mb: 4 }}
-            src="/static/img/logo.svg"
-          />
+          <Logo sx={{ pl: 3, width: 160, mb: 4 }} />
           <Box>
             {items.map((item, i) => (
               <Link key={i} href={item.link} passHref>
@@ -63,12 +63,13 @@ export default () => {
                     transition: 'color .3s',
                     '&:hover': {
                       color: 'primary',
-                      transition: 'color .3s'
-                    }
+                      transition: 'color .3s',
+                    },
                   }}
                   as="a"
                   key={i}
-                  i={i}>
+                  i={i}
+                >
                   <item.icon sx={{ width: 20, mr: 2 }} />
                   {item.name}
                 </Styled.div>
@@ -80,3 +81,4 @@ export default () => {
     </Flex>
   )
 }
+console.log('hi')
