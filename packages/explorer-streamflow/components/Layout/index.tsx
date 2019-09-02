@@ -1,10 +1,10 @@
-import * as React from "react";
-import Head from "next/head";
-import Drawer from "../Drawer";
-import Reset from "../../lib/reset";
-import { Styled, Flex } from "theme-ui";
+import * as React from 'react'
+import Head from 'next/head'
+import Drawer from '../Drawer'
+import Reset from '../../lib/reset'
+import { Styled, Flex } from 'theme-ui'
 
-const Layout = ({ children, title = "Livepeer Explorer" }: any) => (
+const Layout = ({ children, title = 'Livepeer Explorer' }: any) => (
   <>
     <Head>
       <title>{title}</title>
@@ -13,12 +13,12 @@ const Layout = ({ children, title = "Livepeer Explorer" }: any) => (
     </Head>
     <Reset />
     <Styled.root>
-      <Flex style={{ maxWidth: 1400, margin: "0 auto" }}>
+      <Flex style={{ maxWidth: 1400, margin: '0 auto' }}>
         <Drawer />
         {children}
       </Flex>
     </Styled.root>
   </>
-);
+)
 
-export default Layout;
+export default Layout

@@ -33,7 +33,8 @@ class MyApp extends App<IProps> {
             <Web3Provider
               connectors={connectors}
               libraryName={'web3.js'}
-              web3Api={Web3}>
+              web3Api={Web3}
+            >
               <Component {...pageProps} />
             </Web3Provider>
           </ThemeProvider>
@@ -44,3 +45,4 @@ class MyApp extends App<IProps> {
 }
 
 export default withApolloClient(MyApp)
+console.log('hi')

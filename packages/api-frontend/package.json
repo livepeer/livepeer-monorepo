@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "start": "run-p start:babel start:next",
-    "start:babel": "npm run build:babel --watch",
+    "start:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' --watch .",
     "start:next": "next --port=3008",
-    "build": "next build",
+    "build": "run-p build:babel build:next",
+    "build:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' .",
+    "build:next": "next build",
     "server": "next start --port=3008",
     "now-build": "next build"
   },

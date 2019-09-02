@@ -3,7 +3,7 @@
   "version": "2.0.0-alpha.1",
   "scripts": {
     "start": "run-p start:babel start:next",
-    "start:babel": "npm run build:babel --watch",
+    "start:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' --watch .",
     "start:next": "next --port=3009",
     "build": "run-p build:babel build:next",
     "build:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' .",
