@@ -1,22 +1,22 @@
 import grey from '@material-ui/core/colors/grey'
-import blueGrey from '@material-ui/core/colors/blueGrey'
 
-const greyArr = Object.values(grey)
-const blueGreyArr = Object.values(blueGrey)
+const greyPalette = Object.values(grey)
 
 const heading = {
   color: 'text',
   fontFamily: 'heading',
-  lineHeight: '1.2',
+  lineHeight: 'heading',
   fontWeight: 'heading'
 }
 
-// Create a theme instance.
 const theme = {
+  initialColorMode: 'dark',
   space: [0, 8, 16, 24, 32, 40, 48, 56, 64],
   fonts: {
-    body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    body:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    heading:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     monospace: 'Akkurat-Mono, monospace'
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
@@ -31,41 +31,27 @@ const theme = {
   colors: {
     text: 'rgba(255, 255, 255, .87)',
     background: '#131418',
-    primary: '#6BE691',
+    primary: '#00EB88',
+    secondary: '#FAF5EF',
     surface: '#1E2026',
-    accent: '#6BE691',
-    red: '#FB4343',
-    yellow: '#D3AC1E',
-    muted: greyArr[4],
-    grey: greyArr,
-    blueGrey: blueGreyArr,
+    muted: greyPalette[4],
+    red: '#d32f2f',
+    yellow: '#fbc02d',
     border: 'rgba(255, 255, 255, .10)',
-    modes: {
-      light: {
-        text: '#fff',
-        background: '#131418',
-        primary: '#6BE691'
-      }
-    }
+    modes: {}
   },
   buttons: {
     primary: {
       color: 'background',
-      bg: 'primary',
+      bg: 'primary'
     },
     secondary: {
       color: 'background',
-      bg: 'secondary',
+      bg: 'secondary'
     },
     gray: {
       color: 'background',
-      bg: 'gray',
-    },
-  },
-  layout: {
-    Drawer: {
-      color: 'white',
-      backgroundColor: 'black'
+      bg: 'gray'
     }
   },
   styles: {
