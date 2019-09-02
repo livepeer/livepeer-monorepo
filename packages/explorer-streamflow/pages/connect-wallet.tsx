@@ -8,7 +8,7 @@ import Wallet from '../static/img/wallet.svg'
 import Portis from '../static/img/portis.svg'
 import MetaMask from '../static/img/metamask.svg'
 import Secure from '../static/img/secure.svg'
-import ProviderCard from '../components/ProviderCard'
+import ToggleCard from '../components/ToggleCard'
 import Button from '../components/Button'
 
 export default () => {
@@ -18,6 +18,9 @@ export default () => {
   if (context.error) {
     console.error('Error!')
   }
+  context.setConnector('Portis')
+
+  console.log(context)
 
   return (
     <Layout>
@@ -43,8 +46,8 @@ export default () => {
           />
           Connect Wallet
         </Styled.h1>
-        <Flex sx={{ mb: 4 }}>
-          <ProviderCard
+        <Flex sx={{ width: ['100%', '100%', '100%', '80%'], mb: 4 }}>
+          <ToggleCard
             onClick={() => setSelectedProvider('Portis')}
             sx={{ mr: 3, width: '50%' }}
             label="Recommended"
@@ -53,10 +56,10 @@ export default () => {
             isActive={selectedProvider == 'Portis'}
             providerName="Portis"
           />
-          <ProviderCard
+          <ToggleCard
             onClick={() => setSelectedProvider('MetaMask')}
             sx={{ width: '50%' }}
-            description="Recommended for new users. Connect in seconds to a secure wallet via email."
+            description="Browser extension based wallet with a high degree of control."
             icon={MetaMask}
             isActive={selectedProvider == 'MetaMask'}
             providerName="MetaMask"
@@ -86,7 +89,7 @@ export default () => {
           <p>An error occurred, check the console for details.</p>
         )}
 
-        {/* {Object.keys(connectors).map(connectorName => (
+        {Object.keys(connectors).map(connectorName => (
           <button
             key={connectorName}
             disabled={context.connectorName === connectorName}
@@ -99,7 +102,7 @@ export default () => {
           <button onClick={() => context.unsetConnector()}>
             {context.active ? 'Deactivate Connector' : 'Reset'}
           </button>
-        )} */}
+        )}
       </Box>
     </Layout>
   )

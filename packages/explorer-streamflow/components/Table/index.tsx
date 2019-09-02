@@ -25,18 +25,18 @@ export default ({ transcoders }) => {
         main: context.theme.colors.background
       },
       secondary: {
-        main: context.theme.colors.grey[3]
+        main: context.theme.colors.text
       },
       background: {
         default: context.theme.colors.background,
         paper: context.theme.colors.background
       },
       text: {
-        primary: context.theme.colors.grey[3],
-        secondary: context.theme.colors.grey[3]
+        primary: context.theme.colors.text,
+        secondary: context.theme.colors.text
       },
       action: {
-        active: context.theme.colors.grey[3]
+        active: context.theme.colors.primary
       }
     },
     typography: {
@@ -87,7 +87,8 @@ export default ({ transcoders }) => {
             transition: 'background-color .2s, color .2s'
           },
           '&:hover a': {
-            borderBottom: '1px solid rgba(255, 255, 255, .4)'
+            borderBottom: `1px solid`,
+            borderColor: 'rgba(255, 255, 255, .4) !important'
           }
         },
         footer: {
@@ -165,7 +166,9 @@ export default ({ transcoders }) => {
         )
         break
       case 'totalStake':
-        let num = Number(Utils.fromWei(props.value)).toFixed(2)
+        let num = props.value
+          ? Number(Utils.fromWei(props.value)).toFixed(2)
+          : 0
         cellValue = (
           <span style={{ fontFamily: 'Akkurat-Mono' }}>
             {numberWithCommas(num)}

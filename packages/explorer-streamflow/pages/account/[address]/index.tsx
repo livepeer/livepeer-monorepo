@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { useRouter } from 'next/router'
-import { jsx, Flex } from 'theme-ui'
+import { jsx, Flex, Box } from 'theme-ui'
 import Layout from '../../../components/Layout'
 import ROICalculator from '../../../components/ROICalculator'
 import Profile from '../../../components/Profile'
@@ -38,8 +38,8 @@ export default withApollo(() => {
   })
 
   const views = [
-    { name: 'Overview', slug: '' },
-    { name: 'Staking', slug: 'staking', isActive: true },
+    { name: 'Overview', slug: '', isActive: true },
+    { name: 'Staking', slug: 'staking' },
     { name: 'Earned Fees' },
     { name: 'History' },
     { name: 'Settings' }
