@@ -2,13 +2,13 @@
   "name": "@livepeer/explorer-streamflow",
   "version": "2.0.0-alpha.1",
   "scripts": {
-    "start": "run-p start:babel start:next",
-    "start:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' --watch .",
-    "start:next": "next --port=3009",
+    "dev": "run-p dev:babel dev:next",
+    "dev:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' --watch .",
+    "dev:next": "next --port=3009",
     "build": "run-p build:babel build:next",
     "build:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' .",
     "build:next": "next build",
-    "server": "next start",
+    "start": "next start",
     "now-build": "next build",
     "build-storybook": "build-storybook"
   },
