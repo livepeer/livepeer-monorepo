@@ -1,3 +1,10 @@
 {
+<<<<<<< HEAD
   "presets": ["next/babel"]
+=======
+  "presets": ["next/babel"],
+  "plugins": [
+    "inline-react-svg"
+  ]
+>>>>>>> chore(api-frontend): first attempt at unified api-frontend
 }
