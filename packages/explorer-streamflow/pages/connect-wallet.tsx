@@ -1,9 +1,9 @@
 /** @jsx jsx */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { jsx, Flex, Box, Styled } from 'theme-ui'
 import Layout from '../components/Layout'
+import Router from 'next/router'
 import { useWeb3Context, Web3Consumer } from 'web3-react'
-import connectors from '../lib/connectors'
 import Wallet from '../static/img/wallet.svg'
 import Portis from '../static/img/portis.svg'
 import MetaMask from '../static/img/metamask.svg'
@@ -15,11 +15,12 @@ export default () => {
   const context = useWeb3Context()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
 
-  if (context.error) {
-    console.error('Error!')
-  }
-
-  context.setConnector('Portis')
+  // Redirect to user's account upon connection to web3
+  useEffect(() => {
+    if (context.account) {
+      Router.push(`/[account]`, `/${context.account}`)
+    }
+  }, [context.account])
 
   return (
     <Layout>
@@ -68,7 +69,9 @@ export default () => {
         </Flex>
         <Button
           sx={{ mb: 4 }}
-          onClick={() => context.setConnector(selectedProvider)}
+          onClick={async () => {
+            context.setConnector(selectedProvider)
+          }}
         >
           Connect
         </Button>
@@ -82,7 +85,7 @@ export default () => {
             </Styled.p>
           </Flex>
         </Flex>
-        {(context.active || (context.error && context.connectorName)) && (
+        {/* {(context.active || (context.error && context.connectorName)) && (
           <button onClick={() => context.unsetConnector()}>
             {context.active ? 'Deactivate Connector' : 'Reset'}
           </button>
@@ -105,7 +108,7 @@ export default () => {
           <button onClick={() => context.unsetConnector()}>
             {context.active ? 'Deactivate Connector' : 'Reset'}
           </button>
-        )}
+        )} */}
       </Box>
     </Layout>
   )

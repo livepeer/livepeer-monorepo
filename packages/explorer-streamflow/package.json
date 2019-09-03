@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "run-p dev:babel dev:next",
     "dev:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' --watch .",
-    "dev:next": "next --port=3009",
+    "dev:next": "next -- -p 3009",
     "build": "run-p build:babel build:next",
     "build:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' .",
     "build:next": "next build",
@@ -79,7 +79,6 @@
     "react-inlinesvg": "^1.1.5",
     "react-md-spinner": "^1.0.0",
     "react-select": "^3.0.3",
-    "rebass": "^4.0.1",
     "styled-jsx": "^3.2.1",
     "theme-ui": "^0.2.18",
     "web3": "^1.2.1",

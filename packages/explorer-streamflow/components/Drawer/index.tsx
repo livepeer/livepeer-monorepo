@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 export default ({ items = [] }) => {
   const router = useRouter()
-  const { pathname } = router
+  const { asPath } = router
 
   return (
     <Flex
@@ -34,11 +34,16 @@ export default ({ items = [] }) => {
           <Logo sx={{ pl: 3, width: 180, mb: 4 }} />
           <Box>
             {items.map((item, i) => (
-              <Link key={i} href={item.link} passHref>
+              <Link
+                key={i}
+                href={item.link}
+                as={item.as ? item.as : item.href}
+                passHref
+              >
                 <Styled.div
                   as="a"
                   sx={{
-                    color: pathname === item.link ? 'primary' : 'muted',
+                    color: asPath === item.as ? 'primary' : 'muted',
                     lineHeight: 'initial',
                     display: 'flex',
                     fontSize: 20,

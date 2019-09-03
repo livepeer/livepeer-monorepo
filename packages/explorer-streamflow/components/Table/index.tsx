@@ -1,9 +1,8 @@
 import React from 'react'
 import * as Utils from 'web3-utils'
-import { Flex } from 'rebass'
 import MaterialTable, { MTableToolbar, MTableCell } from 'material-table'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { useThemeUI } from 'theme-ui'
+import { Flex, useThemeUI } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
 import QRCode from 'qrcode.react'
 import { AvatarGroup, OrchestratorName } from './styles'
@@ -22,41 +21,41 @@ export default ({ transcoders }) => {
   const muiTheme = createMuiTheme({
     palette: {
       primary: {
-        main: context.theme.colors.background
+        main: context.theme.colors.background,
       },
       secondary: {
-        main: context.theme.colors.text
+        main: context.theme.colors.text,
       },
       background: {
         default: context.theme.colors.background,
-        paper: context.theme.colors.background
+        paper: context.theme.colors.background,
       },
       text: {
         primary: context.theme.colors.text,
-        secondary: context.theme.colors.text
+        secondary: context.theme.colors.text,
       },
       action: {
-        active: context.theme.colors.primary
-      }
+        active: context.theme.colors.primary,
+      },
     },
     typography: {
-      fontFamily: context.theme.fonts.body
+      fontFamily: context.theme.fonts.body,
     },
     overrides: {
       MuiTypography: {
         h6: {
           fontWeight: 'bold',
           lineHeight: 'initial',
-          fontSize: 32
-        }
+          fontSize: 32,
+        },
       },
       MuiTableSortLabel: {
         root: {
-          fontSize: 14
+          fontSize: 14,
         },
         icon: {
-          fontSize: 14
-        }
+          fontSize: 14,
+        },
       },
       MuiToolbar: {
         regular: {
@@ -65,63 +64,63 @@ export default ({ transcoders }) => {
           minHeight: 'initial',
           width: '100%',
           ['@media (min-width: 600px)']: {
-            minHeight: 'initial'
+            minHeight: 'initial',
           },
           ['@media (min-width: 0px) and (orientation: landscape)']: {
-            minHeight: 'initial'
-          }
-        }
+            minHeight: 'initial',
+          },
+        },
       },
       MuiInput: {
         underline: {
           '&:before': {
-            borderBottom: '1px solid rgba(255, 255, 255, 0.42)'
-          }
-        }
+            borderBottom: '1px solid rgba(255, 255, 255, 0.42)',
+          },
+        },
       },
       MuiTableRow: {
         hover: {
           '&:hover': {
             cursor: 'initial !important',
             backgroundColor: `${context.theme.colors.surface} !important`,
-            transition: 'background-color .2s, color .2s'
+            transition: 'background-color .2s, color .2s',
           },
           '&:hover a': {
             borderBottom: `1px solid`,
-            borderColor: 'rgba(255, 255, 255, .4) !important'
-          }
+            borderColor: 'rgba(255, 255, 255, .4) !important',
+          },
         },
         footer: {
           '&:hover': {
-            backgroundColor: 'initial'
-          }
-        }
+            backgroundColor: 'initial',
+          },
+        },
       },
       MuiTableCell: {
         head: {
-          padding: 20
+          padding: 20,
         },
         root: {
           borderBottom: 0,
           padding: '14px 20px 14px 20px',
           fontSize: 14,
           '&:first-child': {
-            paddingLeft: 32
+            paddingLeft: 32,
           },
           '&:last-child': {
-            paddingRight: 32
-          }
-        }
+            paddingRight: 32,
+          },
+        },
       },
       MuiPaper: {
         root: {
-          width: '100%'
+          width: '100%',
         },
         elevation2: {
-          boxShadow: 'none'
-        }
-      }
-    }
+          boxShadow: 'none',
+        },
+      },
+    },
   })
 
   const Toolbar = (props: any) => (
@@ -131,7 +130,7 @@ export default ({ transcoders }) => {
           color: context.theme.colors.primary,
           width: 36,
           height: 36,
-          marginRight: 10
+          marginRight: 10,
         }}
       />
       <MTableToolbar {...props} />
@@ -149,15 +148,12 @@ export default ({ transcoders }) => {
                 borderRadius: 1000,
                 width: 32,
                 height: 32,
-                marginRight: 16
+                marginRight: 16,
               }}
               fgColor={`#${props.value.substr(2, 6)}`}
               value={props.value}
             />
-            <Link
-              href="/account/[address]"
-              as={`/account/${props.value}`}
-              passHref>
+            <Link href="/[account]" as={`/${props.value}`} passHref>
               <OrchestratorName>
                 {props.value.substring(0, 10)}...
               </OrchestratorName>
@@ -202,38 +198,38 @@ export default ({ transcoders }) => {
         columns={[
           {
             title: 'Name',
-            field: 'id'
+            field: 'id',
           },
           {
             title: 'Fee Cut',
             field: 'feeShare',
-            type: 'numeric'
+            type: 'numeric',
           },
           {
             title: 'Reward Cut',
             field: 'rewardCut',
-            type: 'numeric'
+            type: 'numeric',
           },
           {
             title: 'Stake',
             field: 'totalStake',
             defaultSort: 'desc',
-            type: 'numeric'
-          }
+            type: 'numeric',
+          },
         ]}
         data={transcoders}
         title="Orchestrators"
         onRowClick={(_event, rowData) =>
           client.writeData({
             data: {
-              selectedOrchestrator: rowData
-            }
+              selectedOrchestrator: rowData,
+            },
           })
         }
         localization={{
           toolbar: {
-            searchPlaceholder: 'Filter'
-          }
+            searchPlaceholder: 'Filter',
+          },
         }}
         options={{
           paging: false,
@@ -246,13 +242,13 @@ export default ({ transcoders }) => {
               backgroundColor:
                 rowData.id == '0xe9e284277648fcdb09b8efc1832c73c09b5ecf59'
                   ? '#1E2026'
-                  : 'transparent'
+                  : 'transparent',
             }
-          }
+          },
         }}
         components={{
           Toolbar: props => <Toolbar {...props} />,
-          Cell: props => <Cell {...props} />
+          Cell: props => <Cell {...props} />,
         }}
       />
     </MuiThemeProvider>
