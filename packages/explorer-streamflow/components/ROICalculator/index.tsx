@@ -165,10 +165,6 @@ export default ({ protocol }) => {
   const { data } = useQuery(GET_ROI)
   let context = useWeb3Context()
 
-  // if (!context.active) {
-  //   context.setConnector('Portis')
-  // }
-
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
   const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
 

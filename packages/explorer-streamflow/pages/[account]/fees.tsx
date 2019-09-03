@@ -1,13 +1,15 @@
 /** @jsx jsx */
+import React from 'react'
 import { useRouter } from 'next/router'
-import { jsx, Flex, Box } from 'theme-ui'
-import Layout from '../../../components/Layout'
-import ROICalculator from '../../../components/ROICalculator'
-import Profile from '../../../components/Profile'
-import Tabs from '../../../components/Tabs'
+import { jsx, Flex } from 'theme-ui'
+import Layout from '../../components/Layout'
+import ROICalculator from '../../components/ROICalculator'
+import Profile from '../../components/Profile'
+import Tabs from '../../components/Tabs'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { withApollo } from '../../../lib/apollo'
+import { useWeb3Context } from 'web3-react'
+import { withApollo } from '../../lib/apollo'
 
 const GET_PROTOCOL_DATA = gql`
   query {
@@ -29,20 +31,38 @@ const GET_PROTOCOL_DATA = gql`
     }
   }
 `
+
 export default withApollo(() => {
+  const context = useWeb3Context()
   const router = useRouter()
-  const { address } = router.query
+  const { account } = router.query
   const { data, loading } = useQuery(GET_PROTOCOL_DATA, {
     notifyOnNetworkStatusChange: true,
     ssr: false,
   })
 
   const views = [
-    { name: 'Overview', slug: '', isActive: true },
-    { name: 'Staking', slug: 'staking' },
-    { name: 'Earned Fees' },
-    { name: 'History' },
-    { name: 'Settings' },
+    {
+      name: 'Staking',
+      href: '/[account]',
+      as: `/${account}`,
+    },
+    {
+      name: 'Earned Fees',
+      href: '/[account]/fees',
+      as: `/${account}/fees`,
+      isActive: true,
+    },
+    {
+      name: 'History',
+      href: '/[account]/history',
+      as: `/${account}/history`,
+    },
+    {
+      name: 'Settings',
+      href: '/[account]/settings',
+      as: `/${account}/settings`,
+    },
   ]
 
   return (
@@ -58,8 +78,12 @@ export default withApollo(() => {
         <Flex
           sx={{ paddingTop: 5, flexDirection: 'column', pr: 6, width: '70%' }}
         >
-          <Profile address={address} styles={{ mb: 4 }} />
-          <Tabs tabs={views} address={address} />
+          <Profile
+            account={account}
+            isConnectedAccount={context.account == account}
+            styles={{ mb: 4 }}
+          />
+          <Tabs tabs={views} />
         </Flex>
 
         {loading ? (
