@@ -1,10 +1,10 @@
 /** @jsx jsx */
-import { Styled, Flex, jsx } from 'theme-ui'
+import { jsx } from 'theme-ui'
 import React from 'react'
 import Check from '../../static/img/check.svg'
 
 export default ({ isActive = false, ...props }) => (
-  <Styled.div
+  <div
     {...props}
     sx={{
       border: '2px solid',
@@ -16,8 +16,9 @@ export default ({ isActive = false, ...props }) => (
       height: 24,
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center'
-    }}>
+      alignItems: 'center',
+    }}
+  >
     {isActive && <Check sx={{ width: 16, height: 16 }} />}
-  </Styled.div>
+  </div>
 )

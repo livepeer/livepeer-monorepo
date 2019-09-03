@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { Styled, jsx } from 'theme-ui'
+import { jsx } from 'theme-ui'
 
 export default ({ children, ...props }) => (
-  <Styled.div
+  <div
     {...props}
     sx={{
       border: '1px solid',
@@ -10,8 +10,9 @@ export default ({ children, ...props }) => (
       borderColor: 'muted',
       px: 1,
       py: '4px',
-      fontSize: 12
-    }}>
+      fontSize: 12,
+    }}
+  >
     {children}
-  </Styled.div>
+  </div>
 )

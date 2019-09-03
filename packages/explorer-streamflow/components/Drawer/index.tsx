@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import React, { useState } from 'react'
-import { Styled, jsx, Flex, Box } from 'theme-ui'
+import React from 'react'
+import { jsx, Flex, Box } from 'theme-ui'
 import Logo from '../../static/img/logo.svg'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -36,14 +36,16 @@ export default ({ items = [] }) => {
             {items.map((item, i) => (
               <Link
                 key={i}
-                href={item.link}
+                href={item.href}
                 as={item.as ? item.as : item.href}
                 passHref
               >
-                <Styled.div
-                  as="a"
+                <a
                   sx={{
-                    color: asPath === item.as ? 'primary' : 'muted',
+                    color:
+                      asPath === (item.as ? item.as : item.href)
+                        ? 'primary'
+                        : 'muted',
                     lineHeight: 'initial',
                     display: 'flex',
                     fontSize: 20,
@@ -62,7 +64,7 @@ export default ({ items = [] }) => {
                 >
                   <item.icon sx={{ width: 20, mr: 2 }} />
                   {item.name}
-                </Styled.div>
+                </a>
               </Link>
             ))}
           </Box>

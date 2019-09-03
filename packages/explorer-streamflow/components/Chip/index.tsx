@@ -1,19 +1,19 @@
 /** @jsx jsx */
-import { Styled, jsx } from "theme-ui";
+import { jsx } from 'theme-ui'
 
-export default ({ label, variant = "primary", ...props }) => (
-  <Styled.div
+export default ({ label, variant = 'primary', ...props }) => (
+  <div
     sx={{
       borderRadius: 1000,
-      bg: "grey",
+      bg: 'grey',
       px: 1,
-      py: "4px",
-      display: "inline-flex",
+      py: '4px',
+      display: 'inline-flex',
       fontSize: 0,
       fontWeight: 600,
-      ...props.sx
+      ...props.sx,
     }}
   >
     {label}
-  </Styled.div>
-);
+  </div>
+)

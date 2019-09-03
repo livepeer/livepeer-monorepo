@@ -11,7 +11,7 @@ export default ({
   ...props
 }) => {
   return (
-    <Styled.div sx={styles} {...props}>
+    <div sx={styles} {...props}>
       <QRCode
         style={{
           borderRadius: 1000,
@@ -28,6 +28,6 @@ export default ({
           : account.replace(account.slice(7, 37), '…')}
       </Styled.h1>
       <Chip label="Orchestrator" />
-    </Styled.div>
+    </div>
   )
 }

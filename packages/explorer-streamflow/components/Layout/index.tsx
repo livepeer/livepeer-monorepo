@@ -13,11 +13,11 @@ const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
   const context = useWeb3Context()
 
   let items = [
-    { name: 'Orchestrators', link: '/', icon: Orchestrators },
-    { name: 'Search', link: '/search', icon: Search },
+    { name: 'Orchestrators', href: '/', icon: Orchestrators },
+    { name: 'Search', href: '/search', icon: Search },
     {
       name: !context.connector ? 'Connect Wallet' : 'My Account',
-      link: !context.connector ? '/connect-wallet' : '/[account]',
+      href: !context.connector ? '/connect-wallet' : '/[account]',
       as: !context.connector ? '/connect-wallet' : `/${context.account}`,
       icon: !context.connector ? Wallet : Account,
     },

@@ -1,10 +1,10 @@
 /** @jsx jsx */
-import { Styled, jsx } from 'theme-ui'
+import { jsx } from 'theme-ui'
 import Link from 'next/link'
 
 export default ({ tabs, variant = 'primary', ...props }) => {
   return (
-    <Styled.div
+    <div
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -14,11 +14,10 @@ export default ({ tabs, variant = 'primary', ...props }) => {
         borderColor: 'border',
       }}
     >
-      {tabs.map((tab: any, i) => {
+      {tabs.map((tab: any, i: number) => {
         return (
           <Link key={i} href={tab.href} as={tab.as} passHref>
-            <Styled.div
-              as="a"
+            <a
               sx={{
                 color: tab.isActive ? 'white' : 'muted',
                 mr: 3,
@@ -30,10 +29,10 @@ export default ({ tabs, variant = 'primary', ...props }) => {
               }}
             >
               {tab.name}
-            </Styled.div>
+            </a>
           </Link>
         )
       })}
-    </Styled.div>
+    </div>
   )
 }

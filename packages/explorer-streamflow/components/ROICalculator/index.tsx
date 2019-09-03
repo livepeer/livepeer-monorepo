@@ -64,10 +64,10 @@ function abbreviateNumber(value) {
 const Row = ({ label, percentChange, symbol, earnings, ...props }) => (
   <Box {...props}>
     <Flex sx={{ fontSize: 0, mb: 1, justifyContent: 'space-between' }}>
-      <Styled.div sx={{ fontWeight: 500 }}>{label}</Styled.div>
-      <Styled.div sx={{ fontFamily: 'monospace', color: 'muted' }}>
+      <div sx={{ fontWeight: 500 }}>{label}</div>
+      <div sx={{ fontFamily: 'monospace', color: 'muted' }}>
         {percentChange}
-      </Styled.div>
+      </div>
     </Flex>
     <Flex sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
       <Styled.h2 as="div" sx={{ fontFamily: 'monospace' }}>
@@ -84,7 +84,7 @@ const Row = ({ label, percentChange, symbol, earnings, ...props }) => (
 )
 
 const Input = ({ variant = 'primary', ...props }) => (
-  <Styled.div
+  <div
     sx={{
       display: 'flex',
       alignItems: 'center',
@@ -93,8 +93,7 @@ const Input = ({ variant = 'primary', ...props }) => (
       position: 'relative',
     }}
   >
-    <Styled.div
-      as="input"
+    <input
       {...props}
       sx={{
         backgroundColor: 'transparent',
@@ -118,10 +117,8 @@ const Input = ({ variant = 'primary', ...props }) => (
         },
       }}
     />
-    <Styled.div sx={{ fontWeight: 'bold', right: 0, position: 'absolute' }}>
-      LPT
-    </Styled.div>
-  </Styled.div>
+    <div sx={{ fontWeight: 'bold', right: 0, position: 'absolute' }}>LPT</div>
+  </div>
 )
 
 const SubmitButton = (props: any) => {
@@ -214,8 +211,8 @@ export default ({ protocol }) => {
             value={'0x58b6a8a3302369daec383334672404ee733ab239'}
           />
           <Flex sx={{ flexDirection: 'column' }}>
-            <Styled.div>Staked</Styled.div>
-            <Styled.div
+            <div>Staked</div>
+            <div
               sx={{
                 fontWeight: 'normal',
                 color: 'muted',
@@ -225,11 +222,11 @@ export default ({ protocol }) => {
               }}
             >
               0xe9e...28427
-            </Styled.div>
+            </div>
           </Flex>
         </Styled.h4>
-        <Styled.div sx={{ p: 2 }}>
-          <Styled.div
+        <div sx={{ p: 2 }}>
+          <div
             sx={{
               borderRadius: 5,
               width: '100%',
@@ -267,7 +264,7 @@ export default ({ protocol }) => {
                 }
               />
             </Box>
-          </Styled.div>
+          </div>
           <Input
             placeholder="0"
             type="number"
@@ -289,7 +286,7 @@ export default ({ protocol }) => {
             }}
           />
           {context.active && <SubmitButton context={context} />}
-        </Styled.div>
+        </div>
       </Box>
     </Flex>
   )

@@ -1,6 +1,5 @@
 import { Connectors } from "web3-react";
 import PortisApi from "@portis/web3";
-import FortmaticApi from "fortmatic";
 
 const {
   InjectedConnector,
@@ -21,12 +20,6 @@ const MetaMask = new InjectedConnector({
   supportedNetworks: [1, 4]
 });
 
-const Fortmatic = new FortmaticConnector({
-  api: FortmaticApi,
-  apiKey: "pk_live_F95FEECB1BE324B5",
-  logoutOnDeactivation: false
-});
-
 const Ledger = new LedgerConnector({
   supportedNetworkURLs,
   defaultNetwork
@@ -40,7 +33,6 @@ const Portis = new PortisConnector({
 
 export default {
   MetaMask,
-  Fortmatic,
   Ledger,
   Portis
 };
