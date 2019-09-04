@@ -3,7 +3,7 @@ import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import { LevelStore, PostgresStore } from './store'
-import { healthCheck } from './middleware'
+import { healthCheck, authMiddleware } from './middleware'
 import logger from './logger'
 import schema from './schema'
 import * as controllers from './controllers'
@@ -37,6 +37,8 @@ export default async function makeApp({
     req.store = store
     next()
   })
+
+  app.use('/authtoken', authMiddleware)
 
   if (kubeNamespace && kubeBroadcasterService) {
     const kc = new k8s.KubeConfig()
