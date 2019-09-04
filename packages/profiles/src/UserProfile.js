@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Box from '3box'
 //import { Button, CTAButton } from './Button'
@@ -20,6 +20,7 @@ import {
   getProfile,
   saveProfileToLivepeerSpace,
   resetProf,
+  linkProfile,
 } from './Lib'
 
 const UserProfile = styled.div`
@@ -52,9 +53,15 @@ export default () => {
   const [editProfileType, setEditProfileType] = useState(false)
   const [content, setContent] = useState('loading')
   const [profile, setProfile] = useState(0)
-  const [userDid, setUserDid] = useState('loading DID...')
+  const [userDid, setUserDid] = useState(0)
+  const [timestamp, setTimestamp] = useState(0)
+
+  const signatureRef = useRef()
+  const addressRef = useRef()
 
   const update = async () => {
+    console.log('eth: ' + window.web3.eth)
+    console.log('address: ' + window.web3.eth.defaultAccount)
     if (window.web3.eth.defaultAccount != undefined) {
       setAccount(window.web3.eth.defaultAccount)
     } else {
@@ -100,6 +107,7 @@ export default () => {
     }
     const box = await Box.openBox(window.web3.eth.defaultAccount)
     setUserDid(box.DID)
+    setTimestamp(Math.floor(Date.now() / 1000))
   }
   useEffect(() => {
     update()
@@ -175,29 +183,63 @@ export default () => {
             </li>
             <li>When prompted for the message to sign, paste this:</li>
             <br />
-            <div
-              style={{
-                backgroundColor: 'black',
-                color: 'limegreen',
-                width: '350px',
-                display: 'block',
-                margin: '0 auto',
-                overflow: 'scroll',
-              }}
-            >
-              Create a new 3Box profile
-              <br />
-              <br />
-              -
-              <br />
-              Your unique profile ID is {userDid}
-              <br />
-              Timestamp: {Math.floor(Date.now() / 1000)}
-            </div>
+            {(() => {
+              if (userDid == 0 || timestamp == 0) {
+                return (
+                  <LoadingAnimation
+                    style={{
+                      display: 'block',
+                      margin: '0 auto',
+                    }}
+                  />
+                )
+              }
+              return (
+                <div
+                  style={{
+                    backgroundColor: 'black',
+                    color: 'limegreen',
+                    width: '350px',
+                    display: 'block',
+                    margin: '0 auto',
+                    overflow: 'scroll',
+                  }}
+                >
+                  Create a new 3Box profile
+                  <br />
+                  <br />
+                  -
+                  <br />
+                  Your unique profile ID is {userDid}
+                  <br />
+                  Timestamp: {timestamp}
+                </div>
+              )
+            })()}
             <br />
-            <li>Paste the hex signature output here.</li>
+            <li>
+              Paste the hex signature output here, and enter address of account.
+            </li>
           </ol>
-          <input type="text" />
+          <input
+            style={{
+              display: 'block',
+              margin: '0 auto',
+            }}
+            type="text"
+            ref={signatureRef}
+            placeholder="signature"
+          />
+          <br />
+          <input
+            style={{
+              display: 'block',
+              margin: '0 auto',
+            }}
+            type="text"
+            ref={addressRef}
+            placeholder="address"
+          />
           <br />
           <div
             style={{
@@ -206,7 +248,18 @@ export default () => {
             }}
           >
             <Button>Cancel</Button>
-            <Button>Connect Account</Button>
+            <Button
+              onClick={() => {
+                linkProfile(
+                  window.web3.eth.defaultAccount,
+                  addressRef.current.value,
+                  'message',
+                  signatureRef.current.value,
+                )
+              }}
+            >
+              Connect Account
+            </Button>
           </div>
         </>
       </Popup>

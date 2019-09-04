@@ -114,6 +114,18 @@ export const saveProfileToLivepeerSpace = async (
   }
 }
 
+export const linkProfile = async (
+  address,
+  addressToLink,
+  message,
+  signedMessage,
+) => {
+  alert('address: ' + address)
+  alert('addressToLink: ' + addressToLink)
+  alert('message: ' + message)
+  alert('signedMessage: ' + signedMessage)
+}
+
 export const printHello = () => {
   console.log('Hello im imported library')
 }
