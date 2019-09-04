@@ -13,6 +13,7 @@ export default ({ tabs, variant = 'primary', ...props }) => {
         borderBottom: '1px solid',
         borderColor: 'border',
       }}
+      {...props}
     >
       {tabs.map((tab: any, i: number) => {
         return (
@@ -24,7 +25,7 @@ export default ({ tabs, variant = 'primary', ...props }) => {
                 pb: '10px',
                 fontSize: 1,
                 fontWeight: 500,
-                borderBottom: '1px solid',
+                borderBottom: '2px solid',
                 borderColor: tab.isActive ? 'primary' : 'transparent',
               }}
             >

@@ -3,13 +3,14 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { jsx, Flex } from 'theme-ui'
 import Layout from '../../components/Layout'
-import ROICalculator from '../../components/ROICalculator'
+import StakingWidget from '../../components/StakingWidget'
 import Profile from '../../components/Profile'
 import Tabs from '../../components/Tabs'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useWeb3Context } from 'web3-react'
 import { withApollo } from '../../lib/apollo'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const GET_PROTOCOL_DATA = gql`
   query {
@@ -38,7 +39,7 @@ export default withApollo(() => {
   const { account } = router.query
   const { data, loading } = useQuery(GET_PROTOCOL_DATA, {
     notifyOnNetworkStatusChange: true,
-    ssr: false,
+    ssr: true,
   })
 
   const views = [
@@ -72,7 +73,7 @@ export default withApollo(() => {
           width: 'calc(100% - 256px)',
           maxWidth: 1300,
           margin: '0 auto',
-          px: 4,
+          px: 5,
         }}
       >
         <Flex
@@ -86,11 +87,26 @@ export default withApollo(() => {
           <Tabs tabs={views} />
         </Flex>
 
-        {loading ? (
-          <div>Loading</div>
-        ) : (
-          <ROICalculator protocol={data.protocol} />
-        )}
+        <Flex
+          sx={{
+            position: 'sticky',
+            alignSelf: 'flex-start',
+            top: 4,
+            bg: 'surface',
+            minHeight: 300,
+            borderRadius: 2,
+            width: '30%',
+            justifyContent: 'center',
+          }}
+        >
+          {loading ? (
+            <Flex sx={{ alignSelf: 'center', color: 'primary' }}>
+              <CircularProgress size={24} color="inherit" />
+            </Flex>
+          ) : (
+            <StakingWidget protocol={data.protocol} />
+          )}
+        </Flex>
       </Flex>
     </Layout>
   )

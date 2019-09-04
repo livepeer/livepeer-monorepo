@@ -10,12 +10,14 @@
     "build:next": "next build",
     "start": "next start",
     "now-build": "next build",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "storybook": "start-storybook"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@storybook/addon-centered": "^5.1.11",
     "@storybook/addon-info": "^5.1.11",
     "@storybook/cli": "^5.2.0-rc.1",
     "@storybook/react": "^5.2.0-rc.1",

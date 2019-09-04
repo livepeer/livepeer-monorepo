@@ -1,10 +1,9 @@
 /** @jsx jsx */
-import * as React from 'react'
-import { useQuery } from '@apollo/react-hooks'
 import { jsx, Styled, Flex } from 'theme-ui'
+import { useQuery } from '@apollo/react-hooks'
 import Layout from '../components/Layout'
 import Table from '../components/Table'
-import ROICalculator from '../components/ROICalculator'
+import StakingWidget from '../components/StakingWidget'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { withApollo } from '../lib/apollo'
 
@@ -12,7 +11,8 @@ const GET_DATA = require('../queries/transcoders.graphql')
 
 export default withApollo(() => {
   const { data, loading } = useQuery(GET_DATA, {
-    notifyOnNetworkStatusChange: true,
+    notifyOnNetworkStatusChange: false,
+    pollInterval: 10000,
     ssr: false,
   })
 
@@ -26,9 +26,9 @@ export default withApollo(() => {
             alignItems: 'center',
           }}
         >
-          <Styled.div sx={{ color: 'primary' }}>
+          <div sx={{ color: 'primary' }}>
             <CircularProgress size={24} color="inherit" />
-          </Styled.div>
+          </div>
         </Flex>
       </Layout>
     )
@@ -45,7 +45,16 @@ export default withApollo(() => {
           <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
             <Table transcoders={data.transcoders} />
           </Flex>
-          <ROICalculator protocol={data.protocol} />
+          <Flex
+            sx={{
+              position: 'sticky',
+              alignSelf: 'flex-start',
+              top: 4,
+              width: '30%',
+            }}
+          >
+            <StakingWidget protocol={data.protocol} />
+          </Flex>
         </>
       </Flex>
     </Layout>

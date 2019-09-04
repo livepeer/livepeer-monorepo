@@ -6,7 +6,7 @@ import fetch from 'isomorphic-unfetch'
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
-  mergeSchemas
+  mergeSchemas,
 } from 'graphql-tools'
 import { schema } from '@livepeer/graphql-sdk'
 
@@ -30,7 +30,7 @@ export default (initialState = {}) => {
   return apolloClient
 }
 
-function createApolloClient (initialState = {}) {
+function createApolloClient(initialState = {}) {
   const isBrowser = typeof window !== 'undefined'
 
   const mainLink = new ApolloLink(
@@ -40,12 +40,14 @@ function createApolloClient (initialState = {}) {
           let { query, variables, operationName, getContext } = operation
           let context = getContext()
           let account = context.account ? context.account : ''
-          let provider = context.provider ? context.provider : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
+          let provider = context.provider
+            ? context.provider
+            : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
           let mergedSchema = await createSchema()
           let sdk = await LivepeerSDK({
             account: account,
-            gas: 2.1 * 1000000,
-            provider   
+            gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+            provider,
           })
 
           graphql(
@@ -53,10 +55,10 @@ function createApolloClient (initialState = {}) {
             print(query),
             null,
             {
-              livepeer: sdk
+              livepeer: sdk,
             },
             variables,
-            operationName
+            operationName,
           )
             .then(result => {
               observer.next(result)
@@ -66,7 +68,7 @@ function createApolloClient (initialState = {}) {
               return observer.error(e)
             })
         })()
-      })
+      }),
   )
 
   const cache = new InMemoryCache().restore(initialState || {})
@@ -77,9 +79,9 @@ function createApolloClient (initialState = {}) {
       principle: 0,
       selectedOrchestrator: {
         __typename: 'Orchestrator',
-        order: 0
-      }
-    }
+        order: 0,
+      },
+    },
   })
 
   return new ApolloClient({
@@ -87,25 +89,25 @@ function createApolloClient (initialState = {}) {
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: mainLink,
     resolvers: {},
-    cache
+    cache,
   })
 }
 
 async function createSchema() {
   const subgraphServiceLink = new HttpLink({
     uri: subgraphEndpoint,
-    fetch
+    fetch,
   })
 
   const threeBoxServiceLink = new HttpLink({
     uri: threeBoxEndpoint,
-    fetch
+    fetch,
   })
 
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(subgraphServiceLink),
-      link: subgraphServiceLink
+      link: subgraphServiceLink,
     })
     return executableSchema
   }
@@ -113,7 +115,7 @@ async function createSchema() {
   const create3BoxServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(threeBoxServiceLink),
-      link: threeBoxServiceLink
+      link: threeBoxServiceLink,
     })
     return executableSchema
   }
@@ -132,7 +134,7 @@ async function createSchema() {
   `
 
   const merged = mergeSchemas({
-    schemas: [schema, subgraphSchema, threeBoxSchema, linkTypeDefs]
+    schemas: [schema, subgraphSchema, threeBoxSchema, linkTypeDefs],
   })
   return merged
 }
