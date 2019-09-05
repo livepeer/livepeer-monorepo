@@ -1,5 +1,5 @@
-specVersion: 0.0.1
-description: A protocol for affordable and reliable video encoding. Find transcoders, staking rounds, and rewards.
+specVersion: 0.0.2
+description: A protocol for affordable and reliable video encoding. Find transcoders, staking rounds, and rewards!!
 repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql

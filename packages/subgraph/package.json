@@ -12,8 +12,8 @@
     "deploy": "graph deploy livepeer --verbosity debug --node http://127.0.0.1:8020/ --ipfs http://127.0.0.1:5001 subgraph.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.14.0",
-    "@graphprotocol/graph-ts": "0.14.0"
+    "@graphprotocol/graph-cli": "0.15.0",
+    "@graphprotocol/graph-ts": "0.15.0"
   },
   "workspaces": {
     "packages": [
