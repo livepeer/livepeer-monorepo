@@ -97,10 +97,17 @@ export default stream => {
   const enabledEncodes = transcoderConfig.encodes.filter(e => e.enable)
   const renditions = {}
   const presets = []
+  const encodeNameToRenditionName = {}
   for (const encode of enabledEncodes) {
-    const { width, height, name, videoCodec } = encode
+    const { width, height, name, streamName, videoCodec } = encode
+    let renditionName = replaceStreamName(streamName, stream.name)
+    // These can be of the form mp4:name, let's ignore the first bit if present
+    if (renditionName.includes(':')) {
+      renditionName = renditionName.substr(renditionName.indexOf(':') + 1)
+    }
+    encodeNameToRenditionName[name] = renditionName
     if (videoCodec === 'PassThru') {
-      renditions[name] = `/stream/${stream.id}/source.m3u8`
+      renditions[renditionName] = `/stream/${stream.id}/source.m3u8`
       continue
     }
     const wowzaSize = width * height
@@ -124,16 +131,16 @@ export default stream => {
         )}`,
       )
     }
-    renditions[name] = `/stream/${stream.id}/${foundPreset}.m3u8`
+    renditions[renditionName] = `/stream/${stream.id}/${foundPreset}.m3u8`
     presets.push(foundPreset)
   }
   const enabledEncodeNames = new Set(enabledEncodes.map(encode => encode.name))
   const streamNameGroups = transcoderConfig.streamNameGroups.map(
     streamNameGroup => {
       const name = replaceStreamName(streamNameGroup.streamName, stream.name)
-      const renditions = streamNameGroup.Members.map(m => m.encodeName).filter(
-        name => enabledEncodeNames.has(name),
-      )
+      const renditions = streamNameGroup.Members.map(m => m.encodeName)
+        .filter(name => enabledEncodeNames.has(name))
+        .map(encodeName => encodeNameToRenditionName[encodeName])
       return { name, renditions }
     },
   )
