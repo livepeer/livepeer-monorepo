@@ -118,12 +118,25 @@ export const linkProfile = async (
   address,
   addressToLink,
   message,
+  timestamp,
   signedMessage,
 ) => {
-  alert('address: ' + address)
-  alert('addressToLink: ' + addressToLink)
-  alert('message: ' + message)
-  alert('signedMessage: ' + signedMessage)
+  const box = await Box.openBox(address, window.web3.currentProvider)
+  const boxSyncPromise = new Promise((resolve, reject) =>
+    box.onSyncDone(resolve),
+  )
+  await boxSyncPromise
+  const proof = {
+    version: 1,
+    type: 'ethereum-eoa',
+    message: message,
+    timestamp: timestamp,
+    signature: signedMessage,
+  }
+  box.linkAddress({
+    type: 'ethereum-eoa',
+    proof: proof,
+  })
 }
 
 export const printHello = () => {

@@ -55,13 +55,18 @@ export default () => {
   const [profile, setProfile] = useState(0)
   const [userDid, setUserDid] = useState(0)
   const [timestamp, setTimestamp] = useState(0)
+  const [linkingAccount, setLinkingAccount] = useState(false)
 
   const signatureRef = useRef()
   const addressRef = useRef()
 
+  const message = `
+  Create a new 3Box profile\n
+  -\n
+  Your unique profile ID is ${userDid}\n
+  Timestamp: ${timestamp}
+  `
   const update = async () => {
-    console.log('eth: ' + window.web3.eth)
-    console.log('address: ' + window.web3.eth.defaultAccount)
     if (window.web3.eth.defaultAccount != undefined) {
       setAccount(window.web3.eth.defaultAccount)
     } else {
@@ -106,6 +111,15 @@ export default () => {
       setContent('empty_profile')
     }
     const box = await Box.openBox(window.web3.eth.defaultAccount)
+    console.log('box:')
+    console.log(box)
+    console.log('linked:')
+    console.log(await box.listAddressLinks())
+    console.log(
+      await box.isAddressLinked({
+        address: '0x2fD329De62f4aeD97ab5E676eB9D063e09774492',
+      }),
+    )
     setUserDid(box.DID)
     setTimestamp(Math.floor(Date.now() / 1000))
   }
@@ -207,9 +221,7 @@ export default () => {
                 >
                   Create a new 3Box profile
                   <br />
-                  <br />
-                  -
-                  <br />
+                  -<br />
                   Your unique profile ID is {userDid}
                   <br />
                   Timestamp: {timestamp}
@@ -221,25 +233,37 @@ export default () => {
               Paste the hex signature output here, and enter address of account.
             </li>
           </ol>
-          <input
-            style={{
-              display: 'block',
-              margin: '0 auto',
-            }}
-            type="text"
-            ref={signatureRef}
-            placeholder="signature"
-          />
-          <br />
-          <input
-            style={{
-              display: 'block',
-              margin: '0 auto',
-            }}
-            type="text"
-            ref={addressRef}
-            placeholder="address"
-          />
+          <div>
+            {(() => {
+              if (!linkingAccount) {
+                return (
+                  <>
+                    <input
+                      style={{
+                        display: 'block',
+                        margin: '0 auto',
+                      }}
+                      type="text"
+                      ref={signatureRef}
+                      placeholder="signature"
+                    />
+                    <br />
+                    <input
+                      style={{
+                        display: 'block',
+                        margin: '0 auto',
+                      }}
+                      type="text"
+                      ref={addressRef}
+                      placeholder="address"
+                    />
+                  </>
+                )
+              } else {
+                return <LoadingAnimation />
+              }
+            })()}
+          </div>
           <br />
           <div
             style={{
@@ -249,13 +273,16 @@ export default () => {
           >
             <Button>Cancel</Button>
             <Button
-              onClick={() => {
-                linkProfile(
+              onClick={async () => {
+                setLinkingAccount(true)
+                await linkProfile(
                   window.web3.eth.defaultAccount,
                   addressRef.current.value,
-                  'message',
+                  message,
+                  timestamp,
                   signatureRef.current.value,
                 )
+                setLinkingAccount(false)
               }}
             >
               Connect Account

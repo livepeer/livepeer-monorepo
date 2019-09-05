@@ -14,5 +14,5 @@ import BoxManagerTest from './BoxManagerTest'
 
 const element = <UserProfile />
 //const element = <BoxInfo id={window.web3.eth.defaultAccount} />
-//const element = <Profile address={window.web3.eth.defaultAccount} />
+//const element = <Profile address={"0xA72B8B99720FBd9bb13FCadc52bb89f6c226518c"} />
 ReactDOM.render(element, document.querySelector('#react-div'))
