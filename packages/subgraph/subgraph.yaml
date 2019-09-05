@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, staking rounds, pools, and shares.
-repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
+repository: https://github.com/livepeer/livepeerjs/tree/canary/packages/subgraph
 schema:
   file: ./schema.graphql
 dataSources:
