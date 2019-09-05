@@ -1,19 +1,31 @@
 import bearerToken from 'express-bearer-token'
 import { Router } from 'express'
 import uuid from 'uuid/v4'
+import logger from '../logger'
 
 const router = Router()
 
 router.use(bearerToken())
 
 async function verifyToken(req, res, next) {
-  if (!req || !req.token) {
-    return res.sendStatus(403)
+  // if (!req || !req.token) {
+  //   return res.sendStatus(403)
+  // }
+  let resp
+  try {
+    // check token against token DB
+    resp = await req.store.get(`apitoken/${req.token}`)
+  } catch (e) {
+    logger.warn('api Token not found... generating one')
+    await generateToken(req, res, next)
   }
 
-  // check token against token DB
-  let resp = await req.store.get(`apitoken/${req.token}`)
-  res.json(resp)
+  next()
+  // if (resp) {
+  // } else {
+  //   logger.warn('api Token not found... generating one')
+  //   generateToken(req, res, next)
+  // }
 }
 
 async function generateToken(req, res, next) {
@@ -22,12 +34,17 @@ async function generateToken(req, res, next) {
     id,
     kind: 'apitoken',
     otherdata: 1,
+    autogen: true,
   })
 
-  res.send(id)
+  req.token = id
+  logger.info('token = ', id)
+  next()
 }
 
-router.get('/newtoken', generateToken)
-router.get('/test', verifyToken)
+// router.get('/newtoken', generateToken)
+// router.get('/test', verifyToken)
+
+router.use(verifyToken)
 
 export default router

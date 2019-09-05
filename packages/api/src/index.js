@@ -39,6 +39,9 @@ export default async function makeApp({
   })
 
   app.use('/authtoken', authMiddleware)
+  app.get('/authtoken/test', (req, res) => {
+    res.send(req.token)
+  })
 
   if (kubeNamespace && kubeBroadcasterService) {
     const kc = new k8s.KubeConfig()
