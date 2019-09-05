@@ -1,5 +1,5 @@
-specVersion: 0.0.1
-description: A protocol for affordable and reliable video encoding. Find transcoders, staking rounds, and rewards.
+specVersion: 0.0.2
+description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, staking rounds, pools, and shares.
 repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql
@@ -14,15 +14,45 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./mappings/bondingManager.ts
+      file: ./src/mappings/bondingManager.ts
       entities:
         - Transcoder
-        - Reward
+        - Delegator
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
         - name: RoundsManager
           file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: Bond(indexed address,indexed address)
+          handler: bond
+        - event: Unbond(indexed address,indexed address)
+          handler: unbond
+        - event: WithdrawStake(indexed address)
+          handler: withdrawStake
+  - kind: ethereum/contract
+    name: BondingManager_LIP11
+    network: mainnet
+    source:
+      address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/bondingManager_LIP11.ts
+      entities:
+        - Transcoder
+        - Pool
+        - Delegator
+        - Share
+      abis:
+        - name: BondingManager
+          file: ./abis/BondingManager_LIP11.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+        - name: Controller
+          file: ./abis/Controller.json
       eventHandlers:
         - event: TranscoderUpdate(indexed address,uint256,uint256,uint256,bool)
           handler: transcoderUpdated
@@ -40,6 +70,13 @@ dataSources:
           handler: rebond
         - event: Reward(indexed address,uint256)
           handler: reward
+        - event: WithdrawStake(indexed address,uint256,uint256,uint256)
+          handler: withdrawStake
+        - event: WithdrawFees(indexed address)
+          handler: withdrawFees
+      callHandlers:
+        - function: claimEarnings(uint256)
+          handler: claimEarnings
   - kind: ethereum/contract
     name: RoundsManager
     network: mainnet
@@ -50,16 +87,61 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./mappings/roundsManager.ts
+      file: ./src/mappings/roundsManager.ts
       entities:
         - Transcoder
-        - Reward
+        - Pool
         - Round
       abis:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
         - name: BondingManager
-          file: ./abis/BondingManager.json
+          file: ./abis/BondingManager_LIP11.json
       eventHandlers:
         - event: NewRound(uint256)
           handler: newRound
+  - kind: ethereum/contract
+    name: JobsManager
+    network: mainnet
+    source:
+      address: "bf07ff45f14c9ff0571b9fbdc7e2b62d29931224"
+      abi: JobsManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/jobsManager.ts
+      entities:
+        - Transcoder
+        - Share
+        - Pool
+        - Delegator
+      abis:
+        - name: JobsManager
+          file: ./abis/JobsManager.json
+        - name: BondingManager
+          file: ./abis/BondingManager_LIP11.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: DistributeFees(indexed address,indexed uint256,indexed uint256,uint256)
+          handler: distributeFees
+  - kind: ethereum/contract
+    name: LivepeerToken
+    network: mainnet
+    source:
+      address: "58b6a8a3302369daec383334672404ee733ab239"
+      abi: LivepeerToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/livepeerToken.ts
+      entities:
+        - Delegator
+      abis:
+        - name: LivepeerToken
+          file: ./abis/LivepeerToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: approval

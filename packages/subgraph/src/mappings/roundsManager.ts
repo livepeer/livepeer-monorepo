@@ -1,74 +1,74 @@
 // Import types and APIs from graph-ts
-import { store, Address } from "@graphprotocol/graph-ts";
+import { Address } from "@graphprotocol/graph-ts";
 
 // Import event types from the registrar contract ABIs
 import { RoundsManager, NewRound } from "../types/RoundsManager/RoundsManager";
-import { BondingManager } from "../types/BondingManager/BondingManager";
+import { BondingManager } from "../types/BondingManager_LIP11/BondingManager";
 
 // Import entity types generated from the GraphQL schema
-import { Transcoder, Reward, Round } from "../types/schema";
+import { Transcoder, Pool, Round } from "../types/schema";
 
-import { makeRewardId } from "./util";
+import { makePoolId } from "./util";
+
+// Bind BondingManager contract
+let bondingManager = BondingManager.bind(
+  Address.fromString("511bc4556d823ae99630ae8de28b9b80df90ea2e")
+);
 
 // Handler for NewRound events
 export function newRound(event: NewRound): void {
   let roundsManager = RoundsManager.bind(event.address);
   let roundNumber = event.params.round;
-  let bondingManager = BondingManager.bind(
-    Address.fromString("511bc4556d823ae99630ae8de28b9b80df90ea2e")
-  );
   let EMPTY_ADDRESS = Address.fromString(
     "0000000000000000000000000000000000000000"
   );
   let currentTranscoder = bondingManager.getFirstTranscoderInPool();
-  let transcoder = store.get(
-    "Transcoder",
-    currentTranscoder.toHex()
-  ) as Transcoder;
+  let transcoder = Transcoder.load(currentTranscoder.toHex());
   let active: boolean;
-  let rewardId: string;
-  let reward: Reward;
+  let poolId: string;
+  let pool: Pool;
+  let round: Round;
 
   // Iterate over all registered transcoders
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
     // Update transcoder active state
     active = bondingManager.isActiveTranscoder(currentTranscoder, roundNumber);
     transcoder.active = active;
-    store.set("Transcoder", currentTranscoder.toHex(), transcoder);
+    transcoder.rewardCut = transcoder.pendingRewardCut;
+    transcoder.feeShare = transcoder.pendingFeeShare;
+    transcoder.pricePerSegment = transcoder.pendingPricePerSegment;
+    transcoder.save();
 
-    // create a unique "reward" for each active transcoder on every
+    // create a unique "pool" for each active transcoder on every
     // round. If a transcoder calls reward() for a given round, we store its
-    // reward tokens inside this entry in a field called "rewardTokens". If
+    // reward tokens inside this Pool entry in a field called "rewardTokens". If
     // "rewardTokens" is null for a given transcoder and round then we know
     // the transcoder failed to call reward()
     if (active) {
-      // Left-pad these round numbers so we can sort by round later on
-      rewardId = makeRewardId(currentTranscoder, roundNumber);
-      reward = new Reward(rewardId);
-      reward.round = roundNumber.toString();
-      reward.transcoder = currentTranscoder.toHex();
+      poolId = makePoolId(currentTranscoder, roundNumber);
+      pool = new Pool(poolId);
+      pool.round = roundNumber.toString();
+      pool.transcoder = currentTranscoder.toHex();
 
       // Apply store updates
-      store.set("Reward", rewardId, reward);
+      pool.save();
     }
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
       currentTranscoder
     );
 
-    transcoder = store.get(
-      "Transcoder",
-      currentTranscoder.toHex()
-    ) as Transcoder;
+    transcoder = Transcoder.load(currentTranscoder.toHex());
   }
 
   // Create new round
-  let round = new Round(roundNumber.toString());
+  round = new Round(roundNumber.toString());
   round.initialized = true;
+  round.timestamp = event.block.timestamp;
   round.lastInitializedRound = roundsManager.lastInitializedRound();
   round.length = roundsManager.roundLength();
   round.startBlock = roundsManager.currentRoundStartBlock();
 
   // Apply store updates
-  store.set("Round", roundNumber.toString(), round);
+  round.save();
 }

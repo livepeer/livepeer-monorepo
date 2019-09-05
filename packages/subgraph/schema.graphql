@@ -1,31 +1,138 @@
+"""
+Perform transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
+"""
 type Transcoder @entity {
+  "The transcoder's ETH address"
   id: ID!
+  "Whether or not the transcoder is active"
   active: Boolean
-  ensName: String
-  status: String
-  lastRewardRound: BigInt
+  "The status of the transcoder"
+  status: TranscoderStatus
+  "Last round that the transcoder called reward"
+  lastRewardRound: Round
+  "% of block reward cut paid to transcoder by a delegator"
   rewardCut: BigInt
+  "% of fees paid to delegators by transcoder"
   feeShare: BigInt
+  "Price per segment for a stream (LPTU)"
   pricePerSegment: BigInt
+  "Pending block reward cut for next round if the transcoder is active"
   pendingRewardCut: BigInt
+  "Pending fee share for next round if the transcoder is active"
   pendingFeeShare: BigInt
+  "Pending price per segment for next round if the transcoder is active"
   pendingPricePerSegment: BigInt
+  "Total tokens delegated toward a transcoder (including their own)"
   totalStake: BigInt
-  rewards: [Reward!] @derivedFrom(field: "transcoder")
+  "The accrued fees claimed by the transcoder (before distribution to delegators)"
+  accruedFees: BigInt
+  "The pools associated with the transcoder"
+  pools: [Pool!] @derivedFrom(field: "transcoder")
+  "The delegators bonded to the transcoder"
+  delegators: [Delegator!]
 }
 
-type Reward @entity {
+"""
+Represents a transcoder's rewards and fees to be distributed to delegators
+"""
+type Pool @entity {
+  "Unique identifer for the pool (formed using the transcoder's address and round number)"
   id: ID!
+  "The round associated with the pool"
   round: Round
+  "The transcoder associated with the pool"
   transcoder: Transcoder
+  "The fees collected in the pool"
+  fees: BigInt
+  "The reward tokens collected in the pool"
   rewardTokens: BigInt
 }
 
-type Round @entity {
+"""
+Represents a delegator's pool share
+"""
+type Share @entity {
+  "Unique identifer for the share (formed using the delegator's address and round number)"
   id: ID!
+  "The delegator's share of reward tokens"
+  rewardTokens: BigInt
+  "The delegator's share of fees"
+  fees: BigInt
+  "The delegator associated with the share"
+  delegator: Delegator
+  "The round associated with the share"
+  round: Round
+}
+
+"""
+The Livepeer protocol is round based and each round is represented by some number of Ethereum blocks.
+"""
+type Round @entity {
+  "The round number"
+  id: ID!
+  "Whether the round was initialized"
   initialized: Boolean
+  "The number of blocks this round lasts for"
   length: BigInt
+  "The time at which this round was initialized"
+  timestamp: BigInt
+  "Last initialized round. After first round, this is the last round during which initializeRound() was called"
   lastInitializedRound: BigInt
+  "The block number at which this round was initialized"
   startBlock: BigInt
-  rewards: [Reward!] @derivedFrom(field: "round")
+  "The pools associated with the round"
+  pools: [Pool!] @derivedFrom(field: "round")
+  "The shares associated with the round"
+  shares: [Share!] @derivedFrom(field: "round")
+}
+
+type Delegator @entity {
+  "The ETH address of a delegator"
+  id: ID!
+  "The ETH address of the delegate (the one whom the delegator has bonded to)"
+  delegate: Transcoder
+  "The round the delegator becomes bonded and delegated to its delegate"
+  startRound: Round
+  "The last round that the delegator claimed reward and fee pool shares"
+  lastClaimRound: Round
+  "The amount of Livepeer Token a delegator has bonded"
+  bondedAmount: BigInt
+  "The amount of fees a delegator has collected"
+  fees: BigInt
+  "The total amount of tokens the delegator has earned through the current round"
+  pendingStake: BigInt
+  "The total amount of ETH the delegator has earned through the current round"
+  pendingFees: BigInt
+  "The amount of Livepeer Token the delegator has delegated"
+  delegatedAmount: BigInt
+  "The delegator's token allowance"
+  allowance: BigInt
+  "The shares associated with the delegator"
+  shares: [Share!] @derivedFrom(field: "delegator")
+  "The unbonding locks associated with the delegator"
+  unbondingLocks: [UnbondingLock!] @derivedFrom(field: "delegator")
+}
+
+"""
+The possible statuses of a transcoder
+"""
+enum TranscoderStatus @entity {
+  NotRegistered
+  Registered
+}
+
+"""
+Get an unbonding lock for a delegator
+"""
+type UnbondingLock @entity {
+  "unique unlock identifer"
+  id: ID!
+  "unbonding lock id"
+  unbondingLockId: Int!
+  "The address of delegator unbonding from"
+  delegator: Delegator!
+  "The amount being unbonded"
+  amount: BigInt!
+  "When the unbonding amount will be available for withdrawal"
+  withdrawRound: Round!
 }
