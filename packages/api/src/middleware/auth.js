@@ -27,8 +27,6 @@ async function verifyToken(req, res, next) {
     logger.warn('api Token not found... generating one')
     await generateToken(req, res, next)
   }
-
-  next()
 }
 
 /**
