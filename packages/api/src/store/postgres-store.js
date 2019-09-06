@@ -7,6 +7,7 @@ import { parse as parseUrl, format as stringifyUrl } from 'url'
 // Should be configurable, perhaps?
 const TABLE_NAME = 'api'
 const CONNECT_TIMEOUT = 5000
+const DEFAULT_LIMIT = 100
 
 export default class PostgresStore {
   constructor({ postgresUrl }) {
@@ -30,10 +31,10 @@ export default class PostgresStore {
     await this.pool.end()
   }
 
-  async list(prefix = '') {
+  async list(prefix = '', limit = DEFAULT_LIMIT, offset = 0) {
     const res = await this.pool.query(
-      `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1`,
-      [`${prefix}%`],
+      `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $2 OFFSET $3`,
+      [`${prefix}%`, `${limit}`, `${offset}`],
     )
     return res.rows.map(({ data }) => data)
   }

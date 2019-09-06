@@ -1,5 +1,9 @@
 import level from 'level'
 import fs from 'fs-extra'
+
+// default limit value in level is -1 , ref: https://github.com/Level/level#dbcreatereadstreamoptions
+const DEFAULT_LIMIT = -1
+
 export default class LevelStore {
   constructor({ dbPath }) {
     if (!dbPath) {
@@ -22,7 +26,7 @@ export default class LevelStore {
     return this.db.close()
   }
 
-  async *listStream(prefix = '') {
+  async *listStream(prefix = '', limit = DEFAULT_LIMIT, offset = 0) {
     // I do not know if this is the right way to do this, but...
     // if we want every key that starts with "endpoint/", what we're
     // really asking for is ">= 'endpoint/'" and '< 'endpoint0',
@@ -35,6 +39,7 @@ export default class LevelStore {
       filter = {
         gte: prefix,
         lt: endKey,
+        limit,
       }
     }
     await this.ready
@@ -43,9 +48,9 @@ export default class LevelStore {
     }
   }
 
-  async list(prefix = '') {
+  async list(prefix = '', limit = DEFAULT_LIMIT, offset = 0) {
     const ret = []
-    for await (const val of this.listStream(prefix)) {
+    for await (const val of this.listStream(prefix, limit, offset)) {
       ret.push(val)
     }
     return ret

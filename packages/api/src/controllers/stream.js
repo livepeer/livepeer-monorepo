@@ -9,7 +9,10 @@ import wowzaHydrate from './wowza-hydrate'
 const app = Router()
 
 app.get('/', async (req, res) => {
-  const output = await req.store.list(`stream/`)
+  let limit = req.query.limit
+  let offset = req.query.offset
+
+  const output = await req.store.list(`stream/`, limit, offset)
   res.status(200)
   res.json(output)
 })
