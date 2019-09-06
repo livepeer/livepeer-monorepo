@@ -38,10 +38,8 @@ export default async function makeApp({
     next()
   })
 
-  app.use('/authtoken', authMiddleware)
-  app.get('/authtoken/test', (req, res) => {
-    res.send(req.token)
-  })
+  // HTTP bearer token middleware
+  app.use(authMiddleware)
 
   if (kubeNamespace && kubeBroadcasterService) {
     const kc = new k8s.KubeConfig()

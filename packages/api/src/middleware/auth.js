@@ -7,6 +7,14 @@ const router = Router()
 
 router.use(bearerToken())
 
+/**
+ * verify the http brearer token
+ * NOTE: this generates a token if no token is provided for now
+ * FIXME: stop generating tokens on the fly
+ * @param {object} req req object, this should already have req.store
+ * @param {object} res res object
+ * @param {fn} next callback
+ */
 async function verifyToken(req, res, next) {
   // if (!req || !req.token) {
   //   return res.sendStatus(403)
@@ -21,13 +29,14 @@ async function verifyToken(req, res, next) {
   }
 
   next()
-  // if (resp) {
-  // } else {
-  //   logger.warn('api Token not found... generating one')
-  //   generateToken(req, res, next)
-  // }
 }
 
+/**
+ * generate token middleware
+ * @param {object} req req object
+ * @param {object} res res object
+ * @param {fn} next callback
+ */
 async function generateToken(req, res, next) {
   const id = uuid()
   let resp = await req.store.create({
@@ -38,12 +47,9 @@ async function generateToken(req, res, next) {
   })
 
   req.token = id
-  logger.info('token = ', id)
-  next()
+  logger.debug(`token = ${id}`)
+  return next()
 }
-
-// router.get('/newtoken', generateToken)
-// router.get('/test', verifyToken)
 
 router.use(verifyToken)
 
