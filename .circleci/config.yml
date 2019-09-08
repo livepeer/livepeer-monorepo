@@ -122,7 +122,7 @@ jobs:
           export DOCKER
           rm /tmp/token.json
           yarn run lerna-run deploy:prerelease
-          export TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
+          export DOCKER_TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
           yarn run lerna-run docker:build
           yarn run lerna-run docker:push
 
