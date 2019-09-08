@@ -20,6 +20,7 @@
     "deploy:prerelease": "lerna run --stream deploy:prerelease",
     "docs": "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
     "prepare": "lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/player",
+    "lerna-run": "lerna run --stream",
     "release:dry-run": "lerna publish --exact --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
     "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
