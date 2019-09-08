@@ -1,17 +1,15 @@
+/** @jsx jsx */
 import React from 'react'
 import * as Utils from 'web3-utils'
 import MaterialTable, { MTableToolbar, MTableCell } from 'material-table'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { Flex, useThemeUI } from 'theme-ui'
+import { Flex, jsx, useThemeUI } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
 import QRCode from 'qrcode.react'
 import { AvatarGroup, OrchestratorName } from './styles'
 import { useApolloClient } from '@apollo/react-hooks'
 import Link from 'next/link'
-
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-}
+import { abbreviateNumber } from '../../lib/utils'
 
 export default ({ transcoders }) => {
   const client = useApolloClient()
@@ -124,7 +122,7 @@ export default ({ transcoders }) => {
   })
 
   const Toolbar = (props: any) => (
-    <Flex mb={3} alignItems="center">
+    <Flex sx={{ mb: 4, alignItems: 'center' }}>
       <Orchestrators
         style={{
           color: context.theme.colors.primary,
@@ -167,7 +165,7 @@ export default ({ transcoders }) => {
           : 0
         cellValue = (
           <span style={{ fontFamily: 'Akkurat-Mono' }}>
-            {numberWithCommas(num)}
+            {abbreviateNumber(num)}
           </span>
         )
         break

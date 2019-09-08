@@ -39,15 +39,13 @@ function createApolloClient(initialState = {}) {
         ;(async () => {
           let { query, variables, operationName, getContext } = operation
           let context = getContext()
-          let account = context.account ? context.account : ''
-          let provider = context.provider
-            ? context.provider
-            : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
           let mergedSchema = await createSchema()
           let sdk = await LivepeerSDK({
-            account: account,
+            account: context.account ? context.account : '',
             gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
-            provider,
+            provider: context.provider
+            ? context.provider
+            : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
           })
 
           graphql(
@@ -55,6 +53,7 @@ function createApolloClient(initialState = {}) {
             print(query),
             null,
             {
+              ...context,
               livepeer: sdk,
             },
             variables,

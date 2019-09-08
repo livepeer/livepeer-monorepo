@@ -4,6 +4,7 @@ import { Styled, jsx, Flex, Box } from 'theme-ui'
 import Trending from '../../../static/img/trending.svg'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { abbreviateNumber } from '../../../lib/utils'
 
 export default () => {
   const GET_ROI = gql`
@@ -64,19 +65,4 @@ export default () => {
       </Box>
     </div>
   )
-}
-
-function abbreviateNumber(value) {
-  let newValue = value
-  const suffixes = ['', 'K', 'M', 'B', 'T']
-  let suffixNum = 0
-  while (newValue >= 1000) {
-    newValue /= 1000
-    suffixNum++
-  }
-
-  newValue = Number.parseFloat(newValue).toPrecision(3)
-
-  newValue += suffixes[suffixNum]
-  return newValue
 }

@@ -11,15 +11,15 @@ export default ({ variant = 'primary', ...props }) => (
       textAlign: 'center',
       lineHeight: 'inherit',
       textDecoration: 'none',
-      fontSize: 'inherit',
+      fontSize: '14px',
       fontWeight: '700',
+      textTransform: 'uppercase',
       m: 0,
-      px: 3,
+      px: 2,
       py: 1,
       border: 0,
       borderRadius: 4,
-      // pass variant prop to sx
-      variant: `buttons.${variant}`
+      variant: `buttons.${variant}`,
     }}
   />
 )

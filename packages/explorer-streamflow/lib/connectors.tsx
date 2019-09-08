@@ -10,11 +10,12 @@ const {
 } = Connectors;
 
 const supportedNetworkURLs = {
-  1: "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
+  1: "wss://mainnet.infura.io/ws/v3/39df858a55ee42f4b2a8121978f9f98e",
   4: "https://rinkeby.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e"
 };
 
 const defaultNetwork = 1;
+
 
 const MetaMask = new InjectedConnector({
   supportedNetworks: [1, 4]
