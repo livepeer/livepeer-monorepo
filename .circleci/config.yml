@@ -104,6 +104,10 @@ jobs:
 
     steps:
       - checkout
+      - setup_remote_docker:
+          # This actually only exists for paid plans. But it's good luck!
+          docker_layer_caching: true
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: *install-libsecret
       - run: *install-dependencies
       - run: *reporter
@@ -115,8 +119,12 @@ jobs:
           gcloud version
           echo $GCLOUD_TOKEN | base64 --decode > /tmp/token.json
           gcloud auth activate-service-account --key-file=/tmp/token.json
+          export DOCKER
           rm /tmp/token.json
-          npm run deploy:prerelease
+          yarn run lerna-run deploy:prerelease
+          export TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
+          yarn run lerna-run docker:build
+          yarn run lerna-run docker:push
 
   build-apps-staging:
     <<: *node-env
