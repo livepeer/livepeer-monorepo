@@ -39,7 +39,7 @@ export default class LevelStore {
       filter = {
         gte: prefix,
         lt: endKey,
-        limit,
+        // limit,
       }
     }
     await this.ready
@@ -53,6 +53,11 @@ export default class LevelStore {
     for await (const val of this.listStream(prefix, limit, offset)) {
       ret.push(val)
     }
+
+    if (limit > 0) {
+      ret = ret.slice(offset, offset + limit)
+    }
+
     return ret
   }
 
