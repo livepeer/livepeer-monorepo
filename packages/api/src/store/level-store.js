@@ -39,7 +39,7 @@ export default class LevelStore {
       filter = {
         gte: prefix,
         lt: endKey,
-        limit,
+        // limit,
       }
     }
     await this.ready
