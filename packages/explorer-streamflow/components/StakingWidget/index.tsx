@@ -7,7 +7,7 @@ import Tabs from './components/Tabs'
 import ProjectionBox from './components/ProjectionBox'
 import Footer from './components/Footer'
 
-export default ({ protocol }) => {
+export default ({ transcoder, protocol }) => {
   let context = useWeb3Context()
 
   return (
@@ -19,7 +19,7 @@ export default ({ protocol }) => {
         backgroundColor: '#1E2026',
       }}
     >
-      <Header />
+      <Header transcoder={transcoder} />
       <div sx={{ p: 2 }}>
         <Tabs />
         <Input protocol={protocol} />

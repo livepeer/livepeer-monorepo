@@ -2,7 +2,7 @@
 import { Styled, jsx, Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
 
-export default () => {
+export default ({ transcoder }) => {
   return (
     <Styled.h4
       as="h3"
@@ -23,14 +23,13 @@ export default () => {
           height: 44,
           marginRight: 16,
         }}
-        fgColor={`#${'0x58b6a8a3302369daec383334672404ee733ab239'.substr(
-          2,
-          6,
-        )}`}
-        value={'0x58b6a8a3302369daec383334672404ee733ab239'}
+        fgColor={`#${transcoder.id.substr(2, 6)}`}
+        value={transcoder.id}
       />
       <Flex sx={{ flexDirection: 'column' }}>
-        <Styled.h3>Staked</Styled.h3>
+        <Styled.h3>
+          {transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
+        </Styled.h3>
         <div
           sx={{
             fontWeight: 'normal',
@@ -39,9 +38,7 @@ export default () => {
             lineHeight: 1.5,
             textTransform: 'initial',
           }}
-        >
-          0xe9e...28427
-        </div>
+        ></div>
       </Flex>
     </Styled.h4>
   )

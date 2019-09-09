@@ -9,6 +9,7 @@ const apolloClient = initApollo()
 storiesOf('StakingWidget', module).add('with text', () => (
   <ApolloProvider client={apolloClient}>
     <StakingWidget
+      transcoder={{ id: '0x...' }}
       protocol={{ totalTokenSupply: '100', totalBondedToken: '100' }}
     />
   </ApolloProvider>

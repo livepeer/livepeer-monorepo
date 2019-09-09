@@ -9,8 +9,12 @@ import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 
 const GET_DATA = gql`
-  query {
-    transcoders(where: { status: "Registered" }) {
+  {
+    transcoders(
+      where: { status: "Registered" }
+      orderBy: totalStake
+      orderDirection: desc
+    ) {
       id
       active
       feeShare
@@ -25,6 +29,10 @@ const GET_DATA = gql`
     protocol {
       totalTokenSupply
       totalBondedToken
+    }
+    selectedTranscoder @client {
+      __typename
+      id
     }
   }
 `
@@ -53,6 +61,7 @@ export default withApollo(() => {
       </Layout>
     )
   }
+
   return (
     <Layout>
       <Flex
@@ -73,7 +82,14 @@ export default withApollo(() => {
               width: '30%',
             }}
           >
-            <StakingWidget protocol={data.protocol} />
+            <StakingWidget
+              transcoder={
+                data.selectedTranscoder.id
+                  ? data.selectedTranscoder
+                  : data.transcoders[0]
+              }
+              protocol={data.protocol}
+            />
           </Flex>
         </>
       </Flex>

@@ -85,50 +85,7 @@ export default () => {
             </Styled.p>
           </Flex>
         </Flex>
-        {/* {(context.active || (context.error && context.connectorName)) && (
-          <button onClick={() => context.unsetConnector()}>
-            {context.active ? 'Deactivate Connector' : 'Reset'}
-          </button>
-        )}
-        {context.error && (
-          <p>An error occurred, check the console for details.</p>
-        )}
-
-        {Object.keys(connectors).map(connectorName => (
-          <button
-            key={connectorName}
-            disabled={context.connectorName === connectorName}
-            onClick={() => context.setConnector(connectorName)}
-          >
-            Activate {connectorName}
-          </button>
-        ))}
-
-        {(context.active || (context.error && context.connectorName)) && (
-          <button onClick={() => context.unsetConnector()}>
-            {context.active ? 'Deactivate Connector' : 'Reset'}
-          </button>
-        )} */}
       </Box>
     </Layout>
-  )
-}
-
-function Web3ConsumerComponent() {
-  return (
-    <Web3Consumer>
-      {context => {
-        const { active, connectorName, account, networkId } = context
-        return (
-          active && (
-            <>
-              <p>Active Connector: {connectorName}</p>
-              <p>Account: {account || 'None'}</p>
-              <p>Network ID: {networkId}</p>
-            </>
-          )
-        )
-      }}
-    </Web3Consumer>
   )
 }

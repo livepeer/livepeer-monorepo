@@ -24,7 +24,7 @@ const GET_DATA = gql`
   }
 `
 
-const Overview = () => {
+export default withApollo(() => {
   const context = useWeb3Context()
   const router = useRouter()
   const { account } = router.query
@@ -57,7 +57,7 @@ const Overview = () => {
       as: `/${account}/settings`,
     },
   ]
-
+  console.log(data)
   return (
     <Layout>
       <Flex
@@ -88,28 +88,32 @@ const Overview = () => {
           )}
         </Flex>
 
-        <Flex
-          sx={{
-            position: 'sticky',
-            alignSelf: 'flex-start',
-            top: 4,
-            bg: 'surface',
-            minHeight: 300,
-            borderRadius: 2,
-            width: '30%',
-            justifyContent: 'center',
-          }}
-        >
-          {loading ? (
-            <Flex sx={{ alignSelf: 'center', color: 'primary' }}>
-              <CircularProgress size={24} color="inherit" />
-            </Flex>
-          ) : (
-            <StakingWidget protocol={data.protocol} />
-          )}
-        </Flex>
+        {isOrchestrator && (
+          <Flex
+            sx={{
+              position: 'sticky',
+              alignSelf: 'flex-start',
+              top: 4,
+              bg: 'surface',
+              minHeight: 300,
+              borderRadius: 2,
+              width: '30%',
+              justifyContent: 'center',
+            }}
+          >
+            {loading ? (
+              <Flex sx={{ alignSelf: 'center', color: 'primary' }}>
+                <CircularProgress size={24} color="inherit" />
+              </Flex>
+            ) : (
+              <StakingWidget
+                transcoder={data.transcoder}
+                protocol={data.protocol}
+              />
+            )}
+          </Flex>
+        )}
       </Flex>
     </Layout>
   )
-}
-export default withApollo(Overview)
+})

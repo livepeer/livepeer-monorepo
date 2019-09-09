@@ -52,13 +52,13 @@ export default () => {
           </Flex>
           <Flex sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Styled.h2 as="div" sx={{ fontFamily: 'monospace' }}>
-              {abbreviateNumber(parseFloat(data.roi).toFixed(2))}
+              {abbreviateNumber(data.roi)}
               <Styled.h6 as="span" sx={{ ml: 1 }}>
                 LPT
               </Styled.h6>
             </Styled.h2>
             <Styled.h2 as="div" sx={{ fontFamily: 'monospace' }}>
-              ${abbreviateNumber((parseFloat(data.roi) * 6.3).toFixed(2))}
+              ${abbreviateNumber(data.roi * 6.3)}
             </Styled.h2>
           </Flex>
         </Box>

@@ -2,11 +2,11 @@
 import React from 'react'
 import * as Utils from 'web3-utils'
 import MaterialTable, { MTableToolbar, MTableCell } from 'material-table'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { MuiThemeProvider } from '@material-ui/core/styles'
 import { Flex, jsx, useThemeUI } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
 import QRCode from 'qrcode.react'
-import { AvatarGroup, OrchestratorName } from './styles'
+import { createMuiTheme } from './theme'
 import { useApolloClient } from '@apollo/react-hooks'
 import Link from 'next/link'
 import { abbreviateNumber } from '../../lib/utils'
@@ -14,112 +14,6 @@ import { abbreviateNumber } from '../../lib/utils'
 export default ({ transcoders }) => {
   const client = useApolloClient()
   const context = useThemeUI()
-
-  // Apply theme-ui settings to material-ui component
-  const muiTheme = createMuiTheme({
-    palette: {
-      primary: {
-        main: context.theme.colors.background,
-      },
-      secondary: {
-        main: context.theme.colors.text,
-      },
-      background: {
-        default: context.theme.colors.background,
-        paper: context.theme.colors.background,
-      },
-      text: {
-        primary: context.theme.colors.text,
-        secondary: context.theme.colors.text,
-      },
-      action: {
-        active: context.theme.colors.primary,
-      },
-    },
-    typography: {
-      fontFamily: context.theme.fonts.body,
-    },
-    overrides: {
-      MuiTypography: {
-        h6: {
-          fontWeight: 'bold',
-          lineHeight: 'initial',
-          fontSize: 32,
-        },
-      },
-      MuiTableSortLabel: {
-        root: {
-          fontSize: 14,
-        },
-        icon: {
-          fontSize: 14,
-        },
-      },
-      MuiToolbar: {
-        regular: {
-          paddingRight: '0',
-          paddingLeft: '0',
-          minHeight: 'initial',
-          width: '100%',
-          ['@media (min-width: 600px)']: {
-            minHeight: 'initial',
-          },
-          ['@media (min-width: 0px) and (orientation: landscape)']: {
-            minHeight: 'initial',
-          },
-        },
-      },
-      MuiInput: {
-        underline: {
-          '&:before': {
-            borderBottom: '1px solid rgba(255, 255, 255, 0.42)',
-          },
-        },
-      },
-      MuiTableRow: {
-        hover: {
-          '&:hover': {
-            cursor: 'initial !important',
-            backgroundColor: `${context.theme.colors.surface} !important`,
-            transition: 'background-color .2s, color .2s',
-          },
-          '&:hover a': {
-            borderBottom: `1px solid`,
-            borderColor: 'rgba(255, 255, 255, .4) !important',
-          },
-        },
-        footer: {
-          '&:hover': {
-            backgroundColor: 'initial',
-          },
-        },
-      },
-      MuiTableCell: {
-        head: {
-          padding: 20,
-        },
-        root: {
-          borderBottom: 0,
-          padding: '14px 20px 14px 20px',
-          fontSize: 14,
-          '&:first-child': {
-            paddingLeft: 32,
-          },
-          '&:last-child': {
-            paddingRight: 32,
-          },
-        },
-      },
-      MuiPaper: {
-        root: {
-          width: '100%',
-        },
-        elevation2: {
-          boxShadow: 'none',
-        },
-      },
-    },
-  })
 
   const Toolbar = (props: any) => (
     <Flex sx={{ mb: 4, alignItems: 'center' }}>
@@ -140,7 +34,7 @@ export default ({ transcoders }) => {
     switch (props.columnDef.field) {
       case 'id':
         cellValue = (
-          <AvatarGroup>
+          <Flex sx={{ alignItems: 'center' }}>
             <QRCode
               style={{
                 borderRadius: 1000,
@@ -152,20 +46,32 @@ export default ({ transcoders }) => {
               value={props.value}
             />
             <Link href="/[account]" as={`/${props.value}`} passHref>
-              <OrchestratorName>
+              <a
+                sx={{
+                  color: 'text',
+                  cursor: 'pointer',
+                  transition: 'all .3s',
+                  borderBottom: '1px solid',
+                  borderColor: 'transparent',
+                  '&:hover': {
+                    color: 'primary',
+                    borderBottom: '1px solid',
+                    borderColor: 'primary',
+                    transition: 'all .3s',
+                  },
+                }}
+              >
                 {props.value.substring(0, 10)}...
-              </OrchestratorName>
+              </a>
             </Link>
-          </AvatarGroup>
+          </Flex>
         )
         break
       case 'totalStake':
-        let num = props.value
-          ? Number(Utils.fromWei(props.value)).toFixed(2)
-          : 0
+        let num = props.value ? Utils.fromWei(props.value) : 0
         cellValue = (
           <span style={{ fontFamily: 'Akkurat-Mono' }}>
-            {abbreviateNumber(num)}
+            {abbreviateNumber(num, 5)}
           </span>
         )
         break
@@ -191,7 +97,7 @@ export default ({ transcoders }) => {
   }
 
   return (
-    <MuiThemeProvider theme={muiTheme}>
+    <MuiThemeProvider theme={createMuiTheme(context)}>
       <MaterialTable
         columns={[
           {
@@ -220,7 +126,10 @@ export default ({ transcoders }) => {
         onRowClick={(_event, rowData) =>
           client.writeData({
             data: {
-              selectedOrchestrator: rowData,
+              selectedTranscoder: {
+                __typename: 'Transcoder',
+                id: rowData.id,
+              },
             },
           })
         }

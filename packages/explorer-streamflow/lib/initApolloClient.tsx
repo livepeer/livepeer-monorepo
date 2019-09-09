@@ -1,14 +1,16 @@
-import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost'
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
 import { graphql, print } from 'graphql'
 import { Observable, ApolloLink } from 'apollo-link'
-import LivepeerSDK from '@livepeer/sdk'
+import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 import fetch from 'isomorphic-unfetch'
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
   mergeSchemas,
 } from 'graphql-tools'
-import { schema } from '@livepeer/graphql-sdk'
+import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
 const subgraphEndpoint =
   'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
@@ -76,10 +78,10 @@ function createApolloClient(initialState = {}) {
     data: {
       roi: 0,
       principle: 0,
-      selectedOrchestrator: {
-        __typename: 'Orchestrator',
-        order: 0,
-      },
+      selectedTranscoder: {
+        __typename: 'Transcoder',
+        id: null
+      }
     },
   })
 

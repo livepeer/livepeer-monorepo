@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from 'theme-ui'
-import Utils from 'web3-utils'
 import { useApolloClient } from '@apollo/react-hooks'
+import * as Utils from 'web3-utils'
 
 let hoursPerYear = 8760
 let averageHoursPerRound = 21
