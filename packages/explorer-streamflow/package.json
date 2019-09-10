@@ -41,8 +41,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@adamsoffer/livepeer-graphql-sdk": "^1.0.0-alpha.6",
-    "@adamsoffer/livepeer-sdk": "^1.0.0-alpha.6",
+    "@adamsoffer/livepeer-graphql-sdk": "^1.0.0-alpha.7",
+    "@adamsoffer/livepeer-sdk": "^1.0.0-alpha.7",
     "@apollo/react-hooks": "^3.0.1",
     "@apollo/react-ssr": "^3.0.1",
     "@babel/core": "^7.5.5",
@@ -54,6 +54,7 @@
     "@mdx-js/react": "^1.0.27",
     "@portis/web3": "^2.0.0-beta.37",
     "@reach/dialog": "^0.2.9",
+    "@reach/tabs": "^0.1.6",
     "@storybook/addon-links": "^5.2.0-rc.1",
     "@theme-ui/style-guide": "^0.2.36",
     "@theme-ui/typography": "^0.2.29",

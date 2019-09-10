@@ -3,7 +3,7 @@ import { jsx, Styled, Flex } from 'theme-ui'
 import React from 'react'
 import ArrowRight from '../../static/img/arrow-right-long.svg'
 
-export default () => {
+export default ({ action = 'stake', amount = 0, orchestrator = {} }) => {
   return (
     <Flex
       sx={{
@@ -17,11 +17,17 @@ export default () => {
       }}
     >
       <div>
-        <span sx={{ fontFamily: 'monospace', fontSize: 4 }}>100</span>{' '}
+        <span sx={{ fontFamily: 'monospace', fontSize: 4 }}>{amount}</span>{' '}
         <span sx={{ fontSize: 1 }}>LPT</span>
       </div>
-      <ArrowRight sx={{ mx: 4, color: 'primary' }} />
-      <Styled.h3>Livepeer Community Node</Styled.h3>
+      <ArrowRight
+        sx={{
+          mx: 4,
+          transform: `rotate(${action == 'stake' ? '0' : '180deg'})`,
+          color: action == 'stake' ? 'primary' : 'red',
+        }}
+      />
+      <Styled.h3>0xe9e28...b5ecf59</Styled.h3>
     </Flex>
   )
 }

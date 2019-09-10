@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import React from 'react'
 import { Styled, jsx, Flex, Box } from 'theme-ui'
-import Trending from '../../../static/img/trending.svg'
+import Trending from '../../static/img/trending.svg'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { abbreviateNumber } from '../../../lib/utils'
+import { abbreviateNumber } from '../../lib/utils'
 
-export default () => {
+export default ({ action }) => {
   const GET_ROI = gql`
     {
       roi @client
@@ -37,7 +37,7 @@ export default () => {
           fontWeight: 'bold',
         }}
       >
-        Projected Rewards
+        {action == 'stake' ? 'Projected Rewards' : 'Projected Opportunity Cost'}
         <Trending sx={{ width: 16, height: 16, ml: 1, color: 'primary' }} />
       </Styled.h4>
       <Box sx={{ px: 2, py: 3, mb: 4 }}>

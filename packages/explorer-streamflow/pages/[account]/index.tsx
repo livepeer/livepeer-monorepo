@@ -57,7 +57,7 @@ export default withApollo(() => {
       as: `/${account}/settings`,
     },
   ]
-  console.log(data)
+
   return (
     <Layout>
       <Flex
@@ -87,7 +87,6 @@ export default withApollo(() => {
             </>
           )}
         </Flex>
-
         {isOrchestrator && (
           <Flex
             sx={{

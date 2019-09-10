@@ -7,14 +7,25 @@ let hoursPerYear = 8760
 let averageHoursPerRound = 21
 let roundsPerYear = hoursPerYear / averageHoursPerRound
 
-export default ({ protocol, ...props }) => {
+export default ({ value, protocol, ...props }) => {
   const client = useApolloClient()
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
   const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
 
   let roi: number = 0
   let principle: number
-
+  principle = parseFloat(value) ? parseFloat(value) : 0
+  roi = calculateAnnualROI({
+    principle,
+    totalSupply,
+    totalStaked,
+  })
+  client.writeData({
+    data: {
+      principle,
+      roi,
+    },
+  })
   return (
     <div
       sx={{
@@ -29,22 +40,6 @@ export default ({ protocol, ...props }) => {
       <input
         placeholder="0"
         type="number"
-        onChange={e => {
-          principle = parseFloat(e.target.value)
-            ? parseFloat(e.target.value)
-            : 0
-          roi = calculateAnnualROI({
-            principle,
-            totalSupply,
-            totalStaked,
-          })
-          client.writeData({
-            data: {
-              principle,
-              roi,
-            },
-          })
-        }}
         sx={{
           backgroundColor: 'transparent',
           borderTop: '0',
