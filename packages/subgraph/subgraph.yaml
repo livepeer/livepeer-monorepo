@@ -145,3 +145,24 @@ dataSources:
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: approval
+  - kind: ethereum/contract
+    name: Minter
+    network: mainnet
+    source:
+      address: "8573f2f5a3bd960eee3d998473e50c75cdbe6828"
+      abi: Minter
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/minter.ts
+      entities:
+        - Round
+      abis:
+        - name: Minter
+          file: ./abis/Minter.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: SetCurrentRewardTokens(uint256,uint256)
+          handler: setCurrentRewardTokens    
