@@ -84,6 +84,8 @@ type Round @entity {
   pools: [Pool!] @derivedFrom(field: "round")
   "The shares associated with the round"
   shares: [Share!] @derivedFrom(field: "round")
+  "Mintable tokens for the round"
+  mintableTokens: BigInt
 }
 
 type Delegator @entity {
