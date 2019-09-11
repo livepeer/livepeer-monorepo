@@ -41,6 +41,13 @@ export function distributeFees(event: DistributeFees): void {
     delegatorAddress = Address.fromString(delegators[i])
     delegator = Delegator.load(delegators[i]) as Delegator
 
+    delegatorTotalStake = BigInt.compare(
+      delegator.bondedAmount as BigInt,
+      delegator.pendingStake as BigInt
+    )
+      ? (delegator.bondedAmount as BigInt)
+      : (delegator.pendingStake as BigInt)
+
     delegatorTotalFees = BigInt.compare(
       delegator.fees as BigInt,
       delegator.pendingFees as BigInt
