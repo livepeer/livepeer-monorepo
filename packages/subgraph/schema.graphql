@@ -46,6 +46,8 @@ type Pool @entity {
   fees: BigInt
   "The reward tokens collected in the pool"
   rewardTokens: BigInt
+  "The total shares in the pool"
+  shares: [Share!] @derivedFrom(field: "pool")
 }
 
 """
@@ -62,6 +64,8 @@ type Share @entity {
   delegator: Delegator
   "The round associated with the share"
   round: Round
+  "The pool this share belongs to"
+  pool: Pool
 }
 
 """
