@@ -31,7 +31,9 @@ export function distributeFees(event: DistributeFees): void {
   let delegatorFeeShare: BigInt
   let delegatorEquity: BigInt
   let delegatorEquityPercentage: BigInt
-  let feeSharePercent = transcoder.feeShare.div(BigInt.fromI32(1000000))
+  let feeSharePercent = transcoder.feeShare.gt(BigInt.fromI32(0))
+    ? transcoder.feeShare.div(BigInt.fromI32(1000000))
+    : (transcoder.feeShare as BigInt)
   let fees = event.params.fees
   let feeShare = fees.times(feeSharePercent)
   let transcoderFees = fees.minus(feeShare)
@@ -40,6 +42,12 @@ export function distributeFees(event: DistributeFees): void {
   for (let i = 0; i < delegators.length; i++) {
     delegatorAddress = Address.fromString(delegators[i])
     delegator = Delegator.load(delegators[i]) as Delegator
+
+    // no rewards for delegator if it claimed earnings before transcoder
+    // called reward
+    if (parseInt(delegator.lastClaimRound, 10) >= currentRound.toI32()) {
+      continue
+    }
 
     delegatorTotalStake = BigInt.compare(
       delegator.bondedAmount as BigInt,
