@@ -372,7 +372,9 @@ export function reward(event: RewardEvent): void {
   let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
   let currentRound = roundsManager.currentRound()
   let delegateData = bondingManager.getDelegator(transcoderAddress)
-  let rewardCutPercent = transcoder.rewardCut.div(BigInt.fromI32(1000000))
+  let rewardCutPercent = transcoder.rewardCut.gt(BigInt.fromI32(0))
+    ? transcoder.rewardCut.div(BigInt.fromI32(1000000))
+    : (transcoder.rewardCut as BigInt)
   let rewardTokens = event.params.amount
   let transcoderRewardCut = rewardTokens.times(rewardCutPercent)
   let rewardTokensMinusCut = rewardTokens.minus(transcoderRewardCut)
@@ -403,6 +405,13 @@ export function reward(event: RewardEvent): void {
   for (let i = 0; i < delegators.length; i++) {
     delegatorAddress = Address.fromString(delegators[i])
     delegator = Delegator.load(delegators[i]) as Delegator
+
+    // no rewards for delegator if it claimed earnings before transcoder
+    // called reward
+    if (parseInt(delegator.lastClaimRound, 10) >= currentRound.toI32()) {
+      continue
+    }
+
     delegatorTotalStake = BigInt.compare(
       delegator.bondedAmount as BigInt,
       delegator.pendingStake as BigInt
