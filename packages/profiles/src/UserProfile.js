@@ -61,7 +61,7 @@ export default () => {
   const addressRef = useRef()
 
   const message = `
-  Create a new 3Box profile\n
+  Create a new 3Box profile\n\n
   -\n
   Your unique profile ID is ${userDid}\n
   Timestamp: ${timestamp}
@@ -220,6 +220,7 @@ export default () => {
                   }}
                 >
                   Create a new 3Box profile
+                  <br />
                   <br />
                   -<br />
                   Your unique profile ID is {userDid}

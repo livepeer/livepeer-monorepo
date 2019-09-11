@@ -126,6 +126,7 @@ export const linkProfile = async (
     box.onSyncDone(resolve),
   )
   await boxSyncPromise
+  console.log('Box synced')
   const proof = {
     version: 1,
     type: 'ethereum-eoa',
@@ -133,10 +134,11 @@ export const linkProfile = async (
     timestamp: timestamp,
     signature: signedMessage,
   }
-  box.linkAddress({
+  await box.linkAddress({
     type: 'ethereum-eoa',
     proof: proof,
   })
+  console.log('Done linking')
 }
 
 export const printHello = () => {
