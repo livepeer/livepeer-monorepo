@@ -5,7 +5,11 @@ import List from './index'
 import ListItem from '../ListItem'
 
 storiesOf('List', module).add('default', () => (
-  <List header={<Styled.h3>Pending Stake Transactions</Styled.h3>}>
+  <List
+    sx={{ minWidth: 600 }}
+    header={<Styled.h4>Pending Stake Transactions</Styled.h4>}
+  >
+    <ListItem>a</ListItem>
     <ListItem>a</ListItem>
   </List>
 ))

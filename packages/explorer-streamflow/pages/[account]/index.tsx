@@ -1,11 +1,13 @@
 /** @jsx jsx */
 import React from 'react'
 import { useRouter } from 'next/router'
-import { jsx, Flex } from 'theme-ui'
+import { jsx, Flex, Styled } from 'theme-ui'
 import Layout from '../../components/Layout'
 import StakingWidget from '../../components/StakingWidget'
 import Profile from '../../components/Profile'
 import Tabs from '../../components/Tabs'
+import List from '../../components/List'
+import ListItem from '../../components/ListItem'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useWeb3Context } from 'web3-react'
@@ -84,6 +86,14 @@ export default withApollo(() => {
                 styles={{ mb: 4 }}
               />
               <Tabs tabs={views} />
+              <Flex>
+                <List
+                  header={<Styled.h4>Pending Stake Transactions</Styled.h4>}
+                >
+                  <ListItem>a</ListItem>
+                  <ListItem>a</ListItem>
+                </List>
+              </Flex>
             </>
           )}
         </Flex>

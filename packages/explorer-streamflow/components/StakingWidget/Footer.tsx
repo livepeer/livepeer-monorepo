@@ -11,7 +11,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 
-export default ({ transcoder, action, amount, context }) => {
+export default ({ transcoder = null, action, amount, context }) => {
   const [, setIsModalOpen] = useState(false)
 
   if (!context.active) {
