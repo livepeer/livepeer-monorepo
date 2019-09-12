@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import { DistributeFees } from '../types/JobsManager/JobsManager'
@@ -8,7 +8,9 @@ import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Delegator, Pool, Share } from '../types/schema'
 
-import { makePoolId, makeShareId } from './util'
+import { makePoolId, makeShareId, percOf, percOfWithDenom } from './util'
+
+import { getPendingStakeAndFees } from './bondingManager'
 
 // Bind RoundsManager contract
 let roundsManager = RoundsManager.bind(
@@ -29,14 +31,17 @@ export function distributeFees(event: DistributeFees): void {
   let delegatorTotalStake: BigInt
   let delegatorTotalFees: BigInt
   let delegatorFeeShare: BigInt
-  let delegatorEquity: BigInt
-  let delegatorEquityPercentage: BigInt
-  let feeSharePercent = transcoder.feeShare.gt(BigInt.fromI32(0))
-    ? transcoder.feeShare.div(BigInt.fromI32(1000000))
-    : (transcoder.feeShare as BigInt)
+  let delegatorFeePool: BigInt
+  let pendingStakeAndFees: Array<BigInt>
   let fees = event.params.fees
-  let feeShare = fees.times(feeSharePercent)
-  let transcoderFees = fees.minus(feeShare)
+
+  if (transcoder.feeShare.isZero()) {
+    delegatorFeePool = fees
+  } else {
+    delegatorFeePool = percOf(fees, transcoder.feeShare as BigInt)
+  }
+
+  let transcoderFeePool = fees.minus(delegatorFeePool)
 
   // Update each delegator's earned fees
   for (let i = 0; i < delegators.length; i++) {
@@ -49,29 +54,34 @@ export function distributeFees(event: DistributeFees): void {
       continue
     }
 
+    pendingStakeAndFees = getPendingStakeAndFees(delegator, currentRound)
+
     delegatorTotalStake = BigInt.compare(
       delegator.bondedAmount as BigInt,
-      delegator.pendingStake as BigInt
+      pendingStakeAndFees[0] as BigInt
     )
       ? (delegator.bondedAmount as BigInt)
-      : (delegator.pendingStake as BigInt)
+      : (pendingStakeAndFees[0] as BigInt)
 
     delegatorTotalFees = BigInt.compare(
       delegator.fees as BigInt,
-      delegator.pendingFees as BigInt
+      pendingStakeAndFees[1] as BigInt
     )
       ? (delegator.fees as BigInt)
-      : (delegator.pendingFees as BigInt)
+      : (pendingStakeAndFees[1] as BigInt)
 
-    delegatorEquity = delegatorTotalStake.div(transcoder.totalStake as BigInt)
-    delegatorEquityPercentage = delegatorEquity.div(BigInt.fromI32(1000000))
-    delegatorFeeShare = feeShare.times(delegatorEquityPercentage)
+    delegatorFeeShare = percOfWithDenom(
+      delegatorFeePool,
+      delegatorTotalStake,
+      pool.claimableStake as BigInt
+    )
 
     shareId = makeShareId(delegatorAddress, currentRound)
     share = Share.load(shareId) as Share
     if (share == null) {
       share = new Share(shareId)
     }
+
     share.fees = delegatorFeeShare
     share.round = currentRound.toString()
     share.delegator = delegatorAddress.toHex()
@@ -80,7 +90,7 @@ export function distributeFees(event: DistributeFees): void {
     if (transcoderAddress == delegatorAddress) {
       delegator.pendingFees = delegatorTotalFees
         .plus(delegatorFeeShare)
-        .plus(transcoderFees)
+        .plus(transcoderFeePool)
     } else {
       delegator.pendingFees = delegatorTotalFees.plus(delegatorFeeShare)
     }

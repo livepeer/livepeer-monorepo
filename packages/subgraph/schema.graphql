@@ -44,10 +44,18 @@ type Pool @entity {
   transcoder: Transcoder
   "The fees collected in the pool"
   fees: BigInt
-  "The reward tokens collected in the pool"
+  "The total reward tokens collected in the pool"
   rewardTokens: BigInt
   "The total shares in the pool"
-  shares: [Share!] @derivedFrom(field: "pool")
+  shares: [Share!]
+  "Transcoder's total stake during the earnings pool's round"
+  totalStake: BigInt
+  "Stake that can be used to claim portions of the fee and reward pools"
+  claimableStake: BigInt
+  "Transcoder's reward cut during the earnings pool's round"
+  rewardCut: BigInt
+  "Transcoder's fee share during the earnings pool's round"
+  feeShare: BigInt
 }
 
 """

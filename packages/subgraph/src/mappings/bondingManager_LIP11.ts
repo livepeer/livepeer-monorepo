@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, BigInt, store, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, store } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -18,6 +18,11 @@ import {
 } from '../types/BondingManager_LIP11/BondingManager'
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
+import {
+  updateDelegatorWithEarnings,
+  getPendingStakeAndFees
+} from './bondingManager'
+
 // Import entity types generated from the GraphQL schema
 import {
   Transcoder,
@@ -27,7 +32,13 @@ import {
   UnbondingLock
 } from '../types/schema'
 
-import { makePoolId, makeShareId, makeUnbondingLockId } from './util'
+import {
+  makePoolId,
+  makeShareId,
+  makeUnbondingLockId,
+  percOf,
+  percOfWithDenom
+} from './util'
 
 // Bind RoundsManager contract
 let roundsManager = RoundsManager.bind(
@@ -112,7 +123,6 @@ export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
   let newTranscoderAddress = event.params.newDelegate
   let oldTranscoderAddress = event.params.oldDelegate
-  let bondedAmount = event.params.bondedAmount
   let delegatorAddress = event.params.delegator
   let currentRound = roundsManager.currentRound()
 
@@ -123,7 +133,7 @@ export function bond(event: Bond): void {
   let newDelegateData = bondingManager.getDelegator(newTranscoderAddress)
 
   // Create delegator if it does not yet exist
-  let delegator = Delegator.load(delegatorAddress.toHex())
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   if (delegator == null) {
     delegator = new Delegator(delegatorAddress.toHex())
   }
@@ -198,25 +208,17 @@ export function bond(event: Bond): void {
   // Update delegator's start round
   delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
 
-  // Update delegator's last claim round
-  delegator.lastClaimRound = currentRound.toString()
-
-  // Update delegator's bonded amount
-  delegator.bondedAmount = bondedAmount
-
-  // Update delegator's fees
-  delegator.fees = delegator.pendingFees
-
-  // Update delegator's pending stake
-  delegator.pendingStake = BigInt.fromI32(0)
-
-  // Update delegator's pending fees
-  delegator.pendingFees = BigInt.fromI32(0)
-
   // Apply store updates
   newDelegate.save()
   newTranscoder.save()
   delegator.save()
+
+  updateDelegatorWithEarnings(
+    delegator,
+    currentRound,
+    delegator.pendingStake as BigInt,
+    delegator.pendingFees as BigInt
+  )
 }
 
 // Handler for Unbond events
@@ -231,7 +233,7 @@ export function unbond(event: Unbond): void {
   )
   let withdrawRound = event.params.withdrawRound
   let amount = event.params.amount
-  let delegator = Delegator.load(delegatorAddress.toHex())
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress)
   let currentRound = roundsManager.currentRound()
 
@@ -262,21 +264,6 @@ export function unbond(event: Unbond): void {
   // Update transcoder's total stake
   transcoder.totalStake = totalStake
 
-  // Update delegator's last claim round
-  delegator.lastClaimRound = currentRound.toString()
-
-  // Update delegator's bonded amount
-  delegator.bondedAmount = delegatorData.value0
-
-  // Update delegator's fees
-  delegator.fees = delegatorData.value1
-
-  // Update delegator's pending stake
-  delegator.pendingStake = BigInt.fromI32(0)
-
-  // Update delegator's pending fees
-  delegator.pendingFees = BigInt.fromI32(0)
-
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
   if (!delegatorData.value0) {
@@ -305,6 +292,13 @@ export function unbond(event: Unbond): void {
   transcoder.save()
   unbondingLock.save()
   delegator.save()
+
+  updateDelegatorWithEarnings(
+    delegator,
+    currentRound,
+    delegator.pendingStake as BigInt,
+    delegator.pendingFees as BigInt
+  )
 }
 
 // Handler for Rebond events
@@ -319,7 +313,7 @@ export function rebond(event: Rebond): void {
   )
   let transcoder = Transcoder.load(delegateAddress.toHex())
   let delegate = Delegator.load(delegateAddress.toHex())
-  let delegator = Delegator.load(delegatorAddress.toHex())
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress)
   let currentRound = roundsManager.currentRound()
 
@@ -335,21 +329,6 @@ export function rebond(event: Rebond): void {
   // Update delegator's start round
   delegator.startRound = delegatorData.value4.toString()
 
-  // Update delegator's last claim round
-  delegator.lastClaimRound = currentRound.toString()
-
-  // Update delegator's bonded amount
-  delegator.bondedAmount = delegatorData.value0
-
-  // Update delegator's fees
-  delegator.fees = delegatorData.value1
-
-  // Update delegator's pending stake
-  delegator.pendingStake = BigInt.fromI32(0)
-
-  // Update delegator's pending fees
-  delegator.pendingFees = BigInt.fromI32(0)
-
   // Update delegate's delegatedAmount
   delegate.delegatedAmount = delegateData.value3
 
@@ -361,6 +340,13 @@ export function rebond(event: Rebond): void {
   transcoder.save()
   delegator.save()
   store.remove('UnbondingLock', uniqueUnbondingLockId)
+
+  updateDelegatorWithEarnings(
+    delegator,
+    currentRound,
+    delegator.pendingStake as BigInt,
+    delegator.pendingFees as BigInt
+  )
 }
 
 // Handler for Reward events
@@ -372,12 +358,14 @@ export function reward(event: RewardEvent): void {
   let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
   let currentRound = roundsManager.currentRound()
   let delegateData = bondingManager.getDelegator(transcoderAddress)
-  let rewardCutPercent = transcoder.rewardCut.gt(BigInt.fromI32(0))
-    ? transcoder.rewardCut.div(BigInt.fromI32(1000000))
-    : (transcoder.rewardCut as BigInt)
   let rewardTokens = event.params.amount
-  let transcoderRewardCut = rewardTokens.times(rewardCutPercent)
-  let rewardTokensMinusCut = rewardTokens.minus(transcoderRewardCut)
+  let shares = new Array<string>()
+
+  let transcoderRewardPool = percOf(
+    rewardTokens,
+    transcoder.rewardCut as BigInt
+  )
+  let delegatorRewardPool = rewardTokens.minus(transcoderRewardPool)
 
   let poolId = makePoolId(transcoderAddress, currentRound)
 
@@ -396,9 +384,8 @@ export function reward(event: RewardEvent): void {
   let delegators: Array<string> = transcoder.delegators as Array<string>
   let shareId: string
   let delegatorTotalStake: BigInt
-  let delegatorRewards: BigInt
-  let delegatorEquity: BigInt
-  let delegatorEquityPercentage: BigInt
+  let delegatorRewardShare: BigInt
+  let pendingStakeAndFees: Array<BigInt>
 
   // Calculate each delegator's reward tokens for this round
   // and update its pending stake
@@ -412,33 +399,44 @@ export function reward(event: RewardEvent): void {
       continue
     }
 
+    pendingStakeAndFees = getPendingStakeAndFees(delegator, currentRound)
+
     delegatorTotalStake = BigInt.compare(
       delegator.bondedAmount as BigInt,
-      delegator.pendingStake as BigInt
+      pendingStakeAndFees[0] as BigInt
     )
       ? (delegator.bondedAmount as BigInt)
-      : (delegator.pendingStake as BigInt)
+      : (pendingStakeAndFees[0] as BigInt)
 
-    delegatorEquity = delegatorTotalStake.div(transcoder.totalStake as BigInt)
-    delegatorEquityPercentage = delegatorEquity.div(BigInt.fromI32(1000000))
-    delegatorRewards = rewardTokensMinusCut.times(delegatorEquityPercentage)
+    delegatorRewardShare = percOfWithDenom(
+      delegatorRewardPool,
+      delegatorTotalStake,
+      pool.claimableStake as BigInt
+    )
 
     shareId = makeShareId(delegatorAddress, currentRound)
-    share = Share.load(shareId) as Share
-    if (share == null) {
-      share = new Share(shareId)
-    }
-    share.rewardTokens = delegatorRewards
+
+    share = new Share(shareId)
+    share.rewardTokens = delegatorRewardShare
     share.round = currentRound.toString()
     share.delegator = delegatorAddress.toHex()
     share.save()
 
+    if (pool.shares == null) {
+      pool.shares = new Array<string>()
+    }
+
+    // Add share to pool
+    shares = pool.shares as Array<string>
+    shares.push(shareId)
+    pool.shares = shares
+
     if (transcoderAddress == delegatorAddress) {
       delegator.pendingStake = delegatorTotalStake
-        .plus(delegatorRewards)
-        .plus(transcoderRewardCut)
+        .plus(delegatorRewardShare)
+        .plus(transcoderRewardPool)
     } else {
-      delegator.pendingStake = delegatorTotalStake.plus(delegatorRewards)
+      delegator.pendingStake = delegatorTotalStake.plus(delegatorRewardShare)
     }
 
     delegator.save()
@@ -456,21 +454,15 @@ export function reward(event: RewardEvent): void {
 export function claimEarnings(call: ClaimEarningsCall): void {
   let delegatorAddress = call.transaction.from
   let endRound = call.inputs._endRound
-  let delegator = Delegator.load(delegatorAddress.toHex())
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   let bondingManager = BondingManager.bind(call.to)
-  let currentRound = roundsManager.currentRound()
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let delegatorData = bondingManager.getDelegator(
+    Address.fromString(delegator.id)
+  )
 
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
-  delegator.lastClaimRound = endRound.toString()
-
-  if (endRound.toI32() == currentRound.toI32()) {
-    delegator.pendingStake = BigInt.fromI32(0)
-    delegator.pendingFees = BigInt.fromI32(0)
-  }
-
-  delegator.save()
+  let bondedAmount = delegatorData.value0
+  let fees = delegatorData.value1
+  updateDelegatorWithEarnings(delegator, endRound, bondedAmount, fees)
 }
 
 // Handler for WithdrawStake events
@@ -485,16 +477,14 @@ export function withdrawStake(event: WithdrawStake): void {
 }
 
 export function withdrawFees(event: WithdrawFees): void {
-  let bondingManager = BondingManager.bind(event.address)
   let delegatorAddress = event.params.delegator
-  let delegator = Delegator.load(delegatorAddress.toHex())
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   let currentRound = roundsManager.currentRound()
 
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = BigInt.fromI32(0)
-  delegator.pendingFees = BigInt.fromI32(0)
-  delegator.pendingStake = BigInt.fromI32(0)
-  delegator.lastClaimRound = currentRound.toString()
-  delegator.save()
+  updateDelegatorWithEarnings(
+    delegator,
+    currentRound,
+    delegator.pendingStake as BigInt,
+    delegator.pendingFees as BigInt
+  )
 }
