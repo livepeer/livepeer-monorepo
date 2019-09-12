@@ -39,7 +39,7 @@ export default async function makeApp({
   })
 
   // HTTP bearer token middleware
-  app.use(authMiddleware)
+  app.use(authMiddleware({ adminOnly: 1 }))
 
   if (kubeNamespace && kubeBroadcasterService) {
     const kc = new k8s.KubeConfig()

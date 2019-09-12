@@ -49,6 +49,26 @@ async function generateToken(req, res, next) {
   return next()
 }
 
-router.use(verifyToken)
+// router.use(verifyToken)
 
-export default router
+function authFactory(params) {
+  return router.use(async (req, res, next) => {
+    if (!req || !req.token) {
+      return res.sendStatus(401)
+    }
+    logger.info('authFactory params ', params)
+    let resp
+    try {
+      // check token against token DB
+      resp = await req.store.get(`apitoken/${req.token}`)
+    } catch (e) {
+      logger.warn('api Token not found... generating one')
+      return await generateToken(req, res, next)
+    }
+
+    return next()
+  })
+}
+
+// export default router
+export default authFactory
