@@ -31,16 +31,12 @@ export function distributeFees(event: DistributeFees): void {
   let delegatorTotalStake: BigInt
   let delegatorTotalFees: BigInt
   let delegatorFeeShare: BigInt
-  let delegatorFeePool: BigInt
   let pendingStakeAndFees: Array<BigInt>
   let fees = event.params.fees
 
-  if (transcoder.feeShare.isZero()) {
-    delegatorFeePool = fees
-  } else {
-    delegatorFeePool = percOf(fees, transcoder.feeShare as BigInt)
-  }
-
+  let delegatorFeePool = transcoder.feeShare.isZero()
+    ? BigInt.fromI32(0)
+    : percOf(fees, transcoder.feeShare as BigInt)
   let transcoderFeePool = fees.minus(delegatorFeePool)
 
   // Update each delegator's earned fees
