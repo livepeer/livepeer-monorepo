@@ -126,6 +126,10 @@ export function bond(event: Bond): void {
   let delegatorAddress = event.params.delegator
   let currentRound = roundsManager.currentRound()
 
+  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let bondedAmount = delegatorData.value0
+  let fees = delegatorData.value1
+
   // Get old delegate data
   let oldDelegateData = bondingManager.getDelegator(oldTranscoderAddress)
 
@@ -213,12 +217,7 @@ export function bond(event: Bond): void {
   newTranscoder.save()
   delegator.save()
 
-  updateDelegatorWithEarnings(
-    delegator,
-    currentRound,
-    delegator.pendingStake as BigInt,
-    delegator.pendingFees as BigInt
-  )
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 // Handler for Unbond events
@@ -254,6 +253,8 @@ export function unbond(event: Unbond): void {
 
   // get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let bondedAmount = delegatorData.value0
+  let fees = delegatorData.value1
 
   // Get delegate data
   let delegateData = bondingManager.getDelegator(delegateAddress)
@@ -293,12 +294,7 @@ export function unbond(event: Unbond): void {
   unbondingLock.save()
   delegator.save()
 
-  updateDelegatorWithEarnings(
-    delegator,
-    currentRound,
-    delegator.pendingStake as BigInt,
-    delegator.pendingFees as BigInt
-  )
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 // Handler for Rebond events
@@ -319,6 +315,8 @@ export function rebond(event: Rebond): void {
 
   // Get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let bondedAmount = delegatorData.value0
+  let fees = delegatorData.value1
 
   // Get delegate data
   let delegateData = bondingManager.getDelegator(delegateAddress)
@@ -341,12 +339,7 @@ export function rebond(event: Rebond): void {
   delegator.save()
   store.remove('UnbondingLock', uniqueUnbondingLockId)
 
-  updateDelegatorWithEarnings(
-    delegator,
-    currentRound,
-    delegator.pendingStake as BigInt,
-    delegator.pendingFees as BigInt
-  )
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 // Handler for Reward events
