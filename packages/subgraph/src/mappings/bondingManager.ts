@@ -28,6 +28,10 @@ export function bond(event: Bond): void {
   )
   let currentRound = roundsManager.currentRound()
 
+  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let bondedAmount = delegatorData.value0
+  let fees = delegatorData.value1
+
   // Create transcoder if it does not yet exist
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   if (transcoder == null) {
@@ -76,12 +80,7 @@ export function bond(event: Bond): void {
   delegator.save()
   transcoder.save()
 
-  updateDelegatorWithEarnings(
-    delegator,
-    currentRound,
-    delegator.pendingStake as BigInt,
-    delegator.pendingFees as BigInt
-  )
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 export function unbond(event: Unbond): void {
@@ -110,6 +109,8 @@ export function unbond(event: Unbond): void {
 
   // Get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let bondedAmount = delegatorData.value0
+  let fees = delegatorData.value1
 
   // Update delegate's total stake
   transcoder.totalStake = totalStake
@@ -136,12 +137,7 @@ export function unbond(event: Unbond): void {
   delegator.save()
   transcoder.save()
 
-  updateDelegatorWithEarnings(
-    delegator,
-    currentRound,
-    delegator.pendingStake as BigInt,
-    delegator.pendingFees as BigInt
-  )
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 // Handler for WithdrawStake events
