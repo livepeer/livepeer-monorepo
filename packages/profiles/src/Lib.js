@@ -140,7 +140,3 @@ export const linkProfile = async (
   })
   console.log('Done linking')
 }
-
-export const printHello = () => {
-  console.log('Hello im imported library')
-}
