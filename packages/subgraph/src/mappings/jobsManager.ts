@@ -66,11 +66,13 @@ export function distributeFees(event: DistributeFees): void {
       ? (delegator.fees as BigInt)
       : (pendingStakeAndFees[1] as BigInt)
 
-    delegatorFeeShare = percOfWithDenom(
-      delegatorFeePool,
-      delegatorTotalStake,
-      pool.claimableStake as BigInt
-    )
+    delegatorFeeShare = pool.claimableStake.isZero()
+      ? BigInt.fromI32(0)
+      : percOfWithDenom(
+          delegatorFeePool,
+          delegatorTotalStake,
+          pool.claimableStake as BigInt
+        )
 
     shareId = makeShareId(delegatorAddress, currentRound)
     share = Share.load(shareId) as Share
