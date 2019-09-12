@@ -134,9 +134,13 @@ export const linkProfile = async (
     timestamp: timestamp,
     signature: signedMessage,
   }
-  await box.linkAddress({
-    type: 'ethereum-eoa',
-    proof: proof,
-  })
-  console.log('Done linking')
+  try {
+    await box.linkAddress({
+      type: 'ethereum-eoa',
+      proof: proof,
+    })
+    console.log('Done linking')
+  } catch (err) {
+    console.log('linking error: ' + err)
+  }
 }
