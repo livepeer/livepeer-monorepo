@@ -108,9 +108,17 @@ export function bond(event: Bond): void {
   )
   let currentRound = roundsManager.currentRound()
 
+  // Create delegator if it does not yet exist
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
+  if (delegator == null) {
+    delegator = new Delegator(delegatorAddress.toHex())
+  }
+
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   let bondedAmount = delegatorData.value0
   let fees = delegatorData.value1
+
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 
   // Create transcoder if it does not yet exist
   let transcoder = Transcoder.load(transcoderAddress.toHex())
@@ -129,12 +137,6 @@ export function bond(event: Bond): void {
 
   // Update delegate's delegated amount
   delegate.delegatedAmount = delegateData.value3
-
-  // Create delegator if it does not yet exist
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
-  if (delegator == null) {
-    delegator = new Delegator(delegatorAddress.toHex())
-  }
 
   if (transcoder.delegators == null) {
     transcoder.delegators = new Array<string>()
@@ -159,8 +161,6 @@ export function bond(event: Bond): void {
   delegate.save()
   delegator.save()
   transcoder.save()
-
-  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 export function unbond(event: Unbond): void {
@@ -192,6 +192,8 @@ export function unbond(event: Unbond): void {
   let bondedAmount = delegatorData.value0
   let fees = delegatorData.value1
 
+  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
+
   // Update delegate's total stake
   transcoder.totalStake = totalStake
 
@@ -216,8 +218,6 @@ export function unbond(event: Unbond): void {
   delegate.save()
   delegator.save()
   transcoder.save()
-
-  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
 }
 
 // Handler for Reward events
@@ -366,33 +366,37 @@ export function updateDelegatorWithEarnings(
   bondedAmount: BigInt,
   fees: BigInt
 ): void {
-  let delegateAddress = Address.fromString(delegator.delegate)
-  let currentRound = roundsManager.currentRound()
+  // Only will have earnings to claim if you have a delegate
+  // If not delegated, skip the earnings claim process
+  if (delegator.delegate) {
+    let delegateAddress = Address.fromString(delegator.delegate)
+    let currentRound = roundsManager.currentRound()
 
-  delegator.bondedAmount = bondedAmount
-  delegator.fees = fees
-  delegator.lastClaimRound = endRound.toString()
+    delegator.bondedAmount = bondedAmount
+    delegator.fees = fees
 
-  if (endRound.toI32() == currentRound.toI32()) {
-    delegator.pendingStake = BigInt.fromI32(0)
-    delegator.pendingFees = BigInt.fromI32(0)
+    if (endRound.toI32() == currentRound.toI32()) {
+      delegator.pendingStake = BigInt.fromI32(0)
+      delegator.pendingFees = BigInt.fromI32(0)
 
-    let poolId = makePoolId(delegateAddress, endRound)
-    let pool = Pool.load(poolId) as Pool
-    if (pool == null) {
-      pool = new Pool(poolId)
-    }
+      let poolId = makePoolId(delegateAddress, endRound)
+      let pool = Pool.load(poolId) as Pool
+      if (pool == null) {
+        pool = new Pool(poolId)
+      }
 
-    // Reduce the pool's claimableStake if delegator claimed before delegate
-    // called reward
-    if (!pool.rewardTokens) {
-      pool.claimableStake = pool.claimableStake.minus(
-        delegator.bondedAmount as BigInt
-      )
-      pool.save()
+      // Reduce the pool's claimableStake if delegator claimed before delegate
+      // called reward
+      if (!pool.rewardTokens) {
+        pool.claimableStake = pool.claimableStake.minus(
+          delegator.bondedAmount as BigInt
+        )
+        pool.save()
+      }
     }
   }
 
+  delegator.lastClaimRound = endRound.toString()
   delegator.save()
 }
 
