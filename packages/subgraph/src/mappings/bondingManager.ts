@@ -232,10 +232,9 @@ export function reward(event: RewardEvent): void {
   let rewardTokens = event.params.amount
   let shares = new Array<string>()
 
-  let transcoderRewardPool = percOf(
-    rewardTokens,
-    transcoder.rewardCut as BigInt
-  )
+  let transcoderRewardPool = transcoder.rewardCut.isZero()
+    ? BigInt.fromI32(0)
+    : percOf(rewardTokens, transcoder.rewardCut as BigInt)
   let delegatorRewardPool = rewardTokens.minus(transcoderRewardPool)
 
   let poolId = makePoolId(transcoderAddress, currentRound)
