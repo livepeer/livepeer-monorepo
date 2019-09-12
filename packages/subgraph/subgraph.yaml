@@ -45,6 +45,9 @@ dataSources:
           handler: withdrawStake
         - event: WithdrawFees(indexed address)
           handler: withdrawFees
+      callHandlers:
+        - function: claimEarnings(uint256)
+          handler: claimEarnings
   - kind: ethereum/contract
     name: BondingManager_LIP11
     network: mainnet
@@ -77,9 +80,6 @@ dataSources:
           handler: rebond
         - event: WithdrawStake(indexed address,uint256,uint256,uint256)
           handler: withdrawStake
-      callHandlers:
-        - function: claimEarnings(uint256)
-          handler: claimEarnings
   - kind: ethereum/contract
     name: RoundsManager
     network: mainnet
