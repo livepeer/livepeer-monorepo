@@ -237,10 +237,12 @@ export function reward(event: RewardEvent): void {
     : percOf(rewardTokens, transcoder.rewardCut as BigInt)
   let delegatorRewardPool = rewardTokens.minus(transcoderRewardPool)
 
-  let poolId = makePoolId(transcoderAddress, currentRound)
-
   // Get pool
-  let pool = new Pool(poolId)
+  let poolId = makePoolId(transcoderAddress, currentRound)
+  let pool = Pool.load(poolId) as Pool
+  if (pool == null) {
+    pool = new Pool(poolId)
+  }
 
   // Update delegate's delegated amount
   delegate.delegatedAmount = delegateData.value3
@@ -278,11 +280,13 @@ export function reward(event: RewardEvent): void {
       ? (delegator.bondedAmount as BigInt)
       : (pendingStakeAndFees[0] as BigInt)
 
-    delegatorRewardShare = percOfWithDenom(
-      delegatorRewardPool,
-      delegatorTotalStake,
-      pool.claimableStake as BigInt
-    )
+    delegatorRewardShare = pool.claimableStake.isZero()
+      ? BigInt.fromI32(0)
+      : percOfWithDenom(
+          delegatorRewardPool,
+          delegatorTotalStake,
+          pool.claimableStake as BigInt
+        )
 
     shareId = makeShareId(delegatorAddress, currentRound)
 
