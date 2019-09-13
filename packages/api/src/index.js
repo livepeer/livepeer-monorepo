@@ -20,6 +20,8 @@ export default async function makeApp({
   kubeNamespace,
   kubeBroadcasterService,
   kubeBroadcasterTemplate,
+  kubeOrchestratorService,
+  kubeOrchestratorTemplate,
 }) {
   // Storage init
   let store
@@ -40,7 +42,7 @@ export default async function makeApp({
     next()
   })
 
-  if (kubeNamespace && kubeBroadcasterService) {
+  if (kubeNamespace && (kubeBroadcasterService || kubeOrchestratorService)) {
     const kc = new k8s.KubeConfig()
     kc.loadFromDefault()
 
@@ -49,7 +51,9 @@ export default async function makeApp({
       req.kubeApi = kubeApi
       req.kubeNamespace = kubeNamespace
       req.kubeBroadcasterService = kubeBroadcasterService
+      req.kubeOrchestratorService = kubeOrchestratorService
       req.kubeBroadcasterTemplate = kubeBroadcasterTemplate
+      req.kubeOrchestratorTemplate = kubeOrchestratorTemplate
       next()
     })
   }
@@ -102,7 +106,13 @@ export default async function makeApp({
     next(err)
   })
 
-  return { app, listener, port: listenPort, close, store }
+  return {
+    app,
+    listener,
+    port: listenPort,
+    close,
+    store,
+  }
 }
 
 process.on('unhandledRejection', err => {

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { timeout } from '../util'
-import format from 'string-template'
+import { render } from 'mustache'
 import fetch from 'isomorphic-fetch'
 import { checkKubernetes } from '../middleware'
 
@@ -18,10 +18,13 @@ export const getBroadcasters = async req => {
   const ret = []
   if (endpoints.body && endpoints.body.subsets) {
     for (const subset of endpoints.body.subsets) {
+      if (!subset.addresses) {
+        continue
+      }
       for (const address of subset.addresses) {
         ret.push({
           ...address,
-          name: format(req.kubeBroadcasterTemplate, {
+          name: render(req.kubeBroadcasterTemplate, {
             nodeName: address.nodeName,
             ip: address.ip,
           }),
