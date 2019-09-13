@@ -48,9 +48,19 @@ const args = yargs
     },
     'kube-broadcaster-template': {
       describe:
-        'template string of the form https://{nodeName}.example.com to give broadcasters external identity.',
+        'template string of the form https://{{nodeName}}.example.com to give broadcasters external identity.',
       type: 'string',
-      default: 'https://{nodeName}.livepeer.live',
+      default: 'https://{{nodeName}}.livepeer.live',
+    },
+    'kube-orchestrator-service': {
+      describe: 'name of the service we should look at for orchestrators.',
+      type: 'string',
+    },
+    'kube-orchestrator-template': {
+      describe:
+        'template string of the form {{ip}} for the broadcaster webhook.',
+      type: 'string',
+      default: '{{ip}}',
     },
     'http-prefix': {
       describe: 'accept requests at this prefix',

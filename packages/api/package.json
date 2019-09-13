@@ -43,6 +43,7 @@
     "level": "^5.0.1",
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.1",
+    "mustache": "^3.0.3",
     "nodemon": "^1.19.0",
     "pg": "^7.10.0",
     "string-template": "^1.0.0",
