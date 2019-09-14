@@ -51,15 +51,13 @@ export default ({ action }) => {
             </div>
           </Flex>
           <Flex sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <Styled.h2 as="div" sx={{ fontFamily: 'monospace' }}>
+            <div sx={{ fontSize: 4, fontFamily: 'monospace' }}>
               {abbreviateNumber(data.roi)}
-              <Styled.h6 as="span" sx={{ ml: 1 }}>
-                LPT
-              </Styled.h6>
-            </Styled.h2>
-            <Styled.h2 as="div" sx={{ fontFamily: 'monospace' }}>
+              <span sx={{ fontSize: 1, ml: 1 }}>LPT</span>
+            </div>
+            <div sx={{ fontSize: 4, fontFamily: 'monospace' }}>
               ${abbreviateNumber(data.roi * 6.3)}
-            </Styled.h2>
+            </div>
           </Flex>
         </Box>
       </Box>

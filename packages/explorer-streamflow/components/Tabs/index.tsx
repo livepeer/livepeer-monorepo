@@ -2,6 +2,13 @@
 import { jsx } from 'theme-ui'
 import Link from 'next/link'
 
+export interface TabType {
+  name: string
+  href: string
+  as: string
+  isActive?: boolean
+}
+
 export default ({ tabs, variant = 'primary', ...props }) => {
   return (
     <div
@@ -15,7 +22,7 @@ export default ({ tabs, variant = 'primary', ...props }) => {
       }}
       {...props}
     >
-      {tabs.map((tab: any, i: number) => {
+      {tabs.map((tab: TabType, i: number) => {
         return (
           <Link key={i} href={tab.href} as={tab.as} passHref>
             <a

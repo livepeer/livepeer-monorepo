@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { jsx, Flex, Styled } from 'theme-ui'
+import Button from '../Button'
 
 export default ({ children, ...props }) => {
   return (
@@ -31,8 +32,11 @@ export default ({ children, ...props }) => {
         </div>
       </Flex>
       <div>
-        <span>cta1</span>
-        <span>cta2</span>
+        <Button sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}>
+          Rebond
+        </Button>
+
+        <Button sx={{ py: 1, variant: 'buttons.secondary' }}>Withdraw</Button>
       </div>
     </Flex>
   )

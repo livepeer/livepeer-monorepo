@@ -6,7 +6,7 @@ export default ({ label, variant = 'primary', ...props }) => (
     sx={{
       borderRadius: 1000,
       bg: 'grey',
-      px: 1,
+      px: 2,
       py: '4px',
       display: 'inline-flex',
       fontSize: 0,

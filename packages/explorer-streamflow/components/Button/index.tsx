@@ -1,14 +1,14 @@
 /** @jsx jsx */
 import { Styled, jsx } from 'theme-ui'
 
-export default ({ variant = 'primary', ...props }) => (
+export default ({ variant = 'primary', size = 'normal', ...props }) => (
   <Styled.div
-    as="button"
     {...props}
     sx={{
       appearance: 'none',
       display: 'inline-block',
       textAlign: 'center',
+      cursor: 'pointer',
       lineHeight: 'inherit',
       textDecoration: 'none',
       fontSize: '14px',
@@ -20,6 +20,7 @@ export default ({ variant = 'primary', ...props }) => (
       border: 0,
       borderRadius: 4,
       variant: `buttons.${variant}`,
+      position: 'relative',
     }}
   />
 )

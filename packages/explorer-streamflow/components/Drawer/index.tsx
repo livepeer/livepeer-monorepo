@@ -48,7 +48,7 @@ export default ({ items = [] }) => {
                         : 'muted',
                     lineHeight: 'initial',
                     display: 'flex',
-                    fontSize: 20,
+                    fontSize: 3,
                     fontWeight: 600,
                     cursor: 'pointer',
                     alignItems: 'center',

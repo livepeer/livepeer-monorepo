@@ -9,6 +9,18 @@ const heading = {
   fontWeight: 'heading'
 }
 
+const buttonSizes = {
+  small: {
+    py: 0
+  },
+  medium: {
+    py: 1
+  },
+  large: {
+    py: 2
+  }
+}
+
 const theme = {
   initialColorMode: 'dark',
   space: [0, 8, 16, 24, 32, 40, 48, 56, 64],
@@ -17,9 +29,9 @@ const theme = {
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     heading:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    monospace: 'Akkurat-Mono, monospace'
+    monospace: '"SF Mono", "Roboto Mono", monospace'
   },
-  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
+  fontSizes: [12, 14, 16, 20, 24, 32, 40, 48, 64, 96],
   fontWeights: {
     body: 400,
     heading: 700
@@ -37,7 +49,7 @@ const theme = {
     muted: greyPalette[4],
     red: '#d32f2f',
     yellow: '#fbc02d',
-    border: 'rgba(255, 255, 255, .10)',
+    border: 'rgba(255, 255, 255, .16)',
     modes: {}
   },
   buttons: {
@@ -46,13 +58,16 @@ const theme = {
       bg: 'primary'
     },
     secondary: {
-      color: 'background',
-      bg: 'secondary'
+      color: 'text',
+      bg: 'transparent',
+      border: '1px solid',
+      borderColor: 'border',
+      transition: 'border-color .2s',
+      '&:hover': {
+        borderColor: 'text',
+        transition: 'border-color .2s'
+      }
     },
-    gray: {
-      color: 'background',
-      bg: 'gray'
-    }
   },
   styles: {
     root: {
