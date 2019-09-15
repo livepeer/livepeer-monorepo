@@ -13,7 +13,7 @@ import {
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
 const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
+  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 let apolloClient = null
 
@@ -56,6 +56,9 @@ function createApolloClient(initialState = {}) {
             null,
             {
               ...context,
+              // graphql-sdk transactions query requires 'persistor' object so pass it
+              // an empty object
+              persistor: { cache: { cache: { data: { data: { ROOT_QUERY: [] } } } } },
               livepeer: sdk,
             },
             variables,

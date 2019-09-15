@@ -11,7 +11,7 @@ import gql from 'graphql-tag'
 const GET_DATA = gql`
   {
     transcoders(
-      where: { status: "Registered" }
+      where: { status: Registered }
       orderBy: totalStake
       orderDirection: desc
     ) {
@@ -22,7 +22,7 @@ const GET_DATA = gql`
       status
       totalStake
       pricePerSegment
-      rewards {
+      pools {
         rewardTokens
       }
     }
@@ -38,7 +38,7 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const { data, loading } = useQuery(GET_DATA, {
+  const { data, loading, error } = useQuery(GET_DATA, {
     notifyOnNetworkStatusChange: false,
     pollInterval: 10000,
     ssr: false,

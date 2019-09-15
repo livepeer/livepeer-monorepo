@@ -16,40 +16,77 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '../../components/Card'
 
 const GET_DATA = gql`
-  query($transcoderID: ID!, $delegatorID: String!) {
-    # The subgraph subgraph and graphql-sdk uses different types for the eth
+  query($account: ID!) {
+    delegator(id: $account) {
+      unbondingLocks {
+        id
+        amount
+      }
+    }
+    # The subgraph subgraph and graphql-sdk use different types for the eth
     # address so we have to pass two separate inputs
-    # TODO: add unbondlocks to subgraph
-    transcoder(id: $transcoderID) {
+    transcoder(id: $account) {
       id
     }
     protocol {
       totalTokenSupply
       totalBondedToken
     }
-    account(id: $delegatorID) {
-      unbondlocks {
-        id
-        amount
-        withdrawRound
-        delegator
-      }
+    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
+      id
     }
+    # transactions(address: $account) {
+    #   id
+    # }
   }
 `
 
 export default withApollo(() => {
   const context = useWeb3Context()
   const router = useRouter()
-  const { account } = router.query
-  const { data, loading } = useQuery(GET_DATA, {
-    variables: { transcoderID: account, delegatorID: account },
+  const query = router.query
+  const account = query.account as string
+
+  const { data, loading, error } = useQuery(GET_DATA, {
+    variables: {
+      account: account.toLowerCase(),
+    },
     notifyOnNetworkStatusChange: true,
     ssr: false,
   })
   const isOrchestrator = data && data.transcoder && data.transcoder.id
   const tabs = getTabs(isOrchestrator, account)
 
+  if (loading) {
+    return (
+      <Layout>
+        <Flex
+          sx={{
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <div sx={{ color: 'primary' }}>
+            <CircularProgress size={24} color="inherit" />
+          </div>
+        </Flex>
+      </Layout>
+    )
+  }
+
+  const currentRound = data.currentRound[0].id
+  const pendingStakeTransactions = data.delegator.unbondingLocks.filter(
+    item =>
+      item['withdrawRound'].id !== '0' &&
+      item['withdrawRound'].id > currentRound,
+  )
+
+  const completedStakeTransactions = data.delegator.unbondingLocks.filter(
+    item =>
+      item['withdrawRound'].id !== '0' &&
+      item['withdrawRound'].id <= currentRound,
+  )
   console.log(data)
   return (
     <Layout>
@@ -62,91 +99,96 @@ export default withApollo(() => {
         }}
       >
         <Flex
-          sx={{ paddingTop: 5, flexDirection: 'column', pr: 6, width: '70%' }}
+          sx={{
+            paddingTop: 5,
+            mb: 8,
+            flexDirection: 'column',
+            pr: 6,
+            width: '70%',
+          }}
         >
-          {loading ? (
-            <Flex sx={{ alignSelf: 'center', color: 'primary' }}>
-              <CircularProgress size={24} color="inherit" />
-            </Flex>
-          ) : (
-            <>
-              <Profile
-                account={account}
-                isOrchestrator={isOrchestrator}
-                isConnectedAccount={context.account == account}
-                styles={{ mb: 4 }}
-              />
-              <Tabs tabs={tabs} sx={{ mb: 5 }} />
-              <Card
-                sx={{ mb: 2 }}
-                title="Staked Towards"
-                subtitle={
-                  <div
-                    sx={{
-                      fontSize: 3,
-                      fontWeight: 'heading',
-                      color: 'text',
-                      lineHeight: 'heading',
-                    }}
-                  >
-                    Livepeer Community Node
-                  </div>
-                }
-              />
+          <Profile
+            account={account}
+            isOrchestrator={isOrchestrator}
+            isConnectedAccount={context.account == account}
+            styles={{ mb: 4 }}
+          />
+          <Tabs tabs={tabs} sx={{ mb: 5 }} />
+          <Card
+            sx={{ mb: 2 }}
+            title="Staked Towards"
+            subtitle={
               <div
                 sx={{
-                  display: 'grid',
-                  gridGap: 2,
-                  gridTemplateColumns: `repeat(auto-fit, minmax(128px, 1fr))`,
-                  mb: 5,
+                  fontSize: 3,
+                  fontWeight: 'heading',
+                  color: 'text',
+                  lineHeight: 'heading',
                 }}
               >
-                <Card
-                  sx={{ flex: 1, mb: 2 }}
-                  title="Total Staked"
-                  subtitle={
-                    <div
-                      sx={{
-                        fontSize: 5,
-                        color: 'text',
-                        lineHeight: 'heading',
-                        fontFamily: 'monospace',
-                      }}
-                    >
-                      612.00<span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
-                    </div>
-                  }
-                ></Card>
-                <Card
-                  sx={{ flex: 1, mb: 2 }}
-                  title="Equity"
-                  subtitle={
-                    <div
-                      sx={{
-                        fontSize: 5,
-                        color: 'text',
-                        lineHeight: 'heading',
-                        fontFamily: 'monospace',
-                      }}
-                    >
-                      0.004%
-                    </div>
-                  }
-                ></Card>
+                Livepeer Community Node
               </div>
-              <Flex>
-                <List
-                  header={<Styled.h4>Pending Stake Transactions</Styled.h4>}
+            }
+          />
+          <div
+            sx={{
+              display: 'grid',
+              gridGap: 2,
+              gridTemplateColumns: `repeat(auto-fit, minmax(128px, 1fr))`,
+              mb: 5,
+            }}
+          >
+            <Card
+              sx={{ flex: 1, mb: 2 }}
+              title="Total Staked"
+              subtitle={
+                <div
+                  sx={{
+                    fontSize: 5,
+                    color: 'text',
+                    lineHeight: 'heading',
+                    fontFamily: 'monospace',
+                  }}
                 >
-                  {data.account.unbondlocks
-                    .filter(item => item['withdrawRound'] !== '0')
-                    .map(lock => (
-                      <ListItem key={lock.id}>{lock.id}</ListItem>
-                    ))}
-                </List>
-              </Flex>
-            </>
+                  612.00<span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
+                </div>
+              }
+            ></Card>
+            <Card
+              sx={{ flex: 1, mb: 2 }}
+              title="Equity"
+              subtitle={
+                <div
+                  sx={{
+                    fontSize: 5,
+                    color: 'text',
+                    lineHeight: 'heading',
+                    fontFamily: 'monospace',
+                  }}
+                >
+                  0.004%
+                </div>
+              }
+            ></Card>
+          </div>
+          {!!pendingStakeTransactions.length && (
+            <List
+              sx={{ mb: 6 }}
+              header={<Styled.h4>Pending Transactions</Styled.h4>}
+            >
+              {pendingStakeTransactions.map(lock => (
+                <ListItem key={lock.id}>{lock.id}</ListItem>
+              ))}
+            </List>
           )}
+          <List header={<Styled.h4>Completed Transactions</Styled.h4>}>
+            {!completedStakeTransactions.length && (
+              <div sx={{ fontSize: 1, mt: 2 }}>No History</div>
+            )}
+            {completedStakeTransactions.map(lock => (
+              <ListItem key={lock.id}>{lock.id}</ListItem>
+            ))}
+          </List>
         </Flex>
         {isOrchestrator && (
           <Flex

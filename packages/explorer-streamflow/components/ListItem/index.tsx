@@ -11,6 +11,9 @@ export default ({ children, ...props }) => {
         py: 2,
         alignItems: 'center',
         justifyContent: 'space-between',
+        '&:first-of-type': {
+          borderTop: 0,
+        },
       }}
       {...props}
     >
