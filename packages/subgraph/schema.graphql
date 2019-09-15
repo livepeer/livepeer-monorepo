@@ -46,34 +46,12 @@ type Pool @entity {
   fees: BigInt
   "The total reward tokens collected in the pool"
   rewardTokens: BigInt
-  "The total shares in the pool"
-  shares: [Share!]
   "Transcoder's total stake during the earnings pool's round"
   totalStake: BigInt
-  "Stake that can be used to claim portions of the fee and reward pools"
-  claimableStake: BigInt
   "Transcoder's reward cut during the earnings pool's round"
   rewardCut: BigInt
   "Transcoder's fee share during the earnings pool's round"
   feeShare: BigInt
-}
-
-"""
-Represents a delegator's pool share
-"""
-type Share @entity {
-  "Unique identifer for the share (formed using the delegator's address and round number)"
-  id: ID!
-  "The delegator's share of reward tokens"
-  rewardTokens: BigInt
-  "The delegator's share of fees"
-  fees: BigInt
-  "The delegator associated with the share"
-  delegator: Delegator
-  "The round associated with the share"
-  round: Round
-  "The pool this share belongs to"
-  pool: Pool
 }
 
 """
@@ -94,8 +72,6 @@ type Round @entity {
   startBlock: BigInt
   "The pools associated with the round"
   pools: [Pool!] @derivedFrom(field: "round")
-  "The shares associated with the round"
-  shares: [Share!] @derivedFrom(field: "round")
   "Mintable tokens for the round"
   mintableTokens: BigInt
 }
@@ -113,16 +89,10 @@ type Delegator @entity {
   bondedAmount: BigInt
   "The amount of fees a delegator has collected"
   fees: BigInt
-  "The total amount of tokens the delegator has earned through the current round"
-  pendingStake: BigInt
-  "The total amount of ETH the delegator has earned through the current round"
-  pendingFees: BigInt
   "The amount of Livepeer Token the delegator has delegated"
   delegatedAmount: BigInt
   "The delegator's token allowance"
   allowance: BigInt
-  "The shares associated with the delegator"
-  shares: [Share!] @derivedFrom(field: "delegator")
   "The unbonding locks associated with the delegator"
   unbondingLocks: [UnbondingLock!] @derivedFrom(field: "delegator")
 }
