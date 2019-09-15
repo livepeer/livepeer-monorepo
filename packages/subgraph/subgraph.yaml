@@ -1,5 +1,5 @@
 specVersion: 0.0.2
-description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, staking rounds, pools, and shares.
+description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, staking rounds, and pools.
 repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql
@@ -19,7 +19,6 @@ dataSources:
         - Transcoder
         - Pool
         - Delegator
-        - Share
         - Round
       abis:
         - name: BondingManager
@@ -63,7 +62,6 @@ dataSources:
         - Transcoder
         - Pool
         - Delegator
-        - Share
         - Round
         - UnbondingLock
       abis:
@@ -116,7 +114,6 @@ dataSources:
       file: ./src/mappings/jobsManager.ts
       entities:
         - Transcoder
-        - Share
         - Pool
         - Delegator
       abis:

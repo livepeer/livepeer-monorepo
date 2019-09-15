@@ -11,8 +11,6 @@ import {
 } from '../types/BondingManager_LIP11/BondingManager'
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
-import { updateDelegatorWithEarnings } from './bondingManager'
-
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Delegator, UnbondingLock } from '../types/schema'
 
@@ -31,21 +29,22 @@ export function bond(event: Bond): void {
   let delegatorAddress = event.params.delegator
   let currentRound = roundsManager.currentRound()
 
+  // Create delegator if it does not yet exist
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
+  if (delegator == null) {
+    delegator = new Delegator(delegatorAddress.toHex())
+  }
+
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
-  let bondedAmount = delegatorData.value0
-  let fees = delegatorData.value1
+  delegator.bondedAmount = delegatorData.value0
+  delegator.fees = delegatorData.value1
+  delegator.lastClaimRound = currentRound.toString()
 
   // Get old delegate data
   let oldDelegateData = bondingManager.getDelegator(oldTranscoderAddress)
 
   // Get new delegate data
   let newDelegateData = bondingManager.getDelegator(newTranscoderAddress)
-
-  // Create delegator if it does not yet exist
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
-  if (delegator == null) {
-    delegator = new Delegator(delegatorAddress.toHex())
-  }
 
   // Create new transcoder if it does not yet exist
   let newTranscoder = Transcoder.load(newTranscoderAddress.toHex())
@@ -117,8 +116,6 @@ export function bond(event: Bond): void {
   // Update delegator's start round
   delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
 
-  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
-
   // Apply store updates
   newDelegate.save()
   newTranscoder.save()
@@ -147,10 +144,9 @@ export function unbond(event: Unbond): void {
   }
   // get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
-  let bondedAmount = delegatorData.value0
-  let fees = delegatorData.value1
-
-  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
+  delegator.bondedAmount = delegatorData.value0
+  delegator.fees = delegatorData.value1
+  delegator.lastClaimRound = currentRound.toString()
 
   let transcoder = Transcoder.load(delegateAddress.toHex())
   if (transcoder == null) {
@@ -219,10 +215,9 @@ export function rebond(event: Rebond): void {
 
   // Get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
-  let bondedAmount = delegatorData.value0
-  let fees = delegatorData.value1
-
-  updateDelegatorWithEarnings(delegator, currentRound, bondedAmount, fees)
+  delegator.bondedAmount = delegatorData.value0
+  delegator.fees = delegatorData.value1
+  delegator.lastClaimRound = currentRound.toString()
 
   // Get delegate data
   let delegateData = bondingManager.getDelegator(delegateAddress)
