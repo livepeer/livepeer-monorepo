@@ -183,7 +183,7 @@ export function unbond(event: Unbond): void {
 
   unbondingLock.unbondingLockId = unbondingLockId.toI32()
   unbondingLock.delegator = delegateAddress.toHex()
-  unbondingLock.withdrawRound = withdrawRound.toString()
+  unbondingLock.withdrawRound = withdrawRound.toI32()
   unbondingLock.amount = amount
 
   // Apply store updates
