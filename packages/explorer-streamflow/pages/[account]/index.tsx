@@ -18,9 +18,15 @@ import Card from '../../components/Card'
 const GET_DATA = gql`
   query($account: ID!) {
     delegator(id: $account) {
+      delegate {
+        id
+      }
       unbondingLocks {
         id
         amount
+        withdrawRound {
+          id
+        }
       }
     }
     # The subgraph subgraph and graphql-sdk use different types for the eth
@@ -35,7 +41,7 @@ const GET_DATA = gql`
     currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
       id
     }
-    # transactions(address: $account) {
+    # transactions(address: $address) {
     #   id
     # }
   }
@@ -46,17 +52,16 @@ export default withApollo(() => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
-
-  const { data, loading, error } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_DATA, {
     variables: {
       account: account.toLowerCase(),
+      address: account.toLowerCase(),
     },
     notifyOnNetworkStatusChange: true,
     ssr: false,
   })
-  const isOrchestrator = data && data.transcoder && data.transcoder.id
-  const tabs = getTabs(isOrchestrator, account)
-
+  console.log(data)
+  return null
   if (loading) {
     return (
       <Layout>
@@ -74,19 +79,24 @@ export default withApollo(() => {
       </Layout>
     )
   }
-
+  const isOrchestrator = data && data.transcoder && data.transcoder.id
+  const transcoder = isOrchestrator ? data.transcoder : data.delegator.delegate
+  const tabs = getTabs(isOrchestrator, account)
+  const unbondingLocks = data.delegator.unbondingLocks
   const currentRound = data.currentRound[0].id
-  const pendingStakeTransactions = data.delegator.unbondingLocks.filter(
+  const isConnectedAccount = context.account == account
+  const pendingStakeTransactions = unbondingLocks.filter(
     item =>
       item['withdrawRound'].id !== '0' &&
       item['withdrawRound'].id > currentRound,
   )
 
-  const completedStakeTransactions = data.delegator.unbondingLocks.filter(
+  const completedStakeTransactions = unbondingLocks.filter(
     item =>
       item['withdrawRound'].id !== '0' &&
       item['withdrawRound'].id <= currentRound,
   )
+
   console.log(data)
   return (
     <Layout>
@@ -110,7 +120,7 @@ export default withApollo(() => {
           <Profile
             account={account}
             isOrchestrator={isOrchestrator}
-            isConnectedAccount={context.account == account}
+            isConnectedAccount={isConnectedAccount}
             styles={{ mb: 4 }}
           />
           <Tabs tabs={tabs} sx={{ mb: 5 }} />
@@ -126,7 +136,7 @@ export default withApollo(() => {
                   lineHeight: 'heading',
                 }}
               >
-                Livepeer Community Node
+                {transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
               </div>
             }
           />
@@ -190,7 +200,7 @@ export default withApollo(() => {
             ))}
           </List>
         </Flex>
-        {isOrchestrator && (
+        {(isOrchestrator || isConnectedAccount) && (
           <Flex
             sx={{
               position: 'sticky',
@@ -208,10 +218,7 @@ export default withApollo(() => {
                 <CircularProgress size={24} color="inherit" />
               </Flex>
             ) : (
-              <StakingWidget
-                transcoder={data.transcoder}
-                protocol={data.protocol}
-              />
+              <StakingWidget transcoder={transcoder} protocol={data.protocol} />
             )}
           </Flex>
         )}
@@ -219,31 +226,6 @@ export default withApollo(() => {
     </Layout>
   )
 })
-
-function getStakingWidget(data: any, loading: boolean) {
-  return (
-    <Flex
-      sx={{
-        position: 'sticky',
-        alignSelf: 'flex-start',
-        top: 4,
-        bg: 'surface',
-        minHeight: 300,
-        borderRadius: 2,
-        width: '30%',
-        justifyContent: 'center',
-      }}
-    >
-      {loading ? (
-        <Flex sx={{ alignSelf: 'center', color: 'primary' }}>
-          <CircularProgress size={24} color="inherit" />
-        </Flex>
-      ) : (
-        <StakingWidget transcoder={data.transcoder} protocol={data.protocol} />
-      )}
-    </Flex>
-  )
-}
 
 function getTabs(isOrchestrator: boolean, account): Array<TabType> {
   let tabs: Array<TabType> = [
