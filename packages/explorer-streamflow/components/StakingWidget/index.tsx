@@ -7,8 +7,14 @@ import Input from './Input'
 import ProjectionBox from './ProjectionBox'
 import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
+import { Transcoder, Protocol } from '../../@types'
 
-export default ({ transcoder, protocol }) => {
+interface Props {
+  transcoder: Transcoder
+  protocol: Protocol
+}
+
+export default ({ transcoder, protocol }: Props) => {
   let context = useWeb3Context()
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')

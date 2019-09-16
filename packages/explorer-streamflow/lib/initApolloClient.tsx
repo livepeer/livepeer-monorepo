@@ -1,6 +1,6 @@
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
+import { ApolloClient } from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from 'apollo-link-http'
 import { graphql, print } from 'graphql'
 import { Observable, ApolloLink } from 'apollo-link'
 import LivepeerSDK from '@adamsoffer/livepeer-sdk'
@@ -8,7 +8,7 @@ import fetch from 'isomorphic-unfetch'
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
-  mergeSchemas,
+  mergeSchemas
 } from 'graphql-tools'
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
@@ -46,8 +46,8 @@ function createApolloClient(initialState = {}) {
             account: context.account ? context.account : '',
             gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
             provider: context.provider
-            ? context.provider
-            : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
+              ? context.provider
+              : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
           })
 
           graphql(
@@ -58,11 +58,13 @@ function createApolloClient(initialState = {}) {
               ...context,
               // graphql-sdk transactions query requires 'persistor' object so pass it
               // an empty object
-              persistor: { cache: { cache: { data: { data: { ROOT_QUERY: [] } } } } },
-              livepeer: sdk,
+              persistor: {
+                cache: { cache: { data: { data: { ROOT_QUERY: [] } } } }
+              },
+              livepeer: sdk
             },
             variables,
-            operationName,
+            operationName
           )
             .then(result => {
               observer.next(result)
@@ -72,7 +74,7 @@ function createApolloClient(initialState = {}) {
               return observer.error(e)
             })
         })()
-      }),
+      })
   )
 
   const cache = new InMemoryCache().restore(initialState || {})
@@ -85,7 +87,7 @@ function createApolloClient(initialState = {}) {
         __typename: 'Transcoder',
         id: null
       }
-    },
+    }
   })
 
   return new ApolloClient({
@@ -93,25 +95,26 @@ function createApolloClient(initialState = {}) {
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: mainLink,
     resolvers: {},
-    cache,
+    cache
   })
 }
 
 async function createSchema() {
+  const { rpc } = await LivepeerSDK()
   const subgraphServiceLink = new HttpLink({
     uri: subgraphEndpoint,
-    fetch,
+    fetch
   })
 
   const threeBoxServiceLink = new HttpLink({
     uri: threeBoxEndpoint,
-    fetch,
+    fetch
   })
 
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(subgraphServiceLink),
-      link: subgraphServiceLink,
+      link: subgraphServiceLink
     })
     return executableSchema
   }
@@ -119,7 +122,7 @@ async function createSchema() {
   const create3BoxServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(threeBoxServiceLink),
-      link: threeBoxServiceLink,
+      link: threeBoxServiceLink
     })
     return executableSchema
   }
@@ -135,10 +138,24 @@ async function createSchema() {
     extend type Transcoder {
       profile: Profile
     }
+
+    extend type Delegator {
+      pendingStake: String
+    }
   `
 
   const merged = mergeSchemas({
     schemas: [schema, subgraphSchema, threeBoxSchema, linkTypeDefs],
+    resolvers: {
+      Delegator: {
+        pendingStake: {
+          async resolve(delegator, _args, _context, _info) {
+            const { pendingStake } = await rpc.getDelegator(delegator.id)
+            return pendingStake
+          }
+        }
+      }
+    }
   })
   return merged
 }

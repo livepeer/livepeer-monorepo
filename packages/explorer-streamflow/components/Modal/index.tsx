@@ -5,7 +5,13 @@ import { DialogOverlay, DialogContent } from '@reach/dialog'
 import { useTransition } from 'react-spring'
 // import '@reach/dialog/styles.css'
 
-export default ({ isOpen, setOpen, Icon = () => <></>, title, children }) => {
+export default ({
+  isOpen = false,
+  setOpen,
+  Icon = () => <></>,
+  title,
+  children,
+}) => {
   const transitions = useTransition(isOpen, null, {
     config: { duration: 150 },
     from: { opacity: 0 },

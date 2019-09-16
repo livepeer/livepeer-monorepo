@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import React from 'react'
+import * as Utils from 'web3-utils'
 import { useRouter } from 'next/router'
 import { jsx, Flex, Styled } from 'theme-ui'
 import Layout from '../../components/Layout'
@@ -14,19 +15,21 @@ import { useWeb3Context } from 'web3-react'
 import { withApollo } from '../../lib/apollo'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '../../components/Card'
+import { UnbondingLock, Transcoder, Delegator, Round } from '../../@types'
+import { abbreviateNumber } from '../../lib/utils'
 
 const GET_DATA = gql`
   query($account: ID!) {
     delegator(id: $account) {
+      id
+      pendingStake
       delegate {
         id
       }
       unbondingLocks {
         id
         amount
-        withdrawRound {
-          id
-        }
+        withdrawRound
       }
     }
     # The subgraph subgraph and graphql-sdk use different types for the eth
@@ -52,7 +55,7 @@ export default withApollo(() => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
-  const { data, loading } = useQuery(GET_DATA, {
+  const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: account.toLowerCase(),
       address: account.toLowerCase(),
@@ -60,8 +63,11 @@ export default withApollo(() => {
     notifyOnNetworkStatusChange: true,
     ssr: false,
   })
-  console.log(data)
-  return null
+
+  if (error) {
+    console.error(error)
+  }
+
   if (loading) {
     return (
       <Layout>
@@ -79,25 +85,28 @@ export default withApollo(() => {
       </Layout>
     )
   }
-  const isOrchestrator = data && data.transcoder && data.transcoder.id
-  const transcoder = isOrchestrator ? data.transcoder : data.delegator.delegate
-  const tabs = getTabs(isOrchestrator, account)
-  const unbondingLocks = data.delegator.unbondingLocks
-  const currentRound = data.currentRound[0].id
-  const isConnectedAccount = context.account == account
-  const pendingStakeTransactions = unbondingLocks.filter(
-    item =>
-      item['withdrawRound'].id !== '0' &&
-      item['withdrawRound'].id > currentRound,
+  const isOrchestrator: boolean = data && data.transcoder && data.transcoder.id
+  const transcoder: Transcoder = isOrchestrator
+    ? data.transcoder
+    : data.delegator.delegate
+  const delegator: Delegator = data.delegator
+  const tabs: Array<TabType> = getTabs(isOrchestrator, account)
+  const unbondingLocks: Array<UnbondingLock> = delegator.unbondingLocks
+  const currentRound: Round = data.currentRound[0]
+  const isConnectedAccount: boolean = context.account == account
+
+  const pendingStakeTransactions: Array<UnbondingLock> = unbondingLocks.filter(
+    (item: UnbondingLock) =>
+      item.withdrawRound && item.withdrawRound > parseInt(currentRound.id, 10),
   )
 
-  const completedStakeTransactions = unbondingLocks.filter(
-    item =>
-      item['withdrawRound'].id !== '0' &&
-      item['withdrawRound'].id <= currentRound,
+  const completedStakeTransactions: Array<
+    UnbondingLock
+  > = unbondingLocks.filter(
+    (item: UnbondingLock) =>
+      item.withdrawRound && item.withdrawRound <= parseInt(currentRound.id, 10),
   )
 
-  console.log(data)
   return (
     <Layout>
       <Flex
@@ -160,7 +169,8 @@ export default withApollo(() => {
                     fontFamily: 'monospace',
                   }}
                 >
-                  612.00<span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
+                  {abbreviateNumber(Utils.fromWei(delegator.pendingStake), 4)}
+                  <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
                 </div>
               }
             ></Card>

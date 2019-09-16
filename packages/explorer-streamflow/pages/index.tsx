@@ -38,7 +38,7 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const { data, loading, error } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_DATA, {
     notifyOnNetworkStatusChange: false,
     pollInterval: 10000,
     ssr: false,
