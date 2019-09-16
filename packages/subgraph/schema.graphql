@@ -118,5 +118,5 @@ type UnbondingLock @entity {
   "The amount being unbonded"
   amount: BigInt!
   "When the unbonding amount will be available for withdrawal"
-  withdrawRound: Round!
+  withdrawRound: Round
 }
