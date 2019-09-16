@@ -128,10 +128,7 @@ export function unbond(event: Unbond): void {
   let delegateAddress = event.params.delegate
   let delegatorAddress = event.params.delegator
   let unbondingLockId = event.params.unbondingLockId
-  let uniqueUnbondingLockId = makeUnbondingLockId(
-    delegatorAddress,
-    unbondingLockId
-  )
+
   let withdrawRound = event.params.withdrawRound
   let amount = event.params.amount
   let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
@@ -152,11 +149,11 @@ export function unbond(event: Unbond): void {
   if (transcoder == null) {
     transcoder = new Transcoder(delegateAddress.toHex())
   }
-
-  let unbondingLock = UnbondingLock.load(uniqueUnbondingLockId)
-  if (unbondingLock == null) {
-    unbondingLock = new UnbondingLock(uniqueUnbondingLockId)
-  }
+  let uniqueUnbondingLockId = makeUnbondingLockId(
+    delegatorAddress,
+    unbondingLockId
+  )
+  let unbondingLock = new UnbondingLock(uniqueUnbondingLockId)
 
   // Get delegate data
   let delegateData = bondingManager.getDelegator(delegateAddress)
@@ -184,7 +181,6 @@ export function unbond(event: Unbond): void {
     delegator.startRound = delegatorData.value4.toString()
   }
 
-  unbondingLock.id = uniqueUnbondingLockId
   unbondingLock.unbondingLockId = unbondingLockId.toI32()
   unbondingLock.delegator = delegateAddress.toHex()
   unbondingLock.withdrawRound = withdrawRound.toString()
