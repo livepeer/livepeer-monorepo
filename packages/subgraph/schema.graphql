@@ -117,6 +117,6 @@ type UnbondingLock @entity {
   delegator: Delegator!
   "The amount being unbonded"
   amount: BigInt!
-  "When the unbonding amount will be available for withdrawal"
-  withdrawRound: Round
+  "Round number when the unbonding amount will be available for withdrawal"
+  withdrawRound: Int
 }
