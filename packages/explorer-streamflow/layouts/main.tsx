@@ -1,12 +1,12 @@
 import * as React from 'react'
 import Head from 'next/head'
-import Drawer from '../Drawer'
-import Reset from '../../lib/reset'
+import Drawer from '../components/Drawer'
+import Reset from '../lib/reset'
 import { Styled, Flex } from 'theme-ui'
-import Orchestrators from '../../static/img/orchestrators.svg'
-import Account from '../../static/img/account.svg'
-import Wallet from '../../static/img/wallet.svg'
-import Search from '../../static/img/search.svg'
+import Orchestrators from '../static/img/orchestrators.svg'
+import Account from '../static/img/account.svg'
+import Wallet from '../static/img/wallet.svg'
+import Search from '../static/img/search.svg'
 import { useWeb3Context } from 'web3-react'
 
 const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
@@ -17,8 +17,10 @@ const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
     { name: 'Search', href: '/search', icon: Search },
     {
       name: !context.connector ? 'Connect Wallet' : 'My Account',
-      href: !context.connector ? '/connect-wallet' : '/[account]',
-      as: !context.connector ? '/connect-wallet' : `/${context.account}`,
+      href: !context.connector ? '/connect-wallet' : '/[account]/staking',
+      as: !context.connector
+        ? '/connect-wallet'
+        : `/${context.account}/staking`,
       icon: !context.connector ? Wallet : Account,
     },
   ]

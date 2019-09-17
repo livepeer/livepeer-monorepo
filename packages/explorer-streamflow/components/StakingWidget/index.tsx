@@ -46,7 +46,12 @@ export default ({ transcoder, protocol }: Props) => {
           protocol={protocol}
         />
         <ProjectionBox action={action} />
-        <Footer action={action} amount={amount} context={context} />
+        <Footer
+          transcoder={transcoder}
+          action={action}
+          amount={amount}
+          context={context}
+        />
       </div>
     </Box>
   )

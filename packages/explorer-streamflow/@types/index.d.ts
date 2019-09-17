@@ -22,6 +22,7 @@ export interface Delegator {
   lastClaimRound?: Round
   bondedAmount?: string
   pendingStake?: string
+  status?: string
   fees?: string
   delegatedAmount?: string
   allowance?: string
@@ -67,12 +68,3 @@ export interface Protocol {
   transcoderPoolMaxSize?: string
   maxEarningsClaimsRounds?: string
 }
-
-declare module '*.png'
-declare module '*.jpg'
-declare module '*.jpeg'
-declare module '*.svg'
-declare module '*.gif'
-// declare module 'theme-ui'
-// declare module 'qrcode.react'
-// declare module 'web3-utils'

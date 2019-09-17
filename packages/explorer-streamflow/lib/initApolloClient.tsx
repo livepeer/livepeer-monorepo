@@ -141,6 +141,7 @@ async function createSchema() {
 
     extend type Delegator {
       pendingStake: String
+      status: String
     }
   `
 
@@ -152,6 +153,12 @@ async function createSchema() {
           async resolve(delegator, _args, _context, _info) {
             const { pendingStake } = await rpc.getDelegator(delegator.id)
             return pendingStake
+          }
+        },
+        status: {
+          async resolve(delegator, _args, _context, _info) {
+            const { status } = await rpc.getDelegator(delegator.id)
+            return status
           }
         }
       }

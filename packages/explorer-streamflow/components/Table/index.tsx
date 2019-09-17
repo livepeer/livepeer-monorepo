@@ -45,7 +45,11 @@ export default ({ transcoders }) => {
               fgColor={`#${props.value.substr(2, 6)}`}
               value={props.value}
             />
-            <Link href="/[account]" as={`/${props.value}`} passHref>
+            <Link
+              href="/[account]/campaign"
+              as={`/${props.value}/campaign`}
+              passHref
+            >
               <a
                 sx={{
                   color: 'text',
@@ -86,7 +90,7 @@ export default ({ transcoders }) => {
       case 'feeShare':
         cellValue = (
           <span style={{ fontFamily: 'Akkurat-Mono' }}>
-            {props.value / 10000}%
+            {100 - props.value / 10000}%
           </span>
         )
         break

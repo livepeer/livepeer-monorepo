@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import { jsx, Styled, Flex } from 'theme-ui'
+import { jsx, Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
-import Layout from '../components/Layout'
+import Page from '../layouts/main'
 import Table from '../components/Table'
 import StakingWidget from '../components/StakingWidget'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -46,7 +46,7 @@ export default withApollo(() => {
 
   if (loading) {
     return (
-      <Layout>
+      <Page>
         <Flex
           sx={{
             width: '100%',
@@ -58,12 +58,12 @@ export default withApollo(() => {
             <CircularProgress size={24} color="inherit" />
           </div>
         </Flex>
-      </Layout>
+      </Page>
     )
   }
 
   return (
-    <Layout>
+    <Page>
       <Flex
         sx={{
           width: 'calc(100% - 256px)',
@@ -93,6 +93,6 @@ export default withApollo(() => {
           </Flex>
         </>
       </Flex>
-    </Layout>
+    </Page>
   )
 })

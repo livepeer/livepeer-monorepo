@@ -5,8 +5,8 @@ import Chip from '../../components/Chip'
 
 export default ({
   account,
-  isOrchestrator = false,
-  isConnectedAccount = false,
+  role = 'Orchestrator',
+  isConnected = false,
   styles = {},
   variant = 'primary',
   ...props
@@ -24,11 +24,11 @@ export default ({
         value={account}
       />
       <Styled.h1 sx={{ mb: 2 }}>
-        {isConnectedAccount
+        {isConnected
           ? 'My Account'
           : account.replace(account.slice(7, 37), '…')}
       </Styled.h1>
-      <Chip label={isOrchestrator ? 'Orchestrator' : 'Tokenholder'} />
+      <Chip label={role} />
     </div>
   )
 }

@@ -11,7 +11,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 
-export default ({ amount, context }) => {
+export default ({ transcoder, amount, context }) => {
   const [, setIsModalOpen] = useState(false)
 
   if (!context.active) {
@@ -41,8 +41,8 @@ export default ({ amount, context }) => {
 
   const [bond, { data }] = useMutation(BOND, {
     variables: {
-      to: '0x21d1130dc36958db75fbb0e5a9e3e5f5680238ff',
-      amount: Utils.toWei(amount, 'ether'),
+      to: transcoder.id,
+      amount: Utils.toWei(amount ? amount : '0', 'ether'),
     },
     notifyOnNetworkStatusChange: true,
     context: {

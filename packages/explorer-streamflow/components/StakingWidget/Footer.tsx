@@ -10,9 +10,9 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 
-export default ({ action, amount, context }) => {
+export default ({ transcoder, action, amount, context }) => {
   if (action == 'stake') {
-    return <Stake amount={amount} context={context} />
+    return <Stake transcoder={transcoder} amount={amount} context={context} />
   }
   return <Unstake amount={amount} context={context} />
 }

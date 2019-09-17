@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React, { useState, useEffect } from 'react'
 import { jsx, Flex, Box, Styled } from 'theme-ui'
-import Layout from '../components/Layout'
+import Page from '../layouts/main'
 import Router from 'next/router'
 import { useWeb3Context, Web3Consumer } from 'web3-react'
 import Wallet from '../static/img/wallet.svg'
@@ -18,12 +18,12 @@ export default () => {
   // Redirect to user's account upon connection to web3
   useEffect(() => {
     if (context.account) {
-      Router.push(`/[account]`, `/${context.account}`)
+      Router.push(`/[account]/staking`, `/${context.account}/staking`)
     }
   }, [context.account])
 
   return (
-    <Layout>
+    <Page>
       <Box
         sx={{
           width: 'calc(100% - 256px)',
@@ -86,6 +86,6 @@ export default () => {
           </Flex>
         </Flex>
       </Box>
-    </Layout>
+    </Page>
   )
 }

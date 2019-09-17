@@ -2,7 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { jsx, Flex } from 'theme-ui'
-import Layout from '../../components/Layout'
+import Page from '../../layouts/account'
 import StakingWidget from '../../components/StakingWidget'
 import Profile from '../../components/Profile'
 import Tabs from '../../components/Tabs'
@@ -59,7 +59,7 @@ export default withApollo(() => {
   ]
 
   return (
-    <Layout>
+    <Page>
       <Flex
         sx={{
           width: 'calc(100% - 256px)',
@@ -112,6 +112,6 @@ export default withApollo(() => {
           )}
         </Flex>
       </Flex>
-    </Layout>
+    </Page>
   )
 })

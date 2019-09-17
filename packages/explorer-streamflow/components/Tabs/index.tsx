@@ -23,6 +23,7 @@ export default ({ tabs, variant = 'primary', ...props }) => {
       {...props}
     >
       {tabs.map((tab: TabType, i: number) => {
+        console.log(tab)
         return (
           <Link key={i} href={tab.href} as={tab.as} passHref>
             <a

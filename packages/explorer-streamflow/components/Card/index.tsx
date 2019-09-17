@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Box, Flex, Styled } from 'theme-ui'
+import { jsx, Flex } from 'theme-ui'
 
 export default ({
   title = null,
@@ -8,8 +8,10 @@ export default ({
   ...props
 }) => {
   return (
-    <Box
+    <Flex
       sx={{
+        flexDirection: 'column',
+        justifyContent: 'center',
         border: '1px solid',
         borderColor: 'border',
         py: 3,
@@ -23,6 +25,6 @@ export default ({
       </div>
       {subtitle}
       {children}
-    </Box>
+    </Flex>
   )
 }
