@@ -17,17 +17,15 @@ export function fetch(server, path, args = {}) {
 }
 
 export async function get(server, path) {
-  const res = await fetch(server, path, { method: 'GET' })
-  return res.json()
+  return await fetch(server, path, { method: 'GET' })
 }
 
 export async function post(server, path, data) {
-  const res = await fetch(server, path, {
+  return await fetch(server, path, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
     },
     body: JSON.stringify(data),
   })
-  return res.json()
 }
