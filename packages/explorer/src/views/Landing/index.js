@@ -57,7 +57,7 @@ const Landing = ({ history, ...props }) => (
           </p>
           <CTAButton
             target="_blank"
-            href="https://supermax.cool/livepeer"
+            href="https://scout.cool/livepeer"
             style={{
               background: 'inherit',
               color: '#000',
