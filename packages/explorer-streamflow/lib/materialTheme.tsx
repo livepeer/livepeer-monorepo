@@ -88,10 +88,10 @@ export const createMuiTheme = (context: any) => {
           padding: '14px 20px 14px 20px',
           fontSize: 14,
           '&:first-child': {
-            paddingLeft: 32,
+            paddingLeft: 16,
           },
           '&:last-child': {
-            paddingRight: 32,
+            paddingRight: 16,
           },
         },
       },

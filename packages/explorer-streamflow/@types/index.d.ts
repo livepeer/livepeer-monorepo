@@ -56,6 +56,7 @@ export interface UnbondingLock {
   unbondingLockId?: number
   withdrawRound?: number
   delegator?: Delegator
+  delegate?: Transcoder
   amount?: string
   withdrawRound?: number
 }

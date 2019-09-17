@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { jsx, Flex, Styled } from 'theme-ui'
+import { jsx, Flex } from 'theme-ui'
 import Button from '../Button'
 
-export default ({ children, ...props }) => {
+export default ({ avatar = null, children, ...props }) => {
   return (
     <Flex
       sx={{
@@ -18,21 +18,8 @@ export default ({ children, ...props }) => {
       {...props}
     >
       <Flex sx={{ alignItems: 'center' }}>
-        <div
-          sx={{
-            borderRadius: 1000,
-            backgroundColor: 'surface',
-            width: 30,
-            height: 30,
-            mr: 2,
-            border: '1px solid',
-            borderColor: 'border',
-          }}
-        />
-        <div>
-          <Styled.h4>Title</Styled.h4>
-          <span sx={{ fontSize: 0, color: 'muted' }}>Subtitle</span>
-        </div>
+        {avatar}
+        <div>{children}</div>
       </Flex>
       <div>
         <Button sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}>

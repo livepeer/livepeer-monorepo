@@ -3,7 +3,6 @@ import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { useRouter } from 'next/router'
-import { useWeb3Context } from 'web3-react'
 import AccountLayout from '../../layouts/account'
 import PageLayout from '../../layouts/main'
 import List from '../../components/List'
@@ -13,6 +12,7 @@ import gql from 'graphql-tag'
 import { withApollo } from '../../lib/apollo'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '../../components/Card'
+import Unlink from '../../static/img/unlink.svg'
 import {
   UnbondingLock,
   Transcoder,
@@ -35,10 +35,20 @@ const GET_DATA = gql`
         id
         amount
         withdrawRound
+        delegate {
+          id
+        }
       }
     }
     transcoder(id: $account) {
       id
+      rewardCut
+      feeShare
+      totalStake
+      active
+      delegators {
+        id
+      }
     }
     protocol {
       totalTokenSupply
@@ -105,6 +115,25 @@ export default withApollo(() => {
   > = unbondingLocks.filter(
     (item: UnbondingLock) =>
       item.withdrawRound && item.withdrawRound <= parseInt(currentRound.id, 10),
+  )
+
+  const LinkIcon = (
+    <Flex
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 1000,
+        color: 'primary',
+        bg: 'surface',
+        width: 30,
+        height: 30,
+        mr: 2,
+        border: '1px solid',
+        borderColor: 'border',
+      }}
+    >
+      <Unlink />
+    </Flex>
   )
 
   return (
@@ -183,19 +212,30 @@ export default withApollo(() => {
         {!!pendingStakeTransactions.length && (
           <List
             sx={{ mb: 6 }}
-            header={<Styled.h4>Pending Transactions</Styled.h4>}
+            header={<Styled.h4>Pending Unstake Transactions</Styled.h4>}
           >
             {pendingStakeTransactions.map(lock => (
-              <ListItem key={lock.id}>{lock.id}</ListItem>
+              <ListItem key={lock.id} avatar={LinkIcon}>
+                <div>
+                  Unstaking from{' '}
+                  {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
+                </div>
+                {/* <span sx={{ fontSize: 0, color: 'muted' }}>Subtitle</span> */}
+              </ListItem>
             ))}
           </List>
         )}
-        <List header={<Styled.h4>Completed Transactions</Styled.h4>}>
+        <List header={<Styled.h4>Completed Unstake Transactions</Styled.h4>}>
           {!completedStakeTransactions.length && (
             <div sx={{ fontSize: 1, mt: 2 }}>No History</div>
           )}
           {completedStakeTransactions.map(lock => (
-            <ListItem key={lock.id}>{lock.id}</ListItem>
+            <ListItem key={lock.id} avatar={LinkIcon}>
+              <div>
+                Unstaked from{' '}
+                {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
+              </div>
+            </ListItem>
           ))}
         </List>
       </AccountLayout>

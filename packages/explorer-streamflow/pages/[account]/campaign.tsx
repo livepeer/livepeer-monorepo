@@ -10,17 +10,35 @@ import gql from 'graphql-tag'
 import { withApollo } from '../../lib/apollo'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '../../components/Card'
-import { Transcoder, Delegator, Protocol } from '../../@types'
 import { abbreviateNumber } from '../../lib/utils'
 
 const GET_DATA = gql`
   query($account: ID!) {
+    delegator(id: $account) {
+      id
+      pendingStake
+      status
+      delegate {
+        id
+      }
+      unbondingLocks {
+        id
+        amount
+        withdrawRound
+        delegate {
+          id
+        }
+      }
+    }
     transcoder(id: $account) {
       id
       rewardCut
       feeShare
       totalStake
       active
+      delegators {
+        id
+      }
     }
     protocol {
       totalTokenSupply
@@ -89,7 +107,10 @@ export default withApollo(() => {
                     fontFamily: 'monospace',
                   }}
                 >
-                  {abbreviateNumber(Utils.fromWei(data.transcoder.totalStake), 4)}
+                  {abbreviateNumber(
+                    Utils.fromWei(data.transcoder.totalStake),
+                    4,
+                  )}
                   <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
                 </div>
               }

@@ -7,27 +7,11 @@ import { Flex, jsx, useThemeUI } from 'theme-ui'
 import Orchestrators from '../../static/img/orchestrators.svg'
 import QRCode from 'qrcode.react'
 import { createMuiTheme } from '../../lib/materialTheme'
-import { useApolloClient } from '@apollo/react-hooks'
 import Link from 'next/link'
 import { abbreviateNumber } from '../../lib/utils'
 
-export default ({ transcoders }) => {
-  const client = useApolloClient()
+export default ({ delegators }) => {
   const context = useThemeUI()
-
-  const Toolbar = (props: any) => (
-    <Flex sx={{ mb: 4, alignItems: 'center' }}>
-      <Orchestrators
-        style={{
-          color: context.theme.colors.primary,
-          width: 36,
-          height: 36,
-          marginRight: 10,
-        }}
-      />
-      <MTableToolbar {...props} />
-    </Flex>
-  )
 
   const Cell = (props: any) => {
     let cellValue: any
@@ -46,8 +30,8 @@ export default ({ transcoders }) => {
               value={props.value}
             />
             <Link
-              href="/[account]/campaign"
-              as={`/${props.value}/campaign`}
+              href="/[account]/staking"
+              as={`/${props.value}/staking`}
               passHref
             >
               <a
@@ -71,26 +55,11 @@ export default ({ transcoders }) => {
           </Flex>
         )
         break
-      case 'totalStake':
+      case 'pendingStake':
         let num = props.value ? Utils.fromWei(props.value) : 0
         cellValue = (
           <span style={{ fontFamily: 'Akkurat-Mono' }}>
             {abbreviateNumber(num, 5)}
-          </span>
-        )
-        break
-
-      case 'rewardCut':
-        cellValue = (
-          <span style={{ fontFamily: 'Akkurat-Mono' }}>
-            {props.value / 10000}%
-          </span>
-        )
-        break
-      case 'feeShare':
-        cellValue = (
-          <span style={{ fontFamily: 'Akkurat-Mono' }}>
-            {100 - props.value / 10000}%
           </span>
         )
         break
@@ -103,40 +72,21 @@ export default ({ transcoders }) => {
   return (
     <MuiThemeProvider theme={createMuiTheme(context)}>
       <MaterialTable
+        style={{ marginTop: '-16px' }}
         columns={[
           {
-            title: 'Name',
+            title: 'Tokenholder',
             field: 'id',
           },
-          {
-            title: 'Fee Cut',
-            field: 'feeShare',
-            type: 'numeric',
-          },
-          {
-            title: 'Reward Cut',
-            field: 'rewardCut',
-            type: 'numeric',
-          },
+
           {
             title: 'Stake',
-            field: 'totalStake',
+            field: 'pendingStake',
             defaultSort: 'desc',
             type: 'numeric',
           },
         ]}
-        data={transcoders}
-        title="Orchestrators"
-        onRowClick={(_event, rowData) =>
-          client.writeData({
-            data: {
-              selectedTranscoder: {
-                __typename: 'Transcoder',
-                id: rowData.id,
-              },
-            },
-          })
-        }
+        data={delegators}
         localization={{
           toolbar: {
             searchPlaceholder: 'Filter',
@@ -148,6 +98,7 @@ export default ({ transcoders }) => {
           draggable: false,
           showTextRowsSelected: false,
           headerStyle: { position: 'sticky', top: 0 },
+          toolbar: false,
           rowStyle: rowData => {
             return {
               backgroundColor:
@@ -158,7 +109,6 @@ export default ({ transcoders }) => {
           },
         }}
         components={{
-          Toolbar: props => <Toolbar {...props} />,
           Cell: props => <Cell {...props} />,
         }}
       />
