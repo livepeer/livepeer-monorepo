@@ -166,7 +166,7 @@ const AccountOverview: React.ComponentType<AccountOverviewProps> = ({
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://www.supermax.cool/livepeer/mainnet/activity?filter=%7B%22search%22%3A%22${
+              href={`https://www.scout.cool/livepeer/mainnet/activity?filter=%7B%22search%22%3A%22${
                 match.params.accountId
               }%22%7D`}
               style={{
