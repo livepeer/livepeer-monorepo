@@ -250,11 +250,9 @@ export function reward(event: RewardEvent): void {
 export function claimEarnings(call: ClaimEarningsCall): void {
   let delegatorAddress = call.transaction.from
   let endRound = call.inputs._endRound
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   let bondingManager = BondingManager.bind(call.to)
-  let delegatorData = bondingManager.getDelegator(
-    Address.fromString(delegator.id)
-  )
+  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
+  let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
