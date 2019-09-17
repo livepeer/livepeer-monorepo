@@ -32,6 +32,7 @@ app.post('/', async (req, res) => {
     renditions: {},
     id,
   })
+  console.log(doc)
   await req.store.create(doc)
   res.status(201)
   res.json(doc)

@@ -77,7 +77,7 @@ export default class LevelStore {
     await this.ready
 
     try {
-      await this.db.get(id)
+      await this.db.get(`${kind}/${id}`)
       throw new Error(`${id} already exists`)
     } catch (err) {
       if (!err.type === 'NotFoundError') {

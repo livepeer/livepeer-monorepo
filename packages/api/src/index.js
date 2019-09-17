@@ -13,19 +13,20 @@ import * as k8s from '@kubernetes/client-node'
 
 // console.log(bodyParser)
 
-export default async function makeApp({
-  storage,
-  dbPath,
-  httpPrefix,
-  port,
-  postgresUrl,
-  listen = true,
-  kubeNamespace,
-  kubeBroadcasterService,
-  kubeBroadcasterTemplate,
-  kubeOrchestratorService,
-  kubeOrchestratorTemplate,
-}) {
+export default async function makeApp(params) {
+  const {
+    storage,
+    dbPath,
+    httpPrefix,
+    port,
+    postgresUrl,
+    listen = true,
+    kubeNamespace,
+    kubeBroadcasterService,
+    kubeBroadcasterTemplate,
+    kubeOrchestratorService,
+    kubeOrchestratorTemplate,
+  } = params
   // Storage init
   let store
   if (storage === 'level') {
@@ -111,6 +112,7 @@ export default async function makeApp({
   })
 
   return {
+    ...params,
     app,
     listener,
     port: listenPort,
