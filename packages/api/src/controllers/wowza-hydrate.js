@@ -78,6 +78,9 @@ export default stream => {
   if (!stream.wowza) {
     return stream
   }
+  if (!stream.name || !stream.id) {
+    throw new Error('missing required fields: id, name')
+  }
   const { transcoderAppConfig, transcoderTemplateAppConfig } = stream.wowza
   const templatesInUse = transcoderAppConfig.templatesInUse.split(',')
   let template

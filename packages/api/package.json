@@ -24,7 +24,7 @@
     "start:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "start:server": "nodemon -w src -x node -r esm src/cli.js",
     "start": "run-p \"start:**\"",
-    "test-disabled": "jest --env node --coverage --no-cache src"
+    "test": "jest --env node --coverage --no-cache src"
   },
   "dependencies": {
     "@cloudflare/json-schema-walker": "^0.1.1",
