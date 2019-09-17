@@ -113,8 +113,10 @@ type UnbondingLock @entity {
   id: ID!
   "unbonding lock id"
   unbondingLockId: Int!
-  "The address of delegator unbonding from"
+  "The delegator address this lock belongs to"
   delegator: Delegator!
+  "The address of delegate unbonding from"
+  delegate: Transcoder!
   "The amount being unbonded"
   amount: BigInt!
   "Round number when the unbonding amount will be available for withdrawal"

@@ -149,11 +149,6 @@ export function unbond(event: Unbond): void {
   if (transcoder == null) {
     transcoder = new Transcoder(delegateAddress.toHex())
   }
-  let uniqueUnbondingLockId = makeUnbondingLockId(
-    delegatorAddress,
-    unbondingLockId
-  )
-  let unbondingLock = new UnbondingLock(uniqueUnbondingLockId)
 
   // Get delegate data
   let delegateData = bondingManager.getDelegator(delegateAddress)
@@ -181,8 +176,14 @@ export function unbond(event: Unbond): void {
     delegator.startRound = delegatorData.value4.toString()
   }
 
+  let uniqueUnbondingLockId = makeUnbondingLockId(
+    delegatorAddress,
+    unbondingLockId
+  )
+  let unbondingLock = new UnbondingLock(uniqueUnbondingLockId)
   unbondingLock.unbondingLockId = unbondingLockId.toI32()
-  unbondingLock.delegator = delegateAddress.toHex()
+  unbondingLock.delegate = delegateAddress.toHex()
+  unbondingLock.delegator = delegatorAddress.toHex()
   unbondingLock.withdrawRound = withdrawRound.toI32()
   unbondingLock.amount = amount
 
@@ -199,10 +200,6 @@ export function rebond(event: Rebond): void {
   let delegateAddress = event.params.delegate
   let delegatorAddress = event.params.delegator
   let unbondingLockId = event.params.unbondingLockId
-  let uniqueUnbondingLockId = makeUnbondingLockId(
-    delegatorAddress,
-    unbondingLockId
-  )
   let transcoder = Transcoder.load(delegateAddress.toHex())
   let delegate = Delegator.load(delegateAddress.toHex())
   let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
@@ -230,11 +227,16 @@ export function rebond(event: Rebond): void {
   // Update delegate's total stake
   transcoder.totalStake = totalStake
 
+  let uniqueUnbondingLockId = makeUnbondingLockId(
+    delegatorAddress,
+    unbondingLockId
+  )
+  store.remove('UnbondingLock', uniqueUnbondingLockId)
+
   // Apply store updates
   delegate.save()
   transcoder.save()
   delegator.save()
-  store.remove('UnbondingLock', uniqueUnbondingLockId)
 }
 
 // Handler for WithdrawStake events
