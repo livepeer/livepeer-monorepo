@@ -52,7 +52,6 @@ export default class PostgresStore {
   }
 
   async create(data) {
-    throw new Error('oh noes')
     const { id, kind } = data
     if (!id || !kind) {
       throw new Error("object missing 'id' and/or 'kind'")
