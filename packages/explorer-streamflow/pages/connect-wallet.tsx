@@ -18,7 +18,7 @@ export default () => {
   // Redirect to user's account upon connection to web3
   useEffect(() => {
     if (context.account) {
-      Router.push(`/[account]/staking`, `/${context.account}/staking`)
+      Router.push(`/[account]/[slug]`, `/${context.account}/staking`)
     }
   }, [context.account])
 

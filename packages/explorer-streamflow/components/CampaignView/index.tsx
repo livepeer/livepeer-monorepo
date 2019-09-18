@@ -3,11 +3,8 @@ import React from 'react'
 import { jsx, Flex } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { useRouter } from 'next/router'
-import AccountLayout from '../../layouts/account'
-import PageLayout from '../../layouts/main'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { withApollo } from '../../lib/apollo'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '../../components/Card'
 import { abbreviateNumber } from '../../lib/utils'
@@ -21,14 +18,6 @@ const GET_DATA = gql`
       delegate {
         id
       }
-      unbondingLocks {
-        id
-        amount
-        withdrawRound
-        delegate {
-          id
-        }
-      }
     }
     transcoder(id: $account) {
       id
@@ -36,9 +25,6 @@ const GET_DATA = gql`
       feeShare
       totalStake
       active
-      delegators {
-        id
-      }
     }
     protocol {
       totalTokenSupply
@@ -50,7 +36,7 @@ const GET_DATA = gql`
   }
 `
 
-export default withApollo(() => {
+export default () => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
@@ -61,7 +47,6 @@ export default withApollo(() => {
       address: account.toLowerCase(),
     },
     notifyOnNetworkStatusChange: true,
-    ssr: false,
   })
 
   if (error) {
@@ -69,7 +54,7 @@ export default withApollo(() => {
   }
 
   return (
-    <PageLayout>
+    <div>
       {loading ? (
         <Flex
           sx={{
@@ -83,11 +68,7 @@ export default withApollo(() => {
           </div>
         </Flex>
       ) : (
-        <AccountLayout
-          transcoder={data.transcoder}
-          delegator={data.delegator}
-          protocol={data.protocol}
-        >
+        <>
           <div
             sx={{
               display: 'grid',
@@ -164,8 +145,8 @@ export default withApollo(() => {
               </div>
             }
           />
-        </AccountLayout>
+        </>
       )}
-    </PageLayout>
+    </div>
   )
-})
+}

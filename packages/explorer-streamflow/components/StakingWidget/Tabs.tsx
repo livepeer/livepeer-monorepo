@@ -29,12 +29,20 @@ export const Tab = props => (
       flex: 1,
       outline: 'none',
       textAlign: 'center',
-      color: props.isSelected ? 'primary' : 'muted',
+      color: props.isSelected
+        ? props.children == 'Unstake'
+          ? 'red'
+          : 'primary'
+        : 'muted',
       pb: '10px',
       fontSize: 1,
       fontWeight: 500,
       borderBottom: '2px solid',
-      borderColor: props.isSelected ? 'primary' : 'transparent',
+      borderColor: props.isSelected
+        ? props.children == 'Unstake'
+          ? 'red'
+          : 'primary'
+        : 'transparent',
     }}
     {...props}
   />

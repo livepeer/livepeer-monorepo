@@ -22,26 +22,23 @@ export default ({ tabs, variant = 'primary', ...props }) => {
       }}
       {...props}
     >
-      {tabs.map((tab: TabType, i: number) => {
-        console.log(tab)
-        return (
-          <Link key={i} href={tab.href} as={tab.as} passHref>
-            <a
-              sx={{
-                color: tab.isActive ? 'white' : 'muted',
-                mr: 3,
-                pb: '10px',
-                fontSize: 1,
-                fontWeight: 500,
-                borderBottom: '2px solid',
-                borderColor: tab.isActive ? 'primary' : 'transparent',
-              }}
-            >
-              {tab.name}
-            </a>
-          </Link>
-        )
-      })}
+      {tabs.map((tab: TabType, i: number) => (
+        <Link key={i} href={tab.href} as={tab.as} passHref>
+          <a
+            sx={{
+              color: tab.isActive ? 'white' : 'muted',
+              mr: 3,
+              pb: '10px',
+              fontSize: 1,
+              fontWeight: 500,
+              borderBottom: '2px solid',
+              borderColor: tab.isActive ? 'primary' : 'transparent',
+            }}
+          >
+            {tab.name}
+          </a>
+        </Link>
+      ))}
     </div>
   )
 }

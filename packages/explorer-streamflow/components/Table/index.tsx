@@ -9,12 +9,24 @@ import QRCode from 'qrcode.react'
 import { createMuiTheme } from '../../lib/materialTheme'
 import { useApolloClient } from '@apollo/react-hooks'
 import Link from 'next/link'
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 import { abbreviateNumber } from '../../lib/utils'
 
 export default ({ transcoders }) => {
   const client = useApolloClient()
   const context = useThemeUI()
+  const GET_ROI = gql`
+    {
+      selectedTranscoder @client {
+        __typename
+        id
+      }
+    }
+  `
 
+  const { data } = useQuery(GET_ROI)
+  console.log(data)
   const Toolbar = (props: any) => (
     <Flex sx={{ mb: 4, alignItems: 'center' }}>
       <Orchestrators
@@ -54,14 +66,14 @@ export default ({ transcoders }) => {
                 sx={{
                   color: 'text',
                   cursor: 'pointer',
-                  transition: 'all .3s',
+                  transition: 'all .2s',
                   borderBottom: '1px solid',
                   borderColor: 'transparent',
                   '&:hover': {
                     color: 'primary',
                     borderBottom: '1px solid',
                     borderColor: 'primary',
-                    transition: 'all .3s',
+                    transition: 'all .2s',
                   },
                 }}
               >
@@ -90,7 +102,7 @@ export default ({ transcoders }) => {
       case 'feeShare':
         cellValue = (
           <span style={{ fontFamily: 'Akkurat-Mono' }}>
-            {100 - props.value / 10000}%
+            {(100 - props.value / 10000).toFixed(2).replace(/[.,]00$/, '')}%
           </span>
         )
         break
@@ -151,7 +163,8 @@ export default ({ transcoders }) => {
           rowStyle: rowData => {
             return {
               backgroundColor:
-                rowData.id == '0xe9e284277648fcdb09b8efc1832c73c09b5ecf59'
+                rowData.id ==
+                (data && data.selectedTranscoder && data.selectedTranscoder.id)
                   ? '#1E2026'
                   : 'transparent',
             }

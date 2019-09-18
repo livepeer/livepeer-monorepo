@@ -93,7 +93,8 @@ export default ({ delegators }) => {
           },
         }}
         options={{
-          paging: false,
+          paging: true,
+          pageSize: 10,
           search: true,
           draggable: false,
           showTextRowsSelected: false,

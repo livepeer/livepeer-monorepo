@@ -38,7 +38,9 @@ export default ({ action }) => {
         }}
       >
         {action == 'stake' ? 'Projected Rewards' : 'Projected Opportunity Cost'}
-        <Trending sx={{ width: 16, height: 16, ml: 1, color: 'primary' }} />
+        {action == 'stake' && (
+          <Trending sx={{ width: 16, height: 16, ml: 1, color: 'primary' }} />
+        )}
       </Styled.h4>
       <Box sx={{ px: 2, py: 3, mb: 4 }}>
         <Box>
