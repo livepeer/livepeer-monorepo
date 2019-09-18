@@ -4,6 +4,14 @@
 
 import argParser from './cli'
 import makeApp from './index'
+import fs from 'fs-extra'
+import uuid from 'uuid/v4'
+import path from 'path'
+import os from 'os'
+
+const dbPath = path.resolve(os.tmpdir(), 'livepeer', uuid())
+
+fs.ensureDirSync(dbPath)
 
 const DEFAULT_PARAMS = ['--storage=level']
 
@@ -22,6 +30,7 @@ const params = argParser([binary, script, ...argv])
 
 // Some overrides... we want to run on a random port for parallel reasons
 delete params.port
+params.dbPath = dbPath
 
 let server
 
@@ -34,4 +43,5 @@ export default makeApp(params).then(s => {
 
 afterAll(() => {
   server.close()
+  fs.removeSync(dbPath)
 })
