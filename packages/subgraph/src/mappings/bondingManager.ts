@@ -108,17 +108,8 @@ export function bond(event: Bond): void {
   )
   let currentRound = roundsManager.currentRound()
 
-  // Create delegator if it does not yet exist
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
-  if (delegator == null) {
-    delegator = new Delegator(delegatorAddress.toHex())
-  }
-
+  // Get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
-
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
-  delegator.lastClaimRound = currentRound.toString()
 
   // Create transcoder if it does not yet exist
   let transcoder = Transcoder.load(transcoderAddress.toHex())
@@ -137,6 +128,12 @@ export function bond(event: Bond): void {
 
   // Update delegate's delegated amount
   delegate.delegatedAmount = delegateData.value3
+
+  // Create delegator if it does not yet exist
+  let delegator = Delegator.load(delegatorAddress.toHex())
+  if (delegator == null) {
+    delegator = new Delegator(delegatorAddress.toHex())
+  }
 
   if (transcoder.delegators == null) {
     transcoder.delegators = new Array<string>()
@@ -158,6 +155,15 @@ export function bond(event: Bond): void {
   // Update delegator's start round
   delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
 
+  // Update delegator's last claim round
+  delegator.lastClaimRound = currentRound.toString()
+
+  // Update delegator's bonded amount
+  delegator.bondedAmount = delegatorData.value0
+
+  // Update delegator's fees
+  delegator.fees = delegatorData.value1
+
   delegate.save()
   delegator.save()
   transcoder.save()
@@ -166,7 +172,7 @@ export function bond(event: Bond): void {
 export function unbond(event: Unbond): void {
   let bondingManager = BondingManager.bind(event.address)
   let delegatorAddress = event.params.delegator
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
+  let delegator = Delegator.load(delegatorAddress.toHex())
   let currentRound = roundsManager.currentRound()
 
   // delegate is not emitted in the deprecated event so grab it from delegator
@@ -190,10 +196,6 @@ export function unbond(event: Unbond): void {
   // Get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
-  delegator.lastClaimRound = currentRound.toString()
-
   // Update delegate's total stake
   transcoder.totalStake = totalStake
 
@@ -213,6 +215,15 @@ export function unbond(event: Unbond): void {
 
   // Update delegator's start round
   delegator.startRound = delegatorData.value4.toString()
+
+  // Update delegator's last claim round
+  delegator.lastClaimRound = currentRound.toString()
+
+  // Update delegator's bonded amount
+  delegator.bondedAmount = delegatorData.value0
+
+  // Update delegator's fees
+  delegator.fees = delegatorData.value1
 
   // Apply store updates
   delegate.save()
@@ -250,8 +261,8 @@ export function reward(event: RewardEvent): void {
 export function claimEarnings(call: ClaimEarningsCall): void {
   let delegatorAddress = call.transaction.from
   let endRound = call.inputs._endRound
+  let delegator = Delegator.load(delegatorAddress.toHex())
   let bondingManager = BondingManager.bind(call.to)
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
   delegator.bondedAmount = delegatorData.value0
@@ -271,23 +282,11 @@ export function withdrawStake(event: WithdrawStake): void {
 export function withdrawFees(event: WithdrawFees): void {
   let bondingManager = BondingManager.bind(event.address)
   let delegatorAddress = event.params.delegator
-  let delegator = Delegator.load(delegatorAddress.toHex()) as Delegator
+  let delegator = Delegator.load(delegatorAddress.toHex())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
   delegator.lastClaimRound = currentRound.toString()
-  delegator.save()
-}
-
-export function updateDelegatorWithEarnings(
-  delegator: Delegator,
-  endRound: BigInt,
-  bondedAmount: BigInt,
-  fees: BigInt
-): void {
-  delegator.bondedAmount = bondedAmount
-  delegator.fees = fees
-  delegator.lastClaimRound = endRound.toString()
   delegator.save()
 }
