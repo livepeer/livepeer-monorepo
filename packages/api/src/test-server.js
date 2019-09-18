@@ -9,10 +9,12 @@ const DEFAULT_PARAMS = ['--storage=level']
 
 const dashes = process.argv.indexOf('--')
 let argv
-if (dashes === -1) {
-  argv = DEFAULT_PARAMS
-} else {
+if (process.env.TEST_PARAMS) {
+  argv = JSON.parse(process.env.TEST_PARAMS)
+} else if (dashes !== -1) {
   argv = process.argv.slice(dashes + 1)
+} else {
+  argv = DEFAULT_PARAMS
 }
 
 const [binary, script] = process.argv

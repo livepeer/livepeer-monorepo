@@ -15,7 +15,8 @@
     "docker:build": "docker build -t livepeerci/api:${DOCKER_TAG:-dev} .",
     "docker:push": "docker push livepeerci/api:${DOCKER_TAG:-dev}",
     "docker": "run-s docker:build docker:push",
-    "postgres": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
+    "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
+    "postgres:stop": "docker rm -f postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare": "run-p \"prepare:**\"",
@@ -24,7 +25,7 @@
     "start:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "start:server": "nodemon -w src -x node -r esm src/cli.js",
     "start": "run-p \"start:**\"",
-    "test": "jest --env node --coverage --no-cache src"
+    "test": "node run-tests.js"
   },
   "dependencies": {
     "@cloudflare/json-schema-walker": "^0.1.1",
@@ -55,6 +56,8 @@
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "esm": "^3.2.22",
+    "istanbul-api": "^2.1.6",
+    "istanbul-lib-coverage": "^2.0.5",
     "jest": "24.7.1",
     "live-server": "^1.2.1",
     "livereload": "^0.7.0",
