@@ -1,16 +1,20 @@
 /** @jsx jsx */
-import React from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { jsx } from 'theme-ui'
 import Button from '../Button'
-import Modal from '../Modal'
-import StakeFlow from '../StakeFlow'
 import Stake from './Stake'
 import Unstake from './Unstake'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Broadcast from '../../static/img/wifi.svg'
-import NewTab from '../../static/img/open-in-new.svg'
+import Link from 'next/link'
 
 export default ({ transcoder, action, amount, context }) => {
+  if (!context.active) {
+    return (
+      <Link href="/connect-wallet" passHref>
+        <Button as="a" sx={{ width: '100%' }}>
+          Connect Wallet
+        </Button>
+      </Link>
+    )
+  }
   if (action == 'stake') {
     return <Stake transcoder={transcoder} amount={amount} context={context} />
   }

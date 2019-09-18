@@ -89,8 +89,6 @@ export default withApollo(() => {
   const tabs: Array<TabType> = getTabs(role, account, asPath)
   const isStaked = delegator && delegator.delegate
 
-  console.log(isConnected)
-
   return (
     <Page>
       <Flex

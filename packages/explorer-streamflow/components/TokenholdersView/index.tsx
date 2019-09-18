@@ -17,6 +17,7 @@ const GET_DATA = gql`
       totalStake
       active
       delegators {
+        pendingStake
         id
       }
     }

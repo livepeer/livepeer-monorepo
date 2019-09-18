@@ -2,6 +2,7 @@
 import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
+import { useWeb3Context } from 'web3-react'
 import { useRouter } from 'next/router'
 import List from '../../components/List'
 import ListItem from '../../components/ListItem'
@@ -12,6 +13,7 @@ import Card from '../../components/Card'
 import Unlink from '../../static/img/unlink.svg'
 import { UnbondingLock } from '../../@types'
 import { abbreviateNumber } from '../../lib/utils'
+import Button from '../../components/Button'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -45,6 +47,8 @@ export default () => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
+  const context = useWeb3Context()
+  const isMyAccount = account == context.account
 
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
@@ -184,10 +188,33 @@ export default () => {
         >
           {pendingStakeTransactions.map(lock => (
             <ListItem key={lock.id} avatar={LinkIcon}>
-              <div>
-                Unstaking from{' '}
-                {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
-              </div>
+              <Flex
+                sx={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  Unstaking from{' '}
+                  {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
+                </div>
+                <Flex sx={{ alignItems: 'center' }}>
+                  {isMyAccount && (
+                    <>
+                      <Button
+                        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
+                      >
+                        Rebond
+                      </Button>
+                    </>
+                  )}
+                  <div sx={{ ml: 3 }}>
+                    {' '}
+                    -{abbreviateNumber(Utils.fromWei(lock.amount), 3)} LPT
+                  </div>
+                </Flex>
+              </Flex>
             </ListItem>
           ))}
         </List>
@@ -198,10 +225,36 @@ export default () => {
         )}
         {completedStakeTransactions.map(lock => (
           <ListItem key={lock.id} avatar={LinkIcon}>
-            <div>
-              Unstaked from{' '}
-              {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
-            </div>
+            <Flex
+              sx={{
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                Unstaked from{' '}
+                {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
+              </div>
+
+              <Flex sx={{ alignItems: 'center' }}>
+                {isMyAccount && (
+                  <>
+                    <Button sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}>
+                      Rebond
+                    </Button>
+
+                    <Button sx={{ py: 1, variant: 'buttons.secondary' }}>
+                      Withdraw
+                    </Button>
+                  </>
+                )}
+                <div sx={{ ml: 3 }}>
+                  {' '}
+                  -{abbreviateNumber(Utils.fromWei(lock.amount), 3)} LPT
+                </div>
+              </Flex>
+            </Flex>
           </ListItem>
         ))}
       </List>
