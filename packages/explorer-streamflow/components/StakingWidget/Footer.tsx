@@ -9,9 +9,9 @@ export default ({ transcoder, action, amount, context }) => {
   if (!context.active) {
     return (
       <Link href="/connect-wallet" passHref>
-        <Button as="a" sx={{ width: '100%' }}>
-          Connect Wallet
-        </Button>
+        <a>
+          <Button sx={{ width: '100%' }}>Connect Wallet</Button>
+        </a>
       </Link>
     )
   }

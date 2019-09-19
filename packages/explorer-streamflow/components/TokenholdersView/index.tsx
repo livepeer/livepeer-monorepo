@@ -4,8 +4,7 @@ import { jsx, Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { abbreviateNumber } from '../../lib/utils'
+import Spinner from '../Spinner'
 import DelegatorList from '../DelegatorList'
 
 const GET_DATA = gql`
@@ -58,13 +57,14 @@ export default () => {
             alignItems: 'center',
           }}
         >
-          <div sx={{ color: 'primary' }}>
-            <CircularProgress size={24} color="inherit" />
-          </div>
+          <Spinner />
         </Flex>
       ) : (
         !!data.transcoder.delegators.length && (
-          <DelegatorList delegators={data.transcoder.delegators} />
+          <DelegatorList
+            protocol={data.protocol}
+            delegators={data.transcoder.delegators}
+          />
         )
       )}
     </div>

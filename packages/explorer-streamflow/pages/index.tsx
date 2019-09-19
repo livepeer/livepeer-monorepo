@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import Page from '../layouts/main'
 import Table from '../components/Table'
 import StakingWidget from '../components/StakingWidget'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Spinner from '../components/Spinner'
 import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 
@@ -54,9 +54,7 @@ export default withApollo(() => {
             alignItems: 'center',
           }}
         >
-          <div sx={{ color: 'primary' }}>
-            <CircularProgress size={24} color="inherit" />
-          </div>
+          <Spinner />
         </Flex>
       </Page>
     )

@@ -14,7 +14,7 @@ import CampaignView from '../../components/CampaignView'
 import StakingView from '../../components/StakingView'
 import { withApollo } from '../../lib/apollo'
 import { Transcoder, Delegator, Protocol } from '../../@types'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Spinner from '../../components/Spinner'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -73,9 +73,7 @@ export default withApollo(() => {
             alignItems: 'center',
           }}
         >
-          <div sx={{ color: 'primary' }}>
-            <CircularProgress size={24} color="inherit" />
-          </div>
+          <Spinner />
         </Flex>
       </Page>
     )

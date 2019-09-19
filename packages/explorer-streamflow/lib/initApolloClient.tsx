@@ -13,7 +13,7 @@ import {
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
 const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
+  'https://graph.livepeer.org/subgraphs/name/livepeer/livepeer-canary'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 let apolloClient = null
 

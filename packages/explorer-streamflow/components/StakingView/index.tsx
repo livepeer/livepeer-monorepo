@@ -2,6 +2,7 @@
 import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
+import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3Context } from 'web3-react'
 import { useRouter } from 'next/router'
 import List from '../../components/List'
@@ -12,7 +13,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '../../components/Card'
 import Unlink from '../../static/img/unlink.svg'
 import { UnbondingLock } from '../../@types'
-import { abbreviateNumber } from '../../lib/utils'
 import Button from '../../components/Button'
 
 const GET_DATA = gql`
@@ -53,7 +53,6 @@ export default () => {
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: account.toLowerCase(),
-      address: account.toLowerCase(),
     },
     notifyOnNetworkStatusChange: true,
     ssr: false,
