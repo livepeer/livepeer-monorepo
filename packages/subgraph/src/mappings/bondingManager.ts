@@ -224,7 +224,7 @@ export function unbond(event: Unbond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.unstaked = delegator.unstaked.plus(delegatorData.value0)
+  delegator.unbonded = delegator.unbonded.plus(delegatorData.value0)
 
   // Apply store updates
   delegate.save()

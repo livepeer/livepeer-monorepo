@@ -60,7 +60,7 @@ export function unbond(event: Unbond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.unstaked = delegator.unstaked.plus(amount)
+  delegator.unbonded = delegator.unbonded.plus(amount)
 
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
@@ -116,7 +116,7 @@ export function rebond(event: Rebond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.unstaked = delegator.unstaked.minus(amount)
+  delegator.unbonded = delegator.unbonded.minus(amount)
 
   // update delegate
   delegate.delegatedAmount = totalStake
