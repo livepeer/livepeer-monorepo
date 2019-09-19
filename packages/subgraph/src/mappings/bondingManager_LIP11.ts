@@ -24,110 +24,86 @@ let roundsManager = RoundsManager.bind(
 // Handler for Bond events
 export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
-  let newTranscoderAddress = event.params.newDelegate
-  let oldTranscoderAddress = event.params.oldDelegate
-  let bondedAmount = event.params.bondedAmount
+  let transcoderAddress = event.params.newDelegate
   let delegatorAddress = event.params.delegator
+  let bondedAmount = event.params.bondedAmount
+  let transcoderTotalStake = bondingManager.transcoderTotalStake(
+    transcoderAddress
+  )
   let currentRound = roundsManager.currentRound()
+  let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  // Get old delegate data
-  let oldDelegateData = bondingManager.getDelegator(oldTranscoderAddress)
+  let transcoder = Transcoder.load(transcoderAddress.toHex())
+  if (transcoder == null) {
+    transcoder = new Transcoder(transcoderAddress.toHex())
+  }
 
-  // Get new delegate data
-  let newDelegateData = bondingManager.getDelegator(newTranscoderAddress)
+  let delegate = Delegator.load(transcoderAddress.toHex())
+  if (delegate == null) {
+    delegate = new Delegator(transcoderAddress.toHex())
+  }
 
-  // Create delegator if it does not yet exist
   let delegator = Delegator.load(delegatorAddress.toHex())
   if (delegator == null) {
     delegator = new Delegator(delegatorAddress.toHex())
   }
 
-  // Create new transcoder if it does not yet exist
-  let newTranscoder = Transcoder.load(newTranscoderAddress.toHex())
-  if (newTranscoder == null) {
-    newTranscoder = new Transcoder(newTranscoderAddress.toHex())
+  if (transcoder.delegators == null) {
+    transcoder.delegators = new Array<string>()
   }
 
-  // Create new delegate if it does not yet exist
-  let newDelegate = Delegator.load(newTranscoderAddress.toHex())
-  if (newDelegate == null) {
-    newDelegate = new Delegator(newTranscoderAddress.toHex())
+  // Update delegator's start round if in an unbonded state
+  if (delegator.bondedAmount.equals(BigInt.fromI32(0))) {
+    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
   }
 
-  // Add delegator to transcoder if bonding to it for first time
-  if (newTranscoderAddress.toHex() != oldTranscoderAddress.toHex()) {
-    // Update old transcoder if delegator is bonding to a new one
-    if (
-      oldTranscoderAddress.toHex() !=
-      '0x0000000000000000000000000000000000000000'
-    ) {
-      // Remove delegator from old transcoder
-      let oldTranscoder = Transcoder.load(oldTranscoderAddress.toHex())
-      let oldDelegate = Delegator.load(oldTranscoderAddress.toHex())
-      let delegators = oldTranscoder.delegators
-      let i = delegators.indexOf(delegatorAddress.toHex())
-      delegators.splice(i, 1)
-      oldTranscoder.delegators = delegators
+  // Changing delegate
+  if (
+    delegator.delegate != null &&
+    delegator.delegate != transcoderAddress.toHex()
+  ) {
+    let oldTranscoder = Transcoder.load(delegator.delegate)
+    let oldDelegate = Delegator.load(delegator.delegate)
+    let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
+      Address.fromString(oldTranscoder.id)
+    )
 
-      // Update old transcoder's stake
-      let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
-        oldTranscoderAddress
-      )
+    oldTranscoder.totalStake = oldTranscoderTotalStake
+    oldDelegate.delegatedAmount = oldTranscoderTotalStake
 
-      // Update old transcoder's total stake
-      oldTranscoder.totalStake = oldTranscoderTotalStake
-
-      // Update old delegate's delegated amount
-      oldDelegate.delegatedAmount = oldDelegateData.value3
-
-      oldTranscoder.save()
-      oldDelegate.save()
+    // remove from old transcoder's array of delegators
+    let oldTranscoderDelegators = oldTranscoder.delegators
+    if (oldTranscoderDelegators != null) {
+      let i = oldTranscoderDelegators.indexOf(delegatorAddress.toHex())
+      oldTranscoderDelegators.splice(i, 1)
+      oldTranscoder.delegators = oldTranscoderDelegators
     }
 
-    if (newTranscoder.delegators == null) {
-      newTranscoder.delegators = new Array<string>()
-    }
+    oldDelegate.save()
+    oldTranscoder.save()
 
-    // Add delegator to delegate
-    let delegators = newTranscoder.delegators
-    let i = delegators.indexOf(delegatorAddress.toHex())
-    if (i == -1) {
-      delegators.push(delegatorAddress.toHex())
-      newTranscoder.delegators = delegators
-    }
-    delegator.delegate = newTranscoderAddress.toHex()
+    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
   }
 
-  // Update new transcoder's total stake
-  let newTranscoderTotalStake = bondingManager.transcoderTotalStake(
-    newTranscoderAddress
-  )
+  // Update transcoder / delegate
+  let delegators = transcoder.delegators
+  let i = delegators.indexOf(delegatorAddress.toHex())
+  if (i == -1) {
+    delegators.push(delegatorAddress.toHex())
+    transcoder.delegators = delegators
+  }
+  transcoder.totalStake = transcoderTotalStake
+  delegate.delegatedAmount = transcoderTotalStake
 
-  // Update new transcoder's total stake
-  newTranscoder.totalStake = newTranscoderTotalStake
-
-  // Update new delegate's delegated amount
-  newDelegate.delegatedAmount = newDelegateData.value3
-
-  // Update delegator's start round
-  delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
-
-  // Update delegator's last claim round
+  // Update delegator
+  delegator.delegate = transcoderAddress.toHex()
   delegator.lastClaimRound = currentRound.toString()
-
-  // Update delegator's bonded amount
   delegator.bondedAmount = bondedAmount
-
-  // Get delegator data
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
-
-  // Update delegator's fees
   delegator.fees = delegatorData.value1
 
-  // Apply store updates
-  newDelegate.save()
-  newTranscoder.save()
+  delegate.save()
   delegator.save()
+  transcoder.save()
 }
 
 // Handler for Unbond events
@@ -201,6 +177,7 @@ export function unbond(event: Unbond): void {
 
   unbondingLock.unbondingLockId = unbondingLockId.toI32()
   unbondingLock.delegator = delegatorAddress.toHex()
+  unbondingLock.delegate = delegateAddress.toHex()
   unbondingLock.withdrawRound = withdrawRound.toI32()
   unbondingLock.amount = amount
 
