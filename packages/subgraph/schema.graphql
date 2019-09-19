@@ -89,7 +89,7 @@ type Delegator @entity {
   bondedAmount: BigInt
   "The amount of Livepeer Token a delegator has bonded over its lifetime separate from rewards"
   principal: BigInt
-  "The amount of Livepeer Token a delegator has unbonded over its"
+  "The amount of Livepeer Token a delegator has unbonded over its lifetime"
   unbonded: BigInt
   "The amount of fees a delegator has collected"
   fees: BigInt
