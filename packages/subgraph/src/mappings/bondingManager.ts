@@ -3,9 +3,9 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 // Import event types from the registrar contract ABIs
 import {
   BondingManager,
-  Bond,
-  Unbond,
+  BondCall,
   ClaimEarningsCall,
+  Unbond,
   WithdrawStake,
   TranscoderUpdate,
   TranscoderResigned,
@@ -99,10 +99,11 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
   transcoder.save()
 }
 
-export function bond(event: Bond): void {
-  let bondingManager = BondingManager.bind(event.address)
-  let transcoderAddress = event.params.delegate
-  let delegatorAddress = event.params.delegator
+export function bond(call: BondCall): void {
+  let bondingManager = BondingManager.bind(call.to)
+  let transcoderAddress = call.inputs._to
+  let delegatorAddress = call.from
+  let amount = call.inputs._amount
   let transcoderTotalStake = bondingManager.transcoderTotalStake(
     transcoderAddress
   )
@@ -176,6 +177,7 @@ export function bond(event: Bond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.principal = delegator.principal.plus(amount)
 
   delegate.save()
   delegator.save()
@@ -185,11 +187,9 @@ export function bond(event: Bond): void {
 export function unbond(event: Unbond): void {
   let bondingManager = BondingManager.bind(event.address)
   let delegatorAddress = event.params.delegator
+  let transcoderAddress = event.params.delegate
   let delegator = Delegator.load(delegatorAddress.toHex())
   let currentRound = roundsManager.currentRound()
-
-  // delegate is not emitted in the deprecated event so grab it from delegator
-  let transcoderAddress = Address.fromString(delegator.delegate)
 
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   if (transcoder == null) {
@@ -201,9 +201,6 @@ export function unbond(event: Unbond): void {
     delegate = new Delegator(transcoderAddress.toHex())
   }
 
-  // Get delegate data
-  let delegateData = bondingManager.getDelegator(transcoderAddress)
-
   let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
 
   // Get delegator data
@@ -211,6 +208,7 @@ export function unbond(event: Unbond): void {
 
   // Update delegate's total stake
   transcoder.totalStake = totalStake
+  delegate.delegatedAmount = totalStake
 
   // Remove delegator from delegate
   let delegators = transcoder.delegators
@@ -220,23 +218,13 @@ export function unbond(event: Unbond): void {
     transcoder.delegators = delegators
   }
 
-  // Update delegate's delegated amount
-  delegate.delegatedAmount = delegateData.value3
-
-  // Remote delegate from delegator
+  // Delegator no longer bonded to anyone
   delegator.delegate = null
-
-  // Update delegator's start round
-  delegator.startRound = delegatorData.value4.toString()
-
-  // Update delegator's last claim round
+  delegator.startRound = null
   delegator.lastClaimRound = currentRound.toString()
-
-  // Update delegator's bonded amount
   delegator.bondedAmount = delegatorData.value0
-
-  // Update delegator's fees
   delegator.fees = delegatorData.value1
+  delegator.unstaked = delegator.unstaked.plus(delegatorData.value0)
 
   // Apply store updates
   delegate.save()
