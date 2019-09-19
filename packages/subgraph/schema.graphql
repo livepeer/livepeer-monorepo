@@ -85,12 +85,12 @@ type Delegator @entity {
   startRound: Round
   "The last round that the delegator claimed reward and fee pool shares"
   lastClaimRound: Round
-  "The amount of Livepeer Token a delegator has bonded"
+  "The amount of Livepeer Token a delegator currently has bonded"
   bondedAmount: BigInt
-  "The amount of Livepeer Token a delegator has bonded separate from rewards"
+  "The amount of Livepeer Token a delegator has bonded over its lifetime separate from rewards"
   principal: BigInt
-  "The amount of Livepeer Token a delegator has unstaked"
-  unstaked: BigInt
+  "The amount of Livepeer Token a delegator has unbonded over its"
+  unbonded: BigInt
   "The amount of fees a delegator has collected"
   fees: BigInt
   "The amount of Livepeer Token the delegator has delegated"
