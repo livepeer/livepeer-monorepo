@@ -20,6 +20,7 @@ const GET_DATA = gql`
     delegator(id: $account) {
       id
       pendingStake
+      bondedAmount
       status
       principal
       unbonded
@@ -153,14 +154,20 @@ export default () => {
                 fontFamily: 'monospace',
               }}
             >
-              {abbreviateNumber(Utils.fromWei(data.delegator.pendingStake), 4)}
+              {abbreviateNumber(
+                Math.max(
+                  Utils.fromWei(data.delegator.bondedAmount),
+                  Utils.fromWei(data.delegator.pendingStake),
+                ),
+                4,
+              )}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </div>
           }
         >
           <div sx={{ mt: 3 }}>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
-              Principle:{' '}
+              Principal:{' '}
               <span sx={{ fontFamily: 'monospace' }}>
                 {abbreviateNumber(Utils.fromWei(data.delegator.principal), 3)}
               </span>
