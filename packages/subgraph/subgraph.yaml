@@ -35,6 +35,8 @@ dataSources:
           handler: transcoderEvicted
         - event: TranscoderSlashed(indexed address,address,uint256,uint256)
           handler: transcoderSlashed
+        - event: Bond(indexed address,indexed address)
+          handler: bond
         - event: Unbond(indexed address,indexed address)
           handler: unbond
         - event: Reward(indexed address,uint256)
@@ -46,8 +48,6 @@ dataSources:
       callHandlers:
         - function: claimEarnings(uint256)
           handler: claimEarnings
-        - function: bond(uint256,address)
-          handler: bond
   - kind: ethereum/contract
     name: BondingManager_LIP11
     network: mainnet
@@ -72,6 +72,8 @@ dataSources:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
       eventHandlers:
+        - event: Bond(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: bond
         - event: Unbond(indexed address,indexed address,uint256,uint256,uint256)
           handler: unbond
         - event: Rebond(indexed address,indexed address,uint256,uint256)
