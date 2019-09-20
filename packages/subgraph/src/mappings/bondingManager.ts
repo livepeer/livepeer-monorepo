@@ -3,8 +3,8 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 // Import event types from the registrar contract ABIs
 import {
   BondingManager,
-  BondCall,
   ClaimEarningsCall,
+  Bond,
   Unbond,
   WithdrawStake,
   TranscoderUpdate,
@@ -99,11 +99,10 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
   transcoder.save()
 }
 
-export function bond(call: BondCall): void {
-  let bondingManager = BondingManager.bind(call.to)
-  let transcoderAddress = call.inputs._to
-  let delegatorAddress = call.from
-  let amount = call.inputs._amount
+export function bond(event: Bond): void {
+  let bondingManager = BondingManager.bind(event.address)
+  let transcoderAddress = event.params.delegate
+  let delegatorAddress = event.params.delegator
   let transcoderTotalStake = bondingManager.transcoderTotalStake(
     transcoderAddress
   )
@@ -172,12 +171,22 @@ export function bond(call: BondCall): void {
   transcoder.totalStake = transcoderTotalStake
   delegate.delegatedAmount = transcoderTotalStake
 
-  // Update delegator
+  // Delegation amount
+  let amount = delegatorData.value0.minus(delegator.bondedAmount as BigInt)
+
   delegator.delegate = transcoderAddress.toHex()
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
   delegator.principal = delegator.principal.plus(amount)
+
+  // Update unbonded amount if rebonding
+  if (
+    delegatorData.value0.gt(BigInt.fromI32(0)) &&
+    delegatorData.value5.toI32() > 0
+  ) {
+    delegator.unbonded = delegator.unbonded.minus(delegatorData.value0)
+  }
 
   delegate.save()
   delegator.save()
