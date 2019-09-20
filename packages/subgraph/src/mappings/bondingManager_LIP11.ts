@@ -1,10 +1,11 @@
 // Import types and APIs from graph-ts
-import { Address, store } from '@graphprotocol/graph-ts'
+import { Address, store, BigInt } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
   BondingManager,
   WithdrawStake,
+  Bond,
   Unbond,
   Rebond
 } from '../types/BondingManager_LIP11/BondingManager'
@@ -19,6 +20,90 @@ import { makeUnbondingLockId } from './util'
 let roundsManager = RoundsManager.bind(
   Address.fromString('3984fc4ceeef1739135476f625d36d6c35c40dc3')
 )
+
+export function bond(event: Bond): void {
+  let bondingManager = BondingManager.bind(event.address)
+  let transcoderAddress = event.params.newDelegate
+  let delegatorAddress = event.params.delegator
+  let amount = event.params.additionalAmount
+  let transcoderTotalStake = bondingManager.transcoderTotalStake(
+    transcoderAddress
+  )
+  let currentRound = roundsManager.currentRound()
+  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+
+  let transcoder = Transcoder.load(transcoderAddress.toHex())
+  if (transcoder == null) {
+    transcoder = new Transcoder(transcoderAddress.toHex())
+  }
+
+  let delegate = Delegator.load(transcoderAddress.toHex())
+  if (delegate == null) {
+    delegate = new Delegator(transcoderAddress.toHex())
+  }
+
+  let delegator = Delegator.load(delegatorAddress.toHex())
+  if (delegator == null) {
+    delegator = new Delegator(delegatorAddress.toHex())
+  }
+
+  if (transcoder.delegators == null) {
+    transcoder.delegators = new Array<string>()
+  }
+
+  // Update delegator's start round if in an unbonded state
+  if (delegator.bondedAmount.equals(BigInt.fromI32(0))) {
+    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
+  }
+
+  // Changing delegate
+  if (
+    delegator.delegate != null &&
+    delegator.delegate != transcoderAddress.toHex()
+  ) {
+    let oldTranscoder = Transcoder.load(delegator.delegate)
+    let oldDelegate = Delegator.load(delegator.delegate)
+    let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
+      Address.fromString(oldTranscoder.id)
+    )
+
+    oldTranscoder.totalStake = oldTranscoderTotalStake
+    oldDelegate.delegatedAmount = oldTranscoderTotalStake
+
+    // remove from old transcoder's array of delegators
+    let oldTranscoderDelegators = oldTranscoder.delegators
+    if (oldTranscoderDelegators != null) {
+      let i = oldTranscoderDelegators.indexOf(delegatorAddress.toHex())
+      oldTranscoderDelegators.splice(i, 1)
+      oldTranscoder.delegators = oldTranscoderDelegators
+    }
+
+    oldDelegate.save()
+    oldTranscoder.save()
+
+    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
+  }
+
+  // Update transcoder / delegate
+  let delegators = transcoder.delegators
+  let i = delegators.indexOf(delegatorAddress.toHex())
+  if (i == -1) {
+    delegators.push(delegatorAddress.toHex())
+    transcoder.delegators = delegators
+  }
+  transcoder.totalStake = transcoderTotalStake
+  delegate.delegatedAmount = transcoderTotalStake
+
+  delegator.delegate = transcoderAddress.toHex()
+  delegator.lastClaimRound = currentRound.toString()
+  delegator.bondedAmount = delegatorData.value0
+  delegator.fees = delegatorData.value1
+  delegator.principal = delegator.principal.plus(amount)
+
+  delegate.save()
+  delegator.save()
+  transcoder.save()
+}
 
 // Handler for Unbond events
 export function unbond(event: Unbond): void {
