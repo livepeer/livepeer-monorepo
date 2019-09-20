@@ -171,22 +171,24 @@ export function bond(event: Bond): void {
   transcoder.totalStake = transcoderTotalStake
   delegate.delegatedAmount = transcoderTotalStake
 
-  // Delegation amount
-  let amount = delegatorData.value0.minus(delegator.bondedAmount as BigInt)
+  // additional amount == new bondedAmount minus previous bonded amount
+  let additionalAmount = delegatorData.value0.minus(
+    delegator.bondedAmount as BigInt
+  )
+
+  // no existing delegate && has bondedAmount == rebonding
+  // Subtract bondedAmount from unbonded
+  if (!delegator.delegate && delegator.bondedAmount.gt(BigInt.fromI32(0))) {
+    delegator.unbonded = delegator.unbonded.minus(
+      delegator.bondedAmount as BigInt
+    )
+  }
 
   delegator.delegate = transcoderAddress.toHex()
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.principal = delegator.principal.plus(amount)
-
-  // Update unbonded amount if rebonding
-  if (
-    delegatorData.value0.gt(BigInt.fromI32(0)) &&
-    delegatorData.value5.toI32() > 0
-  ) {
-    delegator.unbonded = delegator.unbonded.minus(delegatorData.value0)
-  }
+  delegator.principal = delegator.principal.plus(additionalAmount)
 
   delegate.save()
   delegator.save()

@@ -25,7 +25,7 @@ export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
   let transcoderAddress = event.params.newDelegate
   let delegatorAddress = event.params.delegator
-  let amount = event.params.additionalAmount
+  let additionalAmount = event.params.additionalAmount
   let transcoderTotalStake = bondingManager.transcoderTotalStake(
     transcoderAddress
   )
@@ -98,7 +98,7 @@ export function bond(event: Bond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.principal = delegator.principal.plus(amount)
+  delegator.principal = delegator.principal.plus(additionalAmount)
 
   delegate.save()
   delegator.save()
