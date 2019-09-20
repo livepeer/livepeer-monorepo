@@ -9,7 +9,7 @@ import List from '../../components/List'
 import ListItem from '../../components/ListItem'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Unlink from '../../static/img/unlink.svg'
 import { UnbondingLock } from '../../@types'
@@ -21,6 +21,8 @@ const GET_DATA = gql`
       id
       pendingStake
       status
+      principal
+      unbonded
       delegate {
         id
       }
@@ -71,9 +73,7 @@ export default () => {
           alignItems: 'center',
         }}
       >
-        <div sx={{ color: 'primary' }}>
-          <CircularProgress size={24} color="inherit" />
-        </div>
+        <Spinner />
       </Flex>
     )
   }
@@ -157,7 +157,41 @@ export default () => {
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </div>
           }
-        ></Card>
+        >
+          <div sx={{ mt: 3 }}>
+            <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
+              Principle:{' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(Utils.fromWei(data.delegator.principal), 3)}
+              </span>
+            </Flex>
+            <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
+              Unstaked:{' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(
+                  data.delegator.unbonded
+                    ? Utils.fromWei(data.delegator.unbonded)
+                    : 0,
+                  3,
+                )}
+              </span>
+            </Flex>
+            <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
+              Rewards:{' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                +
+                {abbreviateNumber(
+                  Utils.fromWei(data.delegator.pendingStake) -
+                    (Utils.fromWei(data.delegator.principal) -
+                      (data.delegator.unbonded
+                        ? Utils.fromWei(data.delegator.unbonded)
+                        : 0)),
+                  3,
+                )}
+              </span>
+            </Flex>
+          </div>
+        </Card>
         <Card
           sx={{ flex: 1, mb: 2 }}
           title="Equity"

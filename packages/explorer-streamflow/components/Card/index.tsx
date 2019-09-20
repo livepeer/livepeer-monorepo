@@ -11,7 +11,7 @@ export default ({
     <Flex
       sx={{
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         border: '1px solid',
         borderColor: 'border',
         py: 3,
