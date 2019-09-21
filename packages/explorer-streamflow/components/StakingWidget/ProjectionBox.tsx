@@ -45,7 +45,7 @@ export default ({ action }) => {
       <Box sx={{ px: 2, py: 3, mb: 4 }}>
         <Box>
           <Flex sx={{ fontSize: 0, mb: 1, justifyContent: 'space-between' }}>
-            <div sx={{ fontWeight: 500 }}>1 Year</div>
+            <div sx={{ fontWeight: 500 }}>12 Months</div>
             <div sx={{ fontFamily: 'monospace', color: 'muted' }}>
               {data.principle
                 ? ((data.roi / data.principle) * 100).toFixed(2) + '%'

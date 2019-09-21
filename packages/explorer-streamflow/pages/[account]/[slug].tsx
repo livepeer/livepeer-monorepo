@@ -108,6 +108,8 @@ export default withApollo(() => {
         >
           <Profile
             account={account}
+            delegator={delegator}
+            transcoder={transcoder}
             role={role}
             isConnected={isConnected}
             styles={{ mb: 4 }}

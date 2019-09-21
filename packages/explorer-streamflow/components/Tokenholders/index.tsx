@@ -7,7 +7,25 @@ import Link from 'next/link'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 
-function Table({ columns, data: { delegators, protocol } }) {
+export default ({ protocol, delegators }) => {
+  const columns: any = React.useMemo(
+    () => [
+      {
+        Header: 'Address',
+        accessor: 'id',
+      },
+      {
+        Header: 'Stake',
+        accessor: 'pendingStake',
+      },
+      {
+        Header: 'Equity',
+        accessor: 'pendingStake',
+      },
+    ],
+    [],
+  )
+
   const { getTableProps, headerGroups, rows, prepareRow } = useTable({
     columns,
     data: delegators,
@@ -65,7 +83,7 @@ function Table({ columns, data: { delegators, protocol } }) {
 
 function renderSwitch(cell, protocol) {
   switch (cell.column.Header) {
-    case 'Tokenholder':
+    case 'Address':
       return (
         <Flex sx={{ alignItems: 'center' }}>
           <QRCode
@@ -121,27 +139,3 @@ function renderSwitch(cell, protocol) {
       return null
   }
 }
-
-function App({ protocol, delegators }) {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Tokenholder',
-        accessor: 'id',
-      },
-      {
-        Header: 'Stake',
-        accessor: 'pendingStake',
-      },
-      {
-        Header: 'Equity',
-        accessor: 'pendingStake',
-      },
-    ],
-    [],
-  )
-
-  return <Table columns={columns} data={{ delegators, protocol }} />
-}
-
-export default App

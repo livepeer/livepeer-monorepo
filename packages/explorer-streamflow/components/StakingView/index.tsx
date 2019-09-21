@@ -14,6 +14,7 @@ import Card from '../../components/Card'
 import Unlink from '../../static/img/unlink.svg'
 import { UnbondingLock } from '../../@types'
 import Button from '../../components/Button'
+import Link from 'next/link'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -79,6 +80,10 @@ export default () => {
     )
   }
 
+  if (!data.delegator) {
+    return <div>No history</div>
+  }
+
   const pendingStakeTransactions: Array<
     UnbondingLock
   > = data.delegator.unbondingLocks.filter(
@@ -113,27 +118,50 @@ export default () => {
     </Flex>
   )
 
+  const pendingStake = Math.max(
+    Utils.fromWei(data.delegator.bondedAmount),
+    Utils.fromWei(data.delegator.pendingStake),
+  )
+  const unbonded = data.delegator.unbonded
+    ? Utils.fromWei(data.delegator.unbonded)
+    : 0
+  const principal = Utils.fromWei(data.delegator.principal)
+  const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
+  const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
+
   return (
     <>
-      <Card
-        sx={{ mb: 2 }}
-        title="Staked Towards"
-        subtitle={
-          <div
+      <Link
+        href={`/[account]/[slug]`}
+        as={`/${data.delegator.delegate.id}/campaign`}
+        passHref
+      >
+        <a>
+          <Card
             sx={{
-              fontSize: 5,
-              fontWeight: 'text',
-              color: 'text',
-              lineHeight: 'heading',
+              mb: 2,
+              cursor: 'pointer',
+              '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
             }}
-          >
-            {data.delegator.delegate.id.replace(
-              data.delegator.delegate.id.slice(7, 37),
-              '…',
-            )}
-          </div>
-        }
-      />
+            title="Staked Towards"
+            subtitle={
+              <div
+                sx={{
+                  fontSize: 5,
+                  fontWeight: 'text',
+                  color: 'text',
+                  lineHeight: 'heading',
+                }}
+              >
+                {data.delegator.delegate.id.replace(
+                  data.delegator.delegate.id.slice(7, 37),
+                  '…',
+                )}
+              </div>
+            }
+          />
+        </a>
+      </Link>
       <div
         sx={{
           display: 'grid',
@@ -154,47 +182,40 @@ export default () => {
                 fontFamily: 'monospace',
               }}
             >
-              {abbreviateNumber(
-                Math.max(
-                  Utils.fromWei(data.delegator.bondedAmount),
-                  Utils.fromWei(data.delegator.pendingStake),
-                ),
-                4,
-              )}
+              {abbreviateNumber(pendingStake, 4)}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </div>
           }
         >
           <div sx={{ mt: 3 }}>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
-              Principal:{' '}
+              <span sx={{ color: 'muted' }}>Principal</span>
               <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(Utils.fromWei(data.delegator.principal), 3)}
+                {abbreviateNumber(principal, 3)}
               </span>
             </Flex>
-            <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
-              Unstaked:{' '}
+            <Flex
+              sx={{
+                fontSize: 1,
+                mb: 1,
+                justifyContent: 'space-between',
+              }}
+            >
+              <span sx={{ color: 'muted' }}>Unstaked</span>
               <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(
-                  data.delegator.unbonded
-                    ? Utils.fromWei(data.delegator.unbonded)
-                    : 0,
-                  3,
+                {unbonded > 0 ? (
+                  <span sx={{ color: 'red' }}>
+                    -{abbreviateNumber(unbonded, 3)}
+                  </span>
+                ) : (
+                  0
                 )}
               </span>
             </Flex>
             <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
-              Rewards:{' '}
-              <span sx={{ fontFamily: 'monospace' }}>
-                +
-                {abbreviateNumber(
-                  Utils.fromWei(data.delegator.pendingStake) -
-                    (Utils.fromWei(data.delegator.principal) -
-                      (data.delegator.unbonded
-                        ? Utils.fromWei(data.delegator.unbonded)
-                        : 0)),
-                  3,
-                )}
+              <span sx={{ color: 'muted' }}>Rewards</span>
+              <span sx={{ color: 'primary', fontFamily: 'monospace' }}>
+                +{abbreviateNumber(rewards, 3)}
               </span>
             </Flex>
           </div>
@@ -211,12 +232,7 @@ export default () => {
                 fontFamily: 'monospace',
               }}
             >
-              {(
-                (Utils.fromWei(data.delegator.pendingStake) /
-                  Utils.fromWei(data.protocol.totalBondedToken)) *
-                100
-              ).toPrecision(2)}
-              %
+              {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%
             </div>
           }
         ></Card>

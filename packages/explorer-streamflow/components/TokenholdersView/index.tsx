@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../Spinner'
-import DelegatorList from '../DelegatorList'
+import Tokenholders from '../Tokenholders'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -61,7 +61,7 @@ export default () => {
         </Flex>
       ) : (
         !!data.transcoder.delegators.length && (
-          <DelegatorList
+          <Tokenholders
             protocol={data.protocol}
             delegators={data.transcoder.delegators}
           />
