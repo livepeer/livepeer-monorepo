@@ -149,7 +149,7 @@ export function unbond(event: Unbond): void {
 
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
-  if (!delegatorData.value0) {
+  if (delegatorData.value0.isZero()) {
     let delegators = transcoder.delegators
     if (delegators != null) {
       let i = delegators.indexOf(delegatorAddress.toHex())
