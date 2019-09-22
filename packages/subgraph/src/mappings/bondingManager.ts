@@ -140,6 +140,7 @@ export function bond(event: Bond): void {
   ) {
     let oldTranscoder = Transcoder.load(delegator.delegate)
     let oldDelegate = Delegator.load(delegator.delegate)
+
     let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
       Address.fromString(oldTranscoder.id)
     )
@@ -198,26 +199,26 @@ export function bond(event: Bond): void {
 export function unbond(event: Unbond): void {
   let bondingManager = BondingManager.bind(event.address)
   let delegatorAddress = event.params.delegator
-  let transcoderAddress = event.params.delegate
   let delegator = Delegator.load(delegatorAddress.toHex())
+  let transcoderAddress = delegator.delegate
   let currentRound = roundsManager.currentRound()
 
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let transcoder = Transcoder.load(transcoderAddress)
   if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
+    transcoder = new Transcoder(transcoderAddress)
   }
 
-  let delegate = Delegator.load(transcoderAddress.toHex())
+  let delegate = Delegator.load(transcoderAddress)
   if (delegate == null) {
-    delegate = new Delegator(transcoderAddress.toHex())
+    delegate = new Delegator(transcoderAddress)
   }
 
-  let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
+  let totalStake = bondingManager.transcoderTotalStake(
+    Address.fromString(transcoderAddress)
+  )
 
-  // Get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  // Update delegate's total stake
   transcoder.totalStake = totalStake
   delegate.delegatedAmount = totalStake
 

@@ -136,11 +136,9 @@ export function unbond(event: Unbond): void {
     unbondingLock = new UnbondingLock(uniqueUnbondingLockId)
   }
 
-  // Get delegate
   delegate.delegatedAmount = totalStake
   transcoder.totalStake = totalStake
 
-  // get delegator data
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
