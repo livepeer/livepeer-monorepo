@@ -47,6 +47,8 @@ export default () => {
     console.error(error)
   }
 
+  // TODO: redirect to staking tab if not a transcoder
+
   return (
     <div>
       {loading ? (
@@ -60,6 +62,7 @@ export default () => {
           <Spinner />
         </Flex>
       ) : (
+        data.transcoder &&
         !!data.transcoder.delegators.length && (
           <Tokenholders
             protocol={data.protocol}

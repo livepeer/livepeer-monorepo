@@ -18,5 +18,5 @@ export default ({ transcoder, action, amount, context }) => {
   if (action == 'stake') {
     return <Stake transcoder={transcoder} amount={amount} context={context} />
   }
-  return <Unstake amount={amount} context={context} />
+  return <Unstake transcoder={transcoder} amount={amount} context={context} />
 }

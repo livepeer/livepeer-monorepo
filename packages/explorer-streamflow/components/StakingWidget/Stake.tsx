@@ -85,7 +85,7 @@ export default ({ transcoder, amount, context }) => {
           title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          <StakeFlow />
+          <StakeFlow action="stake" transcoder={transcoder} amount={amount} />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>

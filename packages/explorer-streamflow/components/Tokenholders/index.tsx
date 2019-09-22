@@ -11,7 +11,7 @@ export default ({ protocol, delegators }) => {
   const columns: any = React.useMemo(
     () => [
       {
-        Header: 'Address',
+        Header: 'Account',
         accessor: 'id',
       },
       {
@@ -46,7 +46,7 @@ export default ({ protocol, delegators }) => {
           <tr key={i}>
             {headerGroup.headers.map((column, i) => (
               <th
-                sx={{ pb: 3 }}
+                sx={{ pb: 3, textTransform: 'uppercase' }}
                 align="left"
                 {...column.getHeaderProps()}
                 key={i}
@@ -83,7 +83,7 @@ export default ({ protocol, delegators }) => {
 
 function renderSwitch(cell, protocol) {
   switch (cell.column.Header) {
-    case 'Address':
+    case 'Account':
       return (
         <Flex sx={{ alignItems: 'center' }}>
           <QRCode
@@ -97,8 +97,8 @@ function renderSwitch(cell, protocol) {
             value={cell.value}
           />
           <Link
-            href="/[account]/staking"
-            as={`/${cell.value}/staking`}
+            href="/account/[account]/staking"
+            as={`/account/${cell.value}/staking`}
             passHref
           >
             <a

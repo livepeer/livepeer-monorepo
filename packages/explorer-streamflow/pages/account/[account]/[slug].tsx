@@ -3,18 +3,18 @@ import React from 'react'
 import { jsx, Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
 import { useWeb3Context } from 'web3-react'
-import Page from '../../layouts/main'
+import Page from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
-import Tabs, { TabType } from '../../components/Tabs'
-import Profile from '../../components/Profile'
-import StakingWidget from '../../components/StakingWidget'
-import TokenholdersView from '../../components/TokenholdersView'
-import CampaignView from '../../components/CampaignView'
-import StakingView from '../../components/StakingView'
-import { withApollo } from '../../lib/apollo'
-import { Transcoder, Delegator, Protocol } from '../../@types'
-import Spinner from '../../components/Spinner'
+import Tabs, { TabType } from '../../../components/Tabs'
+import Profile from '../../../components/Profile'
+import StakingWidget from '../../../components/StakingWidget'
+import TokenholdersView from '../../../components/TokenholdersView'
+import CampaignView from '../../../components/CampaignView'
+import StakingView from '../../../components/StakingView'
+import { withApollo } from '../../../lib/apollo'
+import { Transcoder, Delegator, Protocol } from '../../../@types'
+import Spinner from '../../../components/Spinner'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -103,7 +103,10 @@ export default withApollo(() => {
             mb: 8,
             flexDirection: 'column',
             pr: 6,
-            width: '70%',
+            width:
+              role == 'Orchestrator' || (isConnected && isStaked)
+                ? '70%'
+                : '100%',
           }}
         >
           <Profile
@@ -153,41 +156,41 @@ function getTabs(
   let tabs: Array<TabType> = [
     {
       name: 'Staking',
-      href: '/[account]/[slug]',
-      as: `/${account}/staking`,
-      isActive: asPath == `/${account}/staking`,
+      href: '/account/[account]/[slug]',
+      as: `/account/${account}/staking`,
+      isActive: asPath == `/account/${account}/staking`,
     },
     {
       name: 'Earned Fees',
-      href: '/[account]/[slug]',
-      as: `/${account}/fees`,
-      isActive: asPath == `/${account}/fees`,
+      href: '/account/[account]/[slug]',
+      as: `/account/${account}/fees`,
+      isActive: asPath == `/account/${account}/fees`,
     },
     {
       name: 'History',
-      href: '/[account]/[slug]',
-      as: `/${account}/history`,
-      isActive: asPath == `/${account}/history`,
+      href: '/account/[account]/[slug]',
+      as: `/account/${account}/history`,
+      isActive: asPath == `/account/${account}/history`,
     },
     {
       name: 'Settings',
-      href: '/[account]/[slug]',
-      as: `/${account}/settings`,
-      isActive: asPath == `/${account}/settings`,
+      href: '/account/[account]/[slug]',
+      as: `/account/${account}/settings`,
+      isActive: asPath == `/account/${account}/settings`,
     },
   ]
   if (role == 'Orchestrator') {
     tabs.splice(0, 0, {
       name: 'Tokenholders',
-      href: '/[account]/[slug]',
-      as: `/${account}/tokenholders`,
-      isActive: asPath == `/${account}/tokenholders`,
+      href: '/account/[account]/[slug]',
+      as: `/account/${account}/tokenholders`,
+      isActive: asPath == `/account/${account}/tokenholders`,
     })
     tabs.unshift({
       name: 'Campaign',
-      href: '/[account]/[slug]',
-      as: `/${account}/campaign`,
-      isActive: asPath == `/${account}/campaign`,
+      href: '/account/[account]/[slug]',
+      as: `/account/${account}/campaign`,
+      isActive: asPath == `/account/${account}/campaign`,
     })
   }
 

@@ -1,40 +1,29 @@
 /** @jsx jsx */
-import { jsx } from 'theme-ui'
+import { jsx, Flex, Box } from 'theme-ui'
 
-export default ({ variant = 'primary', ...props }) => (
-  <div
+export default props => (
+  <Flex
     sx={{
-      display: 'flex',
       alignItems: 'center',
-      width: '100%',
-      mb: 3,
-      position: 'relative',
     }}
   >
-    <input
-      {...props}
+    {props.icon && props.icon}
+    <Box
+      as="input"
+      type="text"
+      variant="input"
       sx={{
-        backgroundColor: 'transparent',
-        borderTop: '0',
-        borderLeft: '0',
-        borderRight: '0',
-        borderBottom: '1px solid',
-        borderColor: 'muted',
-        p: 1,
-        color: 'text',
-        boxShadow: 'none',
-        width: '100%',
+        display: 'block',
         outline: 'none',
-        fontSize: 26,
-        fontFamily: 'monospace',
-        '&::-webkit-inner-spin-button': {
-          WebkitAppearance: 'none',
-        },
-        '&::-webkit-outer-spin-button': {
-          WebkitAppearance: 'none',
-        },
+        width: '100%',
+        appearance: 'none',
+        fontSize: 2,
+        lineHeight: 'inherit',
+        border: 0,
+        color: 'inherit',
+        bg: 'transparent',
       }}
+      {...props}
     />
-    <div sx={{ fontWeight: 'bold', right: 0, position: 'absolute' }}>LPT</div>
-  </div>
+  </Flex>
 )

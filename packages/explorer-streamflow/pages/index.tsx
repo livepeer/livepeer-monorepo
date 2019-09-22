@@ -2,7 +2,7 @@
 import { jsx, Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import Page from '../layouts/main'
-import Table from '../components/Table'
+import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
 import { withApollo } from '../lib/apollo'
@@ -70,7 +70,10 @@ export default withApollo(() => {
       >
         <>
           <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
-            <Table transcoders={data.transcoders} />
+            <Orchestrators
+              protocol={data.protocol}
+              transcoders={data.transcoders}
+            />
           </Flex>
           <Flex
             sx={{

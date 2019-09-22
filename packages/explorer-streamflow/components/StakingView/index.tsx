@@ -58,8 +58,8 @@ export default () => {
     variables: {
       account: account.toLowerCase(),
     },
-    notifyOnNetworkStatusChange: true,
     ssr: false,
+    pollInterval: 10000,
   })
 
   if (error) {
@@ -126,14 +126,15 @@ export default () => {
     ? Utils.fromWei(data.delegator.unbonded)
     : 0
   const principal = Utils.fromWei(data.delegator.principal)
-  const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
+  const rewards =
+    pendingStake + parseInt(unbonded ? unbonded : 0) - parseInt(principal)
   const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
 
   return (
     <>
       <Link
-        href={`/[account]/[slug]`}
-        as={`/${data.delegator.delegate.id}/campaign`}
+        href={`/account/[account]/[slug]`}
+        as={`/account/${data.delegator.delegate.id}/campaign`}
         passHref
       >
         <a>
@@ -275,9 +276,9 @@ export default () => {
           ))}
         </List>
       )}
-      <List header={<Styled.h4>Completed Unstake Transactions</Styled.h4>}>
+      <List header={<Styled.h4>Available For Withdrawal</Styled.h4>}>
         {!completedStakeTransactions.length && (
-          <div sx={{ fontSize: 1, mt: 2 }}>No History</div>
+          <div sx={{ fontSize: 1, mt: 2 }}>Nothing Here</div>
         )}
         {completedStakeTransactions.map(lock => (
           <ListItem key={lock.id} avatar={LinkIcon}>

@@ -11,7 +11,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 
-export default ({ amount, context }) => {
+export default ({ transcoder, amount, context }) => {
   const [, setIsModalOpen] = useState(false)
 
   if (!context.active) {
@@ -84,7 +84,7 @@ export default ({ amount, context }) => {
           title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          <StakeFlow />
+          <StakeFlow action="unstake" transcoder={transcoder} amount={amount} />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>

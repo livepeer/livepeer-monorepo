@@ -17,10 +17,12 @@ const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
     { name: 'Search', href: '/search', icon: Search },
     {
       name: !context.connector ? 'Connect Wallet' : 'My Account',
-      href: !context.connector ? '/connect-wallet' : '/[account]/staking',
+      href: !context.connector
+        ? '/connect-wallet'
+        : '/account/[account]/staking',
       as: !context.connector
         ? '/connect-wallet'
-        : `/${context.account}/staking`,
+        : `/account/${context.account}/staking`,
       icon: !context.connector ? Wallet : Account,
     },
   ]
