@@ -9,23 +9,48 @@ export async function clearDatabase(server) {
   }
 }
 
-export function fetch(server, path, args = {}) {
-  return isoFetch(
-    `http://localhost:${server.port}${server.httpPrefix}${path}`,
-    args,
-  )
-}
+export class TestClient {
+  constructor(opts) {
+    if (!opts.server) {
+      throw new Error('TestClient missing server')
+    }
+    this.server = opts.server
+    if (opts.apiKey) {
+      this.apiKey = opts.apiKey
+    }
+  }
 
-export async function get(server, path) {
-  return await fetch(server, path, { method: 'GET' })
-}
+  fetch(path, args = {}) {
+    let headers = args.headers || {}
+    if (this.apiKey) {
+      headers = {
+        ...headers,
+        authorization: `Bearer ${this.apiKey}`,
+      }
+    }
+    return isoFetch(
+      `http://localhost:${this.server.port}${this.server.httpPrefix}${path}`,
+      {
+        ...args,
+        headers,
+      },
+    )
+  }
 
-export async function post(server, path, data) {
-  return await fetch(server, path, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
+  async get(path) {
+    return await this.fetch(path, { method: 'GET' })
+  }
+
+  async post(path, data) {
+    const params = {
+      method: 'POST',
+    }
+    if (data) {
+      params.headers = {
+        'content-type': 'application/json',
+      }
+      params.body = JSON.stringify(data)
+    }
+    return await this.fetch(path, params)
+  }
 }

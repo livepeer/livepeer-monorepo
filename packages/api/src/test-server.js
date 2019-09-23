@@ -42,6 +42,8 @@ export default makeApp(params).then(s => {
 })
 
 afterAll(() => {
-  server.close()
+  if (server) {
+    server.close()
+  }
   fs.removeSync(dbPath)
 })

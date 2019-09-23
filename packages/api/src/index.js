@@ -5,7 +5,7 @@ import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
 import * as bodyParser from 'body-parser'
 import { LevelStore, PostgresStore } from './store'
-import { healthCheck, authMiddleware } from './middleware'
+import { healthCheck } from './middleware'
 import logger from './logger'
 import schema from './schema'
 import * as controllers from './controllers'
@@ -47,11 +47,6 @@ export default async function makeApp(params) {
     next()
   })
   app.use(bearerToken())
-
-  // if (authEnabled) {
-  // HTTP bearer token middleware
-  app.use(authMiddleware({}))
-  // }
 
   // Populate Kubernetes stuff if present
   if (kubeNamespace && (kubeBroadcasterService || kubeOrchestratorService)) {

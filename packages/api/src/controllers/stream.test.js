@@ -1,5 +1,5 @@
 import serverPromise from '../test-server'
-import { get, post, fetch, clearDatabase } from '../test-helpers'
+import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
 
 let server
@@ -13,48 +13,61 @@ afterEach(async () => {
 })
 
 describe('controllers/stream', () => {
-  it('should create a stream', async () => {
-    const res = await post(server, '/stream', {
-      name: 'test-stream',
+  describe('basic CRUD', () => {
+    let client
+
+    beforeEach(() => {
+      client = new TestClient({
+        server,
+        apiKey: uuid(),
+      })
     })
-    expect(res.status).toBe(201)
-    const stream = await res.json()
-    expect(stream.id).toBeDefined()
-    expect(stream.kind).toBe('stream')
-    expect(stream.name).toBe('test-stream')
-    const document = await server.store.get(`stream/${stream.id}`)
-    expect(document).toEqual(stream)
-  })
 
-  it('should accept empty body for creating a stream', async () => {
-    const res = await fetch(server, '/stream', { method: 'POST' })
-    expect(res.status).toBe(201)
-    const stream = await res.json()
-    expect(stream.id).toBeDefined()
-  })
-
-  it('should get all streams', async () => {
-    for (let i = 0; i < 10; i += 1) {
-      const document = {
-        id: uuid(),
-        kind: 'stream',
-      }
-      await server.store.create(document)
-      const res = await get(server, `/stream/${document.id}`)
+    it('should create a stream', async () => {
+      const res = await client.post('/stream', { name: 'test-stream' })
+      expect(res.status).toBe(201)
       const stream = await res.json()
-      expect(stream).toEqual(document)
-    }
-    const res = await get(server, '/stream')
-    const streams = await res.json()
-    expect(streams.length).toEqual(10)
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('test-stream')
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+    })
+
+    it('should accept empty body for creating a stream', async () => {
+      const res = await client.post('/stream')
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+    })
+
+    it('should get all streams', async () => {
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+      const res = await client.get('/stream')
+      const streams = await res.json()
+      expect(streams.length).toEqual(10)
+    })
   })
 
   describe('webhooks', () => {
     let stream
     let data
     let res
+    let client
 
     beforeEach(async () => {
+      client = new TestClient({
+        server,
+      })
       stream = {
         id: uuid(),
         kind: 'stream',
@@ -73,7 +86,7 @@ describe('controllers/stream', () => {
     for (let url of happyCases) {
       it(`should succeed for ${url}`, async () => {
         url = url.replace('STREAM_ID', stream.id)
-        res = await post(server, '/stream/hook', { url })
+        res = await client.post('/stream/hook', { url })
         data = await res.json()
         expect(data.presets).toEqual(stream.presets)
       })
@@ -91,13 +104,13 @@ describe('controllers/stream', () => {
     for (let [status, url] of sadCases) {
       it(`should return ${status} for ${url}`, async () => {
         url = url.replace('STREAM_ID', stream.id)
-        res = await post(server, '/stream/hook', { url })
+        res = await client.post('/stream/hook', { url })
         expect(res.status).toBe(status)
       })
     }
 
     it('should reject missing urls', async () => {
-      res = await post(server, '/stream/hook', {})
+      res = await client.post('/stream/hook', {})
       expect(res.status).toBe(422)
     })
   })

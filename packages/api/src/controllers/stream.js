@@ -1,6 +1,7 @@
 import { parse as parsePath } from 'path'
 import { parse as parseQS } from 'querystring'
 import { parse as parseUrl } from 'url'
+import { authMiddleware } from '../middleware'
 import { Router } from 'express'
 import logger from '../logger'
 import uuid from 'uuid/v4'
@@ -8,7 +9,7 @@ import wowzaHydrate from './wowza-hydrate'
 
 const app = Router()
 
-app.get('/', async (req, res) => {
+app.get('/', authMiddleware({}), async (req, res) => {
   let limit = req.query.limit
   let offset = req.query.offset
 
@@ -17,13 +18,13 @@ app.get('/', async (req, res) => {
   res.json(output)
 })
 
-app.get('/:id', async (req, res) => {
+app.get('/:id', authMiddleware({}), async (req, res) => {
   const output = await req.store.get(`stream/${req.params.id}`)
   res.status(200)
   res.json(output)
 })
 
-app.post('/', async (req, res) => {
+app.post('/', authMiddleware({}), async (req, res) => {
   const id = uuid()
   const doc = wowzaHydrate({
     ...req.body,
