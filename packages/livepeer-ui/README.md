@@ -30,7 +30,7 @@ Import a Livepeer UI component inside your application.
 import { jsx } from 'theme-ui'
 import { Button } from '@livepeer/ui'
 
-export default props => <Button>Rebass</Button>
+export default props => <Button>Stake</Button>
 ```
 
 The sx prop lets you style elements inline, using values from the Livepeer UI theme.
@@ -40,5 +40,5 @@ The sx prop lets you style elements inline, using values from the Livepeer UI th
 import { jsx } from 'theme-ui'
 import { Button } from '@livepeer/ui'
 
-export default props => <Button sx={{ mb: 2 }}>Rebass</Button>
+export default props => <Button sx={{ mb: 2 }}>Stake</Button>
 ```
