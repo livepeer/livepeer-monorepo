@@ -19,7 +19,6 @@ export default async function makeApp({
   listen = true,
   kubeNamespace,
   kubeBroadcasterService,
-  authEnabled,
 }) {
   // Storage init
   let store
@@ -41,10 +40,10 @@ export default async function makeApp({
   })
   app.use(bearerToken())
 
-  if (authEnabled) {
-    // HTTP bearer token middleware
-    app.use(authMiddleware({ adminOnly: 1 }))
-  }
+  // if (authEnabled) {
+  // HTTP bearer token middleware
+  app.use(authMiddleware({}))
+  // }
 
   if (kubeNamespace && kubeBroadcasterService) {
     const kc = new k8s.KubeConfig()
