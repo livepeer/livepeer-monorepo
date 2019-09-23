@@ -1,6 +1,7 @@
 {
   "id": "de7818e7-610a-4057-8f6f-b785dc1e6f88",
   "kind": "stream",
+  "name": "test_stream",
   "wowza": {
     "transcoderAppConfig": {
       "version": "1564614763000",

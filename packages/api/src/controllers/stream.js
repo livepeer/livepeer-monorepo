@@ -26,7 +26,7 @@ app.get('/:id', async (req, res) => {
 app.post('/', async (req, res) => {
   const id = uuid()
   const doc = wowzaHydrate({
-    ...(req.body || {}),
+    ...req.body,
     kind: 'stream',
     presets: req.body.presets || [],
     renditions: {},
@@ -46,7 +46,7 @@ app.post('/hook', async (req, res) => {
   }
   logger.info(`got webhook: ${JSON.stringify(req.body)}`)
   // These are of the form /live/:manifestId/:segmentNum.ts
-  let { query, pathname, protocol } = parseUrl(req.body.url)
+  let { pathname, protocol } = parseUrl(req.body.url)
   // Protocol is sometimes undefined, due to https://github.com/livepeer/go-livepeer/issues/1006
   if (!protocol) {
     protocol = 'http:'
@@ -63,6 +63,10 @@ app.post('/hook', async (req, res) => {
   // http(s)://broadcaster.example.com/live/:streamId/:segNum.ts
   // rtmp://broadcaster.example.com/live/:streamId
   const [live, streamId, ...rest] = pathname.split('/').filter(x => !!x)
+  if (!streamId) {
+    res.status(401)
+    return res.json({ errors: ['stream key is required'] })
+  }
   if (protocol === 'rtmp:' && rest.length > 0) {
     res.status(422)
     return res.json({
@@ -70,7 +74,8 @@ app.post('/hook', async (req, res) => {
         'RTMP address should be rtmp://example.com/live. Stream key should be a UUID.',
       ],
     })
-  } else if (protocol === 'http:' && rest.length > 1) {
+  }
+  if (protocol === 'http:' && rest.length > 1) {
     res.status(422)
     return res.json({
       errors: [

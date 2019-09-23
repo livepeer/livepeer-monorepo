@@ -3,6 +3,7 @@ import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
+import * as bodyParser from 'body-parser'
 import { LevelStore, PostgresStore } from './store'
 import { healthCheck, authMiddleware } from './middleware'
 import logger from './logger'
@@ -11,19 +12,22 @@ import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import * as k8s from '@kubernetes/client-node'
 
-export default async function makeApp({
-  storage,
-  dbPath,
-  httpPrefix,
-  port,
-  postgresUrl,
-  listen = true,
-  kubeNamespace,
-  kubeBroadcasterService,
-  kubeBroadcasterTemplate,
-  kubeOrchestratorService,
-  kubeOrchestratorTemplate,
-}) {
+// console.log(bodyParser)
+
+export default async function makeApp(params) {
+  const {
+    storage,
+    dbPath,
+    httpPrefix,
+    port,
+    postgresUrl,
+    listen = true,
+    kubeNamespace,
+    kubeBroadcasterService,
+    kubeBroadcasterTemplate,
+    kubeOrchestratorService,
+    kubeOrchestratorTemplate,
+  } = params
   // Storage init
   let store
   if (storage === 'level') {
@@ -49,6 +53,7 @@ export default async function makeApp({
   app.use(authMiddleware({}))
   // }
 
+  // Populate Kubernetes stuff if present
   if (kubeNamespace && (kubeBroadcasterService || kubeOrchestratorService)) {
     const kc = new k8s.KubeConfig()
     kc.loadFromDefault()
@@ -114,6 +119,7 @@ export default async function makeApp({
   })
 
   return {
+    ...params,
     app,
     listener,
     port: listenPort,
