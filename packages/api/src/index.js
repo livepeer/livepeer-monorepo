@@ -2,6 +2,7 @@ import express, { Router } from 'express'
 import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
+import bearerToken from 'express-bearer-token'
 import { LevelStore, PostgresStore } from './store'
 import { healthCheck, authMiddleware } from './middleware'
 import logger from './logger'
@@ -38,6 +39,7 @@ export default async function makeApp({
     req.store = store
     next()
   })
+  app.use(bearerToken())
 
   if (authEnabled) {
     // HTTP bearer token middleware

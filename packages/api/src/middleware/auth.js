@@ -1,11 +1,4 @@
-import bearerToken from 'express-bearer-token'
-import { Router } from 'express'
-import uuid from 'uuid/v4'
 import logger from '../logger'
-
-const router = Router()
-
-router.use(bearerToken())
 
 /**
  * generate token middleware
@@ -14,7 +7,16 @@ router.use(bearerToken())
  * @param {fn} next callback
  */
 async function generateToken(req, res, next) {
+  // For the autogen case,
+  // we want the token in the database to match up with what they provided in the token field,
+  // so id should be req.token.
+
   const id = req.token
+  if (!id) {
+    // for now send a 406 if the user doesn't provide any access_token
+    return res.sendStatus(406)
+  }
+
   let resp = await req.store.create({
     id,
     kind: 'apitoken',
@@ -30,7 +32,7 @@ async function generateToken(req, res, next) {
  * @param {Object} params auth middleware params, to be defined later
  */
 function authFactory(params) {
-  return router.use(async (req, res, next) => {
+  return async (req, res, next) => {
     if (!req || !req.token) {
       return res.sendStatus(401)
     }
@@ -49,7 +51,7 @@ function authFactory(params) {
     }
 
     return next()
-  })
+  }
 }
 
 // export default router
