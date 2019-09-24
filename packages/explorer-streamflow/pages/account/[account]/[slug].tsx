@@ -18,6 +18,10 @@ import Spinner from '../../../components/Spinner'
 
 const GET_DATA = gql`
   query($account: ID!) {
+    account(id: $account) {
+      id
+      tokenBalance
+    }
     delegator(id: $account) {
       id
       pendingStake
@@ -78,14 +82,25 @@ export default withApollo(() => {
       </Page>
     )
   }
+
   const transcoder: Transcoder = data.transcoder
   const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
   const isConnected: boolean = context.account == account
   const isOrchestrator: boolean = data.transcoder && data.transcoder.id
-  const role = isOrchestrator ? 'Orchestrator' : 'Tokenholder'
-  const tabs: Array<TabType> = getTabs(role, account, asPath)
   const isStaked = delegator && delegator.delegate
+  const hasLivepeerToken = data.account.tokenBalance > 0
+  let role: string
+
+  if (data.transcoder && data.transcoder.id) {
+    role = 'Orchestrator'
+  } else if ((data.delegator && data.delegator.id) || hasLivepeerToken) {
+    role = 'Tokenholder'
+  } else {
+    role = 'Lurker'
+  }
+
+  const tabs: Array<TabType> = getTabs(role, account, asPath)
 
   return (
     <Page>
@@ -113,9 +128,10 @@ export default withApollo(() => {
             account={account}
             delegator={delegator}
             transcoder={transcoder}
+            hasLivepeerToken={hasLivepeerToken}
             role={role}
             isConnected={isConnected}
-            styles={{ mb: 4 }}
+            sx={{ mb: 4 }}
           />
           <Tabs sx={{ mb: 4 }} tabs={tabs} />
           {slug == 'campaign' && <CampaignView />}

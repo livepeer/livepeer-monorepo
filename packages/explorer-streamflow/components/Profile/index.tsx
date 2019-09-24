@@ -6,14 +6,17 @@ import Chip from '../../components/Chip'
 export default ({
   account,
   role = 'Orchestrator',
+  hasLivepeerToken,
+  delegator,
   transcoder,
   isConnected = false,
-  styles = {},
-  variant = 'primary',
   ...props
 }) => {
+  const isLivepeerAware =
+    hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
+
   return (
-    <div sx={styles} {...props}>
+    <div {...props}>
       <div
         sx={{
           mb: 2,
@@ -53,7 +56,7 @@ export default ({
           ? 'My Account'
           : account.replace(account.slice(7, 37), '…')}
       </Styled.h1>
-      <Chip label={role} />
+      {isLivepeerAware && <Chip label={role} />}
     </div>
   )
 }

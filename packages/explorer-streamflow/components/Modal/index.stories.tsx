@@ -7,7 +7,7 @@ import Button from '../Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
-import StakeFlow from '../StakeFlow'
+import StakingFlow from '../StakingFlow'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
 
@@ -24,7 +24,7 @@ storiesOf('Modal', module)
           title="Broadcasted"
           Icon={Broadcast}
         >
-          <StakeFlow />
+          <StakingFlow amount={100} action="stake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
               <div sx={{ color: 'primary', mr: 1 }}>
@@ -62,7 +62,7 @@ storiesOf('Modal', module)
             width={width}
             height={height}
           />
-          <StakeFlow amount={100} />
+          <StakingFlow amount={100} action="stake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Button
               sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}
@@ -81,7 +81,7 @@ storiesOf('Modal', module)
       <>
         <button onClick={() => setOpen(true)}>Toggle Modal</button>{' '}
         <Modal isOpen={isOpen} setOpen={setOpen} title="Successfully Unstaked">
-          <StakeFlow amount={100} action="unstake" />
+          <StakingFlow amount={100} action="unstake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Button
               sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}

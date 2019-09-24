@@ -53,6 +53,10 @@ export default () => {
     console.error(error)
   }
 
+  if (!data.transcoder) {
+    return null
+  }
+
   return (
     <div>
       {loading ? (

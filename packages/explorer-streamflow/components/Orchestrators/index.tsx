@@ -153,13 +153,7 @@ export default ({ protocol, transcoders }) => {
                   key={i}
                   sx={{
                     '&:hover': {
-                      bg:
-                        row.values.id ==
-                        (data &&
-                          data.selectedTranscoder &&
-                          data.selectedTranscoder.id)
-                          ? 'surface'
-                          : lighten('#1E2026', 0.05),
+                      bg: lighten('#1E2026', 0.05),
                     },
                     bg:
                       row.values.id ==

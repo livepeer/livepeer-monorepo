@@ -1,26 +1,27 @@
 /** @jsx jsx */
-import React, { useState } from 'react'
 import { jsx, Flex } from 'theme-ui'
+import React, { useState } from 'react'
+import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Utils from 'web3-utils'
-import Button from '../Button'
-import Modal from '../Modal'
 import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
+import Modal from '../Modal'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
+import Button from '../Button'
 
-export default ({ transcoder, amount, context }) => {
+export default ({ lock }) => {
+  const context = useWeb3Context()
   const [, setIsModalOpen] = useState(false)
 
   if (!context.active) {
     return null
   }
 
-  const UNBOND = gql`
-    mutation unbond($amount: String!) {
-      txHash: unbond(amount: $amount)
+  const WITHDRAW = gql`
+    mutation withdrawStake($unbondingLockId: Int!) {
+      txHash: withdrawStake(unbondingLockId: $unbondingLockId)
     }
   `
 
@@ -39,9 +40,9 @@ export default ({ transcoder, amount, context }) => {
     }
   `
 
-  const [unbond, { data }] = useMutation(UNBOND, {
+  const [withdrawStake, { data }] = useMutation(WITHDRAW, {
     variables: {
-      amount: Utils.toWei(amount, 'ether'),
+      unbondingLockId: lock.unbondingLockId,
     },
     notifyOnNetworkStatusChange: true,
     context: {
@@ -70,24 +71,22 @@ export default ({ transcoder, amount, context }) => {
   return (
     <>
       <Button
-        onClick={async () => {
-          unstake(unbond)
-        }}
-        sx={{ backgroundColor: 'red', width: '100%' }}
+        onClick={() => withdrawStake(lock.unbondingLockId)}
+        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
       >
-        Unstake
+        Withdraw
       </Button>
       {isBroadcasted && (
         <Modal
           isOpen={isBroadcasted}
           setOpen={setIsModalOpen}
-          title={isMined ? 'Success!' : 'Broadcasted'}
+          title={isMined ? 'Successfully Withdrawn' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
           <StakingFlow
-            action="unstake"
-            account={transcoder.id}
-            amount={amount}
+            action="withdraw"
+            account={context.account}
+            amount={lock.amount}
           />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
@@ -122,14 +121,4 @@ export default ({ transcoder, amount, context }) => {
       )}
     </>
   )
-}
-
-async function unstake(unstake: any) {
-  try {
-    await unstake()
-  } catch (e) {
-    return {
-      error: e.message.replace('GraphQL error: ', ''),
-    }
-  }
 }

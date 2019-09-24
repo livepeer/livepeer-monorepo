@@ -3,7 +3,7 @@ import { jsx, Styled, Flex } from 'theme-ui'
 import React from 'react'
 import ArrowRight from '../../static/img/arrow-right-long.svg'
 
-export default ({ action = 'stake', amount = 0, transcoder }) => {
+export default ({ action = 'stake', amount = 0, account }) => {
   return (
     <Flex
       sx={{
@@ -27,9 +27,7 @@ export default ({ action = 'stake', amount = 0, transcoder }) => {
           color: action == 'stake' ? 'primary' : 'red',
         }}
       />
-      <Styled.h3>
-        {transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
-      </Styled.h3>
+      <Styled.h3>{account.replace(account.slice(7, 37), '…')}</Styled.h3>
     </Flex>
   )
 }

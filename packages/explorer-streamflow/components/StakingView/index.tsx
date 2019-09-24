@@ -1,20 +1,15 @@
 /** @jsx jsx */
-import React from 'react'
-import { jsx, Flex, Styled } from 'theme-ui'
+import { jsx, Flex } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3Context } from 'web3-react'
 import { useRouter } from 'next/router'
-import List from '../../components/List'
-import ListItem from '../../components/ListItem'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
-import Unlink from '../../static/img/unlink.svg'
-import { UnbondingLock } from '../../@types'
-import Button from '../../components/Button'
 import Link from 'next/link'
+import StakeTransactions from '../StakeTransactions'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -31,6 +26,7 @@ const GET_DATA = gql`
       unbondingLocks {
         id
         amount
+        unbondingLockId
         withdrawRound
         delegate {
           id
@@ -83,40 +79,6 @@ export default () => {
   if (!data.delegator) {
     return <div>No history</div>
   }
-
-  const pendingStakeTransactions: Array<
-    UnbondingLock
-  > = data.delegator.unbondingLocks.filter(
-    (item: UnbondingLock) =>
-      item.withdrawRound &&
-      item.withdrawRound > parseInt(data.currentRound[0].id, 10),
-  )
-  const completedStakeTransactions: Array<
-    UnbondingLock
-  > = data.delegator.unbondingLocks.filter(
-    (item: UnbondingLock) =>
-      item.withdrawRound &&
-      item.withdrawRound <= parseInt(data.currentRound[0].id, 10),
-  )
-
-  const LinkIcon = (
-    <Flex
-      sx={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 1000,
-        color: 'primary',
-        bg: 'surface',
-        width: 30,
-        height: 30,
-        mr: 2,
-        border: '1px solid',
-        borderColor: 'border',
-      }}
-    >
-      <Unlink />
-    </Flex>
-  )
 
   const pendingStake = Math.max(
     Utils.fromWei(data.delegator.bondedAmount),
@@ -236,85 +198,13 @@ export default () => {
               {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%
             </div>
           }
-        ></Card>
+        />
       </div>
-      {!!pendingStakeTransactions.length && (
-        <List
-          sx={{ mb: 6 }}
-          header={<Styled.h4>Pending Unstake Transactions</Styled.h4>}
-        >
-          {pendingStakeTransactions.map(lock => (
-            <ListItem key={lock.id} avatar={LinkIcon}>
-              <Flex
-                sx={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  Unstaking from{' '}
-                  {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
-                </div>
-                <Flex sx={{ alignItems: 'center' }}>
-                  {isMyAccount && (
-                    <>
-                      <Button
-                        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
-                      >
-                        Rebond
-                      </Button>
-                    </>
-                  )}
-                  <div sx={{ ml: 3 }}>
-                    {' '}
-                    -{abbreviateNumber(Utils.fromWei(lock.amount), 3)} LPT
-                  </div>
-                </Flex>
-              </Flex>
-            </ListItem>
-          ))}
-        </List>
-      )}
-      <List header={<Styled.h4>Available For Withdrawal</Styled.h4>}>
-        {!completedStakeTransactions.length && (
-          <div sx={{ fontSize: 1, mt: 2 }}>Nothing Here</div>
-        )}
-        {completedStakeTransactions.map(lock => (
-          <ListItem key={lock.id} avatar={LinkIcon}>
-            <Flex
-              sx={{
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                Unstaked from{' '}
-                {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
-              </div>
-
-              <Flex sx={{ alignItems: 'center' }}>
-                {isMyAccount && (
-                  <>
-                    <Button sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}>
-                      Rebond
-                    </Button>
-
-                    <Button sx={{ py: 1, variant: 'buttons.secondary' }}>
-                      Withdraw
-                    </Button>
-                  </>
-                )}
-                <div sx={{ ml: 3 }}>
-                  {' '}
-                  -{abbreviateNumber(Utils.fromWei(lock.amount), 3)} LPT
-                </div>
-              </Flex>
-            </Flex>
-          </ListItem>
-        ))}
-      </List>
+      <StakeTransactions
+        delegator={data.delegator}
+        currentRound={data.currentRound[0]}
+        isMyAccount={isMyAccount}
+      />
     </>
   )
 }

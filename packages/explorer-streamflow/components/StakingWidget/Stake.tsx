@@ -1,13 +1,13 @@
 /** @jsx jsx */
-import React, { useState } from 'react'
 import { jsx, Flex } from 'theme-ui'
+import React, { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 import Button from '../Button'
 import Modal from '../Modal'
-import StakeFlow from '../StakeFlow'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import StakingFlow from '../StakingFlow'
+import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 
@@ -85,13 +85,11 @@ export default ({ transcoder, amount, context }) => {
           title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          <StakeFlow action="stake" transcoder={transcoder} amount={amount} />
+          <StakingFlow action="stake" account={transcoder.id} amount={amount} />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-                <div sx={{ color: 'primary', mr: 1 }}>
-                  <CircularProgress size={16} color="inherit" />
-                </div>
+                <Spinner />
                 {mining && (
                   <div sx={{ color: 'text' }}>
                     Waiting for your transaction to be mined.

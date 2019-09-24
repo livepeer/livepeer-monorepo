@@ -8,7 +8,9 @@ import fetch from 'isomorphic-unfetch'
 import {
   introspectSchema,
   makeRemoteExecutableSchema,
-  mergeSchemas
+  mergeSchemas,
+  transformSchema,
+  FilterTypes
 } from 'graphql-tools'
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
@@ -130,6 +132,12 @@ async function createSchema() {
   const subgraphSchema = await createSubgraphServiceSchema()
   const threeBoxSchema = await create3BoxServiceSchema()
 
+  const transformedSchema = transformSchema(schema, [
+    new FilterTypes(type => {
+      return type.name != 'Account'
+    })
+  ])
+
   const linkTypeDefs = `
     extend type Profile {
       transcoder: Transcoder
@@ -143,11 +151,28 @@ async function createSchema() {
       pendingStake: String
       status: String
     }
+
+    type Account {
+      id: ID!
+      tokenBalance: String
+    }
+
+    extend type Query {
+      account(id: ID!): Account
+    }
   `
 
   const merged = mergeSchemas({
-    schemas: [schema, subgraphSchema, threeBoxSchema, linkTypeDefs],
+    schemas: [transformedSchema, subgraphSchema, threeBoxSchema, linkTypeDefs],
     resolvers: {
+      Query: {
+        account: async (account, _args, _context, _info) => {
+          return {
+            id: _args.id,
+            tokenBalance: await rpc.getTokenBalance(_args.id)
+          }
+        }
+      },
       Delegator: {
         pendingStake: {
           async resolve(delegator, _args, _context, _info) {
@@ -164,5 +189,6 @@ async function createSchema() {
       }
     }
   })
+
   return merged
 }
