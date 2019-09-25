@@ -3,16 +3,12 @@ import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
-import * as bodyParser from 'body-parser'
 import { LevelStore, PostgresStore } from './store'
 import { healthCheck } from './middleware'
 import logger from './logger'
-import schema from './schema'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import * as k8s from '@kubernetes/client-node'
-
-// console.log(bodyParser)
 
 export default async function makeApp(params) {
   const {
@@ -95,13 +91,22 @@ export default async function makeApp(params) {
 
   const close = async () => {
     process.off('SIGTERM', sigterm)
+    process.off('unhandledRejection', unhandledRejection)
     listener.close()
     await store.close()
   }
 
   // Handle SIGTERM gracefully. It's polite, and Kubernetes likes it.
   const sigterm = handleSigterm(close)
+
   process.on('SIGTERM', sigterm)
+
+  const unhandledRejection = err => {
+    logger.error('fatal, unhandled promise rejection: ', err)
+    err.stack && logger.error(err.stack)
+    sigterm()
+  }
+  process.on('unhandledRejection', unhandledRejection)
 
   // If we throw any errors with numerical statuses, use them.
   app.use((err, req, res, next) => {
@@ -122,12 +127,6 @@ export default async function makeApp(params) {
     store,
   }
 }
-
-process.on('unhandledRejection', err => {
-  logger.error('fatal, unhandled promise rejection: ', err)
-  err.stack && logger.error(err.stack)
-  // process.exit(1)
-})
 
 const handleSigterm = close => async () => {
   // Handle SIGTERM gracefully. It's polite, and Kubernetes likes it.

@@ -1,69 +1,6 @@
-// Todo: get this dynamically somehow? API endpoint on go-livepeer?
-export const PRESETS = [
-  {
-    Name: 'P720p60fps16x9',
-    Bitrate: '6000k',
-    Framerate: 60,
-    AspectRatio: '16:9',
-    Resolution: '1280x720',
-  },
-  {
-    Name: 'P720p30fps16x9',
-    Bitrate: '4000k',
-    Framerate: 30,
-    AspectRatio: '16:9',
-    Resolution: '1280x720',
-  },
-  {
-    Name: 'P720p30fps4x3',
-    Bitrate: '3500k',
-    Framerate: 30,
-    AspectRatio: '4:3',
-    Resolution: '960x720',
-  },
-  {
-    Name: 'P576p30fps16x9',
-    Bitrate: '1500k',
-    Framerate: 30,
-    AspectRatio: '16:9',
-    Resolution: '1024x576',
-  },
-  {
-    Name: 'P360p30fps16x9',
-    Bitrate: '1200k',
-    Framerate: 30,
-    AspectRatio: '16:9',
-    Resolution: '640x360',
-  },
-  {
-    Name: 'P360p30fps4x3',
-    Bitrate: '1000k',
-    Framerate: 30,
-    AspectRatio: '4:3',
-    Resolution: '480x360',
-  },
-  {
-    Name: 'P240p30fps16x9',
-    Bitrate: '600k',
-    Framerate: 30,
-    AspectRatio: '16:9',
-    Resolution: '426x240',
-  },
-  {
-    Name: 'P240p30fps4x3',
-    Bitrate: '600k',
-    Framerate: 30,
-    AspectRatio: '4:3',
-    Resolution: '320x240',
-  },
-  {
-    Name: 'P144p30fps16x9',
-    Bitrate: '400k',
-    Framerate: 30,
-    AspectRatio: '16:9',
-    Resolution: '256x144',
-  },
-]
+import { VIDEO_PROFILES } from '@livepeer/sdk'
+
+const PRESETS = Object.values(VIDEO_PROFILES)
 
 /**
  * Replace a string containing "${SourceStreamName}" with the appropriate stream name
@@ -117,13 +54,13 @@ export default stream => {
     let diff = Infinity
     let foundPreset = null
     for (const preset of PRESETS) {
-      const [livepeerWidth, livepeerHeight] = preset.Resolution.split('x').map(
-        x => parseInt(x),
-      )
+      const [livepeerWidth, livepeerHeight] = preset.resolution
+        .split('x')
+        .map(x => parseInt(x))
       const livepeerSize = livepeerWidth * livepeerHeight
       const thisDiff = Math.abs(livepeerSize - wowzaSize)
       if (thisDiff < diff) {
-        foundPreset = preset.Name
+        foundPreset = preset.name
         diff = thisDiff
       }
     }
