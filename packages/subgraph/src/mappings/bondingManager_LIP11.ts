@@ -12,7 +12,15 @@ import {
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
-import { Transcoder, Delegator, UnbondingLock } from '../types/schema'
+import {
+  Transcoder,
+  Delegator,
+  UnbondingLock,
+  BondTransaction,
+  UnbondTransaction,
+  WithdrawStakeTransaction,
+  RebondTransaction
+} from '../types/schema'
 
 import { makeUnbondingLockId } from './util'
 
@@ -103,6 +111,21 @@ export function bond(event: Bond): void {
   delegate.save()
   delegator.save()
   transcoder.save()
+
+  // Store transaction info
+  let bondTransaction = new BondTransaction(event.transaction.hash.toHex())
+  bondTransaction.blockNumber = event.block.number
+  bondTransaction.gasUsed = event.transaction.gasUsed
+  bondTransaction.gasPrice = event.transaction.gasPrice
+  bondTransaction.timestamp = event.block.timestamp
+  bondTransaction.from = event.transaction.from.toHex()
+  bondTransaction.to = event.transaction.to.toHex()
+  bondTransaction.round = currentRound.toString()
+  bondTransaction.newDelegate = transcoderAddress.toHex()
+  bondTransaction.oldDelegate = event.params.oldDelegate.toHex()
+  bondTransaction.delegator = delegatorAddress.toHex()
+  bondTransaction.additionalAmount = additionalAmount
+  bondTransaction.save()
 }
 
 // Handler for Unbond events
@@ -173,6 +196,22 @@ export function unbond(event: Unbond): void {
   transcoder.save()
   unbondingLock.save()
   delegator.save()
+
+  // Store transaction info
+  let unbondTransaction = new UnbondTransaction(event.transaction.hash.toHex())
+  unbondTransaction.blockNumber = event.block.number
+  unbondTransaction.gasUsed = event.transaction.gasUsed
+  unbondTransaction.gasPrice = event.transaction.gasPrice
+  unbondTransaction.timestamp = event.block.timestamp
+  unbondTransaction.from = event.transaction.from.toHex()
+  unbondTransaction.to = event.transaction.to.toHex()
+  unbondTransaction.round = currentRound.toString()
+  unbondTransaction.amount = amount
+  unbondTransaction.withdrawRound = unbondingLock.withdrawRound
+  unbondTransaction.unbondingLockId = unbondingLock.unbondingLockId
+  unbondTransaction.delegate = delegateAddress.toHex()
+  unbondTransaction.delegator = delegator.id
+  unbondTransaction.save()
 }
 
 // Handler for Rebond events
@@ -210,15 +249,48 @@ export function rebond(event: Rebond): void {
   transcoder.save()
   delegator.save()
   store.remove('UnbondingLock', uniqueUnbondingLockId)
+
+  // Store transaction info
+  let rebondTransaction = new RebondTransaction(event.transaction.hash.toHex())
+  rebondTransaction.blockNumber = event.block.number
+  rebondTransaction.gasUsed = event.transaction.gasUsed
+  rebondTransaction.gasPrice = event.transaction.gasPrice
+  rebondTransaction.timestamp = event.block.timestamp
+  rebondTransaction.from = event.transaction.from.toHex()
+  rebondTransaction.to = event.transaction.to.toHex()
+  rebondTransaction.round = currentRound.toString()
+  rebondTransaction.delegator = delegator.id
+  rebondTransaction.delegate = delegate.id
+  rebondTransaction.amount = amount
+  rebondTransaction.unbondingLockId = unbondingLockId.toI32()
+  rebondTransaction.save()
 }
 
 // Handler for WithdrawStake events
 export function withdrawStake(event: WithdrawStake): void {
   let delegatorAddress = event.params.delegator
   let unbondingLockId = event.params.unbondingLockId
+  let amount = event.params.amount
+  let currentRound = roundsManager.currentRound()
   let uniqueUnbondingLockId = makeUnbondingLockId(
     delegatorAddress,
     unbondingLockId
   )
   store.remove('UnbondingLock', uniqueUnbondingLockId)
+
+  // Store transaction info
+  let withdrawStakeTransaction = new WithdrawStakeTransaction(
+    event.transaction.hash.toHex()
+  )
+  withdrawStakeTransaction.blockNumber = event.block.number
+  withdrawStakeTransaction.gasUsed = event.transaction.gasUsed
+  withdrawStakeTransaction.gasPrice = event.transaction.gasPrice
+  withdrawStakeTransaction.timestamp = event.block.timestamp
+  withdrawStakeTransaction.from = event.transaction.from.toHex()
+  withdrawStakeTransaction.to = event.transaction.to.toHex()
+  withdrawStakeTransaction.round = currentRound.toString()
+  withdrawStakeTransaction.amount = amount
+  withdrawStakeTransaction.unbondingLockId = unbondingLockId.toI32()
+  withdrawStakeTransaction.delegator = delegatorAddress.toHex()
+  withdrawStakeTransaction.save()
 }

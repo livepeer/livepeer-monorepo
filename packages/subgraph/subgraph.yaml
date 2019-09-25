@@ -19,7 +19,15 @@ dataSources:
         - Transcoder
         - Pool
         - Delegator
-        - Round
+        - TranscoderUpdatedTransaction
+        - TranscoderResignedTransaction
+        - TranscoderEvictedTransaction
+        - TranscoderSlashedTransaction
+        - BondTransaction
+        - UnbondTransaction
+        - RewardTransaction
+        - ClaimEarningsTransaction
+        - WithdrawFeesTransaction
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -60,10 +68,10 @@ dataSources:
       file: ./src/mappings/bondingManager_LIP11.ts
       entities:
         - Transcoder
-        - Pool
         - Delegator
-        - Round
         - UnbondingLock
+        - BondTransaction
+        - UnbondTransaction
       abis:
         - name: BondingManager
           file: ./abis/BondingManager_LIP11.json
