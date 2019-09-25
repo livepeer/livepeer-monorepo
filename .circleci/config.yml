@@ -199,34 +199,26 @@ workflows:
       - build-test
 
       # Staging workflow for the apps
-      - hold-staging-apps-deploy:
-          type: approval
-          requires:
-            - build-test
       - build-apps-staging:
           requires:
-            - hold-staging-apps-deploy
+            - build-test
       - deploy-apps-staging:
           requires:
             - build-apps-staging
+          filters:
+            branches:
+              only: master
 
       # Production workflow for the apps
-      - hold-production-apps-deploy:
-          type: approval
+      - build-apps-production:
           requires:
             - build-test
           filters:
             branches:
-              only: master
-      - build-apps-production:
-          requires:
-            - hold-production-apps-deploy
-          filters:
-            branches:
-              only: master
+              only: latest
       - deploy-apps-production:
           requires:
             - build-apps-production
           filters:
             branches:
-              only: master
+              only: latest
