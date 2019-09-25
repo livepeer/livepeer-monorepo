@@ -1,0 +1,88 @@
+{
+  "name": "@livepeer/api",
+  "description": "Livepeer API node for controlling streams",
+  "version": "0.0.1-alpha-0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "src/index.js",
+  "bin": {
+    "livepeer-api": "dist/cli.js"
+  },
+  "scripts": {
+    "build:lambda": "parcel build --no-minify --bundle-node-modules -t node src/lambda.js",
+    "build": "npm run prepare",
+    "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && sleep 1 && kubectl logs -f --pod-running-timeout=30s $(kubectl get pods -o name -l app.kubernetes.io/name=livepeer-api-server)",
+    "docker:build": "docker build -t livepeerci/api:${DOCKER_TAG:-dev} .",
+    "docker:push": "docker push livepeerci/api:${DOCKER_TAG:-dev}",
+    "docker": "run-s docker:build docker:push",
+    "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
+    "postgres:stop": "docker rm -f postgres",
+    "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
+    "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
+    "prepare": "run-p \"prepare:**\"",
+    "deploy:prerelease": "gsutil rsync ./docs gs://docs.livepeer.live",
+    "start:live-server": "live-server --port=3005 docs",
+    "start:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
+    "start:server": "nodemon -w src -x node -r esm src/cli.js",
+    "start": "run-p \"start:**\"",
+    "test": "node run-tests.js",
+    "test:local": "jest src"
+  },
+  "dependencies": {
+    "@cloudflare/json-schema-walker": "^0.1.1",
+    "@kubernetes/client-node": "^0.10.2",
+    "ajv": "^6.10.0",
+    "any-base": "^1.1.0",
+    "aws-serverless-express": "^3.3.6",
+    "body-parser": "^1.18.3",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "express-async-errors": "^3.1.1",
+    "express-bearer-token": "^2.4.0",
+    "fs-extra": "^7.0.1",
+    "isomorphic-fetch": "^2.2.1",
+    "js-yaml": "^3.13.1",
+    "level": "^5.0.1",
+    "mkdirp": "^0.5.1",
+    "morgan": "^1.9.1",
+    "mustache": "^3.0.3",
+    "nodemon": "^1.19.0",
+    "pg": "^7.10.0",
+    "string-template": "^1.0.0",
+    "uuid": "^3.3.2",
+    "winston": "^3.2.1",
+    "yargs": "^13.2.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "esm": "^3.2.22",
+    "istanbul-api": "^2.1.6",
+    "istanbul-lib-coverage": "^2.0.5",
+    "jest": "24.7.1",
+    "live-server": "^1.2.1",
+    "livereload": "^0.7.0",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^14.0.0",
+    "parcel": "^1.12.3",
+    "redoc-cli": "^0.8.3"
+  },
+  "homepage": "https://livepeer.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livepeer/livepeerjs.git"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "browserslist": [
+    "node 10"
+  ],
+  "alias": {
+    "pg-native": "./src/empty.js",
+    "level": "./src/empty.js"
+  }
+}
