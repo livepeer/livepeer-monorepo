@@ -2,7 +2,6 @@ import { Address } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import { DistributeFees } from '../types/JobsManager/JobsManager'
-
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
