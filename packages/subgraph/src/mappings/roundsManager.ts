@@ -6,7 +6,12 @@ import { RoundsManager, NewRound } from '../types/RoundsManager/RoundsManager'
 import { BondingManager } from '../types/BondingManager_LIP11/BondingManager'
 
 // Import entity types generated from the GraphQL schema
-import { Transcoder, Pool, Round } from '../types/schema'
+import {
+  Transcoder,
+  Pool,
+  Round,
+  InitializeRoundTransaction
+} from '../types/schema'
 
 import { makePoolId } from './util'
 
@@ -48,7 +53,7 @@ export function newRound(event: NewRound): void {
       poolId = makePoolId(currentTranscoder, roundNumber)
       pool = new Pool(poolId)
       pool.round = roundNumber.toString()
-      pool.transcoder = currentTranscoder.toHex()
+      pool.delegate = currentTranscoder.toHex()
       pool.totalStake = transcoder.totalStake
       pool.rewardCut = transcoder.rewardCut
       pool.feeShare = transcoder.feeShare
@@ -74,4 +79,17 @@ export function newRound(event: NewRound): void {
 
   // Apply store updates
   round.save()
+
+  // Store transaction info
+  let initializeRoundTransaction = new InitializeRoundTransaction(
+    event.transaction.hash.toHex()
+  )
+  initializeRoundTransaction.blockNumber = event.block.number
+  initializeRoundTransaction.gasUsed = event.transaction.gasUsed
+  initializeRoundTransaction.gasPrice = event.transaction.gasPrice
+  initializeRoundTransaction.timestamp = event.block.timestamp
+  initializeRoundTransaction.from = event.transaction.from.toHex()
+  initializeRoundTransaction.to = event.transaction.to.toHex()
+  initializeRoundTransaction.round = roundNumber.toString()
+  initializeRoundTransaction.save()
 }

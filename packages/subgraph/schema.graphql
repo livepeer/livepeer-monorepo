@@ -27,7 +27,7 @@ type Transcoder @entity {
   "The accrued fees claimed by the transcoder (before distribution to delegators)"
   accruedFees: BigInt
   "The pools associated with the transcoder"
-  pools: [Pool!] @derivedFrom(field: "transcoder")
+  pools: [Pool!] @derivedFrom(field: "delegate")
   "The delegators bonded to the transcoder"
   delegators: [Delegator!]
 }
@@ -41,7 +41,7 @@ type Pool @entity {
   "The round associated with the pool"
   round: Round
   "The transcoder associated with the pool"
-  transcoder: Transcoder
+  delegate: Transcoder
   "The fees collected in the pool"
   fees: BigInt
   "The total reward tokens collected in the pool"
@@ -125,4 +125,197 @@ type UnbondingLock @entity {
   amount: BigInt!
   "Round number when the unbonding amount will be available for withdrawal"
   withdrawRound: Int
+}
+
+interface Transaction {
+  id: ID! # tx hash
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+}
+
+type BondTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  additionalAmount: BigInt
+  newDelegate: Transcoder
+  oldDelegate: Transcoder
+  delegator: Delegator
+}
+
+type UnbondTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  amount: BigInt
+  withdrawRound: Int
+  unbondingLockId: Int
+  delegate: Transcoder
+  delegator: Delegator
+}
+
+type RewardTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  rewardTokens: BigInt
+  delegate: Transcoder
+}
+
+type ClaimEarningsTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  delegate: Transcoder
+  startRound: Round
+  endRound: Round
+  rewardTokens: BigInt
+  fees: BigInt
+}
+
+type RebondTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  delegate: Transcoder
+  amount: BigInt
+  unbondingLockId: Int
+}
+
+type TranscoderUpdatedTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+  pendingRewardCut: BigInt
+  pendingFeeShare: BigInt
+  registered: Boolean
+}
+
+type TranscoderSlashedTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+  finder: Bytes
+  penalty: BigInt
+  finderReward: BigInt
+}
+
+type TranscoderResignedTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+}
+
+type TranscoderEvictedTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+}
+
+type WithdrawStakeTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  unbondingLockId: Int
+  amount: BigInt
+}
+
+type WithdrawFeesTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  amount: BigInt
+}
+
+type ApprovalTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  amount: BigInt
+}
+
+type InitializeRoundTransaction implements Transaction @entity {
+  id: ID!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  amount: BigInt
 }
