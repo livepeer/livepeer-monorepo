@@ -1,5 +1,5 @@
 specVersion: 0.0.2
-description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, staking rounds, pools, and shares.
+description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, earning pools, and staking rounds.
 repository: https://github.com/livepeer/livepeerjs/tree/canary/packages/subgraph
 schema:
   file: ./schema.graphql
@@ -19,8 +19,15 @@ dataSources:
         - Transcoder
         - Pool
         - Delegator
-        - Share
-        - Round
+        - TranscoderUpdatedEvent
+        - TranscoderResignedEvent
+        - TranscoderEvictedEvent
+        - TranscoderSlashedEvent
+        - BondEvent
+        - UnbondEvent
+        - RewardEvent
+        - ClaimEarningsEvent
+        - WithdrawFeesEvent
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -61,11 +68,12 @@ dataSources:
       file: ./src/mappings/bondingManager_LIP11.ts
       entities:
         - Transcoder
-        - Pool
         - Delegator
-        - Share
-        - Round
         - UnbondingLock
+        - BondEvent
+        - UnbondEvent
+        - RebondEvent
+        - WithdrawStakeEvent
       abis:
         - name: BondingManager
           file: ./abis/BondingManager_LIP11.json
@@ -104,32 +112,6 @@ dataSources:
         - event: NewRound(uint256)
           handler: newRound
   - kind: ethereum/contract
-    name: JobsManager
-    network: mainnet
-    source:
-      address: "bf07ff45f14c9ff0571b9fbdc7e2b62d29931224"
-      abi: JobsManager
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.3
-      language: wasm/assemblyscript
-      file: ./src/mappings/jobsManager.ts
-      entities:
-        - Transcoder
-        - Share
-        - Pool
-        - Delegator
-      abis:
-        - name: JobsManager
-          file: ./abis/JobsManager.json
-        - name: BondingManager
-          file: ./abis/BondingManager_LIP11.json
-        - name: RoundsManager
-          file: ./abis/RoundsManager.json
-      eventHandlers:
-        - event: DistributeFees(indexed address,indexed uint256,indexed uint256,uint256)
-          handler: distributeFees
-  - kind: ethereum/contract
     name: LivepeerToken
     network: mainnet
     source:
@@ -142,9 +124,12 @@ dataSources:
       file: ./src/mappings/livepeerToken.ts
       entities:
         - Delegator
+        - ApprovalEvent
       abis:
         - name: LivepeerToken
           file: ./abis/LivepeerToken.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: approval
