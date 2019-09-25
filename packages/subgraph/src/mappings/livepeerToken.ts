@@ -1,7 +1,7 @@
 import { Address } from '@graphprotocol/graph-ts'
 import { LivepeerToken, Approval } from '../types/LivepeerToken/LivepeerToken'
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
-import { Delegator, ApprovalTransaction } from '../types/schema'
+import { Delegator, ApprovalEvent } from '../types/schema'
 
 // Bind RoundsManager contract
 let roundsManager = RoundsManager.bind(
@@ -26,17 +26,15 @@ export function approval(event: Approval): void {
   delegator.save()
 
   // Store transaction info
-  let approvalTransaction = new ApprovalTransaction(
-    event.transaction.hash.toHex()
-  )
-  approvalTransaction.blockNumber = event.block.number
-  approvalTransaction.gasUsed = event.transaction.gasUsed
-  approvalTransaction.gasPrice = event.transaction.gasPrice
-  approvalTransaction.timestamp = event.block.timestamp
-  approvalTransaction.from = event.transaction.from.toHex()
-  approvalTransaction.to = event.transaction.to.toHex()
-  approvalTransaction.round = currentRound.toString()
-  approvalTransaction.amount = allowance
-  approvalTransaction.delegator = delegator.id
-  approvalTransaction.save()
+  let approvalEvent = new ApprovalEvent(event.transaction.hash.toHex())
+  approvalEvent.blockNumber = event.block.number
+  approvalEvent.gasUsed = event.transaction.gasUsed
+  approvalEvent.gasPrice = event.transaction.gasPrice
+  approvalEvent.timestamp = event.block.timestamp
+  approvalEvent.from = event.transaction.from.toHex()
+  approvalEvent.to = event.transaction.to.toHex()
+  approvalEvent.round = currentRound.toString()
+  approvalEvent.amount = allowance
+  approvalEvent.delegator = delegator.id
+  approvalEvent.save()
 }
