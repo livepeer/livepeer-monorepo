@@ -12,7 +12,7 @@
     "build:lambda": "parcel build --no-minify --bundle-node-modules -t node src/lambda.js",
     "build": "npm run prepare",
     "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && sleep 1 && kubectl logs -f --pod-running-timeout=30s $(kubectl get pods -o name -l app.kubernetes.io/name=livepeer-api-server)",
-    "docker:build": "docker build -t livepeerci/api:${DOCKER_TAG:-dev} .",
+    "docker:build": "docker pull livepeerci/api:master && docker build --cache-from=livepeerci/api:master -t livepeerci/api:${DOCKER_TAG:-dev} . && docker run livepeerci/api:${DOCKER_TAG:-dev} --help",
     "docker:push": "docker push livepeerci/api:${DOCKER_TAG:-dev}",
     "docker": "run-s docker:build docker:push",
     "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
@@ -29,6 +29,7 @@
     "test:local": "jest src"
   },
   "dependencies": {
+    "@livepeer/sdk": "1.0.0-alpha.6",
     "@cloudflare/json-schema-walker": "^0.1.1",
     "@kubernetes/client-node": "^0.10.2",
     "ajv": "^6.10.0",
