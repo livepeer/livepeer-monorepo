@@ -2,6 +2,16 @@
 import { Styled, jsx } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Chip from '../../components/Chip'
+import { Transcoder, Delegator } from '../../@types'
+
+interface Props {
+  account: string
+  role: string
+  hasLivepeerToken: boolean
+  delegator: Delegator
+  transcoder: Transcoder
+  isMyAccount: boolean
+}
 
 export default ({
   account,
@@ -9,9 +19,9 @@ export default ({
   hasLivepeerToken,
   delegator,
   transcoder,
-  isConnected = false,
+  isMyAccount = false,
   ...props
-}) => {
+}: Props) => {
   const isLivepeerAware =
     hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
 
@@ -52,7 +62,7 @@ export default ({
         )}
       </div>
       <Styled.h1 sx={{ mb: 2 }}>
-        {isConnected
+        {isMyAccount
           ? 'My Account'
           : account.replace(account.slice(7, 37), '…')}
       </Styled.h1>

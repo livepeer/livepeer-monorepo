@@ -1,3 +1,8 @@
+export interface Account {
+  id: string
+  tokenBalance: string
+}
+
 export interface Transcoder {
   id: string
   active?: boolean

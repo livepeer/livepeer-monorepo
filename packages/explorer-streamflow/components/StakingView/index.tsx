@@ -22,6 +22,7 @@ const GET_DATA = gql`
       unbonded
       delegate {
         id
+        totalStake
       }
       unbondingLocks {
         id
@@ -84,6 +85,7 @@ export default () => {
     Utils.fromWei(data.delegator.bondedAmount),
     Utils.fromWei(data.delegator.pendingStake),
   )
+  const totalStake = Utils.fromWei(data.delegator.delegate.totalStake)
   const unbonded = data.delegator.unbonded
     ? Utils.fromWei(data.delegator.unbonded)
     : 0
@@ -185,7 +187,7 @@ export default () => {
         </Card>
         <Card
           sx={{ flex: 1, mb: 2 }}
-          title="Equity"
+          title="Stake Equity"
           subtitle={
             <div
               sx={{
@@ -198,7 +200,47 @@ export default () => {
               {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%
             </div>
           }
-        />
+        >
+          <div sx={{ mt: 3 }}>
+            <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
+              <span sx={{ color: 'muted' }}>
+                Orchestrator (
+                {((totalStake / totalBondedToken) * 100).toPrecision(2)}
+                %)
+              </span>
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(totalStake, 3)}
+              </span>
+            </Flex>
+            <Flex
+              sx={{
+                fontSize: 1,
+                mb: 1,
+                justifyContent: 'space-between',
+              }}
+            >
+              <span sx={{ color: 'muted' }}>
+                Tokenholder (
+                {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
+              </span>
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(pendingStake, 3)}
+              </span>
+            </Flex>
+            <Flex
+              sx={{
+                fontSize: 1,
+                mb: 1,
+                justifyContent: 'space-between',
+              }}
+            >
+              <span sx={{ color: 'muted' }}>Network</span>
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(totalBondedToken, 3)}
+              </span>
+            </Flex>
+          </div>
+        </Card>
       </div>
       <StakeTransactions
         delegator={data.delegator}

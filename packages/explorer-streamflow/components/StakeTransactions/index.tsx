@@ -66,7 +66,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                   {isMyAccount && <Restake lock={lock} />}
                   <div sx={{ ml: 3 }}>
                     {' '}
-                    -{abbreviateNumber(Utils.fromWei(lock.amount), 3)} LPT
+                    -{abbreviateNumber(Utils.fromWei(lock.amount), 4)} LPT
                   </div>
                 </Flex>
               </Flex>

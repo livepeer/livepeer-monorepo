@@ -1,6 +1,7 @@
 {
   "name": "@livepeer/explorer-streamflow",
-  "version": "2.0.0-alpha.1",
+  "version": "0.0.1-alpha-0",
+  "license": "MIT",
   "scripts": {
     "dev": "run-p dev:babel dev:next",
     "dev:babel": "babel --ignore node_modules --out-dir dist -x '.tsx' --watch .",
@@ -39,12 +40,11 @@
     "react-docgen-typescript-loader": "^3.1.1",
     "typescript": "^3.5.3"
   },
-  "license": "ISC",
   "dependencies": {
     "@adamsoffer/livepeer-graphql-sdk": "^1.0.0-alpha.7",
     "@adamsoffer/livepeer-sdk": "^1.0.0-alpha.7",
-    "@apollo/react-hooks": "^3.0.1",
-    "@apollo/react-ssr": "^3.0.1",
+    "@apollo/react-hooks": "^3.1.1",
+    "@apollo/react-ssr": "^3.1.1",
     "@babel/core": "^7.5.5",
     "@emotion/core": "^10.0.17",
     "@emotion/styled": "^10.0.11",

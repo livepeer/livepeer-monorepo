@@ -10,7 +10,7 @@ export const abbreviateNumber = (value, precision = 3) => {
   newValue = Number.parseFloat(newValue).toPrecision(precision)
 
   newValue += suffixes[suffixNum]
-  return newValue
+  return parseFloat(newValue)
 }
 
 export const numberWithCommas = (x) => {

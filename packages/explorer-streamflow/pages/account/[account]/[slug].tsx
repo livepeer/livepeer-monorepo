@@ -86,7 +86,7 @@ export default withApollo(() => {
   const transcoder: Transcoder = data.transcoder
   const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
-  const isConnected: boolean = context.account == account
+  const isMyAccount: boolean = context.account == account
   const isOrchestrator: boolean = data.transcoder && data.transcoder.id
   const isStaked = delegator && delegator.delegate
   const hasLivepeerToken = data.account.tokenBalance > 0
@@ -119,7 +119,7 @@ export default withApollo(() => {
             flexDirection: 'column',
             pr: 6,
             width:
-              role == 'Orchestrator' || (isConnected && isStaked)
+              role == 'Orchestrator' || (isMyAccount && isStaked)
                 ? '70%'
                 : '100%',
           }}
@@ -130,7 +130,7 @@ export default withApollo(() => {
             transcoder={transcoder}
             hasLivepeerToken={hasLivepeerToken}
             role={role}
-            isConnected={isConnected}
+            isMyAccount={isMyAccount}
             sx={{ mb: 4 }}
           />
           <Tabs sx={{ mb: 4 }} tabs={tabs} />
@@ -138,7 +138,7 @@ export default withApollo(() => {
           {slug == 'tokenholders' && <TokenholdersView />}
           {slug == 'staking' && <StakingView />}
         </Flex>
-        {(role == 'Orchestrator' || (isConnected && isStaked)) && (
+        {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
           <Flex
             sx={{
               position: 'sticky',
