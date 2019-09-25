@@ -201,7 +201,7 @@ workflows:
       # Staging workflow for the apps
       - build-apps-staging:
           requires:
-            - hold-staging-apps-deploy
+            - build-test
       - deploy-apps-staging:
           requires:
             - build-apps-staging
