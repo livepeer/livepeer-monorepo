@@ -1,0 +1,702 @@
+{
+  "id": "de7818e7-610a-4057-8f6f-b785dc1e6f88",
+  "kind": "stream",
+  "name": "test_stream",
+  "wowza": {
+    "transcoderAppConfig": {
+      "version": "1564614763000",
+      "licensed": true,
+      "licenses": -1,
+      "available": true,
+      "templates": {
+        "templates": [
+          {
+            "id": "transcode-h265-divx",
+            "href": "/v2/servers/_defaultServer_/vhosts/_defaultVHost_/applications/live/transcoder/templates/transcode-h265-divx"
+          },
+          {
+            "id": "audioonly",
+            "href": "/v2/servers/_defaultServer_/vhosts/_defaultVHost_/applications/live/transcoder/templates/audioonly"
+          },
+          {
+            "id": "transrate",
+            "href": "/v2/servers/_defaultServer_/vhosts/_defaultVHost_/applications/live/transcoder/templates/transrate"
+          },
+          {
+            "id": "transcode",
+            "href": "/v2/servers/_defaultServer_/vhosts/_defaultVHost_/applications/live/transcoder/templates/transcode"
+          }
+        ],
+        "vhostName": "_defaultVHost_"
+      },
+      "profileDir": "${com.wowza.wms.context.VHostConfigHome}/transcoder/profiles",
+      "templateDir": "${com.wowza.wms.context.VHostConfigHome}/transcoder/templates",
+      "licensesInUse": 0,
+      "templatesInUse": "${SourceStreamName}.xml,transrate.xml",
+      "createTemplateDir": false,
+      "liveStreamTranscoder": "transcoder"
+    },
+    "transcoderTemplateAppConfig": {
+      "audioonly": {
+        "name": "audioonly",
+        "encodes": [
+          {
+            "name": "aac",
+            "gpuid": 0,
+            "width": 0,
+            "enable": true,
+            "height": 0,
+            "Overlays": [],
+            "interval": 0,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_aac",
+            "videoCodec": "PassThru",
+            "audioBitrate": "48000",
+            "followSource": false,
+            "videoBitrate": "${SourceVideoBitrate}"
+          }
+        ],
+        "version": "1541749568000",
+        "overlays": [],
+        "deinterlace": false,
+        "description": "Default audioonly.xml file",
+        "streamNameGroups": []
+      },
+      "transcode": {
+        "name": "transcode",
+        "encodes": [
+          {
+            "name": "720p",
+            "gpuid": -1,
+            "width": 1280,
+            "enable": false,
+            "height": 720,
+            "fitMode": "fit-height",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_720p",
+            "videoCodec": "H.264",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "1300000",
+            "implementation": "default"
+          },
+          {
+            "name": "360p",
+            "gpuid": -1,
+            "width": 640,
+            "enable": true,
+            "height": 360,
+            "fitMode": "fit-height",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_360p",
+            "videoCodec": "H.264",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "850000",
+            "implementation": "default"
+          },
+          {
+            "name": "240p",
+            "gpuid": -1,
+            "width": 360,
+            "enable": false,
+            "height": 240,
+            "fitMode": "fit-height",
+            "profile": "baseline",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_240p",
+            "videoCodec": "H.264",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "350000",
+            "implementation": "default"
+          },
+          {
+            "name": "160p",
+            "gpuid": -1,
+            "width": 284,
+            "enable": true,
+            "height": 160,
+            "fitMode": "fit-height",
+            "profile": "baseline",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_160p",
+            "videoCodec": "H.264",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "200000",
+            "implementation": "default"
+          },
+          {
+            "name": "h263",
+            "gpuid": -1,
+            "width": 176,
+            "enable": false,
+            "height": 144,
+            "fitMode": "letterbox",
+            "profile": "baseline",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_h263",
+            "videoCodec": "H.263",
+            "audioBitrate": "64000",
+            "followSource": false,
+            "videoBitrate": "150000",
+            "implementation": "default"
+          }
+        ],
+        "version": "1541749568000",
+        "overlays": [
+          {
+            "x": 4,
+            "y": 4,
+            "align": "left,top",
+            "index": 0,
+            "width": "${ImageWidth}",
+            "enable": false,
+            "height": "${ImageHeight}",
+            "opacity": 100,
+            "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+            "overlayName": "WowzaLogo",
+            "checkForUpdates": false
+          }
+        ],
+        "deinterlace": false,
+        "description": "Default transcode.xml file",
+        "implementation": "default",
+        "streamNameGroups": [
+          {
+            "name": "all",
+            "Members": [
+              {
+                "encodeName": "720p",
+                "memberName": "720p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "360p",
+                "memberName": "360p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "240p",
+                "memberName": "240p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "160p",
+                "memberName": "160p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              }
+            ],
+            "streamName": "${SourceStreamName}_all"
+          },
+          {
+            "name": "mobile",
+            "Members": [
+              {
+                "encodeName": "240p",
+                "memberName": "240p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "160p",
+                "memberName": "160p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              }
+            ],
+            "streamName": "${SourceStreamName}_mobile"
+          }
+        ]
+      },
+      "transrate": {
+        "name": "transrate",
+        "encodes": [
+          {
+            "name": "source",
+            "gpuid": 0,
+            "width": 0,
+            "enable": true,
+            "height": 0,
+            "Overlays": [],
+            "interval": 0,
+            "audioCodec": "PassThru",
+            "streamName": "mp4:${SourceStreamName}_source",
+            "videoCodec": "PassThru",
+            "audioBitrate": "${SourceAudioBitrate}",
+            "followSource": false,
+            "videoBitrate": "${SourceVideoBitrate}"
+          },
+          {
+            "name": "720p",
+            "gpuid": -1,
+            "width": 1280,
+            "enable": false,
+            "height": 720,
+            "fitMode": "fit-height",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "PassThru",
+            "streamName": "mp4:${SourceStreamName}_720p",
+            "videoCodec": "H.264",
+            "audioBitrate": "${SourceAudioBitrate}",
+            "followSource": true,
+            "videoBitrate": "1300000",
+            "implementation": "default"
+          },
+          {
+            "name": "360p",
+            "gpuid": -1,
+            "width": 640,
+            "enable": true,
+            "height": 360,
+            "fitMode": "fit-height",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "PassThru",
+            "streamName": "mp4:${SourceStreamName}_360p",
+            "videoCodec": "H.264",
+            "audioBitrate": "${SourceAudioBitrate}",
+            "followSource": true,
+            "videoBitrate": "850000",
+            "implementation": "default"
+          },
+          {
+            "name": "240p",
+            "gpuid": -1,
+            "width": 360,
+            "enable": false,
+            "height": 240,
+            "fitMode": "fit-height",
+            "profile": "baseline",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "PassThru",
+            "streamName": "mp4:${SourceStreamName}_240p",
+            "videoCodec": "H.264",
+            "audioBitrate": "${SourceAudioBitrate}",
+            "followSource": true,
+            "videoBitrate": "350000",
+            "implementation": "default"
+          },
+          {
+            "name": "160p",
+            "gpuid": -1,
+            "width": 284,
+            "enable": true,
+            "height": 160,
+            "fitMode": "fit-height",
+            "profile": "baseline",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "PassThru",
+            "streamName": "mp4:${SourceStreamName}_160p",
+            "videoCodec": "H.264",
+            "audioBitrate": "${SourceAudioBitrate}",
+            "followSource": true,
+            "videoBitrate": "200000",
+            "implementation": "default"
+          },
+          {
+            "name": "h263",
+            "gpuid": -1,
+            "width": 176,
+            "enable": false,
+            "height": 144,
+            "fitMode": "letterbox",
+            "profile": "baseline",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "PassThru",
+            "streamName": "mp4:${SourceStreamName}_h263",
+            "videoCodec": "H.263",
+            "audioBitrate": "${SourceAudioBitrate}",
+            "followSource": false,
+            "videoBitrate": "150000",
+            "implementation": "default"
+          }
+        ],
+        "version": "1541749568000",
+        "overlays": [
+          {
+            "x": 4,
+            "y": 4,
+            "align": "left,top",
+            "index": 0,
+            "width": "${ImageWidth}",
+            "enable": false,
+            "height": "${ImageHeight}",
+            "opacity": 100,
+            "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+            "overlayName": "WowzaLogo",
+            "checkForUpdates": false
+          }
+        ],
+        "deinterlace": false,
+        "description": "Default transrate.xml file",
+        "implementation": "default",
+        "streamNameGroups": [
+          {
+            "name": "all",
+            "Members": [
+              {
+                "encodeName": "source",
+                "memberName": "source",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "720p",
+                "memberName": "720p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "360p",
+                "memberName": "360p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "240p",
+                "memberName": "240p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "160p",
+                "memberName": "160p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              }
+            ],
+            "streamName": "${SourceStreamName}_all"
+          },
+          {
+            "name": "mobile",
+            "Members": [
+              {
+                "encodeName": "240p",
+                "memberName": "240p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "160p",
+                "memberName": "160p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              }
+            ],
+            "streamName": "${SourceStreamName}_mobile"
+          }
+        ]
+      },
+      "transcode-h265-divx": {
+        "name": "transcode-h265-divx",
+        "encodes": [
+          {
+            "name": "4k",
+            "gpuid": -1,
+            "width": 4096,
+            "enable": false,
+            "height": 2160,
+            "fitMode": "letterbox",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_4k",
+            "videoCodec": "H.265",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "12000000",
+            "implementation": "default"
+          },
+          {
+            "name": "1080p",
+            "gpuid": -1,
+            "width": 1920,
+            "enable": false,
+            "height": 1080,
+            "fitMode": "letterbox",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_1080p",
+            "videoCodec": "H.265",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "8000000",
+            "implementation": "default"
+          },
+          {
+            "name": "720p",
+            "gpuid": -1,
+            "width": 1280,
+            "enable": true,
+            "height": 720,
+            "fitMode": "letterbox",
+            "profile": "main",
+            "Overlays": [
+              {
+                "x": 4,
+                "y": 4,
+                "align": "left,top",
+                "index": 0,
+                "width": "${ImageWidth}",
+                "enable": false,
+                "height": "${ImageHeight}",
+                "opacity": 100,
+                "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+                "overlayName": "WowzaLogo",
+                "checkForUpdates": false
+              }
+            ],
+            "interval": 60,
+            "audioCodec": "AAC",
+            "streamName": "mp4:${SourceStreamName}_720p",
+            "videoCodec": "H.265",
+            "audioBitrate": "96000",
+            "followSource": false,
+            "videoBitrate": "5000000",
+            "implementation": "default"
+          }
+        ],
+        "version": "1541749568000",
+        "overlays": [
+          {
+            "x": 4,
+            "y": 4,
+            "align": "left,top",
+            "index": 0,
+            "width": "${ImageWidth}",
+            "enable": false,
+            "height": "${ImageHeight}",
+            "opacity": 100,
+            "imagePath": "${com.wowza.wms.context.VHostConfigHome}/content/wowzalogo.png",
+            "overlayName": "WowzaLogo",
+            "checkForUpdates": false
+          }
+        ],
+        "deinterlace": false,
+        "description": "Default H.265 / DivX Transcode.xml file",
+        "implementation": "default",
+        "streamNameGroups": [
+          {
+            "name": "all",
+            "Members": [
+              {
+                "encodeName": "4k",
+                "memberName": "4k",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "1080p",
+                "memberName": "1080p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              },
+              {
+                "encodeName": "720p",
+                "memberName": "720p",
+                "wowzaAudioOnly": false,
+                "wowzaVideoOnly": false
+              }
+            ],
+            "streamName": "${SourceStreamName}_all"
+          }
+        ]
+      }
+    }
+  }
+}

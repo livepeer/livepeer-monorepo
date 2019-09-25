@@ -1,0 +1,4 @@
+data
+src/lambda.config.js
+docs
+coverage*
