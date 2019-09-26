@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { Styled, jsx } from 'theme-ui'
+import { jsx } from 'theme-ui'
 
 export default ({ variant = 'primary', size = 'normal', ...props }) => (
-  <Styled.div
+  <div
     {...props}
     sx={{
       appearance: 'none',
