@@ -17,7 +17,7 @@
     "react-feather": "^1.0.7",
     "react-responsive-modal": "^3.0.1",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "^3.0.0",
+    "react-scripts": "^3.1.2",
     "recompose": "^0.30.0",
     "rmwc": "1.6.2",
     "styled-components": "4.2.0"
