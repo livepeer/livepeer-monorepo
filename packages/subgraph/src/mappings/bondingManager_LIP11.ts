@@ -113,19 +113,19 @@ export function bond(event: Bond): void {
   transcoder.save()
 
   // Store transaction info
-  let bondTransaction = new BondEvent(event.transaction.hash.toHex())
-  bondTransaction.blockNumber = event.block.number
-  bondTransaction.gasUsed = event.transaction.gasUsed
-  bondTransaction.gasPrice = event.transaction.gasPrice
-  bondTransaction.timestamp = event.block.timestamp
-  bondTransaction.from = event.transaction.from.toHex()
-  bondTransaction.to = event.transaction.to.toHex()
-  bondTransaction.round = currentRound.toString()
-  bondTransaction.newDelegate = transcoderAddress.toHex()
-  bondTransaction.oldDelegate = event.params.oldDelegate.toHex()
-  bondTransaction.delegator = delegatorAddress.toHex()
-  bondTransaction.additionalAmount = additionalAmount
-  bondTransaction.save()
+  let bondEvent = new BondEvent(event.transaction.hash.toHex())
+  bondEvent.blockNumber = event.block.number
+  bondEvent.gasUsed = event.transaction.gasUsed
+  bondEvent.gasPrice = event.transaction.gasPrice
+  bondEvent.timestamp = event.block.timestamp
+  bondEvent.from = event.transaction.from.toHex()
+  bondEvent.to = event.transaction.to.toHex()
+  bondEvent.round = currentRound.toString()
+  bondEvent.newDelegate = transcoderAddress.toHex()
+  bondEvent.oldDelegate = event.params.oldDelegate.toHex()
+  bondEvent.delegator = delegatorAddress.toHex()
+  bondEvent.additionalAmount = additionalAmount
+  bondEvent.save()
 }
 
 // Handler for Unbond events
