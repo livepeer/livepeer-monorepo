@@ -152,6 +152,8 @@ dataSources:
       abis:
         - name: LivepeerToken
           file: ./abis/LivepeerToken.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: approval

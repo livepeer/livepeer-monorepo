@@ -21,8 +21,6 @@ import {
   Delegator,
   Pool,
   TranscoderUpdatedEvent,
-  TranscoderResignedEvent,
-  TranscoderEvictedEvent,
   TranscoderSlashedEvent,
   BondEvent,
   UnbondEvent,
@@ -94,7 +92,6 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
 export function transcoderResigned(event: TranscoderResigned): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
-  let currentRound = roundsManager.currentRound()
 
   // Update transcoder
   transcoder.active = false
@@ -102,27 +99,12 @@ export function transcoderResigned(event: TranscoderResigned): void {
 
   // Apply store updates
   transcoder.save()
-
-  // Store transaction info
-  let transcoderResignedEvent = new TranscoderResignedEvent(
-    event.transaction.hash.toHex()
-  )
-  transcoderResignedEvent.blockNumber = event.block.number
-  transcoderResignedEvent.gasUsed = event.transaction.gasUsed
-  transcoderResignedEvent.gasPrice = event.transaction.gasPrice
-  transcoderResignedEvent.timestamp = event.block.timestamp
-  transcoderResignedEvent.from = event.transaction.from.toHex()
-  transcoderResignedEvent.to = event.transaction.to.toHex()
-  transcoderResignedEvent.round = currentRound.toString()
-  transcoderResignedEvent.delegate = transcoderAddress.toHex()
-  transcoderResignedEvent.save()
 }
 
 // Handler for TranscoderEvicted events
 export function transcoderEvicted(event: TranscoderEvicted): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
-  let currentRound = roundsManager.currentRound()
 
   // Update transcoder
   transcoder.active = false
@@ -130,21 +112,6 @@ export function transcoderEvicted(event: TranscoderEvicted): void {
 
   // Apply store updates
   transcoder.save()
-
-  // Store transaction info
-  let transcoderEvictedEvent = new TranscoderEvictedEvent(
-    event.transaction.hash.toHex()
-  )
-
-  transcoderEvictedEvent.blockNumber = event.block.number
-  transcoderEvictedEvent.gasUsed = event.transaction.gasUsed
-  transcoderEvictedEvent.gasPrice = event.transaction.gasPrice
-  transcoderEvictedEvent.timestamp = event.block.timestamp
-  transcoderEvictedEvent.from = event.transaction.from.toHex()
-  transcoderEvictedEvent.to = event.transaction.to.toHex()
-  transcoderEvictedEvent.round = currentRound.toString()
-  transcoderEvictedEvent.delegate = transcoderAddress.toHex()
-  transcoderEvictedEvent.save()
 }
 
 // Handler for TranscoderSlashed events
