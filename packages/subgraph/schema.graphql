@@ -243,30 +243,6 @@ type TranscoderSlashedEvent implements Transaction @entity {
   finderReward: BigInt
 }
 
-type TranscoderResignedEvent implements Transaction @entity {
-  id: ID!
-  blockNumber: BigInt!
-  gasUsed: BigInt!
-  gasPrice: BigInt!
-  timestamp: BigInt
-  from: String
-  to: String
-  round: Round
-  delegate: Transcoder
-}
-
-type TranscoderEvictedEvent implements Transaction @entity {
-  id: ID!
-  blockNumber: BigInt!
-  gasUsed: BigInt!
-  gasPrice: BigInt!
-  timestamp: BigInt
-  from: String
-  to: String
-  round: Round
-  delegate: Transcoder
-}
-
 type WithdrawStakeEvent implements Transaction @entity {
   id: ID!
   blockNumber: BigInt!
