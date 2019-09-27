@@ -129,6 +129,7 @@ type UnbondingLock @entity {
 
 interface Transaction {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -139,6 +140,7 @@ interface Transaction {
 
 type BondEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -154,6 +156,7 @@ type BondEvent implements Transaction @entity {
 
 type UnbondEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -170,6 +173,7 @@ type UnbondEvent implements Transaction @entity {
 
 type RewardEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -183,6 +187,7 @@ type RewardEvent implements Transaction @entity {
 
 type ClaimEarningsEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -200,6 +205,7 @@ type ClaimEarningsEvent implements Transaction @entity {
 
 type RebondEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -215,6 +221,7 @@ type RebondEvent implements Transaction @entity {
 
 type TranscoderUpdatedEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -230,6 +237,7 @@ type TranscoderUpdatedEvent implements Transaction @entity {
 
 type TranscoderSlashedEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -243,8 +251,35 @@ type TranscoderSlashedEvent implements Transaction @entity {
   finderReward: BigInt
 }
 
+type TranscoderResignedEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+}
+
+type TranscoderEvictedEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+}
+
 type WithdrawStakeEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -259,6 +294,7 @@ type WithdrawStakeEvent implements Transaction @entity {
 
 type WithdrawFeesEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -272,6 +308,7 @@ type WithdrawFeesEvent implements Transaction @entity {
 
 type ApprovalEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!
@@ -285,6 +322,7 @@ type ApprovalEvent implements Transaction @entity {
 
 type InitializeRoundEvent implements Transaction @entity {
   id: ID!
+  hash: String
   blockNumber: BigInt!
   gasUsed: BigInt!
   gasPrice: BigInt!

@@ -26,7 +26,10 @@ export function approval(event: Approval): void {
   delegator.save()
 
   // Store transaction info
-  let approvalEvent = new ApprovalEvent(event.transaction.hash.toHex())
+  let approvalEvent = new ApprovalEvent(
+    event.transaction.hash.toHex() + '-Approval'
+  )
+  approvalEvent.hash = event.transaction.hash.toHex()
   approvalEvent.blockNumber = event.block.number
   approvalEvent.gasUsed = event.transaction.gasUsed
   approvalEvent.gasPrice = event.transaction.gasPrice
