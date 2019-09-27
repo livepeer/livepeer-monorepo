@@ -11,7 +11,7 @@ import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 
-export default ({ transcoder, amount, context }) => {
+export default ({ transcoder, amount, context, disabled }) => {
   const [, setIsModalOpen] = useState(false)
 
   if (!context.active) {
@@ -71,6 +71,7 @@ export default ({ transcoder, amount, context }) => {
   return (
     <>
       <Button
+        disabled={disabled}
         onClick={async () => {
           stake(bond)
         }}

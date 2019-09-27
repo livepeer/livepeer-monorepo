@@ -8,7 +8,7 @@ export default ({ variant = 'primary', size = 'normal', ...props }) => (
       appearance: 'none',
       display: 'inline-block',
       textAlign: 'center',
-      cursor: 'pointer',
+      cursor: props.disabled ? 'not-allowed' : 'pointer',
       lineHeight: 'inherit',
       textDecoration: 'none',
       fontSize: '14px',
@@ -19,6 +19,7 @@ export default ({ variant = 'primary', size = 'normal', ...props }) => (
       py: 1,
       border: 0,
       borderRadius: 4,
+      opacity: props.disabled ? 0.1 : 1,
       variant: `buttons.${variant}`,
       position: 'relative',
     }}

@@ -57,7 +57,6 @@ export default withApollo(() => {
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: account.toLowerCase(),
-      address: account.toLowerCase(),
     },
     notifyOnNetworkStatusChange: true,
     ssr: false,
@@ -87,7 +86,6 @@ export default withApollo(() => {
   const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
   const isMyAccount: boolean = context.account == account
-  const isOrchestrator: boolean = data.transcoder && data.transcoder.id
   const isStaked = delegator && delegator.delegate
   const hasLivepeerToken = data.account.tokenBalance > 0
   let role: string
@@ -97,7 +95,7 @@ export default withApollo(() => {
   } else if ((data.delegator && data.delegator.id) || hasLivepeerToken) {
     role = 'Tokenholder'
   } else {
-    role = 'Lurker'
+    role = 'Observer'
   }
 
   const tabs: Array<TabType> = getTabs(role, account, asPath)
