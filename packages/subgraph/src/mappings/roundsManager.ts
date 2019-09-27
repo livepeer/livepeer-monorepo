@@ -77,8 +77,9 @@ export function newRound(event: NewRound): void {
 
   // Store transaction info
   let initializeRoundEvent = new InitializeRoundEvent(
-    event.transaction.hash.toHex()
+    event.transaction.hash.toHex() + '-InitializeRound'
   )
+  initializeRoundEvent.hash = event.transaction.hash.toHex()
   initializeRoundEvent.blockNumber = event.block.number
   initializeRoundEvent.gasUsed = event.transaction.gasUsed
   initializeRoundEvent.gasPrice = event.transaction.gasPrice

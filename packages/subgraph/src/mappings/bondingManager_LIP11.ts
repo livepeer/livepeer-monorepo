@@ -113,7 +113,8 @@ export function bond(event: Bond): void {
   transcoder.save()
 
   // Store transaction info
-  let bondEvent = new BondEvent(event.transaction.hash.toHex())
+  let bondEvent = new BondEvent(event.transaction.hash.toHex() + '-Bond')
+  bondEvent.hash = event.transaction.hash.toHex()
   bondEvent.blockNumber = event.block.number
   bondEvent.gasUsed = event.transaction.gasUsed
   bondEvent.gasPrice = event.transaction.gasPrice
@@ -198,7 +199,8 @@ export function unbond(event: Unbond): void {
   delegator.save()
 
   // Store transaction info
-  let unbondEvent = new UnbondEvent(event.transaction.hash.toHex())
+  let unbondEvent = new UnbondEvent(event.transaction.hash.toHex() + '-Unbond')
+  unbondEvent.hash = event.transaction.hash.toHex()
   unbondEvent.blockNumber = event.block.number
   unbondEvent.gasUsed = event.transaction.gasUsed
   unbondEvent.gasPrice = event.transaction.gasPrice
@@ -251,7 +253,8 @@ export function rebond(event: Rebond): void {
   store.remove('UnbondingLock', uniqueUnbondingLockId)
 
   // Store transaction info
-  let rebondEvent = new RebondEvent(event.transaction.hash.toHex())
+  let rebondEvent = new RebondEvent(event.transaction.hash.toHex() + 'Rebond')
+  rebondEvent.hash = event.transaction.hash.toHex()
   rebondEvent.blockNumber = event.block.number
   rebondEvent.gasUsed = event.transaction.gasUsed
   rebondEvent.gasPrice = event.transaction.gasPrice
@@ -280,8 +283,9 @@ export function withdrawStake(event: WithdrawStake): void {
 
   // Store transaction info
   let withdrawStakeEvent = new WithdrawStakeEvent(
-    event.transaction.hash.toHex()
+    event.transaction.hash.toHex() + 'WithdrawStake'
   )
+  withdrawStakeEvent.hash = event.transaction.hash.toHex()
   withdrawStakeEvent.blockNumber = event.block.number
   withdrawStakeEvent.gasUsed = event.transaction.gasUsed
   withdrawStakeEvent.gasPrice = event.transaction.gasPrice
