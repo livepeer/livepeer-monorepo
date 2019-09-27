@@ -22,6 +22,8 @@ import {
   Pool,
   TranscoderUpdatedEvent,
   TranscoderSlashedEvent,
+  TranscoderResignedEvent,
+  TranscoderEvictedEvent,
   BondEvent,
   UnbondEvent,
   RewardEvent,
@@ -72,8 +74,9 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
 
   // Store transaction info
   let transcoderUpdatedEvent = new TranscoderUpdatedEvent(
-    event.transaction.hash.toHex()
+    event.transaction.hash.toHex() + '-TranscoderUpdate'
   )
+  transcoderUpdatedEvent.hash = event.block.hash.toHex()
   transcoderUpdatedEvent.blockNumber = event.block.number
   transcoderUpdatedEvent.gasUsed = event.transaction.gasUsed
   transcoderUpdatedEvent.gasPrice = event.transaction.gasPrice
@@ -92,6 +95,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
 export function transcoderResigned(event: TranscoderResigned): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let currentRound = roundsManager.currentRound()
 
   // Update transcoder
   transcoder.active = false
@@ -99,12 +103,28 @@ export function transcoderResigned(event: TranscoderResigned): void {
 
   // Apply store updates
   transcoder.save()
+
+  // Store transaction info
+  let transcoderResignedEvent = new TranscoderResignedEvent(
+    event.transaction.hash.toHex() + '-TranscoderResigned'
+  )
+  transcoderResignedEvent.hash = event.block.hash.toHex()
+  transcoderResignedEvent.blockNumber = event.block.number
+  transcoderResignedEvent.gasUsed = event.transaction.gasUsed
+  transcoderResignedEvent.gasPrice = event.transaction.gasPrice
+  transcoderResignedEvent.timestamp = event.block.timestamp
+  transcoderResignedEvent.from = event.transaction.from.toHex()
+  transcoderResignedEvent.to = event.transaction.to.toHex()
+  transcoderResignedEvent.round = currentRound.toString()
+  transcoderResignedEvent.delegate = transcoderAddress.toHex()
+  transcoderResignedEvent.save()
 }
 
 // Handler for TranscoderEvicted events
 export function transcoderEvicted(event: TranscoderEvicted): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let currentRound = roundsManager.currentRound()
 
   // Update transcoder
   transcoder.active = false
@@ -112,6 +132,20 @@ export function transcoderEvicted(event: TranscoderEvicted): void {
 
   // Apply store updates
   transcoder.save()
+
+  let transcoderEvictedEvent = new TranscoderEvictedEvent(
+    event.transaction.hash.toHex() + '-TranscoderEvicted'
+  )
+  transcoderEvictedEvent.hash = event.block.hash.toHex()
+  transcoderEvictedEvent.blockNumber = event.block.number
+  transcoderEvictedEvent.gasUsed = event.transaction.gasUsed
+  transcoderEvictedEvent.gasPrice = event.transaction.gasPrice
+  transcoderEvictedEvent.timestamp = event.block.timestamp
+  transcoderEvictedEvent.from = event.transaction.from.toHex()
+  transcoderEvictedEvent.to = event.transaction.to.toHex()
+  transcoderEvictedEvent.round = currentRound.toString()
+  transcoderEvictedEvent.delegate = transcoderAddress.toHex()
+  transcoderEvictedEvent.save()
 }
 
 // Handler for TranscoderSlashed events
@@ -130,9 +164,10 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
 
   // Store transaction info
   let transcoderSlashedEvent = new TranscoderSlashedEvent(
-    event.transaction.hash.toHex()
+    event.transaction.hash.toHex() + '-TranscoderSlashed'
   )
 
+  transcoderSlashedEvent.hash = event.block.hash.toHex()
   transcoderSlashedEvent.blockNumber = event.block.number
   transcoderSlashedEvent.gasUsed = event.transaction.gasUsed
   transcoderSlashedEvent.gasPrice = event.transaction.gasPrice
@@ -248,7 +283,8 @@ export function bond(event: Bond): void {
   transcoder.save()
 
   // Store transaction info
-  let bondEvent = new BondEvent(event.transaction.hash.toHex())
+  let bondEvent = new BondEvent(event.transaction.hash.toHex() + '-Bond')
+  bondEvent.hash = event.block.hash.toHex()
   bondEvent.blockNumber = event.block.number
   bondEvent.gasUsed = event.transaction.gasUsed
   bondEvent.gasPrice = event.transaction.gasPrice
@@ -310,7 +346,8 @@ export function unbond(event: Unbond): void {
   transcoder.save()
 
   // Store transaction info
-  let unbondEvent = new UnbondEvent(event.transaction.hash.toHex())
+  let unbondEvent = new UnbondEvent(event.transaction.hash.toHex() + '-Unbond')
+  unbondEvent.hash = event.block.hash.toHex()
   unbondEvent.blockNumber = event.block.number
   unbondEvent.gasUsed = event.transaction.gasUsed
   unbondEvent.gasPrice = event.transaction.gasPrice
@@ -351,7 +388,8 @@ export function reward(event: Reward): void {
   delegate.save()
   pool.save()
 
-  let rewardEvent = new RewardEvent(event.transaction.hash.toHex())
+  let rewardEvent = new RewardEvent(event.transaction.hash.toHex() + '-Reward')
+  rewardEvent.hash = event.transaction.hash.toHex()
   rewardEvent.blockNumber = event.block.number
   rewardEvent.gasUsed = event.transaction.gasUsed
   rewardEvent.gasPrice = event.transaction.gasPrice
@@ -372,7 +410,10 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   let bondingManager = BondingManager.bind(call.to)
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  let claimEarningsEvent = new ClaimEarningsEvent(call.transaction.hash.toHex())
+  let claimEarningsEvent = new ClaimEarningsEvent(
+    call.transaction.hash.toHex() + '-ClaimEarnings'
+  )
+  claimEarningsEvent.hash = call.transaction.hash.toHex()
   claimEarningsEvent.blockNumber = call.block.number
   claimEarningsEvent.gasUsed = call.transaction.gasUsed
   claimEarningsEvent.gasPrice = call.transaction.gasPrice
@@ -404,8 +445,9 @@ export function withdrawStake(event: WithdrawStake): void {
 
   // Store transaction info
   let withdrawStakeEvent = new WithdrawStakeEvent(
-    event.transaction.hash.toHex()
+    event.transaction.hash.toHex() + '-WithdrawStake'
   )
+  withdrawStakeEvent.hash = event.block.hash.toHex()
   withdrawStakeEvent.blockNumber = event.block.number
   withdrawStakeEvent.gasUsed = event.transaction.gasUsed
   withdrawStakeEvent.gasPrice = event.transaction.gasPrice
@@ -430,8 +472,9 @@ export function withdrawFees(event: WithdrawFees): void {
 
   // Store transaction info
   let withdrawFeesTransaction = new WithdrawFeesEvent(
-    event.transaction.hash.toHex()
+    event.transaction.hash.toHex() + '-WithdrawFeesEvent'
   )
+  withdrawFeesTransaction.hash = event.block.hash.toHex()
   withdrawFeesTransaction.blockNumber = event.block.number
   withdrawFeesTransaction.gasUsed = event.transaction.gasUsed
   withdrawFeesTransaction.gasPrice = event.transaction.gasPrice
