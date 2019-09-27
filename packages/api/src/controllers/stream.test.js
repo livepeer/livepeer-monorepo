@@ -56,6 +56,25 @@ describe('controllers/stream', () => {
       const streams = await res.json()
       expect(streams.length).toEqual(10)
     })
+
+    it('should get some of the streams', async () => {
+      const ids = []
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        ids.push(document.id)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+      const res = await client.get(`/stream?cursor=${ids[2]}&limit=5`)
+      const streams = await res.json()
+      console.log(streams)
+      expect(streams.length).toBeLessThan(6)
+    })
   })
 
   describe('webhooks', () => {

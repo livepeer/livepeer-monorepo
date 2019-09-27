@@ -12,8 +12,10 @@ const app = Router()
 app.get('/', authMiddleware({}), async (req, res) => {
   let limit = req.query.limit
   let offset = req.query.offset
+  let cursor = req.query.cursor
+  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const output = await req.store.list(`stream/`, limit, offset)
+  const output = await req.store.list(`stream/`, cursor, limit, offset)
   res.status(200)
   res.json(output)
 })
