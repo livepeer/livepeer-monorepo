@@ -147,14 +147,17 @@ async function createSchema() {
       profile: Profile
     }
 
-    extend type Delegator {
-      pendingStake: String
-      status: String
-    }
-
     type Account {
       id: ID!
       tokenBalance: String
+      ethBalance: String
+    }
+
+    extend type Delegator {
+      pendingStake: String
+      status: String
+      tokenBalance: String
+      ethBalance: String
     }
 
     extend type Query {
@@ -166,23 +169,34 @@ async function createSchema() {
     schemas: [transformedSchema, subgraphSchema, threeBoxSchema, linkTypeDefs],
     resolvers: {
       Query: {
-        account: async (account, _args, _context, _info) => {
+        account: async (_account, _args, _context, _info) => {
           return {
             id: _args.id,
-            tokenBalance: await rpc.getTokenBalance(_args.id)
+            tokenBalance: await rpc.getTokenBalance(_args.id),
+            ethBalance: await rpc.getEthBalance(_args.id)
           }
         }
       },
       Delegator: {
         pendingStake: {
-          async resolve(delegator, _args, _context, _info) {
-            const { pendingStake } = await rpc.getDelegator(delegator.id)
+          async resolve(_delegator, _args, _context, _info) {
+            const { pendingStake } = await rpc.getDelegator(_args.id)
             return pendingStake
           }
         },
+        tokenBalance: {
+          async resolve(_delegator, _args, _context, _info) {
+            return await rpc.getTokenBalance(_args.id)
+          }
+        },
+        ethBalance: {
+          async resolve(_delegator, _args, _context, _info) {
+            return await rpc.getEthBalance(_args.id)
+          }
+        },
         status: {
-          async resolve(delegator, _args, _context, _info) {
-            const { status } = await rpc.getDelegator(delegator.id)
+          async resolve(_delegator, _args, _context, _info) {
+            const { status } = await rpc.getDelegator(_args.id)
             return status
           }
         }
