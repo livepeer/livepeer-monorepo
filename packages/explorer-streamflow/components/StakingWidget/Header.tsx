@@ -19,8 +19,8 @@ export default ({ transcoder }) => {
       <QRCode
         style={{
           borderRadius: 1000,
-          width: 44,
-          height: 44,
+          width: 40,
+          height: 40,
           marginRight: 16,
         }}
         fgColor={`#${transcoder.id.substr(2, 6)}`}

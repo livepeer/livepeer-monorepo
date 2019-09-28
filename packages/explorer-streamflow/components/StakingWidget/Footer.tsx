@@ -5,8 +5,8 @@ import Stake from './Stake'
 import Unstake from './Unstake'
 import Link from 'next/link'
 
-export default ({ transcoder, action, amount, context, canStake, account }) => {
-  if (!context.active) {
+export default ({ transcoder, action, amount, account }) => {
+  if (!account) {
     return (
       <Link href="/connect-wallet" passHref>
         <a>
@@ -22,20 +22,20 @@ export default ({ transcoder, action, amount, context, canStake, account }) => {
     return (
       <>
         <Stake
-          disabled={!canStake}
+          account={account}
+          disabled={true}
           transcoder={transcoder}
           amount={amount}
-          context={context}
         />
       </>
     )
   }
   return (
     <Unstake
-      disabled={!canStake}
+      account={account}
+      disabled={true}
       transcoder={transcoder}
       amount={amount}
-      context={context}
     />
   )
 }

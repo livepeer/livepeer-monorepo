@@ -180,23 +180,23 @@ async function createSchema() {
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
-            const { pendingStake } = await rpc.getDelegator(_args.id)
+            const { pendingStake } = await rpc.getDelegator(_delegator.id)
             return pendingStake
           }
         },
         tokenBalance: {
           async resolve(_delegator, _args, _context, _info) {
-            return await rpc.getTokenBalance(_args.id)
+            return await rpc.getTokenBalance(_delegator.id)
           }
         },
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
-            return await rpc.getEthBalance(_args.id)
+            return await rpc.getEthBalance(_delegator.id)
           }
         },
         status: {
           async resolve(_delegator, _args, _context, _info) {
-            const { status } = await rpc.getDelegator(_args.id)
+            const { status } = await rpc.getDelegator(_delegator.id)
             return status
           }
         }

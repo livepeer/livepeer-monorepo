@@ -3,15 +3,16 @@ import React, { useState, useEffect } from 'react'
 import { jsx, Flex, Box, Styled } from 'theme-ui'
 import Page from '../layouts/main'
 import Router from 'next/router'
-import { useWeb3Context, Web3Consumer } from 'web3-react'
+import { useWeb3Context } from 'web3-react'
 import Wallet from '../static/img/wallet.svg'
 import Portis from '../static/img/portis.svg'
 import MetaMask from '../static/img/metamask.svg'
 import Secure from '../static/img/secure.svg'
 import ToggleCard from '../components/ToggleCard'
 import Button from '../components/Button'
+import { withApollo } from '../lib/apollo'
 
-export default () => {
+export default withApollo(() => {
   const context = useWeb3Context()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
 
@@ -91,4 +92,4 @@ export default () => {
       </Box>
     </Page>
   )
-}
+})

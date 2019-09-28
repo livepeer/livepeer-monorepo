@@ -1,6 +1,7 @@
 export interface Account {
   id: string
   tokenBalance: string
+  ethBalance: string
 }
 
 export interface Transcoder {

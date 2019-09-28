@@ -77,7 +77,7 @@ export default () => {
     )
   }
 
-  if (!data.delegator) {
+  if (!(data && data.delegator)) {
     return <div>No history</div>
   }
 

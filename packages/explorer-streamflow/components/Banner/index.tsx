@@ -1,19 +1,30 @@
 /** @jsx jsx */
-import { jsx } from 'theme-ui'
+import { jsx, Flex } from 'theme-ui'
+import React from 'react'
 
-export default ({ body, button, variant = 'primary', ...props }) => (
+interface Props {
+  open: boolean
+  label: React.ReactNode
+  button?: React.ReactNode
+  sx?: object
+}
+
+export default ({ open, label, button, ...props }: Props) => (
   <div
     sx={{
-      borderRadius: 1000,
-      bg: 'grey',
-      px: 2,
-      py: '4px',
-      display: 'inline-flex',
+      borderRadius: 5,
+      border: '1px solid',
+      borderColor: 'border',
+      width: '100%',
+      mb: 2,
+      p: 2,
       fontSize: 0,
-      fontWeight: 600,
       ...props.sx,
     }}
   >
-    {body}
+    <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+      {label}
+      {button && button}
+    </Flex>
   </div>
 )

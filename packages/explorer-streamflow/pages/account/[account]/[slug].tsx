@@ -2,7 +2,6 @@
 import React from 'react'
 import { jsx, Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
-import { useWeb3Context } from 'web3-react'
 import Page from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
@@ -15,13 +14,12 @@ import StakingView from '../../../components/StakingView'
 import { withApollo } from '../../../lib/apollo'
 import { Transcoder, Delegator, Protocol } from '../../../@types'
 import Spinner from '../../../components/Spinner'
+import { useAccount } from '../../../hooks'
+import Utils from 'web3-utils'
+import { is } from '@babel/types'
 
 const GET_DATA = gql`
   query($account: ID!) {
-    account(id: $account) {
-      id
-      tokenBalance
-    }
     delegator(id: $account) {
       id
       pendingStake
@@ -48,15 +46,14 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const context = useWeb3Context()
+  const account = useAccount()
   const router = useRouter()
   const { query, asPath } = router
-  const account = query.account as string
   const slug = query.slug
 
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
-      account: account.toLowerCase(),
+      account: query.account.toString().toLowerCase(),
     },
     notifyOnNetworkStatusChange: true,
     ssr: false,
@@ -85,9 +82,11 @@ export default withApollo(() => {
   const transcoder: Transcoder = data.transcoder
   const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
-  const isMyAccount: boolean = context.account == account
-  const isStaked = delegator && delegator.delegate
-  const hasLivepeerToken = data.account.tokenBalance > 0
+  const isMyAccount: boolean = account && account.id.toString() == query.account
+  const isStaked: boolean = !!(delegator && delegator.delegate)
+  console.log(data)
+  const hasLivepeerToken: boolean =
+    account && Utils.fromWei(account.tokenBalance) > 0
   let role: string
 
   if (data.transcoder && data.transcoder.id) {
@@ -98,7 +97,7 @@ export default withApollo(() => {
     role = 'Observer'
   }
 
-  const tabs: Array<TabType> = getTabs(role, account, asPath)
+  const tabs: Array<TabType> = getTabs(role, query.account.toString(), asPath)
 
   return (
     <Page>
@@ -123,7 +122,7 @@ export default withApollo(() => {
           }}
         >
           <Profile
-            account={account}
+            account={query.account.toString()}
             delegator={delegator}
             transcoder={transcoder}
             hasLivepeerToken={hasLivepeerToken}
@@ -142,7 +141,6 @@ export default withApollo(() => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 4,
-              bg: 'surface',
               minHeight: 300,
               borderRadius: 2,
               width: '30%',
@@ -150,6 +148,7 @@ export default withApollo(() => {
             }}
           >
             <StakingWidget
+              account={account}
               transcoder={
                 role == 'Orchestrator' ? transcoder : delegator.delegate
               }

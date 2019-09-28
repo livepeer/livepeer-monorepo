@@ -6,15 +6,19 @@ import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 import Button from '../Button'
 import Modal from '../Modal'
-import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 import { useWeb3Context } from 'web3-react'
-import useWindowSize from 'react-use/lib/useWindowSize'
-import Confetti from 'react-confetti'
+import { Account } from '../../@types'
 
-export default ({ transcoder, amount, account, disabled }) => {
+interface Props {
+  amount?: string
+  account: Account
+  children: React.ReactNode
+}
+
+export default ({ children, amount, account }: Props) => {
   const context = useWeb3Context()
   const [, setIsModalOpen] = useState(false)
 
@@ -22,9 +26,9 @@ export default ({ transcoder, amount, account, disabled }) => {
     return null
   }
 
-  const BOND = gql`
-    mutation bond($to: String!, $amount: String!) {
-      txHash: bond(to: $to, amount: $amount)
+  const APPROVE = gql`
+    mutation approve($type: String!, $amount: String!) {
+      txHash: approve(type: $type, amount: $amount)
     }
   `
 
@@ -43,10 +47,14 @@ export default ({ transcoder, amount, account, disabled }) => {
     }
   `
 
-  const [bond, { data }] = useMutation(BOND, {
+  const [approve, { data, error }] = useMutation(APPROVE, {
     variables: {
-      to: transcoder.id,
-      amount: Utils.toWei(amount ? amount : '0', 'ether'),
+      type: 'bond',
+      amount: Utils.toWei(
+        // set transfer allowance to a near inifinite amount if none is provided
+        amount ? amount : '10000000000000000000000000000000000000000',
+        'ether',
+      ),
     },
     notifyOnNetworkStatusChange: true,
     context: {
@@ -55,6 +63,9 @@ export default ({ transcoder, amount, account, disabled }) => {
       returnTxHash: true,
     },
   })
+
+  console.log('data', data)
+  console.log('error', error)
 
   const isBroadcasted = data && data.txHash
 
@@ -71,17 +82,21 @@ export default ({ transcoder, amount, account, disabled }) => {
 
   const isMined =
     transaction && transaction.receipt && transaction.receipt.blockNumber
-  const { width, height } = useWindowSize()
+
   return (
     <>
       <Button
-        disabled={disabled}
         onClick={async () => {
-          stake(bond)
+          try {
+            await approve()
+          } catch (e) {
+            return {
+              error: e.message.replace('GraphQL error: ', ''),
+            }
+          }
         }}
-        sx={{ width: '100%' }}
       >
-        Stake
+        {children}
       </Button>
       {isBroadcasted && (
         <Modal
@@ -90,14 +105,7 @@ export default ({ transcoder, amount, account, disabled }) => {
           title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          {isMined && (
-            <Confetti
-              canvasRef={React.createRef()}
-              width={width}
-              height={height}
-            />
-          )}
-          <StakingFlow action="stake" account={transcoder.id} amount={amount} />
+          All set! You're ready to begin staking.
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -131,14 +139,4 @@ export default ({ transcoder, amount, account, disabled }) => {
       )}
     </>
   )
-}
-
-async function stake(stake: any) {
-  try {
-    await stake()
-  } catch (e) {
-    return {
-      error: e.message.replace('GraphQL error: ', ''),
-    }
-  }
 }

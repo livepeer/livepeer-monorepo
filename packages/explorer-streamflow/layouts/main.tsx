@@ -7,23 +7,18 @@ import Orchestrators from '../static/img/orchestrators.svg'
 import Account from '../static/img/account.svg'
 import Wallet from '../static/img/wallet.svg'
 import Search from '../static/img/search.svg'
-import { useWeb3Context } from 'web3-react'
+import { useAccount } from '../hooks'
 
 const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
-  const context = useWeb3Context()
-
+  const account = useAccount()
   let items = [
     { name: 'Orchestrators', href: '/', icon: Orchestrators },
     { name: 'Search', href: '/search', icon: Search },
     {
-      name: !context.connector ? 'Connect Wallet' : 'My Account',
-      href: !context.connector
-        ? '/connect-wallet'
-        : '/account/[account]/staking',
-      as: !context.connector
-        ? '/connect-wallet'
-        : `/account/${context.account}/staking`,
-      icon: !context.connector ? Wallet : Account,
+      name: !account ? 'Connect Wallet' : 'My Account',
+      href: !account ? '/connect-wallet' : '/account/[account]/staking',
+      as: !account ? '/connect-wallet' : `/account/${account.id}/staking`,
+      icon: !account ? Wallet : Account,
     },
   ]
 
