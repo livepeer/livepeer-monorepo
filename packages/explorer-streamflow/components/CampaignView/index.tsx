@@ -5,8 +5,8 @@ import * as Utils from 'web3-utils'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Card from '../../components/Card'
+import Spinner from '../Spinner'
+import Card from '../Card'
 import { abbreviateNumber } from '../../lib/utils'
 
 const GET_DATA = gql`
@@ -67,9 +67,7 @@ export default () => {
             alignItems: 'center',
           }}
         >
-          <div sx={{ color: 'primary' }}>
-            <CircularProgress size={24} color="inherit" />
-          </div>
+          <Spinner />
         </Flex>
       ) : (
         <>

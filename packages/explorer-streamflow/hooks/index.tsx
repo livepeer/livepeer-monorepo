@@ -10,6 +10,7 @@ const GET_ACCOUNT = gql`
       id
       tokenBalance
       ethBalance
+      allowance
     }
   }
 `
@@ -17,18 +18,19 @@ const GET_ACCOUNT = gql`
 export function useAccount(): Account {
   let context = useWeb3Context()
 
-  const [account, setAccount] = useState(null)
+  const [account, setAccount] = useState()
 
   const { data } = useQuery(GET_ACCOUNT, {
     variables: {
-      account: context.active ? context.account : '',
+      account: context.account,
     },
     ssr: false,
-    skip: !context.active,
   })
 
   useEffect(() => {
-    setAccount(data ? data.account : null)
+    if (data && data.account) {
+      setAccount(data.account)
+    }
   }, [data])
 
   return account

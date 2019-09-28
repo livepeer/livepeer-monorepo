@@ -16,8 +16,6 @@ export default ({ transcoder, action, amount, account }) => {
     )
   }
 
-  console.log(account)
-
   if (action == 'stake') {
     return (
       <>

@@ -1,24 +1,8 @@
-import grey from '@material-ui/core/colors/grey'
-
-const greyPalette = Object.values(grey)
-
 const heading = {
   color: 'text',
   fontFamily: 'heading',
   lineHeight: 'heading',
   fontWeight: 'heading'
-}
-
-const buttonSizes = {
-  small: {
-    py: 0
-  },
-  medium: {
-    py: 1
-  },
-  large: {
-    py: 2
-  }
 }
 
 const theme = {
@@ -46,7 +30,7 @@ const theme = {
     primary: '#00EB88',
     secondary: '#FAF5EF',
     surface: '#1E2026',
-    muted: greyPalette[4],
+    muted: '#bdbdbd',
     red: '#d32f2f',
     yellow: '#fbc02d',
     border: 'rgba(255, 255, 255, .16)',

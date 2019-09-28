@@ -78,7 +78,7 @@ export default () => {
   }
 
   if (!(data && data.delegator)) {
-    return <div>No history</div>
+    return <div>Time to get staking! </div>
   }
 
   const pendingStake = Math.max(
@@ -202,6 +202,21 @@ export default () => {
           }
         >
           <div sx={{ mt: 3 }}>
+            <Flex
+              sx={{
+                fontSize: 1,
+                mb: 1,
+                justifyContent: 'space-between',
+              }}
+            >
+              <span sx={{ color: 'muted' }}>
+                Account (
+                {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
+              </span>
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(pendingStake, 3)}
+              </span>
+            </Flex>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
               <span sx={{ color: 'muted' }}>
                 Orchestrator (
@@ -212,6 +227,7 @@ export default () => {
                 {abbreviateNumber(totalStake, 3)}
               </span>
             </Flex>
+
             <Flex
               sx={{
                 fontSize: 1,
@@ -219,22 +235,7 @@ export default () => {
                 justifyContent: 'space-between',
               }}
             >
-              <span sx={{ color: 'muted' }}>
-                Tokenholder (
-                {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
-              </span>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(pendingStake, 3)}
-              </span>
-            </Flex>
-            <Flex
-              sx={{
-                fontSize: 1,
-                mb: 1,
-                justifyContent: 'space-between',
-              }}
-            >
-              <span sx={{ color: 'muted' }}>Network</span>
+              <span sx={{ color: 'muted' }}>Rest of Network</span>
               <span sx={{ fontFamily: 'monospace' }}>
                 {abbreviateNumber(totalBondedToken, 3)}
               </span>

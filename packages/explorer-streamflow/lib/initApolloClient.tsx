@@ -151,6 +151,7 @@ async function createSchema() {
       id: ID!
       tokenBalance: String
       ethBalance: String
+      allowance: String
     }
 
     extend type Delegator {
@@ -170,10 +171,12 @@ async function createSchema() {
     resolvers: {
       Query: {
         account: async (_account, _args, _context, _info) => {
+          const { allowance } = await rpc.getDelegator(_args.id)
           return {
             id: _args.id,
             tokenBalance: await rpc.getTokenBalance(_args.id),
-            ethBalance: await rpc.getEthBalance(_args.id)
+            ethBalance: await rpc.getEthBalance(_args.id),
+            allowance: allowance
           }
         }
       },

@@ -16,7 +16,6 @@ import { Transcoder, Delegator, Protocol } from '../../../@types'
 import Spinner from '../../../components/Spinner'
 import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
-import { is } from '@babel/types'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -84,7 +83,6 @@ export default withApollo(() => {
   const protocol: Protocol = data.protocol
   const isMyAccount: boolean = account && account.id.toString() == query.account
   const isStaked: boolean = !!(delegator && delegator.delegate)
-  console.log(data)
   const hasLivepeerToken: boolean =
     account && Utils.fromWei(account.tokenBalance) > 0
   let role: string

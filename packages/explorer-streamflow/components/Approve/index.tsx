@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
@@ -10,21 +10,17 @@ import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 import { useWeb3Context } from 'web3-react'
-import { Account } from '../../@types'
 
 interface Props {
   amount?: string
-  account: Account
   children: React.ReactNode
 }
 
-export default ({ children, amount, account }: Props) => {
+export default ({ children, amount }: Props) => {
   const context = useWeb3Context()
-  const [, setIsModalOpen] = useState(false)
-
-  if (!account) {
-    return null
-  }
+  const [isOpen, setIsModalOpen] = useState(false)
+  // const [mining, setMining] = useState(false)
+  // const [mined, setMined] = useState(false)
 
   const APPROVE = gql`
     mutation approve($type: String!, $amount: String!) {
@@ -33,16 +29,11 @@ export default ({ children, amount, account }: Props) => {
   `
 
   const GET_TRANSACTION_RECEIPT = gql`
-    query transaction($id: String!) {
-      receipt: transaction(id: $id) {
+    query approvalEvent($id: ID!) {
+      approvalEvent(id: $id) {
+        id
         blockNumber
-        blockHash
-        transactionIndex
-        from
-        to
-        status
-        cumulativeGasUsed
-        gasUsed
+        hash
       }
     }
   `
@@ -64,24 +55,27 @@ export default ({ children, amount, account }: Props) => {
     },
   })
 
-  console.log('data', data)
-  console.log('error', error)
+  let isBroadcasted = data && data.txHash
+  let isMined = false
+  let isMining = false
 
-  const isBroadcasted = data && data.txHash
-
-  const { data: transaction, loading: mining } = useQuery(
-    GET_TRANSACTION_RECEIPT,
-    {
-      variables: {
-        id: data && data.txHash,
-      },
-      skip: !isBroadcasted, // skip query if tx hasn't yet been broadcasted
-      notifyOnNetworkStatusChange: true,
+  const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
+    variables: {
+      id: `${data && data.txHash}-Approval`,
     },
-  )
+    ssr: false,
+    pollInterval: 1000,
+    skip: !isBroadcasted || isMined, // skip query if tx hasn't yet been broadcasted
+  })
 
-  const isMined =
-    transaction && transaction.receipt && transaction.receipt.blockNumber
+  useEffect(() => {
+    if (isBroadcasted) {
+      setIsModalOpen(true)
+    }
+  }, [isBroadcasted])
+
+  isMining = transaction && !transaction.approvalEvent
+  isMined = transaction && transaction.approvalEvent
 
   return (
     <>
@@ -100,17 +94,26 @@ export default ({ children, amount, account }: Props) => {
       </Button>
       {isBroadcasted && (
         <Modal
-          isOpen={isBroadcasted}
+          isOpen={isOpen}
           setOpen={setIsModalOpen}
           title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          All set! You're ready to begin staking.
+          <div sx={{ mb: 4 }}>
+            {isMined ? (
+              <div>All set! You're ready to begin staking.</div>
+            ) : (
+              <div>
+                Approving {amount ? Utils.fromWei(amount, 'ether') : ''}{' '}
+                Livepeer tokens for staking...
+              </div>
+            )}
+          </div>
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-                <Spinner />
-                {mining && (
+                <Spinner sx={{ mr: 2 }} />
+                {isMining && (
                   <div sx={{ color: 'text' }}>
                     Waiting for your transaction to be mined.
                   </div>

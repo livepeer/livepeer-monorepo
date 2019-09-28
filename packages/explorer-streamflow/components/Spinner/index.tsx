@@ -9,8 +9,9 @@ const rotate = keyframes`
   }
 `
 
-export default () => (
+export default ({ ...props }) => (
   <div
+    {...props}
     sx={{
       border: '3px solid',
       borderColor: 'surface',

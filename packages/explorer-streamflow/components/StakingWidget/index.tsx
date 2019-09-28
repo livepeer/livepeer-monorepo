@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Box, Flex } from 'theme-ui'
+import { jsx, Box } from 'theme-ui'
 import React, { useState } from 'react'
 import Header from './Header'
 import Input from './Input'
@@ -21,26 +21,10 @@ export default ({ account, transcoder, protocol }: Props) => {
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')
 
-  let allowance = null
-  let pendingStake = 0
-
-  // return null
-  // if (data && data.delegator) {
-  //   allowance = Utils.fromWei(data.delegator.allowance)
-  //   pendingStake = Math.max(
-  //     Utils.fromWei(data.delegator.bondedAmount),
-  //     Utils.fromWei(data.delegator.pendingStake),
-  //   )
-  // }
-  // if (!allowance) {
-  //   console.log('Approve Livepeer Token for Staking')
-  // }
-
   return (
     <div>
       <Banner
-        sx={{ position: 'relative', top: 0 }}
-        open={true}
+        open={account && parseInt(account.allowance) == 0}
         label={
           <div>
             Approve Livepeer tokens for staking.
@@ -55,7 +39,7 @@ export default ({ account, transcoder, protocol }: Props) => {
             />
           </div>
         }
-        button={<Approve account={account}>Approve</Approve>}
+        button={<Approve>Approve</Approve>}
       />
       <Box
         sx={{
