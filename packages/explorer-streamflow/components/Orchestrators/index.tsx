@@ -23,6 +23,7 @@ export default ({ protocol, transcoders }) => {
     {
       selectedTranscoder @client {
         __typename
+        index
         id
       }
     }
@@ -32,6 +33,15 @@ export default ({ protocol, transcoders }) => {
 
   const columns: any = React.useMemo(
     () => [
+      {
+        Header: '#',
+        accessor: 'rank',
+      },
+      {
+        Header: 'Active',
+        accessor: 'active',
+        show: false,
+      },
       {
         Header: 'Account',
         accessor: 'id',
@@ -49,6 +59,10 @@ export default ({ protocol, transcoders }) => {
       {
         Header: 'Fee Cut',
         accessor: 'feeShare',
+      },
+      {
+        Header: 'Calls',
+        accessor: 'pools',
       },
     ],
     [],
@@ -94,7 +108,7 @@ export default ({ protocol, transcoders }) => {
     useFilters,
   )
 
-  const firstColumn: any = headerGroups[0].headers[0]
+  const accountColumn: any = headerGroups[0].headers[1]
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -112,7 +126,9 @@ export default ({ protocol, transcoders }) => {
           />{' '}
           Orchestrators
         </Styled.h1>
-        <div>{firstColumn.canFilter ? firstColumn.render('Filter') : null}</div>
+        <div>
+          {accountColumn.canFilter ? accountColumn.render('Filter') : null}
+        </div>
       </Flex>
       <table
         sx={{
@@ -146,20 +162,23 @@ export default ({ protocol, transcoders }) => {
 
         <tbody>
           {rows.map(
-            (row: any, i) =>
+            (row: any, rowIndex) =>
               prepareRow(row) || (
                 <tr
                   {...row.getRowProps()}
-                  key={i}
+                  key={rowIndex}
                   sx={{
                     '&:hover': {
                       bg: lighten('#1E2026', 0.05),
+                      '.status': {
+                        borderColor: lighten('#1E2026', 0.05),
+                      },
                     },
                     bg:
-                      row.values.id ==
+                      rowIndex ==
                       (data &&
                         data.selectedTranscoder &&
-                        data.selectedTranscoder.id)
+                        data.selectedTranscoder.index)
                         ? 'surface'
                         : 'transparent',
                   }}
@@ -167,13 +186,20 @@ export default ({ protocol, transcoders }) => {
                   {row.cells.map((cell, i) => {
                     return (
                       <td
-                        sx={{ fontSize: 1, px: 2, py: '12px' }}
+                        sx={{
+                          width: i > 0 ? 'auto' : 1,
+                          fontSize: 1,
+                          pl: 2,
+                          pr: 2,
+                          py: '12px',
+                        }}
                         {...cell.getCellProps()}
                         onClick={() =>
                           client.writeData({
                             data: {
                               selectedTranscoder: {
                                 __typename: 'Transcoder',
+                                index: rowIndex,
                                 id: row.values.id,
                               },
                             },
@@ -181,7 +207,7 @@ export default ({ protocol, transcoders }) => {
                         }
                         key={i}
                       >
-                        {renderSwitch(cell)}
+                        {renderSwitch(cell, data)}
                       </td>
                     )
                   })}
@@ -194,21 +220,45 @@ export default ({ protocol, transcoders }) => {
   )
 }
 
-function renderSwitch(cell) {
+function renderSwitch(cell, data) {
   switch (cell.column.Header) {
+    case '#':
+      return <span sx={{ fontFamily: 'monospace' }}>{cell.row.index + 1}</span>
     case 'Account':
       return (
         <Flex sx={{ alignItems: 'center' }}>
-          <QRCode
-            style={{
-              borderRadius: 1000,
-              width: 32,
-              height: 32,
-              marginRight: 16,
-            }}
-            fgColor={`#${cell.value.substr(2, 6)}`}
-            value={cell.value}
-          />
+          <div sx={{ position: 'relative', mr: 2 }}>
+            <QRCode
+              style={{
+                borderRadius: 1000,
+                width: 32,
+                height: 32,
+              }}
+              fgColor={`#${cell.value.substr(2, 6)}`}
+              value={cell.value}
+            />
+            <div
+              className="status"
+              sx={{
+                position: 'absolute',
+                right: '-2px',
+                bottom: '4px',
+                bg: cell.row.values.active ? 'primary' : 'yellow',
+                border: '3px solid',
+                borderColor:
+                  cell.value ==
+                  (data &&
+                    data.selectedTranscoder &&
+                    data.selectedTranscoder.id)
+                    ? 'surface'
+                    : 'background',
+                boxSizing: 'border-box',
+                width: 14,
+                height: 14,
+                borderRadius: 1000,
+              }}
+            ></div>
+          </div>
           <Link
             href="/account/[account]/[slug]"
             as={`/account/${cell.value}/campaign`}
@@ -229,7 +279,9 @@ function renderSwitch(cell) {
                 },
               }}
             >
-              {cell.value.replace(cell.value.slice(7, 37), '…')}
+              <Flex sx={{ alignItems: 'center' }}>
+                {cell.value.replace(cell.value.slice(7, 37), '…')}
+              </Flex>
             </a>
           </Link>
         </Flex>
@@ -246,6 +298,13 @@ function renderSwitch(cell) {
       return (
         <span sx={{ fontFamily: 'monospace' }}>
           {(100 - cell.value / 10000).toFixed(2).replace(/[.,]00$/, '')}%
+        </span>
+      )
+    case 'Calls':
+      let callsMade = cell.value.filter(r => r.rewardTokens != null).length
+      return (
+        <span sx={{ fontFamily: 'monospace' }}>
+          {`${callsMade}/${cell.value.length}`}
         </span>
       )
     default:

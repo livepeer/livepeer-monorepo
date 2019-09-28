@@ -21,9 +21,9 @@ const GET_DATA = gql`
       feeShare
       rewardCut
       status
+      active
       totalStake
-      pricePerSegment
-      pools {
+      pools(first: 30, orderBy: id, orderDirection: desc) {
         rewardTokens
       }
     }
@@ -33,6 +33,7 @@ const GET_DATA = gql`
     }
     selectedTranscoder @client {
       __typename
+      index
       id
     }
   }

@@ -21,10 +21,15 @@ const GET_DATA = gql`
     }
     transcoder(id: $account) {
       id
-      rewardCut
-      feeShare
-      totalStake
       active
+      feeShare
+      rewardCut
+      status
+      active
+      totalStake
+      pools(first: 30, orderBy: id, orderDirection: desc) {
+        rewardTokens
+      }
     }
     protocol {
       totalTokenSupply
@@ -53,10 +58,12 @@ export default () => {
     console.error(error)
   }
 
-  if (!data.transcoder) {
+  if (data && !data.transcoder) {
     return null
   }
 
+  let callsMade = data.transcoder.pools.filter(r => r.rewardTokens != null)
+    .length
   return (
     <div>
       {loading ? (
@@ -133,18 +140,31 @@ export default () => {
           </div>
           <Card
             sx={{ mb: 2 }}
-            title="Reward Calls Made"
+            title="Reward Calls"
             subtitle={
-              <div
+              <Flex
                 sx={{
+                  alignItems: 'center',
                   fontSize: 5,
                   color: 'text',
                   lineHeight: 'heading',
                   fontFamily: 'monospace',
                 }}
               >
-                30/30
-              </div>
+                {/* {callsMade / data.transcoder.pools.length === 1 && (
+                  <div
+                    sx={{
+                      mr: 3,
+                      fontSize: 5,
+                      color: 'transparent',
+                      textShadow: '0 0 0 rgba(255, 255, 255, .87)',
+                    }}
+                  >
+                    💯
+                  </div>
+                )} */}
+                {callsMade}/{data.transcoder.pools.length}
+              </Flex>
             }
           />
         </>

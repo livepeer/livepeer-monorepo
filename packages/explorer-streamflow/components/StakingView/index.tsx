@@ -210,8 +210,10 @@ export default () => {
               }}
             >
               <span sx={{ color: 'muted' }}>
-                Account (
-                {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
+                Account{' '}
+                <span sx={{ color: 'text' }}>
+                  ({((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
+                </span>
               </span>
               <span sx={{ fontFamily: 'monospace' }}>
                 {abbreviateNumber(pendingStake, 3)}
@@ -219,9 +221,10 @@ export default () => {
             </Flex>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
               <span sx={{ color: 'muted' }}>
-                Orchestrator (
-                {((totalStake / totalBondedToken) * 100).toPrecision(2)}
-                %)
+                Orchestrator{' '}
+                <span sx={{ color: 'text' }}>
+                  ({((totalStake / totalBondedToken) * 100).toPrecision(2)}%)
+                </span>
               </span>
               <span sx={{ fontFamily: 'monospace' }}>
                 {abbreviateNumber(totalStake, 3)}
@@ -235,9 +238,23 @@ export default () => {
                 justifyContent: 'space-between',
               }}
             >
-              <span sx={{ color: 'muted' }}>Rest of Network</span>
+              <span sx={{ color: 'muted' }}>
+                Rest of Network{' '}
+                <span sx={{ color: 'text' }}>
+                  (
+                  {(
+                    ((totalBondedToken - totalStake - pendingStake) /
+                      totalBondedToken) *
+                    100
+                  ).toPrecision(2)}
+                  %)
+                </span>
+              </span>
               <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(totalBondedToken, 3)}
+                {abbreviateNumber(
+                  totalBondedToken - totalStake - pendingStake,
+                  3,
+                )}
               </span>
             </Flex>
           </div>

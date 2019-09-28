@@ -45,17 +45,17 @@ export default ({
           value={account}
         />
 
-        {role == 'Orchestrator' && transcoder.active && (
+        {role == 'Orchestrator' && (
           <div
             sx={{
               position: 'absolute',
               right: 0,
-              bottom: 0,
-              backgroundColor: 'primary',
-              border: '4px solid #131418',
+              bottom: '-2px',
+              backgroundColor: transcoder.active ? 'primary' : 'yellow',
+              border: '5px solid #131418',
               boxSizing: 'border-box',
-              width: 18,
-              height: 18,
+              width: 24,
+              height: 24,
               borderRadius: 1000,
             }}
           ></div>

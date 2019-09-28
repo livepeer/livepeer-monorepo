@@ -63,7 +63,8 @@ export default ({ children, amount }: Props) => {
     },
     ssr: false,
     pollInterval: 1000,
-    skip: !isBroadcasted || isMined, // skip query if tx hasn't yet been broadcasted
+    // skip query if tx hasn't yet been broadcasted or has been mined
+    skip: !isBroadcasted || isMined,
   })
 
   useEffect(() => {

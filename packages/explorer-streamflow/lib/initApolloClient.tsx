@@ -87,6 +87,7 @@ function createApolloClient(initialState = {}) {
       principle: 0,
       selectedTranscoder: {
         __typename: 'Transcoder',
+        index: 0,
         id: null
       }
     }
