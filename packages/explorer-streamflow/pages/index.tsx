@@ -42,7 +42,6 @@ export default withApollo(() => {
   const account = useAccount()
 
   const { data, loading } = useQuery(GET_DATA, {
-    notifyOnNetworkStatusChange: false,
     pollInterval: 10000,
     ssr: false,
   })

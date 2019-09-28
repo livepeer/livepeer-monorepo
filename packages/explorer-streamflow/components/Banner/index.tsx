@@ -3,7 +3,7 @@ import { jsx, Flex } from 'theme-ui'
 import React from 'react'
 
 interface Props {
-  open: boolean
+  open?: boolean
   label: React.ReactNode
   button?: React.ReactNode
   sx?: object

@@ -54,9 +54,9 @@ export default withApollo(() => {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
-    notifyOnNetworkStatusChange: true,
     ssr: false,
   })
+  console.log(loading)
 
   if (error) {
     console.error(error)

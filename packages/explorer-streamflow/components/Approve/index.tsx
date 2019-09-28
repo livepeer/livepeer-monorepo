@@ -19,8 +19,6 @@ interface Props {
 export default ({ children, amount }: Props) => {
   const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
-  // const [mining, setMining] = useState(false)
-  // const [mined, setMined] = useState(false)
 
   const APPROVE = gql`
     mutation approve($type: String!, $amount: String!) {
@@ -38,7 +36,7 @@ export default ({ children, amount }: Props) => {
     }
   `
 
-  const [approve, { data, error }] = useMutation(APPROVE, {
+  const [approve, { data }] = useMutation(APPROVE, {
     variables: {
       type: 'bond',
       amount: Utils.toWei(

@@ -23,24 +23,25 @@ export default ({ account, transcoder, protocol }: Props) => {
 
   return (
     <div>
-      <Banner
-        open={account && parseInt(account.allowance) == 0}
-        label={
-          <div>
-            Approve Livepeer tokens for staking.
-            <Help
-              sx={{
-                position: 'relative',
-                ml: 1,
-                top: '2px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </div>
-        }
-        button={<Approve>Approve</Approve>}
-      />
+      {account && parseInt(account.allowance) == 0 && (
+        <Banner
+          label={
+            <div>
+              Approve Livepeer tokens for staking.
+              <Help
+                sx={{
+                  position: 'relative',
+                  ml: 1,
+                  top: '2px',
+                  width: 12,
+                  height: 12,
+                }}
+              />
+            </div>
+          }
+          button={<Approve>Approve</Approve>}
+        />
+      )}
       <Box
         sx={{
           width: '100%',

@@ -210,7 +210,7 @@ function renderSwitch(cell) {
             value={cell.value}
           />
           <Link
-            href="/account/[account]/campaign"
+            href="/account/[account]/[slug]"
             as={`/account/${cell.value}/campaign`}
             passHref
           >
