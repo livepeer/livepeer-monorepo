@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import Head from 'next/head'
-import Drawer from '@livepeer/explorer-streamflow/dist/components/Drawer'
-import Reset from '@livepeer/explorer-streamflow/dist/lib/reset'
+import { List, ListItem } from '@livepeer/ui'
 import { Styled, Flex, Box, jsx } from 'theme-ui'
 
 const Live = () => {
@@ -25,7 +24,7 @@ const Layout = ({ children, title = 'Livepeer.live' }: any) => (
     {/* <Reset /> */}
     <Styled.root>
       <Flex style={{ maxWidth: 1400, margin: '0 auto' }}>
-        {/* <Drawer items={menuItems} /> */}
+        <List items={menuItems} />
         {children}
       </Flex>
     </Styled.root>

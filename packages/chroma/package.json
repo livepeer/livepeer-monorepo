@@ -19,8 +19,8 @@
     "cross-env": "^5.2.0",
     "hls.js": "https://github.com/jozanza/hls.js.git#9f68d40971242b0d2216376ff7ff776299acf8fd",
     "prop-types": "15.7.2",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
     "redux": "^4.0.1",
     "styled-components": "4.2.0",
     "video-react": "0.13.6"

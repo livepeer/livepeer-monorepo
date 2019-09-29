@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Flex, Box, Styled } from 'theme-ui'
+/** @jsx jsx */
+import { Box, Styled, jsx } from 'theme-ui'
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -41,7 +41,7 @@ export default ({ streamId, stream, broadcasterName }) => {
       <Box
         style={{
           fontFamily: 'Akkurat-Mono, monospace',
-          whiteSpace: 'noWrap',
+          // whiteSpace: 'noWrap',
           overflow: 'hidden',
           fontSize: '0.6em',
           textAlign: 'center',
@@ -52,9 +52,9 @@ export default ({ streamId, stream, broadcasterName }) => {
       <Box
         sx={{ fontFamily: 'body' }}
         style={{
-          whiteSpace: 'noWrap',
+          // whiteSpace: 'noWrap',
           overflow: 'hidden',
-          overflowText: 'ellipsis',
+          // overflowText: 'ellipsis',
         }}
       >
         {stream.title || <em>no title</em>}
