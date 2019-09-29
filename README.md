@@ -49,10 +49,10 @@ cd livepeerjs
 yarn
 ```
 
-For development purposes there's a top-level `start` script that will watch and continuously compile all packages concurrently:
+For development purposes there's a top-level `dev` script that will watch and continuously compile all packages concurrently:
 
 ```bash
-yarn start
+yarn dev
 ```
 
 For next steps, take a look at documentation for the individual package(s) you want to run and/or develop.

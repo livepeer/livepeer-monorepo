@@ -13,7 +13,7 @@
     "graphiql": "yarn build && node ./server.js",
     "prebuild": "rimraf lib && rimraf main",
     "prepack": "npm -s run build",
-    "start": "run-p \"build-** -- --watch\"",
+    "dev": "run-p \"build-** -- --watch\"",
     "test": "ava main/**/*.test.js"
   },
   "devDependencies": {

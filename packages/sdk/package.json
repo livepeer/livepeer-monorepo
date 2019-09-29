@@ -9,7 +9,7 @@
     "build": "run-p --npm-path npm build-main build-module",
     "build-main": "cross-env NODE_ENV=production babel src --out-dir main --ignore spec.js,test.js --plugins=@babel/plugin-transform-modules-commonjs --source-maps inline",
     "build-module": "cross-env NODE_ENV=production babel src --out-dir lib --ignore spec.js,test.js --source-maps inline",
-    "start": "run-p \"build-** -- --watch\"",
+    "dev": "run-p \"build-** -- --watch\"",
     "copy-etc": "f(){ rimraf etc; mkdir etc; printf 'Importing truffle artifacts...'; tput sc; for x in $@/*.json; do tput rc; tput el; echo \"$(basename $x)\"; node -e \"const {contractName,abi,networks}=require('$x');const [address]=Object.values(networks).sort((a, b) => b.updated_at - a.updated_at);console.log(JSON.stringify({name:contractName,abi,address: (address && address.address) || address}, null, 2));\" > etc/$(basename $x); done; tput rc; tput el; echo 'done! :)'; };f",
     "compile": "pushd ../../node_modules/protocol && rimraf build && yarn && truffle version && yarn compile && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
     "deploy": "pushd ../../node_modules/protocol && rimraf build && yarn && truffle version && truffle migrate --reset && popd && yarn copy-etc ../../node_modules/protocol/build/contracts",
