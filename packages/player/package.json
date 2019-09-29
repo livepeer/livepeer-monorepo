@@ -23,7 +23,7 @@
     "styled-components": "4.2.0"
   },
   "scripts": {
-    "start": "cross-env PORT=3002 react-scripts start",
+    "dev": "cross-env PORT=3002 react-scripts dev",
     "build": "react-scripts build",
     "copy-docs": "echo 'No copy-docs script specified'",
     "eject": "react-scripts eject",
