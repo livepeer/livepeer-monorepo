@@ -16,7 +16,11 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
 
   let items = [
     { name: 'Orchestrators', href: '/', icon: Orchestrators },
-    { name: 'Search', href: '/search', icon: Search },
+    {
+      name: 'Search',
+      href: '/search',
+      icon: Search,
+    },
     {
       name: !account ? 'Connect Wallet' : 'My Account',
       href: !account ? '/connect-wallet' : '/account/[account]/[slug]',
