@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { jsx, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3Context } from 'web3-react'
@@ -10,6 +10,7 @@ import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
+import Button from '../Button'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -78,7 +79,17 @@ export default () => {
   }
 
   if (!(data && data.delegator)) {
-    return <div>Time to get staking! </div>
+    if (isMyAccount) {
+      return (
+        <div>
+          <span sx={{ mr: 2 }}>Time to get staking!</span>
+          <Link href="/" passHref>
+            <Styled.a>View Orchestrators.</Styled.a>
+          </Link>
+        </div>
+      )
+    }
+    return null
   }
 
   const pendingStake = Math.max(

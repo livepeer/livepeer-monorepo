@@ -10,6 +10,8 @@ import { Tabs, TabList, Tab } from './Tabs'
 import { Account, Transcoder, Protocol } from '../../@types'
 import Banner from '../Banner'
 import Approve from '../Approve'
+import Button from '../Button'
+import Modal from '../Modal'
 
 interface Props {
   transcoder: Transcoder
@@ -20,28 +22,58 @@ interface Props {
 export default ({ account, transcoder, protocol }: Props) => {
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')
+  const [open, setModalOpen] = useState(false)
 
   return (
     <div>
-      {account && parseInt(account.allowance) == 0 && (
-        <Banner
-          label={
-            <div>
-              Approve Livepeer tokens for staking.
-              <Help
-                sx={{
-                  position: 'relative',
-                  ml: 1,
-                  top: '2px',
-                  width: 12,
-                  height: 12,
-                }}
-              />
-            </div>
-          }
-          button={<Approve>Approve</Approve>}
-        />
+      {account && parseInt(account.tokenBalance) == 0 && (
+        <>
+          <Banner
+            label={
+              <div>
+                Acquire Livepeer tokens for staking.
+                <Help
+                  sx={{
+                    position: 'relative',
+                    ml: 1,
+                    top: '2px',
+                    width: 12,
+                    height: 12,
+                  }}
+                />
+              </div>
+            }
+            button={<Button onClick={() => setModalOpen(true)}>Acquire</Button>}
+          />
+          <Modal isOpen={open} setOpen={setModalOpen}>
+            <iframe
+              sx={{ bg: '#323639', width: '100%', height: '100%', border: '0' }}
+              src="https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239"
+            />
+          </Modal>
+        </>
       )}
+      {account &&
+        parseInt(account.allowance) == 0 &&
+        parseInt(account.tokenBalance) != 0 && (
+          <Banner
+            label={
+              <div>
+                Approve Livepeer tokens for staking.
+                <Help
+                  sx={{
+                    position: 'relative',
+                    ml: 1,
+                    top: '2px',
+                    width: 12,
+                    height: 12,
+                  }}
+                />
+              </div>
+            }
+            button={<Approve>Approve</Approve>}
+          />
+        )}
       <Box
         sx={{
           width: '100%',

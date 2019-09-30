@@ -15,22 +15,30 @@ export default () => {
     <Page>
       <Flex
         sx={{
-          mt: '20%',
+          mt: 5,
           width: '100%',
           flexDirection: 'column',
         }}
       >
-        <Styled.h1 sx={{ fontSize: 7, alignSelf: 'center' }}>Search</Styled.h1>
-        <p sx={{ mb: 4, color: 'muted', alignSelf: 'center' }}>
+        <Styled.h1 sx={{ display: 'flex', mb: 3, alignItems: 'center' }}>
+          <Search
+            sx={{
+              width: 26,
+              height: 26,
+              color: 'primary',
+              mr: 2,
+            }}
+          />
+          Search
+        </Styled.h1>
+        {/* <p sx={{ mb: 4, color: 'muted' }}>
           Look up orchestrators and delegators by their Ethereum address
-        </p>
+        </p> */}
         <form
           onSubmit={handleSubmit}
           sx={{
             display: 'flex',
             alignItems: 'center',
-            maxWidth: 600,
-            margin: '0 auto',
             width: '100%',
             position: 'relative',
             borderRadius: 5,
@@ -38,15 +46,25 @@ export default () => {
             borderColor: 'border',
           }}
         >
-          <Search
-            sx={{ position: 'absolute', left: 2, mr: 1, color: 'muted' }}
-          />
+          <button sx={{ display: 'flex', alignItems: 'center' }} type="submit">
+            <Search
+              sx={{
+                cursor: 'pointer',
+                position: 'absolute',
+                right: 2,
+                mr: 1,
+                color: 'muted',
+              }}
+            />
+          </button>
           <input
+            required
             name="search"
             sx={{
+              outlineColor: '#00EB88',
               py: 2,
-              pl: 6,
-              pr: 2,
+              pl: 2,
+              pr: 8,
               border: 0,
               boxShadow: 'none',
               width: '100%',
@@ -54,7 +72,7 @@ export default () => {
               fontSize: 2,
               bg: 'transparent',
             }}
-            placeholder="Search by Address"
+            placeholder="Search Account"
             type="search"
           />
         </form>
