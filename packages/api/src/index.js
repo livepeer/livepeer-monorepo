@@ -37,8 +37,8 @@ export default async function makeApp(params) {
   await store.ready
 
   // Logging, JSON parsing, store injection
-  const app = express()
-  app.use('/healthz', healthCheck)
+  const app = express() // top level app! middleware for entire application
+  app.use(healthCheck)
   app.use(morgan('combined'))
   app.use(jsonParser())
   app.use((req, res, next) => {

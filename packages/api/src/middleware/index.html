@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <h1>Please sign in below:</h1>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta
+      name="google-signin-client_id"
+      content="211814034878-r7iugl9pa9fo2shd2pvmmadjatd5o4af.apps.googleusercontent.com"
+    />
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance()
+        auth2.signOut().then(function() {
+          console.log('User signed out.')
+        })
+      }
+
+      var token
+
+      function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile()
+        var id_token = googleUser.getAuthResponse().id_token
+        token = id_token
+        console.log('ID: ' + profile.getId()) // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName())
+        console.log('Image URL: ' + profile.getImageUrl())
+        console.log('Email: ' + profile.getEmail()) // This is null if the 'email' scope is not present.
+      }
+
+      const CLIENT_ID = 'fill_in_client_id'
+
+      const { OAuth2Client } = require('google-auth-library')
+      const client = new OAuth2Client(CLIENT_ID)
+      async function verify() {
+        const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+          // Or, if multiple clients access the backend:
+          //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        })
+        const payload = ticket.getPayload()
+        const userid = payload['sub']
+        // If request specified a G Suite domain:
+        const domain = payload['hd']
+      }
+      verify().catch(console.error)
+    </script>
+  </body>
+</html>
