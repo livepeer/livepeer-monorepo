@@ -16,3 +16,13 @@ export const abbreviateNumber = (value, precision = 3) => {
 export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
+
+export const getDelegationStatusColor = (status) => {
+  if (status == 'Bonded') {
+    return 'primary'
+  } else if (status == 'Unbonding') {
+    return 'yellow'
+  } else {
+    return 'muted'
+  }
+}

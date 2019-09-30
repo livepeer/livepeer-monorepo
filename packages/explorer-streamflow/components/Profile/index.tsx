@@ -3,6 +3,7 @@ import { Styled, jsx } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Chip from '../../components/Chip'
 import { Transcoder, Delegator } from '../../@types'
+import { getDelegationStatusColor } from '../../lib/utils'
 
 interface Props {
   account: string
@@ -45,21 +46,19 @@ export default ({
           value={account}
         />
 
-        {role == 'Orchestrator' && (
-          <div
-            sx={{
-              position: 'absolute',
-              right: 0,
-              bottom: '-2px',
-              backgroundColor: transcoder.active ? 'primary' : 'yellow',
-              border: '5px solid #131418',
-              boxSizing: 'border-box',
-              width: 24,
-              height: 24,
-              borderRadius: 1000,
-            }}
-          ></div>
-        )}
+        <div
+          sx={{
+            position: 'absolute',
+            right: 0,
+            bottom: '-2px',
+            bg: getDelegationStatusColor(delegator && delegator.status),
+            border: '5px solid #131418',
+            boxSizing: 'border-box',
+            width: 24,
+            height: 24,
+            borderRadius: 1000,
+          }}
+        />
       </div>
       <Styled.h1 sx={{ mb: 2 }}>
         {isMyAccount

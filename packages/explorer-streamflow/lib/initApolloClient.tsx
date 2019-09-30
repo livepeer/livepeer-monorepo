@@ -146,6 +146,7 @@ async function createSchema() {
 
     extend type Transcoder {
       profile: Profile
+      delegationStatus: String
     }
 
     type Account {
@@ -178,6 +179,14 @@ async function createSchema() {
             tokenBalance: await rpc.getTokenBalance(_args.id),
             ethBalance: await rpc.getEthBalance(_args.id),
             allowance: allowance
+          }
+        }
+      },
+      Transcoder: {
+        delegationStatus: {
+          async resolve(_delegator, _args, _context, _info) {
+            const { status } = await rpc.getDelegator(_delegator.id)
+            return status
           }
         }
       },
