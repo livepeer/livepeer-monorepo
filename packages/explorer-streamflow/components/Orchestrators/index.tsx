@@ -227,12 +227,12 @@ function renderSwitch(cell, data) {
     case 'Account':
       return (
         <Flex sx={{ alignItems: 'center' }}>
-          <div sx={{ position: 'relative', mr: 2 }}>
+          <Flex sx={{ position: 'relative', mr: 2 }}>
             <QRCode
               style={{
                 borderRadius: 1000,
-                width: 32,
-                height: 32,
+                width: 36,
+                height: 36,
               }}
               fgColor={`#${cell.value.substr(2, 6)}`}
               value={cell.value}
@@ -241,8 +241,8 @@ function renderSwitch(cell, data) {
               className="status"
               sx={{
                 position: 'absolute',
-                right: '-2px',
-                bottom: '4px',
+                right: '0px',
+                bottom: '0px',
                 bg: cell.row.values.active ? 'primary' : 'yellow',
                 border: '3px solid',
                 borderColor:
@@ -257,8 +257,8 @@ function renderSwitch(cell, data) {
                 height: 14,
                 borderRadius: 1000,
               }}
-            ></div>
-          </div>
+            />
+          </Flex>
           <Link
             href="/account/[account]/[slug]"
             as={`/account/${cell.value}/campaign`}

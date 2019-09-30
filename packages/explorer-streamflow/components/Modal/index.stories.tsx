@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import Modal from './index'
 import Button from '../Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 import StakingFlow from '../StakingFlow'
@@ -27,9 +27,7 @@ storiesOf('Modal', module)
           <StakingFlow amount={100} action="stake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-              <div sx={{ color: 'primary', mr: 1 }}>
-                <CircularProgress size={16} color="inherit" />
-              </div>
+              <Spinner sx={{ mr: 1 }} />
               <div sx={{ color: 'text' }}>
                 Waiting for your transaction to be mined.
               </div>

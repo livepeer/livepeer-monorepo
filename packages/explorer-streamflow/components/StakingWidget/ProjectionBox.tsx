@@ -47,6 +47,7 @@ export default ({ action }) => {
           <Flex sx={{ fontSize: 0, mb: 1, justifyContent: 'space-between' }}>
             <div sx={{ fontWeight: 500 }}>12 Months</div>
             <div sx={{ fontFamily: 'monospace', color: 'muted' }}>
+              +
               {data.principle
                 ? ((data.roi / data.principle) * 100).toFixed(2) + '%'
                 : 0 + '%'}
@@ -54,7 +55,7 @@ export default ({ action }) => {
           </Flex>
           <Flex sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <div sx={{ fontSize: 4, fontFamily: 'monospace' }}>
-              {abbreviateNumber(data.roi)}
+              +{abbreviateNumber(data.roi)}
             </div>
             <div sx={{ fontSize: 1 }}>LPT</div>
           </Flex>

@@ -47,9 +47,9 @@ export default withApollo(() => {
     ssr: false,
   })
 
-  if (loading) {
-    return (
-      <Page>
+  return (
+    <Page>
+      {loading ? (
         <Flex
           sx={{
             width: '100%',
@@ -59,18 +59,7 @@ export default withApollo(() => {
         >
           <Spinner />
         </Flex>
-      </Page>
-    )
-  }
-
-  return (
-    <Page>
-      <Flex
-        sx={{
-          width: 'calc(100% - 256px)',
-          px: 5,
-        }}
-      >
+      ) : (
         <>
           <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
             <Orchestrators
@@ -97,7 +86,7 @@ export default withApollo(() => {
             />
           </Flex>
         </>
-      </Flex>
+      )}
     </Page>
   )
 })

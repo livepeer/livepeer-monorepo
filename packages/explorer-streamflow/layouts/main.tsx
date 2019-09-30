@@ -1,15 +1,16 @@
-import * as React from 'react'
+/** @jsx jsx */
+import { jsx, Styled, Flex } from 'theme-ui'
+import React from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
-import { Styled, Flex } from 'theme-ui'
 import Orchestrators from '../static/img/orchestrators.svg'
 import Account from '../static/img/account.svg'
 import Wallet from '../static/img/wallet.svg'
 import Search from '../static/img/search.svg'
 import { useWeb3Context } from 'web3-react'
 
-const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
+export default ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
   const account = context && context.account
 
@@ -33,12 +34,19 @@ const Layout = ({ children, title = 'Livepeer Explorer' }: any) => {
       </Head>
       <Reset />
       <Styled.root>
-        <Flex style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <Flex sx={{ maxWidth: 1400, margin: '0 auto' }}>
           <Drawer items={items} />
-          {children}
+          <Flex
+            sx={{
+              width: 'calc(100% - 256px)',
+              paddingLeft: 40,
+              paddingRight: 40,
+            }}
+          >
+            {children}
+          </Flex>
         </Flex>
       </Styled.root>
     </>
   )
 }
-export default Layout

@@ -56,7 +56,6 @@ export default withApollo(() => {
     },
     ssr: false,
   })
-  console.log(loading)
 
   if (error) {
     console.error(error)
@@ -101,60 +100,51 @@ export default withApollo(() => {
     <Page>
       <Flex
         sx={{
-          width: 'calc(100% - 256px)',
-          maxWidth: 1300,
-          margin: '0 auto',
-          px: 5,
+          pt: 5,
+          mb: 8,
+          flexDirection: 'column',
+          pr: 6,
+          width:
+            role == 'Orchestrator' || (isMyAccount && isStaked)
+              ? '70%'
+              : '100%',
         }}
       >
+        <Profile
+          account={query.account.toString()}
+          delegator={delegator}
+          transcoder={transcoder}
+          hasLivepeerToken={hasLivepeerToken}
+          role={role}
+          isMyAccount={isMyAccount}
+          sx={{ mb: 4 }}
+        />
+        <Tabs sx={{ mb: 4 }} tabs={tabs} />
+        {slug == 'campaign' && <CampaignView />}
+        {slug == 'tokenholders' && <TokenholdersView />}
+        {slug == 'staking' && <StakingView />}
+      </Flex>
+      {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
         <Flex
           sx={{
-            paddingTop: 5,
-            mb: 8,
-            flexDirection: 'column',
-            pr: 6,
-            width:
-              role == 'Orchestrator' || (isMyAccount && isStaked)
-                ? '70%'
-                : '100%',
+            position: 'sticky',
+            alignSelf: 'flex-start',
+            top: 4,
+            minHeight: 300,
+            borderRadius: 2,
+            width: '30%',
+            justifyContent: 'center',
           }}
         >
-          <Profile
-            account={query.account.toString()}
-            delegator={delegator}
-            transcoder={transcoder}
-            hasLivepeerToken={hasLivepeerToken}
-            role={role}
-            isMyAccount={isMyAccount}
-            sx={{ mb: 4 }}
+          <StakingWidget
+            account={account}
+            transcoder={
+              role == 'Orchestrator' ? transcoder : delegator.delegate
+            }
+            protocol={protocol}
           />
-          <Tabs sx={{ mb: 4 }} tabs={tabs} />
-          {slug == 'campaign' && <CampaignView />}
-          {slug == 'tokenholders' && <TokenholdersView />}
-          {slug == 'staking' && <StakingView />}
         </Flex>
-        {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
-          <Flex
-            sx={{
-              position: 'sticky',
-              alignSelf: 'flex-start',
-              top: 4,
-              minHeight: 300,
-              borderRadius: 2,
-              width: '30%',
-              justifyContent: 'center',
-            }}
-          >
-            <StakingWidget
-              account={account}
-              transcoder={
-                role == 'Orchestrator' ? transcoder : delegator.delegate
-              }
-              protocol={protocol}
-            />
-          </Flex>
-        )}
-      </Flex>
+      )}
     </Page>
   )
 })

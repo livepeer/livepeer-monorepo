@@ -62,8 +62,8 @@ export default () => {
     return null
   }
 
-  let callsMade = data.transcoder.pools.filter(r => r.rewardTokens != null)
-    .length
+  let callsMade =
+    data && data.transcoder.pools.filter(r => r.rewardTokens != null).length
   return (
     <div>
       {loading ? (

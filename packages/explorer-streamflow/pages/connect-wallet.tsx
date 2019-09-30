@@ -10,9 +10,8 @@ import MetaMask from '../static/img/metamask.svg'
 import Secure from '../static/img/secure.svg'
 import ToggleCard from '../components/ToggleCard'
 import Button from '../components/Button'
-import { withApollo } from '../lib/apollo'
 
-export default withApollo(() => {
+export default () => {
   const context = useWeb3Context()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
 
@@ -28,12 +27,7 @@ export default withApollo(() => {
 
   return (
     <Page>
-      <Box
-        sx={{
-          width: 'calc(100% - 256px)',
-          p: 5,
-        }}
-      >
+      <div sx={{ pt: 5 }}>
         <Styled.h1
           sx={{
             display: 'flex',
@@ -52,7 +46,7 @@ export default withApollo(() => {
           />
           Connect Wallet
         </Styled.h1>
-        <Flex sx={{ width: ['100%', '100%', '100%', '80%'], mb: 4 }}>
+        <Flex sx={{ width: ['100%', '100%', '100%', '80%'], mb: 3 }}>
           <ToggleCard
             onClick={() => setSelectedProvider('Portis')}
             sx={{ mr: 3, width: '50%' }}
@@ -71,6 +65,7 @@ export default withApollo(() => {
             providerName="MetaMask"
           />
         </Flex>
+
         <Button
           sx={{ mb: 4 }}
           onClick={async () => {
@@ -79,17 +74,23 @@ export default withApollo(() => {
         >
           Connect
         </Button>
-        <Flex>
-          <Secure sx={{ mr: 2 }} />
+        <Flex
+          sx={{
+            mb: 3,
+            alignSelf: 'flex-start',
+            alignItems: 'center',
+            width: '80%',
+          }}
+        >
+          <Secure sx={{ width: 24, height: 24, mr: 2 }} />
           <Flex sx={{ flexDirection: 'column' }}>
-            <Styled.h5 sx={{ mb: 0 }}>Non-custodial & Secure</Styled.h5>
-            <Styled.p sx={{ fontSize: 0 }}>
-              We do not own your private keys and cannot access your funds
-              without your confirmation.
-            </Styled.p>
+            <h5 sx={{ color: 'muted' }}>Non-custodial & Secure</h5>
+            <div sx={{ color: 'muted', fontSize: 0 }}>
+              We do not own your private keys and cannot access your funds.
+            </div>
           </Flex>
         </Flex>
-      </Box>
+      </div>
     </Page>
   )
-})
+}
