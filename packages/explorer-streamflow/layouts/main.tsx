@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Styled, Flex } from 'theme-ui'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
@@ -9,10 +9,11 @@ import Account from '../static/img/account.svg'
 import Wallet from '../static/img/wallet.svg'
 import Search from '../static/img/search.svg'
 import { useWeb3Context } from 'web3-react'
+import { ethers } from 'ethers'
 
 export default ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
-  const account = context && context.account
+  const { account } = context
 
   let items = [
     { name: 'Orchestrators', href: '/', icon: Orchestrators },

@@ -30,7 +30,7 @@ export default ({ account, transcoder, protocol }: Props) => {
         <>
           <Banner
             label={
-              <div>
+              <div sx={{ flex: 1 }}>
                 Acquire Livepeer tokens for staking.
                 <Help
                   sx={{
@@ -43,7 +43,7 @@ export default ({ account, transcoder, protocol }: Props) => {
                 />
               </div>
             }
-            button={<Button onClick={() => setModalOpen(true)}>Acquire</Button>}
+            button={<Button onClick={() => setModalOpen(true)}>Get LPT</Button>}
           />
           <Modal isOpen={open} setOpen={setModalOpen}>
             <iframe

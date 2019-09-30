@@ -8,6 +8,7 @@ import Link from 'next/link'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import Orchestrators from '../../static/img/orchestrators.svg'
+import Power from '../../static/img/power.svg'
 import Search from '../../static/img/search.svg'
 import { useApolloClient } from '@apollo/react-hooks'
 import { useQuery } from '@apollo/react-hooks'
@@ -37,16 +38,17 @@ export default ({ protocol, transcoders }) => {
         Header: '#',
         accessor: 'rank',
       },
-      {
-        Header: 'Active',
-        accessor: 'active',
-        show: false,
-      },
+
       {
         Header: 'Account',
         accessor: 'id',
         filter: 'fuzzyText',
         Filter: DefaultColumnFilter,
+      },
+      {
+        Header: 'Active',
+        accessor: 'active',
+        show: false,
       },
       {
         Header: 'Stake',
@@ -161,8 +163,8 @@ export default ({ protocol, transcoders }) => {
         </thead>
 
         <tbody>
-          {rows.map(
-            (row: any, rowIndex) =>
+          {rows.map((row: any, rowIndex) => {
+            return (
               prepareRow(row) || (
                 <tr
                   {...row.getRowProps()}
@@ -173,6 +175,15 @@ export default ({ protocol, transcoders }) => {
                       '.status': {
                         borderColor: lighten('#1E2026', 0.05),
                       },
+                    },
+                    '.status': {
+                      borderColor:
+                        rowIndex ==
+                        (data &&
+                          data.selectedTranscoder &&
+                          data.selectedTranscoder.index)
+                          ? 'surface'
+                          : 'background',
                     },
                     bg:
                       rowIndex ==
@@ -207,89 +218,116 @@ export default ({ protocol, transcoders }) => {
                         }
                         key={i}
                       >
-                        {renderSwitch(cell, data)}
+                        {renderSwitch(cell)}
                       </td>
                     )
                   })}
                 </tr>
-              ),
-          )}
+              )
+            )
+          })}
         </tbody>
       </table>
     </Box>
   )
 }
 
-function renderSwitch(cell, data) {
+const ActiveCircle = ({ active }, props) => (
+  <div
+    className="status"
+    sx={{
+      position: 'absolute',
+      right: '-2px',
+      bottom: '-2px',
+      bg: active ? 'primary' : 'yellow',
+      border: '3px solid',
+      borderColor: 'background',
+      boxSizing: 'border-box',
+      width: 14,
+      height: 14,
+      borderRadius: 1000,
+      ...props.sx,
+    }}
+  />
+)
+
+function renderSwitch(cell) {
   switch (cell.column.Header) {
     case '#':
-      return <span sx={{ fontFamily: 'monospace' }}>{cell.row.index + 1}</span>
+      return (
+        <Flex sx={{ alignItems: 'center', fontFamily: 'monospace' }}>
+          {cell.row.index + 1}{' '}
+        </Flex>
+      )
     case 'Account':
       return (
         <Flex sx={{ alignItems: 'center' }}>
-          <Flex sx={{ position: 'relative', mr: 2 }}>
+          <Flex
+            sx={{ minWidth: 32, minHeight: 32, position: 'relative', mr: 2 }}
+          >
             <QRCode
               style={{
                 borderRadius: 1000,
-                width: 36,
-                height: 36,
+                width: 32,
+                height: 32,
               }}
               fgColor={`#${cell.value.substr(2, 6)}`}
               value={cell.value}
             />
-            <div
-              className="status"
-              sx={{
-                position: 'absolute',
-                right: '0px',
-                bottom: '0px',
-                bg: cell.row.values.active ? 'primary' : 'yellow',
-                border: '3px solid',
-                borderColor:
-                  cell.value ==
-                  (data &&
-                    data.selectedTranscoder &&
-                    data.selectedTranscoder.id)
-                    ? 'surface'
-                    : 'background',
-                boxSizing: 'border-box',
-                width: 14,
-                height: 14,
-                borderRadius: 1000,
-              }}
-            />
+            <ActiveCircle active={cell.row.values.active} />
           </Flex>
-          <Link
-            href="/account/[account]/[slug]"
-            as={`/account/${cell.value}/campaign`}
-            passHref
-          >
-            <a
-              sx={{
-                color: 'text',
-                cursor: 'pointer',
-                transition: 'all .3s',
-                borderBottom: '1px solid',
-                borderColor: 'transparent',
-                '&:hover': {
-                  color: 'primary',
-                  borderBottom: '1px solid',
-                  borderColor: 'primary',
-                  transition: 'all .3s',
-                },
-              }}
+          <Flex sx={{ justifyContent: 'space-between', width: '100%' }}>
+            <Link
+              href="/account/[account]/[slug]"
+              as={`/account/${cell.value}/campaign`}
+              passHref
             >
-              <Flex sx={{ alignItems: 'center' }}>
-                {cell.value.replace(cell.value.slice(7, 37), '…')}
-              </Flex>
-            </a>
-          </Link>
+              <a
+                sx={{
+                  color: 'text',
+                  cursor: 'pointer',
+                  transition: 'all .3s',
+                  borderBottom: '1px solid',
+                  borderColor: 'transparent',
+                  '&:hover': {
+                    color: 'primary',
+                    borderBottom: '1px solid',
+                    borderColor: 'primary',
+                    transition: 'all .3s',
+                  },
+                }}
+              >
+                <Flex
+                  sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <div>{cell.value.replace(cell.value.slice(5, 39), '…')}</div>
+                </Flex>
+              </a>
+            </Link>
+            {cell.row.values.active && (
+              <div
+                sx={{
+                  display: 'inline-flex',
+                  padding: '0px 6px',
+                  border: '1px solid',
+                  borderColor: 'border',
+                  color: 'muted',
+                  fontWeight: 600,
+                  borderRadius: 3,
+                  fontSize: '10px',
+                  alignItems: 'center',
+                }}
+              >
+                ACTIVE
+              </div>
+            )}
+          </Flex>
         </Flex>
       )
     case 'Stake':
       return (
         <span sx={{ fontFamily: 'monospace' }}>
-          {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 5)}
+          {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
         </span>
       )
     case 'Reward Cut':

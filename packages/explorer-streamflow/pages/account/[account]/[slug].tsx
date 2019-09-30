@@ -16,6 +16,7 @@ import { Transcoder, Delegator, Protocol } from '../../../@types'
 import Spinner from '../../../components/Spinner'
 import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
+import { useWeb3Context } from 'web3-react'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -47,6 +48,7 @@ const GET_DATA = gql`
 export default withApollo(() => {
   const account = useAccount()
   const router = useRouter()
+  const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
 
@@ -80,7 +82,8 @@ export default withApollo(() => {
   const transcoder: Transcoder = data.transcoder
   const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
-  const isMyAccount: boolean = account && account.id.toString() == query.account
+  const isMyAccount: boolean =
+    context.account && context.account == query.account
   const isStaked: boolean = !!(delegator && delegator.delegate)
   const hasLivepeerToken: boolean =
     account && Utils.fromWei(account.tokenBalance) > 0
@@ -100,10 +103,10 @@ export default withApollo(() => {
     <Page>
       <Flex
         sx={{
-          pt: 5,
-          mb: 8,
           flexDirection: 'column',
+          mb: 8,
           pr: 6,
+          pt: 5,
           width:
             role == 'Orchestrator' || (isMyAccount && isStaked)
               ? '70%'
@@ -113,11 +116,11 @@ export default withApollo(() => {
         <Profile
           account={query.account.toString()}
           delegator={delegator}
-          transcoder={transcoder}
           hasLivepeerToken={hasLivepeerToken}
-          role={role}
           isMyAccount={isMyAccount}
+          role={role}
           sx={{ mb: 4 }}
+          transcoder={transcoder}
         />
         <Tabs sx={{ mb: 4 }} tabs={tabs} />
         {slug == 'campaign' && <CampaignView />}
@@ -127,13 +130,13 @@ export default withApollo(() => {
       {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
         <Flex
           sx={{
-            position: 'sticky',
             alignSelf: 'flex-start',
-            top: 4,
-            minHeight: 300,
             borderRadius: 2,
-            width: '30%',
             justifyContent: 'center',
+            minHeight: 300,
+            position: 'sticky',
+            top: 4,
+            width: '30%',
           }}
         >
           <StakingWidget
@@ -161,12 +164,12 @@ function getTabs(
       as: `/account/${account}/staking`,
       isActive: asPath == `/account/${account}/staking`,
     },
-    {
-      name: 'Earned Fees',
-      href: '/account/[account]/[slug]',
-      as: `/account/${account}/fees`,
-      isActive: asPath == `/account/${account}/fees`,
-    },
+    // {
+    //   name: 'Earned Fees',
+    //   href: '/account/[account]/[slug]',
+    //   as: `/account/${account}/fees`,
+    //   isActive: asPath == `/account/${account}/fees`,
+    // },
     {
       name: 'History',
       href: '/account/[account]/[slug]',
