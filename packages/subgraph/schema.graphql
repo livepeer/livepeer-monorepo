@@ -84,7 +84,7 @@ type Delegator @entity {
   "The ETH address of the delegate (the one whom the delegator has bonded to)"
   delegate: Transcoder
   "The round the delegator becomes bonded and delegated to its delegate"
-  startRound: Round
+  startRound: Int
   "The last round that the delegator claimed reward and fee pool shares"
   lastClaimRound: Round
   "The amount of Livepeer Token a delegator currently has bonded"
@@ -199,7 +199,7 @@ type ClaimEarningsEvent implements Transaction @entity {
   round: Round
   delegator: Delegator
   delegate: Transcoder
-  startRound: Round
+  startRound: Int
   endRound: Round
   rewardTokens: BigInt
   fees: BigInt

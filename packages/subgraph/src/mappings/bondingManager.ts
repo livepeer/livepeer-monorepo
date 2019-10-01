@@ -216,11 +216,6 @@ export function bond(event: Bond): void {
     transcoder.delegators = new Array<string>()
   }
 
-  // Update delegator's start round if in an unbonded state
-  if (delegator.bondedAmount.isZero()) {
-    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
-  }
-
   // Changing delegate
   if (
     delegator.delegate != null &&
@@ -246,8 +241,6 @@ export function bond(event: Bond): void {
 
     oldDelegate.save()
     oldTranscoder.save()
-
-    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
   }
 
   // Update transcoder / delegate
@@ -277,6 +270,7 @@ export function bond(event: Bond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.startRound = delegatorData.value4.toI32()
   delegator.principal = delegator.principal.plus(additionalAmount)
 
   delegate.save()
@@ -335,10 +329,10 @@ export function unbond(event: Unbond): void {
 
   // Delegator no longer bonded to anyone
   delegator.delegate = null
-  delegator.startRound = null
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.startRound = delegatorData.value4.toI32()
   delegator.unbonded = delegator.unbonded.plus(delegatorData.value0)
 
   // Apply store updates
@@ -424,7 +418,7 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   claimEarningsEvent.round = currentRound.toString()
   claimEarningsEvent.delegate = delegator.id
   claimEarningsEvent.delegator = delegatorAddress.toHex()
-  claimEarningsEvent.startRound = delegator.lastClaimRound
+  claimEarningsEvent.startRound = delegator.lastClaimRound as i32
   claimEarningsEvent.endRound = endRound.toString()
   claimEarningsEvent.rewardTokens = delegatorData.value0.minus(
     delegator.bondedAmount as BigInt

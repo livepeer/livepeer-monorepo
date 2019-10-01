@@ -59,11 +59,6 @@ export function bond(event: Bond): void {
     transcoder.delegators = new Array<string>()
   }
 
-  // Update delegator's start round if in an unbonded state
-  if (delegator.bondedAmount.isZero()) {
-    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
-  }
-
   // Changing delegate
   if (
     delegator.delegate != null &&
@@ -88,8 +83,6 @@ export function bond(event: Bond): void {
 
     oldDelegate.save()
     oldTranscoder.save()
-
-    delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
   }
 
   // Update transcoder / delegate
@@ -106,6 +99,7 @@ export function bond(event: Bond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.startRound = delegatorData.value4.toI32()
   delegator.principal = delegator.principal.plus(additionalAmount)
 
   delegate.save()
@@ -167,6 +161,7 @@ export function unbond(event: Unbond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.startRound = delegatorData.value4.toI32()
   delegator.unbonded = delegator.unbonded.plus(amount)
 
   // Delegator no longer delegated to anyone if it does not have a bonded amount
@@ -181,9 +176,6 @@ export function unbond(event: Unbond): void {
 
     // Update delegator's delegate
     delegator.delegate = null
-
-    // Update delegator's start round
-    delegator.startRound = delegatorData.value4.toString()
   }
 
   unbondingLock.unbondingLockId = unbondingLockId.toI32()
@@ -236,7 +228,7 @@ export function rebond(event: Rebond): void {
   // update delegator
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   delegator.delegate = delegateAddress.toHex()
-  delegator.startRound = delegatorData.value4.toString()
+  delegator.startRound = delegatorData.value4.toI32()
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
