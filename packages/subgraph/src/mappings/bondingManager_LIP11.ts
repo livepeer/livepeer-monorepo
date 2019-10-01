@@ -60,7 +60,7 @@ export function bond(event: Bond): void {
   }
 
   // Update delegator's start round if in an unbonded state
-  if (delegator.bondedAmount.equals(BigInt.fromI32(0))) {
+  if (delegator.bondedAmount.isZero()) {
     delegator.startRound = currentRound.plus(BigInt.fromI32(1)).toString()
   }
 
