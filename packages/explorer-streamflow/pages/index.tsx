@@ -23,6 +23,15 @@ const GET_DATA = gql`
       status
       active
       totalStake
+      delegator {
+        startRound {
+          id
+        }
+        bondedAmount
+        unbondingLocks {
+          withdrawRound
+        }
+      }
       pools(first: 30, orderBy: id, orderDirection: desc) {
         rewardTokens
       }
@@ -34,6 +43,9 @@ const GET_DATA = gql`
     selectedTranscoder @client {
       __typename
       index
+      id
+    }
+    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
       id
     }
   }
@@ -63,7 +75,7 @@ export default withApollo(() => {
         <>
           <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
             <Orchestrators
-              protocol={data.protocol}
+              currentRound={data.currentRound[0]}
               transcoders={data.transcoders}
             />
           </Flex>

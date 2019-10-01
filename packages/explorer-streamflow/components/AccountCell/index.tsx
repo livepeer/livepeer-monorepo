@@ -27,22 +27,7 @@ const ActiveCircle = ({ status }, props) => {
   )
 }
 
-export default ({ cell }) => {
-  const GET_DELEGATION_STATUS = gql`
-    query($account: ID!) {
-      delegator(id: $account) {
-        id
-        status
-      }
-    }
-  `
-  const { data } = useQuery(GET_DELEGATION_STATUS, {
-    variables: {
-      account: cell.value.toLowerCase() as string,
-    },
-    ssr: false,
-  })
-
+export default ({ status, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
       <Flex sx={{ minWidth: 32, minHeight: 32, position: 'relative', mr: 2 }}>
@@ -52,17 +37,15 @@ export default ({ cell }) => {
             width: 32,
             height: 32,
           }}
-          fgColor={`#${cell.value.substr(2, 6)}`}
-          value={cell.value}
+          fgColor={`#${address.substr(2, 6)}`}
+          value={address}
         />
-        {data && data.delegator && (
-          <ActiveCircle status={data.delegator.status} />
-        )}
+        <ActiveCircle status={status} />
       </Flex>
       <Flex sx={{ justifyContent: 'space-between', width: '100%' }}>
         <Link
           href="/account/[account]/[slug]"
-          as={`/account/${cell.value}/campaign`}
+          as={`/account/${address}/campaign`}
           passHref
         >
           <a
@@ -83,11 +66,11 @@ export default ({ cell }) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <div>{cell.value.replace(cell.value.slice(5, 39), '…')}</div>
+              <div>{address.replace(address.slice(5, 39), '…')}</div>
             </Flex>
           </a>
         </Link>
-        {cell.row.values.active && (
+        {active && (
           <div
             sx={{
               display: 'inline-flex',

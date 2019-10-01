@@ -3,11 +3,9 @@ import { jsx, Flex, Box } from 'theme-ui'
 import { lighten } from '@theme-ui/color'
 import React from 'react'
 import { useTable, useFilters } from 'react-table'
-import Link from 'next/link'
 import * as Utils from 'web3-utils'
-import { abbreviateNumber } from '../../lib/utils'
+import { getDelegatorStatus, abbreviateNumber } from '../../lib/utils'
 import Orchestrators from '../../static/img/orchestrators.svg'
-import Power from '../../static/img/power.svg'
 import Search from '../../static/img/search.svg'
 import { useApolloClient } from '@apollo/react-hooks'
 import { useQuery } from '@apollo/react-hooks'
@@ -17,7 +15,7 @@ import { Styled } from 'theme-ui'
 import Textfield from '../Textfield'
 import AccountCell from '../AccountCell'
 
-export default ({ protocol, transcoders }) => {
+export default ({ currentRound, transcoders }) => {
   const client = useApolloClient()
 
   const GET_ROI = gql`
@@ -48,6 +46,11 @@ export default ({ protocol, transcoders }) => {
       {
         Header: 'Active',
         accessor: 'active',
+        show: false,
+      },
+      {
+        Header: 'Delegator',
+        accessor: 'delegator',
         show: false,
       },
       {
@@ -218,7 +221,7 @@ export default ({ protocol, transcoders }) => {
                         }
                         key={i}
                       >
-                        {renderSwitch(cell)}
+                        {renderSwitch(cell, currentRound)}
                       </td>
                     )
                   })}
@@ -232,7 +235,7 @@ export default ({ protocol, transcoders }) => {
   )
 }
 
-function renderSwitch(cell) {
+function renderSwitch(cell, currentRound) {
   switch (cell.column.Header) {
     case '#':
       return (
@@ -241,7 +244,14 @@ function renderSwitch(cell) {
         </Flex>
       )
     case 'Account':
-      return <AccountCell cell={cell} />
+      const status = getDelegatorStatus(cell.row.values.delegator, currentRound)
+      return (
+        <AccountCell
+          status={status}
+          active={cell.row.values.active}
+          address={cell.value}
+        />
+      )
     case 'Stake':
       return (
         <span sx={{ fontFamily: 'monospace' }}>

@@ -20,6 +20,7 @@ export interface Transcoder {
   accruedFees?: string
   pools?: [Pool]
   delegators?: [Delegator]
+  delegator?: Delegator
 }
 
 export interface Delegator {

@@ -15,7 +15,7 @@ import {
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
 const subgraphEndpoint =
-  'https://graph.livepeer.org/subgraphs/name/livepeer/livepeer-canary'
+  'https://graph.livepeer.org/subgraphs/name/livepeer/livepeer'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 let apolloClient = null
 
@@ -182,14 +182,6 @@ async function createSchema() {
           }
         }
       },
-      Transcoder: {
-        delegationStatus: {
-          async resolve(_delegator, _args, _context, _info) {
-            const { status } = await rpc.getDelegator(_delegator.id)
-            return status
-          }
-        }
-      },
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
@@ -205,12 +197,6 @@ async function createSchema() {
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
             return await rpc.getEthBalance(_delegator.id)
-          }
-        },
-        status: {
-          async resolve(_delegator, _args, _context, _info) {
-            const { status } = await rpc.getDelegator(_delegator.id)
-            return status
           }
         }
       }

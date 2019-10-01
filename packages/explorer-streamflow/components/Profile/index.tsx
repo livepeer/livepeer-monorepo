@@ -3,7 +3,7 @@ import { Styled, jsx } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Chip from '../../components/Chip'
 import { Transcoder, Delegator } from '../../@types'
-import { getDelegationStatusColor } from '../../lib/utils'
+import { getDelegatorStatus, getDelegationStatusColor } from '../../lib/utils'
 
 interface Props {
   account: string
@@ -12,6 +12,7 @@ interface Props {
   delegator: Delegator
   transcoder: Transcoder
   isMyAccount: boolean
+  status: string
 }
 
 export default ({
@@ -19,6 +20,7 @@ export default ({
   role = 'Orchestrator',
   hasLivepeerToken,
   delegator,
+  status,
   transcoder,
   isMyAccount = false,
   ...props
@@ -51,7 +53,7 @@ export default ({
             position: 'absolute',
             right: 0,
             bottom: '-2px',
-            bg: getDelegationStatusColor(delegator && delegator.status),
+            bg: getDelegationStatusColor(status),
             border: '5px solid #131418',
             boxSizing: 'border-box',
             width: 24,

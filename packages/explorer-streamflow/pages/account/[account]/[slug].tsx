@@ -12,18 +12,25 @@ import TokenholdersView from '../../../components/TokenholdersView'
 import CampaignView from '../../../components/CampaignView'
 import StakingView from '../../../components/StakingView'
 import { withApollo } from '../../../lib/apollo'
-import { Transcoder, Delegator, Protocol } from '../../../@types'
+import { Transcoder, Delegator, Protocol, Round } from '../../../@types'
 import Spinner from '../../../components/Spinner'
 import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
 import { useWeb3Context } from 'web3-react'
+import { getDelegatorStatus } from '../../../lib/utils'
 
 const GET_DATA = gql`
   query($account: ID!) {
     delegator(id: $account) {
       id
       pendingStake
-      status
+      startRound {
+        id
+      }
+      bondedAmount
+      unbondingLocks {
+        withdrawRound
+      }
       delegate {
         id
       }
@@ -82,6 +89,7 @@ export default withApollo(() => {
   const transcoder: Transcoder = data.transcoder
   const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
+  const currentRound: Round = data.currentRound[0]
   const isMyAccount: boolean =
     context.account && context.account == query.account
   const isStaked: boolean = !!(delegator && delegator.delegate)
@@ -120,6 +128,7 @@ export default withApollo(() => {
           isMyAccount={isMyAccount}
           role={role}
           sx={{ mb: 4 }}
+          status={getDelegatorStatus(delegator, currentRound)}
           transcoder={transcoder}
         />
         <Tabs sx={{ mb: 4 }} tabs={tabs} />
