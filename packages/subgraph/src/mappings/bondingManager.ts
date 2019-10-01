@@ -63,6 +63,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   let pendingPricePerSegment = event.params.pendingPricePerSegment
 
   // Update transcoder
+  transcoder.delegator = transcoderAddress.toHex()
   transcoder.pendingRewardCut = pendingRewardCut
   transcoder.pendingFeeShare = pendingFeeShare
   transcoder.pendingPricePerSegment = pendingPricePerSegment
