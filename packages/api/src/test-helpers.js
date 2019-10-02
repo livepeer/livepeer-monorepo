@@ -16,6 +16,8 @@ export class TestClient {
       throw new Error('TestClient missing server')
     }
     this.server = opts.server
+    this.lptoken = 'mock_token'
+
     // same as apiKey , but with google token
     // here: https://jestjs.io/docs/en/manual-mocks.html#mocking-node-modules
     if (opts.apiKey) {
@@ -25,6 +27,8 @@ export class TestClient {
 
   fetch(path, args = {}) {
     let headers = args.headers || {}
+    headers.lptoken = this.lptoken
+    args.lptoken = this.lptoken
     if (this.apiKey) {
       headers = {
         ...headers,

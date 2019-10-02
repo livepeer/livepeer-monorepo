@@ -37,7 +37,6 @@ function authFactory(params) {
       try {
         const user = await getUser(req, res, next)
         if (user.domain === req.trustedDomain) {
-          console.log(`USER: ${JSON.stringify(user)}`)
           req.user = user
           return next()
         } else {
@@ -75,18 +74,17 @@ function authFactory(params) {
 }
 
 async function getUser(req, res, next) {
-  var token = req.headers.token
-  if (token != null) {
-    req.token = token
+  var lpToken = req.headers.lptoken
+  if (lpToken != null) {
+    req.lpToken = lpToken
   } else {
-    token = req.token
+    lpToken = req.lpToken
   }
   let clientId = req.clientId
   let { OAuth2Client } = require('google-auth-library')
   let client = new OAuth2Client(clientId)
-
   let ticket = await client.verifyIdToken({
-    idToken: token,
+    idToken: lpToken,
     audience: clientId,
   })
   let payload = ticket.getPayload()
@@ -102,9 +100,10 @@ async function getUser(req, res, next) {
       id: payload.sub,
       name: payload.name,
       email: payload.email,
-      domain: payload['hd'],
+      domain: payload['hd'], // this doesn't always exist!!!
       kind: 'user',
     })
+    user = await req.store.get(`user/${payload.sub}`)
   }
 
   return user

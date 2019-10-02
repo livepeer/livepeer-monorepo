@@ -11,13 +11,12 @@
     <a id="signOut" href="#">Sign out</a>
     <button>Download Streams</button>
     <script>
-      var token = localStorage.getItem('livepeerToken')
+      var lpToken = localStorage.getItem('livepeerToken')
 
       document.querySelector('button').addEventListener('click', () => {
-        console.log(token)
         fetch('/api/stream/test-streams', {
           headers: {
-            token: token,
+            lptoken: lpToken,
           },
         })
       })
@@ -32,9 +31,11 @@
 
       var sub
       function onSignIn(googleUser) {
-        token = googleUser.getAuthResponse().id_token
-        localStorage.setItem('livepeerToken', token)
+        lpToken = googleUser.getAuthResponse().id_token
+        localStorage.setItem('livepeerToken', lpToken)
       }
+
+      fetch('/api/stream', { headers: { lptoken: lpToken } })
     </script>
   </body>
 </html>
