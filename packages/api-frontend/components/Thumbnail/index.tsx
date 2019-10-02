@@ -1,14 +1,6 @@
 /** @jsx jsx */
 import { Box, Styled, jsx } from 'theme-ui'
 
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
-}
-
 export default ({ streamId, stream, broadcasterName }) => {
   const m3u8 = `${broadcasterName}/stream/${streamId}.m3u8`
   const href = `http://media.livepeer.org/play?url=${encodeURIComponent(m3u8)}`
