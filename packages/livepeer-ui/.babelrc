@@ -1,4 +1,7 @@
 {
   "presets": ["@babel/env"],
-  "plugins": ["@babel/plugin-transform-react-jsx"]
+  "plugins": [
+    "@babel/plugin-transform-react-jsx",
+    "babel-plugin-inline-react-svg"
+  ]
 }

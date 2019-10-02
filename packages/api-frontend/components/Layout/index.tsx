@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import Head from 'next/head'
-import { List, ListItem } from '@livepeer/ui'
+import { Drawer } from '@livepeer/ui'
 import { Styled, Flex, Box, jsx } from 'theme-ui'
 
 const Live = () => {
@@ -24,7 +24,7 @@ const Layout = ({ children, title = 'Livepeer.live' }: any) => (
     {/* <Reset /> */}
     <Styled.root>
       <Flex style={{ maxWidth: 1400, margin: '0 auto' }}>
-        <List items={menuItems} />
+        <Drawer items={menuItems} />
         {children}
       </Flex>
     </Styled.root>
