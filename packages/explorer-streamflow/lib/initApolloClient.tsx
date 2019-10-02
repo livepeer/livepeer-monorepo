@@ -152,7 +152,6 @@ async function createSchema() {
 
     extend type Transcoder {
       profile: Profile
-      delegationStatus: String
     }
 
     type Account {
@@ -164,7 +163,6 @@ async function createSchema() {
 
     extend type Delegator {
       pendingStake: String
-      status: String
       tokenBalance: String
       ethBalance: String
     }

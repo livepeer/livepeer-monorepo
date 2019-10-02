@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
@@ -14,11 +14,12 @@ import { useWeb3Context } from 'web3-react'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
 
-export default ({ transcoder, amount, account, disabled }) => {
+export default ({ transcoder, amount, disabled }) => {
   const context = useWeb3Context()
-  const [, setIsModalOpen] = useState(false)
+  const [isOpen, setIsModalOpen] = useState(false)
+  const { width, height } = useWindowSize()
 
-  if (!account) {
+  if (!context.active) {
     return null
   }
 
@@ -29,16 +30,11 @@ export default ({ transcoder, amount, account, disabled }) => {
   `
 
   const GET_TRANSACTION_RECEIPT = gql`
-    query transaction($id: String!) {
-      receipt: transaction(id: $id) {
+    query bondEvent($id: ID!) {
+      bondEvent(id: $id) {
+        id
         blockNumber
-        blockHash
-        transactionIndex
-        from
-        to
-        status
-        cumulativeGasUsed
-        gasUsed
+        hash
       }
     }
   `
@@ -56,22 +52,29 @@ export default ({ transcoder, amount, account, disabled }) => {
     },
   })
 
-  const isBroadcasted = data && data.txHash
+  let isBroadcasted = data && data.txHash
+  let isMined = false
+  let isMining = false
 
-  const { data: transaction, loading: mining } = useQuery(
-    GET_TRANSACTION_RECEIPT,
-    {
-      variables: {
-        id: data && data.txHash,
-      },
-      skip: !isBroadcasted, // skip query if tx hasn't yet been broadcasted
-      notifyOnNetworkStatusChange: true,
+  const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
+    variables: {
+      id: `${data && data.txHash}-Bond`,
     },
-  )
+    ssr: false,
+    pollInterval: 1000,
+    // skip query if tx hasn't yet been broadcasted or has been mined
+    skip: !isBroadcasted || isMined,
+  })
 
-  const isMined =
-    transaction && transaction.receipt && transaction.receipt.blockNumber
-  const { width, height } = useWindowSize()
+  useEffect(() => {
+    if (isBroadcasted) {
+      setIsModalOpen(true)
+    }
+  }, [isBroadcasted])
+
+  isMining = transaction && !transaction.bondEvent
+  isMined = transaction && transaction.bondEvent
+
   return (
     <>
       <Button
@@ -85,7 +88,7 @@ export default ({ transcoder, amount, account, disabled }) => {
       </Button>
       {isBroadcasted && (
         <Modal
-          isOpen={isBroadcasted}
+          isOpen={isOpen}
           setOpen={setIsModalOpen}
           title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
@@ -101,8 +104,8 @@ export default ({ transcoder, amount, account, disabled }) => {
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-                <Spinner />
-                {mining && (
+                <Spinner sx={{ mr: 2 }} />
+                {isMining && (
                   <div sx={{ color: 'text' }}>
                     Waiting for your transaction to be mined.
                   </div>

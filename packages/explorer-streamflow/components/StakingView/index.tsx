@@ -17,7 +17,6 @@ const GET_DATA = gql`
       id
       pendingStake
       bondedAmount
-      status
       principal
       unbonded
       delegate {

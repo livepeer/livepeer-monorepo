@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -13,12 +13,12 @@ import Button from '../Button'
 
 export default ({ lock }) => {
   const context = useWeb3Context()
-  const [, setIsModalOpen] = useState(false)
+  const [isOpen, setIsModalOpen] = useState(false)
 
   if (!context.active) {
     return null
   }
-  console.log(lock)
+
   const REBOND = gql`
     mutation rebond($unbondingLockId: Int!) {
       txHash: rebond(unbondingLockId: $unbondingLockId)
@@ -26,16 +26,11 @@ export default ({ lock }) => {
   `
 
   const GET_TRANSACTION_RECEIPT = gql`
-    query transaction($id: String!) {
-      receipt: transaction(id: $id) {
+    query rebondEvent($id: ID!) {
+      rebondEvent(id: $id) {
+        id
         blockNumber
-        blockHash
-        transactionIndex
-        from
-        to
-        status
-        cumulativeGasUsed
-        gasUsed
+        hash
       }
     }
   `
@@ -52,21 +47,28 @@ export default ({ lock }) => {
     },
   })
 
-  const isBroadcasted = data && data.txHash
+  let isBroadcasted = data && data.txHash
+  let isMined = false
+  let isMining = false
 
-  const { data: transaction, loading: mining } = useQuery(
-    GET_TRANSACTION_RECEIPT,
-    {
-      variables: {
-        id: data && data.txHash,
-      },
-      skip: !isBroadcasted, // skip query if tx hasn't yet been broadcasted
-      notifyOnNetworkStatusChange: true,
+  const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
+    variables: {
+      id: `${data && data.txHash}-Rebond`,
     },
-  )
+    ssr: false,
+    pollInterval: 1000,
+    // skip query if tx hasn't yet been broadcasted or has been mined
+    skip: !isBroadcasted || isMined,
+  })
 
-  const isMined =
-    transaction && transaction.receipt && transaction.receipt.blockNumber
+  useEffect(() => {
+    if (isBroadcasted) {
+      setIsModalOpen(true)
+    }
+  }, [isBroadcasted])
+
+  isMining = transaction && !transaction.rebondEvent
+  isMined = transaction && transaction.rebondEvent
 
   return (
     <>
@@ -78,7 +80,7 @@ export default ({ lock }) => {
       </Button>
       {isBroadcasted && (
         <Modal
-          isOpen={isBroadcasted}
+          isOpen={isOpen}
           setOpen={setIsModalOpen}
           title={isMined ? 'Successfully Rebonded' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
@@ -91,8 +93,8 @@ export default ({ lock }) => {
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-                <Spinner />
-                {mining && (
+                <Spinner sx={{ mr: 2 }} />
+                {isMining && (
                   <div sx={{ color: 'text' }}>
                     Waiting for your transaction to be mined.
                   </div>

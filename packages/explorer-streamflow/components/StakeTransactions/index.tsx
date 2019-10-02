@@ -84,7 +84,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                 <Flex sx={{ alignItems: 'center' }}>
                   {isMyAccount && (
                     <>
-                      <Restake lock={lock} />
+                      {/* <Restake lock={lock} /> */}
                       <WithdrawStake lock={lock} />
                     </>
                   )}

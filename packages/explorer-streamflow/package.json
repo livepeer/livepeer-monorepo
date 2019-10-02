@@ -41,7 +41,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@adamsoffer/livepeer-graphql-sdk": "^1.0.0-alpha.8",
+    "@adamsoffer/livepeer-graphql-sdk": "^1.0.0-alpha.9",
     "@adamsoffer/livepeer-sdk": "^1.0.0-alpha.7",
     "@apollo/react-hooks": "^3.1.1",
     "@apollo/react-ssr": "^3.1.1",

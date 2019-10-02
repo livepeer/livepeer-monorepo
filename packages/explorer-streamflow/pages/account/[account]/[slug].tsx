@@ -149,6 +149,7 @@ export default withApollo(() => {
           }}
         >
           <StakingWidget
+            delegator={delegator}
             account={account}
             transcoder={
               role == 'Orchestrator' ? transcoder : delegator.delegate
@@ -185,12 +186,12 @@ function getTabs(
       as: `/account/${account}/history`,
       isActive: asPath == `/account/${account}/history`,
     },
-    {
-      name: 'Settings',
-      href: '/account/[account]/[slug]',
-      as: `/account/${account}/settings`,
-      isActive: asPath == `/account/${account}/settings`,
-    },
+    // {
+    //   name: 'Settings',
+    //   href: '/account/[account]/[slug]',
+    //   as: `/account/${account}/settings`,
+    //   isActive: asPath == `/account/${account}/settings`,
+    // },
   ]
   if (role == 'Orchestrator') {
     tabs.splice(0, 0, {

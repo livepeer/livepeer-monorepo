@@ -14,7 +14,6 @@ const GET_DATA = gql`
     delegator(id: $account) {
       id
       pendingStake
-      status
       delegate {
         id
       }
@@ -152,18 +151,6 @@ export default () => {
                   fontFamily: 'monospace',
                 }}
               >
-                {/* {callsMade / data.transcoder.pools.length === 1 && (
-                  <div
-                    sx={{
-                      mr: 3,
-                      fontSize: 5,
-                      color: 'transparent',
-                      textShadow: '0 0 0 rgba(255, 255, 255, .87)',
-                    }}
-                  >
-                    💯
-                  </div>
-                )} */}
                 {callsMade}/{data.transcoder.pools.length}
               </Flex>
             }

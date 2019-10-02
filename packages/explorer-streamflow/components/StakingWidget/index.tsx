@@ -7,7 +7,7 @@ import ProjectionBox from './ProjectionBox'
 import Help from '../../static/img/help.svg'
 import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
-import { Account, Transcoder, Protocol } from '../../@types'
+import { Account, Delegator, Transcoder, Protocol } from '../../@types'
 import Banner from '../Banner'
 import Approve from '../Approve'
 import Button from '../Button'
@@ -16,11 +16,12 @@ import { useWeb3Context } from 'web3-react'
 
 interface Props {
   transcoder: Transcoder
+  delegator?: Delegator
   protocol: Protocol
   account: Account
 }
 
-export default ({ account, transcoder, protocol }: Props) => {
+export default ({ delegator, account, transcoder, protocol }: Props) => {
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')
   const [open, setModalOpen] = useState(false)
@@ -113,6 +114,7 @@ export default ({ account, transcoder, protocol }: Props) => {
           <ProjectionBox action={action} />
           <Footer
             account={account}
+            delegator={delegator}
             transcoder={transcoder}
             action={action}
             amount={amount}
