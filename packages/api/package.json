@@ -27,7 +27,7 @@
     "dev:server": "nodemon -w src -x node -r esm src/cli.js",
     "dev": "run-p \"dev:**\"",
     "go-livepeer": "run-p \"go-livepeer:**\"",
-    "go-livepeer:broadcaster": "bin/livepeer -broadcaster -orchAddr 127.0.0.1:3086 -rtmpAddr 0.0.0.0:3035 -httpAddr :3085 -cliAddr :3075 -v 6",
+    "go-livepeer:broadcaster": "bin/livepeer -broadcaster -orchAddr 127.0.0.1:3086 -rtmpAddr 0.0.0.0:3035 -httpAddr :3085 -cliAddr :3075 -v 6 -authWebhookUrl http://localhost:3004/api/stream/hook -orchWebhookUrl http://localhost:3004/api/orchestrator",
     "go-livepeer:orchestrator": "bin/livepeer -orchestrator -transcoder -serviceAddr 127.0.0.1:3086 -cliAddr :3076 -v 6",
     "test": "node run-tests.js",
     "test:local": "jest src"
@@ -46,6 +46,7 @@
     "express-async-errors": "^3.1.1",
     "express-bearer-token": "^2.4.0",
     "fs-extra": "^7.0.1",
+    "http-proxy-middleware": "^0.20.0",
     "isomorphic-fetch": "^2.2.1",
     "js-yaml": "^3.13.1",
     "level": "^5.0.1",
