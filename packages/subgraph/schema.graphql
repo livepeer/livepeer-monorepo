@@ -199,7 +199,7 @@ type ClaimEarningsEvent implements Transaction @entity {
   round: Round
   delegator: Delegator
   delegate: Transcoder
-  startRound: Int
+  startRound: Round
   endRound: Round
   rewardTokens: BigInt
   fees: BigInt

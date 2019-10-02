@@ -418,7 +418,7 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   claimEarningsEvent.round = currentRound.toString()
   claimEarningsEvent.delegate = delegator.id
   claimEarningsEvent.delegator = delegatorAddress.toHex()
-  claimEarningsEvent.startRound = delegator.lastClaimRound as i32
+  claimEarningsEvent.startRound = delegator.lastClaimRound.toString()
   claimEarningsEvent.endRound = endRound.toString()
   claimEarningsEvent.rewardTokens = delegatorData.value0.minus(
     delegator.bondedAmount as BigInt
