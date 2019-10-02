@@ -48,9 +48,8 @@ export default () => {
   }
 
   // TODO: redirect to staking tab if not a transcoder
-
   return (
-    <div>
+    <div sx={{ pt: 4 }}>
       {loading ? (
         <Flex
           sx={{

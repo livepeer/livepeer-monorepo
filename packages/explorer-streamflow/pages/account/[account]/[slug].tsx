@@ -130,7 +130,7 @@ export default withApollo(() => {
           status={getDelegatorStatus(delegator, currentRound)}
           transcoder={transcoder}
         />
-        <Tabs sx={{ mb: 4 }} tabs={tabs} />
+        <Tabs tabs={tabs} />
         {slug == 'campaign' && <CampaignView />}
         {slug == 'tokenholders' && <TokenholdersView />}
         {slug == 'staking' && <StakingView />}

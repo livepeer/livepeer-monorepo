@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import Button from '../Button'
 
 export default ({ avatar = null, children, ...props }) => {
   return (

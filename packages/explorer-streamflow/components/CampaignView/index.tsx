@@ -65,10 +65,11 @@ export default () => {
   let callsMade =
     data && data.transcoder.pools.filter(r => r.rewardTokens != null).length
   return (
-    <div>
+    <div sx={{ pt: 4 }}>
       {loading ? (
         <Flex
           sx={{
+            pt: 4,
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',

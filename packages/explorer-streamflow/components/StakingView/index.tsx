@@ -67,6 +67,7 @@ export default () => {
     return (
       <Flex
         sx={{
+          pt: 4,
           width: '100%',
           justifyContent: 'center',
           alignItems: 'center',
@@ -80,7 +81,7 @@ export default () => {
   if (!(data && data.delegator)) {
     if (isMyAccount) {
       return (
-        <div>
+        <div sx={{ pt: 4 }}>
           <span sx={{ mr: 2 }}>Time to get staking!</span>
           <Link href="/" passHref>
             <Styled.a>View Orchestrators.</Styled.a>
@@ -105,7 +106,7 @@ export default () => {
   const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
 
   return (
-    <>
+    <div sx={{ pt: 4 }}>
       <Link
         href={`/account/[account]/[slug]`}
         as={`/account/${data.delegator.delegate.id}/campaign`}
@@ -275,6 +276,6 @@ export default () => {
         currentRound={data.currentRound[0]}
         isMyAccount={isMyAccount}
       />
-    </>
+    </div>
   )
 }

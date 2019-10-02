@@ -10,25 +10,6 @@ import ListItem from '../ListItem'
 import Restake from '../Restake'
 import WithdrawStake from '../WithdrawStake'
 
-const LinkIcon = (
-  <Flex
-    sx={{
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 1000,
-      color: 'primary',
-      bg: 'surface',
-      width: 30,
-      height: 30,
-      mr: 2,
-      border: '1px solid',
-      borderColor: 'border',
-    }}
-  >
-    <Unlink />
-  </Flex>
-)
-
 export default ({ delegator, currentRound, isMyAccount }) => {
   const pendingStakeTransactions: Array<
     UnbondingLock
@@ -47,10 +28,13 @@ export default ({ delegator, currentRound, isMyAccount }) => {
       {!!pendingStakeTransactions.length && (
         <List
           sx={{ mb: 6 }}
-          header={<Styled.h4>Pending Stake Transactions</Styled.h4>}
+          header={<Styled.h4>Pending Transactions</Styled.h4>}
         >
           {pendingStakeTransactions.map(lock => (
-            <ListItem key={lock.id} avatar={LinkIcon}>
+            <ListItem
+              key={lock.id}
+              avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}
+            >
               <Flex
                 sx={{
                   width: '100%',
@@ -66,7 +50,11 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                   {isMyAccount && <Restake lock={lock} />}
                   <div sx={{ ml: 3 }}>
                     {' '}
-                    -{abbreviateNumber(Utils.fromWei(lock.amount), 4)} LPT
+                    -
+                    <span sx={{ fontFamily: 'monospace' }}>
+                      {abbreviateNumber(Utils.fromWei(lock.amount), 4)}
+                    </span>{' '}
+                    LPT
                   </div>
                 </Flex>
               </Flex>
@@ -75,9 +63,12 @@ export default ({ delegator, currentRound, isMyAccount }) => {
         </List>
       )}
       {!!completedStakeTransactions.length && (
-        <List header={<Styled.h4>Available For Withdrawal</Styled.h4>}>
+        <List header={<Styled.h4>Completed Transactions</Styled.h4>}>
           {completedStakeTransactions.map(lock => (
-            <ListItem key={lock.id} avatar={LinkIcon}>
+            <ListItem
+              key={lock.id}
+              avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}
+            >
               <Flex
                 sx={{
                   width: '100%',
@@ -99,7 +90,11 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                   )}
                   <div sx={{ ml: 3 }}>
                     {' '}
-                    -{abbreviateNumber(Utils.fromWei(lock.amount), 3)} LPT
+                    -
+                    <span sx={{ fontFamily: 'monospace' }}>
+                      {abbreviateNumber(Utils.fromWei(lock.amount), 3)}
+                    </span>{' '}
+                    LPT
                   </div>
                 </Flex>
               </Flex>
