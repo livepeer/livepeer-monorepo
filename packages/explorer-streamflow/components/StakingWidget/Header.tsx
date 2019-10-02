@@ -16,20 +16,21 @@ export default ({ transcoder }) => {
         fontSize: 20,
       }}
     >
-      <QRCode
-        style={{
-          borderRadius: 1000,
-          width: 40,
-          height: 40,
-          marginRight: 16,
-        }}
-        fgColor={`#${transcoder.id.substr(2, 6)}`}
-        value={transcoder.id}
-      />
+      <Flex sx={{ minWidth: 32, minHeight: 32, position: 'relative', mr: 2 }}>
+        <QRCode
+          style={{
+            borderRadius: 1000,
+            width: 32,
+            height: 32,
+          }}
+          fgColor={`#${transcoder.id.substr(2, 6)}`}
+          value={transcoder.id}
+        />
+      </Flex>
       <Flex sx={{ flexDirection: 'column' }}>
-        <Styled.h3>
+        <Styled.h4>
           {transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
-        </Styled.h3>
+        </Styled.h4>
         <div
           sx={{
             fontWeight: 'normal',

@@ -1,3 +1,5 @@
+import { StringifyOptions } from 'querystring'
+
 export interface Account {
   id: string
   tokenBalance: string
@@ -26,7 +28,7 @@ export interface Transcoder {
 export interface Delegator {
   id: string
   delegate?: Transcoder
-  startRound?: Round
+  startRound?: number
   lastClaimRound?: Round
   bondedAmount?: string
   pendingStake?: string
@@ -76,4 +78,15 @@ export interface Protocol {
   targetBondingRate?: string
   transcoderPoolMaxSize?: string
   maxEarningsClaimsRounds?: string
+}
+
+export interface Transaction {
+  id: string
+  hash?: string
+  blockNumber?: string
+  timestamp?: string
+  to?: string
+  from?: string
+  gasUsed?: string
+  gasPrice?: string
 }

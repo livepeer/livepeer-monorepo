@@ -1,5 +1,5 @@
 import { ApolloClient } from 'apollo-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { graphql, print } from 'graphql'
 import { Observable, ApolloLink } from 'apollo-link'
@@ -79,7 +79,13 @@ function createApolloClient(initialState = {}) {
       })
   )
 
-  const cache = new InMemoryCache().restore(initialState || {})
+  const fragmentMatcher = new IntrospectionFragmentMatcher({
+    introspectionQueryResultData: {
+      __schema: { types: [] }
+    }
+  })
+
+  const cache = new InMemoryCache({fragmentMatcher}).restore(initialState || {})
 
   cache.writeData({
     data: {

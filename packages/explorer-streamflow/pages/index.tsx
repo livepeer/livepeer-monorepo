@@ -24,9 +24,7 @@ const GET_DATA = gql`
       active
       totalStake
       delegator {
-        startRound {
-          id
-        }
+        startRound
         bondedAmount
         unbondingLocks {
           withdrawRound

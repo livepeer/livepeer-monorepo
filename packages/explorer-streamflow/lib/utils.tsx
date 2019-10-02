@@ -34,28 +34,25 @@ export const getDelegatorStatus = (
   delegator: Delegator,
   currentRound: Round
 ): string => {
-  if(!delegator) {
+  if (!delegator || Utils.fromWei(delegator.bondedAmount) == 0) {
     return 'Unbonded'
-  }
-  if (Utils.fromWei(delegator.bondedAmount) == 0) {
-    return 'Unbonded'
-  } else if (
-    parseInt(delegator.startRound.id, 10) > parseInt(currentRound.id, 10)
-  ) {
-    return 'Pending'
-  } else if (
-    parseInt(delegator.startRound.id, 10) > 0 &&
-    parseInt(delegator.startRound.id, 10) <= parseInt(currentRound.id, 10)
-  ) {
-    return 'Bonding'
   } else if (
     delegator.unbondingLocks.filter(
       (lock: UnbondingLock) =>
         lock.withdrawRound && lock.withdrawRound > parseInt(currentRound.id, 10)
-    )
+    ).length > 0
   ) {
     return 'Unbonding'
-  } else {
+  } else if (
+    delegator.startRound > parseInt(currentRound.id, 10)
+  ) {
+    return 'Pending'
+  } else if (
+    delegator.startRound > 0 &&
+    delegator.startRound <= parseInt(currentRound.id, 10)
+  ) {
+    return 'Bonded'
+  }  else {
     return 'Unbonded'
   }
 }

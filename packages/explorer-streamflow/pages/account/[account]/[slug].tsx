@@ -18,15 +18,14 @@ import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
 import { useWeb3Context } from 'web3-react'
 import { getDelegatorStatus } from '../../../lib/utils'
+import HistoryView from '../../../components/HistoryView'
 
 const GET_DATA = gql`
   query($account: ID!) {
     delegator(id: $account) {
       id
       pendingStake
-      startRound {
-        id
-      }
+      startRound
       bondedAmount
       unbondingLocks {
         withdrawRound
@@ -135,6 +134,7 @@ export default withApollo(() => {
         {slug == 'campaign' && <CampaignView />}
         {slug == 'tokenholders' && <TokenholdersView />}
         {slug == 'staking' && <StakingView />}
+        {slug == 'history' && <HistoryView />}
       </Flex>
       {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
         <Flex

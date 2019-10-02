@@ -10,7 +10,6 @@ import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
-import Button from '../Button'
 
 const GET_DATA = gql`
   query($account: ID!) {
