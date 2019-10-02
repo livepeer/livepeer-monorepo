@@ -58,11 +58,6 @@ function createApolloClient(initialState = {}) {
             null,
             {
               ...context,
-              // graphql-sdk transactions query requires 'persistor' object so pass it
-              // an empty object
-              persistor: {
-                cache: { cache: { data: { data: { ROOT_QUERY: [] } } } }
-              },
               livepeer: sdk
             },
             variables,

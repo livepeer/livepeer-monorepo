@@ -10,6 +10,7 @@ import Modal from '../Modal'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 import Button from '../Button'
+import Utils from 'web3-utils'
 
 export default ({ lock }) => {
   const context = useWeb3Context()
@@ -35,8 +36,7 @@ export default ({ lock }) => {
     }
   `
 
-  console.log(context.account.toLowerCase())
-  const [withdrawStake, { data }] = useMutation(WITHDRAW_STAKE, {
+  const [withdrawStake, { data, error }] = useMutation(WITHDRAW_STAKE, {
     variables: {
       unbondingLockId: lock.unbondingLockId,
     },

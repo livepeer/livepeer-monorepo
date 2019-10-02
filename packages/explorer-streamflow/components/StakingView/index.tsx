@@ -10,6 +10,7 @@ import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
+import DelegateCard from '../DelegateCard'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -95,7 +96,7 @@ export default () => {
     Utils.fromWei(data.delegator.bondedAmount),
     Utils.fromWei(data.delegator.pendingStake),
   )
-  const totalStake = Utils.fromWei(data.delegator.delegate.totalStake)
+
   const unbonded = data.delegator.unbonded
     ? Utils.fromWei(data.delegator.unbonded)
     : 0
@@ -106,37 +107,9 @@ export default () => {
 
   return (
     <div sx={{ pt: 4 }}>
-      <Link
-        href={`/account/[account]/[slug]`}
-        as={`/account/${data.delegator.delegate.id}/campaign`}
-        passHref
-      >
-        <a>
-          <Card
-            sx={{
-              mb: 2,
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
-            }}
-            title="Staked Towards"
-            subtitle={
-              <div
-                sx={{
-                  fontSize: 5,
-                  fontWeight: 'text',
-                  color: 'text',
-                  lineHeight: 'heading',
-                }}
-              >
-                {data.delegator.delegate.id.replace(
-                  data.delegator.delegate.id.slice(7, 37),
-                  '…',
-                )}
-              </div>
-            }
-          />
-        </a>
-      </Link>
+      {data.delegator.delegate && (
+        <DelegateCard delegate={data.delegator.delegate} />
+      )}
       <div
         sx={{
           display: 'grid',
@@ -195,89 +168,107 @@ export default () => {
             </Flex>
           </div>
         </Card>
-        <Card
-          sx={{ flex: 1, mb: 2 }}
-          title="Stake Equity"
-          subtitle={
-            <div
-              sx={{
-                fontSize: 5,
-                color: 'text',
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
-              {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%
-            </div>
-          }
-        >
-          <div sx={{ mt: 3 }}>
-            <Flex
-              sx={{
-                fontSize: 1,
-                mb: 1,
-                justifyContent: 'space-between',
-              }}
-            >
-              <span sx={{ color: 'muted' }}>
-                Account{' '}
-                <span sx={{ color: 'text' }}>
-                  ({((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
+        {data.delegator.delegate && (
+          <Card
+            sx={{ flex: 1, mb: 2 }}
+            title="Stake Equity"
+            subtitle={
+              <div
+                sx={{
+                  fontSize: 5,
+                  color: 'text',
+                  lineHeight: 'heading',
+                  fontFamily: 'monospace',
+                }}
+              >
+                {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%
+              </div>
+            }
+          >
+            <div sx={{ mt: 3 }}>
+              <Flex
+                sx={{
+                  fontSize: 1,
+                  mb: 1,
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span sx={{ color: 'muted' }}>
+                  Account{' '}
+                  <span sx={{ color: 'text' }}>
+                    ({((pendingStake / totalBondedToken) * 100).toPrecision(2)}
+                    %)
+                  </span>
                 </span>
-              </span>
-              <span>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(pendingStake, 3)}
-                </span>{' '}
-                LPT
-              </span>
-            </Flex>
-            <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
-              <span sx={{ color: 'muted' }}>
-                Orchestrator{' '}
-                <span sx={{ color: 'text' }}>
-                  ({((totalStake / totalBondedToken) * 100).toPrecision(2)}%)
+                <span>
+                  <span sx={{ fontFamily: 'monospace' }}>
+                    {abbreviateNumber(pendingStake, 3)}
+                  </span>{' '}
+                  LPT
                 </span>
-              </span>
-              <span>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(totalStake, 3)}
-                </span>{' '}
-                LPT
-              </span>
-            </Flex>
+              </Flex>
+              <Flex
+                sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}
+              >
+                <span sx={{ color: 'muted' }}>
+                  Orchestrator{' '}
+                  <span sx={{ color: 'text' }}>
+                    (
+                    {(
+                      (Utils.fromWei(data.delegator.delegate.totalStake) /
+                        totalBondedToken) *
+                      100
+                    ).toPrecision(2)}
+                    %)
+                  </span>
+                </span>
+                <span>
+                  <span sx={{ fontFamily: 'monospace' }}>
+                    {abbreviateNumber(
+                      Utils.fromWei(data.delegator.delegate.totalStake),
+                      3,
+                    )}
+                  </span>{' '}
+                  LPT
+                </span>
+              </Flex>
 
-            <Flex
-              sx={{
-                fontSize: 1,
-                mb: 1,
-                justifyContent: 'space-between',
-              }}
-            >
-              <span sx={{ color: 'muted' }}>
-                Rest of Network{' '}
-                <span sx={{ color: 'text' }}>
-                  (
-                  {(
-                    ((totalBondedToken - totalStake - pendingStake) /
-                      totalBondedToken) *
-                    100
-                  ).toPrecision(2)}
-                  %)
+              <Flex
+                sx={{
+                  fontSize: 1,
+                  mb: 1,
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span sx={{ color: 'muted' }}>
+                  Rest of Network{' '}
+                  <span sx={{ color: 'text' }}>
+                    (
+                    {(
+                      ((totalBondedToken -
+                        Utils.fromWei(data.delegator.delegate.totalStake) -
+                        pendingStake) /
+                        totalBondedToken) *
+                      100
+                    ).toPrecision(2)}
+                    %)
+                  </span>
                 </span>
-              </span>
-              <span>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(
-                    totalBondedToken - totalStake - pendingStake,
-                    3,
-                  )}
-                </span>{' '}
-                LPT
-              </span>
-            </Flex>
-          </div>
-        </Card>
+                <span>
+                  <span sx={{ fontFamily: 'monospace' }}>
+                    {abbreviateNumber(
+                      totalBondedToken -
+                        Utils.fromWei(data.delegator.delegate.totalStake) -
+                        pendingStake,
+                      3,
+                    )}
+                  </span>{' '}
+                  LPT
+                </span>
+              </Flex>
+            </div>
+          </Card>
+        )}
       </div>
       <StakeTransactions
         delegator={data.delegator}

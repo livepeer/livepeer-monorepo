@@ -5,6 +5,7 @@ import Stake from './Stake'
 import Unstake from './Unstake'
 import Link from 'next/link'
 import { Account, Delegator, Transcoder } from '../../@types'
+import Utils from 'web3-utils'
 
 interface Props {
   action: string
@@ -26,8 +27,9 @@ export default ({ delegator, transcoder, action, amount, account }: Props) => {
   }
 
   const bondedAmount = delegator ? delegator.bondedAmount : 0
-  const hasTokenBalance = account && parseInt(account.tokenBalance) == 0
-  const canStake = hasTokenBalance && bondedAmount
+  const hasTokenBalance =
+    account && parseInt(Utils.fromWei(account.tokenBalance)) == 0
+  const canStake = hasTokenBalance
   const canUnstake = bondedAmount > 0
 
   if (action == 'stake') {
