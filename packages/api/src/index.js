@@ -4,11 +4,11 @@ import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
 import { LevelStore, PostgresStore } from './store'
-import { healthCheck } from './middleware'
+import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import logger from './logger'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
-import * as k8s from '@kubernetes/client-node'
+import proxy from 'http-proxy-middleware'
 
 export default async function makeApp(params) {
   const {
@@ -23,6 +23,9 @@ export default async function makeApp(params) {
     kubeBroadcasterTemplate,
     kubeOrchestratorService,
     kubeOrchestratorTemplate,
+    fallbackProxy,
+    orchestrators,
+    broadcasters,
   } = params
   // Storage init
   let store
@@ -35,7 +38,7 @@ export default async function makeApp(params) {
 
   // Logging, JSON parsing, store injection
   const app = express()
-  app.use(healthCheck)
+  app.use('/healthz', healthCheck)
   app.use(morgan('combined'))
   app.use(jsonParser())
   app.use((req, res, next) => {
@@ -44,21 +47,19 @@ export default async function makeApp(params) {
   })
   app.use(bearerToken())
 
-  // Populate Kubernetes stuff if present
-  if (kubeNamespace && (kubeBroadcasterService || kubeOrchestratorService)) {
-    const kc = new k8s.KubeConfig()
-    kc.loadFromDefault()
-
-    const kubeApi = kc.makeApiClient(k8s.CoreV1Api)
-    app.use((req, res, next) => {
-      req.kubeApi = kubeApi
-      req.kubeNamespace = kubeNamespace
-      req.kubeBroadcasterService = kubeBroadcasterService
-      req.kubeOrchestratorService = kubeOrchestratorService
-      req.kubeBroadcasterTemplate = kubeBroadcasterTemplate
-      req.kubeOrchestratorTemplate = kubeOrchestratorTemplate
-      next()
-    })
+  // Populate Kubernetes getOrchestrators and getBroadcasters is provided
+  if (kubeNamespace) {
+    app.use(
+      kubernetes({
+        kubeNamespace,
+        kubeBroadcasterService,
+        kubeOrchestratorService,
+        kubeBroadcasterTemplate,
+        kubeOrchestratorTemplate,
+      }),
+    )
+  } else {
+    app.use(hardcodedNodes({ orchestrators, broadcasters }))
   }
 
   // Add a controller for each route at the /${httpPrefix} route
@@ -107,6 +108,12 @@ export default async function makeApp(params) {
     sigterm()
   }
   process.on('unhandledRejection', unhandledRejection)
+
+  // This far down, this would otherwise be a 404... hit up the fallback proxy if we have it.
+  // Mostly this is used for proxying to the Next.js server in development.
+  if (fallbackProxy) {
+    app.use(proxy({ target: fallbackProxy, changeOrigin: true }))
+  }
 
   // If we throw any errors with numerical statuses, use them.
   app.use((err, req, res, next) => {

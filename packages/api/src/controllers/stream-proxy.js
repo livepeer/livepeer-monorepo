@@ -3,13 +3,10 @@
 // conventions on the broadcasters themselves.
 
 import { Router } from 'express'
-import { checkKubernetes } from '../middleware'
 import { getBroadcasterStatuses } from './broadcaster'
 import fetch from 'isomorphic-fetch'
 
 const app = Router()
-
-app.use(checkKubernetes())
 
 const TS = '.ts'
 const M3U8 = '.m3u8'

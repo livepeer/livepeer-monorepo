@@ -19,7 +19,10 @@ export default () => {
   const [streams, setStreams] = useState(null)
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('https://livepeer.live/api/broadcaster/status')
+      const res = await fetch('/api/broadcaster/status')
+      if (res.status !== 200) {
+        return console.error('fetch failed ' + (await res.text()))
+      }
       const data: BroadcasterStatusResponse = await res.json()
       const streams = []
       for (const [bName, bData] of Object.entries(data)) {
