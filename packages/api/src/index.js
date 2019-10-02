@@ -18,6 +18,8 @@ export default async function makeApp(params) {
     port,
     postgresUrl,
     listen = true,
+    clientId,
+    trustedDomain,
     kubeNamespace,
     kubeBroadcasterService,
     kubeBroadcasterTemplate,
@@ -43,6 +45,8 @@ export default async function makeApp(params) {
   app.use(jsonParser())
   app.use((req, res, next) => {
     req.store = store
+    req.trustedDomain = trustedDomain
+    req.clientId = clientId
     next()
   })
   app.use(bearerToken())

@@ -24,7 +24,7 @@
     "deploy:prerelease": "gsutil rsync ./docs gs://docs.livepeer.live",
     "dev:live-server": "live-server --port=3005 docs",
     "dev:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
-    "dev:server": "nodemon -w src -x node -r esm src/cli.js",
+    "dev:server": "nodemon -w src -x node -r esm src/cli.js --trusted-domain=livepeer.org --client-id=211814034878-r7iugl9pa9fo2shd2pvmmadjatd5o4af.apps.googleusercontent.com",
     "dev": "run-p \"dev:**\"",
     "go-livepeer": "run-p \"go-livepeer:**\"",
     "go-livepeer:broadcaster": "bin/livepeer -broadcaster -orchAddr 127.0.0.1:3086 -rtmpAddr 0.0.0.0:3035 -httpAddr :3085 -cliAddr :3075 -v 6 -authWebhookUrl http://localhost:3004/api/stream/hook -orchWebhookUrl http://localhost:3004/api/orchestrator",

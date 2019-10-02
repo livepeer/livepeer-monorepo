@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <h1>Please sign in below:</h1>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta
+      name="google-signin-client_id"
+      content="211814034878-r7iugl9pa9fo2shd2pvmmadjatd5o4af.apps.googleusercontent.com"
+    />
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a id="signOut" href="#">Sign out</a>
+    <button>Download Streams</button>
+    <script>
+      var token = localStorage.getItem('livepeerToken')
+
+      document.querySelector('button').addEventListener('click', () => {
+        console.log(token)
+        fetch('/api/stream/test-streams', {
+          headers: {
+            token: token,
+          },
+        })
+      })
+
+      document.querySelector('#signOut').addEventListener('click', () => {
+        localStorage.removeItem('livepeerToken')
+        var auth2 = gapi.auth2.getAuthInstance()
+        auth2.signOut().then(function() {
+          console.log('User signed out.')
+        })
+      })
+
+      var sub
+      function onSignIn(googleUser) {
+        token = googleUser.getAuthResponse().id_token
+        localStorage.setItem('livepeerToken', token)
+      }
+    </script>
+  </body>
+</html>

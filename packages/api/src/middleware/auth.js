@@ -33,6 +33,26 @@ async function generateToken(req, res, next) {
  */
 function authFactory(params) {
   return async (req, res, next) => {
+    if (params.admin === true) {
+      try {
+        const user = await getUser(req, res, next)
+        if (user.domain === req.trustedDomain) {
+          console.log(`USER: ${JSON.stringify(user)}`)
+          req.user = user
+          return next()
+        } else {
+          res.status(403)
+          return res.json({
+            errors: ['not livepeer.org email address'],
+          })
+        }
+      } catch (error) {
+        console.error(error)
+        res.status(403)
+        return res.json({ errors: ['not logged in'] })
+      }
+    }
+
     if (!req || !req.token) {
       return res.sendStatus(401)
     }
@@ -54,5 +74,44 @@ function authFactory(params) {
   }
 }
 
+async function getUser(req, res, next) {
+  var token = req.headers.token
+  if (token != null) {
+    req.token = token
+  } else {
+    token = req.token
+  }
+  let clientId = req.clientId
+  let { OAuth2Client } = require('google-auth-library')
+  let client = new OAuth2Client(clientId)
+
+  let ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: clientId,
+  })
+  let payload = ticket.getPayload()
+
+  var user
+  try {
+    user = await req.store.get(`user/${payload.sub}`)
+  } catch (error) {
+    if (error.type !== 'NotFoundError') {
+      throw error
+    }
+    await req.store.create({
+      id: payload.sub,
+      name: payload.name,
+      email: payload.email,
+      domain: payload['hd'],
+      kind: 'user',
+    })
+  }
+
+  return user
+}
+
 // export default router
 export default authFactory
+
+// // TODO: add tests ... do a failure test here ... try to make req without appropriate header. 403 back. stream.test.js
+// // fix the broken tests!

@@ -3,7 +3,6 @@
 // such are healthy.
 
 import { Router } from 'express'
-import path from 'path'
 
 const router = Router()
 
@@ -13,13 +12,6 @@ const healthcheck = (req, res) => {
   res.json({ ok: true })
 }
 router.get('/healthz', healthcheck)
-// router.get('/', healthcheck)
-
-router.get('/', async (req, res, next) => {
-  res.sendFile(path.join(__dirname + '/index.html'))
-  // res.json(req.body);
-  // res.json(req.params);
-  // res.json({"done": true})
-}) ///
+router.get('/', healthcheck)
 
 export default router

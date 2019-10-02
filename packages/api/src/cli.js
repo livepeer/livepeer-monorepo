@@ -42,6 +42,14 @@ export default function parseCli(argv) {
         describe: 'url of a postgres database',
         type: 'string',
       },
+      'client-id': {
+        describe: 'google auth ID',
+        type: 'string',
+      },
+      'trusted-domain': {
+        describe: 'trusted google domain, example: livepeer.org',
+        type: 'string',
+      },
       'kube-namespace': {
         describe:
           "namespace of the Kubernetes cluster we're in. required for Kubernetes service discovery.",
