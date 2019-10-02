@@ -12,6 +12,7 @@ import Banner from '../Banner'
 import Approve from '../Approve'
 import Button from '../Button'
 import Modal from '../Modal'
+import { useWeb3Context } from 'web3-react'
 
 interface Props {
   transcoder: Transcoder
@@ -23,36 +24,46 @@ export default ({ account, transcoder, protocol }: Props) => {
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')
   const [open, setModalOpen] = useState(false)
+  const context = useWeb3Context()
 
   return (
     <div>
-      {account && parseInt(account.tokenBalance) == 0 && (
-        <>
-          <Banner
-            label={
-              <div sx={{ flex: 1 }}>
-                Acquire Livepeer tokens for staking.
-                <Help
-                  sx={{
-                    position: 'relative',
-                    ml: 1,
-                    top: '2px',
-                    width: 12,
-                    height: 12,
-                  }}
-                />
-              </div>
-            }
-            button={<Button onClick={() => setModalOpen(true)}>Get LPT</Button>}
-          />
-          <Modal isOpen={open} setOpen={setModalOpen}>
-            <iframe
-              sx={{ bg: '#323639', width: '100%', height: '100%', border: '0' }}
-              src="https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239"
+      {context.connectorName != 'Portis' &&
+        account &&
+        parseInt(account.tokenBalance) == 0 && (
+          <>
+            <Banner
+              label={
+                <div sx={{ flex: 1 }}>
+                  Acquire Livepeer tokens for staking.
+                  <Help
+                    sx={{
+                      position: 'relative',
+                      ml: 1,
+                      top: '2px',
+                      width: 12,
+                      height: 12,
+                    }}
+                  />
+                </div>
+              }
+              button={
+                <Button onClick={() => setModalOpen(true)}>Get LPT</Button>
+              }
             />
-          </Modal>
-        </>
-      )}
+            <Modal isOpen={open} setOpen={setModalOpen}>
+              <iframe
+                sx={{
+                  bg: '#323639',
+                  width: '100%',
+                  height: '100%',
+                  border: '0',
+                }}
+                src="https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239"
+              />
+            </Modal>
+          </>
+        )}
       {account &&
         parseInt(account.allowance) == 0 &&
         parseInt(account.tokenBalance) != 0 && (

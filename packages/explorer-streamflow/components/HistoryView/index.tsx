@@ -3,7 +3,7 @@ import { jsx, Flex, Box } from 'theme-ui'
 import React from 'react'
 import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../../components/Spinner'
@@ -153,6 +153,9 @@ export default () => {
       </Flex>
     )
   }
+  if (!data.transactions.length) {
+    ;<div sx={{ pt: 5 }}>No history</div>
+  }
 
   return (
     <>
@@ -169,7 +172,18 @@ function renderSwitch(transaction: any, i: number) {
   switch (transaction.__typename) {
     case 'ApprovalEvent':
       return (
-        <ListItem key={i} avatar={<Approve sx={{ color: 'primary', mr: 2 }} />}>
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
+          key={i}
+          avatar={<Approve sx={{ color: 'primary', mr: 2 }} />}
+        >
           <Flex
             sx={{
               width: '100%',
@@ -201,7 +215,18 @@ function renderSwitch(transaction: any, i: number) {
       )
     case 'BondEvent':
       return (
-        <ListItem key={i} avatar={<Link sx={{ color: 'primary', mr: 2 }} />}>
+        <ListItem
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          key={i}
+          avatar={<Link sx={{ color: 'primary', mr: 2 }} />}
+        >
           <Flex
             sx={{
               width: '100%',
@@ -241,6 +266,14 @@ function renderSwitch(transaction: any, i: number) {
     case 'ClaimEarningsEvent':
       return (
         <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
           key={i}
           avatar={
             <Claim sx={{ width: 16, height: 16, color: 'primary', mr: 2 }} />
@@ -282,6 +315,14 @@ function renderSwitch(transaction: any, i: number) {
     case 'InitializeRoundEvent':
       return (
         <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
           key={i}
           avatar={
             <Play sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
@@ -314,7 +355,18 @@ function renderSwitch(transaction: any, i: number) {
       )
     case 'RebondEvent':
       return (
-        <ListItem key={i} avatar={<Link sx={{ color: 'primary', mr: 2 }} />}>
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
+          key={i}
+          avatar={<Link sx={{ color: 'primary', mr: 2 }} />}
+        >
           <Flex
             sx={{
               width: '100%',
@@ -349,7 +401,18 @@ function renderSwitch(transaction: any, i: number) {
       )
     case 'UnbondEvent':
       return (
-        <ListItem key={i} avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}>
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
+          key={i}
+          avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}
+        >
           <Flex
             sx={{
               width: '100%',
@@ -385,6 +448,14 @@ function renderSwitch(transaction: any, i: number) {
     case 'RewardEvent':
       return (
         <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
           key={i}
           avatar={
             <LPT sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
@@ -419,6 +490,14 @@ function renderSwitch(transaction: any, i: number) {
     case 'TranscoderUpdatedEvent':
       return (
         <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
           key={i}
           avatar={
             <LPT sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
@@ -458,11 +537,17 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'WithdrawFeesEvent':
-      return <ListItem key={i}>WithdrawFeesEvent</ListItem>
     case 'WithdrawStakeEvent':
       return (
         <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
           key={i}
           avatar={
             <LPT sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />

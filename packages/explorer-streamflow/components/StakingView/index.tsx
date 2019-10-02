@@ -226,8 +226,11 @@ export default () => {
                   ({((pendingStake / totalBondedToken) * 100).toPrecision(2)}%)
                 </span>
               </span>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(pendingStake, 3)}
+              <span>
+                <span sx={{ fontFamily: 'monospace' }}>
+                  {abbreviateNumber(pendingStake, 3)}
+                </span>{' '}
+                LPT
               </span>
             </Flex>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
@@ -237,8 +240,11 @@ export default () => {
                   ({((totalStake / totalBondedToken) * 100).toPrecision(2)}%)
                 </span>
               </span>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(totalStake, 3)}
+              <span>
+                <span sx={{ fontFamily: 'monospace' }}>
+                  {abbreviateNumber(totalStake, 3)}
+                </span>{' '}
+                LPT
               </span>
             </Flex>
 
@@ -261,11 +267,14 @@ export default () => {
                   %)
                 </span>
               </span>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(
-                  totalBondedToken - totalStake - pendingStake,
-                  3,
-                )}
+              <span>
+                <span sx={{ fontFamily: 'monospace' }}>
+                  {abbreviateNumber(
+                    totalBondedToken - totalStake - pendingStake,
+                    3,
+                  )}
+                </span>{' '}
+                LPT
               </span>
             </Flex>
           </div>

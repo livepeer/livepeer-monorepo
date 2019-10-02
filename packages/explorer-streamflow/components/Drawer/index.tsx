@@ -4,10 +4,12 @@ import { jsx, Flex, Box } from 'theme-ui'
 import Logo from '../../static/img/logo.svg'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useWeb3Context } from 'web3-react'
 
 export default ({ items = [] }) => {
   const router = useRouter()
   const { asPath } = router
+  const context = useWeb3Context()
 
   return (
     <Flex
@@ -43,7 +45,9 @@ export default ({ items = [] }) => {
                 <a
                   sx={{
                     color:
-                      asPath === (item.as ? item.as : item.href)
+                      asPath === (item.as ? item.as : item.href) ||
+                      (item.name == 'My Account' &&
+                        asPath.includes(context.account))
                         ? 'primary'
                         : 'muted',
                     lineHeight: 'initial',

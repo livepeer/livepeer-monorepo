@@ -25,15 +25,41 @@ export default ({ transcoder, action, amount, account }) => {
           transcoder={transcoder}
           amount={amount}
         />
+        <div
+          sx={{
+            px: 2,
+            pt: 2,
+            color: 'muted',
+            textAlign: 'center',
+            fontSize: 0,
+          }}
+        >
+          {account &&
+            parseInt(account.tokenBalance) == 0 &&
+            `You have 0 LPT in your wallet.`}
+        </div>
       </>
     )
   }
   return (
-    <Unstake
-      account={account}
-      disabled={true}
-      transcoder={transcoder}
-      amount={amount}
-    />
+    <>
+      <Unstake
+        account={account}
+        disabled={true}
+        transcoder={transcoder}
+        amount={amount}
+      />
+      <div
+        sx={{
+          px: 2,
+          pt: 2,
+          color: 'muted',
+          textAlign: 'center',
+          fontSize: 0,
+        }}
+      >
+        {`One must stake before one can unstake.`}
+      </div>
+    </>
   )
 }
