@@ -4,18 +4,27 @@ import Button from '../Button'
 import Stake from './Stake'
 import Unstake from './Unstake'
 import Link from 'next/link'
-import { Account, Delegator, Transcoder } from '../../@types'
+import { Account, Delegator, Transcoder, Round } from '../../@types'
 import Utils from 'web3-utils'
+import { getDelegatorStatus } from '../../lib/utils'
 
 interface Props {
   action: string
   amount: string
   transcoder: Transcoder
   delegator?: Delegator
+  currentRound: Round
   account: Account
 }
 
-export default ({ delegator, transcoder, action, amount, account }: Props) => {
+export default ({
+  delegator,
+  transcoder,
+  action,
+  amount,
+  account,
+  currentRound,
+}: Props) => {
   if (!account) {
     return (
       <Link href="/connect-wallet" passHref>
@@ -29,8 +38,11 @@ export default ({ delegator, transcoder, action, amount, account }: Props) => {
   const bondedAmount = delegator ? delegator.bondedAmount : 0
   const hasTokenBalance =
     account && parseInt(Utils.fromWei(account.tokenBalance)) == 0
+  const delegatorStatus = getDelegatorStatus(delegator, currentRound)
+  const isStaked =
+    delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
   const canStake = hasTokenBalance
-  const canUnstake = bondedAmount > 0
+  const canUnstake = isStaked
 
   if (action == 'stake') {
     return (
@@ -63,7 +75,9 @@ export default ({ delegator, transcoder, action, amount, account }: Props) => {
             fontSize: 0,
           }}
         >
-          {`One must stake before one can unstake.`}
+          {delegatorStatus == 'Pending'
+            ? `Your account is in a pending state. You can unstake during the next round.`
+            : 'One must stake before one can unstake.'}
         </div>
       )}
     </>

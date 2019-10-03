@@ -25,6 +25,8 @@ export const getDelegationStatusColor = status => {
     return 'primary'
   } else if (status == 'Unbonding') {
     return 'yellow'
+  } else if (status == 'Pending') {
+    return 'blue'
   } else {
     return 'muted'
   }

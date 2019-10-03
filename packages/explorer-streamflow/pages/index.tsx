@@ -37,10 +37,13 @@ const GET_DATA = gql`
     protocol {
       totalTokenSupply
       totalBondedToken
+      inflation
+      inflationChange
     }
     selectedTranscoder @client {
       __typename
       index
+      rewardCut
       id
     }
     currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
@@ -86,6 +89,7 @@ export default withApollo(() => {
             }}
           >
             <StakingWidget
+              currentRound={data.currentRound[0]}
               account={account}
               transcoder={
                 data.selectedTranscoder.id

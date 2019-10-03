@@ -42,7 +42,7 @@ export default ({ transcoder, amount, disabled }) => {
   const [bond, { data }] = useMutation(BOND, {
     variables: {
       to: transcoder.id,
-      amount: Utils.toWei(amount ? amount : '0', 'ether'),
+      amount: Utils.toWei(amount ? amount : '0'),
     },
     notifyOnNetworkStatusChange: true,
     context: {

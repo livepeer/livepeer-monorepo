@@ -89,6 +89,7 @@ function createApolloClient(initialState = {}) {
       selectedTranscoder: {
         __typename: 'Transcoder',
         index: 0,
+        rewardCut: null,
         id: null
       }
     }
@@ -162,6 +163,11 @@ async function createSchema() {
       ethBalance: String
     }
 
+    extend type Protocol {
+      inflation: String
+      inflationChange: String
+    }
+
     extend type Query {
       account(id: ID!): Account
     }
@@ -196,6 +202,18 @@ async function createSchema() {
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
             return await rpc.getEthBalance(_delegator.id)
+          }
+        }
+      },
+      Protocol: {
+        inflation: {
+          async resolve(_protocol, _args, _context, _info) {
+            return await rpc.getInflation()
+          }
+        },
+        inflationChange: {
+          async resolve(_protocol, _args, _context, _info) {
+            return await rpc.getInflationChange()
           }
         }
       }

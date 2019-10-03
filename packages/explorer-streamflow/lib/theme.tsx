@@ -33,6 +33,7 @@ const theme = {
     muted: '#bdbdbd',
     red: '#d32f2f',
     yellow: '#fbc02d',
+    blue: '#0062eb',
     border: 'rgba(255, 255, 255, .16)',
     modes: {}
   },

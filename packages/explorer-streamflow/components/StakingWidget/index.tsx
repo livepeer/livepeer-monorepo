@@ -7,7 +7,7 @@ import ProjectionBox from './ProjectionBox'
 import Help from '../../static/img/help.svg'
 import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
-import { Account, Delegator, Transcoder, Protocol } from '../../@types'
+import { Account, Delegator, Transcoder, Protocol, Round } from '../../@types'
 import Banner from '../Banner'
 import Approve from '../Approve'
 import Button from '../Button'
@@ -19,9 +19,16 @@ interface Props {
   delegator?: Delegator
   protocol: Protocol
   account: Account
+  currentRound: Round
 }
 
-export default ({ delegator, account, transcoder, protocol }: Props) => {
+export default ({
+  delegator,
+  account,
+  transcoder,
+  protocol,
+  currentRound,
+}: Props) => {
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')
   const [open, setModalOpen] = useState(false)
@@ -105,14 +112,16 @@ export default ({ delegator, account, transcoder, protocol }: Props) => {
             </TabList>
           </Tabs>
           <Input
+            transcoder={transcoder}
             value={amount}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setAmount(e.target.value ? e.target.value : "0")
+              setAmount(e.target.value ? e.target.value : '0')
             }
             protocol={protocol}
           />
           <ProjectionBox action={action} />
           <Footer
+            currentRound={currentRound}
             account={account}
             delegator={delegator}
             transcoder={transcoder}
