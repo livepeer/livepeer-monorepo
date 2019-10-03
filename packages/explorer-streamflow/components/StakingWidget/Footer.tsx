@@ -38,28 +38,31 @@ export default ({
   }
 
   const hasTokenBalance =
-    account && parseInt(Utils.fromWei(account.tokenBalance)) == 0
+    account && parseFloat(Utils.fromWei(account.tokenBalance)) > 0
+  const approved = account && parseFloat(Utils.fromWei(account.allowance)) > 0
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
-  const canStake = hasTokenBalance
+  const canStake = hasTokenBalance && approved
   const canUnstake = isStaked
 
   if (action == 'stake') {
     return (
       <>
         <Stake disabled={!canStake} transcoder={transcoder} amount={amount} />
-        <div
-          sx={{
-            px: 2,
-            pt: 2,
-            color: 'muted',
-            textAlign: 'center',
-            fontSize: 0,
-          }}
-        >
-          {!hasTokenBalance && `You have 0 LPT in your wallet.`}
-        </div>
+        {!hasTokenBalance && (
+          <div
+            sx={{
+              px: 2,
+              pt: 2,
+              color: 'muted',
+              textAlign: 'center',
+              fontSize: 0,
+            }}
+          >
+            You have 0 LPT in your wallet.
+          </div>
+        )}
       </>
     )
   }

@@ -8,6 +8,7 @@ import Spinner from '../components/Spinner'
 import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 import { useAccount } from '../hooks'
+import { useWeb3Context } from 'web3-react'
 
 const GET_DATA = gql`
   {
@@ -53,7 +54,8 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const { account, delegator } = useAccount()
+  const context = useWeb3Context()
+  const myAccount = useAccount(context.account)
 
   const { data, loading } = useQuery(GET_DATA, {
     pollInterval: 10000,
@@ -89,9 +91,9 @@ export default withApollo(() => {
             }}
           >
             <StakingWidget
-              delegator={delegator}
+              delegator={myAccount.delegator}
               currentRound={data.currentRound[0]}
-              account={account}
+              account={myAccount.account}
               transcoder={
                 data.selectedTranscoder.id
                   ? data.selectedTranscoder

@@ -54,6 +54,8 @@ export default withApollo(() => {
     ssr: false,
   })
 
+  const myAccount = useAccount(context.account)
+
   if (error) {
     console.error(error)
   }
@@ -138,8 +140,8 @@ export default withApollo(() => {
         >
           <StakingWidget
             currentRound={data.currentRound[0]}
-            delegator={delegator}
-            account={account}
+            delegator={myAccount.delegator}
+            account={myAccount.account}
             transcoder={
               role == 'Orchestrator' ? transcoder : delegator.delegate
             }

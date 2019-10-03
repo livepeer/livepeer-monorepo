@@ -34,12 +34,17 @@ export default ({
   const [open, setModalOpen] = useState(false)
   const context = useWeb3Context()
 
+  if (account) {
+    console.log(parseFloat(account.tokenBalance))
+  }
+
   return (
     <div>
       {context.connectorName != 'Portis' &&
         context.account &&
         account &&
-        parseInt(account.tokenBalance) == 0 && (
+        account.id.toLowerCase() == context.account.toLowerCase() &&
+        parseFloat(account.tokenBalance) == 0 && (
           <>
             <Banner
               label={
@@ -75,8 +80,9 @@ export default ({
         )}
       {context.account &&
         account &&
-        parseInt(account.allowance) == 0 &&
-        parseInt(account.tokenBalance) != 0 && (
+        account.id.toLowerCase() == context.account.toLowerCase() &&
+        parseFloat(account.allowance) == 0 &&
+        parseFloat(account.tokenBalance) != 0 && (
           <Banner
             label={
               <div>

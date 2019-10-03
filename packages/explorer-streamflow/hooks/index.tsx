@@ -40,6 +40,7 @@ export function useAccount(address = null) {
         ? address.toLowerCase()
         : context.account && context.account.toLowerCase(),
     },
+    pollInterval: 10000,
     ssr: false,
   })
 
