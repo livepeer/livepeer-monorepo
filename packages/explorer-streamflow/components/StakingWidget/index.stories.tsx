@@ -12,6 +12,7 @@ storiesOf('StakingWidget', module).add('with text', () => {
   return (
     <ApolloProvider client={apolloClient}>
       <StakingWidget
+        currentRound={{ id: '1500' }}
         account={account}
         transcoder={{ id: '0x...' }}
         protocol={{ totalTokenSupply: '100', totalBondedToken: '100' }}
