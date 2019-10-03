@@ -26,7 +26,7 @@ export default class LevelStore {
     return this.db.close()
   }
 
-  async *listStream(prefix = '', cursor, limit = DEFAULT_LIMIT, offset = 0) {
+  async *listStream(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     // I do not know if this is the right way to do this, but...
     // if we want every key that starts with "endpoint/", what we're
     // really asking for is ">= 'endpoint/'" and '< 'endpoint0',
@@ -52,16 +52,16 @@ export default class LevelStore {
         limit,
       }
     }
-    console.log('filter: ', filter, prefix)
+
     await this.ready
     for await (const { value } of this.db.createReadStream(filter)) {
       yield JSON.parse(value)
     }
   }
 
-  async list(prefix = '', cursor, limit = DEFAULT_LIMIT, offset = 0) {
+  async list(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     const ret = []
-    for await (const val of this.listStream(prefix, cursor, limit, offset)) {
+    for await (const val of this.listStream(prefix, cursor, limit)) {
       ret.push(val)
     }
 
