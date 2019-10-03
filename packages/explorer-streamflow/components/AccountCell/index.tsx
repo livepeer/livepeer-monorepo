@@ -49,18 +49,13 @@ export default ({ status, active, address }) => {
           passHref
         >
           <a
+            className="orchestratorLink"
             sx={{
               color: 'text',
               cursor: 'pointer',
               transition: 'all .3s',
               borderBottom: '1px solid',
               borderColor: 'transparent',
-              '&:hover': {
-                color: 'primary',
-                borderBottom: '1px solid',
-                borderColor: 'primary',
-                transition: 'all .3s',
-              },
             }}
           >
             <Flex

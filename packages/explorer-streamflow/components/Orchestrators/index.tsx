@@ -178,6 +178,15 @@ export default ({ currentRound, transcoders }) => {
                       '.status': {
                         borderColor: lighten('#1E2026', 0.05),
                       },
+                      '.orchestratorLink': {
+                        borderBottom: '1px solid',
+                        borderColor: 'text',
+                        transition: 'all .3s',
+                        '&:hover': {
+                          color: 'primary',
+                          borderColor: 'primary',
+                        },
+                      },
                     },
                     '.status': {
                       borderColor:
