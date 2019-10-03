@@ -38,6 +38,7 @@ export default ({
     <div>
       {context.connectorName != 'Portis' &&
         context.account &&
+        account &&
         parseInt(account.tokenBalance) == 0 && (
           <>
             <Banner
@@ -72,7 +73,8 @@ export default ({
             </Modal>
           </>
         )}
-      {/* {context.account && 
+      {context.account &&
+        account &&
         parseInt(account.allowance) == 0 &&
         parseInt(account.tokenBalance) != 0 && (
           <Banner
@@ -92,7 +94,7 @@ export default ({
             }
             button={<Approve>Approve</Approve>}
           />
-        )} */}
+        )}
       <Box
         sx={{
           width: '100%',
