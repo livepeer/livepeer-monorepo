@@ -17,7 +17,12 @@ app.get('/', authMiddleware({}), async (req, res) => {
 
   const output = await req.store.list(`stream/`, cursor, limit, offset)
   res.status(200)
-  res.json(output)
+  let context = {}
+  if (output.length > 0) {
+    context.cursor = output[output.length - 1].id
+  }
+
+  res.json({ payload: output, context })
 })
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
