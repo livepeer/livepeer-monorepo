@@ -8,7 +8,7 @@ import { useAccount } from '../../hooks'
 const apolloClient = initApollo()
 
 storiesOf('StakingWidget', module).add('with text', () => {
-  const account = useAccount()
+  const { account } = useAccount()
   return (
     <ApolloProvider client={apolloClient}>
       <StakingWidget

@@ -22,19 +22,6 @@ import HistoryView from '../../../components/HistoryView'
 
 const GET_DATA = gql`
   query($account: ID!) {
-    delegator(id: $account) {
-      id
-      pendingStake
-      startRound
-      bondedAmount
-      unbondingLocks {
-        withdrawRound
-      }
-      delegate {
-        id
-        rewardCut
-      }
-    }
     transcoder(id: $account) {
       id
       rewardCut
@@ -55,12 +42,11 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const account = useAccount()
   const router = useRouter()
   const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
-
+  const { account, delegator } = useAccount(query.account.toString())
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
@@ -89,7 +75,6 @@ export default withApollo(() => {
   }
 
   const transcoder: Transcoder = data.transcoder
-  const delegator: Delegator = data.delegator
   const protocol: Protocol = data.protocol
   const currentRound: Round = data.currentRound[0]
   const isMyAccount: boolean =

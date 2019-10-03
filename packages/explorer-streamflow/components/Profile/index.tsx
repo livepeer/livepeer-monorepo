@@ -27,7 +27,6 @@ export default ({
 }: Props) => {
   const isLivepeerAware =
     hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
-
   return (
     <div {...props}>
       <div

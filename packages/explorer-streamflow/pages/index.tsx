@@ -53,7 +53,7 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const account = useAccount()
+  const { account, delegator } = useAccount()
 
   const { data, loading } = useQuery(GET_DATA, {
     pollInterval: 10000,
@@ -89,6 +89,7 @@ export default withApollo(() => {
             }}
           >
             <StakingWidget
+              delegator={delegator}
               currentRound={data.currentRound[0]}
               account={account}
               transcoder={

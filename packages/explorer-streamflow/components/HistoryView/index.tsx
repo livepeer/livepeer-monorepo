@@ -201,14 +201,15 @@ function renderSwitch(transaction: any, i: number) {
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
-              {' '}
-              <span sx={{ fontFamily: 'monospace' }}>
-                {transaction.amount ==
-                '10000000000000000000000000000000000000000000000000000000000'
-                  ? 'Approved'
-                  : abbreviateNumber(Utils.fromWei(transaction.amount), 3) +
+              {transaction.amount ==
+              '10000000000000000000000000000000000000000000000000000000000' ? (
+                <span>Approved</span>
+              ) : (
+                <span sx={{ fontFamily: 'monospace' }}>
+                  {abbreviateNumber(Utils.fromWei(transaction.amount), 3) +
                     ' LPT'}
-              </span>{' '}
+                </span>
+              )}
             </div>
           </Flex>
         </ListItem>

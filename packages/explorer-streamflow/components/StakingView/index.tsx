@@ -78,7 +78,7 @@ export default () => {
     )
   }
 
-  if (!(data && data.delegator)) {
+  if (!(data && data.delegator && data.delegator.bondedAmount != null)) {
     if (isMyAccount) {
       return (
         <div sx={{ pt: 4 }}>
@@ -89,7 +89,11 @@ export default () => {
         </div>
       )
     }
-    return null
+    return (
+      <div sx={{ pt: 4 }}>
+        <span sx={{ mr: 2 }}>Nothing here.</span>
+      </div>
+    )
   }
 
   const pendingStake = Math.max(
@@ -102,7 +106,7 @@ export default () => {
     : 0
   const principal = Utils.fromWei(data.delegator.principal)
   const rewards =
-    pendingStake + parseInt(unbonded ? unbonded : 0) - parseInt(principal)
+    pendingStake + parseInt(unbonded ? unbonded : 0) - parseFloat(principal)
   const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
 
   return (

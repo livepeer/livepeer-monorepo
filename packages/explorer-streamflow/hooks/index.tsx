@@ -12,17 +12,33 @@ const GET_ACCOUNT = gql`
       ethBalance
       allowance
     }
+    delegator(id: $account) {
+      id
+      pendingStake
+      startRound
+      bondedAmount
+      unbondingLocks {
+        withdrawRound
+      }
+      delegate {
+        id
+        rewardCut
+      }
+    }
   }
 `
 
-export function useAccount(): Account {
+export function useAccount(address = null) {
   let context = useWeb3Context()
 
   const [account, setAccount] = useState()
+  const [delegator, setDelegator] = useState()
 
   const { data } = useQuery(GET_ACCOUNT, {
     variables: {
-      account: context.account,
+      account: address
+        ? address.toLowerCase()
+        : context.account && context.account.toLowerCase(),
     },
     ssr: false,
   })
@@ -31,7 +47,10 @@ export function useAccount(): Account {
     if (data && data.account) {
       setAccount(data.account)
     }
+    if (data && data.delegator) {
+      setDelegator(data.delegator)
+    }
   }, [data])
 
-  return account
+  return { account, delegator }
 }

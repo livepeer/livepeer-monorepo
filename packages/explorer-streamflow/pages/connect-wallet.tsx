@@ -50,7 +50,6 @@ export default () => {
           <ToggleCard
             onClick={() => setSelectedProvider('Portis')}
             sx={{ mr: 3, width: '50%' }}
-            label="Recommended"
             description="Recommended for new users. Connect in seconds to a secure wallet via email."
             icon={Portis}
             isActive={selectedProvider == 'Portis'}

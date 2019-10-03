@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Account, Delegator, Transcoder, Round } from '../../@types'
 import Utils from 'web3-utils'
 import { getDelegatorStatus } from '../../lib/utils'
+import { useWeb3Context } from 'web3-react'
 
 interface Props {
   action: string
@@ -25,7 +26,8 @@ export default ({
   account,
   currentRound,
 }: Props) => {
-  if (!account) {
+  const context = useWeb3Context()
+  if (!context.account) {
     return (
       <Link href="/connect-wallet" passHref>
         <a>
@@ -35,7 +37,6 @@ export default ({
     )
   }
 
-  const bondedAmount = delegator ? delegator.bondedAmount : 0
   const hasTokenBalance =
     account && parseInt(Utils.fromWei(account.tokenBalance)) == 0
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
