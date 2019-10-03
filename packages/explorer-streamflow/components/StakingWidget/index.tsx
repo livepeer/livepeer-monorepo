@@ -107,7 +107,7 @@ export default ({ delegator, account, transcoder, protocol }: Props) => {
           <Input
             value={amount}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setAmount(e.target.value)
+              setAmount(e.target.value ? e.target.value : "0")
             }
             protocol={protocol}
           />

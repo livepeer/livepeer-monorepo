@@ -2,6 +2,7 @@
 import { jsx, Styled, Flex } from 'theme-ui'
 import React from 'react'
 import ArrowRight from '../../static/img/arrow-right-long.svg'
+import Utils from 'web3-utils'
 
 export default ({ action = 'stake', amount = 0, account }) => {
   return (
@@ -17,7 +18,9 @@ export default ({ action = 'stake', amount = 0, account }) => {
       }}
     >
       <div>
-        <span sx={{ fontFamily: 'monospace', fontSize: 4 }}>{amount}</span>{' '}
+        <span sx={{ fontFamily: 'monospace', fontSize: 4 }}>
+          {Utils.fromWei(amount)}
+        </span>{' '}
         <span sx={{ fontSize: 1 }}>LPT</span>
       </div>
       <ArrowRight

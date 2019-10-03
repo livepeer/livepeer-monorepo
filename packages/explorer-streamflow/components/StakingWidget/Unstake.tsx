@@ -38,7 +38,7 @@ export default ({ transcoder, amount, disabled }) => {
 
   const [unbond, { data }] = useMutation(UNBOND, {
     variables: {
-      amount: Utils.toWei(amount, 'ether'),
+      amount: Utils.toWei(amount),
     },
     notifyOnNetworkStatusChange: true,
     context: {
@@ -76,7 +76,13 @@ export default ({ transcoder, amount, disabled }) => {
       <Button
         disabled={disabled}
         onClick={async () => {
-          unstake(unbond)
+          try {
+            await unbond()
+          } catch (e) {
+            return {
+              error: e.message.replace('GraphQL error: ', ''),
+            }
+          }
         }}
         sx={{ backgroundColor: 'red', width: '100%' }}
       >
@@ -127,14 +133,4 @@ export default ({ transcoder, amount, disabled }) => {
       )}
     </>
   )
-}
-
-async function unstake(unstake: any) {
-  try {
-    await unstake()
-  } catch (e) {
-    return {
-      error: e.message.replace('GraphQL error: ', ''),
-    }
-  }
 }

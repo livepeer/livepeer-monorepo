@@ -73,7 +73,15 @@ export default ({ lock }) => {
   return (
     <>
       <Button
-        onClick={() => rebond(lock.unbondingLockId)}
+        onClick={async () => {
+          try {
+            await rebond(lock.unbondingLockId)
+          } catch (e) {
+            return {
+              error: e.message.replace('GraphQL error: ', ''),
+            }
+          }
+        }}
         sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
       >
         Rebond

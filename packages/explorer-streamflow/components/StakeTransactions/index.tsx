@@ -8,6 +8,7 @@ import { UnbondingLock } from '../../@types'
 import List from '../List'
 import ListItem from '../ListItem'
 import Restake from '../Restake'
+import RestakeFromUnstaked from '../RestakeFromUnstaked'
 import WithdrawStake from '../WithdrawStake'
 
 export default ({ delegator, currentRound, isMyAccount }) => {
@@ -23,6 +24,8 @@ export default ({ delegator, currentRound, isMyAccount }) => {
     (item: UnbondingLock) =>
       item.withdrawRound && item.withdrawRound <= parseInt(currentRound.id, 10),
   )
+  const isBonded = !!delegator.delegate
+
   return (
     <>
       {!!pendingStakeTransactions.length && (
@@ -47,7 +50,12 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                   {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
                 </div>
                 <Flex sx={{ alignItems: 'center' }}>
-                  {isMyAccount && <Restake lock={lock} />}
+                  {isMyAccount &&
+                    (isBonded ? (
+                      <Restake lock={lock} />
+                    ) : (
+                      <RestakeFromUnstaked lock={lock} />
+                    ))}
                   <div sx={{ ml: 3 }}>
                     {' '}
                     -
@@ -84,7 +92,11 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                 <Flex sx={{ alignItems: 'center' }}>
                   {isMyAccount && (
                     <>
-                      {/* <Restake lock={lock} /> */}
+                      {isBonded ? (
+                        <Restake lock={lock} />
+                      ) : (
+                        <RestakeFromUnstaked lock={lock} />
+                      )}
                       <WithdrawStake lock={lock} />
                     </>
                   )}

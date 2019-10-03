@@ -1,9 +1,9 @@
 /** @jsx jsx */
-import { jsx, Flex, Box } from 'theme-ui'
+import { jsx, Flex, Box, Styled } from 'theme-ui'
 import React from 'react'
 import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../../components/Spinner'
@@ -154,12 +154,12 @@ export default () => {
     )
   }
   if (!data.transactions.length) {
-    ;<div sx={{ pt: 5 }}>No history</div>
+    return <div sx={{ pt: 5 }}>No history</div>
   }
 
   return (
     <>
-      <List sx={{ mb: 6 }}>
+      <List sx={{ mt: 3, mb: 6 }}>
         {data.transactions.map((transaction: any, i: number) =>
           renderSwitch(transaction, i),
         )}

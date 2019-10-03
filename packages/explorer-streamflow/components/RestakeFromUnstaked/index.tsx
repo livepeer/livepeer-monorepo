@@ -1,64 +1,68 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
 import React, { useState, useEffect } from 'react'
+import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Utils from 'web3-utils'
-import Button from '../Button'
-import Modal from '../Modal'
 import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
+import Modal from '../Modal'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
-import useWindowSize from 'react-use/lib/useWindowSize'
-import Confetti from 'react-confetti'
+import Button from '../Button'
 
-export default ({ transcoder, amount, disabled }) => {
+export default ({ lock }) => {
   const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
-  const { width, height } = useWindowSize()
 
   if (!context.active) {
     return null
   }
 
-  const BOND = gql`
-    mutation bond($to: String!, $amount: String!) {
-      txHash: bond(to: $to, amount: $amount)
+  const REBOND_FROM_UNBONDED = gql`
+    mutation rebondFromUnbonded($unbondingLockId: Int!, $delegate: String!) {
+      txHash: rebondFromUnbonded(
+        unbondingLockId: $unbondingLockId
+        delegate: $delegate
+      )
     }
   `
 
   const GET_TRANSACTION_RECEIPT = gql`
-    query bondEvent($id: ID!) {
-      bondEvent(id: $id) {
+    query rebondEvent($id: ID!) {
+      rebondEvent(id: $id) {
         id
         blockNumber
         hash
       }
     }
   `
+  console.log(lock.delegate.id)
 
-  const [bond, { data }] = useMutation(BOND, {
-    variables: {
-      to: transcoder.id,
-      amount: Utils.toWei(amount ? amount : '0', 'ether'),
+  const [rebondFromUnbonded, { data, error }] = useMutation(
+    REBOND_FROM_UNBONDED,
+    {
+      variables: {
+        unbondingLockId: lock.unbondingLockId,
+        delegate: lock.delegate.id,
+      },
+      notifyOnNetworkStatusChange: true,
+      context: {
+        provider: context.library.currentProvider,
+        account: context.account.toLowerCase(),
+        returnTxHash: true,
+      },
     },
-    notifyOnNetworkStatusChange: true,
-    context: {
-      provider: context.library.currentProvider,
-      account: context.account.toLowerCase(),
-      returnTxHash: true,
-    },
-  })
+  )
 
+  console.log(error)
   let isBroadcasted = data && data.txHash
   let isMined = false
   let isMining = false
 
   const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
     variables: {
-      id: `${data && data.txHash}-Bond`,
+      id: `${data && data.txHash}-Rebond`,
     },
     ssr: false,
     pollInterval: 1000,
@@ -72,41 +76,38 @@ export default ({ transcoder, amount, disabled }) => {
     }
   }, [isBroadcasted])
 
-  isMining = transaction && !transaction.bondEvent
-  isMined = transaction && transaction.bondEvent
+  isMining = transaction && !transaction.rebondEvent
+  isMined = transaction && transaction.rebondEvent
 
   return (
     <>
       <Button
-        disabled={disabled}
         onClick={async () => {
+          console.log('wrong')
           try {
-            await bond()
+            await rebondFromUnbonded(lock.unbondingLockId)
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),
             }
           }
         }}
-        sx={{ width: '100%' }}
+        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
       >
-        Stake
+        Rebond
       </Button>
       {isBroadcasted && (
         <Modal
           isOpen={isOpen}
           setOpen={setIsModalOpen}
-          title={isMined ? 'Success!' : 'Broadcasted'}
+          title={isMined ? 'Successfully Rebonded' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          {isMined && (
-            <Confetti
-              canvasRef={React.createRef()}
-              width={width}
-              height={height}
-            />
-          )}
-          <StakingFlow action="stake" account={transcoder.id} amount={amount} />
+          <StakingFlow
+            action="stake"
+            account={lock.delegate.id}
+            amount={lock.amount}
+          />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
