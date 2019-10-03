@@ -236,7 +236,7 @@ function renderSwitch(transaction: any, i: number) {
           >
             <Box>
               <Box>
-                Bonded to{' '}
+                Staked towards{' '}
                 {transaction.newDelegate.id.replace(
                   transaction.newDelegate.id.slice(7, 37),
                   '…',
@@ -422,7 +422,7 @@ function renderSwitch(transaction: any, i: number) {
           >
             <Box>
               <Box>
-                Unbonded from{' '}
+                Unstaked from{' '}
                 {transaction.delegate.id.replace(
                   transaction.delegate.id.slice(7, 37),
                   '…',

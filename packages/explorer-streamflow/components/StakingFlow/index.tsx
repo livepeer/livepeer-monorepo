@@ -18,9 +18,7 @@ export default ({ action = 'stake', amount = 0, account }) => {
       }}
     >
       <div>
-        <span sx={{ fontFamily: 'monospace', fontSize: 4 }}>
-          {Utils.fromWei(amount)}
-        </span>{' '}
+        <span sx={{ fontFamily: 'monospace', fontSize: 4 }}>{amount}</span>{' '}
         <span sx={{ fontSize: 1 }}>LPT</span>
       </div>
       <ArrowRight
