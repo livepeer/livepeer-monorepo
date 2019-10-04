@@ -10,6 +10,8 @@ import path from 'path'
 import os from 'os'
 
 const dbPath = path.resolve(os.tmpdir(), 'livepeer', uuid())
+const clientId = 'EXPECTED_AUDIENCE'
+const trustedDomain = 'livepeer.org'
 
 fs.ensureDirSync(dbPath)
 
@@ -31,7 +33,8 @@ const params = argParser([binary, script, ...argv])
 // Some overrides... we want to run on a random port for parallel reasons
 delete params.port
 params.dbPath = dbPath
-
+params.clientId = clientId
+params.trustedDomain = trustedDomain
 let server
 
 console.log(`test run parameters: ${JSON.stringify(params)}`)

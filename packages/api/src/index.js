@@ -45,8 +45,7 @@ export default async function makeApp(params) {
   app.use(jsonParser())
   app.use((req, res, next) => {
     req.store = store
-    req.trustedDomain = trustedDomain
-    req.clientId = clientId
+    req.config = params
     next()
   })
   app.use(bearerToken())

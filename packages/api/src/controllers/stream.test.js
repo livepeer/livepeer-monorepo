@@ -52,10 +52,9 @@ describe('controllers/stream', () => {
         const stream = await res.json()
         expect(stream).toEqual(document)
       }
-      const res = await client.get('/stream') // BROKEN! Teach this. Mock out google dependency. Return known good value
-      // and bad value
+      const res = await client.get('/stream')
       const streams = await res.json()
-      expect(streams.length).toEqual(10) // FAILLL
+      expect(streams.length).toEqual(10)
     })
 
     it('should get some of the streams', async () => {

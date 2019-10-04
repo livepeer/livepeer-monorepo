@@ -9,20 +9,11 @@
     />
     <div class="g-signin2" data-onsuccess="onSignIn"></div>
     <a id="signOut" href="#">Sign out</a>
-    <button>Download Streams</button>
     <script>
-      var lpToken = localStorage.getItem('livepeerToken')
-
-      document.querySelector('button').addEventListener('click', () => {
-        fetch('/api/stream/test-streams', {
-          headers: {
-            lptoken: lpToken,
-          },
-        })
-      })
+      var googleAuthToken = localStorage.getItem('googleAuthToken')
 
       document.querySelector('#signOut').addEventListener('click', () => {
-        localStorage.removeItem('livepeerToken')
+        localStorage.removeItem('googleAuthToken')
         var auth2 = gapi.auth2.getAuthInstance()
         auth2.signOut().then(function() {
           console.log('User signed out.')
@@ -31,11 +22,11 @@
 
       var sub
       function onSignIn(googleUser) {
-        lpToken = googleUser.getAuthResponse().id_token
-        localStorage.setItem('livepeerToken', lpToken)
+        googleAuthToken = googleUser.getAuthResponse().id_token
+        localStorage.setItem('googleAuthToken', googleAuthToken)
       }
 
-      fetch('/api/stream', { headers: { lptoken: lpToken } })
+      fetch('/api/stream', { headers: { google_auth_token: googleAuthToken } })
     </script>
   </body>
 </html>
