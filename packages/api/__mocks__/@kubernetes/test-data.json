@@ -1,0 +1,306 @@
+{
+  "broadcasterResponse": {
+    "response": {
+      "statusCode": 200,
+      "body": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "broadcaster",
+          "namespace": "default",
+          "selfLink": "/api/v1/namespaces/default/endpoints/broadcaster",
+          "uid": "6d646416-d5d2-11e9-9474-42010aa40117",
+          "resourceVersion": "6365335",
+          "creationTimestamp": "2019-09-13T02:58:56Z",
+          "labels": {
+            "livepeer.live/app": "broadcaster",
+            "livepeer.live/region": "ams"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "10.40.0.46",
+                "nodeName": "gke-ams-prod-cpu-efde94aa-2k9f",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "default",
+                  "name": "broadcaster-r55d5",
+                  "uid": "9fa152f9-e0ae-11e9-9474-42010aa40117",
+                  "resourceVersion": "6365279"
+                }
+              },
+              {
+                "ip": "10.40.1.52",
+                "nodeName": "gke-ams-prod-cpu-efde94aa-k8lz",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "default",
+                  "name": "broadcaster-6wdt7",
+                  "uid": "a685e071-e0ae-11e9-9474-42010aa40117",
+                  "resourceVersion": "6365334"
+                }
+              },
+              {
+                "ip": "10.40.2.67",
+                "nodeName": "gke-ams-prod-cpu-efde94aa-5sr7",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "default",
+                  "name": "broadcaster-m6z8x",
+                  "uid": "99a9614a-e0ae-11e9-9474-42010aa40117",
+                  "resourceVersion": "6365229"
+                }
+              }
+            ],
+            "ports": [
+              { "name": "http", "port": 80, "protocol": "TCP" },
+              { "name": "https", "port": 443, "protocol": "TCP" }
+            ]
+          }
+        ]
+      },
+      "headers": {
+        "audit-id": "f8602bc7-b49e-4022-8ec9-d06816690207",
+        "content-type": "application/json",
+        "date": "Wed, 02 Oct 2019 02:31:22 GMT",
+        "content-length": "1112",
+        "connection": "close"
+      },
+      "request": {
+        "uri": {
+          "protocol": "https:",
+          "slashes": true,
+          "auth": null,
+          "host": "10.0.0.1:443",
+          "port": "443",
+          "hostname": "10.0.0.1",
+          "hash": null,
+          "search": null,
+          "query": null,
+          "pathname": "/api/v1/namespaces/default/endpoints/broadcaster",
+          "path": "/api/v1/namespaces/default/endpoints/broadcaster",
+          "href": "https://10.0.0.1:443/api/v1/namespaces/default/endpoints/broadcaster"
+        },
+        "method": "GET",
+        "headers": {
+          "authorization": "",
+          "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFwaS10b2tlbi1sd3hmOSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJhcGkiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJiMzU4MDUxNi1kNWM5LTExZTktOTQ3NC00MjAxMGFhNDAxMTciLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6ZGVmYXVsdDphcGkifQ.WCpKG5PbFLfmN3PxUZ-jWMAevWk4l16vAZrgTxjWt7LXkVw9_N5KS3bA_s9O5grT2uYUCaVQyEqsUoBCO_-up3u3GgFoE4eVGiSl3whveq3Y4LsnTAgPQZM91EL96Vux9GsJPsqNLSPBgtHQz8yKu5x5uXJq6Oj2p2de8Ww8DKk-11tEAQzA06bkdGzOXnOgPB9EcTlHC6zl81i3z7MsH7NXhlMW7xQGfCN16YFHQJ6rMbq7K8bfmmyxmtFMMZQEZa9fn-4tmxAqIop0xcsT4kzt-S9u7iGKlNPNDK6_KWIjc_QJzK1EBW298OfOhPA5jkRzhlZwiber3l3gY3wg1A",
+          "accept": "application/json"
+        }
+      }
+    },
+    "body": {
+      "apiVersion": "v1",
+      "kind": "Endpoints",
+      "metadata": {
+        "creationTimestamp": "2019-09-13T02:58:56.000Z",
+        "labels": {
+          "livepeer.live/app": "broadcaster",
+          "livepeer.live/region": "ams"
+        },
+        "name": "broadcaster",
+        "namespace": "default",
+        "resourceVersion": "6365335",
+        "selfLink": "/api/v1/namespaces/default/endpoints/broadcaster",
+        "uid": "6d646416-d5d2-11e9-9474-42010aa40117"
+      },
+      "subsets": [
+        {
+          "addresses": [
+            {
+              "ip": "10.40.0.46",
+              "nodeName": "gke-ams-prod-cpu-efde94aa-2k9f",
+              "targetRef": {
+                "kind": "Pod",
+                "name": "broadcaster-r55d5",
+                "namespace": "default",
+                "resourceVersion": "6365279",
+                "uid": "9fa152f9-e0ae-11e9-9474-42010aa40117"
+              }
+            },
+            {
+              "ip": "10.40.1.52",
+              "nodeName": "gke-ams-prod-cpu-efde94aa-k8lz",
+              "targetRef": {
+                "kind": "Pod",
+                "name": "broadcaster-6wdt7",
+                "namespace": "default",
+                "resourceVersion": "6365334",
+                "uid": "a685e071-e0ae-11e9-9474-42010aa40117"
+              }
+            },
+            {
+              "ip": "10.40.2.67",
+              "nodeName": "gke-ams-prod-cpu-efde94aa-5sr7",
+              "targetRef": {
+                "kind": "Pod",
+                "name": "broadcaster-m6z8x",
+                "namespace": "default",
+                "resourceVersion": "6365229",
+                "uid": "99a9614a-e0ae-11e9-9474-42010aa40117"
+              }
+            }
+          ],
+          "ports": [
+            { "name": "http", "port": 80, "protocol": "TCP" },
+            { "name": "https", "port": 443, "protocol": "TCP" }
+          ]
+        }
+      ]
+    }
+  },
+  "orchestratorResponse": {
+    "response": {
+      "statusCode": 200,
+      "body": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "orchestrator",
+          "namespace": "default",
+          "selfLink": "/api/v1/namespaces/default/endpoints/orchestrator",
+          "uid": "e4412597-d5c0-11e9-9474-42010aa40117",
+          "resourceVersion": "5917737",
+          "creationTimestamp": "2019-09-13T00:53:25Z",
+          "labels": {
+            "livepeer.live/app": "orchestrator",
+            "livepeer.live/region": "ams"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "10.40.0.41",
+                "nodeName": "gke-ams-prod-cpu-efde94aa-2k9f",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "default",
+                  "name": "orchestrator-mwx79",
+                  "uid": "e8a54991-d5e9-11e9-9474-42010aa40117",
+                  "resourceVersion": "5917733"
+                }
+              },
+              {
+                "ip": "10.40.1.48",
+                "nodeName": "gke-ams-prod-cpu-efde94aa-k8lz",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "default",
+                  "name": "orchestrator-bgqmz",
+                  "uid": "ec69ffba-d5e9-11e9-9474-42010aa40117",
+                  "resourceVersion": "2134365"
+                }
+              },
+              {
+                "ip": "10.40.2.59",
+                "nodeName": "gke-ams-prod-cpu-efde94aa-5sr7",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "default",
+                  "name": "orchestrator-pwbjz",
+                  "uid": "dce21086-d5e9-11e9-9474-42010aa40117",
+                  "resourceVersion": "2134206"
+                }
+              }
+            ],
+            "ports": [
+              { "name": "http-cli", "port": 7935, "protocol": "TCP" },
+              { "name": "http-rpc", "port": 8935, "protocol": "TCP" }
+            ]
+          }
+        ]
+      },
+      "headers": {
+        "audit-id": "6a6655c2-96ea-4802-a6c1-195cca4f9362",
+        "content-type": "application/json",
+        "date": "Wed, 02 Oct 2019 02:33:13 GMT",
+        "content-length": "1128",
+        "connection": "close"
+      },
+      "request": {
+        "uri": {
+          "protocol": "https:",
+          "slashes": true,
+          "auth": null,
+          "host": "10.0.0.1:443",
+          "port": "443",
+          "hostname": "10.0.0.1",
+          "hash": null,
+          "search": null,
+          "query": null,
+          "pathname": "/api/v1/namespaces/default/endpoints/orchestrator",
+          "path": "/api/v1/namespaces/default/endpoints/orchestrator",
+          "href": "https://10.0.0.1:443/api/v1/namespaces/default/endpoints/orchestrator"
+        },
+        "method": "GET",
+        "headers": {
+          "authorization": "",
+          "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFwaS10b2tlbi1sd3hmOSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJhcGkiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJiMzU4MDUxNi1kNWM5LTExZTktOTQ3NC00MjAxMGFhNDAxMTciLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6ZGVmYXVsdDphcGkifQ.WCpKG5PbFLfmN3PxUZ-jWMAevWk4l16vAZrgTxjWt7LXkVw9_N5KS3bA_s9O5grT2uYUCaVQyEqsUoBCO_-up3u3GgFoE4eVGiSl3whveq3Y4LsnTAgPQZM91EL96Vux9GsJPsqNLSPBgtHQz8yKu5x5uXJq6Oj2p2de8Ww8DKk-11tEAQzA06bkdGzOXnOgPB9EcTlHC6zl81i3z7MsH7NXhlMW7xQGfCN16YFHQJ6rMbq7K8bfmmyxmtFMMZQEZa9fn-4tmxAqIop0xcsT4kzt-S9u7iGKlNPNDK6_KWIjc_QJzK1EBW298OfOhPA5jkRzhlZwiber3l3gY3wg1A",
+          "accept": "application/json"
+        }
+      }
+    },
+    "body": {
+      "apiVersion": "v1",
+      "kind": "Endpoints",
+      "metadata": {
+        "creationTimestamp": "2019-09-13T00:53:25.000Z",
+        "labels": {
+          "livepeer.live/app": "orchestrator",
+          "livepeer.live/region": "ams"
+        },
+        "name": "orchestrator",
+        "namespace": "default",
+        "resourceVersion": "5917737",
+        "selfLink": "/api/v1/namespaces/default/endpoints/orchestrator",
+        "uid": "e4412597-d5c0-11e9-9474-42010aa40117"
+      },
+      "subsets": [
+        {
+          "addresses": [
+            {
+              "ip": "10.40.0.41",
+              "nodeName": "gke-ams-prod-cpu-efde94aa-2k9f",
+              "targetRef": {
+                "kind": "Pod",
+                "name": "orchestrator-mwx79",
+                "namespace": "default",
+                "resourceVersion": "5917733",
+                "uid": "e8a54991-d5e9-11e9-9474-42010aa40117"
+              }
+            },
+            {
+              "ip": "10.40.1.48",
+              "nodeName": "gke-ams-prod-cpu-efde94aa-k8lz",
+              "targetRef": {
+                "kind": "Pod",
+                "name": "orchestrator-bgqmz",
+                "namespace": "default",
+                "resourceVersion": "2134365",
+                "uid": "ec69ffba-d5e9-11e9-9474-42010aa40117"
+              }
+            },
+            {
+              "ip": "10.40.2.59",
+              "nodeName": "gke-ams-prod-cpu-efde94aa-5sr7",
+              "targetRef": {
+                "kind": "Pod",
+                "name": "orchestrator-pwbjz",
+                "namespace": "default",
+                "resourceVersion": "2134206",
+                "uid": "dce21086-d5e9-11e9-9474-42010aa40117"
+              }
+            }
+          ],
+          "ports": [
+            { "name": "http-cli", "port": 7935, "protocol": "TCP" },
+            { "name": "http-rpc", "port": 8935, "protocol": "TCP" }
+          ]
+        }
+      ]
+    }
+  }
+}
