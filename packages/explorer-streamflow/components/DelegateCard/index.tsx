@@ -6,8 +6,8 @@ import Card from '../Card'
 export default ({ delegate = null }) => {
   return (
     <Link
-      href={`/account/[account]/[slug]`}
-      as={`/account/${delegate.id}/campaign`}
+      href={`/accounts/[account]/[slug]`}
+      as={`/accounts/${delegate.id}/campaign`}
       passHref
     >
       <a>

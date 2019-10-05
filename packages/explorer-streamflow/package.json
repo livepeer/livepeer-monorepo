@@ -28,6 +28,7 @@
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.8.5",
     "@types/react-icons": "^3.0.0",
+    "@types/react-table": "^6.8.5",
     "@types/storybook__react": "^4.0.2",
     "@types/styled-jsx": "^2.2.8",
     "@types/theme-ui": "^0.2.2",
@@ -82,7 +83,7 @@
     "react-inlinesvg": "^1.1.5",
     "react-select": "^3.0.3",
     "react-spring": "^8.0.27",
-    "react-table": "next",
+    "react-table": "7.0.0-beta.1",
     "react-use": "^12.2.0",
     "theme-ui": "^0.2.43",
     "web3": "1.2.0",
@@ -90,5 +91,8 @@
     "web3-react": "^5.0.4",
     "web3-utils": "^1.2.1"
   },
-  "main": "package.json"
+  "main": "package.json",
+  "engines": {
+    "node": "10.x"
+  }
 }

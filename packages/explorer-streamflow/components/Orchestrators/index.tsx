@@ -101,7 +101,7 @@ export default ({ currentRound, transcoders }) => {
     [],
   )
 
-  const tableOptions = {
+  const tableOptions: any = {
     columns,
     data: transcoders,
     defaultColumn,

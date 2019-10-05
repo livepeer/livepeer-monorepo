@@ -44,8 +44,8 @@ export default ({ status, active, address }) => {
       </Flex>
       <Flex sx={{ justifyContent: 'space-between', width: '100%' }}>
         <Link
-          href="/account/[account]/[slug]"
-          as={`/account/${address}/campaign`}
+          href="/accounts/[account]/[slug]"
+          as={`/accounts/${address}/campaign`}
           passHref
         >
           <a

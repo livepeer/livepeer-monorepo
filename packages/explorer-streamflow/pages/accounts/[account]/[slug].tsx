@@ -161,41 +161,41 @@ function getTabs(
   let tabs: Array<TabType> = [
     {
       name: 'Staking',
-      href: '/account/[account]/[slug]',
-      as: `/account/${account}/staking`,
-      isActive: asPath == `/account/${account}/staking`,
+      href: '/accounts/[account]/[slug]',
+      as: `/accounts/${account}/staking`,
+      isActive: asPath == `/accounts/${account}/staking`,
     },
     // {
     //   name: 'Earned Fees',
-    //   href: '/account/[account]/[slug]',
-    //   as: `/account/${account}/fees`,
-    //   isActive: asPath == `/account/${account}/fees`,
+    //   href: '/accounts/[account]/[slug]',
+    //   as: `/accounts/${account}/fees`,
+    //   isActive: asPath == `/accounts/${account}/fees`,
     // },
     {
       name: 'History',
-      href: '/account/[account]/[slug]',
-      as: `/account/${account}/history`,
-      isActive: asPath == `/account/${account}/history`,
+      href: '/accounts/[account]/[slug]',
+      as: `/accounts/${account}/history`,
+      isActive: asPath == `/accounts/${account}/history`,
     },
     // {
     //   name: 'Settings',
-    //   href: '/account/[account]/[slug]',
-    //   as: `/account/${account}/settings`,
-    //   isActive: asPath == `/account/${account}/settings`,
+    //   href: '/accounts/[account]/[slug]',
+    //   as: `/accounts/${account}/settings`,
+    //   isActive: asPath == `/accounts/${account}/settings`,
     // },
   ]
   if (role == 'Orchestrator') {
     tabs.splice(0, 0, {
       name: 'Tokenholders',
-      href: '/account/[account]/[slug]',
-      as: `/account/${account}/tokenholders`,
-      isActive: asPath == `/account/${account}/tokenholders`,
+      href: '/accounts/[account]/[slug]',
+      as: `/accounts/${account}/tokenholders`,
+      isActive: asPath == `/accounts/${account}/tokenholders`,
     })
     tabs.unshift({
       name: 'Campaign',
-      href: '/account/[account]/[slug]',
-      as: `/account/${account}/campaign`,
-      isActive: asPath == `/account/${account}/campaign`,
+      href: '/accounts/[account]/[slug]',
+      as: `/accounts/${account}/campaign`,
+      isActive: asPath == `/accounts/${account}/campaign`,
     })
   }
 

@@ -8,7 +8,7 @@ import Router from 'next/router'
 function handleSubmit(e) {
   e.preventDefault()
   const [_, input] = e.target.children
-  Router.push(`/account/[account]/[slug]`, `/account/${input.value}/staking`)
+  Router.push(`/accounts/[account]/[slug]`, `/accounts/${input.value}/staking`)
 }
 export default () => {
   return (

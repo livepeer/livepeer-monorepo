@@ -19,8 +19,8 @@ export default () => {
   useEffect(() => {
     if (context.account) {
       Router.push(
-        `/account/[account]/[slug]`,
-        `/account/${context.account}/staking`,
+        `/accounts/[account]/[slug]`,
+        `/accounts/${context.account}/staking`,
       )
     }
   }, [context.account])

@@ -23,9 +23,18 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
       icon: Search,
     },
     {
-      name: !account ? 'Connect Wallet' : 'My Account',
-      href: !account ? '/connect-wallet' : '/account/[account]/[slug]',
-      as: !account ? '/connect-wallet' : `/account/${account}/staking`,
+      name: !account ? (
+        'Connect Wallet'
+      ) : (
+        <div>
+          <div sx={{ lineHeight: 1.5 }}>My Account</div>
+          <div sx={{ fontSize: 0 }}>
+            {account.replace(account.slice(5, 39), '…')}
+          </div>
+        </div>
+      ),
+      href: !account ? '/connect-wallet' : '/accounts/[account]/[slug]',
+      as: !account ? '/connect-wallet' : `/accounts/${account}/staking`,
       icon: !account ? Wallet : Account,
     },
   ]

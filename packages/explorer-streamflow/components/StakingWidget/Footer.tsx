@@ -43,7 +43,7 @@ export default ({
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
-  const canStake = hasTokenBalance && approved
+  const canStake = hasTokenBalance && approved && parseFloat(amount) > 0
   const canUnstake = isStaked
 
   if (action == 'stake') {

@@ -71,7 +71,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
         </List>
       )}
       {!!completedStakeTransactions.length && (
-        <List header={<Styled.h4>Completed Transactions</Styled.h4>}>
+        <List header={<Styled.h4>Available for Withdrawal</Styled.h4>}>
           {completedStakeTransactions.map(lock => (
             <ListItem
               key={lock.id}

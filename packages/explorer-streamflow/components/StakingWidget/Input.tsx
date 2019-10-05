@@ -48,6 +48,7 @@ export default ({ transcoder, value, protocol, ...props }) => {
       <input
         placeholder="0"
         type="number"
+        autoFocus
         sx={{
           backgroundColor: 'transparent',
           borderTop: '0',
