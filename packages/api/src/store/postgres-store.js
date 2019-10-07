@@ -36,7 +36,7 @@ export default class PostgresStore {
     if (cursor) {
       res = await this.pool.query(
         `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 LIMIT $3`,
-        [`${prefix}%`, `${prefix}/${cursor}`, `${limit}`],
+        [`${prefix}%`, `${prefix}${cursor}`, `${limit}`],
       )
     } else {
       res = await this.pool.query(
