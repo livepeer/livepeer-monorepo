@@ -4,7 +4,8 @@ import isoFetch from 'isomorphic-fetch'
  * Clear the entire database! Not to be used outside of tests
  */
 export async function clearDatabase(server) {
-  for (const doc of await server.store.list()) {
+  let output = await server.store.list()
+  for (const doc of output.data) {
     await server.store.delete(`${doc.kind}/${doc.id}`)
   }
 }

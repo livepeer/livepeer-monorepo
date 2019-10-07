@@ -44,8 +44,8 @@ export default class PostgresStore {
         [`${prefix}%`, `${limit}`],
       )
     }
-
-    return res.rows.map(({ data }) => data)
+    let data = res.rows.map(({ data }) => data)
+    return { data: data, cursor: data[data.length - 1].id }
   }
 
   async get(id) {

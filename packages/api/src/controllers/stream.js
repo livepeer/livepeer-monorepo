@@ -14,7 +14,9 @@ app.get('/', authMiddleware({}), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const output = await req.store.list(`stream/`, cursor, limit)
+  const resp = await req.store.list(`stream/`, cursor, limit)
+  const output = resp.data
+  const nextCursor = resp.cursor
   res.status(200)
 
   let baseUrl = new URL(
@@ -23,7 +25,7 @@ app.get('/', authMiddleware({}), async (req, res) => {
   if (output.length > 0) {
     try {
       let next = baseUrl
-      next.searchParams.append('cursor', output[output.length - 1].id)
+      next.searchParams.set('cursor', nextCursor)
       res.links({
         next: next.href,
       })
@@ -61,7 +63,7 @@ app.post('/hook', async (req, res) => {
       errors: ['missing url'],
     })
   }
-  logger.info(`got webhook: ${JSON.stringify(req.body)}`)
+  // logger.info(`got webhook: ${JSON.stringify(req.body)}`)
   // These are of the form /live/:manifestId/:segmentNum.ts
   let { pathname, protocol } = parseUrl(req.body.url)
   // Protocol is sometimes undefined, due to https://github.com/livepeer/go-livepeer/issues/1006

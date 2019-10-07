@@ -65,7 +65,8 @@ export default class LevelStore {
       ret.push(val)
     }
 
-    return ret
+    // return ret
+    return { data: ret, cursor: ret[ret.length - 1].id }
   }
 
   async get(key) {

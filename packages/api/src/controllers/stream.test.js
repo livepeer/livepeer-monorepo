@@ -53,6 +53,7 @@ describe('controllers/stream', () => {
         expect(stream).toEqual(document)
       }
       const res = await client.get('/stream')
+      console.log('res: ', res)
       const streams = await res.json()
       expect(streams.length).toEqual(10)
     })
