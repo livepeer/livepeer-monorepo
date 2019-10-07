@@ -54,11 +54,7 @@ describe('controllers/stream', () => {
       }
       const res = await client.get('/stream')
       const streams = await res.json()
-      expect(streams.payload.length).toEqual(10)
-      expect(streams.context).toBeDefined()
-      expect(streams.context.cursor).toEqual(
-        streams.payload[streams.payload.length - 1].id,
-      )
+      expect(streams.length).toEqual(10)
     })
 
     it('should get some of the streams', async () => {
@@ -77,7 +73,7 @@ describe('controllers/stream', () => {
       const res = await client.get(`/stream?cursor=${ids[2]}&limit=5`)
       const streams = await res.json()
       // console.log(streams)
-      expect(streams.payload.length).toBeLessThan(6)
+      expect(streams.length).toBeLessThan(6)
     })
   })
 

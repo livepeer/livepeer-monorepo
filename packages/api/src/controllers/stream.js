@@ -17,12 +17,21 @@ app.get('/', authMiddleware({}), async (req, res) => {
   const output = await req.store.list(`stream/`, cursor, limit)
   res.status(200)
 
-  let context = {}
+  let baseUrl = new URL(
+    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
+  )
   if (output.length > 0) {
-    context.cursor = output[output.length - 1].id
+    try {
+      let next = baseUrl
+      next.searchParams.append('cursor', output[output.length - 1].id)
+      res.links({
+        next: next.href,
+      })
+    } catch (e) {
+      logger.error('bad next url :', e)
+    }
   }
-
-  res.json({ payload: output, context })
+  res.json(output)
 })
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
