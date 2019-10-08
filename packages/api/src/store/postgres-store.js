@@ -45,6 +45,10 @@ export default class PostgresStore {
       )
     }
     let data = res.rows.map(({ data }) => data)
+    if (data.length < 1) {
+      return { data: data, cursor: null }
+    }
+
     return { data: data, cursor: data[data.length - 1].id }
   }
 

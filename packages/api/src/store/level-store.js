@@ -65,6 +65,9 @@ export default class LevelStore {
       ret.push(val)
     }
 
+    if (ret.length < 1) {
+      return { data: ret, cursor: null }
+    }
     // return ret
     return { data: ret, cursor: ret[ret.length - 1].id }
   }
