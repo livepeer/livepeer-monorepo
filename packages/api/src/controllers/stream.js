@@ -23,15 +23,11 @@ app.get('/', authMiddleware({}), async (req, res) => {
     `${req.protocol}://${req.get('host')}${req.originalUrl}`,
   )
   if (output.length > 0) {
-    try {
-      let next = baseUrl
-      next.searchParams.set('cursor', nextCursor)
-      res.links({
-        next: next.href,
-      })
-    } catch (e) {
-      logger.error('bad next url :', e)
-    }
+    let next = baseUrl
+    next.searchParams.set('cursor', nextCursor)
+    res.links({
+      next: next.href,
+    })
   }
   res.json(output)
 })
