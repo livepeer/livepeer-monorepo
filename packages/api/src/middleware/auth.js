@@ -37,7 +37,11 @@ function authFactory(params) {
     if (params.admin === true) {
       try {
         const user = await getUser(req, res, next)
-        if (user.domain === req.config.trustedDomain) {
+        if (
+          user &&
+          'domain' in user &&
+          user.domain === req.config.trustedDomain
+        ) {
           req.user = user
           return next()
         } else {
@@ -50,7 +54,10 @@ function authFactory(params) {
         res.status(403)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
+    } else if (!req.headers.authorization.startsWith('Bearer')) {
+      return next()
     }
+
     if (!req || !req.token) {
       return res.sendStatus(401)
     }
@@ -73,7 +80,7 @@ function authFactory(params) {
 }
 
 async function getUser(req, res, next) {
-  var googleAuthToken = req.headers.google_auth_token
+  var googleAuthToken = req.headers.authorization
   if (googleAuthToken != 'null') {
     req.googleAuthToken = googleAuthToken
   } else {

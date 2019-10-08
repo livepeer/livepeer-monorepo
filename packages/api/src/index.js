@@ -74,6 +74,10 @@ export default async function makeApp(params) {
   // Special case: handle /stream proxies off that endpoint
   app.use('/stream', streamProxy)
 
+  prefixRouter.get('/google-client', async (req, res, next) => {
+    res.json({ clientId: req.config.clientId })
+  })
+
   let listener
   let listenPort
 

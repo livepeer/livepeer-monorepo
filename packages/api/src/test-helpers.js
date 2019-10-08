@@ -23,6 +23,10 @@ export class TestClient {
     if (opts.apiKey) {
       this.apiKey = opts.apiKey
     }
+
+    if (opts.googleAuthorization) {
+      this.googleAuthorization = opts.googleAuthorization
+    }
   }
 
   fetch(path, args = {}) {
@@ -31,7 +35,12 @@ export class TestClient {
       headers = {
         ...headers,
         authorization: `Bearer ${this.apiKey}`,
-        lptoken: 'EXPECTED_TOKEN',
+      }
+    }
+    if (this.googleAuthorization) {
+      headers = {
+        ...headers,
+        authorization: this.googleAuthorization,
       }
     }
     return isoFetch(

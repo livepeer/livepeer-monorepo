@@ -13,7 +13,70 @@ afterEach(async () => {
 })
 
 describe('controllers/stream', () => {
-  describe('basic CRUD', () => {
+  describe('basic CRUD with google auth', () => {
+    let client
+
+    beforeEach(() => {
+      client = new TestClient({
+        server,
+        googleAuthorization: 'EXPECTED_TOKEN',
+      })
+    })
+
+    it('should get all streams', async () => {
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+
+      const user = {
+        id: 'mock_sub',
+        name: 'User Name',
+        email: 'user@livepeer.org',
+        domain: 'livepeer.org',
+        kind: 'user',
+      }
+      await server.store.create(user)
+
+      const res = await client.get('/stream')
+      expect(res.status).toBe(200)
+      const streams = await res.json()
+      expect(streams.length).toEqual(10)
+    })
+
+    it('should not get all streams', async () => {
+      const user = {
+        id: 'mock_sub',
+        name: 'User Name',
+        email: 'user@angie.org',
+        domain: 'angie.org',
+        kind: 'user',
+      }
+      await server.store.create(user)
+
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+
+      let res = await client.get('/stream')
+      expect(res.status).toBe(403)
+    })
+  })
+
+  describe('basic CRUD with apiKey', () => {
     let client
 
     beforeEach(() => {
