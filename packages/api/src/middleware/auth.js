@@ -54,8 +54,23 @@ function authFactory(params) {
         res.status(403)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
-    } else if (!req.headers.authorization.startsWith('Bearer')) {
-      return next()
+    } else if (
+      req.headers.authorization &&
+      !req.headers.authorization.startsWith('Bearer')
+    ) {
+      try {
+        const user = await getUser(req, res, next)
+        if (
+          user &&
+          'domain' in user &&
+          user.domain === req.config.trustedDomain
+        ) {
+          return next()
+        }
+      } catch (error) {
+        res.status(403)
+        return res.json({ errors: ['not logged in', error.toString()] })
+      }
     }
 
     if (!req || !req.token) {
@@ -81,10 +96,10 @@ function authFactory(params) {
 
 async function getUser(req, res, next) {
   var googleAuthToken = req.headers.authorization
-  if (googleAuthToken != 'null') {
+  if (googleAuthToken) {
     req.googleAuthToken = googleAuthToken
   } else {
-    googleAuthToken = req.googleAuthToken
+    return null
   }
   const clientId = req.config.clientId
   const oauthServer = new OAuth2Client(clientId)
@@ -95,9 +110,7 @@ async function getUser(req, res, next) {
       audience: clientId,
     })
   } catch (e) {
-    const error = new Error('invalid oauth token')
-    console.error(error)
-    throw error
+    throw new Error('invalid oauth token')
   }
   const payload = ticket.getPayload()
   var user

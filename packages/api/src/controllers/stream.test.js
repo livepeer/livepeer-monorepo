@@ -23,7 +23,16 @@ describe('controllers/stream', () => {
       })
     })
 
+    let user = {
+      id: 'mock_sub',
+      name: 'User Name',
+      email: 'user@livepeer.org',
+      domain: 'livepeer.org',
+      kind: 'user',
+    }
+
     it('should get all streams', async () => {
+      await server.store.create(user)
       for (let i = 0; i < 10; i += 1) {
         const document = {
           id: uuid(),
@@ -35,23 +44,55 @@ describe('controllers/stream', () => {
         expect(stream).toEqual(document)
       }
 
-      const user = {
-        id: 'mock_sub',
-        name: 'User Name',
-        email: 'user@livepeer.org',
-        domain: 'livepeer.org',
-        kind: 'user',
-      }
-      await server.store.create(user)
-
       const res = await client.get('/stream')
       expect(res.status).toBe(200)
       const streams = await res.json()
       expect(streams.length).toEqual(10)
     })
 
+    it('should get some of the streams', async () => {
+      await server.store.create(user)
+      const ids = []
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        ids.push(document.id)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+      const res = await client.get(`/stream?cursor=${ids[2]}&limit=5`)
+      const streams = await res.json()
+      expect(streams.length).toBeLessThan(6)
+    })
+
+    it('should get a working next Link', async () => {
+      await server.store.create(user)
+      const ids = []
+      for (let i = 0; i < 30; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        ids.push(document.id)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+      const res = await client.get(`/stream?limit=10`)
+      const streams = await res.json()
+      expect(res.headers._headers.link).toBeDefined()
+      expect(res.headers._headers.link.length).toBe(1)
+      console.log('res headers', res.headers._headers.link[0])
+      expect(streams.length).toBeLessThan(11)
+    })
+
     it('should not get all streams', async () => {
-      const user = {
+      user = {
         id: 'mock_sub',
         name: 'User Name',
         email: 'user@angie.org',
@@ -67,11 +108,26 @@ describe('controllers/stream', () => {
         }
         await server.store.create(document)
         const res = await client.get(`/stream/${document.id}`)
-        const stream = await res.json()
-        expect(stream).toEqual(document)
+        expect(res.status).toBe(401)
       }
 
       let res = await client.get('/stream')
+      expect(res.status).toBe(403)
+    })
+  })
+
+  describe('basic CRUD without valid logged in user', () => {
+    let client
+
+    beforeEach(() => {
+      client = new TestClient({
+        server,
+        googleAuthorization: 'nonsense',
+      })
+    })
+
+    it('should not get all streams', async () => {
+      const res = await client.get('/stream')
       expect(res.status).toBe(403)
     })
   })
@@ -102,61 +158,6 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
-    })
-
-    it('should get all streams', async () => {
-      for (let i = 0; i < 10; i += 1) {
-        const document = {
-          id: uuid(),
-          kind: 'stream',
-        }
-        await server.store.create(document)
-        const res = await client.get(`/stream/${document.id}`)
-        const stream = await res.json()
-        expect(stream).toEqual(document)
-      }
-      const res = await client.get('/stream')
-      const streams = await res.json()
-      expect(streams.length).toEqual(10)
-    })
-
-    it('should get some of the streams', async () => {
-      const ids = []
-      for (let i = 0; i < 10; i += 1) {
-        const document = {
-          id: uuid(),
-          kind: 'stream',
-        }
-        await server.store.create(document)
-        const res = await client.get(`/stream/${document.id}`)
-        ids.push(document.id)
-        const stream = await res.json()
-        expect(stream).toEqual(document)
-      }
-      const res = await client.get(`/stream?cursor=${ids[2]}&limit=5`)
-      const streams = await res.json()
-      expect(streams.length).toBeLessThan(6)
-    })
-
-    it('should get a working next Link', async () => {
-      const ids = []
-      for (let i = 0; i < 30; i += 1) {
-        const document = {
-          id: uuid(),
-          kind: 'stream',
-        }
-        await server.store.create(document)
-        const res = await client.get(`/stream/${document.id}`)
-        ids.push(document.id)
-        const stream = await res.json()
-        expect(stream).toEqual(document)
-      }
-      const res = await client.get(`/stream?limit=10`)
-      const streams = await res.json()
-      expect(res.headers._headers.link).toBeDefined()
-      expect(res.headers._headers.link.length).toBe(1)
-      console.log('res headers', res.headers._headers.link[0])
-      expect(streams.length).toBeLessThan(11)
     })
   })
 

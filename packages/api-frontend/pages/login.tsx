@@ -74,9 +74,4 @@ export default () => {
       </Flex>
     </Layout>
   )
-  // return (
-  //   <Layout>
-  //     <Flex>Loaded!</Flex>
-  //   </Layout>
-  // );
 }

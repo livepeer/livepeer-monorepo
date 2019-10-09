@@ -18,8 +18,6 @@ export class TestClient {
 
     this.server = opts.server
 
-    // same as apiKey , but with google token
-    // here: https://jestjs.io/docs/en/manual-mocks.html#mocking-node-modules
     if (opts.apiKey) {
       this.apiKey = opts.apiKey
     }
