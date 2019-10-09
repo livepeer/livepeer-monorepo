@@ -21,12 +21,12 @@ export default stream => {
   const { transcoderAppConfig, transcoderTemplateAppConfig } = stream.wowza
   const templatesInUse = transcoderAppConfig.templatesInUse.split(',')
   let template
-  // todo fixme xxx: handle the {SourceStreamName} case
   for (let tmpl of templatesInUse) {
+    let tmplName = replaceStreamName(tmpl, stream.name)
     // these all end in .xml
-    tmpl = tmpl.slice(0, tmpl.length - 4)
-    if (transcoderTemplateAppConfig[tmpl] !== undefined) {
-      template = tmpl
+    tmplName = tmplName.slice(0, tmplName.length - 4)
+    if (transcoderTemplateAppConfig[tmplName] !== undefined) {
+      template = tmplName
       break
     }
   }
