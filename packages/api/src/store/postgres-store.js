@@ -31,12 +31,25 @@ export default class PostgresStore {
     await this.pool.end()
   }
 
-  async list(prefix = '', limit = DEFAULT_LIMIT, offset = 0) {
-    const res = await this.pool.query(
-      `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $2 OFFSET $3`,
-      [`${prefix}%`, `${limit}`, `${offset}`],
-    )
-    return res.rows.map(({ data }) => data)
+  async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
+    let res = null
+    if (cursor) {
+      res = await this.pool.query(
+        `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 LIMIT $3`,
+        [`${prefix}%`, `${prefix}${cursor}`, `${limit}`],
+      )
+    } else {
+      res = await this.pool.query(
+        `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $2`,
+        [`${prefix}%`, `${limit}`],
+      )
+    }
+    let data = res.rows.map(({ data }) => data)
+    if (data.length < 1) {
+      return { data: data, cursor: null }
+    }
+
+    return { data: data, cursor: data[data.length - 1].id }
   }
 
   async get(id) {

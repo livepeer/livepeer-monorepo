@@ -26,39 +26,50 @@ export default class LevelStore {
     return this.db.close()
   }
 
-  async *listStream(prefix = '', limit = DEFAULT_LIMIT, offset = 0) {
+  async *listStream(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     // I do not know if this is the right way to do this, but...
     // if we want every key that starts with "endpoint/", what we're
     // really asking for is ">= 'endpoint/'" and '< 'endpoint0',
     // which is the character code one after slash? ¯\_(ツ)_/¯
     let filter = {}
-    if (prefix !== '') {
+    limit = parseInt(limit)
+    if (cursor) {
+      const lastCode = prefix.charCodeAt(prefix.length - 1)
+      const endKey =
+        prefix.slice(0, prefix.length - 1) + String.fromCharCode(lastCode + 1)
+      filter = {
+        gte: `${prefix}${cursor}`,
+        lt: endKey,
+        limit,
+      }
+    } else if (prefix !== '') {
       const lastCode = prefix.charCodeAt(prefix.length - 1)
       const endKey =
         prefix.slice(0, prefix.length - 1) + String.fromCharCode(lastCode + 1)
       filter = {
         gte: prefix,
         lt: endKey,
-        // limit,
+        limit,
       }
     }
+
     await this.ready
     for await (const { value } of this.db.createReadStream(filter)) {
       yield JSON.parse(value)
     }
   }
 
-  async list(prefix = '', limit = DEFAULT_LIMIT, offset = 0) {
+  async list(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     const ret = []
-    for await (const val of this.listStream(prefix, limit, offset)) {
+    for await (const val of this.listStream(prefix, cursor, limit)) {
       ret.push(val)
     }
 
-    if (limit > 0) {
-      ret = ret.slice(offset, offset + limit)
+    if (ret.length < 1) {
+      return { data: ret, cursor: null }
     }
-
-    return ret
+    // return ret
+    return { data: ret, cursor: ret[ret.length - 1].id }
   }
 
   async get(key) {
