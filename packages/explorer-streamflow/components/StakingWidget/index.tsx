@@ -13,6 +13,7 @@ import Approve from '../Approve'
 import Button from '../Button'
 import Modal from '../Modal'
 import { useWeb3Context } from 'web3-react'
+import Utils from 'web3-utils'
 
 interface Props {
   transcoder: Transcoder
@@ -34,22 +35,18 @@ export default ({
   const [open, setModalOpen] = useState(false)
   const context = useWeb3Context()
 
-  if (account) {
-    console.log(parseFloat(account.tokenBalance))
-  }
-
   return (
     <div>
       {context.connectorName != 'Portis' &&
         context.account &&
         account &&
         account.id.toLowerCase() == context.account.toLowerCase() &&
-        parseFloat(account.tokenBalance) == 0 && (
+        parseFloat(Utils.fromWei(account.tokenBalance)) == 0 && (
           <>
             <Banner
               label={
                 <div sx={{ flex: 1 }}>
-                  Acquire Livepeer tokens for staking.
+                  Get Livepeer tokens for staking.
                   <Help
                     sx={{
                       position: 'relative',
@@ -134,7 +131,7 @@ export default ({
             delegator={delegator}
             transcoder={transcoder}
             action={action}
-            amount={amount}
+            amount={parseFloat(amount)}
           />
         </div>
       </Box>

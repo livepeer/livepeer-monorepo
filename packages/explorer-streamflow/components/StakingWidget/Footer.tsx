@@ -11,7 +11,7 @@ import { useWeb3Context } from 'web3-react'
 
 interface Props {
   action: string
-  amount: string
+  amount: number
   transcoder: Transcoder
   delegator?: Delegator
   currentRound: Round
@@ -37,14 +37,16 @@ export default ({
     )
   }
 
-  const hasTokenBalance =
-    account && parseFloat(Utils.fromWei(account.tokenBalance)) > 0
+  const tokenBalance =
+    account && parseFloat(Utils.fromWei(account.tokenBalance))
+  const hasTokenBalance = account && tokenBalance > 0
   const approved = account && parseFloat(Utils.fromWei(account.allowance)) > 0
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
-  const canStake = hasTokenBalance && approved && parseFloat(amount) > 0
+  const canStake = hasTokenBalance && approved && amount > 0
   const canUnstake = isStaked
+  const insufficientBalance = account && amount > tokenBalance
 
   if (action == 'stake') {
     return (
@@ -61,6 +63,19 @@ export default ({
             }}
           >
             You have 0 LPT in your wallet.
+          </div>
+        )}
+        {insufficientBalance && (
+          <div
+            sx={{
+              px: 2,
+              pt: 2,
+              color: 'muted',
+              textAlign: 'center',
+              fontSize: 0,
+            }}
+          >
+            Insufficient Balance
           </div>
         )}
       </>

@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Styled, Flex } from 'theme-ui'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
@@ -13,6 +13,7 @@ import { ethers } from 'ethers'
 
 export default ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
+
   const { account } = context
 
   let items = [
@@ -48,7 +49,29 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
       </Head>
       <Reset />
       <Styled.root>
-        <Flex sx={{ maxWidth: 1400, margin: '0 auto' }}>
+        {/* <div
+          sx={{
+            height: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            padding: '0 32px',
+            '@media only screen and (min-width: 1274px)': {
+              display: 'none',
+            },
+          }}
+        >
+          The Livepeer Explorer Beta is currently unavailable on mobile.
+        </div> */}
+
+        <div
+          sx={{
+            display: 'flex',
+            maxWidth: 1400,
+            margin: '0 auto',
+          }}
+        >
           <Drawer items={items} />
           <Flex
             sx={{
@@ -59,7 +82,7 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
           >
             {children}
           </Flex>
-        </Flex>
+        </div>
       </Styled.root>
     </>
   )
