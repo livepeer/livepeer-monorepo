@@ -19,7 +19,10 @@ export default () => {
   const [streams, setStreams] = useState(null)
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('/api/broadcaster/status')
+      const googleAuthToken = localStorage.getItem('googleAuthToken')
+      const res = await fetch('/api/broadcaster/status', {
+        headers: { authorization: googleAuthToken },
+      })
       if (res.status !== 200) {
         return console.error('fetch failed ' + (await res.text()))
       }

@@ -12,6 +12,5 @@ const healthcheck = (req, res) => {
   res.json({ ok: true })
 }
 router.get('/healthz', healthcheck)
-router.get('/', healthcheck)
 
 export default router
