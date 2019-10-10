@@ -15,9 +15,15 @@ export class TestClient {
     if (!opts.server) {
       throw new Error('TestClient missing server')
     }
+
     this.server = opts.server
+
     if (opts.apiKey) {
       this.apiKey = opts.apiKey
+    }
+
+    if (opts.googleAuthorization) {
+      this.googleAuthorization = opts.googleAuthorization
     }
   }
 
@@ -27,6 +33,12 @@ export class TestClient {
       headers = {
         ...headers,
         authorization: `Bearer ${this.apiKey}`,
+      }
+    }
+    if (this.googleAuthorization) {
+      headers = {
+        ...headers,
+        authorization: this.googleAuthorization,
       }
     }
     return isoFetch(

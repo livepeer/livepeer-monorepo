@@ -1,4 +1,5 @@
 import logger from '../logger'
+import { OAuth2Client } from 'google-auth-library'
 
 /**
  * generate token middleware
@@ -33,6 +34,45 @@ async function generateToken(req, res, next) {
  */
 function authFactory(params) {
   return async (req, res, next) => {
+    if (params.admin === true) {
+      try {
+        const user = await getUser(req, res, next)
+        if (
+          user &&
+          'domain' in user &&
+          user.domain === req.config.trustedDomain
+        ) {
+          req.user = user
+          return next()
+        } else {
+          res.status(403)
+          return res.json({
+            errors: [`not ${req.config.trustedDomain} email address`],
+          })
+        }
+      } catch (error) {
+        res.status(403)
+        return res.json({ errors: ['not logged in', error.toString()] })
+      }
+    } else if (
+      req.headers.authorization &&
+      !req.headers.authorization.startsWith('Bearer')
+    ) {
+      try {
+        const user = await getUser(req, res, next)
+        if (
+          user &&
+          'domain' in user &&
+          user.domain === req.config.trustedDomain
+        ) {
+          return next()
+        }
+      } catch (error) {
+        res.status(403)
+        return res.json({ errors: ['not logged in', error.toString()] })
+      }
+    }
+
     if (!req || !req.token) {
       return res.sendStatus(401)
     }
@@ -52,6 +92,45 @@ function authFactory(params) {
 
     return next()
   }
+}
+
+async function getUser(req, res, next) {
+  var googleAuthToken = req.headers.authorization
+  if (googleAuthToken) {
+    req.googleAuthToken = googleAuthToken
+  } else {
+    return null
+  }
+  const clientId = req.config.clientId
+  const oauthServer = new OAuth2Client(clientId)
+
+  try {
+    var ticket = await oauthServer.verifyIdToken({
+      idToken: googleAuthToken,
+      audience: clientId,
+    })
+  } catch (e) {
+    throw new Error('invalid oauth token')
+  }
+  const payload = ticket.getPayload()
+  var user
+  try {
+    user = await req.store.get(`user/${payload.sub}`)
+  } catch (error) {
+    if (error.type !== 'NotFoundError') {
+      console.error(error)
+      throw error
+    }
+    await req.store.create({
+      id: payload.sub,
+      name: payload.name,
+      email: payload.email,
+      domain: payload['hd'],
+      kind: 'user',
+    })
+  }
+
+  return user
 }
 
 // export default router

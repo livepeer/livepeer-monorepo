@@ -18,6 +18,8 @@ export default async function makeApp(params) {
     port,
     postgresUrl,
     listen = true,
+    clientId,
+    trustedDomain,
     kubeNamespace,
     kubeBroadcasterService,
     kubeBroadcasterTemplate,
@@ -38,11 +40,12 @@ export default async function makeApp(params) {
 
   // Logging, JSON parsing, store injection
   const app = express()
-  app.use('/healthz', healthCheck)
+  app.use(healthCheck)
   app.use(morgan('combined'))
   app.use(jsonParser())
   app.use((req, res, next) => {
     req.store = store
+    req.config = params
     next()
   })
   app.use(bearerToken())
@@ -70,6 +73,10 @@ export default async function makeApp(params) {
   app.use(httpPrefix, prefixRouter)
   // Special case: handle /stream proxies off that endpoint
   app.use('/stream', streamProxy)
+
+  prefixRouter.get('/google-client', async (req, res, next) => {
+    res.json({ clientId: req.config.clientId })
+  })
 
   let listener
   let listenPort
