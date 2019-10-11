@@ -49,27 +49,24 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
       </Head>
       <Reset />
       <Styled.root>
-        {/* <div
+        <div
           sx={{
             height: '100vh',
-            display: 'flex',
+            display: ['flex', 'flex', 'flex', 'none'],
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
             padding: '0 32px',
-            '@media only screen and (min-width: 1274px)': {
-              display: 'none',
-            },
           }}
         >
-          The Livepeer Explorer Beta is currently unavailable on mobile.
-        </div> */}
+          Mobile support coming soon!
+        </div>
 
         <div
           sx={{
-            display: 'flex',
             maxWidth: 1400,
             margin: '0 auto',
+            display: ['none', 'none', 'none', 'flex'],
           }}
         >
           <Drawer items={items} />

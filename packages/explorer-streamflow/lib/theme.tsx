@@ -2,7 +2,7 @@ const heading = {
   color: 'text',
   fontFamily: 'heading',
   lineHeight: 'heading',
-  fontWeight: 'heading'
+  fontWeight: 'heading',
 }
 
 const theme = {
@@ -13,17 +13,18 @@ const theme = {
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     heading:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    monospace: '"SF Mono", "Roboto Mono", monospace'
+    monospace: '"SF Mono", "Roboto Mono", monospace',
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 40, 48, 64, 96],
   fontWeights: {
     body: 400,
-    heading: 700
+    heading: 700,
   },
   lineHeights: {
     body: 1.5,
-    heading: 1.125
+    heading: 1.125,
   },
+  breakpoints: ['480px', '672px', '1260px'],
   colors: {
     text: 'rgba(255, 255, 255, .87)',
     background: '#131418',
@@ -35,12 +36,12 @@ const theme = {
     yellow: '#fbc02d',
     blue: '#0062eb',
     border: 'rgba(255, 255, 255, .16)',
-    modes: {}
+    modes: {},
   },
   buttons: {
     primary: {
       color: 'background',
-      bg: 'primary'
+      bg: 'primary',
     },
     secondary: {
       color: 'text',
@@ -50,78 +51,78 @@ const theme = {
       transition: 'border-color .2s',
       '&:hover': {
         borderColor: 'text',
-        transition: 'border-color .2s'
-      }
+        transition: 'border-color .2s',
+      },
     },
   },
   styles: {
     root: {
       fontFamily: 'body',
       lineHeight: 'body',
-      fontWeight: 'body'
+      fontWeight: 'body',
     },
     h1: {
       ...heading,
-      fontSize: 5
+      fontSize: 5,
     },
     h2: {
       ...heading,
-      fontSize: 4
+      fontSize: 4,
     },
     h3: {
       ...heading,
-      fontSize: 3
+      fontSize: 3,
     },
     h4: {
       ...heading,
-      fontSize: 2
+      fontSize: 2,
     },
     h5: {
       ...heading,
-      fontSize: 1
+      fontSize: 1,
     },
     h6: {
       ...heading,
-      fontSize: 0
+      fontSize: 0,
     },
     p: {
       color: 'text',
       fontFamily: 'body',
       fontWeight: 'body',
       lineHeight: 'body',
-      margin: 0
+      margin: 0,
     },
     a: {
-      color: 'primary'
+      color: 'primary',
     },
     pre: {
       fontFamily: 'monospace',
       overflowX: 'auto',
       code: {
-        color: 'inherit'
-      }
+        color: 'inherit',
+      },
     },
     code: {
       fontFamily: 'monospace',
-      fontSize: 'inherit'
+      fontSize: 'inherit',
     },
     table: {
       width: '100%',
       borderCollapse: 'separate',
-      borderSpacing: 0
+      borderSpacing: 0,
     },
     th: {
       textAlign: 'left',
-      borderBottomStyle: 'solid'
+      borderBottomStyle: 'solid',
     },
     td: {
       textAlign: 'left',
-      borderBottomStyle: 'solid'
+      borderBottomStyle: 'solid',
     },
     img: {
-      maxWidth: '100%'
-    }
-  }
+      maxWidth: '100%',
+    },
+  },
 }
 
 export default theme

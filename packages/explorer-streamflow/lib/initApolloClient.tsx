@@ -1,5 +1,8 @@
 import { ApolloClient } from 'apollo-client'
-import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { graphql, print } from 'graphql'
 import { Observable, ApolloLink } from 'apollo-link'
@@ -10,12 +13,12 @@ import {
   makeRemoteExecutableSchema,
   mergeSchemas,
   transformSchema,
-  FilterTypes
+  FilterTypes,
 } from 'graphql-tools'
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
 const subgraphEndpoint =
-  'https://graph.livepeer.org/subgraphs/name/livepeer/livepeer'
+  'https://graph.livepeer.org/subgraphs/name/livepeer/livepeer-canary'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 let apolloClient = null
 
@@ -49,7 +52,7 @@ function createApolloClient(initialState = {}) {
             gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
             provider: context.provider
               ? context.provider
-              : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e'
+              : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
           })
 
           graphql(
@@ -58,10 +61,10 @@ function createApolloClient(initialState = {}) {
             null,
             {
               ...context,
-              livepeer: sdk
+              livepeer: sdk,
             },
             variables,
-            operationName
+            operationName,
           )
             .then(result => {
               observer.next(result)
@@ -71,16 +74,18 @@ function createApolloClient(initialState = {}) {
               return observer.error(e)
             })
         })()
-      })
+      }),
   )
 
   const fragmentMatcher = new IntrospectionFragmentMatcher({
     introspectionQueryResultData: {
-      __schema: { types: [] }
-    }
+      __schema: { types: [] },
+    },
   })
 
-  const cache = new InMemoryCache({fragmentMatcher}).restore(initialState || {})
+  const cache = new InMemoryCache({ fragmentMatcher }).restore(
+    initialState || {},
+  )
 
   cache.writeData({
     data: {
@@ -90,9 +95,9 @@ function createApolloClient(initialState = {}) {
         __typename: 'Transcoder',
         index: 0,
         rewardCut: null,
-        id: null
-      }
-    }
+        id: null,
+      },
+    },
   })
 
   return new ApolloClient({
@@ -100,7 +105,7 @@ function createApolloClient(initialState = {}) {
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: mainLink,
     resolvers: {},
-    cache
+    cache,
   })
 }
 
@@ -108,18 +113,18 @@ async function createSchema() {
   const { rpc } = await LivepeerSDK()
   const subgraphServiceLink = new HttpLink({
     uri: subgraphEndpoint,
-    fetch
+    fetch,
   })
 
   const threeBoxServiceLink = new HttpLink({
     uri: threeBoxEndpoint,
-    fetch
+    fetch,
   })
 
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(subgraphServiceLink),
-      link: subgraphServiceLink
+      link: subgraphServiceLink,
     })
     return executableSchema
   }
@@ -127,7 +132,7 @@ async function createSchema() {
   const create3BoxServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(threeBoxServiceLink),
-      link: threeBoxServiceLink
+      link: threeBoxServiceLink,
     })
     return executableSchema
   }
@@ -138,7 +143,7 @@ async function createSchema() {
   const transformedSchema = transformSchema(schema, [
     new FilterTypes(type => {
       return type.name != 'Account'
-    })
+    }),
   ])
 
   const linkTypeDefs = `
@@ -183,41 +188,41 @@ async function createSchema() {
             id: _args.id,
             tokenBalance: await rpc.getTokenBalance(_args.id),
             ethBalance: await rpc.getEthBalance(_args.id),
-            allowance: allowance
+            allowance: allowance,
           }
-        }
+        },
       },
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
             const { pendingStake } = await rpc.getDelegator(_delegator.id)
             return pendingStake
-          }
+          },
         },
         tokenBalance: {
           async resolve(_delegator, _args, _context, _info) {
             return await rpc.getTokenBalance(_delegator.id)
-          }
+          },
         },
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
             return await rpc.getEthBalance(_delegator.id)
-          }
-        }
+          },
+        },
       },
       Protocol: {
         inflation: {
           async resolve(_protocol, _args, _context, _info) {
             return await rpc.getInflation()
-          }
+          },
         },
         inflationChange: {
           async resolve(_protocol, _args, _context, _info) {
             return await rpc.getInflationChange()
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   })
 
   return merged
