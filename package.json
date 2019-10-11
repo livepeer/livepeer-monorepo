@@ -25,8 +25,9 @@
     "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
-    "test:build-apps": "lerna run build --stream --scope @livepeer/explorer --scope @livepeer/player",
-    "updated": "lerna updated --json"
+    "updated": "lerna updated --json",
+    "wrangler:staging": "wrangler publish --env staging",
+    "wrangler:production": "wrangler publish --env production"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",

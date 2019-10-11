@@ -9,7 +9,7 @@
     "livepeer-api": "dist/cli.js"
   },
   "scripts": {
-    "build:lambda": "parcel build --no-minify --bundle-node-modules -t browser src/worker.js",
+    "build:worker": "parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "build": "npm run prepare",
     "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && sleep 1 && kubectl logs -f --pod-running-timeout=30s $(kubectl get pods -o name -l app.kubernetes.io/name=livepeer-api-server)",
     "docker:build": "docker pull livepeerci/api:master && docker build --cache-from=livepeerci/api:master -t livepeerci/api:${DOCKER_TAG:-dev} . && docker run livepeerci/api:${DOCKER_TAG:-dev} --help",

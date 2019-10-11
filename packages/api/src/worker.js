@@ -58,6 +58,7 @@ async function serveStaticAsset(event) {
   try {
     return await getAssetFromKV(event)
   } catch (e) {
+    const newEvent = { ...event }
     let pathname = new URL(event.request.url).pathname
     return new Response(`"${pathname}" not found`, {
       status: 404,
@@ -81,35 +82,33 @@ async function handleEvent(event) {
     const newRequest = new Request(newUrl.toString(), new Request(req))
     return fetch(newRequest)
   }
-  if (url.hostname === 'docs.livepeer.live') {
+  if (url.hostname.startsWith('docs.')) {
     if (url.pathname === '/') {
       return fetch('http://docs.livepeer.live/index.html')
     }
   }
-  if (url.hostname === 'build.livepeer.live') {
+  if (url.hostname.startsWith('build.')) {
     return fetch(req)
   }
-  if (url.hostname === 'livepeer.live') {
-    if (url.pathname === '/api/geolocate') {
-      const data = await geolocate(false)
-      const res = new Response(JSON.stringify(data, null, 2), {
-        headers: { 'content-type': 'application/json' },
-      })
-      return res
+  if (url.pathname === '/api/geolocate') {
+    const data = await geolocate(false)
+    const res = new Response(JSON.stringify(data, null, 2), {
+      headers: { 'content-type': 'application/json' },
+    })
+    return res
+  }
+  if (url.pathname === '/test.mp4') {
+    return Response.redirect(
+      'https://storage.googleapis.com/lp_testharness_assets/official_test_source_2s_keys_24pfs.mp4',
+      302,
+    )
+  }
+  // Serve the front-end to non-api stuff
+  if (!startsWithApiPrefix(url.pathname)) {
+    if (url.protocol === 'http:') {
+      return Response.redirect(`https://${url.hostname}${url.pathname}`, 302)
     }
-    if (url.pathname === '/test.mp4') {
-      return Response.redirect(
-        'https://storage.googleapis.com/lp_testharness_assets/official_test_source_2s_keys_24pfs.mp4',
-        302,
-      )
-    }
-    // Serve the front-end to non-api stuff
-    if (!startsWithApiPrefix(url.pathname)) {
-      if (url.protocol === 'http:') {
-        return Response.redirect(`https://${url.hostname}${url.pathname}`, 302)
-      }
-      return serveStaticAsset(event)
-    }
+    return serveStaticAsset(event)
   }
   const newUrl = new URL(req.url)
   const { chosenServer } = await geolocate(true)
