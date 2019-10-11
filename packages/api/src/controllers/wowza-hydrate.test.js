@@ -29,6 +29,38 @@ describe('wowzaHydrate', () => {
     })
   })
 
+  it('should correctly substitute heights widths to correct value', () => {
+    stream.name = 'width_height_test'
+    const newStream = wowzaHydrate({ ...stream })
+    expect(newStream.presets).toEqual([
+      'P720p60fps16x9',
+      'P360p30fps16x9',
+      'P240p30fps16x9',
+      'P144p30fps16x9',
+    ])
+    expect(newStream.renditions).toEqual({
+      width_height_test_source:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/source.m3u8',
+      width_height_test_720p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P720p60fps16x9.m3u8',
+      width_height_test_360p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P360p30fps16x9.m3u8',
+      width_height_test_240p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P240p30fps16x9.m3u8',
+      width_height_test_160p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P144p30fps16x9.m3u8',
+    })
+  })
+
+  it('should fail if stream name does not equal any template name', () => {
+    stream.name = 'fake_name'
+    try {
+      const newStream = wowzaHydrate({ ...stream })
+    } catch (e) {
+      expect(e.message).toEqual('no template found from templatesInUse')
+    }
+  })
+
   it('should fail if missing parameters', () => {
     for (const field of ['name', 'id']) {
       const brokenStream = { ...stream }

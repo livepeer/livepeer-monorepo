@@ -39,7 +39,7 @@ export default stream => {
   const presets = []
   const encodeNameToRenditionName = {}
   for (const encode of enabledEncodes) {
-    const { width, height, name, streamName, videoCodec } = encode
+    let { width, height, name, streamName, videoCodec } = encode
     let renditionName = replaceStreamName(streamName, stream.name)
     // These can be of the form mp4:name, let's ignore the first bit if present
     if (renditionName.includes(':')) {
@@ -50,6 +50,12 @@ export default stream => {
       renditions[renditionName] = `/stream/${stream.id}/source.m3u8`
       continue
     }
+
+    const SIXTEEN_BY_NINE = 16 / 9
+    const NINE_BY_SIXTEEN = 9 / 16
+    if (width === 0) width = height * SIXTEEN_BY_NINE
+    if (height === 0) height = width * NINE_BY_SIXTEEN
+
     const wowzaSize = width * height
     let diff = Infinity
     let foundPreset = null
