@@ -1,6 +1,6 @@
 account_id = "2d8e3e6f3567c9760d12a19ca2b931b3"
 name = "livepeerjs"
-type = "webpack"
+type = "javascript"
 route = "/"
 workers_dev = false
 domain = "livepeer-staging.live"
@@ -8,4 +8,4 @@ zone_id = "4d3b36a8ea59b1ec5c9ccd76e033e485"
 
 [site]
 bucket = './packages/api-frontend/out'
-entry-point = './packages/'
+entry-point = './packages/api/worker-dist/worker.js'
