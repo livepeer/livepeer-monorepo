@@ -29,7 +29,7 @@ aliases:
     name: Run tests
     command: |
       yarn test
-      yarn test:build-apps
+      yarn run build
 
   # Installs dependencies for packages
   - &install-dependencies
@@ -121,8 +121,8 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/token.json
           export DOCKER
           rm /tmp/token.json
-          yarn run lerna-run deploy:prerelease
           export DOCKER_TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
+          yarn run build
           yarn run lerna-run docker:build
           yarn run lerna-run docker:push
 
@@ -135,6 +135,10 @@ jobs:
       - run: *install-dependencies
       - run: *build-apps
       - save_cache: *save-apps
+
+      - run:
+          name: Deploy to CloudFlare
+          command: yarn run wrangler:staging
 
   deploy-apps-staging:
     <<: *python-env
@@ -163,6 +167,10 @@ jobs:
       - checkout
       - run: *install-libsecret
       - run: *build-apps
+
+      - run:
+          name: Deploy to CloudFlare
+          command: yarn run wrangler:production
 
       - save_cache:
           paths:
@@ -202,6 +210,9 @@ workflows:
       - build-apps-staging:
           requires:
             - build-test
+          filters:
+            branches:
+              only: master
       - deploy-apps-staging:
           requires:
             - build-apps-staging
