@@ -9,8 +9,6 @@
     "livepeer-api": "dist/cli.js"
   },
   "scripts": {
-    "build:worker": "parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
-    "build": "npm run prepare",
     "cloud-dev": "npm run docker && kubectl delete pod -l app.kubernetes.io/name=livepeer-api-server --wait && sleep 1 && kubectl logs -f --pod-running-timeout=30s $(kubectl get pods -o name -l app.kubernetes.io/name=livepeer-api-server)",
     "docker:build": "docker pull livepeerci/api:master && docker build --cache-from=livepeerci/api:master -t livepeerci/api:${DOCKER_TAG:-dev} . && docker run livepeerci/api:${DOCKER_TAG:-dev} --help",
     "docker:push": "docker push livepeerci/api:${DOCKER_TAG:-dev}",
@@ -18,8 +16,9 @@
     "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "postgres:stop": "docker rm -f postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
-    "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare:dl-livepeer": "dl-livepeer -o ./bin",
+    "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
+    "prepare:worker": "parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "prepare": "run-p \"prepare:**\"",
     "deploy:prerelease": "gsutil rsync ./docs gs://docs.livepeer.live",
     "dev:live-server": "live-server --port=3005 docs",
