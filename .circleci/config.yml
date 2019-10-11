@@ -121,7 +121,6 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/token.json
           export DOCKER
           rm /tmp/token.json
-          yarn run lerna-run deploy:prerelease
           export DOCKER_TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
           yarn run build
           yarn run lerna-run docker:build

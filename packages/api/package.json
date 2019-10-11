@@ -20,7 +20,6 @@
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare:worker": "parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "prepare": "run-p \"prepare:**\"",
-    "deploy:prerelease": "gsutil rsync ./docs gs://docs.livepeer.live",
     "dev:live-server": "live-server --port=3005 docs",
     "dev:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "dev:server": "nodemon -w src -x node -r esm src/cli.js",
