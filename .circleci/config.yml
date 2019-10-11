@@ -212,13 +212,13 @@ workflows:
             - build-test
           filters:
             branches:
-              only: eli/cloudflare-worker
+              only: master
       - deploy-apps-staging:
           requires:
             - build-apps-staging
           filters:
             branches:
-              only: eli/cloudflare-worker
+              only: master
 
       # Production workflow for the apps
       - build-apps-production:
