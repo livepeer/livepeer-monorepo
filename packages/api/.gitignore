@@ -3,3 +3,4 @@ src/lambda.config.js
 docs
 coverage*
 bin
+dist-worker
