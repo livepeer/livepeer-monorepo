@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 import ms from 'ms'
 import { SUBGRAPH_URL, DISCORD_NOTIFICATION_URL, DISCORD_USER } from './config'
 
-const NOTIFICATION_THRESHOLD = 7
+const NOTIFICATION_THRESHOLD = 100
 const TIMEOUT = '15 seconds'
 
 const query = `
