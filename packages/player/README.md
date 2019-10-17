@@ -24,7 +24,7 @@ A video player for the web. Lets you see what's live streaming on the network. O
 ## Developing
 
 ```bash
-yarn start
+yarn dev
 ```
 
 > **Note**: The console may output warnings. You can submit a PR to fix them or just ignore them since they aren't breaking anything.
