@@ -63,6 +63,7 @@ export default class Channel extends Component {
     if (redirect) {
       return <Redirect to={`/play?url=${encodeURIComponent(redirect)}`} />
     }
+
     const embedLink = `<iframe width="640" height="360" src="${
       window.location.origin
     }/embed?${qs.stringify({
@@ -164,6 +165,26 @@ export default class Channel extends Component {
             onDead={() => {
               this.setState({ live: false })
             }}
+            ref={ref => {
+              if (!ref) {
+                return
+              }
+              // Mux Data
+              if (typeof window.mux !== 'undefined') {
+                window.mux.monitor('.video-react-video', {
+                  debug: true,
+                  data: {
+                    env_key: process.env.REACT_APP_MUX_ENV_KEY,
+
+                    // Metadata
+                    player_name: 'Media Player Main',
+                    player_init_time: Date.now(),
+                    // video_id: this.props
+                    // We can add other metadata here
+                  },
+                })
+              }
+            }}
           />
         </Media>
         <Content>
@@ -227,9 +248,7 @@ export default class Channel extends Component {
                 size={18}
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-                  const message = `Check out this live stream on the Livepeer Media Player\n${
-                    window.location
-                  }\n#livepeer #eth #decentralized`
+                  const message = `Check out this live stream on the Livepeer Media Player\n${window.location}\n#livepeer #eth #decentralized`
                   window.open(
                     `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                       message,
