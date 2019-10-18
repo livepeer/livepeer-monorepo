@@ -25,6 +25,26 @@ export default class Embed extends Component {
           onDead={() => {
             this.setState({ live: false })
           }}
+          ref={ref => {
+            if (!ref) {
+              return
+            }
+            // Mux Data
+            if (typeof window.mux !== 'undefined') {
+              window.mux.monitor('.video-react-video', {
+                debug: true,
+                data: {
+                  env_key: process.env.REACT_APP_MUX_ENV_KEY,
+
+                  // Metadata
+                  player_name: 'Media Player Embed',
+                  player_init_time: Date.now(),
+                  // video_id: this.props
+                  // We can add other metadata here
+                },
+              })
+            }
+          }}
         />
       </Media>
     )

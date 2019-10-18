@@ -63,7 +63,8 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
 
   // Analytics
   if (isProd && trackingId) {
-    const script = document.createElement('script')
+    // Google Analytics
+    let script = document.createElement('script')
     script.type = 'text/javascript'
     script.async = true
     document.body.appendChild(script)
@@ -76,6 +77,13 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
       window.gtag('config', trackingId)
     }
     script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`
+
+    // Mux
+    script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.async = true
+    document.body.appendChild(script)
+    script.src = `https://src.litix.io/core/2/mux.js`
   }
 
   // Hot module reloading
