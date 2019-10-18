@@ -19,8 +19,14 @@ const startsWithApiPrefix = pathname => {
   return false
 }
 
-const geolocate = async (first = false) => {
-  const servers = ['dsm.livepeer.live', 'ams.livepeer.live']
+const geolocate = async (url, first = false) => {
+  let servers = [
+    'esh-staging.livepeer-staging.live',
+    'mcw-staging.livepeer-staging.live',
+  ]
+  if (url.hostname === 'livepeer.live') {
+    servers = ['esh.livepeer.live', 'mcw.livepeer.live']
+  }
 
   let smallestServer
   let smallestDuration = Infinity
@@ -74,14 +80,6 @@ async function serveStaticAsset(event) {
 async function handleEvent(event) {
   const req = event.request
   const url = new URL(req.url)
-  if (url.pathname.startsWith('/.well-known/acme-challenge')) {
-    const newUrl = new URL(req.url)
-    newUrl.hostname = 'ams.livepeer.live'
-    newUrl.protocol = 'https:'
-    newUrl.port = 443
-    const newRequest = new Request(newUrl.toString(), new Request(req))
-    return fetch(newRequest)
-  }
   if (url.hostname.startsWith('docs.')) {
     if (url.pathname === '/') {
       return fetch('http://docs.livepeer.live/index.html')
@@ -91,7 +89,7 @@ async function handleEvent(event) {
     return fetch(req)
   }
   if (url.pathname === '/api/geolocate') {
-    const data = await geolocate(false)
+    const data = await geolocate(url, false)
     const res = new Response(JSON.stringify(data, null, 2), {
       headers: { 'content-type': 'application/json' },
     })
@@ -111,7 +109,7 @@ async function handleEvent(event) {
     return serveStaticAsset(event)
   }
   const newUrl = new URL(req.url)
-  const { chosenServer } = await geolocate(true)
+  const { chosenServer } = await geolocate(url, true)
   newUrl.hostname = chosenServer
   newUrl.protocol = 'https:'
   newUrl.port = 443
