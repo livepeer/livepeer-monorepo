@@ -6,6 +6,7 @@ import ListItem from '../ListItem'
 
 storiesOf('List', module).add('default', () => (
   <List
+    onScroll={() => {}}
     sx={{ minWidth: 600 }}
     header={<Styled.h4>Pending Stake Transactions</Styled.h4>}
   >

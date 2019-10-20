@@ -24,7 +24,7 @@ const theme = {
     body: 1.5,
     heading: 1.125,
   },
-  breakpoints: ['480px', '672px', '1260px'],
+  breakpoints: ['480px', '672px', '1160px'],
   colors: {
     text: 'rgba(255, 255, 255, .87)',
     background: '#131418',

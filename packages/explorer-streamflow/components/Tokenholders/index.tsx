@@ -7,7 +7,7 @@ import Link from 'next/link'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 
-export default ({ protocol, delegators }) => {
+export default ({ protocol, delegators, ...props }) => {
   const columns: any = React.useMemo(
     () => [
       {
@@ -40,6 +40,7 @@ export default ({ protocol, delegators }) => {
         borderCollapse: 'collapse',
       }}
       {...getTableProps()}
+      {...props}
     >
       <thead>
         {headerGroups.map((headerGroup, i) => (

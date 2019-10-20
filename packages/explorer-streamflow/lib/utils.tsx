@@ -34,27 +34,33 @@ export const getDelegationStatusColor = status => {
 
 export const getDelegatorStatus = (
   delegator: Delegator,
-  currentRound: Round
+  currentRound: Round,
 ): string => {
-  if (!delegator || !delegator.bondedAmount || Utils.fromWei(delegator.bondedAmount) == 0) {
+  if (
+    !delegator ||
+    !delegator.bondedAmount ||
+    Utils.fromWei(delegator.bondedAmount) == 0
+  ) {
     return 'Unbonded'
   } else if (
     delegator.unbondingLocks.filter(
       (lock: UnbondingLock) =>
-        lock.withdrawRound && lock.withdrawRound > parseInt(currentRound.id, 10)
+        lock.withdrawRound &&
+        lock.withdrawRound > parseInt(currentRound.id, 10),
     ).length > 0
   ) {
     return 'Unbonding'
-  } else if (
-    delegator.startRound > parseInt(currentRound.id, 10)
-  ) {
+  } else if (delegator.startRound > parseInt(currentRound.id, 10)) {
     return 'Pending'
   } else if (
     delegator.startRound > 0 &&
     delegator.startRound <= parseInt(currentRound.id, 10)
   ) {
     return 'Bonded'
-  }  else {
+  } else {
     return 'Unbonded'
   }
 }
+
+export const MAXIUMUM_VALUE_UINT256 =
+  '115792089237316195423570985008687907853269984665640564039457584007913129639935'

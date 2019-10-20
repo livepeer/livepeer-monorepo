@@ -57,7 +57,6 @@ export default ({ lock }) => {
       id: `${data && data.txHash}-WithdrawStake`,
     },
     ssr: false,
-    pollInterval: 1000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })

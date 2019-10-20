@@ -1,8 +1,7 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useWeb3Context } from 'web3-react'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { Account } from '../@types'
 
 const GET_ACCOUNT = gql`
   query($account: ID!) {
@@ -54,4 +53,18 @@ export function useAccount(address = null) {
   }, [data])
 
   return { account, delegator }
+}
+
+export function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef()
+
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value
+  }, [value]) // Only re-run if value changes
+
+  // Return previous value (happens before update in useEffect above)
+  return ref.current
 }

@@ -1,13 +1,12 @@
 /** @jsx jsx */
 import { jsx, Flex, Box, Styled } from 'theme-ui'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Utils from 'web3-utils'
-import { abbreviateNumber } from '../../lib/utils'
+import { abbreviateNumber, MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../../components/Spinner'
-import List from '../List'
 import ListItem from '../ListItem'
 import Unlink from '../../static/img/unlink.svg'
 import Link from '../../static/img/link.svg'
@@ -16,13 +15,16 @@ import LPT from '../../static/img/lpt.svg'
 import Approve from '../../static/img/approve.svg'
 import Play from '../../static/img/play.svg'
 import moment from 'moment'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 const GET_DATA = gql`
-  query($account: String!) {
+  query($account: String!, $first: Int!, $skip: Int!) {
     transactions(
       orderBy: timestamp
       orderDirection: desc
       where: { from: $account }
+      first: $first
+      skip: $skip
     ) {
       hash
       timestamp
@@ -127,19 +129,22 @@ export default () => {
   const query = router.query
   const account = query.account as string
 
-  const { data, loading, error } = useQuery(GET_DATA, {
+  const { data, loading, error, fetchMore, stopPolling } = useQuery(GET_DATA, {
     variables: {
       account: account.toLowerCase(),
+      first: 10,
+      skip: 0,
     },
     ssr: false,
-    pollInterval: 10000,
+    pollInterval: 5000,
+    notifyOnNetworkStatusChange: true,
   })
 
   if (error) {
     console.error(error)
   }
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <Flex
         sx={{
@@ -153,19 +158,81 @@ export default () => {
       </Flex>
     )
   }
-  if (!data.transactions.length) {
+
+  if (data && !data.transactions.length) {
     return <div sx={{ pt: 5 }}>No history</div>
   }
 
   return (
-    <>
-      <List sx={{ mt: 3, mb: 6 }}>
-        {data.transactions.map((transaction: any, i: number) =>
-          renderSwitch(transaction, i),
-        )}
-      </List>
-    </>
+    <InfiniteScroll
+      sx={{ overflow: 'hidden !important' }}
+      scrollThreshold={0.65}
+      dataLength={data && data.transactions.length}
+      next={() => {
+        stopPolling()
+        if (!loading) {
+          fetchMore({
+            variables: {
+              skip: data.transactions.length,
+            },
+            updateQuery: (previousResult: any, { fetchMoreResult }: any) => {
+              if (!fetchMoreResult) {
+                return previousResult
+              }
+              return {
+                ...previousResult,
+                transactions: [
+                  ...previousResult.transactions,
+                  ...fetchMoreResult.transactions,
+                ],
+              }
+            },
+          })
+        }
+      }}
+      hasMore={true}
+    >
+      <div sx={{ mt: 3, mb: 4 }}>
+        <div>
+          {data.transactions.map((transaction: any, i: number) =>
+            renderSwitch(transaction, i),
+          )}
+        </div>
+      </div>
+      {loading && (
+        <Flex
+          sx={{
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Spinner />
+        </Flex>
+      )}
+    </InfiniteScroll>
   )
+}
+
+async function handleScroll(skip, fetchMore) {
+  console.log('handle scroll')
+  fetchMore({
+    variables: {
+      skip,
+    },
+    updateQuery: (previousResult, { fetchMoreResult }) => {
+      if (!fetchMoreResult) {
+        return previousResult
+      }
+      return {
+        ...previousResult,
+        transactions: [
+          ...previousResult.transactions,
+          ...fetchMoreResult.transactions,
+        ],
+      }
+    },
+  })
 }
 
 function renderSwitch(transaction: any, i: number) {
@@ -201,15 +268,10 @@ function renderSwitch(transaction: any, i: number) {
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
-              {transaction.amount ==
-              '10000000000000000000000000000000000000000000000000000000000' ? (
-                <span>Approved</span>
-              ) : (
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(Utils.fromWei(transaction.amount), 3) +
-                    ' LPT'}
-                </span>
-              )}
+              <span sx={{ fontFamily: 'monospace' }}>
+                {parseFloat(Utils.fromWei(transaction.amount)).toPrecision(3) +
+                  ' LPT'}
+              </span>
             </div>
           </Flex>
         </ListItem>

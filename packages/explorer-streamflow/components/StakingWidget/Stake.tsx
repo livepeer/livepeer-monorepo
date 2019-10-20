@@ -61,7 +61,6 @@ export default ({ transcoder, amount, disabled }) => {
       id: `${data && data.txHash}-Bond`,
     },
     ssr: false,
-    pollInterval: 1000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })

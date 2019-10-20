@@ -10,6 +10,7 @@ import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
 import { useWeb3Context } from 'web3-react'
+import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 
 interface Props {
   amount?: string
@@ -41,7 +42,7 @@ export default ({ children, amount }: Props) => {
       type: 'bond',
       amount: Utils.toWei(
         // set transfer allowance to a near inifinite amount if none is provided
-        amount ? amount : '10000000000000000000000000000000000000000',
+        amount ? amount : MAXIUMUM_VALUE_UINT256,
         'ether',
       ),
     },
@@ -62,7 +63,6 @@ export default ({ children, amount }: Props) => {
       id: `${data && data.txHash}-Approval`,
     },
     ssr: false,
-    pollInterval: 1000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })
