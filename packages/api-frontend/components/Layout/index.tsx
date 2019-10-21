@@ -8,7 +8,7 @@ const Live = () => {
 }
 
 const menuItems = [
-  { name: 'LIVE', link: '/', icon: Live },
+  { name: 'LIVE', href: '/', icon: Live },
   // { name: 'Search', link: '/search', icon: Search },
   // // { name: 'Account', link: '/account', icon: Account },
   // { name: 'Connect Wallet', link: '/connect-wallet', icon: Wallet },
