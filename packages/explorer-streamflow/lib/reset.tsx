@@ -20,6 +20,9 @@ const Reset = () =>
       a: {
         textDecoration: 'none',
       },
+      ul: {
+        paddingLeft: 20
+      },
       button: {
         border: 0,
         padding: 0,

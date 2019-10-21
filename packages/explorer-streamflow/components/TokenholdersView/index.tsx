@@ -76,7 +76,7 @@ export default () => {
   return (
     <InfiniteScroll
       sx={{ overflow: 'hidden !important' }}
-      scrollThreshold={0.65}
+      scrollThreshold={0.8}
       dataLength={data && data.transcoder.delegators.length}
       next={() => {
         stopPolling()
@@ -106,16 +106,18 @@ export default () => {
       }}
       hasMore={true}
     >
-      <div sx={{ pt: 4 }}>
-        {data.transcoder && !!data.transcoder.delegators.length && (
-          <Tokenholders
-            protocol={data.protocol}
-            delegators={data.transcoder.delegators}
-          />
-        )}
+      <div sx={{ pt: 4, position: 'relative', pb: 6 }}>
+        <Tokenholders
+          protocol={data.protocol}
+          delegators={data.transcoder.delegators}
+        />
+
         {loading && (
           <Flex
             sx={{
+              position: 'absolute',
+              transform: 'translateX(-50%)',
+              left: '50%',
               width: '100%',
               justifyContent: 'center',
               alignItems: 'center',

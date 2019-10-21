@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Flex, Box, Styled } from 'theme-ui'
+import React from 'react'
+import { jsx, Flex, Styled } from 'theme-ui'
 import Page from '../layouts/main'
 import Search from '../static/img/search.svg'
 import Router from 'next/router'
@@ -31,9 +31,6 @@ export default () => {
           />
           Search
         </Styled.h1>
-        {/* <p sx={{ mb: 4, color: 'muted' }}>
-          Look up orchestrators and delegators by their Ethereum address
-        </p> */}
         <form
           onSubmit={handleSubmit}
           sx={{

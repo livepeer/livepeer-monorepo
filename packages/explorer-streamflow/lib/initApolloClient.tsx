@@ -17,9 +17,12 @@ import {
 } from 'graphql-tools'
 import { schema } from '@adamsoffer/livepeer-graphql-sdk'
 
+const isProd = process.env.NODE_ENV === 'production'
 const subgraphEndpoint =
   'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
+const changefeedEndpoint = isProd ? 'https://beta.explorer.livepeer.org/api/graphql' : 'http://localhost:3009/api/graphql'
+
 let apolloClient = null
 
 export default (initialState = {}) => {
@@ -121,6 +124,11 @@ async function createSchema() {
     fetch,
   })
 
+  const changefeedServiceLink = new HttpLink({
+    uri: changefeedEndpoint,
+    fetch
+  })
+
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(subgraphServiceLink),
@@ -137,15 +145,24 @@ async function createSchema() {
     return executableSchema
   }
 
+  const createChangefeedServiceSchema = async () => {
+    const executableSchema = makeRemoteExecutableSchema({
+      schema: await introspectSchema(changefeedServiceLink),
+      link: changefeedServiceLink,
+    })
+    return executableSchema
+  }
+
   const subgraphSchema = await createSubgraphServiceSchema()
   const threeBoxSchema = await create3BoxServiceSchema()
+  const changefeedSchema = await createChangefeedServiceSchema()
 
   const transformedSchema = transformSchema(schema, [
     new FilterTypes(type => {
       return type.name != 'Account'
     }),
   ])
-
+  
   const linkTypeDefs = `
     extend type Profile {
       transcoder: Transcoder
@@ -179,7 +196,7 @@ async function createSchema() {
   `
 
   const merged = mergeSchemas({
-    schemas: [transformedSchema, subgraphSchema, threeBoxSchema, linkTypeDefs],
+    schemas: [transformedSchema, subgraphSchema, threeBoxSchema, changefeedSchema, linkTypeDefs],
     resolvers: {
       Query: {
         account: async (_account, _args, _context, _info) => {

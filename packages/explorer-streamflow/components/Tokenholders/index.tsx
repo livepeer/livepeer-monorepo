@@ -11,6 +11,10 @@ export default ({ protocol, delegators, ...props }) => {
   const columns: any = React.useMemo(
     () => [
       {
+        Header: '#',
+        accessor: 'rank',
+      },
+      {
         Header: 'Account',
         accessor: 'id',
       },
@@ -84,6 +88,12 @@ export default ({ protocol, delegators, ...props }) => {
 
 function renderSwitch(cell, protocol) {
   switch (cell.column.Header) {
+    case '#':
+      return (
+        <Flex sx={{ alignItems: 'center', fontFamily: 'monospace' }}>
+          {cell.row.index + 1}{' '}
+        </Flex>
+      )
     case 'Account':
       return (
         <Flex sx={{ alignItems: 'center' }}>
@@ -134,7 +144,7 @@ function renderSwitch(cell, protocol) {
           (Utils.fromWei(cell.value) /
             Utils.fromWei(protocol.totalBondedToken)) *
           100
-        ).toPrecision(2)}%`}</span>
+        ).toFixed(3)}%`}</span>
       )
     default:
       return null

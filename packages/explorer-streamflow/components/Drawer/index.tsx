@@ -30,11 +30,19 @@ export default ({ items = [] }) => {
           borderRight: '1px solid',
           borderColor: 'border',
           paddingTop: 5,
+          pl: 2,
         }}
       >
-        <Box sx={{ width: 256 }}>
-          <Logo sx={{ pl: 3, width: 180, mb: 4 }} />
-          <Box>
+        <Flex
+          sx={{
+            alignSelf: 'flex-start',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <Logo sx={{ mb: 3 }} />
+          <Box sx={{ marginBottom: 'auto' }}>
             {items.map((item, i) => (
               <Link
                 key={i}
@@ -56,7 +64,7 @@ export default ({ items = [] }) => {
                     fontWeight: 600,
                     cursor: 'pointer',
                     alignItems: 'center',
-                    p: 2,
+                    py: 2,
                     backgroundColor: 'transparent',
                     borderRadius: 5,
                     transition: 'color .3s',
@@ -66,13 +74,18 @@ export default ({ items = [] }) => {
                     },
                   }}
                 >
-                  <item.icon sx={{ width: 20, mr: 2 }} />
+                  <item.icon sx={{ width: 20, height: 20, mr: 2 }} />
                   {item.name}
                 </a>
               </Link>
             ))}
           </Box>
-        </Box>
+          <div sx={{ mb: 3 }}>
+            <Link href="/whats-new" passHref>
+              <a sx={{ fontSize: 1, color: 'text' }}>🌟What's New</a>
+            </Link>
+          </div>
+        </Flex>
       </Flex>
     </Flex>
   )

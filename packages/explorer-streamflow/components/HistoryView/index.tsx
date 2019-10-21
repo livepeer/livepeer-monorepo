@@ -166,7 +166,7 @@ export default () => {
   return (
     <InfiniteScroll
       sx={{ overflow: 'hidden !important' }}
-      scrollThreshold={0.65}
+      scrollThreshold={0.5}
       dataLength={data && data.transactions.length}
       next={() => {
         stopPolling()
@@ -192,24 +192,27 @@ export default () => {
       }}
       hasMore={true}
     >
-      <div sx={{ mt: 3, mb: 4 }}>
-        <div>
+      <div sx={{ mt: 3, mb: 4, pb: 6, position: 'relative' }}>
+        <div sx={{ pb: 2 }}>
           {data.transactions.map((transaction: any, i: number) =>
             renderSwitch(transaction, i),
           )}
         </div>
+        {loading && (
+          <Flex
+            sx={{
+              position: 'absolute',
+              transform: 'translateX(-50%)',
+              left: '50%',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Spinner />
+          </Flex>
+        )}
       </div>
-      {loading && (
-        <Flex
-          sx={{
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Spinner />
-        </Flex>
-      )}
     </InfiniteScroll>
   )
 }
