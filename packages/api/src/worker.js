@@ -4,6 +4,34 @@
  */
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 
+/**
+ * maps the path of incoming request to the request pathKey to look up
+ * in bucket and in cache
+ * e.g.  for a path '/' returns '/index.html' which serves
+ * the content of bucket/index.html
+ * @param {Request} request incoming request
+ */
+const mapRequestToAsset = request => {
+  const parsedUrl = new URL(request.url)
+  let pathname = parsedUrl.pathname
+  if (pathname === '/') {
+    pathname = 'index.html'
+  } else {
+    const lastSegment = pathname
+      .split('/')
+      .filter(x => !!x)
+      .pop()
+
+    // To handle next.js-style routes, we need to send e.g. /login to /login.html
+    if (lastSegment && !lastSegment.includes('.')) {
+      pathname = `${pathname}.html`
+    }
+  }
+
+  parsedUrl.pathname = pathname
+  return new Request(parsedUrl, request)
+}
+
 addEventListener('fetch', event => {
   event.respondWith(handleEvent(event))
 })
@@ -62,13 +90,11 @@ const geolocate = async (url, first = false) => {
  */
 async function serveStaticAsset(event) {
   try {
-    return await getAssetFromKV(event)
+    return await getAssetFromKV(event, { mapRequestToAsset })
   } catch (e) {
-    const newEvent = { ...event }
     let pathname = new URL(event.request.url).pathname
-    return new Response(`"${pathname}" not found`, {
+    return new Response(`"${pathname}" not found: ${e.message}`, {
       status: 404,
-      statusText: 'not found',
     })
   }
 }

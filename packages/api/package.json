@@ -24,6 +24,7 @@
     "dev:live-server": "live-server --port=3005 docs",
     "dev:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "dev:server": "nodemon -w src -x node -r esm src/cli.js",
+    "dev:worker": "parcel watch --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "dev": "run-p \"dev:**\"",
     "go-livepeer": "run-p \"go-livepeer:**\"",
     "go-livepeer:broadcaster": "bin/livepeer -broadcaster -datadir ./bin/broadcaster -orchAddr 127.0.0.1:3086 -rtmpAddr 0.0.0.0:3035 -httpAddr :3085 -cliAddr :3075 -v 6 -authWebhookUrl http://localhost:3004/api/stream/hook -orchWebhookUrl http://localhost:3004/api/orchestrator",
