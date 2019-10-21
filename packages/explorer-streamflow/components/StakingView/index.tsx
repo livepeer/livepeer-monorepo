@@ -142,8 +142,10 @@ export default () => {
           <div sx={{ mt: 3 }}>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
               <span sx={{ color: 'muted' }}>Principal</span>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {abbreviateNumber(principal, 3)}
+              <span>
+                <span sx={{ fontFamily: 'monospace' }}>
+                  {abbreviateNumber(principal, 3)}
+                </span>
               </span>
             </Flex>
             <Flex
@@ -154,20 +156,24 @@ export default () => {
               }}
             >
               <span sx={{ color: 'muted' }}>Unstaked</span>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {unbonded > 0 ? (
-                  <span sx={{ color: 'red' }}>
-                    -{abbreviateNumber(unbonded, 3)}
-                  </span>
-                ) : (
-                  0
-                )}
+              <span>
+                <span sx={{ fontFamily: 'monospace' }}>
+                  {unbonded > 0 ? (
+                    <span sx={{ color: 'red' }}>
+                      -{abbreviateNumber(unbonded, 3)}
+                    </span>
+                  ) : (
+                    0
+                  )}
+                </span>
               </span>
             </Flex>
             <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
               <span sx={{ color: 'muted' }}>Rewards</span>
-              <span sx={{ color: 'primary', fontFamily: 'monospace' }}>
-                +{abbreviateNumber(rewards, 3)}
+              <span>
+                <span sx={{ color: 'primary', fontFamily: 'monospace' }}>
+                  +{abbreviateNumber(rewards, 3)}
+                </span>
               </span>
             </Flex>
           </div>
@@ -207,8 +213,7 @@ export default () => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(pendingStake, 3)}
-                  </span>{' '}
-                  LPT
+                  </span>
                 </span>
               </Flex>
               <Flex
@@ -232,15 +237,13 @@ export default () => {
                       Utils.fromWei(data.delegator.delegate.totalStake),
                       3,
                     )}
-                  </span>{' '}
-                  LPT
+                  </span>
                 </span>
               </Flex>
 
               <Flex
                 sx={{
                   fontSize: 1,
-                  mb: 1,
                   justifyContent: 'space-between',
                 }}
               >
@@ -266,8 +269,7 @@ export default () => {
                         pendingStake,
                       3,
                     )}
-                  </span>{' '}
-                  LPT
+                  </span>
                 </span>
               </Flex>
             </div>

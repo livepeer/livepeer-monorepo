@@ -15,7 +15,7 @@ export default ({
         border: '1px solid',
         borderColor: 'border',
         py: 3,
-        px: 2,
+        px: 3,
         borderRadius: 5,
       }}
       {...props}

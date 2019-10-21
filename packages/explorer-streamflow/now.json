@@ -1,9 +1,7 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "next.config.js", "use": "@now/next" }
-  ],
+  "builds": [{ "src": "next.config.js", "use": "@now/next" }],
   "env": {
-    "CHANGEFEED_ACCESS_TOKEN": "@changefeed-access-token"
+    "CHANGEFEED_ACCESS_TOKEN": "changefeed-access-token"
   }
 }

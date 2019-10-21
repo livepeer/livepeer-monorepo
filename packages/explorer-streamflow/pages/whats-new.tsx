@@ -73,51 +73,49 @@ export default withApollo(() => {
                 ({ node }, i) =>
                   node.isPublished && (
                     <Card key={i} sx={{ flex: 1, mb: 4 }}>
-                      <div sx={{ px: 1 }}>
-                        <Styled.h3>The First Release</Styled.h3>
-                        <div
-                          sx={{
-                            lineHeight: 2,
-                            mb: 3,
-                            fontSize: 1,
-                            color: 'muted',
-                          }}
-                        >
-                          {moment(node.publishedAt).format('MMM Mo, YYYY')}
-                        </div>
-                        <div
-                          sx={{
-                            borderBottom: '1px solid',
-                            borderColor: 'border',
-                            pb: 3,
-                            mb: 3,
-                          }}
-                        >
-                          {node.description}
-                        </div>
-                        {node.changes.map((change, i) => (
-                          <div key={i} sx={{ alignSelf: 'flexStart' }}>
-                            <div
-                              sx={{
-                                fontSize: '14px',
-                                display: 'inline-flex',
-                                textTransform: 'uppercase',
-                                lineHeight: '1',
-                                fontWeight: 'bold',
-                                margin: '0px',
-                                padding: '4px 16px',
-                                borderRadius: '4px',
-                                color: 'background',
-                                backgroundColor: 'primary',
-                                mb: 2,
-                              }}
-                            >
-                              {change.type}
-                            </div>
-                            <div>{change.content}</div>
-                          </div>
-                        ))}
+                      <Styled.h3>The First Release</Styled.h3>
+                      <div
+                        sx={{
+                          lineHeight: 2,
+                          mb: 3,
+                          fontSize: 1,
+                          color: 'muted',
+                        }}
+                      >
+                        {moment(node.publishedAt).format('MMM Do, YYYY')}
                       </div>
+                      <div
+                        sx={{
+                          borderBottom: '1px solid',
+                          borderColor: 'border',
+                          pb: 3,
+                          mb: 3,
+                        }}
+                      >
+                        {node.description}
+                      </div>
+                      {node.changes.map((change, i) => (
+                        <div key={i} sx={{ alignSelf: 'flexStart' }}>
+                          <div
+                            sx={{
+                              fontSize: '14px',
+                              display: 'inline-flex',
+                              textTransform: 'uppercase',
+                              lineHeight: '1',
+                              fontWeight: 'bold',
+                              margin: '0px',
+                              padding: '4px 16px',
+                              borderRadius: '4px',
+                              color: 'background',
+                              backgroundColor: 'primary',
+                              mb: 2,
+                            }}
+                          >
+                            {change.type}
+                          </div>
+                          <div>{change.content}</div>
+                        </div>
+                      ))}
                     </Card>
                   ),
               )}

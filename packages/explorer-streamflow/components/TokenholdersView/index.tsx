@@ -72,7 +72,7 @@ export default () => {
       </Flex>
     )
   }
-
+  console.log(data)
   return (
     <InfiniteScroll
       sx={{ overflow: 'hidden !important' }}
@@ -80,7 +80,7 @@ export default () => {
       dataLength={data && data.transcoder.delegators.length}
       next={() => {
         stopPolling()
-        if (!loading) {
+        if (!loading && data.transcoder.delegators.length >= 10) {
           fetchMore({
             variables: {
               skip: data.transcoder.delegators.length,

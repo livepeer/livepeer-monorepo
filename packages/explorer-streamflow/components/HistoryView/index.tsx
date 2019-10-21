@@ -170,7 +170,7 @@ export default () => {
       dataLength={data && data.transactions.length}
       next={() => {
         stopPolling()
-        if (!loading) {
+        if (!loading && data.transactions.length >= 10) {
           fetchMore({
             variables: {
               skip: data.transactions.length,
