@@ -16,6 +16,7 @@ const run = (name, args) => {
     process.argv[0],
     [
       path.resolve(__dirname, 'node_modules', '.bin', 'jest'),
+      '--forceExit',
       '--coverage',
       `--coverage-directory=coverage-${name}`,
       'src',
@@ -61,3 +62,4 @@ for (const data of Object.values(runs)) {
 const reporter = createReporter()
 reporter.addAll(['json', 'lcov', 'text'])
 reporter.write(map)
+process.exit(0)
