@@ -49,6 +49,8 @@ const startsWithApiPrefix = pathname => {
 }
 
 const geolocate = async (url, first = false) => {
+  // Sometimes comes in as a string? Normalize.
+  url = new URL(url)
   let servers = [
     'esh-staging.livepeer-staging.live',
     'mcw-staging.livepeer-staging.live',
