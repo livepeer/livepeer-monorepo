@@ -1,8 +1,9 @@
 /** @jsx jsx */
 import { Box, Styled, jsx } from 'theme-ui'
 
-export default ({ streamId, stream, broadcasterName }) => {
-  const m3u8 = `${broadcasterName}/stream/${streamId}.m3u8`
+export default ({ id, stream }) => {
+  const origin = new URL(document.location.href).origin
+  const m3u8 = `${origin}/stream/${id}.m3u8`
   const href = `http://media.livepeer.org/play?url=${encodeURIComponent(m3u8)}`
 
   return (
@@ -39,7 +40,7 @@ export default ({ streamId, stream, broadcasterName }) => {
           textAlign: 'center',
         }}
       >
-        {streamId}
+        {id}
       </Box>
       <Box
         sx={{ fontFamily: 'body' }}
@@ -49,7 +50,7 @@ export default ({ streamId, stream, broadcasterName }) => {
           // overflowText: 'ellipsis',
         }}
       >
-        {stream.title || <em>no title</em>}
+        {name || <em>no title</em>}
       </Box>
     </a>
   )

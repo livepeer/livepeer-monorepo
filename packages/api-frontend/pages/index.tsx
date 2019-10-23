@@ -27,14 +27,10 @@ export default () => {
         return console.error('fetch failed ' + (await res.text()))
       }
       const data: BroadcasterStatusResponse = await res.json()
-      const streams = []
+      const streams = {}
       for (const [bName, bData] of Object.entries(data)) {
-        for (const [id, data] of Object.entries(bData.Manifests)) {
-          streams.push({
-            broadcasterName: bName,
-            streamId: id,
-            stream: data,
-          })
+        for (const [id, stream] of Object.entries(bData.Manifests)) {
+          streams[id] = stream
         }
       }
       setStreams(streams)
@@ -68,8 +64,8 @@ export default () => {
           justifyContent: 'center',
         }}
       >
-        {streams.map(({ ...props }) => (
-          <Thumbnail key={props.streamId} {...props} />
+        {Object.entries(streams).map(([id, stream]) => (
+          <Thumbnail key={id} id={id} stream={stream} />
         ))}
         {/* To fill with empty ones, uncomment: */}
         {/* {[...new Array(50)].map((_, x) => (

@@ -3,6 +3,7 @@
  * just separate.
  */
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
+import composeM3U8 from './controllers/compose-m3u8'
 
 /**
  * maps the path of incoming request to the request pathKey to look up
@@ -86,13 +87,15 @@ const geolocate = async (url, first = false) => {
 }
 
 // Combine a response from all the regions into one.
-const amalgamate = async url => {
+const amalgamate = async req => {
+  const url = req.url
   const { servers } = await geolocate(url)
   let responses = await Promise.all(
     servers.map(async ({ server }) => {
       const newUrl = new URL(url)
       newUrl.hostname = server
-      const serverRes = await fetch(newUrl)
+      const newReq = new Request(newUrl, req)
+      const serverRes = await fetch(newReq)
       const data = await serverRes.json()
       return data
     }),
@@ -109,6 +112,29 @@ const amalgamate = async url => {
   return new Response(JSON.stringify(output), {
     headers: {
       'content-type': 'application/json',
+    },
+  })
+}
+
+// Similar to amalgamate, but for m3u8 files instead of JSON.
+const amalgamateM3U8 = async req => {
+  const url = req.url
+  const { servers } = await geolocate(url)
+  const composed = composeM3U8(
+    servers.map(server => {
+      const newUrl = new URL(req.url)
+      newUrl.hostname = server
+      return newUrl.toString()
+    }),
+  )
+  if (composed === null) {
+    return new Response('not found', { status: 404 })
+  }
+  return new Response(composed, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET',
+      'Content-Type': 'application/x-mpegurl',
     },
   })
 }
@@ -156,7 +182,10 @@ async function handleEvent(event) {
     )
   }
   if (url.pathname.startsWith('/api/broadcaster/status')) {
-    return amalgamate(url)
+    return amalgamate(req)
+  }
+  if (url.pathname.startsWith('/stream')) {
+    return amalgamateM3U8(req)
   }
   if (!startsWithApiPrefix(url.pathname)) {
     // Serve the front-end to non-api stuff
