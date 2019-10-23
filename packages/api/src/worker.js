@@ -85,6 +85,34 @@ const geolocate = async (url, first = false) => {
   return ret
 }
 
+// Combine a response from all the regions into one.
+const amalgamate = async url => {
+  const { servers } = await geolocate(url)
+  let responses = await Promise.all(
+    servers.map(async ({ server }) => {
+      const newUrl = new URL(url)
+      newUrl.hostname = server
+      const serverRes = await fetch(newUrl)
+      const data = await serverRes.json()
+      return data
+    }),
+  )
+  let output
+  if (responses.length === 0) {
+    responses = [[]]
+  } else if (Array.isArray(responses[0])) {
+    output = responses.reduce((arr1, arr2) => arr1.concat(arr2), [])
+  } else {
+    // Object, assume all unique keys
+    output = responses.reduce((obj1, obj2) => ({ ...obj1, ...obj2 }), {})
+  }
+  return new Response(JSON.stringify(output), {
+    headers: {
+      'content-type': 'application/json',
+    },
+  })
+}
+
 /**
  * Serve a static asset or 404
  */
@@ -127,8 +155,11 @@ async function handleEvent(event) {
       302,
     )
   }
-  // Serve the front-end to non-api stuff
+  if (url.pathname.startsWith('/api/broadcaster/status')) {
+    return amalgamate(url)
+  }
   if (!startsWithApiPrefix(url.pathname)) {
+    // Serve the front-end to non-api stuff
     if (url.protocol === 'http:') {
       return Response.redirect(`https://${url.hostname}${url.pathname}`, 302)
     }
