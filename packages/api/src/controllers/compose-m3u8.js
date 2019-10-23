@@ -9,9 +9,6 @@ import { Parser } from 'm3u8-parser'
 import { basename, resolve } from 'path'
 
 export default async urls => {
-  let min = Infinity
-  let max = -1
-  const segments = []
   const responses = await Promise.all(
     urls.map(async url => {
       const res = await fetch(url)
@@ -19,14 +16,43 @@ export default async urls => {
       return [res, url, text]
     }),
   )
-  const pertinentBroadcasters = responses.filter(([response]) => {
+  const broadcasters = responses.filter(([response]) => {
     return response.status === 200
   })
-  if (pertinentBroadcasters.length === 0) {
+
+  if (broadcasters.length === 0) {
     return null
   }
+  let isMasterPlaylist = false
+  let isMediaPlaylist = false
+  for (const [response, address, text] of broadcasters) {
+    if (text.includes('#EXT-X-STREAM-INF')) {
+      isMasterPlaylist = true
+    }
+    if (text.includes('#EXT-X-MEDIA-SEQUENCE')) {
+      isMediaPlaylist = true
+    }
+  }
 
-  for (const [response, address, text] of pertinentBroadcasters) {
+  if (isMasterPlaylist && isMediaPlaylist) {
+    throw new Error('cannot combine master and media playlists')
+  }
+
+  if (isMasterPlaylist) {
+    return handleMasterPlaylist(broadcasters)
+  } else if (isMediaPlaylist) {
+    return handleMediaPlaylist(broadcasters)
+  } else {
+    throw new Error('unable to determine playlist type')
+  }
+}
+
+export const handleMediaPlaylist = broadcasters => {
+  const segments = []
+  let min = Infinity
+  let max = -1
+
+  for (const [response, address, text] of broadcasters) {
     const parser = new Parser()
     parser.push(text)
     parser.end()
@@ -93,5 +119,36 @@ export default async urls => {
     `#EXT-X-TARGETDURATION:${targetDuration}`,
     ...output,
   ]
+
+  return output.join('\n')
+}
+
+export const handleMasterPlaylist = broadcasters => {
+  let playlists = {}
+
+  for (const [response, address, text] of broadcasters) {
+    const parser = new Parser()
+    parser.push(text)
+    parser.end()
+    for (const playlist of parser.manifest.playlists) {
+      playlists[playlist.uri] = playlist
+    }
+  }
+
+  const output = ['#EXTM3U', '#EXT-X-VERSION:3']
+  playlists = Object.values(playlists).sort((p1, p2) => {
+    return p2.attributes.BANDWIDTH - p1.attributes.BANDWIDTH
+  })
+  for (const playlist of Object.values(playlists)) {
+    const programId = playlist.attributes['PROGRAM-ID']
+    const bandwidth = playlist.attributes.BANDWIDTH
+    const { width, height } = playlist.attributes.RESOLUTION
+    // Todo: kinda hardcoded to what go-livepeer provides right now
+    output.push(
+      `#EXT-X-STREAM-INF:PROGRAM-ID=${programId},BANDWIDTH=${bandwidth},RESOLUTION=${width}x${height}`,
+    )
+    output.push(playlist.uri)
+  }
+
   return output.join('\n')
 }
