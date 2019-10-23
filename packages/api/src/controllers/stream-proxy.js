@@ -15,9 +15,12 @@ app.use((req, res, next) => {
 })
 
 app.get('/:streamId.m3u8', async (req, res) => {
-  await req.store.get(`stream/${req.params.streamId}`)
+  const { streamId } = req.params
+  await req.store.get(`stream/${streamId}`)
   const broadcasters = await req.getBroadcasters()
-  const urls = broadcasters.map(({ address }) => `${address}/stream/${file}`)
+  const urls = broadcasters.map(
+    ({ address }) => `${address}/stream/${streamId}.m3u8`,
+  )
   const mergedM3U8 = await composeM3U8(urls)
   if (mergedM3U8 === null) {
     return res.sendStatus(404)
