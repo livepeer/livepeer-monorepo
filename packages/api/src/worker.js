@@ -120,8 +120,8 @@ const amalgamate = async req => {
 const amalgamateM3U8 = async req => {
   const url = req.url
   const { servers } = await geolocate(url)
-  const composed = composeM3U8(
-    servers.map(server => {
+  const composed = await composeM3U8(
+    servers.map(({ server }) => {
       const newUrl = new URL(req.url)
       newUrl.hostname = server
       return newUrl.toString()

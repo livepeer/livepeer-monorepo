@@ -108,9 +108,14 @@ export const handleMediaPlaylist = broadcasters => {
       targetDuration = segment.duration
     }
     output.push(`#EXTINF:${segment.duration.toFixed(3)},`)
-    const fullUrl = new URL(segment.address)
-    fullUrl.pathname = resolve(fullUrl.pathname, segment.uri)
-    output.push(fullUrl.toString())
+    // If segment is a full URL leave it alone, otherwise add its host and whatnot
+    if (segment.uri.startsWith('http')) {
+      output.push(segment.uri)
+    } else {
+      const fullUrl = new URL(segment.address)
+      fullUrl.pathname = resolve(fullUrl.pathname, segment.uri)
+      output.push(fullUrl.toString())
+    }
   }
   output = [
     '#EXTM3U',
