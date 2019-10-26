@@ -6,8 +6,9 @@ import Unstake from './Unstake'
 import Link from 'next/link'
 import { Account, Delegator, Transcoder, Round } from '../../@types'
 import Utils from 'web3-utils'
-import { getDelegatorStatus } from '../../lib/utils'
+import { getDelegatorStatus, MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import { useWeb3Context } from 'web3-react'
+import Warning from './Warning'
 
 interface Props {
   action: string
@@ -16,6 +17,7 @@ interface Props {
   delegator?: Delegator
   currentRound: Round
   account: Account
+  roundsSinceLastClaim: number
 }
 
 export default ({
@@ -25,6 +27,7 @@ export default ({
   amount,
   account,
   currentRound,
+  roundsSinceLastClaim,
 }: Props) => {
   const context = useWeb3Context()
   if (!context.account) {
@@ -44,39 +47,26 @@ export default ({
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
-  const canStake = hasTokenBalance && approved && amount > 0
-  const canUnstake = isStaked
-  const insufficientBalance = account && amount > tokenBalance
+  const sufficientBalance = account && amount < tokenBalance
+  const canStake =
+    hasTokenBalance &&
+    sufficientBalance &&
+    roundsSinceLastClaim < MAX_EARNINGS_CLAIMS_ROUNDS &&
+    approved &&
+    amount > 0
+
+  const canUnstake =
+    isStaked && roundsSinceLastClaim < MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0
 
   if (action == 'stake') {
     return (
       <>
         <Stake disabled={!canStake} transcoder={transcoder} amount={amount} />
-        {!hasTokenBalance && (
-          <div
-            sx={{
-              px: 2,
-              pt: 2,
-              color: 'muted',
-              textAlign: 'center',
-              fontSize: 0,
-            }}
-          >
-            You have 0 LPT in your wallet.
-          </div>
-        )}
-        {insufficientBalance && (
-          <div
-            sx={{
-              px: 2,
-              pt: 2,
-              color: 'muted',
-              textAlign: 'center',
-              fontSize: 0,
-            }}
-          >
-            Insufficient Balance
-          </div>
+        {renderStakeWarnings(
+          roundsSinceLastClaim,
+          amount,
+          hasTokenBalance,
+          sufficientBalance,
         )}
       </>
     )
@@ -84,21 +74,60 @@ export default ({
   return (
     <>
       <Unstake disabled={!canUnstake} transcoder={transcoder} amount={amount} />
-      {!canUnstake && (
-        <div
-          sx={{
-            px: 2,
-            pt: 2,
-            color: 'muted',
-            textAlign: 'center',
-            fontSize: 0,
-          }}
-        >
-          {delegatorStatus == 'Pending'
-            ? `Your account is in a pending state. You can unstake during the next round.`
-            : 'One must stake before one can unstake.'}
-        </div>
+      {renderUnstakeWarnings(
+        roundsSinceLastClaim,
+        amount,
+        delegatorStatus,
+        isStaked,
       )}
     </>
   )
+}
+
+function renderStakeWarnings(
+  roundsSinceLastClaim,
+  amount,
+  hasTokenBalance,
+  sufficientBalance,
+) {
+  if (roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0) {
+    return (
+      <Warning>
+        You must claim your earnings before you can continue staking.
+      </Warning>
+    )
+  }
+  if (!hasTokenBalance) {
+    return <Warning>You have 0 LPT in your wallet.</Warning>
+  }
+
+  if (!sufficientBalance) {
+    return <Warning>Insufficient Balance</Warning>
+  }
+}
+
+function renderUnstakeWarnings(
+  roundsSinceLastClaim,
+  amount,
+  delegatorStatus,
+  isStaked,
+) {
+  if (roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0) {
+    return (
+      <Warning>
+        You must claim your earnings before you can continue staking.
+      </Warning>
+    )
+  }
+  if (!isStaked) {
+    return <Warning>One must stake before one can unstake.</Warning>
+  }
+  if (delegatorStatus == 'Pending') {
+    return (
+      <Warning>
+        Your account is in a pending state. You can unstake during the next
+        round.
+      </Warning>
+    )
+  }
 }

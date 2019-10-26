@@ -1,53 +1,55 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
-import { useWeb3Context } from 'web3-react'
+import React, { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import StakingFlow from '../StakingFlow'
-import Spinner from '../Spinner'
+import Button from '../Button'
 import Modal from '../Modal'
+import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
-import Button from '../Button'
+import { useWeb3Context } from 'web3-react'
 
-export default ({ lock }) => {
+interface Props {
+  lastClaimRound: number
+  endRound: number
+  children: React.ReactNode
+}
+
+export default ({ children, lastClaimRound, endRound }: Props) => {
   const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
+  const totalRoundsToClaim = endRound - (lastClaimRound + 1)
 
-  if (!context.active) {
-    return null
-  }
-
-  const REBOND_FROM_UNBONDED = gql`
-    mutation rebondFromUnbonded($unbondingLockId: Int!, $delegate: String!) {
-      txHash: rebondFromUnbonded(
-        unbondingLockId: $unbondingLockId
-        delegate: $delegate
+  const BATCH_CLAIM_EARNINGS = gql`
+    mutation batchClaimEarnings($lastClaimRound: String!, $endRound: String!) {
+      txns: batchClaimEarnings(
+        lastClaimRound: $lastClaimRound
+        endRound: $endRound
       )
     }
   `
 
   const GET_TRANSACTION_RECEIPT = gql`
-    query rebondEvent($id: ID!) {
-      rebondEvent(id: $id) {
+    query claimEarningsEvent($id: ID!) {
+      claimEarningsEvent(id: $id) {
         id
         blockNumber
         hash
       }
     }
   `
-  console.log(lock.delegate.id)
 
-  const [rebondFromUnbonded, { data, error }] = useMutation(
-    REBOND_FROM_UNBONDED,
+  const [batchClaimEarnings, { data, error }] = useMutation(
+    BATCH_CLAIM_EARNINGS,
     {
       variables: {
-        unbondingLockId: lock.unbondingLockId,
-        delegate: lock.delegate.id,
+        lastClaimRound: lastClaimRound.toString(),
+        endRound: endRound.toString(),
       },
       notifyOnNetworkStatusChange: true,
       context: {
+        web3: context.library,
         provider: context.library.currentProvider,
         account: context.account.toLowerCase(),
         returnTxHash: true,
@@ -55,15 +57,17 @@ export default ({ lock }) => {
     },
   )
 
-  console.log(error)
+  if (error) {
+    console.error(error)
+  }
 
-  let isBroadcasted = data && data.txHash
+  let isBroadcasted = data && data.txns
   let isMined = false
   let isMining = false
 
   const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
     variables: {
-      id: `${data && data.txHash}-Rebond`,
+      id: `${data && data.txns[data.txns.length]}-ClaimEarnings`,
     },
     ssr: false,
     pollInterval: 2000,
@@ -77,38 +81,40 @@ export default ({ lock }) => {
     }
   }, [isBroadcasted])
 
-  isMining = transaction && !transaction.rebondEvent
-  isMined = transaction && transaction.rebondEvent
+  isMining = transaction && !transaction.claimEarningsEvent
+  isMined = transaction && transaction.claimEarningsEvent
 
   return (
     <>
       <Button
         onClick={async () => {
-          console.log('wrong')
           try {
-            await rebondFromUnbonded(lock.unbondingLockId)
+            await batchClaimEarnings()
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),
             }
           }
         }}
-        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
       >
-        Rebond
+        {children}
       </Button>
       {isBroadcasted && (
         <Modal
           isOpen={isOpen}
           setOpen={setIsModalOpen}
-          title={isMined ? 'Successfully Rebonded' : 'Broadcasted'}
+          title={isMined ? 'Success!' : 'Broadcasted'}
           Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          <StakingFlow
-            action="stake"
-            account={lock.delegate.id}
-            amount={lock.amount}
-          />
+          <div sx={{ mb: 4 }}>
+            {isMined ? (
+              <div>Successfully claimed earnings.</div>
+            ) : (
+              <div>
+                Claiming {totalRoundsToClaim} rounds worth of earnings.{' '}
+              </div>
+            )}
+          </div>
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {!isMined && (
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -126,7 +132,9 @@ export default ({ lock }) => {
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`https://etherscan.io/tx/${data.txHash}`}
+                href={`https://etherscan.io/tx/${
+                  data.txns[data.txns.length - 1]
+                }`}
               >
                 View on Etherscan{' '}
                 <NewTab sx={{ ml: 1, width: 16, height: 16 }} />

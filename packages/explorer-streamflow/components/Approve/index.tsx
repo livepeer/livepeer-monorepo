@@ -63,6 +63,7 @@ export default ({ children, amount }: Props) => {
       id: `${data && data.txHash}-Approval`,
     },
     ssr: false,
+    pollInterval: 2000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })

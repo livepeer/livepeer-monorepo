@@ -55,12 +55,16 @@ const GET_DATA = gql`
 
 export default withApollo(() => {
   const context = useWeb3Context()
-  const myAccount = useAccount(context.account)
+  const myAccount = useAccount(context.account ? context.account : '')
 
-  const { data, loading } = useQuery(GET_DATA, {
+  const { data, loading, error } = useQuery(GET_DATA, {
     pollInterval: 10000,
     ssr: false,
   })
+
+  if (error) {
+    console.log(error)
+  }
 
   return (
     <Page>
@@ -86,7 +90,7 @@ export default withApollo(() => {
             sx={{
               position: 'sticky',
               alignSelf: 'flex-start',
-              top: 4,
+              top: 5,
               width: '30%',
             }}
           >

@@ -12,10 +12,8 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
   mergeSchemas,
-  transformSchema,
-  FilterTypes,
 } from 'graphql-tools'
-import { schema } from '@adamsoffer/livepeer-graphql-sdk'
+import schema from '../apollo'
 
 const isProd = process.env.NODE_ENV === 'production'
 const subgraphEndpoint =
@@ -57,7 +55,7 @@ function createApolloClient(initialState = {}) {
               ? context.provider
               : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
           })
-
+ 
           graphql(
             mergedSchema,
             print(query),
@@ -155,60 +153,24 @@ async function createSchema() {
 
   const subgraphSchema = await createSubgraphServiceSchema()
   const threeBoxSchema = await create3BoxServiceSchema()
-  const changefeedSchema = await createChangefeedServiceSchema()
-
-  const transformedSchema = transformSchema(schema, [
-    new FilterTypes(type => {
-      return type.name != 'Account'
-    }),
-  ])
-  
+  const changefeedSchema = await createChangefeedServiceSchema()  
   const linkTypeDefs = `
     extend type Profile {
       transcoder: Transcoder
     }
-
     extend type Transcoder {
       profile: Profile
     }
-
-    type Account {
-      id: ID!
-      tokenBalance: String
-      ethBalance: String
-      allowance: String
-    }
-
     extend type Delegator {
       pendingStake: String
       tokenBalance: String
       ethBalance: String
     }
-
-    extend type Protocol {
-      inflation: String
-      inflationChange: String
-    }
-
-    extend type Query {
-      account(id: ID!): Account
-    }
   `
 
   const merged = mergeSchemas({
-    schemas: [transformedSchema, subgraphSchema, threeBoxSchema, changefeedSchema, linkTypeDefs],
+    schemas: [subgraphSchema, threeBoxSchema, changefeedSchema, schema, linkTypeDefs],
     resolvers: {
-      Query: {
-        account: async (_account, _args, _context, _info) => {
-          const { allowance } = await rpc.getDelegator(_args.id)
-          return {
-            id: _args.id,
-            tokenBalance: await rpc.getTokenBalance(_args.id),
-            ethBalance: await rpc.getEthBalance(_args.id),
-            allowance: allowance,
-          }
-        },
-      },
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
@@ -227,18 +189,7 @@ async function createSchema() {
           },
         },
       },
-      Protocol: {
-        inflation: {
-          async resolve(_protocol, _args, _context, _info) {
-            return await rpc.getInflation()
-          },
-        },
-        inflationChange: {
-          async resolve(_protocol, _args, _context, _info) {
-            return await rpc.getInflationChange()
-          },
-        },
-      },
+
     },
   })
 

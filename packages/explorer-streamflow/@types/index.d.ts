@@ -1,5 +1,3 @@
-import { StringifyOptions } from 'querystring'
-
 export interface Account {
   id: string
   tokenBalance: string

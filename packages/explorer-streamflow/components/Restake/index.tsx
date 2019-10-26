@@ -56,6 +56,7 @@ export default ({ lock }) => {
       id: `${data && data.txHash}-Rebond`,
     },
     ssr: false,
+    pollInterval: 2000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })

@@ -198,7 +198,7 @@ export default () => {
             renderSwitch(transaction, i),
           )}
         </div>
-        {loading && (
+        {loading && data.transactions.length >= 10 && (
           <Flex
             sx={{
               position: 'absolute',

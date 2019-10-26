@@ -108,7 +108,7 @@ function renderSwitch(cell, protocol) {
             value={cell.value}
           />
           <Link
-            href="/accounts/[account]/staking"
+            href="/accounts/[account]/[slug]"
             as={`/accounts/${cell.value}/staking`}
             passHref
           >

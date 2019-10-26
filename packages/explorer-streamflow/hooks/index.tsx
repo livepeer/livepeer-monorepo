@@ -15,6 +15,9 @@ const GET_ACCOUNT = gql`
       id
       pendingStake
       startRound
+      lastClaimRound {
+        id
+      }
       bondedAmount
       unbondingLocks {
         withdrawRound
