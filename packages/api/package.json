@@ -24,7 +24,7 @@
     "prepare": "run-p \"prepare:**\"",
     "dev:live-server": "live-server --port=3005 docs",
     "dev:redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
-    "dev:server": "nodemon -w src -x node -r esm src/cli.js",
+    "dev:server": "nodemon -w src -x node -r esm src/cli.js -e js,yaml",
     "dev:worker": "parcel watch --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "dev": "run-p \"dev:**\"",
     "go-livepeer": "run-p \"go-livepeer:**\"",

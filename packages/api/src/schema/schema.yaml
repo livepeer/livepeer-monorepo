@@ -7,6 +7,9 @@ tags:
   - name: ingress
     description: RTMP Ingress Endpoints
 
+  - name: stream
+    description: Wowza Stream Endpoints
+
 components:
   schemas:
     ingress:
@@ -51,6 +54,53 @@ components:
 
     stream:
       type: object
+      required:
+        - id
+        - kind
+        - name
+        - presets
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          readOnly: true
+        kind:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        presets:
+          type: array
+          items:
+            type: string
+            enum:
+              - P720p60fps16x9
+              - P720p30fps16x9
+              - P720p30fps4x3
+              - P576p30fps16x9
+              - P360p30fps16x9
+              - P360p30fps4x3
+              - P240p30fps16x9
+              - P240p30fps4x3
+              - P144p30fps16x9
+        wowza:
+          type: object
+          required:
+            - transcoderAppConfig
+            - transcoderTemplateAppConfig
+            - streamNameGroups
+          additionalProperties: false
+          properties:
+            transcoderAppConfig:
+              type: object
+            transcoderTemplateAppConfig:
+              type: object
+            streamNameGroups:
+              type: array
+        renditions:
+          type: object
+          additionalProperties:
+            type: string
 
     error:
       required:
@@ -78,6 +128,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ingress'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /stream:
+    tags:
+      - stream
+    post:
+      description: receives Wowza stream
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/stream'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/stream'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+    get:
+      description: list streams
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/stream'
         default:
           description: Error
           content:

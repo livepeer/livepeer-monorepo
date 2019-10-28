@@ -2,6 +2,7 @@ import { parse as parsePath } from 'path'
 import { parse as parseQS } from 'querystring'
 import { parse as parseUrl } from 'url'
 import { authMiddleware } from '../middleware'
+import { validatePost } from '../middleware'
 import { Router } from 'express'
 import logger from '../logger'
 import uuid from 'uuid/v4'
@@ -39,7 +40,7 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
   res.json(output)
 })
 
-app.post('/', authMiddleware({}), async (req, res) => {
+app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   const id = uuid()
   const doc = wowzaHydrate({
     ...req.body,
