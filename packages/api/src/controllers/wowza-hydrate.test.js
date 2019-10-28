@@ -1,5 +1,8 @@
 import wowzaHydrate from './wowza-hydrate'
 const stream = require('./wowza-hydrate.test-data.json')
+const streamWithoutTransrate = JSON.parse(JSON.stringify(stream))
+streamWithoutTransrate.wowza.transcoderAppConfig.templatesInUse =
+  '${SourceStreamName}.xml'
 
 describe('wowzaHydrate', () => {
   it('should correctly determine renditions and presets', () => {
@@ -53,12 +56,14 @@ describe('wowzaHydrate', () => {
   })
 
   it('should fail if stream name does not equal any template name', () => {
-    stream.name = 'fake_name'
+    let message
+    streamWithoutTransrate.name = 'fake_name'
     try {
-      const newStream = wowzaHydrate({ ...stream })
+      const newStream = wowzaHydrate({ ...streamWithoutTransrate })
     } catch (e) {
-      expect(e.message).toEqual('no template found from templatesInUse')
+      message = e.message
     }
+    expect(message).toEqual('no template found from templatesInUse')
   })
 
   it('should fail if missing parameters', () => {

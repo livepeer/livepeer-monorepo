@@ -32,7 +32,7 @@
       "profileDir": "${com.wowza.wms.context.VHostConfigHome}/transcoder/profiles",
       "templateDir": "${com.wowza.wms.context.VHostConfigHome}/transcoder/templates",
       "licensesInUse": 0,
-      "templatesInUse": "${SourceStreamName}.xml, transrate.xml",
+      "templatesInUse": "${SourceStreamName}.xml,transrate.xml",
       "createTemplateDir": false,
       "liveStreamTranscoder": "transcoder"
     },
