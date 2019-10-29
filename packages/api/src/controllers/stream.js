@@ -42,13 +42,20 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 
 app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   const id = uuid()
+  let userId = ''
+  if (req.user) {
+    userId = req.user.id
+  }
+
   const doc = wowzaHydrate({
     ...req.body,
     kind: 'stream',
+    userId: userId,
     presets: req.body.presets || [],
     renditions: {},
     id,
   })
+
   await req.store.create(doc)
   res.status(201)
   res.json(doc)

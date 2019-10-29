@@ -37,6 +37,7 @@ function authFactory(params) {
     if (params.admin === true) {
       try {
         const user = await getUser(req, res, next)
+        req.user = user
         if (
           user &&
           'domain' in user &&
@@ -60,6 +61,7 @@ function authFactory(params) {
     ) {
       try {
         const user = await getUser(req, res, next)
+        req.user = user
         if (
           user &&
           'domain' in user &&

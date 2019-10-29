@@ -91,6 +91,27 @@ describe('controllers/stream', () => {
       expect(streams.length).toBeLessThan(11)
     })
 
+    it('should create a stream', async () => {
+      await server.store.create(user)
+      const res = await client.post('/stream', { name: 'test-stream' })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('test-stream')
+      expect(stream.userId).toBe('mock_sub')
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+    })
+
+    it('should accept empty body for creating a stream', async () => {
+      await server.store.create(user)
+      const res = await client.post('/stream')
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+    })
+
     it('should not get all streams', async () => {
       user = {
         id: 'mock_sub',
@@ -170,6 +191,7 @@ describe('controllers/stream', () => {
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
       expect(stream.name).toBe('test_stream')
+      expect(stream.userId).toBe('')
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
     })
