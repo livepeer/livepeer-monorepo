@@ -121,7 +121,7 @@ export const handleMediaPlaylist = broadcasters => {
     '#EXTM3U',
     '#EXT-X-VERSION:3',
     `#EXT-X-MEDIA-SEQUENCE:${bestRun[0].seq}`,
-    `#EXT-X-TARGETDURATION:${targetDuration}`,
+    `#EXT-X-TARGETDURATION:${Math.ceil(targetDuration)}`,
     ...output,
   ]
 
