@@ -1,6 +1,6 @@
 import { VIDEO_PROFILES } from '@livepeer/sdk'
 
-const PRESETS = Object.values(VIDEO_PROFILES)
+const PRESETS = Object.values(VIDEO_PROFILES).filter(p => p.framerate === 30)
 
 /**
  * Replace a string containing "${SourceStreamName}" with the appropriate stream name
