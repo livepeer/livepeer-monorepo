@@ -1,6 +1,6 @@
 import { VIDEO_PROFILES } from '@livepeer/sdk'
 
-const PRESETS = Object.values(VIDEO_PROFILES).filter(p => p.framerate === 30)
+const PRESETS = Object.values(VIDEO_PROFILES)
 
 /**
  * Replace a string containing "${SourceStreamName}" with the appropriate stream name
@@ -18,7 +18,11 @@ export default stream => {
   if (!stream.name || !stream.id) {
     throw new Error('missing required fields: id, name')
   }
-  const { transcoderAppConfig, transcoderTemplateAppConfig } = stream.wowza
+  const {
+    transcoderAppConfig,
+    transcoderTemplateAppConfig,
+    sourceInfo,
+  } = stream.wowza
   const templatesInUse = transcoderAppConfig.templatesInUse.split(',')
   let template
   for (let tmpl of templatesInUse) {
@@ -38,6 +42,8 @@ export default stream => {
   const renditions = {}
   let presets = []
   const encodeNameToRenditionName = {}
+  const aspectRatio = sourceInfo.width / sourceInfo.height
+  const fps = sourceInfo.fps
   for (const encode of enabledEncodes) {
     let { width, height, name, streamName, videoCodec } = encode
     let renditionName = replaceStreamName(streamName, stream.name)
@@ -51,10 +57,9 @@ export default stream => {
       continue
     }
 
-    const SIXTEEN_BY_NINE = 16 / 9
-    const NINE_BY_SIXTEEN = 9 / 16
-    if (width === 0) width = height * SIXTEEN_BY_NINE
-    if (height === 0) height = width * NINE_BY_SIXTEEN
+    if (width === 0) width = height * aspectRatio
+    if (height === 0) height = (width * 1) / aspectRatio
+    // TODO: do we need to validate whether or not the incoming height/width fit the aspect ratio?
 
     const wowzaSize = width * height
     let diff = Infinity
@@ -65,7 +70,10 @@ export default stream => {
         .map(x => parseInt(x))
       const livepeerSize = livepeerWidth * livepeerHeight
       const thisDiff = Math.abs(livepeerSize - wowzaSize)
-      if (thisDiff < diff) {
+      if (thisDiff < diff && fps == preset.framerate) {
+        // TODO : need to account for when framerate isn't found in VIDEO_PRESETS.
+        // - However, if we'll implement long-term solution soon after this, like enabling full transcoder
+        //   configurability throughout the network, perhaps don't have to, since only Camcast is using this.
         foundPreset = preset.name
         diff = thisDiff
       }

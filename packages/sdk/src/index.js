@@ -35,6 +35,13 @@ export const VIDEO_PROFILES = {
     framerate: 30,
     resolution: '1280x720',
   },
+  P720p25fps16x9: {
+    hash: 'e4a64019',
+    name: 'P720p25fps16x9',
+    bitrate: '4000k',
+    framerate: 25,
+    resolution: '1280x720',
+  },
   P720p30fps4x3: {
     hash: '79332fe7',
     name: 'P720p30fps4x3',
@@ -49,11 +56,25 @@ export const VIDEO_PROFILES = {
     framerate: 30,
     resolution: '1024x576',
   },
+  P576p25fps16x9: {
+    hash: '8b1843d6',
+    name: 'P576p25fps16x9',
+    bitrate: '1500k',
+    framerate: 25,
+    resolution: '1024x576',
+  },
   P360p30fps16x9: {
     hash: '93c717e7',
     name: 'P360p30fps16x9',
     bitrate: '1200k',
     framerate: 30,
+    resolution: '640x360',
+  },
+  P360p25fps16x9: {
+    hash: '7cd40fc7',
+    name: 'P360p25fps16x9',
+    bitrate: '1200k',
+    framerate: 25,
     resolution: '640x360',
   },
   P360p30fps4x3: {
@@ -70,6 +91,13 @@ export const VIDEO_PROFILES = {
     framerate: 30,
     resolution: '426x240',
   },
+  P240p25fps16x9: {
+    hash: '1301a7d0',
+    name: 'P240p25fps16x9',
+    bitrate: '600k',
+    framerate: 25,
+    resolution: '426x240',
+  },
   P240p30fps4x3: {
     hash: 'd435c53a',
     name: 'P240p30fps4x3',
@@ -82,6 +110,13 @@ export const VIDEO_PROFILES = {
     name: 'P144p30fps16x9',
     bitrate: '400k',
     framerate: 30,
+    resolution: '256x144',
+  },
+  P144p25fps16x9: {
+    hash: '03f01d1f',
+    name: 'P144p25fps16x9',
+    bitrate: '400k',
+    framerate: 25,
     resolution: '256x144',
   },
 }

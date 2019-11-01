@@ -1144,6 +1144,11 @@
             }
           ]
         }
+      },
+      "sourceInfo": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 30
       }
     }
   },
@@ -2732,6 +2737,11 @@
             }
           ]
         }
+      },
+      "sourceInfo": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 30
       }
     },
     "presets": [
