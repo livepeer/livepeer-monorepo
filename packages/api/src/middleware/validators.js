@@ -12,8 +12,11 @@ export const validatePost = name => {
       return
     }
     const oldRequired = node.required
+    if (!oldRequired) {
+      return
+    }
     node.required = oldRequired.filter(key => {
-      if (node.properties[key].readOnly === true) {
+      if (node.properties && node.properties[key].readOnly === true) {
         delete node.properties[key]
         return false
       }
@@ -26,7 +29,7 @@ export const validatePost = name => {
     if (!validate(body)) {
       res.status(422)
       return res.json({
-        errors: validate.errors.map(({ message }) => message),
+        errors: validate.errors.map(message => message),
       })
     }
     next()
@@ -79,7 +82,7 @@ export const validatePut = name => {
     if (!validate(data)) {
       res.status(422)
       return res.json({
-        errors: validate.errors.map(({ message }) => message),
+        errors: validate.errors.map(({ message }) => JSON.stringify(message)),
       })
     }
 

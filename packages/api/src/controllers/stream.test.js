@@ -134,6 +134,27 @@ describe('controllers/stream', () => {
 
   describe('basic CRUD with apiKey', () => {
     let client
+    let mockStream = require('./wowza-hydrate.test-data.json')
+    delete mockStream.id
+    delete mockStream.kind
+    mockStream.presets = ['P360p30fps16x9', 'P144p30fps16x9']
+    mockStream.renditions = {
+      bbb_360p:
+        '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P360p30fps16x9.m3u8',
+      thesource_bbb: '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/source.m3u8',
+      random_prefix_bbb_160p:
+        '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P144p30fps16x9.m3u8',
+    }
+    mockStream.wowza.streamNameGroups = [
+      {
+        name: 'bbb_all',
+        renditions: ['thesource_bbb', 'bbb_360p', 'random_prefix_bbb_160p'],
+      },
+      {
+        name: 'bbb_mobile',
+        renditions: ['random_prefix_bbb_160p'],
+      },
+    ]
 
     beforeEach(() => {
       client = new TestClient({
@@ -143,21 +164,27 @@ describe('controllers/stream', () => {
     })
 
     it('should create a stream', async () => {
-      const res = await client.post('/stream', { name: 'test-stream' })
+      const res = await client.post('/stream', { ...mockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test-stream')
+      expect(stream.name).toBe('test_stream')
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
     })
 
-    it('should accept empty body for creating a stream', async () => {
+    it('should not accept empty body for creating a stream', async () => {
       const res = await client.post('/stream')
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(422)
+    })
+
+    it('should not accept additional properties for creating a stream', async () => {
+      mockStream.livepeer = 'livepeer'
+      const res = await client.post('/stream', { ...mockStream })
+      expect(res.status).toBe(422)
       const stream = await res.json()
-      expect(stream.id).toBeDefined()
+      expect(stream.id).toBeUndefined()
     })
   })
 

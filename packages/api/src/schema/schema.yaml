@@ -4,53 +4,60 @@ info:
   version: 0.0.1-alpha.0
 
 tags:
-  - name: ingress
-    description: RTMP Ingress Endpoints
+  - name: stream
+    description: Wowza Stream Endpoints
 
 components:
   schemas:
-    ingress:
+    stream:
+      type: object
       required:
         - id
-        - key
-        - outputs
-      type: object
+        - kind
+        - name
+        - presets
       additionalProperties: false
       properties:
         id:
-          pattern: ^ingress/
           type: string
           readOnly: true
-        key:
+        kind:
           type: string
           readOnly: true
-        outputs:
+        name:
+          type: string
+        presets:
           type: array
           items:
-            type: object
-            required:
-              - bitrate
-              - fps
-              - height
-              - width
-            additionalProperties: false
-            properties:
-              width:
-                minimum: 1
-                type: integer
-              fps:
-                minimum: 1
-                type: integer
-              bitrate:
-                minimum: 1
-                type: integer
-                description: bitrate in kbps
-              height:
-                minimum: 1
-                type: integer
-
-    stream:
-      type: object
+            type: string
+            enum:
+              - P720p60fps16x9
+              - P720p30fps16x9
+              - P720p30fps4x3
+              - P576p30fps16x9
+              - P360p30fps16x9
+              - P360p30fps4x3
+              - P240p30fps16x9
+              - P240p30fps4x3
+              - P144p30fps16x9
+        wowza:
+          type: object
+          required:
+            - transcoderAppConfig
+            - transcoderTemplateAppConfig
+            - streamNameGroups
+          additionalProperties: false
+          properties:
+            transcoderAppConfig:
+              type: object
+            transcoderTemplateAppConfig:
+              type: object
+            streamNameGroups:
+              type: array
+        renditions:
+          type: object
+          additionalProperties:
+            type: string
 
     error:
       required:
@@ -64,11 +71,19 @@ components:
             type: string
 
 paths:
-  /ingress:
+  /stream:
     tags:
-      - ingress
-    get:
-      description: list ingresses
+      - stream
+    post:
+      description: receives Wowza stream
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/stream'
+
       responses:
         200:
           description: Success
@@ -77,7 +92,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ingress'
+                  $ref: '#/components/schemas/stream'
         default:
           description: Error
           content:
@@ -85,23 +100,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
 
-  /ingress/{id}:
-    tags:
-      - ingress
     get:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      description: list streams
       responses:
         200:
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ingress'
+                type: array
+                items:
+                  $ref: '#/components/schemas/stream'
         default:
           description: Error
           content:
