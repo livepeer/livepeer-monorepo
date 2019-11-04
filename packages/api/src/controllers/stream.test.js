@@ -184,14 +184,14 @@ describe('controllers/stream', () => {
       })
     })
 
-    it('should create a stream', async () => {
-      const res = await client.post('/stream', { ...mockStream })
+    it('should create a stream, no `user` registered', async () => {
+      const res = await client.post('/stream', { name: 'test-stream' })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test_stream')
-      expect(stream.userId).toBe('')
+      expect(stream.name).toBe('test-stream')
+      expect(stream.userId).toBe(client.apiKey)
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
     })
@@ -207,6 +207,26 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(422)
       const stream = await res.json()
       expect(stream.id).toBeUndefined()
+    })
+
+    it('should create a stream, `user` already registered', async () => {
+      let user = {
+        id: client.apiKey,
+        name: 'User Name',
+        email: 'user@livepeer.org',
+        domain: 'livepeer.org',
+        kind: 'user',
+      }
+      await server.store.create(user)
+      const res = await client.post('/stream', { name: 'test-stream' })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('test-stream')
+      expect(stream.userId).toBe(client.apiKey)
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
     })
   })
 
