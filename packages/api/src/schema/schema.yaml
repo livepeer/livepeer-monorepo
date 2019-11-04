@@ -4,54 +4,11 @@ info:
   version: 0.0.1-alpha.0
 
 tags:
-  - name: ingress
-    description: RTMP Ingress Endpoints
-
   - name: stream
     description: Wowza Stream Endpoints
 
 components:
   schemas:
-    ingress:
-      required:
-        - id
-        - key
-        - outputs
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          pattern: ^ingress/
-          type: string
-          readOnly: true
-        key:
-          type: string
-          readOnly: true
-        outputs:
-          type: array
-          items:
-            type: object
-            required:
-              - bitrate
-              - fps
-              - height
-              - width
-            additionalProperties: false
-            properties:
-              width:
-                minimum: 1
-                type: integer
-              fps:
-                minimum: 1
-                type: integer
-              bitrate:
-                minimum: 1
-                type: integer
-                description: bitrate in kbps
-              height:
-                minimum: 1
-                type: integer
-
     stream:
       type: object
       required:
@@ -114,27 +71,6 @@ components:
             type: string
 
 paths:
-  /ingress:
-    tags:
-      - ingress
-    get:
-      description: list ingresses
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ingress'
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-
   /stream:
     tags:
       - stream
@@ -175,30 +111,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/stream'
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-
-  /ingress/{id}:
-    tags:
-      - ingress
-    get:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ingress'
         default:
           description: Error
           content:
