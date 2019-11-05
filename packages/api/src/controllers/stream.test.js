@@ -134,7 +134,7 @@ describe('controllers/stream', () => {
 
   describe('basic CRUD with apiKey', () => {
     let client
-    let mockStream = require('./wowza-hydrate.test-data.json')
+    let mockStream = require('./wowza-hydrate.test-data.json').stream
     delete mockStream.id
     delete mockStream.kind
     mockStream.presets = ['P360p30fps16x9', 'P144p30fps16x9']

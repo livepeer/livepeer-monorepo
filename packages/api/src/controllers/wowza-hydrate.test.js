@@ -1,5 +1,5 @@
 import wowzaHydrate from './wowza-hydrate'
-const stream = require('./wowza-hydrate.test-data.json')
+const { stream, camcastStream } = require('./wowza-hydrate.test-data.json')
 const streamWithoutTransrate = JSON.parse(JSON.stringify(stream))
 streamWithoutTransrate.wowza.transcoderAppConfig.templatesInUse =
   '${SourceStreamName}.xml'
@@ -87,5 +87,15 @@ describe('wowzaHydrate', () => {
     }
     const outputStream = wowzaHydrate(inputStream)
     expect(outputStream).toEqual(inputStream)
+  })
+
+  it('should handle duplicate stream cases', () => {
+    const newStream = wowzaHydrate({ ...camcastStream })
+    expect(newStream.presets).toEqual([
+      'P720p30fps16x9',
+      'P360p30fps16x9',
+      'P360p30fps4x3',
+      'P144p30fps16x9',
+    ])
   })
 })
