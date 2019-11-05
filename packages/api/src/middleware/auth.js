@@ -1,5 +1,6 @@
 import logger from '../logger'
 import { OAuth2Client } from 'google-auth-library'
+import uuid from 'uuid/v4'
 
 /**
  * generate token middleware
@@ -18,22 +19,20 @@ async function generateToken(req, res, next) {
     return res.sendStatus(406)
   }
 
-  await req.store.create({
-    id: id,
-    name: '',
-    email: '',
-    domain: '',
-    kind: 'user',
-  })
-
-  let resp = await req.store.create({
-    id,
-    kind: 'apitoken',
-  })
+  try {
+    await req.store.create({
+      id,
+      kind: 'apitoken',
+      userId: '',
+    })
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 
   req.token = id
   logger.debug(`token = ${id}`)
-  return next()
+  return await req.store.get(`apitoken/${id}`)
 }
 
 /**
@@ -45,7 +44,7 @@ function authFactory(params) {
     if (params.admin === true) {
       // if admin credentials required, use google auth to validate admin access
       try {
-        const user = await getUserWithGoogleAUth(req, res, next)
+        const user = await getUserWithGoogleAuth(req, res, next)
         req.user = user
         if (
           user &&
@@ -70,7 +69,7 @@ function authFactory(params) {
     ) {
       // if admin credentials not required, but apiToken not provided, use google auth to allow admins to access
       try {
-        const user = await getUserWithGoogleAUth(req, res, next)
+        const user = await getUserWithGoogleAuth(req, res, next)
         req.user = user
         if (
           user &&
@@ -83,63 +82,74 @@ function authFactory(params) {
         res.status(403)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
-    } else if (req.token) {
-      // if apiToken provided, get or create user with apiToken as user `id`
-      try {
-        const user = await getUserWithApiToken(req)
-        req.user = user
-      } catch (error) {
-        res.status(403)
-        return res.json({ errors: [error.toString()] })
-      }
     }
 
     if (!req || !req.token) {
       // if no apiToken provided, and no google credentials provided, deny access
       return res.sendStatus(401)
     }
+
     logger.info('authFactory params ', params)
-    let resp
+    let tokenObject
     try {
       // check token against token DB
-      resp = await req.store.get(`apitoken/${req.token}`)
+      tokenObject = await req.store.get(`apitoken/${req.token}`)
     } catch (e) {
       if (e.type !== 'NotFoundError') {
         throw e
       }
 
       logger.warn('api Token not found... generating one')
-      return await generateToken(req, res, next)
+      tokenObject = await generateToken(req, res, next)
     }
 
+    if (tokenObject) {
+      // if apiToken provided, get or create user with apiToken as user `id`
+      try {
+        const user = await getUserWithApiToken(req, tokenObject)
+        req.user = user
+        if (tokenObject.userId == '') {
+          const newTokenObject = {
+            id: tokenObject.id,
+            kind: 'apitoken',
+            userId: user.id,
+          }
+          await req.store.replace(newTokenObject)
+        }
+      } catch (error) {
+        console.log(error)
+        res.status(403)
+        return res.json({ errors: [error.toString()] })
+      }
+    }
     return next()
   }
 }
 
-async function getUserWithApiToken(req) {
+async function getUserWithApiToken(req, tokenObject) {
   var user
   try {
-    user = await req.store.get(`user/${req.token}`)
+    user = await req.store.get(`user/${tokenObject.userId}`)
   } catch (error) {
     if (error.type !== 'NotFoundError') {
-      console.error(error)
+      console.log(error)
       throw error
     }
-  }
-  if (!user) {
+    const userId = tokenObject.userId == '' ? uuid() : tokenObject.userId
     await req.store.create({
-      id: req.token,
+      id: userId,
       name: '',
       email: '',
       domain: '',
       kind: 'user',
     })
-    user = await req.store.get(`user/${req.token}`)
+    user = await req.store.get(`user/${userId}`)
   }
+
   return user
 }
 
-async function getUserWithGoogleAUth(req, res, next) {
+async function getUserWithGoogleAuth(req, res, next) {
   var googleAuthToken = req.headers.authorization
   if (googleAuthToken) {
     req.googleAuthToken = googleAuthToken
@@ -173,6 +183,7 @@ async function getUserWithGoogleAUth(req, res, next) {
       domain: payload['hd'],
       kind: 'user',
     })
+    user = await req.store.get(`user/${payload.sub}`)
   }
 
   return user
