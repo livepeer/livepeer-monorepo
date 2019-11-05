@@ -29,7 +29,7 @@ export const validatePost = name => {
     if (!validate(body)) {
       res.status(422)
       return res.json({
-        errors: validate.errors.map(message => message),
+        errors: validate.errors.map(err => JSON.stringify(err)),
       })
     }
     next()
@@ -82,7 +82,7 @@ export const validatePut = name => {
     if (!validate(data)) {
       res.status(422)
       return res.json({
-        errors: validate.errors.map(({ message }) => JSON.stringify(message)),
+        errors: validate.errors.map(err => JSON.stringify(err)),
       })
     }
 
