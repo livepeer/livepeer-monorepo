@@ -36,7 +36,7 @@ export default stream => {
   const transcoderConfig = transcoderTemplateAppConfig[template]
   const enabledEncodes = transcoderConfig.encodes.filter(e => e.enable)
   const renditions = {}
-  const presets = []
+  let presets = []
   const encodeNameToRenditionName = {}
   for (const encode of enabledEncodes) {
     let { width, height, name, streamName, videoCodec } = encode
@@ -80,6 +80,8 @@ export default stream => {
     renditions[renditionName] = `/stream/${stream.id}/${foundPreset}.m3u8`
     presets.push(foundPreset)
   }
+  // Dedupe presets
+  presets = [...new Set(presets)]
   const enabledEncodeNames = new Set(enabledEncodes.map(encode => encode.name))
   const streamNameGroups = transcoderConfig.streamNameGroups.map(
     streamNameGroup => {
