@@ -21,7 +21,7 @@ app.get('/', async (req, res, next) => {
   return res.json(broadcasters.map(({ address }) => ({ address })))
 })
 
-app.get('/status', authMiddleware({ admin: true }), async (req, res, next) => {
+app.get('/status', authMiddleware({}), async (req, res, next) => {
   const statuses = await getBroadcasterStatuses(req)
   res.json(statuses)
 })
