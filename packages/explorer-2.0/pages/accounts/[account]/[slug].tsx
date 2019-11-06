@@ -173,12 +173,12 @@ function getTabs(
     },
   ]
   if (role == 'Orchestrator') {
-    tabs.splice(0, 0, {
-      name: 'Tokenholders',
-      href: '/accounts/[account]/[slug]',
-      as: `/accounts/${account}/tokenholders`,
-      isActive: asPath == `/accounts/${account}/tokenholders`,
-    })
+    // tabs.splice(0, 0, {
+    //   name: 'Tokenholders',
+    //   href: '/accounts/[account]/[slug]',
+    //   as: `/accounts/${account}/tokenholders`,
+    //   isActive: asPath == `/accounts/${account}/tokenholders`,
+    // })
     tabs.unshift({
       name: 'Campaign',
       href: '/accounts/[account]/[slug]',
