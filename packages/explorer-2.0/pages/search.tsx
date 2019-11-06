@@ -81,5 +81,5 @@ const SearchPage: any = () => {
 }
 
 SearchPage.getLayout = getLayout
-
+SearchPage.displayName = ''
 export default SearchPage

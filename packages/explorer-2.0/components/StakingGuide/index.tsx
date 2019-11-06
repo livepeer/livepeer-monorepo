@@ -124,7 +124,7 @@ export default ({ children }) => {
         accentColor="#E926BE"
         maskSpace={10}
         startAt={cookies.connector ? 2 : 0}
-        isOpen={data.tourOpen}
+        isOpen={data ? data.tourOpen : false}
         nextButton={<Button>Next</Button>}
         closeWithMask={false}
         onRequestClose={() => {

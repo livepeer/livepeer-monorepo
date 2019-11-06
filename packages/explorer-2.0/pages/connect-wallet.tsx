@@ -102,5 +102,5 @@ const ConnectWallet = () => {
 }
 
 ConnectWallet.getLayout = getLayout
-
+ConnectWallet.displayName = ''
 export default ConnectWallet

@@ -1,11 +1,9 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
-import Page from '../layouts/main'
 import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
-import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 import { useAccount } from '../hooks'
 import { useWeb3Context } from 'web3-react'
@@ -114,5 +112,5 @@ const Index = () => {
 }
 
 Index.getLayout = getLayout
-
-export default Index
+Index.displayName = ''
+export default () => Index()

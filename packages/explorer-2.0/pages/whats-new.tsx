@@ -128,5 +128,5 @@ const WhatsNew = () => {
 }
 
 WhatsNew.getLayout = getLayout
-
+WhatsNew.displayName = ''
 export default WhatsNew

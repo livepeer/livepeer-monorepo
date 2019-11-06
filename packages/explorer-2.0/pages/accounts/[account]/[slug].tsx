@@ -165,24 +165,12 @@ function getTabs(
       as: `/accounts/${account}/staking`,
       isActive: asPath == `/accounts/${account}/staking`,
     },
-    // {
-    //   name: 'Earned Fees',
-    //   href: '/accounts/[account]/[slug]',
-    //   as: `/accounts/${account}/fees`,
-    //   isActive: asPath == `/accounts/${account}/fees`,
-    // },
     {
       name: 'History',
       href: '/accounts/[account]/[slug]',
       as: `/accounts/${account}/history`,
       isActive: asPath == `/accounts/${account}/history`,
     },
-    // {
-    //   name: 'Settings',
-    //   href: '/accounts/[account]/[slug]',
-    //   as: `/accounts/${account}/settings`,
-    //   isActive: asPath == `/accounts/${account}/settings`,
-    // },
   ]
   if (role == 'Orchestrator') {
     tabs.splice(0, 0, {
@@ -203,5 +191,5 @@ function getTabs(
 }
 
 AccountPage.getLayout = getLayout
-
+AccountPage.displayName = ''
 export default AccountPage

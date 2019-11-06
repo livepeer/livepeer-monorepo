@@ -99,5 +99,5 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
 }
 
 export const getLayout = page => <Layout>{page}</Layout>
-
+Layout.displayName = ''
 export default Layout
