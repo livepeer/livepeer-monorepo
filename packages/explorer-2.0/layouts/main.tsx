@@ -9,19 +9,29 @@ import Account from '../static/img/account.svg'
 import Wallet from '../static/img/wallet.svg'
 import Search from '../static/img/search.svg'
 import { useWeb3Context } from 'web3-react'
+import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
 
-export default ({ children, title = 'Livepeer Explorer' }) => {
+const Layout = ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
-
   const { account } = context
+  const [cookies, setCookie, removeCookie] = useCookies(['connector'])
+  if (cookies.connector) {
+    context.setConnector(cookies.connector)
+  }
 
   let items = [
-    { name: 'Orchestrators', href: '/', icon: Orchestrators },
+    {
+      name: 'Orchestrators',
+      href: '/',
+      icon: Orchestrators,
+      className: 'orchestrators',
+    },
     {
       name: 'Search',
       href: '/search',
       icon: Search,
+      className: 'search',
     },
     {
       name: !account ? (
@@ -34,6 +44,7 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
           </div>
         </div>
       ),
+      className: 'tour-step-1',
       href: !account ? '/connect-wallet' : '/accounts/[account]/[slug]',
       as: !account ? '/connect-wallet' : `/accounts/${account}/staking`,
       icon: !account ? Wallet : Account,
@@ -59,7 +70,7 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
             padding: '0 32px',
           }}
         >
-          Mobile support coming soon!
+          Mobile support coming soon.
         </div>
 
         <div
@@ -72,15 +83,21 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
           <Drawer items={items} />
           <Flex
             sx={{
-              width: 'calc(100% - 256px)',
               paddingLeft: 40,
               paddingRight: 40,
+              width: 'calc(100% - 256px)',
             }}
           >
-            {children}
+            <Flex sx={{ width: '100%' }} className="tour-step-6">
+              {children}
+            </Flex>
           </Flex>
         </div>
       </Styled.root>
     </>
   )
 }
+
+export const getLayout = page => <Layout>{page}</Layout>
+
+export default Layout

@@ -6,11 +6,17 @@ import theme from '../lib/theme'
 import connectors from '../lib/connectors'
 import Web3Provider from 'web3-react'
 import { ethers } from 'ethers'
+import { CookiesProvider } from 'react-cookie'
 import Web3 from 'web3'
+import Layout from '../layouts/main'
+import { withApollo } from '../lib/apollo'
 
 class MyApp extends App {
   render() {
-    const { Component, pageProps } = this.props
+    const { Component, pageProps }: any = this.props
+    const getLayout =
+      Component.getLayout || (page => <Layout children={page} />)
+
     return (
       <>
         <Head>
@@ -29,7 +35,9 @@ class MyApp extends App {
             libraryName={'web3.js'}
             web3Api={Web3}
           >
-            <Component {...pageProps} />
+            <CookiesProvider>
+              {getLayout(<Component {...pageProps} />)}
+            </CookiesProvider>
           </Web3Provider>
         </ThemeProvider>
       </>
@@ -37,4 +45,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp
+export default withApollo(MyApp)

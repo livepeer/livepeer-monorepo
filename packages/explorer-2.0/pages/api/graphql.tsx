@@ -4,9 +4,7 @@ import fetch from 'isomorphic-unfetch'
 import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools'
 import Cors from 'micro-cors'
 
-const cors = Cors({
-  allowedMethods: ['GET', 'HEAD'],
-})
+const cors = Cors()
 
 const createSchema = async () => {
   const changefeedServiceLink = new HttpLink({

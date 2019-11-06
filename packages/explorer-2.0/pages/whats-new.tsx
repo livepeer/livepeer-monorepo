@@ -2,12 +2,12 @@
 import React from 'react'
 import { jsx, Styled, Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
-import Page from '../layouts/main'
 import Spinner from '../components/Spinner'
 import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 import Card from '../components/Card'
 import moment from 'moment'
+import { getLayout } from '../layouts/main'
 
 const GET_CHANGEFEED = gql`
   {
@@ -30,11 +30,11 @@ const GET_CHANGEFEED = gql`
   }
 `
 
-export default withApollo(() => {
+const WhatsNew = () => {
   const { data, loading } = useQuery(GET_CHANGEFEED)
 
   return (
-    <Page>
+    <>
       {loading ? (
         <Flex
           sx={{
@@ -123,6 +123,10 @@ export default withApollo(() => {
           </Flex>
         </>
       )}
-    </Page>
+    </>
   )
-})
+}
+
+WhatsNew.getLayout = getLayout
+
+export default WhatsNew

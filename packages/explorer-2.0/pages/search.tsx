@@ -1,18 +1,20 @@
 /** @jsx jsx */
 import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
-import Page from '../layouts/main'
+import Page, { getLayout } from '../layouts/main'
 import Search from '../static/img/search.svg'
 import Router from 'next/router'
+import { withApollo } from '../lib/apollo'
 
 function handleSubmit(e) {
   e.preventDefault()
   const [_, input] = e.target.children
   Router.push(`/accounts/[account]/[slug]`, `/accounts/${input.value}/staking`)
 }
-export default () => {
+
+const SearchPage: any = () => {
   return (
-    <Page>
+    <>
       <Flex
         sx={{
           mt: 5,
@@ -74,6 +76,10 @@ export default () => {
           />
         </form>
       </Flex>
-    </Page>
+    </>
   )
 }
+
+SearchPage.getLayout = getLayout
+
+export default SearchPage

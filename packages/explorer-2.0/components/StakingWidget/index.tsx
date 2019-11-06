@@ -11,11 +11,11 @@ import { Account, Delegator, Transcoder, Protocol, Round } from '../../@types'
 import Banner from '../Banner'
 import Approve from '../Approve'
 import Button from '../Button'
-import Modal from '../Modal'
 import { useWeb3Context } from 'web3-react'
 import Utils from 'web3-utils'
 import Claim from '../Claim'
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
+import Router, { useRouter } from 'next/router'
 
 interface Props {
   transcoder: Transcoder
@@ -34,36 +34,25 @@ export default ({
 }: Props) => {
   const [amount, setAmount] = useState('0')
   const [action, setAction] = useState('stake')
-  const [open, setModalOpen] = useState(false)
   const context = useWeb3Context()
+  const router = useRouter()
   let roundsSinceLastClaim = 0
   let lastClaimRound: number = 0
-  if (delegator) {
+  if (delegator && delegator.lastClaimRound) {
     lastClaimRound = parseInt(delegator.lastClaimRound.id, 10)
     roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
   }
 
   return (
-    <div>
+    <div className="tour-step-7">
       {renderBanners(
         context,
         account,
         roundsSinceLastClaim,
         lastClaimRound,
-        setModalOpen,
         parseInt(currentRound.id, 10),
+        router,
       )}
-      <Modal isOpen={open} setOpen={setModalOpen}>
-        <iframe
-          sx={{
-            bg: '#323639',
-            width: '100%',
-            height: '100%',
-            border: '0',
-          }}
-          src="https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239"
-        />
-      </Modal>
       <Box
         sx={{
           width: '100%',
@@ -111,11 +100,10 @@ function renderBanners(
   account,
   roundsSinceLastClaim,
   lastClaimRound,
-  setModalOpen,
   currentRound,
+  router,
 ) {
   if (
-    context.connectorName != 'Portis' &&
     context.account &&
     account &&
     account.id.toLowerCase() == context.account.toLowerCase() &&
@@ -138,7 +126,18 @@ function renderBanners(
               />
             </div>
           }
-          button={<Button onClick={() => setModalOpen(true)}>Get LPT</Button>}
+          button={
+            <Button
+              onClick={() =>
+                Router.push(
+                  `${router.pathname}?openExchange=true`,
+                  `${router.asPath}?openExchange=true`,
+                )
+              }
+            >
+              Get LPT
+            </Button>
+          }
         />
       </>
     )
@@ -194,10 +193,7 @@ function renderBanners(
           </div>
         }
         button={
-          <Claim
-            lastClaimRound={lastClaimRound}
-            endRound={parseInt(currentRound.id, 10)}
-          >
+          <Claim lastClaimRound={lastClaimRound} endRound={currentRound}>
             Claim
           </Claim>
         }

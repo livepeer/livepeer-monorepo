@@ -2,7 +2,6 @@
 import { jsx, Styled, Flex } from 'theme-ui'
 import React from 'react'
 import ArrowRight from '../../static/img/arrow-right-long.svg'
-import Utils from 'web3-utils'
 
 export default ({ action = 'stake', amount = 0, account }) => {
   return (

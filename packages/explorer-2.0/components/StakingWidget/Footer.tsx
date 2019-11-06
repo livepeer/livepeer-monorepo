@@ -119,9 +119,6 @@ function renderUnstakeWarnings(
       </Warning>
     )
   }
-  if (!isStaked) {
-    return <Warning>One must stake before one can unstake.</Warning>
-  }
   if (delegatorStatus == 'Pending') {
     return (
       <Warning>
@@ -129,5 +126,8 @@ function renderUnstakeWarnings(
         round.
       </Warning>
     )
+  }
+  if (!isStaked) {
+    return <Warning>One must stake before one can unstake.</Warning>
   }
 }

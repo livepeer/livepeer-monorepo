@@ -9,7 +9,7 @@ export default ({ variant = 'primary', size = 'normal', ...props }) => (
       display: 'inline-block',
       textAlign: 'center',
       cursor: props.disabled ? 'not-allowed' : 'pointer',
-      lineHeight: 'inherit',
+      lineHeight: '22px',
       textDecoration: 'none',
       fontSize: '14px',
       fontWeight: '700',

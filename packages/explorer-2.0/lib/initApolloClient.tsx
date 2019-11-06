@@ -90,6 +90,7 @@ function createApolloClient(initialState = {}) {
 
   cache.writeData({
     data: {
+      tourOpen: false,
       roi: 0,
       principle: 0,
       selectedTranscoder: {

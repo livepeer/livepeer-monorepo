@@ -18,7 +18,7 @@ const theme = {
   fontSizes: [12, 14, 16, 20, 24, 32, 40, 48, 64, 96],
   fontWeights: {
     body: 400,
-    heading: 700,
+    heading: 600,
   },
   lineHeights: {
     body: 1.5,
@@ -54,6 +54,9 @@ const theme = {
         transition: 'border-color .2s',
       },
     },
+    rainbow: {
+      background: 'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)'
+    }
   },
   styles: {
     root: {
@@ -90,7 +93,7 @@ const theme = {
       fontFamily: 'body',
       fontWeight: 'body',
       lineHeight: 'body',
-      margin: 0,
+      margin: '0 0 16px',
     },
     a: {
       color: 'primary',

@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
 import React, { useState, useEffect } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 import Button from '../Button'
@@ -15,6 +15,7 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
 
 export default ({ transcoder, amount, disabled }) => {
+  const client = useApolloClient()
   const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
   const { width, height } = useWindowSize()
@@ -61,7 +62,7 @@ export default ({ transcoder, amount, disabled }) => {
       id: `${data && data.txHash}-Bond`,
     },
     ssr: false,
-    pollInterval: 2000,
+    pollInterval: 1000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })
@@ -82,6 +83,11 @@ export default ({ transcoder, amount, disabled }) => {
         onClick={async () => {
           try {
             await bond()
+            client.writeData({
+              data: {
+                tourOpen: false,
+              },
+            })
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),

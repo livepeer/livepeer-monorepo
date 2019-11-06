@@ -9,6 +9,7 @@ import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 import { useAccount } from '../hooks'
 import { useWeb3Context } from 'web3-react'
+import { getLayout } from '../layouts/main'
 
 const GET_DATA = gql`
   {
@@ -53,7 +54,7 @@ const GET_DATA = gql`
   }
 `
 
-export default withApollo(() => {
+const Index = () => {
   const context = useWeb3Context()
   const myAccount = useAccount(context.account ? context.account : '')
 
@@ -67,7 +68,7 @@ export default withApollo(() => {
   }
 
   return (
-    <Page>
+    <>
       {loading ? (
         <Flex
           sx={{
@@ -79,7 +80,7 @@ export default withApollo(() => {
           <Spinner />
         </Flex>
       ) : (
-        <>
+        <Flex sx={{ width: '100%' }}>
           <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
             <Orchestrators
               currentRound={data.currentRound[0]}
@@ -106,8 +107,12 @@ export default withApollo(() => {
               protocol={data.protocol}
             />
           </Flex>
-        </>
+        </Flex>
       )}
-    </Page>
+    </>
   )
-})
+}
+
+Index.getLayout = getLayout
+
+export default Index

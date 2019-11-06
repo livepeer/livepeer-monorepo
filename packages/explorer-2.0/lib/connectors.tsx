@@ -6,7 +6,7 @@ const {
   PortisConnector
 } = Connectors;
 
-const MetaMask = new InjectedConnector({
+const Injected = new InjectedConnector({
   supportedNetworks: [1, 4]
 });
 
@@ -19,5 +19,5 @@ const Portis = new PortisConnector({
 
 export default {
   Portis,
-  MetaMask
+  Injected
 };

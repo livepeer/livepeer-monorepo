@@ -1,16 +1,13 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import React, { useEffect, useState } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import React, { useState, useEffect } from 'react'
 import Utils from 'web3-utils'
 import Button from '../Button'
 import Modal from '../Modal'
 import Spinner from '../Spinner'
 import Broadcast from '../../static/img/wifi.svg'
 import NewTab from '../../static/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
-import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
+import { useApproveMutation } from '../../hooks'
 
 interface Props {
   amount?: string
@@ -18,64 +15,20 @@ interface Props {
 }
 
 export default ({ children, amount }: Props) => {
-  const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
-
-  const APPROVE = gql`
-    mutation approve($type: String!, $amount: String!) {
-      txHash: approve(type: $type, amount: $amount)
-    }
-  `
-
-  const GET_TRANSACTION_RECEIPT = gql`
-    query approvalEvent($id: ID!) {
-      approvalEvent(id: $id) {
-        id
-        blockNumber
-        hash
-      }
-    }
-  `
-
-  const [approve, { data }] = useMutation(APPROVE, {
-    variables: {
-      type: 'bond',
-      amount: Utils.toWei(
-        // set transfer allowance to a near inifinite amount if none is provided
-        amount ? amount : MAXIUMUM_VALUE_UINT256,
-        'ether',
-      ),
-    },
-    notifyOnNetworkStatusChange: true,
-    context: {
-      provider: context.library.currentProvider,
-      account: context.account.toLowerCase(),
-      returnTxHash: true,
-    },
-  })
-
-  let isBroadcasted = data && data.txHash
-  let isMined = false
-  let isMining = false
-
-  const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
-    variables: {
-      id: `${data && data.txHash}-Approval`,
-    },
-    ssr: false,
-    pollInterval: 2000,
-    // skip query if tx hasn't yet been broadcasted or has been mined
-    skip: !isBroadcasted || isMined,
-  })
+  const {
+    approve,
+    isBroadcasted,
+    isMined,
+    isMining,
+    txHash,
+  } = useApproveMutation()
 
   useEffect(() => {
     if (isBroadcasted) {
       setIsModalOpen(true)
     }
   }, [isBroadcasted])
-
-  isMining = transaction && !transaction.approvalEvent
-  isMined = transaction && transaction.approvalEvent
 
   return (
     <>
@@ -92,7 +45,7 @@ export default ({ children, amount }: Props) => {
       >
         {children}
       </Button>
-      {isBroadcasted && (
+      {isOpen && (
         <Modal
           isOpen={isOpen}
           setOpen={setIsModalOpen}
@@ -126,7 +79,7 @@ export default ({ children, amount }: Props) => {
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`https://etherscan.io/tx/${data.txHash}`}
+                href={`https://etherscan.io/tx/${txHash}`}
               >
                 View on Etherscan{' '}
                 <NewTab sx={{ ml: 1, width: 16, height: 16 }} />

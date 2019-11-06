@@ -2,7 +2,7 @@
 import React from 'react'
 import { jsx, Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
-import Page from '../../../layouts/main'
+import Page, { getLayout } from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import Tabs, { TabType } from '../../../components/Tabs'
@@ -41,7 +41,7 @@ const GET_DATA = gql`
   }
 `
 
-export default withApollo(() => {
+const AccountPage = () => {
   const router = useRouter()
   const context = useWeb3Context()
   const { query, asPath } = router
@@ -62,7 +62,7 @@ export default withApollo(() => {
 
   if (loading) {
     return (
-      <Page>
+      <>
         <Flex
           sx={{
             width: '100%',
@@ -72,7 +72,7 @@ export default withApollo(() => {
         >
           <Spinner />
         </Flex>
-      </Page>
+      </>
     )
   }
 
@@ -97,7 +97,7 @@ export default withApollo(() => {
   const tabs: Array<TabType> = getTabs(role, query.account.toString(), asPath)
 
   return (
-    <Page>
+    <>
       <Flex
         sx={{
           flexDirection: 'column',
@@ -149,9 +149,9 @@ export default withApollo(() => {
           />
         </Flex>
       )}
-    </Page>
+    </>
   )
-})
+}
 
 function getTabs(
   role: string,
@@ -201,3 +201,7 @@ function getTabs(
 
   return tabs
 }
+
+AccountPage.getLayout = getLayout
+
+export default AccountPage

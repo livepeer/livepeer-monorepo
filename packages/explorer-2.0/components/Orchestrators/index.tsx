@@ -135,111 +135,113 @@ export default ({ currentRound, transcoders }) => {
           {accountColumn.canFilter ? accountColumn.render('Filter') : null}
         </div>
       </Flex>
-      <table
-        sx={{
-          display: 'table',
-          width: '100%',
-          borderSpacing: '0',
-          borderCollapse: 'collapse',
-        }}
-        {...getTableProps()}
-      >
-        <thead>
-          {headerGroups.map((headerGroup, i) => (
-            <tr key={i}>
-              {headerGroup.headers.map((column: any, i) => (
-                <th
-                  sx={{
-                    pb: 1,
-                    pl: 2,
-                    textTransform: 'uppercase',
-                  }}
-                  align="left"
-                  {...column.getHeaderProps()}
-                  key={i}
-                >
-                  <span sx={{ fontSize: 0 }}>{column.render('Header')}</span>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
+      <Box>
+        <table
+          sx={{
+            display: 'table',
+            width: '100%',
+            borderSpacing: '0',
+            borderCollapse: 'collapse',
+          }}
+          {...getTableProps()}
+        >
+          <thead>
+            {headerGroups.map((headerGroup, i) => (
+              <tr key={i}>
+                {headerGroup.headers.map((column: any, i) => (
+                  <th
+                    sx={{
+                      pb: 1,
+                      pl: 2,
+                      textTransform: 'uppercase',
+                    }}
+                    align="left"
+                    {...column.getHeaderProps()}
+                    key={i}
+                  >
+                    <span sx={{ fontSize: 0 }}>{column.render('Header')}</span>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
 
-        <tbody>
-          {rows.map((row: any, rowIndex) => {
-            return (
-              prepareRow(row) || (
-                <tr
-                  {...row.getRowProps()}
-                  key={rowIndex}
-                  sx={{
-                    '&:hover': {
-                      bg: lighten('#1E2026', 0.05),
-                      '.status': {
-                        borderColor: lighten('#1E2026', 0.05),
-                      },
-                      '.orchestratorLink': {
-                        borderBottom: '1px solid',
-                        borderColor: 'text',
-                        transition: 'all .3s',
-                        '&:hover': {
-                          color: 'primary',
-                          borderColor: 'primary',
+          <tbody>
+            {rows.map((row: any, rowIndex) => {
+              return (
+                prepareRow(row) || (
+                  <tr
+                    {...row.getRowProps()}
+                    key={rowIndex}
+                    sx={{
+                      '&:hover': {
+                        bg: lighten('#1E2026', 0.05),
+                        '.status': {
+                          borderColor: lighten('#1E2026', 0.05),
+                        },
+                        '.orchestratorLink': {
+                          borderBottom: '1px solid',
+                          borderColor: 'text',
+                          transition: 'all .3s',
+                          '&:hover': {
+                            color: 'primary',
+                            borderColor: 'primary',
+                          },
                         },
                       },
-                    },
-                    '.status': {
-                      borderColor:
+                      '.status': {
+                        borderColor:
+                          rowIndex ==
+                          (data &&
+                            data.selectedTranscoder &&
+                            data.selectedTranscoder.index)
+                            ? 'surface'
+                            : 'background',
+                      },
+                      bg:
                         rowIndex ==
                         (data &&
                           data.selectedTranscoder &&
                           data.selectedTranscoder.index)
                           ? 'surface'
-                          : 'background',
-                    },
-                    bg:
-                      rowIndex ==
-                      (data &&
-                        data.selectedTranscoder &&
-                        data.selectedTranscoder.index)
-                        ? 'surface'
-                        : 'transparent',
-                  }}
-                >
-                  {row.cells.map((cell, i) => {
-                    return (
-                      <td
-                        sx={{
-                          width: i > 0 ? 'auto' : 1,
-                          fontSize: 1,
-                          pl: 2,
-                          pr: 2,
-                          py: '12px',
-                        }}
-                        {...cell.getCellProps()}
-                        onClick={() =>
-                          client.writeData({
-                            data: {
-                              selectedTranscoder: {
-                                __typename: 'Transcoder',
-                                index: rowIndex,
-                                id: row.values.id,
+                          : 'transparent',
+                    }}
+                  >
+                    {row.cells.map((cell, i) => {
+                      return (
+                        <td
+                          sx={{
+                            width: i > 0 ? 'auto' : 1,
+                            fontSize: 1,
+                            pl: 2,
+                            pr: 2,
+                            py: '12px',
+                          }}
+                          {...cell.getCellProps()}
+                          onClick={() =>
+                            client.writeData({
+                              data: {
+                                selectedTranscoder: {
+                                  __typename: 'Transcoder',
+                                  index: rowIndex,
+                                  id: row.values.id,
+                                },
                               },
-                            },
-                          })
-                        }
-                        key={i}
-                      >
-                        {renderSwitch(cell, currentRound)}
-                      </td>
-                    )
-                  })}
-                </tr>
+                            })
+                          }
+                          key={i}
+                        >
+                          {renderSwitch(cell, currentRound)}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
               )
-            )
-          })}
-        </tbody>
-      </table>
+            })}
+          </tbody>
+        </table>
+      </Box>
     </Box>
   )
 }
