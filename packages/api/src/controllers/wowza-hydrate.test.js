@@ -47,6 +47,60 @@ describe('wowzaHydrate', () => {
     })
   })
 
+  it('should correctly determine renditions and presets 15fps', () => {
+    stream.name = 'transrate'
+    stream.wowza.sourceInfo.fps = 15
+    const newStream = wowzaHydrate({ ...stream })
+    expect(newStream.presets).toEqual(['P360p25fps16x9', 'P144p25fps16x9'])
+    expect(newStream.renditions).toEqual({
+      transrate_source:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/source.m3u8',
+      transrate_360p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P360p25fps16x9.m3u8',
+      transrate_160p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P144p25fps16x9.m3u8',
+    })
+  })
+
+  it('should correctly determine renditions and presets 30fps', () => {
+    stream.name = 'transrate'
+    stream.wowza.sourceInfo.fps = 45
+    const newStream = wowzaHydrate({ ...stream })
+    expect(newStream.presets).toEqual(['P360p30fps16x9', 'P144p30fps16x9'])
+    expect(newStream.renditions).toEqual({
+      transrate_source:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/source.m3u8',
+      transrate_360p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P360p30fps16x9.m3u8',
+      transrate_160p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P144p30fps16x9.m3u8',
+    })
+  })
+
+  it('should correctly determine renditions and presets 30fps', () => {
+    stream.name = 'width_height_test'
+    stream.wowza.sourceInfo.fps = 50
+    const newStream = wowzaHydrate({ ...stream })
+    expect(newStream.presets).toEqual([
+      'P720p60fps16x9',
+      'P360p30fps16x9',
+      'P240p30fps16x9',
+      'P144p30fps16x9',
+    ])
+    expect(newStream.renditions).toEqual({
+      width_height_test_source:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/source.m3u8',
+      width_height_test_720p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P720p60fps16x9.m3u8',
+      width_height_test_360p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P360p30fps16x9.m3u8',
+      width_height_test_240p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P240p30fps16x9.m3u8',
+      width_height_test_160p:
+        '/stream/de7818e7-610a-4057-8f6f-b785dc1e6f88/P144p30fps16x9.m3u8',
+    })
+  })
+
   it('should correctly substitute heights widths to correct value', () => {
     stream.wowza.sourceInfo.fps = 30
     stream.name = 'width_height_test'

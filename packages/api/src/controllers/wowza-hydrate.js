@@ -43,7 +43,6 @@ export default stream => {
   let presets = []
   const encodeNameToRenditionName = {}
   const aspectRatio = sourceInfo.width / sourceInfo.height
-  const fps = sourceInfo.fps
   for (const encode of enabledEncodes) {
     let { width, height, name, streamName, videoCodec } = encode
     let renditionName = replaceStreamName(streamName, stream.name)
@@ -62,22 +61,25 @@ export default stream => {
     // TODO: do we need to validate whether or not the incoming height/width fit the aspect ratio?
 
     const wowzaSize = width * height
+    const wowzaFps = sourceInfo.fps
     let diff = Infinity
+    let fpsDiff = Infinity
     let foundPreset = null
+
     for (const preset of PRESETS) {
       const [livepeerWidth, livepeerHeight] = preset.resolution
         .split('x')
         .map(x => parseInt(x))
       const livepeerSize = livepeerWidth * livepeerHeight
       const thisDiff = Math.abs(livepeerSize - wowzaSize)
-      if (thisDiff < diff && fps == preset.framerate) {
-        // TODO : need to account for when framerate isn't found in VIDEO_PRESETS.
-        // - However, if we'll implement long-term solution soon after this, like enabling full transcoder
-        //   configurability throughout the network, perhaps don't have to, since only Camcast is using this.
+      const thisFpsDiff = Math.abs(preset.framerate - wowzaFps)
+      if (thisDiff < diff || (thisDiff == diff && thisFpsDiff < fpsDiff)) {
         foundPreset = preset.name
         diff = thisDiff
+        fpsDiff = thisFpsDiff
       }
     }
+
     if (!foundPreset) {
       throw new Error(
         `couldn't find Livepeer preset for Wowza encode: ${JSON.stringify(
