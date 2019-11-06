@@ -11,21 +11,31 @@ import ToggleCard from '../components/ToggleCard'
 import Button from '../components/Button'
 import { getLayout } from '../layouts/main'
 import { useCookies } from 'react-cookie'
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+
+const GET_TOUR_OPEN = gql`
+  {
+    tourOpen @client
+  }
+`
 
 const ConnectWallet = () => {
+  const client = useApolloClient()
   const context = useWeb3Context()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
   const [cookies, setCookie] = useCookies(['connector'])
+  const { data } = useQuery(GET_TOUR_OPEN)
 
   // Redirect to user's account upon connection to web3
-  // useEffect(() => {
-  //   if (context.account) {
-  //     Router.push(
-  //       `/accounts/[account]/[slug]`,
-  //       `/accounts/${context.account}/staking`,
-  //     )
-  //   }
-  // }, [context.account])
+  useEffect(() => {
+    if (context.account && !data.tourOpen) {
+      Router.push(
+        `/accounts/[account]/[slug]`,
+        `/accounts/${context.account}/staking`,
+      )
+    }
+  }, [context.account])
 
   return (
     <>
