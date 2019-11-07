@@ -9,10 +9,10 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@graphprotocol/graph-cli@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-cli/-/graph-cli-0.15.0.tgz#85bad509a55e212c2dc8f3e5113cdfc6323224d8"
-  integrity sha512-7wfHRDDxKbOrcp9c71dxqDIYviKPyDvApD1oC51fOWLsm6aFe9mFmZDfF3jp+hIeYvSX6dBwakNAphsX9cc1jA==
+"@graphprotocol/graph-cli@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-cli/-/graph-cli-0.16.0.tgz#0829a42a2ec4c122fbdb8bfb482b74e0d27db935"
+  integrity sha512-tTpJc9waeRPzhF/aeWxu4jGW7GonVTQBeubTGVC6B2oFHpADXrQdthPgpmtThexXGHk46q14bHLuiSEm6ZBpkw==
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
     chalk "^2.4.1"
@@ -34,10 +34,10 @@
   optionalDependencies:
     keytar "^4.6.0"
 
-"@graphprotocol/graph-ts@^0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.15.1.tgz#d6cc85197e45dda9bb4083654c183470ff23333e"
-  integrity sha512-l5veH44ULpKq1kLudbfJctgxLaLpnLnYiDIIZn+N8UC1SrpqjLhJyRMfm+uH4xTglmAwI74wyynKWktXp44/iw==
+"@graphprotocol/graph-ts@^0.16.10":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.16.0.tgz#a6f5e8a39b7d651887c80bb2422cfb3a0fbf55d7"
+  integrity sha512-zDhlIYlzE0xq5cJkF6fGwshfPR2z6rRZetNCgEclAtDv1uPSQaPQJuiIWL2hpTMjYHLX2OSNxy8F1G69jC708A==
   dependencies:
     assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
 
@@ -167,19 +167,7 @@ asn1@~0.2.3:
 
 "assemblyscript@git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3":
   version "0.6.0"
-  uid "36040d5b5312f19a025782b5e36663823494c2f3"
   resolved "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
-  dependencies:
-    "@protobufjs/utf8" "^1.1.0"
-    binaryen "77.0.0-nightly.20190407"
-    glob "^7.1.3"
-    long "^4.0.0"
-    opencollective-postinstall "^2.0.0"
-    source-map-support "^0.5.11"
-
-"assemblyscript@https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3":
-  version "0.6.0"
-  resolved "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
     binaryen "77.0.0-nightly.20190407"

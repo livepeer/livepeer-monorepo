@@ -24,14 +24,12 @@ type Transcoder @entity {
   pendingPricePerSegment: BigInt
   "Total tokens delegated toward a transcoder (including their own)"
   totalStake: BigInt
-  "The accrued fees claimed by the transcoder (before distribution to delegators)"
-  accruedFees: BigInt
   "The pools associated with the transcoder"
   pools: [Pool!] @derivedFrom(field: "delegate")
   "The delegators bonded to the transcoder"
   delegators: [Delegator!]
   "The delegator that registered as a transcoder"
-  delegator: Delegator!
+  delegator: Delegator
 }
 
 """
@@ -84,7 +82,7 @@ type Delegator @entity {
   "The ETH address of the delegate (the one whom the delegator has bonded to)"
   delegate: Transcoder
   "The round the delegator becomes bonded and delegated to its delegate"
-  startRound: Int
+  startRound: BigInt
   "The last round that the delegator claimed reward and fee pool shares"
   lastClaimRound: Round
   "The amount of Livepeer Token a delegator currently has bonded"
@@ -126,7 +124,7 @@ type UnbondingLock @entity {
   "The amount being unbonded"
   amount: BigInt!
   "Round number when the unbonding amount will be available for withdrawal"
-  withdrawRound: Int
+  withdrawRound: BigInt
 }
 
 interface Transaction {
@@ -167,7 +165,7 @@ type UnbondEvent implements Transaction @entity {
   to: String
   round: Round
   amount: BigInt
-  withdrawRound: Int
+  withdrawRound: BigInt
   unbondingLockId: Int
   delegate: Transcoder
   delegator: Delegator

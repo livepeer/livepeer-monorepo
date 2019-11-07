@@ -31,23 +31,24 @@ let roundsManager = RoundsManager.bind(
 
 export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
-  let transcoderAddress = event.params.newDelegate
+  let newDelegateAddress = event.params.newDelegate
+  let oldDelegateAddress = event.params.oldDelegate
   let delegatorAddress = event.params.delegator
   let additionalAmount = event.params.additionalAmount
   let transcoderTotalStake = bondingManager.transcoderTotalStake(
-    transcoderAddress
+    newDelegateAddress
   )
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let transcoder = Transcoder.load(newDelegateAddress.toHex())
   if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
+    transcoder = new Transcoder(newDelegateAddress.toHex())
   }
 
-  let delegate = Delegator.load(transcoderAddress.toHex())
+  let delegate = Delegator.load(newDelegateAddress.toHex())
   if (delegate == null) {
-    delegate = new Delegator(transcoderAddress.toHex())
+    delegate = new Delegator(newDelegateAddress.toHex())
   }
 
   let delegator = Delegator.load(delegatorAddress.toHex())
@@ -59,15 +60,20 @@ export function bond(event: Bond): void {
     transcoder.delegators = new Array<string>()
   }
 
+  // If self delegating, assign reference to self
+  if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
+    transcoder.delegator = delegatorAddress.toHex()
+  }
+
   // Changing delegate
   if (
     delegator.delegate != null &&
-    delegator.delegate != transcoderAddress.toHex()
+    oldDelegateAddress.toHex() != newDelegateAddress.toHex()
   ) {
-    let oldTranscoder = Transcoder.load(delegator.delegate)
-    let oldDelegate = Delegator.load(delegator.delegate)
+    let oldTranscoder = Transcoder.load(oldDelegateAddress.toHex())
+    let oldDelegate = Delegator.load(oldDelegateAddress.toHex())
     let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
-      Address.fromString(oldTranscoder.id)
+      oldDelegateAddress
     )
 
     oldTranscoder.totalStake = oldTranscoderTotalStake
@@ -95,11 +101,11 @@ export function bond(event: Bond): void {
   transcoder.totalStake = transcoderTotalStake
   delegate.delegatedAmount = transcoderTotalStake
 
-  delegator.delegate = transcoderAddress.toHex()
+  delegator.delegate = newDelegateAddress.toHex()
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.startRound = delegatorData.value4.toI32()
+  delegator.startRound = delegatorData.value4
   delegator.principal = delegator.principal.plus(additionalAmount)
 
   delegate.save()
@@ -116,8 +122,8 @@ export function bond(event: Bond): void {
   bondEvent.from = event.transaction.from.toHex()
   bondEvent.to = event.transaction.to.toHex()
   bondEvent.round = currentRound.toString()
-  bondEvent.newDelegate = transcoderAddress.toHex()
-  bondEvent.oldDelegate = event.params.oldDelegate.toHex()
+  bondEvent.newDelegate = newDelegateAddress.toHex()
+  bondEvent.oldDelegate = oldDelegateAddress.toHex()
   bondEvent.delegator = delegatorAddress.toHex()
   bondEvent.additionalAmount = additionalAmount
   bondEvent.save()
@@ -161,7 +167,7 @@ export function unbond(event: Unbond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.startRound = delegatorData.value4.toI32()
+  delegator.startRound = delegatorData.value4
   delegator.unbonded = delegator.unbonded.plus(amount)
 
   // Delegator no longer delegated to anyone if it does not have a bonded amount
@@ -181,7 +187,7 @@ export function unbond(event: Unbond): void {
   unbondingLock.unbondingLockId = unbondingLockId.toI32()
   unbondingLock.delegator = delegatorAddress.toHex()
   unbondingLock.delegate = delegateAddress.toHex()
-  unbondingLock.withdrawRound = withdrawRound.toI32()
+  unbondingLock.withdrawRound = withdrawRound
   unbondingLock.amount = amount
 
   // Apply store updates
@@ -228,7 +234,7 @@ export function rebond(event: Rebond): void {
   // update delegator
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   delegator.delegate = delegateAddress.toHex()
-  delegator.startRound = delegatorData.value4.toI32()
+  delegator.startRound = delegatorData.value4
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1

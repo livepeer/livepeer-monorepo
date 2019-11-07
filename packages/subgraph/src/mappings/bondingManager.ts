@@ -216,6 +216,11 @@ export function bond(event: Bond): void {
     transcoder.delegators = new Array<string>()
   }
 
+  // If self delegating, assign reference to self
+  if (delegatorAddress.toHex() == transcoderAddress.toHex()) {
+    transcoder.delegator = delegatorAddress.toHex()
+  }
+
   // Changing delegate
   if (
     delegator.delegate != null &&
@@ -270,7 +275,7 @@ export function bond(event: Bond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.startRound = delegatorData.value4.toI32()
+  delegator.startRound = delegatorData.value4
   delegator.principal = delegator.principal.plus(additionalAmount)
 
   delegate.save()
@@ -332,7 +337,7 @@ export function unbond(event: Unbond): void {
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
-  delegator.startRound = delegatorData.value4.toI32()
+  delegator.startRound = delegatorData.value4
   delegator.unbonded = delegator.unbonded.plus(delegatorData.value0)
 
   // Apply store updates
@@ -351,7 +356,7 @@ export function unbond(event: Unbond): void {
   unbondEvent.to = event.transaction.to.toHex()
   unbondEvent.round = currentRound.toString()
   unbondEvent.amount = delegatorData.value0
-  unbondEvent.withdrawRound = delegatorData.value5.toI32()
+  unbondEvent.withdrawRound = delegatorData.value5
   unbondEvent.delegate = transcoderAddress
   unbondEvent.delegator = delegatorAddress.toHex()
   unbondEvent.save()
