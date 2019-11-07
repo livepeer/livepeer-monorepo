@@ -2,7 +2,7 @@
 import React from 'react'
 import { jsx, Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
-import Page, { getLayout } from '../../../layouts/main'
+import { getLayout } from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import Tabs, { TabType } from '../../../components/Tabs'
@@ -11,8 +11,7 @@ import StakingWidget from '../../../components/StakingWidget'
 import TokenholdersView from '../../../components/TokenholdersView'
 import CampaignView from '../../../components/CampaignView'
 import StakingView from '../../../components/StakingView'
-import { withApollo } from '../../../lib/apollo'
-import { Transcoder, Delegator, Protocol, Round } from '../../../@types'
+import { Transcoder, Protocol, Round } from '../../../@types'
 import Spinner from '../../../components/Spinner'
 import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
@@ -130,11 +129,8 @@ const AccountPage = () => {
         <Flex
           sx={{
             alignSelf: 'flex-start',
-            borderRadius: 2,
-            justifyContent: 'center',
-            minHeight: 300,
             position: 'sticky',
-            top: 4,
+            top: 5,
             width: '30%',
           }}
         >

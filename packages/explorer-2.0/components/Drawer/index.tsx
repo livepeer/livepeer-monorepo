@@ -21,6 +21,12 @@ export default ({ items = [] }) => {
   const [cookies, setCookie, removeCookie] = useCookies(['connector'])
 
   useEffect(() => {
+    if (cookies.connector) {
+      context.setConnector(cookies.connector)
+    }
+  }, [cookies])
+
+  useEffect(() => {
     if (query && query.openExchange) {
       setOpen(true)
     } else {
@@ -98,11 +104,11 @@ export default ({ items = [] }) => {
                 </a>
               </Link>
             ))}
-            <StakingGuide>Staking Guide</StakingGuide>
+            {/* <StakingGuide>Staking Guide</StakingGuide> */}
           </Box>
           <div sx={{ mb: 3 }}>
             <div sx={{ mb: 2 }}>
-              <Link href="/whats-new" passHref>
+              <Link href="/whats-new" as="/whats-new" passHref>
                 <a
                   sx={{
                     display: 'flex',
@@ -176,8 +182,8 @@ export default ({ items = [] }) => {
             </div>
             {context.active && (
               <div
-                onClick={async () => {
-                  await removeCookie('connector')
+                onClick={() => {
+                  removeCookie('connector', { path: '/' })
                   context.unsetConnector()
                 }}
                 sx={{

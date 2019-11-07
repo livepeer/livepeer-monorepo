@@ -15,21 +15,19 @@ import { ethers } from 'ethers'
 const Layout = ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
   const { account } = context
-  const [cookies, setCookie, removeCookie] = useCookies(['connector'])
-  if (cookies.connector) {
-    context.setConnector(cookies.connector)
-  }
 
   let items = [
     {
       name: 'Orchestrators',
       href: '/',
+      as: '/',
       icon: Orchestrators,
       className: 'orchestrators',
     },
     {
       name: 'Search',
       href: '/search',
+      as: '/search',
       icon: Search,
       className: 'search',
     },

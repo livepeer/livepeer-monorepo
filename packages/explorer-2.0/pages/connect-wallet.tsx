@@ -82,7 +82,7 @@ const ConnectWallet = () => {
             className="connectWalletButton"
             sx={{ mb: 4 }}
             onClick={async () => {
-              setCookie('connector', selectedProvider)
+              setCookie('connector', selectedProvider, { path: '/' })
               await context.setConnector(selectedProvider)
               Router.push('/connect-wallet?connected=true')
             }}
