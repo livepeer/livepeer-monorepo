@@ -15,8 +15,8 @@
     "deploy-stage": "graph deploy livepeer/livepeer-canary --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.15.0",
-    "@graphprotocol/graph-ts": "^0.15.1"
+    "@graphprotocol/graph-cli": "^0.16.0",
+    "@graphprotocol/graph-ts": "^0.16.10"
   },
   "workspaces": {
     "packages": [
