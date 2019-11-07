@@ -132,7 +132,10 @@ export default ({ items = [] }) => {
             <div sx={{ mb: 2 }} className="tour-step-3">
               <Link
                 href={`${pathname}?openExchange=true`}
-                as={`${asPath}?openExchange=true`}
+                as={`${asPath +
+                  (Object.keys(query).length
+                    ? '&openExchange=true'
+                    : '?openExchange=true')}`}
                 passHref
               >
                 <a

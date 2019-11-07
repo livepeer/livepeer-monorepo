@@ -21,7 +21,6 @@ const GET_TOUR_OPEN = gql`
 `
 
 const ConnectWallet = () => {
-  const client = useApolloClient()
   const context = useWeb3Context()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
   const [cookies, setCookie] = useCookies(['connector'])
@@ -29,13 +28,22 @@ const ConnectWallet = () => {
 
   // Redirect to user's account upon connection to web3
   useEffect(() => {
-    if (context.account && !data.tourOpen) {
+    if (context.active && !data.tourOpen) {
       Router.push(
         `/accounts/[account]/[slug]`,
         `/accounts/${context.account}/staking`,
       )
     }
   }, [context.account])
+
+  // If product tour is open continue the tour upon connection to web3
+  useEffect(() => {
+    if (data.tourOpen && context.active) {
+      Router.push('/connect-wallet?connected=true')
+    } else {
+      context.unsetConnector()
+    }
+  }, [context.active, cookies.connector])
 
   return (
     <>
@@ -82,9 +90,14 @@ const ConnectWallet = () => {
             className="connectWalletButton"
             sx={{ mb: 4 }}
             onClick={async () => {
-              setCookie('connector', selectedProvider, { path: '/' })
-              await context.setConnector(selectedProvider)
-              Router.push('/connect-wallet?connected=true')
+              try {
+                await context.setConnector(selectedProvider, {
+                  suppressAndThrowErrors: true,
+                })
+                setCookie('connector', selectedProvider, { path: '/' })
+              } catch (e) {
+                console.warn(e)
+              }
             }}
           >
             Connect
