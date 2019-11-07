@@ -104,7 +104,7 @@ export default ({ items = [] }) => {
                 </a>
               </Link>
             ))}
-            {/* <StakingGuide>Staking Guide</StakingGuide> */}
+            <StakingGuide>Staking Guide</StakingGuide>
           </Box>
           <div sx={{ mb: 3 }}>
             <div sx={{ mb: 2 }}>
