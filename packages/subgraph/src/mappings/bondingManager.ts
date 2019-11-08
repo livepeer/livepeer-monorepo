@@ -182,29 +182,23 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
 
 export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
-  let transcoderAddress = event.params.delegate
+  let newDelegateAddress = event.params.delegate
   let delegatorAddress = event.params.delegator
-  let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000'
-  )
+
   let transcoderTotalStake = bondingManager.transcoderTotalStake(
-    transcoderAddress
+    newDelegateAddress
   )
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  // Deprecated event always emits an empty old transcoder / delegate address
-  let oldTranscoder = new Transcoder(EMPTY_ADDRESS.toHex())
-  let oldDelegate = new Delegator(EMPTY_ADDRESS.toHex())
-
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let transcoder = Transcoder.load(newDelegateAddress.toHex())
   if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
+    transcoder = new Transcoder(newDelegateAddress.toHex())
   }
 
-  let delegate = Delegator.load(transcoderAddress.toHex())
+  let delegate = Delegator.load(newDelegateAddress.toHex())
   if (delegate == null) {
-    delegate = new Delegator(transcoderAddress.toHex())
+    delegate = new Delegator(newDelegateAddress.toHex())
   }
 
   let delegator = Delegator.load(delegatorAddress.toHex())
@@ -217,17 +211,17 @@ export function bond(event: Bond): void {
   }
 
   // If self delegating, assign reference to self
-  if (delegatorAddress.toHex() == transcoderAddress.toHex()) {
+  if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
     transcoder.delegator = delegatorAddress.toHex()
   }
 
   // Changing delegate
   if (
     delegator.delegate != null &&
-    delegator.delegate != transcoderAddress.toHex()
+    delegator.delegate != newDelegateAddress.toHex()
   ) {
-    oldTranscoder = Transcoder.load(delegator.delegate) as Transcoder
-    oldDelegate = Delegator.load(delegator.delegate) as Delegator
+    let oldTranscoder = Transcoder.load(delegator.delegate) as Transcoder
+    let oldDelegate = Delegator.load(delegator.delegate) as Delegator
 
     let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
       Address.fromString(oldTranscoder.id)
@@ -238,7 +232,7 @@ export function bond(event: Bond): void {
 
     // remove from old transcoder's array of delegators
     let oldTranscoderDelegators = oldTranscoder.delegators
-    if (oldTranscoderDelegators != null) {
+    if (oldTranscoderDelegators.length) {
       let i = oldTranscoderDelegators.indexOf(delegatorAddress.toHex())
       oldTranscoderDelegators.splice(i, 1)
       oldTranscoder.delegators = oldTranscoderDelegators
@@ -271,7 +265,7 @@ export function bond(event: Bond): void {
     )
   }
 
-  delegator.delegate = transcoderAddress.toHex()
+  delegator.delegate = newDelegateAddress.toHex()
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
@@ -292,8 +286,7 @@ export function bond(event: Bond): void {
   bondEvent.from = event.transaction.from.toHex()
   bondEvent.to = event.transaction.to.toHex()
   bondEvent.round = currentRound.toString()
-  bondEvent.newDelegate = transcoderAddress.toHex()
-  bondEvent.oldDelegate = oldTranscoder.id
+  bondEvent.newDelegate = newDelegateAddress.toHex()
   bondEvent.additionalAmount = additionalAmount
   bondEvent.save()
 }

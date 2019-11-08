@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, store, BigInt } from '@graphprotocol/graph-ts'
+import { Address, store, BigInt, log } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -40,6 +40,9 @@ export function bond(event: Bond): void {
   )
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let EMPTY_ADDRESS = Address.fromString(
+    '0000000000000000000000000000000000000000'
+  )
 
   let transcoder = Transcoder.load(newDelegateAddress.toHex())
   if (transcoder == null) {
@@ -67,7 +70,7 @@ export function bond(event: Bond): void {
 
   // Changing delegate
   if (
-    delegator.delegate != null &&
+    oldDelegateAddress.toHex() != EMPTY_ADDRESS.toHex() &&
     oldDelegateAddress.toHex() != newDelegateAddress.toHex()
   ) {
     let oldTranscoder = Transcoder.load(oldDelegateAddress.toHex())
@@ -81,7 +84,7 @@ export function bond(event: Bond): void {
 
     // remove from old transcoder's array of delegators
     let oldTranscoderDelegators = oldTranscoder.delegators
-    if (oldTranscoderDelegators != null) {
+    if (oldTranscoderDelegators.length) {
       let i = oldTranscoderDelegators.indexOf(delegatorAddress.toHex())
       oldTranscoderDelegators.splice(i, 1)
       oldTranscoder.delegators = oldTranscoderDelegators
