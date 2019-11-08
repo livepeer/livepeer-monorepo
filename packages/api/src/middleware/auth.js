@@ -8,7 +8,7 @@ import uuid from 'uuid/v4'
  * @param {object} res res object
  * @param {fn} next callback
  */
-async function generateToken(req, res, next) {
+async function generateUserAndToken(req, res, next) {
   // For the autogen case,
   // we want the token in the database to match up with what they provided in the token field,
   // so id should be req.token.
@@ -20,11 +20,22 @@ async function generateToken(req, res, next) {
   }
 
   try {
+    const userId = uuid()
+    await req.store.create({
+      id: userId,
+      name: '',
+      email: '',
+      domain: '',
+      kind: 'user',
+    })
+
     await req.store.create({
       id,
       kind: 'apitoken',
-      userId: '',
+      userId: userId,
     })
+    const user = await req.store.get(`user/${userId}`)
+    req.user = user
   } catch (error) {
     console.error(error)
     throw error
@@ -92,7 +103,7 @@ function authFactory(params) {
     logger.info('authFactory params ', params)
     let tokenObject
     try {
-      // check token against token DB
+      // if tokenObject does not exist, create tokenObject and user
       tokenObject = await req.store.get(`apitoken/${req.token}`)
     } catch (e) {
       if (e.type !== 'NotFoundError') {
@@ -100,22 +111,28 @@ function authFactory(params) {
       }
 
       logger.warn('api Token not found... generating one')
-      tokenObject = await generateToken(req, res, next)
+      tokenObject = await generateUserAndToken(req, res, next)
     }
-
-    if (tokenObject) {
-      // if apiToken provided, get or create user with apiToken as user `id`
+    if (tokenObject && !tokenObject.userId) {
+      // if tokenObject exists, but no userId, create user and add userId to tokenObject
       try {
-        const user = await getUserWithApiToken(req, tokenObject)
-        req.user = user
-        if (tokenObject.userId == '') {
-          const newTokenObject = {
-            id: tokenObject.id,
-            kind: 'apitoken',
-            userId: user.id,
-          }
-          await req.store.replace(newTokenObject)
+        const userId = uuid()
+        await req.store.create({
+          id: userId,
+          name: '',
+          email: '',
+          domain: '',
+          kind: 'user',
+        })
+
+        const newTokenObject = {
+          id: tokenObject.id,
+          kind: 'apitoken',
+          userId: userId,
         }
+        await req.store.replace(newTokenObject)
+        const user = await req.store.get(`user/${tokenObject.userId}`)
+        req.user = user
       } catch (error) {
         console.log(error)
         res.status(403)
@@ -124,29 +141,6 @@ function authFactory(params) {
     }
     return next()
   }
-}
-
-async function getUserWithApiToken(req, tokenObject) {
-  var user
-  try {
-    user = await req.store.get(`user/${tokenObject.userId}`)
-  } catch (error) {
-    if (error.type !== 'NotFoundError') {
-      console.log(error)
-      throw error
-    }
-    const userId = tokenObject.userId == '' ? uuid() : tokenObject.userId
-    await req.store.create({
-      id: userId,
-      name: '',
-      email: '',
-      domain: '',
-      kind: 'user',
-    })
-    user = await req.store.get(`user/${userId}`)
-  }
-
-  return user
 }
 
 async function getUserWithGoogleAuth(req, res, next) {

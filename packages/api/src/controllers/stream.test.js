@@ -3,22 +3,22 @@ import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
 
 let server
-let mockStream
+let postMockStream
 
 beforeAll(async () => {
   server = await serverPromise
-  mockStream = require('./wowza-hydrate.test-data.json').stream
-  delete mockStream.id
-  delete mockStream.kind
-  mockStream.presets = ['P360p30fps16x9', 'P144p30fps16x9']
-  mockStream.renditions = {
+  postMockStream = require('./wowza-hydrate.test-data.json').stream
+  delete postMockStream.id
+  delete postMockStream.kind
+  postMockStream.presets = ['P360p30fps16x9', 'P144p30fps16x9']
+  postMockStream.renditions = {
     bbb_360p:
       '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P360p30fps16x9.m3u8',
     thesource_bbb: '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/source.m3u8',
     random_prefix_bbb_160p:
       '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P144p30fps16x9.m3u8',
   }
-  mockStream.wowza.streamNameGroups = [
+  postMockStream.wowza.streamNameGroups = [
     {
       name: 'bbb_all',
       renditions: ['thesource_bbb', 'bbb_360p', 'random_prefix_bbb_160p'],
@@ -150,7 +150,7 @@ describe('controllers/stream', () => {
 
     it('should create a stream', async () => {
       await server.store.create(user)
-      const res = await client.post('/stream', { ...mockStream })
+      const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
@@ -212,7 +212,7 @@ describe('controllers/stream', () => {
     })
 
     it('should create a stream, no `token` registered', async () => {
-      const res = await client.post('/stream', { ...mockStream })
+      const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
@@ -229,48 +229,10 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(422)
     })
 
-    it('should create a stream, token with userId already registered', async () => {
-      const token = {
-        id: client.apiKey,
-        kind: 'apitoken',
-        userId: '1e1b1b11-111e-1f11-b11b-afe11df1ea11',
-      }
-      await server.store.create(token)
-      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
-      const res = await client.post('/stream', { ...mockStream })
-      expect(res.status).toBe(201)
-      const stream = await res.json()
-      expect(stream.id).toBeDefined()
-      expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test_stream')
-      expect(stream.userId).toBe(tokenObject.userId)
-      const document = await server.store.get(`stream/${stream.id}`)
-      expect(document).toEqual(stream)
-    })
-
-    it('should create a stream, token without userId already registered', async () => {
-      const token = {
-        id: client.apiKey,
-        kind: 'apitoken',
-        userId: '',
-      }
-      await server.store.create(token)
-      const res = await client.post('/stream', { ...mockStream })
-      expect(res.status).toBe(201)
-      const stream = await res.json()
-      expect(stream.id).toBeDefined()
-      expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test_stream')
-      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
-      expect(tokenObject.userId.length).toBe(36)
-      expect(stream.userId).toBe(tokenObject.userId)
-      const document = await server.store.get(`stream/${stream.id}`)
-      expect(document).toEqual(stream)
-    })
-
     it('should not accept additional properties for creating a stream', async () => {
-      mockStream.livepeer = 'livepeer'
-      const res = await client.post('/stream', { ...mockStream })
+      const postMockLivepeerStream = JSON.parse(JSON.stringify(postMockStream))
+      postMockLivepeerStream.livepeer = 'livepeer'
+      const res = await client.post('/stream', { ...postMockLivepeerStream })
       expect(res.status).toBe(422)
       const stream = await res.json()
       expect(stream.id).toBeUndefined()
