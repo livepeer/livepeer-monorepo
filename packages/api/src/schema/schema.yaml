@@ -58,11 +58,22 @@ components:
               type: array
             sourceInfo:
               type: object
+              required:
+                - width
+                - height
+                - fps
+              additionalProperties: false
+              properties:
+                width:
+                  type: integer
+                height:
+                  type: integer
+                fps:
+                  type: integer
         renditions:
           type: object
           additionalProperties:
             type: string
-        
 
     error:
       required:

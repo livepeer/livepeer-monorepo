@@ -1,8 +1,21 @@
 import wowzaHydrate from './wowza-hydrate'
 const { stream, camcastStream } = require('./wowza-hydrate.test-data.json')
-const streamWithoutTransrate = JSON.parse(JSON.stringify(stream))
-streamWithoutTransrate.wowza.transcoderAppConfig.templatesInUse =
+const streamWithoutTransrateTemplate = JSON.parse(JSON.stringify(stream))
+streamWithoutTransrateTemplate.wowza.transcoderAppConfig.templatesInUse =
   '${SourceStreamName}.xml'
+
+const streamWidthHeightTest50 = JSON.parse(JSON.stringify(stream))
+streamWidthHeightTest50.name = 'width_height_test'
+streamWidthHeightTest50.wowza.sourceInfo.fps = 50
+
+const streamTransrate = JSON.parse(JSON.stringify(stream))
+streamTransrate.name = 'transrate'
+const streamTransrate25 = JSON.parse(JSON.stringify(streamTransrate))
+streamTransrate25.wowza.sourceInfo.fps = 25
+const streamTransrate15 = JSON.parse(JSON.stringify(streamTransrate))
+streamTransrate15.wowza.sourceInfo.fps = 15
+const streamTransrate45 = JSON.parse(JSON.stringify(streamTransrate))
+streamTransrate45.wowza.sourceInfo.fps = 45
 
 describe('wowzaHydrate', () => {
   it('should correctly determine renditions and presets 30fps', () => {
@@ -19,8 +32,7 @@ describe('wowzaHydrate', () => {
   })
 
   it('should correctly determine renditions and presets with different stream name', () => {
-    stream.name = 'transrate'
-    const newStream = wowzaHydrate({ ...stream })
+    const newStream = wowzaHydrate({ ...streamTransrate })
     expect(newStream.presets).toEqual(['P360p30fps16x9', 'P144p30fps16x9'])
     expect(newStream.renditions).toEqual({
       transrate_source:
@@ -33,9 +45,7 @@ describe('wowzaHydrate', () => {
   })
 
   it('should correctly determine renditions and presets 25fps', () => {
-    stream.name = 'transrate'
-    stream.wowza.sourceInfo.fps = 25
-    const newStream = wowzaHydrate({ ...stream })
+    const newStream = wowzaHydrate({ ...streamTransrate25 })
     expect(newStream.presets).toEqual(['P360p25fps16x9', 'P144p25fps16x9'])
     expect(newStream.renditions).toEqual({
       transrate_source:
@@ -48,9 +58,7 @@ describe('wowzaHydrate', () => {
   })
 
   it('should correctly determine renditions and presets 15fps', () => {
-    stream.name = 'transrate'
-    stream.wowza.sourceInfo.fps = 15
-    const newStream = wowzaHydrate({ ...stream })
+    const newStream = wowzaHydrate({ ...streamTransrate15 })
     expect(newStream.presets).toEqual(['P360p25fps16x9', 'P144p25fps16x9'])
     expect(newStream.renditions).toEqual({
       transrate_source:
@@ -63,9 +71,7 @@ describe('wowzaHydrate', () => {
   })
 
   it('should correctly determine renditions and presets 30fps', () => {
-    stream.name = 'transrate'
-    stream.wowza.sourceInfo.fps = 45
-    const newStream = wowzaHydrate({ ...stream })
+    const newStream = wowzaHydrate({ ...streamTransrate45 })
     expect(newStream.presets).toEqual(['P360p30fps16x9', 'P144p30fps16x9'])
     expect(newStream.renditions).toEqual({
       transrate_source:
@@ -78,9 +84,7 @@ describe('wowzaHydrate', () => {
   })
 
   it('should correctly determine renditions and presets 30fps', () => {
-    stream.name = 'width_height_test'
-    stream.wowza.sourceInfo.fps = 50
-    const newStream = wowzaHydrate({ ...stream })
+    const newStream = wowzaHydrate({ ...streamWidthHeightTest50 })
     expect(newStream.presets).toEqual([
       'P720p60fps16x9',
       'P360p30fps16x9',
@@ -127,9 +131,9 @@ describe('wowzaHydrate', () => {
 
   it('should fail if stream name does not equal any template name', () => {
     let message
-    streamWithoutTransrate.name = 'fake_name'
+    streamWithoutTransrateTemplate.name = 'fake_name'
     try {
-      const newStream = wowzaHydrate({ ...streamWithoutTransrate })
+      const newStream = wowzaHydrate({ ...streamWithoutTransrateTemplate })
     } catch (e) {
       message = e.message
     }
@@ -162,10 +166,10 @@ describe('wowzaHydrate', () => {
   it('should handle duplicate stream cases', () => {
     const newStream = wowzaHydrate({ ...camcastStream })
     expect(newStream.presets).toEqual([
-      'P720p30fps16x9',
-      'P360p30fps16x9',
+      'P720p25fps16x9',
+      'P360p25fps16x9',
       'P360p30fps4x3',
-      'P144p30fps16x9',
+      'P144p25fps16x9',
     ])
   })
 })
