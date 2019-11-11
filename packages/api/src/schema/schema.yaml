@@ -16,6 +16,7 @@ components:
         - kind
         - name
         - presets
+        - renditions
       additionalProperties: false
       properties:
         id:
@@ -46,6 +47,7 @@ components:
             - transcoderAppConfig
             - transcoderTemplateAppConfig
             - streamNameGroups
+            - sourceInfo
           additionalProperties: false
           properties:
             transcoderAppConfig:
@@ -56,6 +58,23 @@ components:
               type: object
             streamNameGroups:
               type: array
+            sourceInfo:
+              type: object
+              required:
+                - width
+                - height
+                - fps
+              additionalProperties: false
+              properties:
+                width:
+                  type: integer
+                  minValue: 1
+                height:
+                  type: integer
+                  minValue: 1
+                fps:
+                  type: integer
+                  minVallue: 1
         renditions:
           type: object
           additionalProperties:
