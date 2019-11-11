@@ -37,7 +37,7 @@
     "@cloudflare/json-schema-walker": "^0.1.1",
     "@cloudflare/kv-asset-handler": "^0.0.5",
     "@kubernetes/client-node": "^0.10.2",
-    "@livepeer/sdk": "1.0.0-alpha.6",
+    "@livepeer/sdk": "1.0.0-alpha.7",
     "ajv": "^6.10.0",
     "any-base": "^1.1.0",
     "aws-serverless-express": "^3.3.6",
