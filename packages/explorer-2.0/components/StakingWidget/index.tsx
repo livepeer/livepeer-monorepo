@@ -115,7 +115,7 @@ function renderBanners(
           label={
             <div sx={{ pr: 3, flex: 1 }}>
               Get Livepeer tokens for staking.
-              <Help
+              {/* <Help
                 sx={{
                   position: 'relative',
                   ml: 1,
@@ -123,7 +123,7 @@ function renderBanners(
                   width: 12,
                   height: 12,
                 }}
-              />
+              /> */}
             </div>
           }
           button={
@@ -155,7 +155,7 @@ function renderBanners(
         label={
           <div sx={{ pr: 3 }}>
             Approve Livepeer tokens for staking.
-            <Help
+            {/* <Help
               sx={{
                 position: 'relative',
                 ml: 1,
@@ -163,7 +163,7 @@ function renderBanners(
                 width: 12,
                 height: 12,
               }}
-            />
+            /> */}
           </div>
         }
         button={<Approve>Approve</Approve>}
@@ -181,7 +181,7 @@ function renderBanners(
         label={
           <div sx={{ pr: 3 }}>
             It's been over 100 rounds since your last claim.
-            <Help
+            {/* <Help
               sx={{
                 position: 'relative',
                 ml: 1,
@@ -189,7 +189,7 @@ function renderBanners(
                 width: 12,
                 height: 12,
               }}
-            />
+            /> */}
           </div>
         }
         button={
