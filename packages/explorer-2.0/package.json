@@ -71,7 +71,7 @@
     "axios": "^0.19.0",
     "babel-loader": "^8.0.6",
     "ethers": "^4.0.33",
-    "graphql": "^14.4.2",
+    "graphql": "^14.0.2",
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.4",
     "graphql-type-json": "^0.3.0",
