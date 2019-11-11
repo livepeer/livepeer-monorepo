@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.7](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2019-11-11)
+
+### Bug Fixes
+
+- **api:** switch back to the hosted subgraph ([e570462](https://github.com/livepeer/livepeerjs/commit/e570462))
+- **subgraph:** point at newer hosted subgraph ([7186104](https://github.com/livepeer/livepeerjs/commit/7186104))
+- fix issue causing missing transcoders ([#435](https://github.com/livepeer/livepeerjs/issues/435)) ([feb5526](https://github.com/livepeer/livepeerjs/commit/feb5526))
+
+### Features
+
+- **api:** add api node ([#466](https://github.com/livepeer/livepeerjs/issues/466)) ([35bd77e](https://github.com/livepeer/livepeerjs/commit/35bd77e)), closes [#382](https://github.com/livepeer/livepeerjs/issues/382) [#451](https://github.com/livepeer/livepeerjs/issues/451) [#450](https://github.com/livepeer/livepeerjs/issues/450) [#463](https://github.com/livepeer/livepeerjs/issues/463)
+- **api-frontend:** introduce api-frontend ([#478](https://github.com/livepeer/livepeerjs/issues/478)) ([47f3621](https://github.com/livepeer/livepeerjs/commit/47f3621))
+
 # [1.0.0-alpha.6](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2019-05-14)
 
 - MultiMerkleMine Feature (#159) ([4d4f6cd](https://github.com/livepeer/livepeerjs/commit/4d4f6cd)), closes [#159](https://github.com/livepeer/livepeerjs/issues/159) [#149](https://github.com/livepeer/livepeerjs/issues/149) [#149](https://github.com/livepeer/livepeerjs/issues/149) [#161](https://github.com/livepeer/livepeerjs/issues/161) [#167](https://github.com/livepeer/livepeerjs/issues/167) [#166](https://github.com/livepeer/livepeerjs/issues/166) [#160](https://github.com/livepeer/livepeerjs/issues/160) [#159](https://github.com/livepeer/livepeerjs/issues/159) [#159](https://github.com/livepeer/livepeerjs/issues/159)

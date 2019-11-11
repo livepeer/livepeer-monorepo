@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.7](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2019-11-11)
+
+**Note:** Version bump only for package @livepeer/sdk
+
 # [1.0.0-alpha.6](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2019-05-14)
 
 - [READY] Added method to estimate gas in sdk (#239) ([053639d](https://github.com/livepeer/livepeerjs/commit/053639d)), closes [#239](https://github.com/livepeer/livepeerjs/issues/239) [#174](https://github.com/livepeer/livepeerjs/issues/174) [#174](https://github.com/livepeer/livepeerjs/issues/174) [#174](https://github.com/livepeer/livepeerjs/issues/174) [#174](https://github.com/livepeer/livepeerjs/issues/174) [#174](https://github.com/livepeer/livepeerjs/issues/174) [#174](https://github.com/livepeer/livepeerjs/issues/174) [#174](https://github.com/livepeer/livepeerjs/issues/174)

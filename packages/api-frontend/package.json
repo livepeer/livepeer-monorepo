@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/api-frontend",
-  "version": "2.0.0-alpha.1",
+  "version": "1.0.0-alpha.7",
   "private": true,
   "scripts": {
     "dev": "run-p dev:babel dev:next",
@@ -20,7 +20,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@livepeer/ui": "0.0.0-alpha.0",
+    "@livepeer/ui": "1.0.0-alpha.7",
     "@mdx-js/react": "^1.5.0",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",

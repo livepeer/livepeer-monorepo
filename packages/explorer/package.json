@@ -1,11 +1,11 @@
 {
   "name": "@livepeer/explorer",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "private": true,
   "main": "src/electron/main.js",
   "dependencies": {
-    "@livepeer/apollo": "1.0.0-alpha.6",
-    "@livepeer/graphql-sdk": "1.0.0-alpha.6",
+    "@livepeer/apollo": "1.0.0-alpha.7",
+    "@livepeer/graphql-sdk": "1.0.0-alpha.7",
     "apollo-cache-inmemory": "1.5.1",
     "apollo-client": "2.5.1",
     "apollo-link": "1.2.11",

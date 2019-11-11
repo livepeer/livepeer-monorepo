@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/graphql-sdk",
   "description": "A GraphQL schema that can be used to simplify protocol interactions in the browser or node.js.",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
@@ -23,7 +23,7 @@
     "lcov-badge": "lcov-badge -o coverage.svg coverage/lcov.info && sed -i .bak 's/3\"/0\"/g' coverage.svg && rm *.bak"
   },
   "dependencies": {
-    "@livepeer/sdk": "1.0.0-alpha.6",
+    "@livepeer/sdk": "1.0.0-alpha.7",
     "bn": "^1.0.1",
     "graphql": "^14.0.2",
     "graphql-subscriptions": "^1.1.0",
