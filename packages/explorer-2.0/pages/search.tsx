@@ -2,7 +2,7 @@
 import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import Page, { getLayout } from '../layouts/main'
-import Search from '../static/img/search.svg'
+import Search from '../public/img/search.svg'
 import Router from 'next/router'
 import { withApollo } from '../lib/apollo'
 

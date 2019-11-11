@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React from 'react'
 import { jsx, Flex } from 'theme-ui'
-import Close from '../../static/img/close.svg'
+import Close from '../../public/img/close.svg'
 
 export default ({ children, onClose }) => (
   <div

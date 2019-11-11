@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React, { useEffect, useState } from 'react'
 import { jsx, Flex } from 'theme-ui'
-import Play from '../../static/img/play.svg'
+import Play from '../../public/img/play.svg'
 import { useWeb3Context } from 'web3-react'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'

@@ -2,7 +2,7 @@
 import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
-import Unlink from '../../static/img/unlink.svg'
+import Unlink from '../../public/img/unlink.svg'
 import { abbreviateNumber } from '../../lib/utils'
 import { UnbondingLock } from '../../@types'
 import List from '../List'

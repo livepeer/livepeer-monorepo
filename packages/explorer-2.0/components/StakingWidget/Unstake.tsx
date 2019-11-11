@@ -8,8 +8,8 @@ import Button from '../Button'
 import Modal from '../Modal'
 import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
-import Broadcast from '../../static/img/wifi.svg'
-import NewTab from '../../static/img/open-in-new.svg'
+import Broadcast from '../../public/img/wifi.svg'
+import NewTab from '../../public/img/open-in-new.svg'
 import { useWeb3Context } from 'web3-react'
 
 export default ({ transcoder, amount, disabled }) => {

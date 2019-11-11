@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import Router, { useRouter } from 'next/router'
-import Copy from '../../static/img/copy.svg'
+import Copy from '../../public/img/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Button from '../Button'
 import { removeURLParameter } from '../../lib/utils'
