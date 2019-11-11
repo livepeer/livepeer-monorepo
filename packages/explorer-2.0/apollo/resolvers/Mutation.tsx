@@ -69,11 +69,7 @@ export async function batchClaimEarnings(obj, args, ctx) {
   for (let i = 1; i <= quotient; i++) {
     calls.push(
       bondingManager.methods.claimEarnings(
-        (
-          parseInt(lastClaimRound) +
-          1 +
-          i * MAX_EARNINGS_CLAIMS_ROUNDS
-        ).toString(),
+        (parseInt(lastClaimRound) + i * MAX_EARNINGS_CLAIMS_ROUNDS).toString(),
       ).send,
     )
   }
