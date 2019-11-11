@@ -66,10 +66,13 @@ components:
               properties:
                 width:
                   type: integer
+                  minValue: 1
                 height:
                   type: integer
+                  minValue: 1
                 fps:
                   type: integer
+                  minVallue: 1
         renditions:
           type: object
           additionalProperties:
