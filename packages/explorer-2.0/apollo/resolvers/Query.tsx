@@ -25,7 +25,7 @@ export async function protocol(_protocol, _args, ctx, _info) {
 
 export async function getTxReceiptStatus(_status, _args, ctx, _info) {
   const data = await fetch(
-    `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${_args.txHash}&apikey=ZF1UMQYPCPFXDS4MYNY5ZT42Q43APEY58V`,
+    `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${_args.txHash}&apikey=${process.env.ETHERSCAN_API_KEY}`,
   )
 
   const response = await data.json()

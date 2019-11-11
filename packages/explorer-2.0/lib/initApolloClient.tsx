@@ -17,7 +17,7 @@ import schema from '../apollo'
 
 const isProd = process.env.NODE_ENV === 'production'
 const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/name/adamsoffer/livepeer-canary'
+  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 const changefeedEndpoint = isProd ? 'https://beta.explorer.livepeer.org/api/graphql' : 'http://localhost:3009/api/graphql'
 
