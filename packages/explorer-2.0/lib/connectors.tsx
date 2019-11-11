@@ -3,8 +3,18 @@ import PortisApi from "@portis/web3";
 
 const {
   InjectedConnector,
-  PortisConnector
+  PortisConnector,
+  NetworkOnlyConnector
 } = Connectors;
+
+const supportedNetworkURLs = {
+  1: "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
+  4: "https://rinkeby.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e"
+};
+
+const Network = new NetworkOnlyConnector({
+  providerURL: supportedNetworkURLs[1]
+});
 
 const Injected = new InjectedConnector({
   supportedNetworks: [1, 4]
@@ -18,6 +28,7 @@ const Portis = new PortisConnector({
 });
 
 export default {
-  Portis,
-  Injected
+  Injected,
+  Network,
+  Portis
 };

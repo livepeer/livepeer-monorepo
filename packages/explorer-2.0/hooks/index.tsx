@@ -76,12 +76,10 @@ export function useApproveMutation(amount = null) {
     }
   `
 
-  const GET_TRANSACTION_RECEIPT = gql`
-    query approvalEvent($id: ID!) {
-      approvalEvent(id: $id) {
-        id
-        blockNumber
-        hash
+  const GET_TRANSACTION_STATUS = gql`
+    query getTxReceiptStatus($txHash: String!) {
+      getTxReceiptStatus: getTxReceiptStatus(txHash: $txHash) {
+        status
       }
     }
   `
@@ -99,18 +97,18 @@ export function useApproveMutation(amount = null) {
     },
   })
 
-  const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
+  const { data: transaction } = useQuery(GET_TRANSACTION_STATUS, {
     variables: {
-      id: `${data && data.txHash}-Approval`,
+      txHash: `${data && data.txHash}`,
     },
     ssr: false,
-    pollInterval: 1000,
+    pollInterval: 2000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !result.isBroadcasted || result.isMined,
   })
 
-  let isMining = !!(transaction && !transaction.approvalEvent)
-  let isMined = !!(transaction && transaction.approvalEvent)
+  let isMining = !!(transaction && !transaction.getTxReceiptStatus.status)
+  let isMined = !!(transaction && transaction.getTxReceiptStatus.status)
 
   useEffect(() => {
     if (approve) {

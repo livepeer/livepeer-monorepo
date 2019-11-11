@@ -12,6 +12,7 @@ import StakingGuide from '../StakingGuide'
 import Modal from '../Modal'
 import { useCookies } from 'react-cookie'
 import { removeURLParameter } from '../../lib/utils'
+import NetworkWidget from '../NetworkWidget'
 
 export default ({ items = [] }) => {
   const router = useRouter()
@@ -106,108 +107,118 @@ export default ({ items = [] }) => {
             ))}
             <StakingGuide>Staking Guide</StakingGuide>
           </Box>
-          <div sx={{ mb: 3 }}>
-            <div sx={{ mb: 2 }}>
-              <Link href="/whats-new" as="/whats-new" passHref>
-                <a
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: 1,
-                    color: 'muted',
-                    transition: 'color .3s',
-                    '&:hover': {
-                      color: 'primary',
+          <div sx={{ mb: 4 }}>
+            <div
+              sx={{
+                mb: 3,
+                pb: 3,
+                borderBottom: '1px solid',
+                borderColor: 'border',
+              }}
+            >
+              <div sx={{ mb: 2 }}>
+                <Link href="/whats-new" as="/whats-new" passHref>
+                  <a
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: 1,
+                      color: 'muted',
                       transition: 'color .3s',
-                    },
-                  }}
-                >
-                  <New
-                    sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
-                  />
-                  What's New
-                </a>
-              </Link>
-            </div>
-            <div sx={{ mb: 2 }} className="tour-step-3">
-              <Link
-                href={`${pathname}?openExchange=true`}
-                as={`${asPath +
-                  (Object.keys(query).length
-                    ? '&openExchange=true'
-                    : '?openExchange=true')}`}
-                passHref
-              >
-                <a
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: 1,
-                    color: 'muted',
-                    transition: 'color .3s',
-                    '&:hover': {
-                      color: 'primary',
-                      transition: 'color .3s',
-                    },
-                  }}
-                >
-                  <LPT
-                    sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
-                  />{' '}
-                  Get LPT
-                  <Modal
-                    className="tour-step-4"
-                    isOpen={open}
-                    sx={{ maxWidth: 600 }}
-                    onDismiss={() => {
-                      Router.push(
-                        removeURLParameter(pathname, 'openExchange'),
-                        removeURLParameter(asPath, 'openExchange'),
-                      )
+                      '&:hover': {
+                        color: 'primary',
+                        transition: 'color .3s',
+                      },
                     }}
                   >
-                    <iframe
-                      sx={{
-                        bg: '#323639',
-                        width: '100%',
-                        height: '100%',
-                        border: '0',
-                      }}
-                      src={`https://uniswap.livepeerorg.now.sh/swap/0x58b6a8a3302369daec383334672404ee733ab239?connector=${
-                        context.connectorName
-                          ? context.connectorName
-                          : 'Injected'
-                      }`}
+                    <New
+                      sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
                     />
-                  </Modal>
-                </a>
-              </Link>
-            </div>
-            {context.active && (
-              <div
-                onClick={() => {
-                  removeCookie('connector', { path: '/' })
-                  context.unsetConnector()
-                }}
-                sx={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontSize: 1,
-                  color: 'muted',
-                  transition: 'color .3s',
-                  '&:hover': {
-                    color: 'primary',
-                    transition: 'color .3s',
-                  },
-                }}
-              >
-                <Wallet
-                  sx={{ color: 'inherit', width: 18, height: 18, mr: 1 }}
-                />
-                Disconnect
+                    What's New
+                  </a>
+                </Link>
               </div>
-            )}
+              <div sx={{ mb: 2 }} className="tour-step-3">
+                <Link
+                  href={`${pathname}?openExchange=true`}
+                  as={`${asPath +
+                    (/[?&]q=/.test(asPath)
+                      ? '&openExchange=true'
+                      : '?openExchange=true')}`}
+                  passHref
+                >
+                  <a
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: 1,
+                      color: 'muted',
+                      transition: 'color .3s',
+                      '&:hover': {
+                        color: 'primary',
+                        transition: 'color .3s',
+                      },
+                    }}
+                  >
+                    <LPT
+                      sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
+                    />{' '}
+                    Get LPT
+                    <Modal
+                      className="tour-step-4"
+                      isOpen={open}
+                      sx={{ maxWidth: 600 }}
+                      onDismiss={() => {
+                        Router.push(
+                          removeURLParameter(pathname, 'openExchange'),
+                          removeURLParameter(asPath, 'openExchange'),
+                        )
+                      }}
+                    >
+                      <iframe
+                        sx={{
+                          bg: '#323639',
+                          width: '100%',
+                          height: '100%',
+                          border: '0',
+                        }}
+                        src={`https://uniswap.livepeerorg.now.sh/swap/0x58b6a8a3302369daec383334672404ee733ab239?connector=${
+                          context.connectorName
+                            ? context.connectorName
+                            : 'Injected'
+                        }`}
+                      />
+                    </Modal>
+                  </a>
+                </Link>
+              </div>
+              {context.active && (
+                <div
+                  onClick={() => {
+                    removeCookie('connector', { path: '/' })
+                    context.unsetConnector()
+                  }}
+                  sx={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 1,
+                    color: 'muted',
+                    transition: 'color .3s',
+                    '&:hover': {
+                      color: 'primary',
+                      transition: 'color .3s',
+                    },
+                  }}
+                >
+                  <Wallet
+                    sx={{ color: 'inherit', width: 18, height: 18, mr: 1 }}
+                  />
+                  Disconnect
+                </div>
+              )}
+            </div>
+            <NetworkWidget />
           </div>
         </Flex>
       </Flex>

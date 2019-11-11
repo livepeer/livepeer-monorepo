@@ -153,7 +153,7 @@ export default ({ children }) => {
           >
             <Flex
               sx={{
-                background: 'linear-gradient(180deg, #00ED6D 0%, #2C785F 100%)',
+                background: 'linear-gradient(180deg, #2C785F 0%, #00ED6D 100%)',
                 minWidth: 220,
                 width: 220,
                 flexDirection: 'column',
@@ -188,7 +188,7 @@ export default ({ children }) => {
                       justifyContent: 'center',
                     }}
                   >
-                    {i}
+                    {i + 1}
                   </Flex>
                   <div
                     sx={{

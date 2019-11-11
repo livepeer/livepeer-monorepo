@@ -9,7 +9,6 @@ import Router from 'next/router'
 
 export default ({ goTo, nextStep }) => {
   const { approve, isBroadcasted, isMined, txHash } = useApproveMutation()
-
   useEffect(() => {
     async function goToNextStep() {
       if (isMined) {

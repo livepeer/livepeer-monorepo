@@ -91,7 +91,7 @@ export default ({ goTo, nextStep }) => {
         disabled={account && account.tokenBalance === '0'}
         sx={{ position: 'absolute', right: 30, bottom: 16 }}
         onClick={async () => {
-          if (account.allowance === '0') {
+          if (account && account.allowance === '0') {
             Router.push(
               removeURLParameter(router.pathname, 'openExchange'),
               removeURLParameter(router.asPath, 'openExchange'),

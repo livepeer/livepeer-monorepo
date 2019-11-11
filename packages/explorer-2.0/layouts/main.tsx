@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Styled, Flex } from 'theme-ui'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
@@ -11,10 +11,21 @@ import Search from '../static/img/search.svg'
 import { useWeb3Context } from 'web3-react'
 import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
+import Snackbar from '../components/Snackbar'
 
 const Layout = ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
   const { account } = context
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [cookies, setCookie, removeCookie] = useCookies([
+    'dismissedOldExplorerSnackbar',
+  ])
+
+  useEffect(() => {
+    if (!cookies.dismissedOldExplorerSnackbar) {
+      setSnackbarOpen(true)
+    }
+  }, [cookies])
 
   let items = [
     {
@@ -90,6 +101,25 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
               {children}
             </Flex>
           </Flex>
+          {/* {snackbarOpen && (
+            <Snackbar
+              onClose={() => {
+                setCookie('dismissedOldExplorerSnackbar', true, { path: '/' })
+                setSnackbarOpen(false)
+              }}
+            >
+              <span>
+                Prefer the old explorer? Visit{' '}
+                <a
+                  sx={{ color: 'background', textDecoration: 'underline' }}
+                  href="https://classic.explorer.livepeer.org"
+                  target="_blank"
+                >
+                  classic.explorer.livepeer.org
+                </a>
+              </span>
+            </Snackbar>
+          )} */}
         </div>
       </Styled.root>
     </>

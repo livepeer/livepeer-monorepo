@@ -1,12 +1,13 @@
 import React from 'react'
 import { Global } from '@emotion/core'
+import theme from './theme'
 
 const Reset = () =>
   React.createElement(Global, {
     styles: {
       '*': {
         boxSizing: 'border-box',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+        fontFamily: theme.fonts.body,
       },
       body: {
         margin: '0',

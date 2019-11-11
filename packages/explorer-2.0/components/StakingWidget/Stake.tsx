@@ -30,12 +30,10 @@ export default ({ transcoder, amount, disabled }) => {
     }
   `
 
-  const GET_TRANSACTION_RECEIPT = gql`
-    query bondEvent($id: ID!) {
-      bondEvent(id: $id) {
-        id
-        blockNumber
-        hash
+  const GET_TRANSACTION_STATUS = gql`
+    query getTxReceiptStatus($txHash: String!) {
+      getTxReceiptStatus: getTxReceiptStatus(txHash: $txHash) {
+        status
       }
     }
   `
@@ -57,12 +55,11 @@ export default ({ transcoder, amount, disabled }) => {
   let isMined = false
   let isMining = false
 
-  const { data: transaction } = useQuery(GET_TRANSACTION_RECEIPT, {
+  const { data: transaction } = useQuery(GET_TRANSACTION_STATUS, {
     variables: {
-      id: `${data && data.txHash}-Bond`,
+      txHash: `${data && data.txHash}`,
     },
-    ssr: false,
-    pollInterval: 1000,
+    pollInterval: 2000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !isBroadcasted || isMined,
   })
@@ -73,8 +70,8 @@ export default ({ transcoder, amount, disabled }) => {
     }
   }, [isBroadcasted])
 
-  isMining = transaction && !transaction.bondEvent
-  isMined = transaction && transaction.bondEvent
+  isMining = transaction && !transaction.getTxReceiptStatus.status
+  isMined = transaction && transaction.getTxReceiptStatus.status
 
   return (
     <>

@@ -3,7 +3,6 @@ import React from 'react'
 import { jsx, Styled, Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import Spinner from '../components/Spinner'
-import { withApollo } from '../lib/apollo'
 import gql from 'graphql-tag'
 import Card from '../components/Card'
 import moment from 'moment'
@@ -60,11 +59,10 @@ const WhatsNew = () => {
             </Styled.h1>
             <Styled.h3>Coming Up</Styled.h3>
             <ul sx={{ mb: 5, lineHeight: 2 }}>
-              <li>Mobile support</li>
               <li>3Box integration</li>
-              <li>Protocol status widget</li>
+              <li>Mobile support</li>
+              <li>Earnings View</li>
               <li>Network statistics view</li>
-              <li>Onboarding tutorial</li>
               <li>Notifications system</li>
             </ul>
 
