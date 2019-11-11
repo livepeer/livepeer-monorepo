@@ -7,7 +7,7 @@ export default ({ children, onClose }) => (
   <div
     sx={{
       borderRadius: '3px',
-      backgroundColor: 'muted',
+      backgroundColor: 'text',
       position: 'fixed',
       transform: 'translateX(-50%)',
       left: '50%',

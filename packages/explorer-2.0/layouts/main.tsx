@@ -101,7 +101,7 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
               {children}
             </Flex>
           </Flex>
-          {/* {snackbarOpen && (
+          {snackbarOpen && (
             <Snackbar
               onClose={() => {
                 setCookie('dismissedOldExplorerSnackbar', true, { path: '/' })
@@ -119,7 +119,7 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
                 </a>
               </span>
             </Snackbar>
-          )} */}
+          )}
         </div>
       </Styled.root>
     </>
