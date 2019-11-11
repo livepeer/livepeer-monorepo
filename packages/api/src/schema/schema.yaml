@@ -54,8 +54,6 @@ components:
               type: object
             transcoderTemplateAppConfig:
               type: object
-            sourceInfo:
-              type: object
             streamNameGroups:
               type: array
             sourceInfo:
