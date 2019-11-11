@@ -79,7 +79,7 @@
     "match-sorter": "^4.0.1",
     "micro-cors": "^0.1.1",
     "moment": "^2.24.0",
-    "next": "9.1.4-canary.3",
+    "next": "9.1.3",
     "qrcode.react": "^0.9.3",
     "react": "^16.8.6",
     "react-confetti": "^4.0.1",
