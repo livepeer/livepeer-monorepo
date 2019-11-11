@@ -31,7 +31,7 @@ export default function parseCli(argv) {
         default: 'level',
         demandOption: true,
         type: 'string',
-        choices: ['level', 'postgres'],
+        choices: ['level', 'postgres', 'cloudflare'],
       },
       'db-path': {
         describe: 'path to LevelDB database',
@@ -40,6 +40,18 @@ export default function parseCli(argv) {
       },
       'postgres-url': {
         describe: 'url of a postgres database',
+        type: 'string',
+      },
+      'cloudflare-namespace': {
+        describe: 'namespace of a cloudflare database',
+        type: 'string',
+      },
+      'cloudflare-account': {
+        describe: 'account id of a cloudflare database',
+        type: 'string',
+      },
+      'cloudflare-auth': {
+        describe: 'auth of a cloudflare database',
         type: 'string',
       },
       'client-id': {
