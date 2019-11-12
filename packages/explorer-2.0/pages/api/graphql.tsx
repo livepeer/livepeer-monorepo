@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server-micro'
+import { ApolloServer } from 'apollo-server-micro'
 import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools'

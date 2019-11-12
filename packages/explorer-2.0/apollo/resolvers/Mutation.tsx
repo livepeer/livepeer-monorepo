@@ -61,7 +61,7 @@ export async function batchClaimEarnings(obj, args, ctx) {
   const { lastClaimRound, endRound } = args
   const { abi, address } = ctx.livepeer.config.contracts.BondingManager
   const bondingManager = new ctx.web3.eth.Contract(abi, address)
-  const totalRoundsToClaim = parseInt(endRound) - (parseInt(lastClaimRound) + 1)
+  const totalRoundsToClaim = parseInt(endRound) - parseInt(lastClaimRound)
   const quotient = Math.floor(totalRoundsToClaim / MAX_EARNINGS_CLAIMS_ROUNDS)
   const remainder = totalRoundsToClaim % MAX_EARNINGS_CLAIMS_ROUNDS
   const calls = []

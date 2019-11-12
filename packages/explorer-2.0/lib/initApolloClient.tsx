@@ -19,7 +19,9 @@ const isProd = process.env.NODE_ENV === 'production'
 const subgraphEndpoint =
   'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
 const threeBoxEndpoint = 'https://api.3box.io/graph'
-const changefeedEndpoint = isProd ? 'https://explorer.livepeer.org/api/graphql' : 'http://localhost:3009/api/graphql'
+const changefeedEndpoint = isProd
+  ? 'https://explorer.livepeer.org/api/graphql'
+  : 'http://localhost:3009/api/graphql'
 
 let apolloClient = null
 
@@ -55,7 +57,7 @@ function createApolloClient(initialState = {}) {
               ? context.provider
               : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
           })
- 
+
           graphql(
             mergedSchema,
             print(query),
@@ -125,7 +127,7 @@ async function createSchema() {
 
   const changefeedServiceLink = new HttpLink({
     uri: changefeedEndpoint,
-    fetch
+    fetch,
   })
 
   const createSubgraphServiceSchema = async () => {
@@ -154,7 +156,7 @@ async function createSchema() {
 
   const subgraphSchema = await createSubgraphServiceSchema()
   const threeBoxSchema = await create3BoxServiceSchema()
-  const changefeedSchema = await createChangefeedServiceSchema()  
+  const changefeedSchema = await createChangefeedServiceSchema()
   const linkTypeDefs = `
     extend type Profile {
       transcoder: Transcoder
@@ -170,7 +172,13 @@ async function createSchema() {
   `
 
   const merged = mergeSchemas({
-    schemas: [subgraphSchema, threeBoxSchema, changefeedSchema, schema, linkTypeDefs],
+    schemas: [
+      subgraphSchema,
+      threeBoxSchema,
+      changefeedSchema,
+      schema,
+      linkTypeDefs,
+    ],
     resolvers: {
       Delegator: {
         pendingStake: {
@@ -190,7 +198,6 @@ async function createSchema() {
           },
         },
       },
-
     },
   })
 

@@ -32,7 +32,6 @@ export default ({
         <Styled.div
           as={DialogOverlay}
           sx={{ background: 'rgba(0, 0, 0, 0.5)', ...props }}
-          isOpen={isOpen}
           onDismiss={() => {
             if (onDismiss) {
               onDismiss()

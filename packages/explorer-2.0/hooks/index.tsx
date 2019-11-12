@@ -101,7 +101,6 @@ export function useApproveMutation(amount = null) {
     variables: {
       txHash: `${data && data.txHash}`,
     },
-    ssr: false,
     pollInterval: 2000,
     // skip query if tx hasn't yet been broadcasted or has been mined
     skip: !result.isBroadcasted || result.isMined,
@@ -126,6 +125,72 @@ export function useApproveMutation(amount = null) {
       })
     }
   }, [transaction, data, approve])
+
+  return result
+}
+
+export function useStakeMutation(variables) {
+  const context = useWeb3Context()
+  const [result, setResult] = useState({
+    bond: null,
+    isBroadcasted: false,
+    isMining: false,
+    isMined: false,
+    txHash: null,
+  })
+
+  const BOND = gql`
+    mutation bond($to: String!, $amount: String!) {
+      txHash: bond(to: $to, amount: $amount)
+    }
+  `
+
+  const GET_TRANSACTION_STATUS = gql`
+    query getTxReceiptStatus($txHash: String!) {
+      getTxReceiptStatus: getTxReceiptStatus(txHash: $txHash) {
+        status
+      }
+    }
+  `
+
+  const [bond, { data }] = useMutation(BOND, {
+    variables,
+    notifyOnNetworkStatusChange: true,
+    context: {
+      provider: context.library.currentProvider,
+      account: context.account.toLowerCase(),
+      returnTxHash: true,
+    },
+  })
+
+  const { data: transaction } = useQuery(GET_TRANSACTION_STATUS, {
+    variables: {
+      txHash: `${data && data.txHash}`,
+    },
+    pollInterval: 2000,
+    // skip query if tx hasn't yet been broadcasted or has been mined
+    skip: !result.isBroadcasted || result.isMined,
+  })
+
+  let isMining = !!(transaction && !transaction.getTxReceiptStatus.status)
+  let isMined = !!(transaction && transaction.getTxReceiptStatus.status)
+
+  useEffect(() => {
+    if (bond) {
+      setResult({ ...result, bond })
+    }
+    if (data) {
+      setResult({ ...result, isBroadcasted: true, txHash: data.txHash })
+    }
+    if (transaction) {
+      setResult({
+        ...result,
+        isMining: isMining && !isMined,
+        isMined: isMined,
+        isBroadcasted: isMined ? false : true,
+      })
+    }
+  }, [transaction, data, bond])
 
   return result
 }

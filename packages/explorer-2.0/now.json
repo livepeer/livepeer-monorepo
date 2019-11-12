@@ -1,6 +1,41 @@
 {
   "version": 2,
   "builds": [{ "src": "next.config.js", "use": "@now/next" }],
+  "routes": [
+    {
+      "src": "/transcoders",
+      "status": 301,
+      "headers": { "Location": "/" }
+    },
+    {
+      "src": "/accounts/(.*)/transcoding",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/campaign"
+      }
+    },
+    {
+      "src": "/accounts/(.*)/delegating",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/staking"
+      }
+    },
+    {
+      "src": "/accounts/(.*)/overview",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/staking"
+      }
+    },
+    {
+      "src": "/accounts/(.*)/",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/staking"
+      }
+    }
+  ],
   "env": {
     "CHANGEFEED_ACCESS_TOKEN": "changefeed-access-token",
     "ETHERSCAN_API_KEY": "etherscan-api-key"

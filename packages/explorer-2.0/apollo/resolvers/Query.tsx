@@ -1,7 +1,7 @@
-const fetch = require('isomorphic-unfetch')
+import fetch from 'isomorphic-unfetch';
 
-export async function account(_account, _args, ctx, _info) {
-  const { rpc } = ctx.livepeer
+export async function account(_account, _args, _ctx, _info) {
+  const { rpc } = _ctx.livepeer
   const { allowance } = await rpc.getDelegator(_args.id)
   return {
     id: _args.id,
@@ -11,8 +11,8 @@ export async function account(_account, _args, ctx, _info) {
   }
 }
 
-export async function protocol(_protocol, _args, ctx, _info) {
-  const { rpc } = ctx.livepeer
+export async function protocol(_protocol, _args, _ctx, _info) {
+  const { rpc } = _ctx.livepeer
   const { totalTokenSupply, totalBondedToken, paused } = await rpc.getProtocol()
   return {
     paused,
@@ -23,7 +23,7 @@ export async function protocol(_protocol, _args, ctx, _info) {
   }
 }
 
-export async function getTxReceiptStatus(_status, _args, ctx, _info) {
+export async function getTxReceiptStatus(_status, _args, _ctx, _info) {
   const data = await fetch(
     `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${_args.txHash}&apikey=${process.env.ETHERSCAN_API_KEY}`,
   )
