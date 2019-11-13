@@ -65,7 +65,7 @@ typings/
 dist/
 
 # subgraph types output
-types/
+src/types/
 
 # docker-compose data directory
 data/

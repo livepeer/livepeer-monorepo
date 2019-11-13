@@ -1,31 +1,335 @@
+"""
+Transcoders, also known as Orchestrators, perform and/or route transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
+"""
 type Transcoder @entity {
+  "The transcoder's ETH address"
   id: ID!
+  "Whether or not the transcoder is active"
   active: Boolean
-  ensName: String
-  status: String
-  lastRewardRound: BigInt
+  "The status of the transcoder"
+  status: TranscoderStatus
+  "Last round that the transcoder called reward"
+  lastRewardRound: Round
+  "% of block reward cut paid to transcoder by a delegator"
   rewardCut: BigInt
+  "% of fees paid to delegators by transcoder"
   feeShare: BigInt
+  "Price per segment for a stream (LPTU)"
   pricePerSegment: BigInt
+  "Pending block reward cut for next round if the transcoder is active"
+  pendingRewardCut: BigInt
+  "Pending fee share for next round if the transcoder is active"
+  pendingFeeShare: BigInt
+  "Pending price per segment for next round if the transcoder is active"
+  pendingPricePerSegment: BigInt
+  "Total tokens delegated toward a transcoder (including their own)"
+  totalStake: BigInt
+  "The pools associated with the transcoder"
+  pools: [Pool!] @derivedFrom(field: "delegate")
+  "The delegators bonded to the transcoder"
+  delegators: [Delegator!]
+  "The delegator that registered as a transcoder"
+  delegator: Delegator
+}
+
+"""
+Represents a transcoder's rewards and fees to be distributed to delegators
+"""
+type Pool @entity {
+  "Unique identifer for the pool (formed using the transcoder's address and round number)"
+  id: ID!
+  "The round associated with the pool"
+  round: Round
+  "The transcoder associated with the pool"
+  delegate: Transcoder
+  "The fees collected in the pool"
+  fees: BigInt
+  "The total reward tokens collected in the pool"
+  rewardTokens: BigInt
+  "Transcoder's total stake during the earnings pool's round"
+  totalStake: BigInt
+  "Transcoder's reward cut during the earnings pool's round"
+  rewardCut: BigInt
+  "Transcoder's fee share during the earnings pool's round"
+  feeShare: BigInt
+}
+
+"""
+The Livepeer protocol is round based and each round is represented by some number of Ethereum blocks.
+"""
+type Round @entity {
+  "The round number"
+  id: ID!
+  "Whether the round was initialized"
+  initialized: Boolean
+  "The number of blocks this round lasts for"
+  length: BigInt
+  "The time at which this round was initialized"
+  timestamp: BigInt
+  "Last initialized round. After first round, this is the last round during which initializeRound() was called"
+  lastInitializedRound: BigInt
+  "The block number at which this round was initialized"
+  startBlock: BigInt
+  "The pools associated with the round"
+  pools: [Pool!] @derivedFrom(field: "round")
+  "Mintable tokens for the round"
+  mintableTokens: BigInt
+}
+
+type Delegator @entity {
+  "The ETH address of a delegator"
+  id: ID!
+  "The ETH address of the delegate (the one whom the delegator has bonded to)"
+  delegate: Transcoder
+  "The round the delegator becomes bonded and delegated to its delegate"
+  startRound: BigInt
+  "The last round that the delegator claimed reward and fee pool shares"
+  lastClaimRound: Round
+  "The amount of Livepeer Token a delegator currently has bonded"
+  bondedAmount: BigInt
+  "The amount of Livepeer Token a delegator has bonded over its lifetime separate from rewards"
+  principal: BigInt
+  "The amount of Livepeer Token a delegator has unbonded over its lifetime"
+  unbonded: BigInt
+  "The amount of fees a delegator has collected"
+  fees: BigInt
+  "The amount of Livepeer Token the delegator has delegated"
+  delegatedAmount: BigInt
+  "The delegator's token allowance"
+  allowance: BigInt
+  "The unbonding locks associated with the delegator"
+  unbondingLocks: [UnbondingLock!] @derivedFrom(field: "delegator")
+}
+
+"""
+The possible statuses of a transcoder
+"""
+enum TranscoderStatus @entity {
+  NotRegistered
+  Registered
+}
+
+"""
+Get an unbonding lock for a delegator
+"""
+type UnbondingLock @entity {
+  "unique unlock identifer"
+  id: ID!
+  "unbonding lock id"
+  unbondingLockId: Int!
+  "The delegator address this lock belongs to"
+  delegator: Delegator!
+  "The address of delegate unbonding from"
+  delegate: Transcoder!
+  "The amount being unbonded"
+  amount: BigInt!
+  "Round number when the unbonding amount will be available for withdrawal"
+  withdrawRound: BigInt
+}
+
+interface Transaction {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+}
+
+type BondEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  additionalAmount: BigInt
+  newDelegate: Transcoder
+  oldDelegate: Transcoder
+  delegator: Delegator
+}
+
+type UnbondEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  amount: BigInt
+  withdrawRound: BigInt
+  unbondingLockId: Int
+  delegate: Transcoder
+  delegator: Delegator
+}
+
+type RewardEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  rewardTokens: BigInt
+  delegate: Transcoder
+}
+
+type ClaimEarningsEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  delegate: Transcoder
+  startRound: Round
+  endRound: Round
+  rewardTokens: BigInt
+  fees: BigInt
+}
+
+type RebondEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  delegate: Transcoder
+  amount: BigInt
+  unbondingLockId: Int
+}
+
+type TranscoderUpdatedEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
   pendingRewardCut: BigInt
   pendingFeeShare: BigInt
-  pendingPricePerSegment: BigInt
-  totalStake: BigInt
-  rewards: [Reward!] @derivedFrom(field: "transcoder")
+  registered: Boolean
 }
 
-type Reward @entity {
+type TranscoderSlashedEvent implements Transaction @entity {
   id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
   round: Round
-  transcoder: Transcoder
-  rewardTokens: BigInt
+  delegate: Transcoder
+  finder: Bytes
+  penalty: BigInt
+  finderReward: BigInt
 }
 
-type Round @entity {
+type TranscoderResignedEvent implements Transaction @entity {
   id: ID!
-  initialized: Boolean
-  length: BigInt
-  lastInitializedRound: BigInt
-  startBlock: BigInt
-  rewards: [Reward!] @derivedFrom(field: "round")
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+}
+
+type TranscoderEvictedEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+}
+
+type WithdrawStakeEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  unbondingLockId: Int
+  amount: BigInt
+}
+
+type WithdrawFeesEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  amount: BigInt
+}
+
+type ApprovalEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  amount: BigInt
+}
+
+type InitializeRoundEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegator: Delegator
+  amount: BigInt
 }

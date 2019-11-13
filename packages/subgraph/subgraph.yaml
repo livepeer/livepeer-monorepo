@@ -1,5 +1,5 @@
-specVersion: 0.0.1
-description: A protocol for affordable and reliable video encoding. Find transcoders, staking rounds, and rewards.
+specVersion: 0.0.2
+description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, earning pools, and staking rounds.
 repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql
@@ -8,16 +8,27 @@ dataSources:
     name: BondingManager
     network: mainnet
     source:
+      startBlock: 5533890
       address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
       abi: BondingManager
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./mappings/bondingManager.ts
+      file: ./src/mappings/bondingManager.ts
       entities:
         - Transcoder
-        - Reward
+        - Pool
+        - Delegator
+        - TranscoderUpdatedEvent
+        - TranscoderResignedEvent
+        - TranscoderEvictedEvent
+        - TranscoderSlashedEvent
+        - BondEvent
+        - UnbondEvent
+        - RewardEvent
+        - ClaimEarningsEvent
+        - WithdrawFeesEvent
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -32,34 +43,119 @@ dataSources:
           handler: transcoderEvicted
         - event: TranscoderSlashed(indexed address,address,uint256,uint256)
           handler: transcoderSlashed
+        - event: Bond(indexed address,indexed address)
+          handler: bond
+        - event: Unbond(indexed address,indexed address)
+          handler: unbond
+        - event: Reward(indexed address,uint256)
+          handler: reward
+        - event: WithdrawStake(indexed address)
+          handler: withdrawStake
+        - event: WithdrawFees(indexed address)
+          handler: withdrawFees
+      callHandlers:
+        - function: claimEarnings(uint256)
+          handler: claimEarnings
+  - kind: ethereum/contract
+    name: BondingManager_LIP11
+    network: mainnet
+    source:
+      startBlock: 5533890
+      address: "511bc4556d823ae99630ae8de28b9b80df90ea2e"
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/bondingManager_LIP11.ts
+      entities:
+        - Transcoder
+        - Delegator
+        - UnbondingLock
+        - BondEvent
+        - UnbondEvent
+        - RebondEvent
+        - WithdrawStakeEvent
+      abis:
+        - name: BondingManager
+          file: ./abis/BondingManager_LIP11.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
         - event: Bond(indexed address,indexed address,indexed address,uint256,uint256)
           handler: bond
         - event: Unbond(indexed address,indexed address,uint256,uint256,uint256)
           handler: unbond
         - event: Rebond(indexed address,indexed address,uint256,uint256)
           handler: rebond
-        - event: Reward(indexed address,uint256)
-          handler: reward
+        - event: WithdrawStake(indexed address,uint256,uint256,uint256)
+          handler: withdrawStake
   - kind: ethereum/contract
     name: RoundsManager
     network: mainnet
     source:
+      startBlock: 5533890
       address: "3984fc4ceeef1739135476f625d36d6c35c40dc3"
       abi: RoundsManager
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./mappings/roundsManager.ts
+      file: ./src/mappings/roundsManager.ts
       entities:
         - Transcoder
-        - Reward
+        - Pool
         - Round
       abis:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
         - name: BondingManager
-          file: ./abis/BondingManager.json
+          file: ./abis/BondingManager_LIP11.json
       eventHandlers:
         - event: NewRound(uint256)
           handler: newRound
+  - kind: ethereum/contract
+    name: LivepeerToken
+    network: mainnet
+    source:
+      startBlock: 5533890
+      address: "58b6a8a3302369daec383334672404ee733ab239"
+      abi: LivepeerToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/livepeerToken.ts
+      entities:
+        - Delegator
+        - ApprovalEvent
+      abis:
+        - name: LivepeerToken
+          file: ./abis/LivepeerToken.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: approval
+  - kind: ethereum/contract
+    name: Minter
+    network: mainnet
+    source:
+      startBlock: 5533890
+      address: "8573f2f5a3bd960eee3d998473e50c75cdbe6828"
+      abi: Minter
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/minter.ts
+      entities:
+        - Round
+      abis:
+        - name: Minter
+          file: ./abis/Minter.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: SetCurrentRewardTokens(uint256,uint256)
+          handler: setCurrentRewardTokens    

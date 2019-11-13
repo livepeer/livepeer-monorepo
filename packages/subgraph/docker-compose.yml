@@ -1,7 +1,7 @@
 version: "3"
 services:
   graph-node:
-    image: graphprotocol/graph-node:v0.5.0
+    image: graphprotocol/graph-node:v0.15.1
     container_name: graph-node
     ports:
       - "8000:8000"
@@ -16,7 +16,7 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: "ipfs:5001"
-      ethereum: "mainnet:https://mainnet.infura.io/"
+      ethereum: "mainnet:https://mainnet.infura.io/v3/[projet_id]"
   ipfs:
     image: ipfs/go-ipfs
     container_name: ipfs

@@ -2,7 +2,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "lastRoundLengthUpdateRound",
+    "name": "currentMintedTokens",
     "outputs": [
       {
         "name": "",
@@ -16,11 +16,11 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "targetContractId",
+    "name": "targetBondingRate",
     "outputs": [
       {
         "name": "",
-        "type": "bytes32"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -28,9 +28,23 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_controller",
+        "type": "address"
+      }
+    ],
+    "name": "setController",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
-    "name": "lastRoundLengthUpdateStartBlock",
+    "name": "currentMintableTokens",
     "outputs": [
       {
         "name": "",
@@ -44,7 +58,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "lastInitializedRound",
+    "name": "inflationChange",
     "outputs": [
       {
         "name": "",
@@ -58,21 +72,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "roundLength",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "roundLockAmount",
+    "name": "inflation",
     "outputs": [
       {
         "name": "",
@@ -102,6 +102,18 @@
       {
         "name": "_controller",
         "type": "address"
+      },
+      {
+        "name": "_inflation",
+        "type": "uint256"
+      },
+      {
+        "name": "_inflationChange",
+        "type": "uint256"
+      },
+      {
+        "name": "_targetBondingRate",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -113,22 +125,51 @@
     "inputs": [
       {
         "indexed": false,
-        "name": "round",
+        "name": "currentMintableTokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "currentInflation",
         "type": "uint256"
       }
     ],
-    "name": "NewRound",
+    "name": "SetCurrentRewardTokens",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "controller",
+        "type": "address"
+      }
+    ],
+    "name": "SetController",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "param",
+        "type": "string"
+      }
+    ],
+    "name": "ParameterUpdate",
     "type": "event"
   },
   {
     "constant": false,
     "inputs": [
       {
-        "name": "_roundLength",
+        "name": "_targetBondingRate",
         "type": "uint256"
       }
     ],
-    "name": "setRoundLength",
+    "name": "setTargetBondingRate",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -138,11 +179,98 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_roundLockAmount",
+        "name": "_inflationChange",
         "type": "uint256"
       }
     ],
-    "name": "setRoundLockAmount",
+    "name": "setInflationChange",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_newMinter",
+        "type": "address"
+      }
+    ],
+    "name": "migrateToNewMinter",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_fracNum",
+        "type": "uint256"
+      },
+      {
+        "name": "_fracDenom",
+        "type": "uint256"
+      }
+    ],
+    "name": "createReward",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "trustedTransferTokens",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "trustedBurnTokens",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "trustedWithdrawETH",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -151,7 +279,21 @@
   {
     "constant": false,
     "inputs": [],
-    "name": "initializeRound",
+    "name": "depositETH",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "setCurrentRewardTokens",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -160,86 +302,11 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "blockNum",
+    "name": "getController",
     "outputs": [
       {
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_block",
-        "type": "uint256"
-      }
-    ],
-    "name": "blockHash",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "currentRound",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "currentRoundStartBlock",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "currentRoundInitialized",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "currentRoundLocked",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
+        "type": "address"
       }
     ],
     "payable": false,

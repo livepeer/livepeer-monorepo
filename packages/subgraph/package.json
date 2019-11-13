@@ -4,16 +4,19 @@
   "version": "1.0.0-alpha.7",
   "license": "MIT",
   "scripts": {
+    "create": "graph create livepeer/livepeer --node https://api.thegraph.com/deploy/",
+    "create-local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
+    "create-stage": "graph create livepeer/livepeer-canary --node https://api.thegraph.com/deploy/",
     "postinstall": "npm run codegen",
-    "codegen": "graph codegen --output-dir types/ subgraph.yaml",
-    "build": "graph build subgraph.yaml",
-    "build-ipfs": "graph build --ipfs /ip4/127.0.0.1/tcp/5001 subgraph.yaml",
-    "build-wast": "graph build -t wast subgraph.yaml",
-    "deploy": "graph deploy livepeer --verbosity debug --node http://127.0.0.1:8020/ --ipfs http://127.0.0.1:5001 subgraph.yaml"
+    "codegen": "graph codegen --debug --output-dir src/types/",
+    "build": "graph build --debug",
+    "deploy": "graph deploy livepeer/livepeer --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-local": "graph deploy livepeer/livepeer --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "deploy-stage": "graph deploy livepeer/livepeer-canary --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.14.0",
-    "@graphprotocol/graph-ts": "0.14.0"
+    "@graphprotocol/graph-cli": "^0.16.1",
+    "@graphprotocol/graph-ts": "^0.16.0"
   },
   "workspaces": {
     "packages": [
