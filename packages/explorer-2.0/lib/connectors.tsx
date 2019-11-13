@@ -1,7 +1,10 @@
 import { Connectors } from "web3-react";
-import dynamic from "next/dynamic";
 
-const PortisApi = dynamic(() => require('@portis/web3'), { ssr: false })
+let PortisApi;
+
+if (typeof window !== 'undefined') {
+  PortisApi = require('@portis/web3')
+}
 
 const {
   InjectedConnector,
