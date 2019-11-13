@@ -53,10 +53,12 @@ query {
     pendingFeeShare
     pendingPricePerSegment
     totalStake
-    lastRewardRound
+    lastRewardRound {
+      id
+    }
     active
     status
-    rewards (orderBy: id, orderDirection: desc) {
+    pools (orderBy: id, orderDirection: desc) {
       rewardTokens
       round {
         id
@@ -70,9 +72,9 @@ Here's another example query for fetching rounds:
 
 ```
 query {
-  rounds {
+  rounds(orderBy: timestamp, orderDirection: desc, first: 5) {
     id
-    rewards (orderBy: id, orderDirection: desc) {
+    pools {
       rewardTokens
       transcoder {
         id
@@ -81,17 +83,3 @@ query {
   }
 }
 ```
-
-### Explorer Integration
-
-Once you've got your Graph Node running and successfully deployed the Livepeer
-Subgraph, you can integrate it with the [Explorer](https://github.com/livepeer/livepeerjs/tree/master/packages/explorer) by setting the
-its environment variable `REACT_APP_LIVEPEER_SUBGRAPH` inside `.env.development` to
-your graphql endpoint.
-
-For example:
-`REACT_APP_LIVEPEER_SUBGRAPH=http://localhost:8000/subgraphs/name/livepeer/graphql`
-
-The explorer will begin quering indexed transcoder data from the Graph Node.
-Note that if you shutdown the Graph Node, the Explorer will gracefully fallback
-to querying the transcoder data from the blockchain directly.
