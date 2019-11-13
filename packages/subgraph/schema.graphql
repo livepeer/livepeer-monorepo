@@ -1,5 +1,5 @@
 """
-Perform transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
+Transcoders, also known as Orchestrators, perform and/or route transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
 """
 type Transcoder @entity {
   "The transcoder's ETH address"
