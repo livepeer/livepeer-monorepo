@@ -1,12 +1,12 @@
 import logger from '../logger'
 import { NotFoundError } from './errors'
 import fetch from 'isomorphic-fetch'
-// import { timeout } from '../util'
 import { parse as parseUrl, format as stringifyUrl } from 'url'
 
-// const CONNECT_TIMEOUT = 5000
-const DEFAULT_LIMIT = 10
+const querystring = require('querystring')
 const cloudflareUrl = 'https://api.cloudflare.com/client/v4/accounts'
+const DEFAULT_LIMIT = 10
+const retryLimit = 3
 let namespace
 let accountId
 let auth
@@ -24,36 +24,34 @@ export default class CloudflareStore {
   }
 
   async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
-    const requestUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/keys?limit=${limit}&prefix=${prefix}`
-    const cursorParam = `&cursor=${cursor}`
-    if (cursor) {
-      requestUrl.concat(cursorParam)
-    }
-
-    const res = await fetch(requestUrl, {
-      method: 'GET',
-      headers: {
-        authorization: `${auth}`,
-      },
+    const params = querystring.stringify({
+      limit: limit,
+      prefix: prefix,
+      cursor: cursor,
     })
 
-    const data = await res.json()
-    checkStatus(res, data)
-    return { data: data.result, cursor: data.result_info.cursor }
+    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/keys?${params}`
+    const respData = await cloudFlareFetch(reqUrl, null, 'GET', 0)
+
+    const values = []
+    var i
+    for (i = 0; i < respData.result.length; i++) {
+      const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${
+        respData.result[i].name
+      }`
+      const resp = await cloudFlareFetch(reqUrl, null, 'GET', 0)
+      await sleep(200)
+      values.push(resp)
+    }
+
+    return { data: values, cursor: respData.result_info.cursor }
   }
 
   async get(value) {
-    const requestUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${value}`
-    const res = await fetch(requestUrl, {
-      method: 'GET',
-      headers: {
-        Authorization: `${auth}`,
-      },
-    })
+    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${value}`
+    const respData = await cloudFlareFetch(reqUrl, null, 'GET', 0)
 
-    const data = await res.json()
-    checkStatus(res, data)
-    return data
+    return respData
   }
 
   async create(data) {
@@ -64,19 +62,10 @@ export default class CloudflareStore {
     }
 
     const key = `${kind}/${id}`
-    const requestUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
-    const res = await fetch(requestUrl, {
-      method: 'PUT',
-      headers: {
-        Authorization: `${auth}`,
-      },
-      body: JSON.stringify(data),
-    })
+    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
+    const respData = await cloudFlareFetch(reqUrl, data, 'PUT', 0)
 
-    data = await res.json()
-    checkStatus(res, data)
-
-    return data
+    return respData
   }
 
   async replace(data) {
@@ -86,46 +75,55 @@ export default class CloudflareStore {
       throw new Error("object missing 'id' and/or 'kind'")
     }
     const key = `${kind}/${id}`
-    const requestUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
-    const res = await fetch(requestUrl, {
-      method: 'PUT',
-      headers: {
-        authorization: `${auth}`,
-      },
-      body: JSON.stringify(data),
-    })
-    data = await res.json()
-    checkStatus(res, data)
+    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
+    const respData = await cloudFlareFetch(reqUrl, data, 'PUT', 0) // can we not declare?
   }
 
   async delete(id) {
-    const requestUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${id}`
-    const res = await fetch(requestUrl, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `${auth}`,
-      },
-    })
-
-    const data = await res.json()
-    checkStatus(res, data)
+    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${id}`
+    const respData = await cloudFlareFetch(reqUrl, null, 'DELETE', 0)
   }
 }
 
-function checkStatus(res, data) {
-  if (res.status < 500 && res.status >= 400) {
-    console.log(
-      `Cloudflare ${res.status} error: ${
-        res.statusText
-      }, error_messages: ${JSON.stringify(data.errors)}`,
-    )
-    throw new NotFoundError()
+async function cloudFlareFetch(reqUrl, data, method, retries) {
+  const req = {
+    method: method,
+    headers: {
+      authorization: `${auth}`,
+    },
   }
-  if (res.status < 200 || res.status > 300) {
-    throw new Error(
-      `Cloudflare ${res.status} error: ${
-        res.statusText
-      }, error_messages: ${JSON.stringify(data.errors)}`,
-    )
+  if (data) {
+    req.body = JSON.stringify(data)
   }
+
+  const res = await fetch(reqUrl, req)
+  const respData = await res.json()
+  const errorMessage = `Cloudflare ${res.status} error: ${
+    res.statusText
+  }, error_messages: ${JSON.stringify(respData.errors)}`
+
+  if (res.status != 200) {
+    console.log(errorMessage)
+
+    if (res.status == 404) {
+      throw new NotFoundError()
+    } else if (res.status == 429) {
+      console.log('Sleeping for 3 seconds')
+      await sleep(3000)
+      if (retries < retryLimit) {
+        retries++
+        await cloudFlareFetch(reqUrl, data, method, retries)
+      }
+    } else {
+      throw new Error(errorMessage)
+    }
+  }
+
+  return respData
+}
+
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
 }
