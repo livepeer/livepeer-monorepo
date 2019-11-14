@@ -3,9 +3,31 @@ import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
 
 let server
+let postMockStream
 
 beforeAll(async () => {
   server = await serverPromise
+  postMockStream = require('./wowza-hydrate.test-data.json').stream
+  delete postMockStream.id
+  delete postMockStream.kind
+  postMockStream.presets = ['P360p30fps16x9', 'P144p30fps16x9']
+  postMockStream.renditions = {
+    bbb_360p:
+      '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P360p30fps16x9.m3u8',
+    thesource_bbb: '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/source.m3u8',
+    random_prefix_bbb_160p:
+      '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P144p30fps16x9.m3u8',
+  }
+  postMockStream.wowza.streamNameGroups = [
+    {
+      name: 'bbb_all',
+      renditions: ['thesource_bbb', 'bbb_360p', 'random_prefix_bbb_160p'],
+    },
+    {
+      name: 'bbb_mobile',
+      renditions: ['random_prefix_bbb_160p'],
+    },
+  ]
 })
 
 afterEach(async () => {
@@ -31,8 +53,43 @@ describe('controllers/stream', () => {
       kind: 'user',
     }
 
-    it('should get all streams', async () => {
+    it('should not get all streams without googleAuthorization', async () => {
+      client.googleAuthorization = ''
       await server.store.create(user)
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        expect(res.status).toBe(401)
+      }
+
+      const res = await client.get('/stream')
+      expect(res.status).toBe(403)
+    })
+
+    it('should get all streams with prior user created', async () => {
+      await server.store.create(user)
+      for (let i = 0; i < 10; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+      }
+
+      const res = await client.get('/stream')
+      expect(res.status).toBe(200)
+      const streams = await res.json()
+      expect(streams.length).toEqual(10)
+    })
+
+    it('should get all streams without a prior user created', async () => {
       for (let i = 0; i < 10; i += 1) {
         const document = {
           id: uuid(),
@@ -91,6 +148,19 @@ describe('controllers/stream', () => {
       expect(streams.length).toBeLessThan(11)
     })
 
+    it('should create a stream', async () => {
+      await server.store.create(user)
+      const res = await client.post('/stream', { ...postMockStream })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('test_stream')
+      expect(stream.userId).toBe('mock_sub')
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+    })
+
     it('should not get all streams', async () => {
       user = {
         id: 'mock_sub',
@@ -134,28 +204,6 @@ describe('controllers/stream', () => {
 
   describe('basic CRUD with apiKey', () => {
     let client
-    let mockStream = require('./wowza-hydrate.test-data.json').stream
-    delete mockStream.id
-    delete mockStream.kind
-    mockStream.presets = ['P360p30fps16x9', 'P144p30fps16x9']
-    mockStream.renditions = {
-      bbb_360p:
-        '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P360p30fps16x9.m3u8',
-      thesource_bbb: '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/source.m3u8',
-      random_prefix_bbb_160p:
-        '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P144p30fps16x9.m3u8',
-    }
-    mockStream.wowza.streamNameGroups = [
-      {
-        name: 'bbb_all',
-        renditions: ['thesource_bbb', 'bbb_360p', 'random_prefix_bbb_160p'],
-      },
-      {
-        name: 'bbb_mobile',
-        renditions: ['random_prefix_bbb_160p'],
-      },
-    ]
-
     beforeEach(() => {
       client = new TestClient({
         server,
@@ -163,13 +211,15 @@ describe('controllers/stream', () => {
       })
     })
 
-    it('should create a stream', async () => {
-      const res = await client.post('/stream', { ...mockStream })
+    it('should create a stream, no `token` registered', async () => {
+      const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
       expect(stream.name).toBe('test_stream')
+      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
+      expect(stream.userId).toBe(tokenObject.userId)
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
     })
@@ -180,8 +230,9 @@ describe('controllers/stream', () => {
     })
 
     it('should not accept additional properties for creating a stream', async () => {
-      mockStream.livepeer = 'livepeer'
-      const res = await client.post('/stream', { ...mockStream })
+      const postMockLivepeerStream = JSON.parse(JSON.stringify(postMockStream))
+      postMockLivepeerStream.livepeer = 'livepeer'
+      const res = await client.post('/stream', { ...postMockLivepeerStream })
       expect(res.status).toBe(422)
       const stream = await res.json()
       expect(stream.id).toBeUndefined()
