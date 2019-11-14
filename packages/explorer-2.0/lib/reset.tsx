@@ -54,6 +54,10 @@ const Reset = () =>
         background: 'white',
         padding: '2rem',
         outline: 'none',
+      },
+      '.tooltip': {
+        backgroundColor: `${theme.colors.surface} !important`,
+        fontWeight: 400
       }
     },
   })

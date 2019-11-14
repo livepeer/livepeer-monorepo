@@ -105,8 +105,9 @@ export default () => {
     ? Utils.fromWei(data.delegator.unbonded)
     : 0
   const principal = Utils.fromWei(data.delegator.principal)
+
   const rewards =
-    pendingStake + parseInt(unbonded ? unbonded : 0) - parseFloat(principal)
+    pendingStake + parseFloat(unbonded ? unbonded : 0) - parseFloat(principal)
   const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
 
   return (
@@ -172,7 +173,7 @@ export default () => {
               <span sx={{ color: 'muted' }}>Rewards</span>
               <span>
                 <span sx={{ color: 'primary', fontFamily: 'monospace' }}>
-                  +{abbreviateNumber(rewards, 3)}
+                  +{abbreviateNumber(rewards, 6)}
                 </span>
               </span>
             </Flex>
@@ -191,7 +192,7 @@ export default () => {
                   fontFamily: 'monospace',
                 }}
               >
-                {((pendingStake / totalBondedToken) * 100).toPrecision(2)}%
+                {((pendingStake / totalBondedToken) * 100).toPrecision(4)}%
               </div>
             }
           >
@@ -206,7 +207,7 @@ export default () => {
                 <span sx={{ color: 'muted' }}>
                   Account{' '}
                   <span sx={{ color: 'text' }}>
-                    ({((pendingStake / totalBondedToken) * 100).toPrecision(2)}
+                    ({((pendingStake / totalBondedToken) * 100).toPrecision(4)}
                     %)
                   </span>
                 </span>
@@ -227,7 +228,7 @@ export default () => {
                       (Utils.fromWei(data.delegator.delegate.totalStake) /
                         totalBondedToken) *
                       100
-                    ).toPrecision(2)}
+                    ).toPrecision(4)}
                     %)
                   </span>
                 </span>
@@ -257,7 +258,7 @@ export default () => {
                         pendingStake) /
                         totalBondedToken) *
                       100
-                    ).toPrecision(2)}
+                    ).toPrecision(4)}
                     %)
                   </span>
                 </span>
