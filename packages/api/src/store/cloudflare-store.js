@@ -2,9 +2,9 @@ import logger from '../logger'
 import { NotFoundError } from './errors'
 import fetch from 'isomorphic-fetch'
 import { parse as parseUrl, format as stringifyUrl } from 'url'
+import querystring from 'querystring'
 
-const querystring = require('querystring')
-const cloudflareUrl = 'https://api.cloudflare.com/client/v4/accounts'
+const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/accounts'
 const DEFAULT_LIMIT = 10
 const retryLimit = 3
 let namespace
@@ -30,16 +30,15 @@ export default class CloudflareStore {
       cursor: cursor,
     })
 
-    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/keys?${params}`
-    const respData = await cloudFlareFetch(reqUrl, null, 'GET', 0)
+    const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/keys?${params}`
+    const respData = await cloudflareFetch(reqUrl)
 
     const values = []
-    var i
-    for (i = 0; i < respData.result.length; i++) {
-      const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${
+    for (let i = 0; i < respData.result.length; i++) {
+      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${
         respData.result[i].name
       }`
-      const resp = await cloudFlareFetch(reqUrl, null, 'GET', 0)
+      const resp = await cloudflareFetch(reqUrl)
       await sleep(200)
       values.push(resp)
     }
@@ -48,8 +47,8 @@ export default class CloudflareStore {
   }
 
   async get(value) {
-    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${value}`
-    const respData = await cloudFlareFetch(reqUrl, null, 'GET', 0)
+    const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${value}`
+    const respData = await cloudflareFetch(reqUrl)
 
     return respData
   }
@@ -62,9 +61,12 @@ export default class CloudflareStore {
     }
 
     const key = `${kind}/${id}`
-    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
-    const respData = await cloudFlareFetch(reqUrl, data, 'PUT', 0)
-
+    const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
+    const respData = await cloudflareFetch(reqUrl, {
+      data: data,
+      method: 'PUT',
+      retries: 0,
+    })
     return respData
   }
 
@@ -75,21 +77,24 @@ export default class CloudflareStore {
       throw new Error("object missing 'id' and/or 'kind'")
     }
     const key = `${kind}/${id}`
-    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
-    const respData = await cloudFlareFetch(reqUrl, data, 'PUT', 0) // can we not declare?
+    const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
+    await cloudflareFetch(reqUrl, { data: data, method: 'PUT', retries: 0 })
   }
 
   async delete(id) {
-    const reqUrl = `${cloudflareUrl}/${accountId}/storage/kv/namespaces/${namespace}/values/${id}`
-    const respData = await cloudFlareFetch(reqUrl, null, 'DELETE', 0)
+    const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${id}`
+    await cloudflareFetch(reqUrl, { data: null, method: 'DELETE', retries: 0 })
   }
 }
 
-async function cloudFlareFetch(reqUrl, data, method, retries) {
+async function cloudflareFetch(
+  reqUrl,
+  { method = 'GET', retries = 0, data = null } = {},
+) {
   const req = {
     method: method,
     headers: {
-      authorization: `${auth}`,
+      authorization: `Bearer ${auth}`,
     },
   }
   if (data) {
@@ -98,11 +103,11 @@ async function cloudFlareFetch(reqUrl, data, method, retries) {
 
   const res = await fetch(reqUrl, req)
   const respData = await res.json()
-  const errorMessage = `Cloudflare ${res.status} error: ${
-    res.statusText
-  }, error_messages: ${JSON.stringify(respData.errors)}`
 
   if (res.status != 200) {
+    const errorMessage = `Cloudflare ${res.status} error: ${
+      res.statusText
+    }, error_messages: ${JSON.stringify(respData.errors)}`
     console.log(errorMessage)
 
     if (res.status == 404) {
@@ -112,11 +117,17 @@ async function cloudFlareFetch(reqUrl, data, method, retries) {
       await sleep(3000)
       if (retries < retryLimit) {
         retries++
-        await cloudFlareFetch(reqUrl, data, method, retries)
+        await cloudflareFetch(reqUrl, {
+          data: data,
+          method: method,
+          retries: retries,
+        })
+      } else {
+        throw new Error(errorMessage)
       }
-    } else {
-      throw new Error(errorMessage)
     }
+
+    return respData
   }
 
   return respData
