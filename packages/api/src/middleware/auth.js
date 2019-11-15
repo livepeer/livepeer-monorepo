@@ -138,7 +138,11 @@ function authFactory(params) {
         res.status(403)
         return res.json({ errors: [error.toString()] })
       }
+    } else if (tokenObject && tokenObject.userId) {
+      const user = await req.store.get(`user/${tokenObject.userId}`)
+      req.user = user
     }
+
     return next()
   }
 }
