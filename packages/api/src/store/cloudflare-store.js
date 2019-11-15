@@ -101,6 +101,9 @@ async function cloudflareFetch(
     req.body = JSON.stringify(data)
   }
 
+  console.log(`req: ${JSON.stringify(req)}`)
+  console.log(`reqURL: ${JSON.stringify(reqUrl)}`)
+
   const res = await fetch(reqUrl, req)
   const respData = await res.json()
 
