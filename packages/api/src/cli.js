@@ -18,7 +18,7 @@ export default function parseCli(argv) {
     `,
     )
     .env('LP_')
-    .strict(true)
+    //.strict(true)
     .options({
       port: {
         describe: 'port to listen on',
