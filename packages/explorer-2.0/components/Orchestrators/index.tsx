@@ -174,6 +174,15 @@ export default ({ currentRound, transcoders }) => {
                     {...row.getRowProps()}
                     key={rowIndex}
                     sx={{
+                      height: 64,
+                      'td:first-of-type': {
+                        borderTopLeftRadius: 6,
+                        borderBottomLeftRadius: 6,
+                      },
+                      'td:last-of-type': {
+                        borderTopRightRadius: 6,
+                        borderBottomRightRadius: 6,
+                      },
                       '&:hover': {
                         bg: lighten('#1E2026', 0.05),
                         '.status': {
