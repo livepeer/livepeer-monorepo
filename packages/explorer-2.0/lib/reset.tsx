@@ -57,7 +57,12 @@ const Reset = () =>
       },
       '.tooltip': {
         backgroundColor: `${theme.colors.surface} !important`,
-        fontWeight: 400
+        fontWeight: 400,
+        color: `${theme.colors.text} !important`,
+        maxWidth: 220,
+        textTransform: 'initial',
+        opacity: '1 !important',
+        borderRadius: '6px !important'
       }
     },
   })

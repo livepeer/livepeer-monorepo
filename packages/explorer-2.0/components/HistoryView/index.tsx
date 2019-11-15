@@ -217,27 +217,6 @@ export default () => {
   )
 }
 
-async function handleScroll(skip, fetchMore) {
-  console.log('handle scroll')
-  fetchMore({
-    variables: {
-      skip,
-    },
-    updateQuery: (previousResult, { fetchMoreResult }) => {
-      if (!fetchMoreResult) {
-        return previousResult
-      }
-      return {
-        ...previousResult,
-        transactions: [
-          ...previousResult.transactions,
-          ...fetchMoreResult.transactions,
-        ],
-      }
-    },
-  })
-}
-
 function renderSwitch(transaction: any, i: number) {
   switch (transaction.__typename) {
     case 'ApprovalEvent':
@@ -442,7 +421,7 @@ function renderSwitch(transaction: any, i: number) {
           >
             <Box>
               <Box>
-                Rebonded to{' '}
+                Restaked to{' '}
                 {transaction.delegate.id.replace(
                   transaction.delegate.id.slice(7, 37),
                   '…',

@@ -7,6 +7,7 @@ import * as Utils from 'web3-utils'
 import { getDelegatorStatus, abbreviateNumber } from '../../lib/utils'
 import Orchestrators from '../../public/img/orchestrators.svg'
 import Search from '../../public/img/search.svg'
+import Help from '../../public/img/help.svg'
 import { useApolloClient } from '@apollo/react-hooks'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -14,6 +15,7 @@ import matchSorter from 'match-sorter'
 import { Styled } from 'theme-ui'
 import Textfield from '../Textfield'
 import AccountCell from '../AccountCell'
+import ReactTooltip from 'react-tooltip'
 
 export default ({ currentRound, transcoders }) => {
   const client = useApolloClient()
@@ -159,7 +161,12 @@ export default ({ currentRound, transcoders }) => {
                     {...column.getHeaderProps()}
                     key={i}
                   >
-                    <span sx={{ fontSize: 0 }}>{column.render('Header')}</span>
+                    <Flex>
+                      <span sx={{ fontSize: 0 }}>
+                        {column.render('Header')}
+                      </span>
+                      {renderTooltips(column.render('Header'))}
+                    </Flex>
                   </th>
                 ))}
               </tr>
@@ -252,6 +259,121 @@ export default ({ currentRound, transcoders }) => {
         </table>
       </Box>
     </Box>
+  )
+}
+
+function renderTooltips(title) {
+  switch (title) {
+    case 'Stake':
+      return (
+        <>
+          <ReactTooltip
+            id="tooltip-stake"
+            className="tooltip"
+            place="top"
+            type="dark"
+            effect="solid"
+          />
+          <Help
+            data-tip="Total amount of LPT staked towards this node, including the orchestrator's own stake."
+            data-for="tooltip-stake"
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              ml: 1,
+              top: '2px',
+              width: 12,
+              height: 12,
+            }}
+          />
+        </>
+      )
+    case 'Reward Cut':
+      return (
+        <>
+          <ReactTooltip
+            id="tooltip-reward-cut"
+            className="tooltip"
+            place="top"
+            type="dark"
+            effect="solid"
+          />
+          <Help
+            data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+            data-for="tooltip-reward-cut"
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              ml: 1,
+              top: '2px',
+              width: 12,
+              height: 12,
+            }}
+          />
+        </>
+      )
+    case 'Fee Cut':
+      return (
+        <>
+          <ReactTooltip
+            id="tooltip-fee-cut"
+            className="tooltip"
+            place="top"
+            type="dark"
+            effect="solid"
+          />
+          <Help
+            data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+            data-for="tooltip-fee-cut"
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              ml: 1,
+              top: '2px',
+              width: 12,
+              height: 12,
+            }}
+          />
+        </>
+      )
+    case 'Calls':
+      return (
+        <>
+          <ReactTooltip
+            id="tooltip-calls"
+            className="tooltip"
+            place="top"
+            type="dark"
+            effect="solid"
+          />
+          <Help
+            data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
+            data-for="tooltip-calls"
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              ml: 1,
+              top: '2px',
+              width: 12,
+              height: 12,
+            }}
+          />
+        </>
+      )
+
+    default:
+      return null
+  }
+  return (
+    <>
+      <ReactTooltip
+        id="tooltip-stake"
+        className="tooltip"
+        place="top"
+        type="dark"
+        effect="solid"
+      />
+    </>
   )
 }
 

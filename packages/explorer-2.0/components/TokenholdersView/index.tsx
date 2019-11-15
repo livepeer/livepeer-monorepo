@@ -72,7 +72,7 @@ export default () => {
       </Flex>
     )
   }
-  console.log(data)
+
   return (
     <InfiniteScroll
       sx={{ overflow: 'hidden !important' }}

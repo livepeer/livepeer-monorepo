@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useEffect } from 'react'
+import React from 'react'
 import { jsx, Flex, Box } from 'theme-ui'
 import Input from './Input'
 import Utils from 'web3-utils'
@@ -15,16 +15,14 @@ export default ({
   protocol,
 }) => {
   const tokenBalance =
-    account && parseFloat(Utils.fromWei(account.tokenBalance)).toPrecision(4)
+    account && parseFloat(Utils.fromWei(account.tokenBalance))
+
   const pendingStake =
     delegator &&
-    parseFloat(
-      Utils.fromWei(
-        delegator.pendingStake
-          ? delegator.pendingStake
-          : delegator.bondedAmount,
-      ),
-    ).toPrecision(4)
+    Math.max(
+      Utils.fromWei(delegator.bondedAmount),
+      Utils.fromWei(delegator.pendingStake),
+    )
 
   return (
     <div
@@ -43,35 +41,33 @@ export default ({
               (action == 'stake' ? (
                 <div
                   data-tip="Enter max"
-                  onClick={() => setAmount(Utils.fromWei(account.tokenBalance))}
+                  data-for="balance"
+                  onClick={() => setAmount(tokenBalance)}
                   sx={{ cursor: 'pointer', color: 'muted' }}
                 >
                   <ReactTooltip
+                    id="balance"
                     className="tooltip"
                     place="top"
                     type="dark"
                     effect="solid"
                   />
                   Balance:{' '}
-                  <span sx={{ fontFamily: 'monospace' }}>{tokenBalance}</span>
+                  <span sx={{ fontFamily: 'monospace' }}>
+                    {tokenBalance.toPrecision(4)}
+                  </span>
                 </div>
               ) : (
                 <>
                   {pendingStake && (
                     <div
                       data-tip="Enter max"
-                      onClick={() =>
-                        setAmount(
-                          Utils.fromWei(
-                            delegator.pendingStake
-                              ? delegator.pendingStake
-                              : delegator.bondedAmount,
-                          ),
-                        )
-                      }
+                      data-for="stake"
+                      onClick={() => setAmount(pendingStake)}
                       sx={{ cursor: 'pointer', color: 'muted' }}
                     >
                       <ReactTooltip
+                        id="stake"
                         className="tooltip"
                         place="top"
                         type="dark"
@@ -79,7 +75,7 @@ export default ({
                       />
                       Stake:{' '}
                       <span sx={{ fontFamily: 'monospace' }}>
-                        {pendingStake}
+                        {pendingStake.toPrecision(4)}
                       </span>
                     </div>
                   )}

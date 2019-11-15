@@ -138,7 +138,7 @@ export default ({ items = [] }) => {
                   </a>
                 </Link>
               </div>
-              <div sx={{ mb: 2 }} className="tour-step-3">
+              <div sx={{ mb: context.active ? 2 : 0 }} className="tour-step-3">
                 <Link
                   href={`${pathname}?openExchange=true`}
                   as={`${asPath +

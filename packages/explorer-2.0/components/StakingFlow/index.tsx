@@ -9,11 +9,11 @@ export default ({ action = 'stake', amount = 0, account }) => {
       sx={{
         border: '1px solid',
         borderColor: 'border',
-        borderRadius: 2,
+        borderRadius: 6,
         p: 3,
         alignItems: 'center',
         justifyContent: 'center',
-        mb: 4,
+        my: 5,
       }}
     >
       <div>

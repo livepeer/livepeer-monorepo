@@ -37,7 +37,6 @@ export default ({ lock }) => {
       }
     }
   `
-  console.log(lock.delegate.id)
 
   const [rebondFromUnbonded, { data, error }] = useMutation(
     REBOND_FROM_UNBONDED,
@@ -84,7 +83,6 @@ export default ({ lock }) => {
     <>
       <Button
         onClick={async () => {
-          console.log('wrong')
           try {
             await rebondFromUnbonded(lock.unbondingLockId)
           } catch (e) {

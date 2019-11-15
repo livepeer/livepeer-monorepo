@@ -84,6 +84,7 @@ export default ({
             ? 'My Account'
             : account.replace(account.slice(7, 37), '…')}
           <Flex
+            data-for="copy"
             data-tip={`${copied ? 'Copied' : 'Copy address to clipboard'}`}
             sx={{
               ml: 1,
@@ -98,6 +99,7 @@ export default ({
             }}
           >
             <ReactTooltip
+              id="copy"
               className="tooltip"
               place="top"
               type="dark"
