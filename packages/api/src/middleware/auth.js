@@ -131,7 +131,7 @@ function authFactory(params) {
           userId: userId,
         }
         await req.store.replace(newTokenObject)
-        const user = await req.store.get(`user/${tokenObject.userId}`)
+        const user = await req.store.get(`user/${newTokenObject.userId}`)
         req.user = user
       } catch (error) {
         console.log(error)

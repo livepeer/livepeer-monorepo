@@ -224,6 +224,23 @@ describe('controllers/stream', () => {
       expect(document).toEqual(stream)
     })
 
+    it('should create a stream, `token` registered, no userId', async () => {
+      await server.store.create({
+        id: client.apiKey,
+        kind: 'apitoken',
+      })
+      const res = await client.post('/stream', { ...postMockStream })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('test_stream')
+      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
+      expect(stream.userId).toBe(tokenObject.userId)
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+    })
+
     it('should not accept empty body for creating a stream', async () => {
       const res = await client.post('/stream')
       expect(res.status).toBe(422)
