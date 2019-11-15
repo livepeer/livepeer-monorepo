@@ -51,12 +51,12 @@ export default ({
   const canStake =
     hasTokenBalance &&
     sufficientBalance &&
-    roundsSinceLastClaim < MAX_EARNINGS_CLAIMS_ROUNDS &&
+    roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     approved &&
     amount > 0
 
   const canUnstake =
-    isStaked && roundsSinceLastClaim < MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0
+    isStaked && roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0
 
   if (action == 'stake') {
     return (
