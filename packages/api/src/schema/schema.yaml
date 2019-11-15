@@ -16,7 +16,6 @@ components:
         - kind
         - name
         - presets
-        - renditions
       additionalProperties: false
       properties:
         id:
