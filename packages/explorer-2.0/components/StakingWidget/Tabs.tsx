@@ -15,8 +15,8 @@ export const TabList = props => (
       alignItems: 'center',
       width: '100%',
       position: 'relative',
-      borderBottom: '1px solid',
-      borderColor: 'border',
+      borderRadius: 32,
+      backgroundColor: '#181a21',
       mb: 2,
     }}
     {...props}
@@ -28,21 +28,19 @@ export const Tab = props => (
     sx={{
       flex: 1,
       outline: 'none',
+      cursor: 'pointer',
       textAlign: 'center',
       color: props.isSelected
         ? props.children == 'Unstake'
           ? 'red'
           : 'primary'
         : 'muted',
-      pb: '10px',
+      py: '10px',
+      width: '50%',
       fontSize: 1,
+      borderRadius: 32,
       fontWeight: 500,
-      borderBottom: '2px solid',
-      borderColor: props.isSelected
-        ? props.children == 'Unstake'
-          ? 'red'
-          : 'primary'
-        : 'transparent',
+      bg: props.isSelected ? 'background' : 'transparent',
     }}
     {...props}
   />

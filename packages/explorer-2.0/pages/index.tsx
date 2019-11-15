@@ -55,7 +55,6 @@ const GET_DATA = gql`
 const Index = () => {
   const context = useWeb3Context()
   const myAccount = useAccount(context.account ? context.account : '')
-
   const { data, loading, error } = useQuery(GET_DATA, {
     pollInterval: 10000,
     ssr: false,

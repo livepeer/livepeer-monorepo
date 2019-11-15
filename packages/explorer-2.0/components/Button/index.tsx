@@ -18,7 +18,7 @@ export default ({ variant = 'primary', size = 'normal', ...props }) => (
       px: 2,
       py: 1,
       border: 0,
-      borderRadius: 4,
+      borderRadius: 6,
       opacity: props.disabled ? 0.15 : 1,
       variant: `buttons.${variant}`,
       position: 'relative',

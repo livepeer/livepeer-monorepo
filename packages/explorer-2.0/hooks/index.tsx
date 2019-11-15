@@ -33,10 +33,9 @@ const GET_ACCOUNT = gql`
 `
 
 export function useAccount(address = null) {
-  let context = useWeb3Context()
-
-  const [account, setAccount] = useState()
-  const [delegator, setDelegator] = useState()
+  const context = useWeb3Context()
+  const [account, setAccount] = useState(null)
+  const [delegator, setDelegator] = useState(null)
 
   const { data } = useQuery(GET_ACCOUNT, {
     variables: {
@@ -44,18 +43,18 @@ export function useAccount(address = null) {
         ? address.toLowerCase()
         : context.account && context.account.toLowerCase(),
     },
-    pollInterval: 10000,
-    ssr: false,
+    skip: !context.account,
   })
 
   useEffect(() => {
-    if (data && data.account) {
-      setAccount(data.account)
+    if (data && context.active) {
+      setAccount(data.account ? data.account : null)
+      setDelegator(data.delegator ? data.delegator : null)
+    } else {
+      setAccount(null)
+      setDelegator(null)
     }
-    if (data && data.delegator) {
-      setDelegator(data.delegator)
-    }
-  }, [data])
+  }, [data, context.active])
 
   return { account, delegator }
 }

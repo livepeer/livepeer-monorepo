@@ -7,7 +7,7 @@ let hoursPerYear = 8760
 let averageHoursPerRound = 21
 let roundsPerYear = hoursPerYear / averageHoursPerRound
 
-export default ({ transcoder, value, protocol, ...props }) => {
+export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const client = useApolloClient()
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
   const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
@@ -40,28 +40,30 @@ export default ({ transcoder, value, protocol, ...props }) => {
         display: 'flex',
         alignItems: 'center',
         width: '100%',
-        mb: 3,
         position: 'relative',
       }}
       {...props}
     >
       <input
-        placeholder="0"
+        placeholder="0.0"
         type="number"
         autoFocus
+        value={value}
+        onChange={onChange}
         sx={{
           backgroundColor: 'transparent',
-          borderTop: '0',
-          borderLeft: '0',
-          borderRight: '0',
-          borderBottom: '1px solid',
-          borderColor: 'muted',
-          p: 1,
+          borderTop: 0,
+          borderLeft: 0,
+          borderRight: 0,
+          borderBottom: 0,
           color: 'text',
+          py: 0,
+          pl: 0,
+          pr: 6,
           boxShadow: 'none',
           width: '100%',
           outline: 'none',
-          fontSize: 26,
+          fontSize: 4,
           fontFamily: 'monospace',
           '&::-webkit-inner-spin-button': {
             WebkitAppearance: 'none',
@@ -71,7 +73,7 @@ export default ({ transcoder, value, protocol, ...props }) => {
           },
         }}
       />
-      <div sx={{ fontWeight: 'bold', right: 0, position: 'absolute' }}>LPT</div>
+      <div sx={{ fontSize: 1, right: 0, position: 'absolute' }}>LPT</div>
     </div>
   )
 }

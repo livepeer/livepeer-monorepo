@@ -36,7 +36,7 @@ export default ({ transcoder, amount, disabled }) => {
 
   const [unbond, { data }] = useMutation(UNBOND, {
     variables: {
-      amount: Utils.toWei(amount.toString()),
+      amount: Utils.toWei(amount ? amount.toString() : '0'),
     },
     notifyOnNetworkStatusChange: true,
     context: {

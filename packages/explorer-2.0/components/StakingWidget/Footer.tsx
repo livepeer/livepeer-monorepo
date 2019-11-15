@@ -47,7 +47,7 @@ export default ({
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
-  const sufficientBalance = account && amount < tokenBalance
+  const sufficientBalance = account && amount && amount <= tokenBalance
   const canStake =
     hasTokenBalance &&
     sufficientBalance &&
@@ -101,7 +101,7 @@ function renderStakeWarnings(
     return <Warning>You have 0 LPT in your wallet.</Warning>
   }
 
-  if (!sufficientBalance) {
+  if (amount && !sufficientBalance) {
     return <Warning>Insufficient Balance</Warning>
   }
 }

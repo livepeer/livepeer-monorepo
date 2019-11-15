@@ -5,6 +5,7 @@ import Header from './Header'
 import Input from './Input'
 import ProjectionBox from './ProjectionBox'
 import Help from '../../public/img/help.svg'
+import ArrowDown from '../../public/img/arrow-down.svg'
 import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
 import { Account, Delegator, Transcoder, Protocol, Round } from '../../@types'
@@ -16,6 +17,8 @@ import Utils from 'web3-utils'
 import Claim from '../Claim'
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Router, { useRouter } from 'next/router'
+import InputBox from './InputBox'
+import { Flex } from 'theme-ui'
 
 interface Props {
   transcoder: Transcoder
@@ -32,12 +35,13 @@ export default ({
   protocol,
   currentRound,
 }: Props) => {
-  const [amount, setAmount] = useState('0')
+  const [amount, setAmount] = useState('')
   const [action, setAction] = useState('stake')
   const context = useWeb3Context()
   const router = useRouter()
   let roundsSinceLastClaim = 0
   let lastClaimRound: number = 0
+
   if (delegator && delegator.lastClaimRound) {
     lastClaimRound = parseInt(delegator.lastClaimRound.id, 10)
     roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
@@ -57,12 +61,12 @@ export default ({
         sx={{
           width: '100%',
           boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-          borderRadius: 5,
+          borderRadius: 10,
           backgroundColor: 'surface',
         }}
       >
         <Header transcoder={transcoder} />
-        <div sx={{ p: 2 }}>
+        <div sx={{ pt: 1, pb: 2, px: 3 }}>
           <Tabs
             onChange={(index: number) => setAction(index ? 'unstake' : 'stake')}
           >
@@ -71,15 +75,30 @@ export default ({
               <Tab>Unstake</Tab>
             </TabList>
           </Tabs>
-          <Input
+
+          <InputBox
+            account={account}
+            action={action}
+            delegator={delegator}
             transcoder={transcoder}
-            value={amount}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setAmount(e.target.value ? e.target.value : '0')
-            }
+            amount={amount}
+            setAmount={setAmount}
             protocol={protocol}
           />
+          <Flex
+            sx={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '95%',
+              bg: '#181a21',
+              height: 32,
+              margin: '0 auto',
+            }}
+          >
+            <ArrowDown sx={{ width: 8, color: 'rgba(255, 255, 255, .3)' }} />
+          </Flex>
           <ProjectionBox action={action} />
+
           <Footer
             currentRound={currentRound}
             roundsSinceLastClaim={roundsSinceLastClaim}
