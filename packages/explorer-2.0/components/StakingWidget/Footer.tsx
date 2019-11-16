@@ -17,7 +17,6 @@ interface Props {
   delegator?: Delegator
   currentRound: Round
   account: Account
-  roundsSinceLastClaim: number
 }
 
 export default ({
@@ -27,7 +26,6 @@ export default ({
   amount,
   account,
   currentRound,
-  roundsSinceLastClaim,
 }: Props) => {
   const context = useWeb3Context()
   if (!context.account) {
@@ -48,6 +46,21 @@ export default ({
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
   const sufficientBalance = account && amount && amount <= tokenBalance
+  const stake =
+    delegator &&
+    Math.max(
+      delegator.bondedAmount ? Utils.fromWei(delegator.bondedAmount) : 0,
+      delegator.pendingStake ? Utils.fromWei(delegator.pendingStake) : 0,
+    )
+
+  const sufficientStake = delegator && amount && amount <= stake
+
+  const roundsSinceLastClaim =
+    currentRound &&
+    delegator &&
+    delegator.lastClaimRound &&
+    parseInt(currentRound.id, 10) - parseInt(delegator.lastClaimRound.id, 10)
+
   const canStake =
     hasTokenBalance &&
     sufficientBalance &&
@@ -79,6 +92,7 @@ export default ({
         amount,
         delegatorStatus,
         isStaked,
+        sufficientStake,
       )}
     </>
   )
@@ -111,6 +125,7 @@ function renderUnstakeWarnings(
   amount,
   delegatorStatus,
   isStaked,
+  sufficientStake,
 ) {
   if (roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0) {
     return (
@@ -129,5 +144,8 @@ function renderUnstakeWarnings(
   }
   if (!isStaked) {
     return <Warning>One must stake before one can unstake.</Warning>
+  }
+  if (amount && !sufficientStake) {
+    return <Warning>Insufficient stake</Warning>
   }
 }

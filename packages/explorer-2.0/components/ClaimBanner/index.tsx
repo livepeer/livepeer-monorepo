@@ -1,26 +1,34 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import React, { useEffect, useState } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import React, { useState, useEffect } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
 import { useWeb3Mutation } from '../../hooks'
+import { useWeb3Context } from 'web3-react'
+import gql from 'graphql-tag'
+import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
+import Banner from '../Banner'
 
-interface Props {
-  lastClaimRound: number
-  endRound: number
-  children: React.ReactNode
-}
-
-export default ({ children, lastClaimRound, endRound }: Props) => {
+export default ({ account, delegator, currentRound }) => {
   const context = useWeb3Context()
-  const [isOpen, setIsModalOpen] = useState(false)
-  const totalRoundsToClaim = endRound - (lastClaimRound + 1)
+
+  if (!account || (delegator && !delegator.lastClaimRound)) {
+    return null
+  }
+
+  // Display approve banner first
+  if (parseFloat(account.allowance) == 0) {
+    return null
+  }
+
+  const [claimModalOpen, setClaimModalOpen] = useState(false)
+
+  let lastClaimRound = parseInt(delegator.lastClaimRound.id, 10)
+  let roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
+  let totalRoundsToClaim = parseInt(currentRound.id, 10) - lastClaimRound
 
   const BATCH_CLAIM_EARNINGS = gql`
     mutation batchClaimEarnings($lastClaimRound: String!, $endRound: String!) {
@@ -36,8 +44,8 @@ export default ({ children, lastClaimRound, endRound }: Props) => {
     reset,
   } = useWeb3Mutation(BATCH_CLAIM_EARNINGS, {
     variables: {
-      lastClaimRound: lastClaimRound.toString(),
-      endRound: endRound.toString(),
+      lastClaimRound: delegator.lastClaimRound.id,
+      endRound: currentRound.id,
     },
     context: {
       web3: context.library,
@@ -49,30 +57,66 @@ export default ({ children, lastClaimRound, endRound }: Props) => {
 
   useEffect(() => {
     if (isBroadcasted) {
-      setIsModalOpen(true)
+      setClaimModalOpen(true)
+    }
+  }, [isBroadcasted])
+
+  let banner = null
+
+  if (
+    context.account &&
+    account &&
+    account.id.toLowerCase() == context.account.toLowerCase() &&
+    roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS
+  ) {
+    banner = (
+      <Banner
+        label={
+          <div sx={{ pr: 3 }}>
+            It's been over 100 rounds since your last claim.
+            {/* <Help
+              sx={{
+                position: 'relative',
+                ml: 1,
+                top: '2px',
+                width: 12,
+                height: 12,
+              }}
+            /> */}
+          </div>
+        }
+        button={
+          <Button
+            onClick={async () => {
+              try {
+                await batchClaimEarnings()
+              } catch (e) {
+                return {
+                  error: e.message.replace('GraphQL error: ', ''),
+                }
+              }
+            }}
+          >
+            Claim
+          </Button>
+        }
+      />
+    )
+  }
+
+  useEffect(() => {
+    if (isBroadcasted) {
+      setClaimModalOpen(true)
     }
   }, [isBroadcasted])
 
   return (
     <>
-      <Button
-        onClick={async () => {
-          try {
-            await batchClaimEarnings()
-          } catch (e) {
-            return {
-              error: e.message.replace('GraphQL error: ', ''),
-            }
-          }
-        }}
-      >
-        {children}
-      </Button>
       <Modal
-        isOpen={isOpen}
+        isOpen={claimModalOpen}
         onDismiss={() => {
           reset()
-          setIsModalOpen(false)
+          setClaimModalOpen(false)
         }}
         title={isMined ? 'Success!' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
@@ -106,12 +150,16 @@ export default ({ children, lastClaimRound, endRound }: Props) => {
             </>
           )}
           {isMined && (
-            <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>
+            <Button
+              onClick={() => setClaimModalOpen(false)}
+              sx={{ ml: 'auto' }}
+            >
               Done
             </Button>
           )}
         </Flex>
       </Modal>
+      {banner}
     </>
   )
 }

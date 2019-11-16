@@ -15,13 +15,13 @@ export default ({
   protocol,
 }) => {
   const tokenBalance =
-    account && parseFloat(Utils.fromWei(account.tokenBalance))
+    account && parseFloat(Utils.fromWei(account.tokenBalance.toString()))
 
-  const pendingStake =
+  const stake =
     delegator &&
     Math.max(
-      Utils.fromWei(delegator.bondedAmount),
-      Utils.fromWei(delegator.pendingStake),
+      delegator.bondedAmount ? Utils.fromWei(delegator.bondedAmount) : 0,
+      delegator.pendingStake ? Utils.fromWei(delegator.pendingStake) : 0,
     )
 
   return (
@@ -59,11 +59,11 @@ export default ({
                 </div>
               ) : (
                 <>
-                  {pendingStake && (
+                  {stake > 0 && (
                     <div
                       data-tip="Enter max"
                       data-for="stake"
-                      onClick={() => setAmount(pendingStake)}
+                      onClick={() => setAmount(stake)}
                       sx={{ cursor: 'pointer', color: 'muted' }}
                     >
                       <ReactTooltip
@@ -75,7 +75,7 @@ export default ({
                       />
                       Stake:{' '}
                       <span sx={{ fontFamily: 'monospace' }}>
-                        {pendingStake.toPrecision(4)}
+                        {stake.toPrecision(4)}
                       </span>
                     </div>
                   )}
