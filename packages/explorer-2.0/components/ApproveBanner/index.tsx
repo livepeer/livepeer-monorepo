@@ -12,12 +12,13 @@ import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import Banner from '../Banner'
 
-export default ({ account }) => {
-  const context = useWeb3Context()
+export default ({ account, context }) => {
   if (!account) {
     return null
   }
+
   const [approveModalOpen, setApproveModalOpen] = useState(false)
+
   const APPROVE = gql`
     mutation approve($type: String!, $amount: String!) {
       txHash: approve(type: $type, amount: $amount)

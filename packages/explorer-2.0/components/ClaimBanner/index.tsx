@@ -12,9 +12,7 @@ import gql from 'graphql-tag'
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Banner from '../Banner'
 
-export default ({ account, delegator, currentRound }) => {
-  const context = useWeb3Context()
-
+export default ({ account, delegator, currentRound, context }) => {
   if (!account || (delegator && !delegator.lastClaimRound)) {
     return null
   }

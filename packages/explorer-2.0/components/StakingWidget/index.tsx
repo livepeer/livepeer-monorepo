@@ -36,12 +36,13 @@ export default ({
     <div className="tour-step-7">
       {context.active && (
         <>
-          <GetLPTBanner account={account} />
-          <ApproveBanner account={account} />
+          <GetLPTBanner account={account} context={context} />
+          <ApproveBanner account={account} context={context} />
           <ClaimBanner
             account={account}
             delegator={delegator}
             currentRound={currentRound}
+            context={context}
           />
         </>
       )}

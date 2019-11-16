@@ -2,13 +2,11 @@
 import { jsx } from 'theme-ui'
 import React from 'react'
 import Button from '../Button'
-import { useWeb3Context } from 'web3-react'
 import Banner from '../Banner'
 import Router, { useRouter } from 'next/router'
 import Utils from 'web3-utils'
 
-export default ({ account }) => {
-  const context = useWeb3Context()
+export default ({ account, context }) => {
   const router = useRouter()
   let banner = null
   if (
