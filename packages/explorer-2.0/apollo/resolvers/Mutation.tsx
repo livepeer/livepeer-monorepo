@@ -83,8 +83,10 @@ export async function batchClaimEarnings(obj, args, ctx) {
     let promises = calls.map(call => {
       return new Promise((res, rej) => {
         let req = call.request({ from: ctx.account }, (err, txHash) => {
-          if (err) rej(err)
-          else res(txHash)
+          if (err) {
+            rej(err)
+          }
+          res(txHash)
         })
         batch.add(req)
       })
@@ -93,7 +95,9 @@ export async function batchClaimEarnings(obj, args, ctx) {
     return Promise.all(promises)
   }
 
-  return await makeBatchRequest(calls)
+  const txns = await makeBatchRequest(calls)
+  const lastTransactionInBatch = txns[calls.length - 1]
+  return lastTransactionInBatch
 }
 
 /**

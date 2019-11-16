@@ -12,7 +12,8 @@ import NewTab from '../../public/img/open-in-new.svg'
 import { useWeb3Context } from 'web3-react'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
-import { useStakeMutation } from '../../hooks'
+import { useWeb3Mutation } from '../../hooks'
+import gql from 'graphql-tag'
 
 export default ({ transcoder, amount, disabled }) => {
   const client = useApolloClient()
@@ -24,9 +25,29 @@ export default ({ transcoder, amount, disabled }) => {
     return null
   }
 
-  const { bond, isBroadcasted, isMined, isMining, txHash } = useStakeMutation({
-    to: transcoder.id,
-    amount: Utils.toWei(amount ? amount.toString() : '0'),
+  const BOND = gql`
+    mutation bond($to: String!, $amount: String!) {
+      txHash: bond(to: $to, amount: $amount)
+    }
+  `
+
+  const {
+    mutate: bond,
+    isBroadcasted,
+    isMined,
+    isMining,
+    txHash,
+  } = useWeb3Mutation(BOND, {
+    variables: {
+      to: transcoder.id,
+      amount: Utils.toWei(amount ? amount.toString() : '0'),
+    },
+    notifyOnNetworkStatusChange: true,
+    context: {
+      provider: context.library.currentProvider,
+      account: context.account.toLowerCase(),
+      returnTxHash: true,
+    },
   })
 
   useEffect(() => {
@@ -57,7 +78,6 @@ export default ({ transcoder, amount, disabled }) => {
       >
         Stake
       </Button>
-
       <Modal
         isOpen={isOpen}
         setOpen={setIsModalOpen}

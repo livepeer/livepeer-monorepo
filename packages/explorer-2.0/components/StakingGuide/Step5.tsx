@@ -2,13 +2,38 @@
 import { useEffect } from 'react'
 import { jsx, Styled } from 'theme-ui'
 import Button from '../Button'
-import { useApproveMutation } from '../../hooks'
+import { useWeb3Mutation } from '../../hooks'
 import Spinner from '../Spinner'
 import { Flex } from 'theme-ui'
 import Router from 'next/router'
+import gql from 'graphql-tag'
+import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
+import { useWeb3Context } from 'web3-react'
 
 export default ({ goTo, nextStep }) => {
-  const { approve, isBroadcasted, isMined, txHash } = useApproveMutation()
+  const context = useWeb3Context()
+
+  const APPROVE = gql`
+    mutation approve($type: String!, $amount: String!) {
+      txHash: approve(type: $type, amount: $amount)
+    }
+  `
+  const { mutate: approve, isBroadcasted, isMined, txHash } = useWeb3Mutation(
+    APPROVE,
+    {
+      variables: {
+        type: 'bond',
+        amount: MAXIUMUM_VALUE_UINT256,
+      },
+      notifyOnNetworkStatusChange: true,
+      context: {
+        provider: context.library.currentProvider,
+        account: context.account.toLowerCase(),
+        returnTxHash: true,
+      },
+    },
+  )
+
   useEffect(() => {
     async function goToNextStep() {
       if (isMined) {

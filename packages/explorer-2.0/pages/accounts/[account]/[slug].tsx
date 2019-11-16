@@ -51,6 +51,7 @@ const AccountPage = () => {
       account: query.account.toString().toLowerCase(),
     },
     ssr: false,
+    pollInterval: 5000,
   })
 
   const myAccount = useAccount(context.account)
