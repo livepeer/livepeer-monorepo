@@ -18,21 +18,21 @@ export default ({ goTo, nextStep }) => {
       txHash: approve(type: $type, amount: $amount)
     }
   `
-  const { mutate: approve, isBroadcasted, isMined, txHash } = useWeb3Mutation(
-    APPROVE,
-    {
-      variables: {
-        type: 'bond',
-        amount: MAXIUMUM_VALUE_UINT256,
-      },
-      notifyOnNetworkStatusChange: true,
-      context: {
-        provider: context.library.currentProvider,
-        account: context.account.toLowerCase(),
-        returnTxHash: true,
-      },
+  const {
+    result: { mutate: approve, isBroadcasted, isMined, txHash },
+    reset,
+  } = useWeb3Mutation(APPROVE, {
+    variables: {
+      type: 'bond',
+      amount: MAXIUMUM_VALUE_UINT256,
     },
-  )
+    notifyOnNetworkStatusChange: true,
+    context: {
+      provider: context.library.currentProvider,
+      account: context.account.toLowerCase(),
+      returnTxHash: true,
+    },
+  })
 
   useEffect(() => {
     async function goToNextStep() {

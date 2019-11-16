@@ -3666,10 +3666,10 @@
     xhr "^2.2.0"
     xtend "^4.0.1"
 
-"@portis/web3@2.0.0-beta.53":
-  version "2.0.0-beta.53"
-  resolved "https://registry.yarnpkg.com/@portis/web3/-/web3-2.0.0-beta.53.tgz#c4a5f7be1550c4d4b74953774f17dc3b6787749a"
-  integrity sha512-qyueShziG/SR9V+XJVZdN1rOLjcO799aC/n7g5+UonEZmA1coAG60Vdvge6kxq7BHwalM+sIWjMzP/8V7cHNUg==
+"@portis/web3@^2.0.0-beta.54":
+  version "2.0.0-beta.54"
+  resolved "https://registry.yarnpkg.com/@portis/web3/-/web3-2.0.0-beta.54.tgz#a46f21375bec90bb247f66e9fde776d863a6f25b"
+  integrity sha512-BrhlbEXUEtlJhElXMI32S8q/2hzQpuGNRLsRxEURxonWkDMzK/CjtpKO2ACoJ205Y96lMH4S3xQB0Vuc8dC/WQ==
   dependencies:
     "@portis/web3-provider-engine" "1.1.0"
     ethereumjs-util "5.2.0"

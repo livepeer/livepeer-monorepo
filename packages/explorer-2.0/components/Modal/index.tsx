@@ -28,44 +28,36 @@ export default ({
 }: Props) => {
   return (
     <>
-      {isOpen && (
+      <Styled.div
+        as={DialogOverlay}
+        isOpen={isOpen}
+        sx={{ background: 'rgba(0, 0, 0, 0.5)', ...props }}
+        onDismiss={onDismiss}
+        {...props}
+      >
         <Styled.div
-          as={DialogOverlay}
-          sx={{ background: 'rgba(0, 0, 0, 0.5)', ...props }}
-          onDismiss={() => {
-            if (onDismiss) {
-              onDismiss()
-            } else {
-              setOpen(false)
-            }
-          }}
-          {...props}
+          ref={ref}
+          className={className}
+          as={DialogContent}
+          sx={
+            title
+              ? { p: 3, bg: 'surface', borderRadius: 2 }
+              : {
+                  margin: '40px auto',
+                  p: 0,
+                  height: 'calc(100vh - 80px)',
+                }
+          }
         >
-          <Styled.div
-            ref={ref}
-            className={className}
-            as={DialogContent}
-            sx={
-              title
-                ? { p: 3, bg: 'surface', borderRadius: 2 }
-                : {
-                    margin: '40px auto',
-                    p: 0,
-                    height: 'calc(100vh - 80px)',
-                  }
-            }
-            isOpen={isOpen}
-          >
-            {title && (
-              <Flex sx={{ alignItems: 'center', mb: 3 }}>
-                {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
-                <Styled.h2>{title}</Styled.h2>
-              </Flex>
-            )}
-            {children}
-          </Styled.div>
+          {title && (
+            <Flex sx={{ alignItems: 'center', mb: 3 }}>
+              {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
+              <Styled.h2>{title}</Styled.h2>
+            </Flex>
+          )}
+          {children}
         </Styled.div>
-      )}
+      </Styled.div>
     </>
   )
 }

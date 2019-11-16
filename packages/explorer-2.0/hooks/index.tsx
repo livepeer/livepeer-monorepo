@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -43,6 +43,7 @@ export function useAccount(address = null) {
         ? address.toLowerCase()
         : context.account && context.account.toLowerCase(),
     },
+    pollInterval: 5000,
     skip: !context.account,
   })
 
@@ -60,15 +61,24 @@ export function useAccount(address = null) {
 }
 
 export function useWeb3Mutation(mutation, options) {
-  const [result, setResult] = useState({
+  const initialState = {
     mutate: null,
     isBroadcasted: false,
     isMining: false,
     isMined: false,
     txHash: null,
-  })
+    error: null,
+  }
+  const [result, setResult] = useState(initialState)
 
-  const [mutate, { data }] = useMutation(mutation, options)
+  const reset = useCallback(() => {
+    setResult(initialState)
+  }, [initialState])
+
+  const [mutate, { data, error: mutationError }] = useMutation(
+    mutation,
+    options,
+  )
 
   const GET_TRANSACTION_STATUS = gql`
     query getTxReceiptStatus($txHash: String!) {
@@ -78,14 +88,17 @@ export function useWeb3Mutation(mutation, options) {
     }
   `
 
-  const { data: transaction } = useQuery(GET_TRANSACTION_STATUS, {
-    variables: {
-      txHash: `${data && data.txHash}`,
+  const { data: transaction, error: queryError } = useQuery(
+    GET_TRANSACTION_STATUS,
+    {
+      variables: {
+        txHash: `${data && data.txHash}`,
+      },
+      pollInterval: 2000,
+      // skip query if tx hasn't yet been broadcasted or has been mined
+      skip: !result.isBroadcasted || result.isMined,
     },
-    pollInterval: 2000,
-    // skip query if tx hasn't yet been broadcasted or has been mined
-    skip: !result.isBroadcasted || result.isMined,
-  })
+  )
 
   let isMining = !!(transaction && !transaction.getTxReceiptStatus.status)
   let isMined = !!(transaction && transaction.getTxReceiptStatus.status)
@@ -102,10 +115,21 @@ export function useWeb3Mutation(mutation, options) {
         ...result,
         isMining: isMining && !isMined,
         isMined: isMined,
-        isBroadcasted: true,
+      })
+    }
+    if (mutationError) {
+      setResult({
+        ...result,
+        error: mutationError,
+      })
+    }
+    if (queryError) {
+      setResult({
+        ...result,
+        error: queryError,
       })
     }
   }, [transaction, data, mutate])
 
-  return result
+  return { result, reset }
 }

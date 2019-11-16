@@ -32,17 +32,13 @@ export default ({ children, lastClaimRound, endRound }: Props) => {
   `
 
   const {
-    mutate: batchClaimEarnings,
-    isBroadcasted,
-    isMined,
-    isMining,
-    txHash,
+    result: { mutate: batchClaimEarnings, isBroadcasted, isMined, txHash },
+    reset,
   } = useWeb3Mutation(BATCH_CLAIM_EARNINGS, {
     variables: {
       lastClaimRound: lastClaimRound.toString(),
       endRound: endRound.toString(),
     },
-    notifyOnNetworkStatusChange: true,
     context: {
       web3: context.library,
       provider: context.library.currentProvider,
@@ -72,10 +68,12 @@ export default ({ children, lastClaimRound, endRound }: Props) => {
       >
         {children}
       </Button>
-
       <Modal
         isOpen={isOpen}
-        setOpen={setIsModalOpen}
+        onDismiss={() => {
+          reset()
+          setIsModalOpen(false)
+        }}
         title={isMined ? 'Success!' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
@@ -87,26 +85,25 @@ export default ({ children, lastClaimRound, endRound }: Props) => {
           )}
         </div>
         <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-          {!isMined && (
-            <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-              <Spinner sx={{ mr: 2 }} />
-              {isMining && (
+          {txHash && !isMined && (
+            <>
+              <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
+                <Spinner sx={{ mr: 2 }} />
                 <div sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
                 </div>
-              )}
-            </Flex>
-          )}
-          {!isMined && (
-            <Button
-              sx={{ display: 'flex', alignItems: 'center' }}
-              as="a"
-              target="_blank"
-              rel="noopener noreferrer"
-              href={`https://etherscan.io/tx/${txHash}`}
-            >
-              View on Etherscan <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
-            </Button>
+              </Flex>
+              <Button
+                sx={{ display: 'flex', alignItems: 'center' }}
+                as="a"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://etherscan.io/tx/${txHash}`}
+              >
+                View on Etherscan{' '}
+                <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
+              </Button>
+            </>
           )}
           {isMined && (
             <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>

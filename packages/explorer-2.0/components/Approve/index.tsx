@@ -18,8 +18,8 @@ interface Props {
 }
 
 export default ({ children, amount }: Props) => {
-  const [isOpen, setIsModalOpen] = useState(false)
   const context = useWeb3Context()
+  const [isOpen, setIsModalOpen] = useState(false)
 
   const APPROVE = gql`
     mutation approve($type: String!, $amount: String!) {
@@ -27,17 +27,13 @@ export default ({ children, amount }: Props) => {
     }
   `
   const {
-    mutate: approve,
-    isBroadcasted,
-    isMined,
-    isMining,
-    txHash,
+    result: { mutate: approve, isBroadcasted, isMined, txHash },
+    reset,
   } = useWeb3Mutation(APPROVE, {
     variables: {
       type: 'bond',
       amount: amount ? Utils.toWei(amount, 'ether') : MAXIUMUM_VALUE_UINT256,
     },
-    notifyOnNetworkStatusChange: true,
     context: {
       provider: context.library.currentProvider,
       account: context.account.toLowerCase(),
@@ -68,11 +64,24 @@ export default ({ children, amount }: Props) => {
       </Button>
       <Modal
         isOpen={isOpen}
-        setOpen={setIsModalOpen}
+        onDismiss={() => {
+          reset()
+          setIsModalOpen(false)
+        }}
         title={isMined ? 'Success!' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
-        <div sx={{ mb: 4 }}>
+        <Flex
+          sx={{
+            border: '1px solid',
+            borderColor: 'border',
+            borderRadius: 6,
+            p: 3,
+            alignItems: 'center',
+            justifyContent: 'center',
+            my: 5,
+          }}
+        >
           {isMined ? (
             <div>All set! You're ready to begin staking.</div>
           ) : (
@@ -81,28 +90,27 @@ export default ({ children, amount }: Props) => {
               tokens for staking...
             </div>
           )}
-        </div>
+        </Flex>
         <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-          {!isMined && (
-            <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-              <Spinner sx={{ mr: 2 }} />
-              {isMining && (
+          {txHash && !isMined && (
+            <>
+              <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
+                <Spinner sx={{ mr: 2 }} />
                 <div sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
                 </div>
-              )}
-            </Flex>
-          )}
-          {!isMined && (
-            <Button
-              sx={{ display: 'flex', alignItems: 'center' }}
-              as="a"
-              target="_blank"
-              rel="noopener noreferrer"
-              href={`https://etherscan.io/tx/${txHash}`}
-            >
-              View on Etherscan <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
-            </Button>
+              </Flex>
+              <Button
+                sx={{ display: 'flex', alignItems: 'center' }}
+                as="a"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://etherscan.io/tx/${txHash}`}
+              >
+                View on Etherscan{' '}
+                <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
+              </Button>
+            </>
           )}
           {isMined && (
             <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>

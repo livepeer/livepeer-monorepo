@@ -29,17 +29,13 @@ export default ({ lock }) => {
   `
 
   const {
-    mutate: rebondFromUnbonded,
-    isBroadcasted,
-    isMined,
-    isMining,
-    txHash,
+    result: { mutate: rebondFromUnbonded, isBroadcasted, isMined, txHash },
+    reset,
   } = useWeb3Mutation(REBOND_FROM_UNBONDED, {
     variables: {
       unbondingLockId: lock.unbondingLockId,
       delegate: lock.delegate.id,
     },
-    notifyOnNetworkStatusChange: true,
     context: {
       provider: context.library.currentProvider,
       account: context.account.toLowerCase(),
@@ -72,7 +68,10 @@ export default ({ lock }) => {
 
       <Modal
         isOpen={isOpen}
-        setOpen={setIsModalOpen}
+        onDismiss={() => {
+          reset()
+          setIsModalOpen(false)
+        }}
         title={isMined ? 'Successfully Rebonded' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
@@ -82,26 +81,26 @@ export default ({ lock }) => {
           amount={lock.amount}
         />
         <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-          {!isMined && (
-            <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-              <Spinner sx={{ mr: 2 }} />
-              {isMining && (
+          {txHash && !isMined && (
+            <>
+              <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
+                <Spinner sx={{ mr: 2 }} />
                 <div sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
                 </div>
+              </Flex>
               )}
-            </Flex>
-          )}
-          {!isMined && (
-            <Button
-              sx={{ display: 'flex', alignItems: 'center' }}
-              as="a"
-              target="_blank"
-              rel="noopener noreferrer"
-              href={`https://etherscan.io/tx/${txHash}`}
-            >
-              View on Etherscan <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
-            </Button>
+              <Button
+                sx={{ display: 'flex', alignItems: 'center' }}
+                as="a"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://etherscan.io/tx/${txHash}`}
+              >
+                View on Etherscan{' '}
+                <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
+              </Button>
+            </>
           )}
           {isMined && (
             <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>

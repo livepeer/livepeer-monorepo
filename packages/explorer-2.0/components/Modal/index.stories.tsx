@@ -20,7 +20,7 @@ storiesOf('Modal', module)
         <button onClick={() => setOpen(true)}>Toggle Modal</button>{' '}
         <Modal
           isOpen={isOpen}
-          setOpen={setOpen}
+          onDismiss={() => setOpen(false)}
           title="Broadcasted"
           Icon={Broadcast}
         >
@@ -51,7 +51,7 @@ storiesOf('Modal', module)
         <button onClick={() => setOpen(true)}>Toggle Modal</button>{' '}
         <Modal
           isOpen={isOpen}
-          setOpen={setOpen}
+          onDismiss={() => setOpen(false)}
           title="Success!"
           Icon={() => <div sx={{ mr: 2 }}>🎊</div>}
         >
@@ -78,7 +78,11 @@ storiesOf('Modal', module)
     return (
       <>
         <button onClick={() => setOpen(true)}>Toggle Modal</button>{' '}
-        <Modal isOpen={isOpen} setOpen={setOpen} title="Successfully Unstaked">
+        <Modal
+          isOpen={isOpen}
+          onDismiss={() => setOpen(false)}
+          title="Successfully Unstaked"
+        >
           <StakingFlow amount={100} action="unstake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Button
