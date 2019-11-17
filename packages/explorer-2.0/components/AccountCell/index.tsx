@@ -1,7 +1,5 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import Link from 'next/link'
 import { getDelegationStatusColor } from '../../lib/utils'
@@ -51,6 +49,7 @@ export default ({ status, active, address }) => {
           <a
             className="orchestratorLink"
             sx={{
+              mr: 1,
               color: 'text',
               cursor: 'pointer',
               transition: 'all .3s',
@@ -61,7 +60,9 @@ export default ({ status, active, address }) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <div>{address.replace(address.slice(5, 39), '…')}</div>
+              <div>
+                {address.replace(address.slice(5, 39), '…')}
+              </div>
             </Flex>
           </a>
         </Link>
@@ -69,11 +70,12 @@ export default ({ status, active, address }) => {
           <div
             sx={{
               display: 'inline-flex',
-              padding: '0px 6px',
+              padding: '3px 6px',
               border: '1px solid',
               borderColor: 'border',
               color: 'muted',
               fontWeight: 600,
+              alignSelf: 'center',
               borderRadius: 3,
               fontSize: '10px',
               alignItems: 'center',
