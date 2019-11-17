@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { MAXIUMUM_VALUE_UINT256 } from '../lib/utils'
-import Utils from 'web3-utils'
 
 const GET_ACCOUNT = gql`
   query($account: ID!) {

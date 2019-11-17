@@ -1,94 +1,86 @@
-import { ApolloClient } from 'apollo-client'
+import { ApolloClient } from "apollo-client";
 import {
   InMemoryCache,
-  IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory'
-import { HttpLink } from 'apollo-link-http'
-import { graphql, print } from 'graphql'
-import { Observable, ApolloLink } from 'apollo-link'
-import LivepeerSDK from '@adamsoffer/livepeer-sdk'
-import fetch from 'isomorphic-unfetch'
-import {
-  introspectSchema,
-  makeRemoteExecutableSchema,
-  mergeSchemas,
-} from 'graphql-tools'
-import schema from '../apollo'
+  IntrospectionFragmentMatcher
+} from "apollo-cache-inmemory";
+import { HttpLink } from "apollo-link-http";
+import { ApolloLink, split, Observable } from "apollo-link";
+import { WebSocketLink } from "apollo-link-ws";
+import LivepeerSDK from "@adamsoffer/livepeer-sdk";
+import schema from "../apollo";
+import { graphql, print } from "graphql";
+import { getMainDefinition } from "apollo-utilities";
 
-const isProd = process.env.NODE_ENV === 'production'
-const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
-const threeBoxEndpoint = 'https://api.3box.io/graph'
-const changefeedEndpoint = isProd
+const isProd = process.env.NODE_ENV === "production";
+
+const graphqlAPI = isProd
   ? 'https://explorer.livepeer.org/api/graphql'
   : 'http://localhost:3009/api/graphql'
 
-let apolloClient = null
+let apolloClient = null;
 
 export default (initialState = {}) => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
-  if (typeof window === 'undefined') {
-    return createApolloClient(initialState)
+  if (typeof window === "undefined") {
+    return createApolloClient(initialState);
   }
 
   // Reuse client on the client-side
   if (!apolloClient) {
-    apolloClient = createApolloClient(initialState)
+    apolloClient = createApolloClient(initialState);
   }
 
-  return apolloClient
-}
+  return apolloClient;
+};
 
 function createApolloClient(initialState = {}) {
-  const isBrowser = typeof window !== 'undefined'
+  const isBrowser = typeof window !== "undefined";
 
-  const mainLink = new ApolloLink(
+  const clientLink = new ApolloLink(
     operation =>
       new Observable(observer => {
-        ;(async () => {
-          let { query, variables, operationName, getContext } = operation
-          let context = getContext()
-          let mergedSchema = await createSchema()
+        (async () => {
+          let { query, variables, operationName, getContext } = operation;
+          let context = getContext();
           let sdk = await LivepeerSDK({
-            account: context.account ? context.account : '',
+            account: context.account ? context.account : "",
             gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
             provider: context.provider
               ? context.provider
-              : 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
-          })
-
+              : "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e"
+          });
           graphql(
-            mergedSchema,
+            schema,
             print(query),
             null,
             {
               ...context,
-              livepeer: sdk,
+              livepeer: sdk
             },
             variables,
-            operationName,
+            operationName
           )
             .then(result => {
-              observer.next(result)
-              observer.complete()
+              observer.next(result);
+              observer.complete();
             })
             .catch(e => {
-              return observer.error(e)
-            })
-        })()
-      }),
-  )
+              return observer.error(e);
+            });
+        })();
+      })
+  );
 
   const fragmentMatcher = new IntrospectionFragmentMatcher({
     introspectionQueryResultData: {
-      __schema: { types: [] },
-    },
-  })
+      __schema: { types: [] }
+    }
+  });
 
   const cache = new InMemoryCache({ fragmentMatcher }).restore(
-    initialState || {},
-  )
+    initialState || {}
+  );
 
   cache.writeData({
     data: {
@@ -96,110 +88,54 @@ function createApolloClient(initialState = {}) {
       roi: 0.0,
       principle: 0.0,
       selectedTranscoder: {
-        __typename: 'Transcoder',
+        __typename: "Transcoder",
         index: 0,
         rewardCut: null,
-        id: null,
-      },
+        id: null
+      }
+    }
+  });
+
+  const httpLink = new HttpLink({
+    uri: graphqlAPI
+  });
+
+
+  const wsLink: any = process.browser ? new WebSocketLink({
+    uri: `wss://api.thegraph.com/subgraphs/name/livepeer/livepeer`,
+    options: {
+      reconnect: true,
     },
-  })
+  }) : () => {};
+
+
+  const link = split(
+    operation => {
+      const mainDefinition: any = getMainDefinition(operation.query);
+      return (
+        mainDefinition.kind === "OperationDefinition" &&
+        mainDefinition.operation === "subscription"
+      );
+    },
+    wsLink,
+    split(
+      operation => {
+        const mainDefinition: any = getMainDefinition(operation.query);
+        return (
+          mainDefinition.kind === "OperationDefinition" &&
+          mainDefinition.operation === "mutation"
+        );
+      },
+      clientLink,
+      httpLink
+    )
+  );
 
   return new ApolloClient({
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
-    link: mainLink,
+    link,
     resolvers: {},
-    cache,
-  })
-}
-
-async function createSchema() {
-  const { rpc } = await LivepeerSDK()
-  const subgraphServiceLink = new HttpLink({
-    uri: subgraphEndpoint,
-    fetch,
-  })
-
-  const threeBoxServiceLink = new HttpLink({
-    uri: threeBoxEndpoint,
-    fetch,
-  })
-
-  const changefeedServiceLink = new HttpLink({
-    uri: changefeedEndpoint,
-    fetch,
-  })
-
-  const createSubgraphServiceSchema = async () => {
-    const executableSchema = makeRemoteExecutableSchema({
-      schema: await introspectSchema(subgraphServiceLink),
-      link: subgraphServiceLink,
-    })
-    return executableSchema
-  }
-
-  const create3BoxServiceSchema = async () => {
-    const executableSchema = makeRemoteExecutableSchema({
-      schema: await introspectSchema(threeBoxServiceLink),
-      link: threeBoxServiceLink,
-    })
-    return executableSchema
-  }
-
-  const createChangefeedServiceSchema = async () => {
-    const executableSchema = makeRemoteExecutableSchema({
-      schema: await introspectSchema(changefeedServiceLink),
-      link: changefeedServiceLink,
-    })
-    return executableSchema
-  }
-
-  const subgraphSchema = await createSubgraphServiceSchema()
-  const threeBoxSchema = await create3BoxServiceSchema()
-  const changefeedSchema = await createChangefeedServiceSchema()
-  const linkTypeDefs = `
-    extend type Profile {
-      transcoder: Transcoder
-    }
-    extend type Transcoder {
-      profile: Profile
-    }
-    extend type Delegator {
-      pendingStake: String
-      tokenBalance: String
-      ethBalance: String
-    }
-  `
-
-  const merged = mergeSchemas({
-    schemas: [
-      subgraphSchema,
-      threeBoxSchema,
-      changefeedSchema,
-      schema,
-      linkTypeDefs,
-    ],
-    resolvers: {
-      Delegator: {
-        pendingStake: {
-          async resolve(_delegator, _args, _context, _info) {
-            const { pendingStake } = await rpc.getDelegator(_delegator.id)
-            return pendingStake
-          },
-        },
-        tokenBalance: {
-          async resolve(_delegator, _args, _context, _info) {
-            return await rpc.getTokenBalance(_delegator.id)
-          },
-        },
-        ethBalance: {
-          async resolve(_delegator, _args, _context, _info) {
-            return await rpc.getEthBalance(_delegator.id)
-          },
-        },
-      },
-    },
-  })
-
-  return merged
+    cache
+  });
 }
