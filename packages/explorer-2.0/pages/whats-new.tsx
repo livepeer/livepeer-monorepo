@@ -15,6 +15,7 @@ const GET_CHANGEFEED = gql`
       releases {
         edges {
           node {
+            title
             description
             isPublished
             publishedAt
@@ -28,6 +29,29 @@ const GET_CHANGEFEED = gql`
     }
   }
 `
+
+function getBadgeColor(changeType) {
+  if (changeType === 'NEW') {
+    return 'primary'
+  } else if (changeType === 'IMPROVED') {
+    return 'teal'
+  } else if (changeType === 'FIXED') {
+    return 'skyBlue'
+  } else if (changeType === 'REMOVED') {
+    return 'red'
+  } else {
+    return 'blue'
+  }
+}
+
+const groupBy = key => array =>
+  array.reduce((objectsByKeyValue, obj) => {
+    const value = obj[key]
+    objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj)
+    return objectsByKeyValue
+  }, {})
+
+const groupByType = groupBy('type')
 
 const WhatsNew = () => {
   const { data, loading } = useQuery(GET_CHANGEFEED)
@@ -71,7 +95,7 @@ const WhatsNew = () => {
                 ({ node }, i) =>
                   node.isPublished && (
                     <Card key={i} sx={{ flex: 1, mb: 4 }}>
-                      <Styled.h3>The First Release</Styled.h3>
+                      <Styled.h3>{node.title}</Styled.h3>
                       <div
                         sx={{
                           lineHeight: 2,
@@ -92,28 +116,35 @@ const WhatsNew = () => {
                       >
                         {node.description}
                       </div>
-                      {node.changes.map((change, i) => (
-                        <div key={i} sx={{ alignSelf: 'flexStart' }}>
-                          <div
-                            sx={{
-                              fontSize: '14px',
-                              display: 'inline-flex',
-                              textTransform: 'uppercase',
-                              lineHeight: '1',
-                              fontWeight: 'bold',
-                              margin: '0px',
-                              padding: '4px 16px',
-                              borderRadius: '4px',
-                              color: 'background',
-                              backgroundColor: 'primary',
-                              mb: 2,
-                            }}
-                          >
-                            {change.type}
+                      {Object.keys(groupByType(node.changes)).map(key => {
+                        return (
+                          <div sx={{ mb: 2 }}>
+                            <div
+                              sx={{
+                                fontSize: '14px',
+                                display: 'inline-flex',
+                                textTransform: 'uppercase',
+                                lineHeight: '1',
+                                fontWeight: 'bold',
+                                margin: '0px',
+                                padding: '4px 16px',
+                                alignSelf: 'flex-start',
+                                borderRadius: '4px',
+                                color: 'background',
+                                bg: getBadgeColor(key),
+                                mb: 2,
+                              }}
+                            >
+                              {key}
+                            </div>
+                            {groupByType(node.changes)[key].map(change => (
+                              <div key={i} sx={{ alignSelf: 'flexStart' }}>
+                                <div sx={{ mb: 2 }}>{change.content}</div>
+                              </div>
+                            ))}
                           </div>
-                          <div>{change.content}</div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </Card>
                   ),
               )}

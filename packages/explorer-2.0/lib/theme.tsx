@@ -35,6 +35,8 @@ const theme = {
     red: '#d32f2f',
     yellow: '#fbc02d',
     blue: '#0062eb',
+    skyBlue: '#5bc2ee',
+    teal: '#00bfb2',
     border: 'rgba(255, 255, 255, .16)',
     modes: {},
   },

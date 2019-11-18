@@ -135,7 +135,7 @@ export default () => {
                 fontFamily: 'monospace',
               }}
             >
-              {abbreviateNumber(pendingStake, 4)}
+              {abbreviateNumber(pendingStake, 5)}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </div>
           }
