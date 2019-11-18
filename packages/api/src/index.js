@@ -3,7 +3,7 @@ import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
 import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
-import { LevelStore, PostgresStore } from './store'
+import { LevelStore, PostgresStore, CloudflareStore } from './store'
 import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import logger from './logger'
 import * as controllers from './controllers'
@@ -17,6 +17,9 @@ export default async function makeApp(params) {
     httpPrefix,
     port,
     postgresUrl,
+    cloudflareNamespace,
+    cloudflareAccount,
+    cloudflareAuth,
     listen = true,
     clientId,
     trustedDomain,
@@ -35,6 +38,12 @@ export default async function makeApp(params) {
     store = new LevelStore({ dbPath })
   } else if (storage === 'postgres') {
     store = new PostgresStore({ postgresUrl })
+  } else if (storage === 'cloudflare') {
+    store = new CloudflareStore({
+      cloudflareNamespace,
+      cloudflareAccount,
+      cloudflareAuth,
+    })
   }
   await store.ready
 
