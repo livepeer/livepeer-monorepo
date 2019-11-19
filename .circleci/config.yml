@@ -48,10 +48,11 @@ aliases:
   - &build-apps
     name: Build React applications
     command: |
-      yarn
+      yarn install
+      yarn postinstall
       # TODO: Fix linting errors so this can be true
       export CI=false
-      yarn build
+      yarn run build
 
   # Installs AWS cli
   - &install-aws-cli
