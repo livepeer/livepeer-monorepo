@@ -36,6 +36,7 @@ aliases:
     name: Install dependencies
     command: |
       yarn install
+      yarn postinstall
 
   # Runs reporter and shows test coverage
   - &show-test-report

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="12px" viewBox="0 0 10 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Path</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="5.68451955 0.111111111 4.43407634 0.111111111 4.43407634 9.37276965 4.34543433 9.37276965 0.907306452 5.88515989 0.0598888889 6.7456477 5.05929794 11.8184282 10.0598889 6.7456477 9.21128943 5.88515989 5.77434345 9.37276965 5.68451955 9.37276965"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Path" fill="currentColor" fill-rule="nonzero" xlink:href="#path-1"></use>
+    </g>
+</svg>
