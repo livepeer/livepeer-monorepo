@@ -7,12 +7,13 @@ import ArrowDown from '../../public/img/arrow-down.svg'
 import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
 import { Account, Delegator, Transcoder, Protocol, Round } from '../../@types'
-import ApproveBanner from '../ApproveBanner'
+import Approve from '../Approve'
 import { useWeb3Context } from 'web3-react'
 import InputBox from './InputBox'
 import { Flex } from 'theme-ui'
 import ClaimBanner from '../ClaimBanner'
 import GetLPTBanner from '../GetLPTBanner'
+import Utils from 'web3-utils'
 
 interface Props {
   transcoder: Transcoder
@@ -37,7 +38,11 @@ export default ({
       {context.active && (
         <>
           <GetLPTBanner account={account} context={context} />
-          <ApproveBanner account={account} context={context} />
+          {account &&
+            parseFloat(Utils.fromWei(account.allowance)) == 0 &&
+            parseFloat(Utils.fromWei(account.tokenBalance)) != 0 && (
+              <Approve account={account} context={context} banner={true} />
+            )}
           <ClaimBanner
             account={account}
             delegator={delegator}

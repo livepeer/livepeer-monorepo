@@ -9,6 +9,7 @@ import Utils from 'web3-utils'
 import { getDelegatorStatus, MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import { useWeb3Context } from 'web3-react'
 import Warning from './Warning'
+import Approve from '../Approve'
 
 interface Props {
   action: string
@@ -41,11 +42,14 @@ export default ({
   const tokenBalance =
     account && parseFloat(Utils.fromWei(account.tokenBalance))
   const hasTokenBalance = account && tokenBalance > 0
+  const tokenAllowance = account && parseFloat(Utils.fromWei(account.allowance))
   const approved = account && parseFloat(Utils.fromWei(account.allowance)) > 0
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
   const sufficientBalance = account && amount && amount <= tokenBalance
+  const sufficientTransferAllowance =
+    account && amount && amount <= tokenAllowance
   const stake =
     delegator &&
     Math.max(
@@ -66,6 +70,7 @@ export default ({
     sufficientBalance &&
     roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     approved &&
+    sufficientTransferAllowance &&
     amount > 0
 
   const canUnstake =
@@ -80,6 +85,9 @@ export default ({
           amount,
           hasTokenBalance,
           sufficientBalance,
+          sufficientTransferAllowance,
+          context,
+          account,
         )}
       </>
     )
@@ -103,6 +111,9 @@ function renderStakeWarnings(
   amount,
   hasTokenBalance,
   sufficientBalance,
+  sufficientTransferAllowance,
+  context,
+  account,
 ) {
   if (roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0) {
     return (
@@ -117,6 +128,15 @@ function renderStakeWarnings(
 
   if (amount && !sufficientBalance) {
     return <Warning>Insufficient Balance</Warning>
+  }
+
+  if (amount && !sufficientTransferAllowance) {
+    return (
+      <Warning>
+        Your transfer allowance is set too low.{' '}
+        <Approve account={account} context={context} banner={false} />
+      </Warning>
+    )
   }
 }
 

@@ -12,7 +12,7 @@ import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import Banner from '../Banner'
 
-export default ({ account, context }) => {
+export default ({ account, context, banner = true }) => {
   if (!account) {
     return null
   }
@@ -45,34 +45,48 @@ export default ({ account, context }) => {
     }
   }, [isBroadcasted])
 
-  let banner = null
+  let element = null
 
-  if (
-    account &&
-    account.id.toLowerCase() == context.account.toLowerCase() &&
-    parseFloat(account.allowance) == 0 &&
-    parseFloat(account.tokenBalance) != 0
-  ) {
-    banner = (
-      <Banner
-        label={<div sx={{ pr: 3 }}>Approve Livepeer tokens for staking.</div>}
-        button={
-          <Button
-            onClick={async () => {
-              try {
-                await approve()
-              } catch (e) {
-                return {
-                  error: e.message.replace('GraphQL error: ', ''),
+  if (account && account.id.toLowerCase() == context.account.toLowerCase()) {
+    if (banner) {
+      element = (
+        <Banner
+          label={<div sx={{ pr: 3 }}>Approve Livepeer tokens for staking.</div>}
+          button={
+            <Button
+              onClick={async () => {
+                try {
+                  await approve()
+                } catch (e) {
+                  return {
+                    error: e.message.replace('GraphQL error: ', ''),
+                  }
                 }
+              }}
+            >
+              Approve
+            </Button>
+          }
+        />
+      )
+    } else {
+      element = (
+        <div
+          sx={{ cursor: 'pointer', color: 'primary' }}
+          onClick={async () => {
+            try {
+              await approve()
+            } catch (e) {
+              return {
+                error: e.message.replace('GraphQL error: ', ''),
               }
-            }}
-          >
-            Approve
-          </Button>
-        }
-      />
-    )
+            }
+          }}
+        >
+          Approve tokens for staking.
+        </div>
+      )
+    }
   }
 
   return (
@@ -134,7 +148,7 @@ export default ({ account, context }) => {
           )}
         </Flex>
       </Modal>
-      {banner}
+      {element}
     </>
   )
 }
