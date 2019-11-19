@@ -41,8 +41,9 @@ export default ({
           as={DialogContent}
           sx={
             title
-              ? { p: 3, bg: 'surface', borderRadius: 2 }
+              ? { p: 3, bg: 'surface', borderRadius: 10 }
               : {
+                  borderRadius: 10,
                   margin: '40px auto',
                   p: 0,
                   height: 'calc(100vh - 80px)',
