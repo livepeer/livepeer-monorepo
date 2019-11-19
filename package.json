@@ -25,6 +25,7 @@
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer --ignore @livepeer/player --ignore @livepeer/chroma",
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
     "updated": "lerna updated --json",
+    "postinstall": "patch-package",
     "wrangler:staging": "wrangler publish --env staging",
     "wrangler:production": "wrangler publish --env production"
   },
@@ -38,6 +39,8 @@
     "husky": "^1.3.1",
     "lcov-result-merger": "^3.0.0",
     "lerna": "^3.13.3",
+    "patch-package": "^6.2.0",
+    "postinstall-postinstall": "^2.0.0",
     "prettier": "^1.11.1",
     "pretty-quick": "^1.4.1"
   },
