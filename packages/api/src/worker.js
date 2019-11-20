@@ -4,7 +4,7 @@
  */
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import composeM3U8 from './controllers/compose-m3u8'
-
+import './controllers/stream.js'
 /**
  * maps the path of incoming request to the request pathKey to look up
  * in bucket and in cache
