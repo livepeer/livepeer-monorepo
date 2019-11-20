@@ -56,7 +56,7 @@ const Index = () => {
   const context = useWeb3Context()
   const myAccount = useAccount(context.account ? context.account : '')
   const { data, loading, error } = useQuery(GET_DATA, {
-    ssr: false
+    ssr: false,
   })
 
   if (error) {

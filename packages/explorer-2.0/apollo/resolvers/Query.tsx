@@ -1,9 +1,8 @@
-import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 import fetch from 'isomorphic-unfetch'
+import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 
 export async function account(_account, _args, _ctx, _info) {
-  const sdk = await LivepeerSDK()
-  const { rpc } = sdk
+  const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
   const { allowance } = await rpc.getDelegator(_args.id)
   return {
     id: _args.id,
@@ -14,8 +13,7 @@ export async function account(_account, _args, _ctx, _info) {
 }
 
 export async function protocol(_protocol, _args, _ctx, _info) {
-  const sdk = await LivepeerSDK()
-  const { rpc } = sdk
+  const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
   const { totalTokenSupply, totalBondedToken, paused } = await rpc.getProtocol()
   return {
     paused,
