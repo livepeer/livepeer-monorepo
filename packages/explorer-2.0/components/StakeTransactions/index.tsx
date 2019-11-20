@@ -12,15 +12,11 @@ import RestakeFromUnstaked from '../RestakeFromUnstaked'
 import WithdrawStake from '../WithdrawStake'
 
 export default ({ delegator, currentRound, isMyAccount }) => {
-  const pendingStakeTransactions: Array<
-    UnbondingLock
-  > = delegator.unbondingLocks.filter(
+  const pendingStakeTransactions: Array<UnbondingLock> = delegator.unbondingLocks.filter(
     (item: UnbondingLock) =>
       item.withdrawRound && item.withdrawRound > parseInt(currentRound.id, 10),
   )
-  const completedStakeTransactions: Array<
-    UnbondingLock
-  > = delegator.unbondingLocks.filter(
+  const completedStakeTransactions: Array<UnbondingLock> = delegator.unbondingLocks.filter(
     (item: UnbondingLock) =>
       item.withdrawRound && item.withdrawRound <= parseInt(currentRound.id, 10),
   )
@@ -46,8 +42,17 @@ export default ({ delegator, currentRound, isMyAccount }) => {
                 }}
               >
                 <div>
-                  Unstaking from{' '}
-                  {lock.delegate.id.replace(lock.delegate.id.slice(7, 37), '…')}
+                  <div sx={{ mb: '2px' }}>
+                    Unstaking from{' '}
+                    {lock.delegate.id.replace(
+                      lock.delegate.id.slice(7, 37),
+                      '…',
+                    )}
+                  </div>
+                  <div sx={{ color: 'muted', fontSize: 0 }}>
+                    Tokens will be available for withdrawal in approximately{' '}
+                    {lock.withdrawRound - parseInt(currentRound.id, 10)} days.
+                  </div>
                 </div>
                 <Flex sx={{ alignItems: 'center' }}>
                   {isMyAccount &&
