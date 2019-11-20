@@ -16,7 +16,6 @@ const subgraphEndpoint =
 const threeBoxEndpoint = 'https://api.3box.io/graph'
 
 const createSchema = async () => {
-  const { rpc } = await LivepeerSDK()
   const subgraphServiceLink = new HttpLink({
     uri: subgraphEndpoint,
     fetch,
@@ -88,17 +87,20 @@ const createSchema = async () => {
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
+            const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
             const { pendingStake } = await rpc.getDelegator(_delegator.id)
             return pendingStake
           },
         },
         tokenBalance: {
           async resolve(_delegator, _args, _context, _info) {
+            const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
             return await rpc.getTokenBalance(_delegator.id)
           },
         },
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
+            const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
             return await rpc.getEthBalance(_delegator.id)
           },
         },
