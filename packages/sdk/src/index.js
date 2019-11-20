@@ -138,7 +138,7 @@ export const DEFAULTS = {
   provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
-  gas: 0,
+  gas: 2.1 * 1000000, // 2.1m wei
   artifacts: {
     LivepeerToken: LivepeerTokenArtifact,
     LivepeerTokenFaucet: LivepeerTokenFaucetArtifact,
