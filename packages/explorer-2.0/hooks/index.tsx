@@ -11,6 +11,11 @@ const GET_ACCOUNT = gql`
       ethBalance
       allowance
     }
+    threeBoxSpace(id: $account) {
+      name
+      url
+      description
+    }
     delegator(id: $account) {
       id
       pendingStake
@@ -34,6 +39,7 @@ export function useAccount(address = null) {
   const context = useWeb3Context()
   const [account, setAccount] = useState(null)
   const [delegator, setDelegator] = useState(null)
+  const [threeBoxSpace, setThreeBoxSpace] = useState(null)
 
   const { data } = useQuery(GET_ACCOUNT, {
     variables: {
@@ -49,13 +55,15 @@ export function useAccount(address = null) {
     if (data && context.active) {
       setAccount(data.account ? data.account : null)
       setDelegator(data.delegator ? data.delegator : null)
+      setThreeBoxSpace(data.threeBoxspace ? data.threeBoxspace : null)
     } else {
       setAccount(null)
       setDelegator(null)
+      setThreeBoxSpace(null)
     }
   }, [data, context.active])
 
-  return { account, delegator }
+  return { account, delegator, threeBoxSpace }
 }
 
 export function useWeb3Mutation(mutation, options) {

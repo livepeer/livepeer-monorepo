@@ -56,6 +56,26 @@ const theme = {
         transition: 'border-color .2s',
       },
     },
+    outline: {
+      color: 'text',
+      bg: 'transparent',
+      border: '1px solid',
+      borderColor: 'text',
+      transition: 'border-color .2s',
+      '&:hover': {
+        borderColor: 'text',
+        transition: 'border-color .2s',
+      },
+    },
+    primaryOutlineSmall: {
+      bg: 'transparent',
+      color: 'primary',
+      border: '1px solid',
+      borderColor: 'primary',
+      fontSize: 0,
+      px: 1,
+      py: '2px'
+    },
     rainbow: {
       background: 'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)'
     }

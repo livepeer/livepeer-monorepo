@@ -45,7 +45,9 @@ const AccountPage = () => {
   const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
-  const { account, delegator } = useAccount(query.account.toString())
+  const { account, threeBoxSpace, delegator } = useAccount(
+    query.account.toString(),
+  )
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
@@ -113,6 +115,7 @@ const AccountPage = () => {
         <Profile
           account={query.account.toString()}
           delegator={delegator}
+          threeBoxSpace={threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}
           isMyAccount={isMyAccount}
           role={role}

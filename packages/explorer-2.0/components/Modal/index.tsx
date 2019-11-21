@@ -2,7 +2,6 @@
 import React from 'react'
 import { jsx, Styled, Flex } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
-import { useTransition } from 'react-spring'
 
 interface Props {
   isOpen: boolean
@@ -51,7 +50,7 @@ export default ({
           }
         >
           {title && (
-            <Flex sx={{ alignItems: 'center', mb: 3 }}>
+            <Flex sx={{ alignItems: 'center', mb: 4 }}>
               {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
               <Styled.h2>{title}</Styled.h2>
             </Flex>

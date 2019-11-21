@@ -13,7 +13,6 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import matchSorter from 'match-sorter'
 import { Styled } from 'theme-ui'
-import Textfield from '../Textfield'
 import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
 
@@ -429,13 +428,33 @@ fuzzyTextFilterFn.autoRemove = val => !val
 
 function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
   return (
-    <Textfield
-      icon={<Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />}
-      value={filterValue || ''}
-      onChange={e => {
-        setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
+    <Flex
+      sx={{
+        alignItems: 'center',
       }}
-      placeholder={`Filter`}
-    />
+    >
+      <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
+      <Box
+        value={filterValue || ''}
+        onChange={e => {
+          setFilter(e.target.value || undefined)
+        }}
+        placeholder={`Filter`}
+        as="input"
+        type="text"
+        variant="input"
+        sx={{
+          display: 'block',
+          outline: 'none',
+          width: '100%',
+          appearance: 'none',
+          fontSize: 2,
+          lineHeight: 'inherit',
+          border: 0,
+          color: 'inherit',
+          bg: 'transparent',
+        }}
+      />
+    </Flex>
   )
 }

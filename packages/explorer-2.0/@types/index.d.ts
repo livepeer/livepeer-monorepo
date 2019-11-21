@@ -37,6 +37,12 @@ export interface Delegator {
   unbondingLocks?: [UnbondingLock]
 }
 
+export interface ThreeBoxSpace {
+  name: string
+  url: string
+  description: string
+}
+
 export interface Round {
   id: string
   initialized?: boolean

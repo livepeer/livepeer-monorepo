@@ -5,6 +5,7 @@ type Account {
   ethBalance: String
   allowance: String
 }
+
 type Protocol {
   inflation: String
   inflationChange: String
@@ -17,10 +18,17 @@ type TransactionStatus {
   status: String
 }
 
+type ThreeBoxSpace {
+  name: String
+  url: String
+  description: String
+}
+
 type Query {
   account(id: ID!): Account
   protocol: Protocol
   getTxReceiptStatus(txHash: String!): TransactionStatus
+  threeBoxSpace(id: ID!): ThreeBoxSpace
 }
 `
 

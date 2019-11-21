@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-unfetch'
 import LivepeerSDK from '@adamsoffer/livepeer-sdk'
+import Box from '3box'
 
 export async function account(_account, _args, _ctx, _info) {
   const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
@@ -33,5 +34,14 @@ export async function getTxReceiptStatus(_status, _args, _ctx, _info) {
 
   return {
     status: response.result.status,
+  }
+}
+
+export async function threeBoxSpace(_threeBoxSpace, _args, _ctx, _info) {
+  const { name, url, description } = await Box.getSpace(_args.id, 'livepeer')
+  return {
+    name,
+    url,
+    description,
   }
 }
