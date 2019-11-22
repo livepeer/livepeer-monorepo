@@ -2,7 +2,7 @@
 import { Styled, jsx } from 'theme-ui'
 
 export default ({ variant = 'primary', size = 'normal', ...props }) => (
-  <Styled.div
+  <button
     {...props}
     sx={{
       appearance: 'none',

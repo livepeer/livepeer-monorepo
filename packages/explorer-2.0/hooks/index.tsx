@@ -41,7 +41,7 @@ export function useAccount(address = null) {
   const [delegator, setDelegator] = useState(null)
   const [threeBoxSpace, setThreeBoxSpace] = useState(null)
 
-  const { data } = useQuery(GET_ACCOUNT, {
+  const { data, refetch } = useQuery(GET_ACCOUNT, {
     variables: {
       account: address
         ? address.toLowerCase()
@@ -55,7 +55,7 @@ export function useAccount(address = null) {
     if (data && context.active) {
       setAccount(data.account ? data.account : null)
       setDelegator(data.delegator ? data.delegator : null)
-      setThreeBoxSpace(data.threeBoxspace ? data.threeBoxspace : null)
+      setThreeBoxSpace(data.threeBoxSpace ? data.threeBoxSpace : null)
     } else {
       setAccount(null)
       setDelegator(null)
@@ -63,7 +63,7 @@ export function useAccount(address = null) {
     }
   }, [data, context.active])
 
-  return { account, delegator, threeBoxSpace }
+  return { account, delegator, threeBoxSpace, refetch }
 }
 
 export function useWeb3Mutation(mutation, options) {

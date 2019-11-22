@@ -88,8 +88,10 @@ export default ({
       <Flex sx={{ alignItems: 'center', mb: 2 }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
           <Styled.h1 sx={{ display: 'flex', alignItems: 'center' }}>
-            {isMyAccount
-              ? 'My Account'
+            {threeBoxSpace
+              ? threeBoxSpace.name
+                ? threeBoxSpace.name
+                : account.replace(account.slice(7, 37), '…')
               : account.replace(account.slice(7, 37), '…')}
             <Flex
               data-for="copy"
@@ -137,10 +139,10 @@ export default ({
           <>
             <Button
               onClick={() => setOpen(true)}
-              sx={{ mt: '3px', ml: 3 }}
+              sx={{ mt: '3px', ml: 2 }}
               variant="primaryOutlineSmall"
             >
-              Set up Profile
+              {threeBoxSpace ? 'Edit Profile' : 'Set up Profile'}
             </Button>
             <Modal
               isOpen={open}
@@ -150,7 +152,10 @@ export default ({
               <ThreeBoxForm
                 account={account}
                 threeBoxSpace={threeBoxSpace}
-                onSubmitCallBack={() => setOpen(false)}
+                onCancel={() => setOpen(false)}
+                onSubmitCallBack={() => {
+                  setOpen(false)
+                }}
               />
             </Modal>
           </>

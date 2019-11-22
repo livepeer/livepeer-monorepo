@@ -77,6 +77,7 @@ const theme = {
       py: '2px'
     },
     rainbow: {
+      color: 'text',
       background: 'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)'
     }
   },

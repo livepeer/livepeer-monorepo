@@ -13,14 +13,26 @@ interface Props {
   account: string
   threeBoxSpace: ThreeBoxSpace
   onSubmitCallBack: Function
+  onCancel: Function
 }
 
-export default ({ account, threeBoxSpace, onSubmitCallBack }: Props) => {
+export default ({
+  account,
+  threeBoxSpace,
+  onSubmitCallBack,
+  onCancel,
+}: Props) => {
   const context = useWeb3Context()
   const { register, handleSubmit, watch, errors } = useForm()
 
-  const onSubmit = data => {
-    console.log(data)
+  const onSubmit = async (data, e) => {
+    const box = await Box.openBox(account, context.library.currentProvider)
+    const space = await box.openSpace('livepeer')
+    await space.public.setMultiple(
+      ['name', 'description', 'url'],
+      [data.name, data.description, data.url],
+    )
+    onSubmitCallBack()
   }
 
   return (
@@ -28,34 +40,33 @@ export default ({ account, threeBoxSpace, onSubmitCallBack }: Props) => {
       <div>
         <Textfield
           inputRef={register}
-          name="textInput"
+          defaultValue={threeBoxSpace ? threeBoxSpace.name : ''}
+          name="name"
           label="Name"
           sx={{ mb: 2, width: '100%' }}
         />
-        <Textfield label="Campaign URL" sx={{ mb: 2, width: '100%' }} />
-        <Textfield label="Description" sx={{ mb: 4, width: '100%' }} />
+        <Textfield
+          inputRef={register}
+          defaultValue={threeBoxSpace ? threeBoxSpace.url : ''}
+          label="Website"
+          name="url"
+          sx={{ mb: 2, width: '100%' }}
+        />
+        <Textfield
+          inputRef={register}
+          defaultValue={threeBoxSpace ? threeBoxSpace.description : ''}
+          name="description"
+          label="Description"
+          as="textarea"
+          rows={4}
+          sx={{ mb: 4, width: '100%' }}
+        />
       </div>
       <Flex sx={{ justifyContent: 'flex-end' }}>
-        <Button sx={{ mr: 2 }} variant="outline">
+        <Button onClick={onCancel} sx={{ mr: 2 }} variant="outline">
           Cancel
         </Button>
-        <Button
-          type="submit"
-          onClick={async () => {
-            const box = await Box.openBox(
-              account,
-              context.library.currentProvider,
-            )
-            const space = await box.openSpace('livepeer')
-            await space.public.setMultiple(
-              ['name', 'description', 'url'],
-              ['Soffer', 'sweet', 'https://soffer.dev'],
-            )
-            onSubmitCallBack()
-          }}
-        >
-          Save
-        </Button>
+        <Button type="submit">Save</Button>
       </Flex>
     </form>
   )

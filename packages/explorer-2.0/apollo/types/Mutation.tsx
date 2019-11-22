@@ -28,6 +28,9 @@ type Mutation {
   
   "Submits a round initialization transaction"
   initializeRound: JSON
+
+  "Update an account 3box space"
+  updateProfile: JSON
 }`
 
 export default Mutation

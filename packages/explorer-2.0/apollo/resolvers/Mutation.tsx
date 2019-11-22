@@ -1,4 +1,5 @@
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
+import Box from '3box'
 
 /**
  * Approve an amount for an ERC20 token transfer
@@ -189,4 +190,18 @@ export async function initializeRound(obj, args, ctx) {
     gas,
     returnTxHash: ctx.returnTxHash ? ctx.returnTxHash : false,
   })
+}
+
+/**
+ * Submits a round initialization transaction
+ * @param obj
+ * @return {Promise}
+ */
+export async function updateProfile(obj, args, ctx) {
+  const box = await Box.openBox(args.address, args.ethereumProvider)
+  const space = await box.openSpace('livepeer')
+  await space.public.setMultiple(
+    ['name', 'description', 'url'],
+    [args.data.name, args.data.description, args.data.url],
+  )
 }
