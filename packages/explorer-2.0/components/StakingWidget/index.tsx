@@ -33,11 +33,14 @@ export default ({
   const [amount, setAmount] = useState('')
   const [action, setAction] = useState('stake')
   const context = useWeb3Context()
+
   return (
     <div className="tour-step-7">
       {context.active && (
         <>
-          <GetLPTBanner account={account} context={context} />
+          {delegator && !delegator.bondedAmount && (
+            <GetLPTBanner account={account} context={context} />
+          )}
           {account &&
             parseFloat(Utils.fromWei(account.allowance)) == 0 &&
             parseFloat(Utils.fromWei(account.tokenBalance)) != 0 && (

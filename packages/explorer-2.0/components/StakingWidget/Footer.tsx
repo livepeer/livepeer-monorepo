@@ -41,15 +41,14 @@ export default ({
 
   const tokenBalance =
     account && parseFloat(Utils.fromWei(account.tokenBalance))
-  const hasTokenBalance = account && tokenBalance > 0
   const tokenAllowance = account && parseFloat(Utils.fromWei(account.allowance))
   const approved = account && parseFloat(Utils.fromWei(account.allowance)) > 0
   const delegatorStatus = getDelegatorStatus(delegator, currentRound)
   const isStaked =
     delegatorStatus == 'Bonded' || delegatorStatus == 'Unbonding' ? true : false
-  const sufficientBalance = account && amount && amount <= tokenBalance
+  const sufficientBalance = account && amount >= 0 && amount <= tokenBalance
   const sufficientTransferAllowance =
-    account && amount && amount <= tokenAllowance
+    account && tokenAllowance > 0 && amount <= tokenAllowance
   const stake =
     delegator &&
     Math.max(
@@ -66,12 +65,10 @@ export default ({
     parseInt(currentRound.id, 10) - parseInt(delegator.lastClaimRound.id, 10)
 
   const canStake =
-    hasTokenBalance &&
     sufficientBalance &&
     roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     approved &&
-    sufficientTransferAllowance &&
-    amount > 0
+    sufficientTransferAllowance
 
   const canUnstake =
     isStaked && roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS && amount > 0
@@ -83,7 +80,6 @@ export default ({
         {renderStakeWarnings(
           roundsSinceLastClaim,
           amount,
-          hasTokenBalance,
           sufficientBalance,
           sufficientTransferAllowance,
           context,
@@ -109,7 +105,6 @@ export default ({
 function renderStakeWarnings(
   roundsSinceLastClaim,
   amount,
-  hasTokenBalance,
   sufficientBalance,
   sufficientTransferAllowance,
   context,
@@ -122,15 +117,12 @@ function renderStakeWarnings(
       </Warning>
     )
   }
-  if (!hasTokenBalance) {
-    return <Warning>You have 0 LPT in your wallet.</Warning>
-  }
 
-  if (amount && !sufficientBalance) {
+  if (amount >= 0 && !sufficientBalance) {
     return <Warning>Insufficient Balance</Warning>
   }
 
-  if (amount && !sufficientTransferAllowance) {
+  if (amount >= 0 && !sufficientTransferAllowance) {
     return (
       <Warning>
         Your transfer allowance is set too low.{' '}
