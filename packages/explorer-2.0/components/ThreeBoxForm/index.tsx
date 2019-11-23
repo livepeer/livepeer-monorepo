@@ -8,6 +8,8 @@ import Textfield from '../Textfield'
 import Box from '3box'
 import { useWeb3Context } from 'web3-react'
 import useForm from 'react-hook-form'
+import { useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
 interface Props {
   account: string
@@ -15,6 +17,16 @@ interface Props {
   onSubmitCallBack: Function
   onCancel: Function
 }
+
+const UPDATE_PROFILE = gql`
+  mutation updateProfile($name: String, $url: String, $description: String) {
+    updateProfile(name: $name, url: $url, description: $description) {
+      name
+      url
+      description
+    }
+  }
+`
 
 export default ({
   account,
@@ -25,13 +37,36 @@ export default ({
   const context = useWeb3Context()
   const { register, handleSubmit, watch, errors } = useForm()
 
+  const name = watch('name')
+  const url = watch('url')
+  const description = watch('description')
+
+  const [updateProfile, { error, data }] = useMutation(UPDATE_PROFILE, {
+    variables: { name, url, description },
+    context: {
+      ethereumProvider: context.library.currentProvider,
+      address: context.account,
+    },
+    optimisticResponse: {
+      __typename: 'Mutation',
+      updateProfile: {
+        __typename: 'ThreeBoxSpace',
+        name,
+        url,
+        description,
+      },
+    },
+  })
+  console.log('error', error)
+  console.log('data', data)
   const onSubmit = async (data, e) => {
-    const box = await Box.openBox(account, context.library.currentProvider)
-    const space = await box.openSpace('livepeer')
-    await space.public.setMultiple(
-      ['name', 'description', 'url'],
-      [data.name, data.description, data.url],
-    )
+    updateProfile()
+    // const box = await Box.openBox(account, context.library.currentProvider)
+    // const space = await box.openSpace('livepeer')
+    // await space.public.setMultiple(
+    //   ['name', 'description', 'url'],
+    //   [data.name, data.description, data.url],
+    // )
     onSubmitCallBack()
   }
 

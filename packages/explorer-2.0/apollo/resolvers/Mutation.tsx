@@ -198,10 +198,19 @@ export async function initializeRound(obj, args, ctx) {
  * @return {Promise}
  */
 export async function updateProfile(obj, args, ctx) {
-  const box = await Box.openBox(args.address, args.ethereumProvider)
+  const address = ctx.address
+  const ethereumProvider = ctx.ethereumProvider
+  const box = await Box.openBox(address, ethereumProvider)
   const space = await box.openSpace('livepeer')
+
   await space.public.setMultiple(
     ['name', 'description', 'url'],
-    [args.data.name, args.data.description, args.data.url],
+    [args.name, args.description, args.url],
   )
+
+  return {
+    name: args.name,
+    url: args.url,
+    description: args.description,
+  }
 }

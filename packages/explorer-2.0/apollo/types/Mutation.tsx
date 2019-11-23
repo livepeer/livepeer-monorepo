@@ -30,7 +30,7 @@ type Mutation {
   initializeRound: JSON
 
   "Update an account 3box space"
-  updateProfile: JSON
+  updateProfile(name: String, url: String, description: String): ThreeBoxSpace
 }`
 
 export default Mutation
