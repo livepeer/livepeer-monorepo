@@ -2,7 +2,7 @@
 // deployments. Maybe eventually should check that our database connection and
 // such are healthy.
 
-import { Router } from 'express'
+import Router from 'express/lib/router'
 
 const router = Router()
 

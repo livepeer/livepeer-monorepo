@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import Router from 'express/lib/router'
 import fetch from 'isomorphic-fetch'
 import { authMiddleware } from '../middleware'
 

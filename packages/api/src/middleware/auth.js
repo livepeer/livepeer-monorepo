@@ -16,7 +16,8 @@ async function generateUserAndToken(req, res, next) {
   const id = req.token
   if (!id) {
     // for now send a 406 if the user doesn't provide any access_token
-    return res.sendStatus(406)
+    res.status(406)
+    return res.json({ errors: ['missing auth token'] })
   }
 
   try {
@@ -52,6 +53,7 @@ async function generateUserAndToken(req, res, next) {
  */
 function authFactory(params) {
   return async (req, res, next) => {
+    // req, res, next ... because promises didn't exist in 2009
     if (params.admin === true) {
       // if admin credentials required, use google auth to validate admin access
       try {
@@ -65,12 +67,14 @@ function authFactory(params) {
           req.user = user
           return next()
         } else {
+          console.log(`Before res.status1`)
           res.status(403)
           return res.json({
             errors: [`not ${req.config.trustedDomain} email address`],
           })
         }
       } catch (error) {
+        console.log(`Before res.status2`)
         res.status(403)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
@@ -90,6 +94,7 @@ function authFactory(params) {
           return next()
         }
       } catch (error) {
+        console.log(`Before res.status3`)
         res.status(403)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
@@ -97,7 +102,8 @@ function authFactory(params) {
 
     if (!req || !req.token) {
       // if no apiToken provided, and no google credentials provided, deny access
-      return res.sendStatus(401)
+      res.status(401)
+      return res.json({ errors: ['missing auth token'] })
     }
 
     logger.info('authFactory params ', params)

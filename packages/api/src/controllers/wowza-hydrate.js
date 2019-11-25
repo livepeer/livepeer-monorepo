@@ -1,4 +1,4 @@
-import { VIDEO_PROFILES } from '@livepeer/sdk'
+import { VIDEO_PROFILES } from '@livepeer/sdk/main/video_profiles.js'
 
 const PRESETS = Object.values(VIDEO_PROFILES)
 

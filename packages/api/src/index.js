@@ -9,6 +9,12 @@ import logger from './logger'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
+import appRouter from './app-router'
+
+// parsel worker.js, concats into 1 blob, uploads to cloudflare.
+// cloudflare workers no file system ... you're just a blob of js
+// challenge: 1. api incompatibilities. "server assumptions"
+// 2. res, req, next ... CF different syntax. Service worker syntax. req & resp objects
 
 export default async function makeApp(params) {
   const {
@@ -33,59 +39,10 @@ export default async function makeApp(params) {
     broadcasters,
   } = params
   // Storage init
-  let store
-  if (storage === 'level') {
-    store = new LevelStore({ dbPath })
-  } else if (storage === 'postgres') {
-    store = new PostgresStore({ postgresUrl })
-  } else if (storage === 'cloudflare') {
-    store = new CloudflareStore({
-      cloudflareNamespace,
-      cloudflareAccount,
-      cloudflareAuth,
-    })
-  }
-  await store.ready
 
-  // Logging, JSON parsing, store injection
+  const { router, store } = await appRouter(params)
   const app = express()
-  app.use(healthCheck)
-  app.use(morgan('combined'))
-  app.use(jsonParser())
-  app.use((req, res, next) => {
-    req.store = store
-    req.config = params
-    next()
-  })
-  app.use(bearerToken())
-
-  // Populate Kubernetes getOrchestrators and getBroadcasters is provided
-  if (kubeNamespace) {
-    app.use(
-      kubernetes({
-        kubeNamespace,
-        kubeBroadcasterService,
-        kubeOrchestratorService,
-        kubeBroadcasterTemplate,
-        kubeOrchestratorTemplate,
-      }),
-    )
-  } else {
-    app.use(hardcodedNodes({ orchestrators, broadcasters }))
-  }
-
-  // Add a controller for each route at the /${httpPrefix} route
-  const prefixRouter = Router()
-  for (const [name, controller] of Object.entries(controllers)) {
-    prefixRouter.use(`/${name}`, controller)
-  }
-  app.use(httpPrefix, prefixRouter)
-  // Special case: handle /stream proxies off that endpoint
-  app.use('/stream', streamProxy)
-
-  prefixRouter.get('/google-client', async (req, res, next) => {
-    res.json({ clientId: req.config.clientId })
-  })
+  app.use(router)
 
   let listener
   let listenPort
@@ -107,7 +64,7 @@ export default async function makeApp(params) {
   }
 
   const close = async () => {
-    process.off('SIGTERM', sigterm)
+    process.off('SIGTERM', sigterm) /// process and SIGTERM not applicable CF
     process.off('unhandledRejection', unhandledRejection)
     listener.close()
     await store.close()
@@ -116,7 +73,7 @@ export default async function makeApp(params) {
   // Handle SIGTERM gracefully. It's polite, and Kubernetes likes it.
   const sigterm = handleSigterm(close)
 
-  process.on('SIGTERM', sigterm)
+  process.on('SIGTERM', sigterm) // LISTENING TO PROCESS TERMINATION SIGNAL, then cleaning up from line 114
 
   const unhandledRejection = err => {
     logger.error('fatal, unhandled promise rejection: ', err)
@@ -124,22 +81,6 @@ export default async function makeApp(params) {
     sigterm()
   }
   process.on('unhandledRejection', unhandledRejection)
-
-  // This far down, this would otherwise be a 404... hit up the fallback proxy if we have it.
-  // Mostly this is used for proxying to the Next.js server in development.
-  if (fallbackProxy) {
-    app.use(proxy({ target: fallbackProxy, changeOrigin: true }))
-  }
-
-  // If we throw any errors with numerical statuses, use them.
-  app.use((err, req, res, next) => {
-    if (typeof err.status === 'number') {
-      res.status(err.status)
-      res.json({ errors: [err.message] })
-    }
-
-    next(err)
-  })
 
   return {
     ...params,
