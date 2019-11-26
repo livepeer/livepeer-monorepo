@@ -8,6 +8,7 @@ import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import logger from './logger'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
+import liveProxy from './controllers/live-proxy'
 import proxy from 'http-proxy-middleware'
 
 export default async function makeApp(params) {
@@ -31,6 +32,9 @@ export default async function makeApp(params) {
     fallbackProxy,
     orchestrators,
     broadcasters,
+    s3Url,
+    s3Access,
+    s3Secret,
   } = params
   // Storage init
   let store
@@ -104,6 +108,10 @@ export default async function makeApp(params) {
         resolve()
       })
     })
+  }
+
+  if (s3Url && s3Access && s3Secret) {
+    app.use('/store', objectStore({ s3Url, s3Access, s3Secret }))
   }
 
   const close = async () => {
