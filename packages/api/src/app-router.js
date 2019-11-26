@@ -53,7 +53,6 @@ export default async function makeApp(params) {
 
   const app = Router()
   app.use(healthCheck)
-  app.use(morgan('combined'))
   app.use(jsonParser())
   app.use((req, res, next) => {
     req.store = store

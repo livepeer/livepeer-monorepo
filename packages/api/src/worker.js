@@ -3,11 +3,14 @@
  * just separate.
  */
 
-// self.process = {
-//   env: {
-//     DEBUG: 'express:*',
-//   },
+// global.process = {
+//   hrtime: require('browser-process-hrtime')
+//   // env: {
+//   //   DEBUG: 'express:*',
+//   // },
 // }
+
+process.hrtime = require('browser-process-hrtime')
 
 self.localStorage = {
   debug: 'express:*',
@@ -17,6 +20,7 @@ import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import 'express-async-errors' // it monkeypatches, i guess
 import composeM3U8 from './controllers/compose-m3u8'
 import appRouter from './app-router'
+
 /**
  * maps the path of incoming request to the request pathKey to look up
  * in bucket and in cache
@@ -31,7 +35,7 @@ const routerPromise = appRouter({
   storage: 'cloudflare',
   cloudflareNamespace: '',
   cloudflareAccount: '',
-  cloudflareAuth: '',
+  cloudflareAuth: ' ',
   storage: 'cloudflare',
   broadcasters: '[]',
   orchestrators: '[]',
@@ -225,7 +229,7 @@ function expressRequest(req, router) {
     }
     router(req, res, error => {
       if (!error) {
-        res.json('WHAT?')
+        res.json('404!!!')
       } else {
         reject(error)
       }
@@ -236,6 +240,7 @@ function expressRequest(req, router) {
 async function handleEvent(event) {
   // call stream controller
   const path = new URL(event.request.url).pathname
+  const fullUrl = new URL(event.request.url).href
   // headers.host = 'host'
   // const req = event.request
   // const headers = event.request.headers
@@ -247,6 +252,7 @@ async function handleEvent(event) {
     protocol: 'http',
     method: event.request.method,
     headers: event.request.headers,
+    get: header => event.request.headers[header],
     // body: event.request.body,
   }
   console.log(`REQQQ: ${JSON.stringify(req)}`)
