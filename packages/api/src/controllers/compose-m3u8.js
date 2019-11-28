@@ -9,20 +9,26 @@ import { Parser } from 'm3u8-parser'
 import { basename, resolve } from 'path'
 
 export default async urls => {
-  const responses = await Promise.all(
+  const broadcasters = []
+  await Promise.all(
     urls.map(async url => {
-      const res = await fetch(url)
-      const text = await res.text()
-      return [res, url, text]
+      try {
+        const res = await fetch(url)
+        if (res.status !== 200) {
+          return
+        }
+        const text = await res.text()
+        broadcasters.push([res, url, text])
+      } catch (err) {
+        // No problem, we expect sometimes they don't exist
+      }
     }),
   )
-  const broadcasters = responses.filter(([response]) => {
-    return response.status === 200
-  })
 
   if (broadcasters.length === 0) {
     return null
   }
+
   let isMasterPlaylist = false
   let isMediaPlaylist = false
   for (const [response, address, text] of broadcasters) {

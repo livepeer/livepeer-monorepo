@@ -55,6 +55,9 @@ export default async function makeApp(params) {
   const app = express()
   app.use(healthCheck)
   app.use(morgan('combined'))
+  if (s3Url && s3Access && s3Secret) {
+    app.use('/live', liveProxy({ s3Url, s3Access, s3Secret }))
+  }
   app.use(jsonParser())
   app.use((req, res, next) => {
     req.store = store
@@ -108,10 +111,6 @@ export default async function makeApp(params) {
         resolve()
       })
     })
-  }
-
-  if (s3Url && s3Access && s3Secret) {
-    app.use('/store', objectStore({ s3Url, s3Access, s3Secret }))
   }
 
   const close = async () => {

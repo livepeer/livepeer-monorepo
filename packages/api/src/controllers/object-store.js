@@ -28,28 +28,12 @@ export default ({ s3Url, s3Access, s3Secret }) => {
     })
   })
 
-  app.get('*', async (req, res) => {
-    await new Promise((resolve, reject) => {
-      proxy.web(req, res, { target: s3Url, changeOrigin: true }, err => {
-        if (err) {
-          console.log('get err', err)
-          reject(err)
-        }
-        resolve()
-      })
-    })
-  })
-
   app.post('*', async (req, res) => {
     const ip = getClientIp(req)
-    console.log(`http://[${ip}]:3075/status`)
-    fetch(`http://[${ip}]:3075/status`).then(async res => {
-      const data = await res.json()
-      console.log(data)
-    })
+    console.log(req.url)
 
     await new Promise((resolve, reject) => {
-      proxy.web(req, res, { target: s3Url, changeOrigin: true }, err => {
+      proxy.web(req, res, { target: 'localhost:3085' }, err => {
         if (err) {
           console.log('post err', err)
           reject(err)
