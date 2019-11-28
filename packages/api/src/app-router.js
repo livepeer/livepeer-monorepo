@@ -14,7 +14,7 @@ export default async function makeApp(params) {
   const {
     storage,
     dbPath,
-    httpPrefix,
+    httpPrefix = '/api',
     port,
     postgresUrl,
     cloudflareNamespace,
@@ -29,8 +29,8 @@ export default async function makeApp(params) {
     kubeOrchestratorService,
     kubeOrchestratorTemplate,
     fallbackProxy,
-    orchestrators,
-    broadcasters,
+    orchestrators = '[]',
+    broadcasters = '[]',
   } = params
   // Storage init
   let store

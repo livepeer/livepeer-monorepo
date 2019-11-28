@@ -20,6 +20,8 @@ import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import 'express-async-errors' // it monkeypatches, i guess
 import composeM3U8 from './controllers/compose-m3u8'
 import appRouter from './app-router'
+import workerSecrets from './worker-secrets.json'
+import camelcase from 'camelcase'
 
 /**
  * maps the path of incoming request to the request pathKey to look up
@@ -31,17 +33,22 @@ import appRouter from './app-router'
 
 self.setImmediate = fn => setTimeout(fn, 0)
 
-const routerPromise = appRouter({
-  storage: 'cloudflare',
-  cloudflareNamespace: '',
-  cloudflareAccount: '',
-  cloudflareAuth: ' ',
-  storage: 'cloudflare',
-  broadcasters: '[]',
-  orchestrators: '[]',
-  httpPrefix: '/api',
-})
+// process.env = workerSecrets
 
+const options = {}
+
+for (let [key, value] of Object.entries(workerSecrets)) {
+  key = camelcase(key.slice(3))
+  options[key] = value
+}
+
+const routerPromise = appRouter(options)
+// default values of things
+
+// add defaults from yargs
+
+// staging, prod, and dev sets of secrets
+// env variables in a JSON blob, turn into file, import file as we're building worker
 const mapRequestToAsset = request => {
   const parsedUrl = new URL(request.url)
   let pathname = parsedUrl.pathname
