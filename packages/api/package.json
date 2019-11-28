@@ -27,7 +27,7 @@
     "dev:server": "nodemon -w src -x node -r esm src/cli.js -e js,yaml",
     "dev:worker": "parcel watch --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "dev": "run-p \"dev:**\"",
-    "dev-with-minio": "cross-env LP_S3_URL=http://localhost:9000/store LP_S3_ACCESS=devkey LP_S3_SECRET=devsecret run-p minio dev:server 'go-livepeer -s3bucket=http://127.0.0.1:9000/store -s3creds=devkey/devsecret'",
+    "dev-with-minio": "cross-env LP_S3_URL=http://localhost:9000/store LP_S3_ACCESS=devkey LP_S3_SECRET=devsecret LP_UPSTREAM_BROADCASTER=http://localhost:3085 run-p minio dev:server 'go-livepeer -s3bucket=http://127.0.0.1:9000/store -s3creds=devkey/devsecret'",
     "minio": "mkdirp minio/store && cross-env MINIO_ACCESS_KEY=devkey MINIO_SECRET_KEY=devsecret minio server ./minio",
     "go-livepeer": "run-p \"go-livepeer:**\" --",
     "go-livepeer:broadcaster": "bin/livepeer -broadcaster -datadir ./bin/broadcaster -orchAddr 127.0.0.1:3086 -rtmpAddr 0.0.0.0:3035 -httpAddr :3085 -cliAddr :3075 -v 6 -authWebhookUrl http://localhost:3004/api/stream/hook -orchWebhookUrl http://localhost:3004/api/orchestrator",

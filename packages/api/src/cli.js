@@ -123,6 +123,11 @@ export default function parseCli(argv) {
           describe: 's3 secret access key',
           type: 'string',
         },
+        'upstream-broadcaster': {
+          describe:
+            'broadcaster to which we should proxy incoming /live requests',
+          type: 'string',
+        },
       })
       .help()
       .parse(argv)

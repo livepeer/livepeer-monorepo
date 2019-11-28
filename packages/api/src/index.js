@@ -35,6 +35,7 @@ export default async function makeApp(params) {
     s3Url,
     s3Access,
     s3Secret,
+    upstreamBroadcaster,
   } = params
   // Storage init
   let store
@@ -56,7 +57,10 @@ export default async function makeApp(params) {
   app.use(healthCheck)
   app.use(morgan('combined'))
   if (s3Url && s3Access && s3Secret) {
-    app.use('/live', liveProxy({ s3Url, s3Access, s3Secret }))
+    app.use(
+      '/live',
+      liveProxy({ s3Url, s3Access, s3Secret, upstreamBroadcaster }),
+    )
   }
   app.use(jsonParser())
   app.use((req, res, next) => {
