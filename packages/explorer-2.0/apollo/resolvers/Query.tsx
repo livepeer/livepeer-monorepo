@@ -38,10 +38,16 @@ export async function getTxReceiptStatus(_status, _args, _ctx, _info) {
 }
 
 export async function threeBoxSpace(_threeBoxSpace, _args, _ctx, _info) {
-  const { name, url, description } = await Box.getSpace(_args.id, 'livepeer')
+  const { name, url, description, image } = await Box.getSpace(
+    _args.id,
+    'livepeer',
+  )
+
   return {
+    id: _args.id,
     name,
     url,
     description,
+    image,
   }
 }

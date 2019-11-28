@@ -45,9 +45,7 @@ const AccountPage = () => {
   const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
-  const { account, threeBoxSpace, delegator } = useAccount(
-    query.account.toString(),
-  )
+  const { account, threeBoxSpace, delegator } = useAccount(query.account)
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
@@ -173,12 +171,6 @@ function getTabs(
     },
   ]
   if (role == 'Orchestrator') {
-    // tabs.splice(0, 0, {
-    //   name: 'Tokenholders',
-    //   href: '/accounts/[account]/[slug]',
-    //   as: `/accounts/${account}/tokenholders`,
-    //   isActive: asPath == `/accounts/${account}/tokenholders`,
-    // })
     tabs.unshift({
       name: 'Campaign',
       href: '/accounts/[account]/[slug]',

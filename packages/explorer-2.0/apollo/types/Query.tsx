@@ -19,9 +19,11 @@ type TransactionStatus {
 }
 
 type ThreeBoxSpace {
+  id: ID!
   name: String
   url: String
   description: String
+  image: String
 }
 
 type Query {

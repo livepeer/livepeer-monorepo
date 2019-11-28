@@ -38,9 +38,11 @@ export interface Delegator {
 }
 
 export interface ThreeBoxSpace {
+  id: string
   name: string
   url: string
   description: string
+  image: string
 }
 
 export interface Round {

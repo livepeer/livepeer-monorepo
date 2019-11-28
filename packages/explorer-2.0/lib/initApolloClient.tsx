@@ -1,14 +1,14 @@
 import { ApolloClient } from "apollo-client";
 import {
   InMemoryCache,
+  defaultDataIdFromObject,
   IntrospectionFragmentMatcher
 } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
-import { ApolloLink, split, Observable } from "apollo-link";
+import { split } from "apollo-link";
+import { SchemaLink } from 'apollo-link-schema';
 import { WebSocketLink } from "apollo-link-ws";
-import LivepeerSDK from "@adamsoffer/livepeer-sdk";
 import schema from "../apollo";
-import { graphql, print } from "graphql";
 import { getMainDefinition } from "apollo-utilities";
 
 const isProd = process.env.NODE_ENV === "production";
@@ -34,43 +34,10 @@ export default (initialState = {}) => {
   return apolloClient;
 };
 
+
+
 function createApolloClient(initialState = {}) {
   const isBrowser = typeof window !== "undefined";
-
-  const clientLink = new ApolloLink(
-    operation =>
-      new Observable(observer => {
-        (async () => {
-          let { query, variables, operationName, getContext } = operation;
-          let context = getContext();
-          let sdk = await LivepeerSDK({
-            account: context.account ? context.account : "",
-            gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
-            provider: context.provider
-              ? context.provider
-              : "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e"
-          });
-          graphql(
-            schema,
-            print(query),
-            null,
-            {
-              ...context,
-              livepeer: sdk
-            },
-            variables,
-            operationName
-          )
-            .then(result => {
-              observer.next(result);
-              observer.complete();
-            })
-            .catch(e => {
-              return observer.error(e);
-            });
-        })();
-      })
-  );
 
   const fragmentMatcher = new IntrospectionFragmentMatcher({
     introspectionQueryResultData: {
@@ -78,7 +45,15 @@ function createApolloClient(initialState = {}) {
     }
   });
 
-  const cache = new InMemoryCache({ fragmentMatcher }).restore(
+  const cache = new InMemoryCache({
+    fragmentMatcher,
+    dataIdFromObject: object => {
+    switch (object.__typename) {
+      case 'ThreeBoxSpace': return object.id; // use the `id` field as the identifier
+      default: return defaultDataIdFromObject(object); // fall back to default handling
+    }
+  }
+    }).restore(
     initialState || {}
   );
 
@@ -95,6 +70,13 @@ function createApolloClient(initialState = {}) {
       }
     }
   });
+
+  const clientLink = new SchemaLink({ schema, context: (operation) => {
+    const context = operation.getContext()
+    return {
+      ...context
+    }
+  }})
 
   const httpLink = new HttpLink({
     uri: graphqlAPI

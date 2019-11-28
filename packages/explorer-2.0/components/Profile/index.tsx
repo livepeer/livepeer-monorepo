@@ -4,24 +4,23 @@ import { Styled, jsx } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Copy from '../../public/img/copy.svg'
 import Check from '../../public/img/check.svg'
+import Link from '../../public/img/link.svg'
 import { Transcoder, Delegator, ThreeBoxSpace } from '../../@types'
 import { getDelegationStatusColor } from '../../lib/utils'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Flex } from 'theme-ui'
 import ReactTooltip from 'react-tooltip'
-import Button from '../Button'
-import Modal from '../Modal'
 import Chip from '../Chip'
-import ThreeBoxForm from '../ThreeBoxForm'
-import { useWeb3Context } from 'web3-react'
-import useForm from 'react-hook-form'
+import EditProfile from '../EditProfile'
+import gql from 'graphql-tag'
+import ShowMoreText from 'react-show-more-text'
 
 interface Props {
   account: string
   role: string
   hasLivepeerToken: boolean
-  delegator: Delegator
   threeBoxSpace: ThreeBoxSpace
+  delegator: Delegator
   transcoder: Transcoder
   isMyAccount: boolean
   status: string
@@ -32,16 +31,15 @@ export default ({
   role = 'Orchestrator',
   hasLivepeerToken,
   delegator,
-  threeBoxSpace,
   status,
   transcoder,
+  threeBoxSpace,
   isMyAccount = false,
   ...props
 }: Props) => {
   const isLivepeerAware =
     hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
   const [copied, setCopied] = useState(false)
-  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (copied) {
@@ -61,15 +59,28 @@ export default ({
           position: 'relative',
         }}
       >
-        <QRCode
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: 1000,
-          }}
-          fgColor={`#${account.substr(2, 6)}`}
-          value={account}
-        />
+        {threeBoxSpace && threeBoxSpace.image ? (
+          <img
+            sx={{
+              objectFit: 'cover',
+              borderRadius: 1000,
+              width: '100%',
+              height: '100%',
+            }}
+            src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
+          />
+        ) : (
+          <QRCode
+            style={{
+              borderRadius: 1000,
+              width: '100%',
+              height: '100%',
+            }}
+            bgColor="#9326E9"
+            fgColor={`#${account.substr(2, 6)}`}
+            value={account}
+          />
+        )}
 
         <div
           sx={{
@@ -85,13 +96,11 @@ export default ({
           }}
         />
       </div>
-      <Flex sx={{ alignItems: 'center', mb: 2 }}>
+      <Flex sx={{ alignItems: 'center', mb: '10px' }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
           <Styled.h1 sx={{ display: 'flex', alignItems: 'center' }}>
-            {threeBoxSpace
+            {threeBoxSpace && threeBoxSpace.name
               ? threeBoxSpace.name
-                ? threeBoxSpace.name
-                : account.replace(account.slice(7, 37), '…')
               : account.replace(account.slice(7, 37), '…')}
             <Flex
               data-for="copy"
@@ -136,32 +145,34 @@ export default ({
           </Styled.h1>
         </CopyToClipboard>
         {isMyAccount && (
-          <>
-            <Button
-              onClick={() => setOpen(true)}
-              sx={{ mt: '3px', ml: 2 }}
-              variant="primaryOutlineSmall"
-            >
-              {threeBoxSpace ? 'Edit Profile' : 'Set up Profile'}
-            </Button>
-            <Modal
-              isOpen={open}
-              onDismiss={() => setOpen(false)}
-              title="Edit Profile"
-            >
-              <ThreeBoxForm
-                account={account}
-                threeBoxSpace={threeBoxSpace}
-                onCancel={() => setOpen(false)}
-                onSubmitCallBack={() => {
-                  setOpen(false)
-                }}
-              />
-            </Modal>
-          </>
+          <EditProfile account={account} threeBoxSpace={threeBoxSpace} />
         )}
       </Flex>
+      {threeBoxSpace && threeBoxSpace.url && (
+        <Flex sx={{ mb: 2, alignItems: 'center' }}>
+          <Link sx={{ color: 'muted', mr: 1 }} />
+          <a
+            sx={{ fontSize: 1, color: 'primary' }}
+            href=""
+            target="__blank"
+            rel="noopener noreferrer"
+          >
+            {threeBoxSpace.url.replace(/(^\w+:|^)\/\//, '')}
+          </a>
+        </Flex>
+      )}
       {isLivepeerAware && <Chip label={role} />}
+      {threeBoxSpace && threeBoxSpace.description && (
+        <div sx={{ mt: 3 }}>
+          <ShowMoreText
+            lines={3}
+            more={<span sx={{ color: 'primary' }}>Show more</span>}
+            less={<span sx={{ color: 'primary' }}>Show Less</span>}
+          >
+            {threeBoxSpace.description}
+          </ShowMoreText>
+        </div>
+      )}
     </div>
   )
 }

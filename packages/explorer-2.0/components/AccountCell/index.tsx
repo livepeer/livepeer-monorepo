@@ -60,9 +60,7 @@ export default ({ status, active, address }) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <div>
-                {address.replace(address.slice(5, 39), '…')}
-              </div>
+              <div>{address.replace(address.slice(5, 39), '…')}</div>
             </Flex>
           </a>
         </Link>

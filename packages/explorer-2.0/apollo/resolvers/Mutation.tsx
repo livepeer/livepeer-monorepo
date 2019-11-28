@@ -1,5 +1,6 @@
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Box from '3box'
+import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 
 /**
  * Approve an amount for an ERC20 token transfer
@@ -40,12 +41,14 @@ export async function approve(
  */
 export async function bond(obj, args: { to: string; amount: string }, ctx) {
   const { to, amount } = args
-  const gas = await ctx.livepeer.rpc.estimateGas('BondingManager', 'bond', [
-    amount,
-    to,
-  ])
+  const sdk = await LivepeerSDK({
+    account: ctx.account ? ctx.account : '',
+    gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+    provider: ctx.provider,
+  })
+  const gas = await sdk.rpc.estimateGas('BondingManager', 'bond', [amount, to])
 
-  return await ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount, {
+  return await sdk.rpc.bondApprovedTokenAmount(to, amount, {
     gas: gas,
     returnTxHash: true,
   })
@@ -204,13 +207,15 @@ export async function updateProfile(obj, args, ctx) {
   const space = await box.openSpace('livepeer')
 
   await space.public.setMultiple(
-    ['name', 'description', 'url'],
-    [args.name, args.description, args.url],
+    ['name', 'description', 'url', 'image'],
+    [args.name, args.description, args.url, args.image],
   )
 
   return {
+    id: address,
     name: args.name,
     url: args.url,
     description: args.description,
+    image: args.image,
   }
 }
