@@ -4,14 +4,38 @@ import { Styled, jsx } from 'theme-ui'
 import { Collapse } from 'react-collapse'
 import { Flex } from 'theme-ui'
 import Textfield from '../Textfield'
+import gql from 'graphql-tag'
+import { useWeb3Context } from 'web3-react'
+import { useQuery } from '@apollo/react-hooks'
 
 interface Props {
   account: string
 }
 
+const GET_BOX = gql`
+  query getBox($id: ID!) {
+    getBox(id: $id) {
+      id
+      did
+    }
+  }
+`
+
 export default ({ account, ...props }: Props) => {
   const [open, setOpen] = useState()
+  const context = useWeb3Context()
+  // const { data, error } = useQuery(GET_BOX, {
+  //   variables: {
+  //     id: context.account,
+  //     ethereumProvider: context.library.provider,
+  //   },
+  //   context: {
+  //     ethereumProvider: context.library.currentProvider,
+  //   },
+  // })
 
+  // console.log('err', error)
+  // console.log('dat', data)
   return (
     <div
       sx={{
@@ -50,7 +74,9 @@ export default ({ account, ...props }: Props) => {
       <Collapse isOpened={open}>
         <div sx={{ mt: 3 }}>
           <div sx={{ mb: 3 }}>
-            <div sx={{ mb: 2 }}>1. Copy this command into livepeer-cli</div>
+            <div sx={{ mb: 2 }}>
+              1. Run livepeer-cli and select option #18 "Sign a message"
+            </div>
             <div
               sx={{
                 p: 2,
