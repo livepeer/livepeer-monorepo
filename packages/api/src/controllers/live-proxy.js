@@ -56,10 +56,13 @@ export default ({ s3Url, s3Access, s3Secret, upstreamBroadcaster }) => {
     await Promise.all([
       upload(`${id}.m3u8`, manifestText),
       ...parser.manifest.playlists.map(async playlist => {
-        const composedManifest = await composeM3U8([
-          `${upstreamBroadcaster}/stream/${playlist.uri}`,
-          `${s3Url}/${playlist.uri}`,
-        ])
+        const composedManifest = await composeM3U8(
+          [
+            `${upstreamBroadcaster}/stream/${playlist.uri}`,
+            `${s3Url}/${playlist.uri}`,
+          ],
+          { limit: 10 },
+        )
 
         await upload(playlist.uri, composedManifest)
       }),
@@ -71,6 +74,7 @@ export default ({ s3Url, s3Access, s3Secret, upstreamBroadcaster }) => {
   app.put('/:id/:num.ts', handleUpload)
   app.post('/:id/:num.ts', handleUpload)
 
+  // Ignore manifests entirely
   const noop = (req, res) => {
     res.sendStatus(204)
   }

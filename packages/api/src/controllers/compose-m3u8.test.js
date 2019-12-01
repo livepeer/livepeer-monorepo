@@ -10,6 +10,11 @@ describe('compose-m3u8', () => {
     }
     setMock('test://404.m3u8', () => new Response('not found', { status: 404 }))
   })
+
+  afterEach(() => {
+    clearMocks()
+  })
+
   it('should combine responses', async () => {
     const combined = await composeM3U8([
       'test://playlist1/stream/playlist.m3u8',
@@ -69,5 +74,31 @@ describe('compose-m3u8', () => {
     }
     expect(failed).toBe(true)
   })
+
+  it('should combine responses', async () => {
+    const combined = await composeM3U8([
+      'test://longPlaylistStore/stream/playlist.m3u8',
+      'test://longPlaylistBroadcaster/stream/playlist.m3u8',
+    ])
+    expect(combined).toEqual(testData.longPlaylistCombined)
+  })
+
+  it('should limit lines in the output', async () => {
+    const combined = await composeM3U8(
+      [
+        'test://longPlaylistStore/stream/playlist.m3u8',
+        'test://longPlaylistBroadcaster/stream/playlist.m3u8',
+      ],
+      { limit: 10 },
+    )
+    expect(combined).toEqual(testData.longPlaylistCombinedTen)
+    const allCombined = await composeM3U8(
+      [
+        'test://longPlaylistStore/stream/playlist.m3u8',
+        'test://longPlaylistBroadcaster/stream/playlist.m3u8',
+      ],
+      { limit: 99999999 },
+    )
+    expect(allCombined).toEqual(testData.longPlaylistCombined)
+  })
 })
-// 60f2242c-f588-4752-a779-e15b6384a720

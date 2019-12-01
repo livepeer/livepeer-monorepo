@@ -8,7 +8,9 @@ import fetch from 'isomorphic-fetch'
 import { Parser } from 'm3u8-parser'
 import { basename, resolve } from 'path'
 
-export default async urls => {
+const PROTOCOL_RE = /^[a-zA-Z]+:\/\//
+
+export default async (urls, { limit } = {}) => {
   const broadcasters = []
   await Promise.all(
     urls.map(async url => {
@@ -47,16 +49,28 @@ export default async urls => {
   if (isMasterPlaylist) {
     return handleMasterPlaylist(broadcasters)
   } else if (isMediaPlaylist) {
-    return handleMediaPlaylist(broadcasters)
+    return handleMediaPlaylist(broadcasters, { limit })
   } else {
     throw new Error('unable to determine playlist type')
   }
 }
 
-export const handleMediaPlaylist = broadcasters => {
+// Helper function to grab the last limit of things
+export const truncate = (run, limit) => {
+  if (typeof limit !== 'number') {
+    return run
+  }
+  if (run.length <= limit) {
+    return run
+  }
+  return run.slice(run.length - limit, run.length)
+}
+
+export const handleMediaPlaylist = (broadcasters, { limit }) => {
   const segments = []
   let min = Infinity
   let max = -1
+  const seenSeq = new Set()
 
   for (const [response, address, text] of broadcasters) {
     const parser = new Parser()
@@ -64,6 +78,11 @@ export const handleMediaPlaylist = broadcasters => {
     parser.end()
     for (const segment of parser.manifest.segments) {
       const seq = parseInt(basename(segment.uri, '.ts'))
+      if (seenSeq.has(seq)) {
+        // For now just ignore duplicated sequence numbers, we assume both instances are valid
+        continue
+      }
+      seenSeq.add(seq)
       if (seq < min) {
         min = seq
       }
@@ -96,39 +115,42 @@ export const handleMediaPlaylist = broadcasters => {
       currentRun = null
     }
   }
-  let bestRun = runs[0]
+  let bestRun = truncate(runs[0], limit)
   // OK so this is something of an ad-hoc algorithm for "best" run, but
   // we have a few objectives...
-  for (const run of runs) {
+  for (let run of runs.slice(1)) {
     // If a few recent segments arrived out-of-order, hold off until
     // we have everything. "Having everything" will be defined for now
     // as a run of 5 contigious segments.
-    if (bestRun.length < 5 && run.length > bestRun.length) {
+    run = truncate(run, limit)
+    if (bestRun.length < 5 && run.length >= bestRun.length) {
       bestRun = run
     }
   }
   let targetDuration = 0
-  let output = []
+  let pairs = []
   for (const segment of bestRun) {
     if (segment.duration > targetDuration) {
       targetDuration = segment.duration
     }
-    output.push(`#EXTINF:${segment.duration.toFixed(3)},`)
+    const pair = []
+    pair.push(`#EXTINF:${segment.duration.toFixed(3)},`)
     // If segment is a full URL leave it alone, otherwise add its host and whatnot
-    if (segment.uri.startsWith('http')) {
-      output.push(segment.uri)
+    if (segment.uri.match(PROTOCOL_RE)) {
+      pair.push(segment.uri)
     } else {
       const fullUrl = new URL(segment.address)
       fullUrl.pathname = resolve(fullUrl.pathname, segment.uri)
-      output.push(fullUrl.toString())
+      pair.push(fullUrl.toString())
     }
+    pairs.push(pair)
   }
-  output = [
+  const output = [
     '#EXTM3U',
     '#EXT-X-VERSION:3',
     `#EXT-X-MEDIA-SEQUENCE:${bestRun[0].seq}`,
     `#EXT-X-TARGETDURATION:${Math.ceil(targetDuration)}`,
-    ...output,
+    ...pairs.map(pair => pair.join('\n')),
   ]
 
   return output.join('\n')
