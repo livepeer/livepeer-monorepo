@@ -75,7 +75,7 @@
     "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
-    "dl-livepeer": "^0.0.3",
+    "dl-livepeer": "0.0.4",
     "esm": "^3.2.22",
     "istanbul-api": "^2.1.6",
     "istanbul-lib-coverage": "^2.0.5",

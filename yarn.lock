@@ -11338,10 +11338,10 @@ disparity@^2.0.0:
     ansi-styles "^2.0.1"
     diff "^1.3.2"
 
-dl-livepeer@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/dl-livepeer/-/dl-livepeer-0.0.3.tgz#35120a1800ad895f0eab8d04dd0b73451e6e761d"
-  integrity sha512-Lu3HvJbhbm0FKePV9XY0cYRij59N0LDQM337/2KSUMH5zFrDmI+CP2jTDDrICyjQ8AHmB/2y4UNkGX6OU+ngmA==
+dl-livepeer@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/dl-livepeer/-/dl-livepeer-0.0.4.tgz#a50a37d267b466465cafd85d8c4ab37f1ef306de"
+  integrity sha512-lqrvOr2PXVmyIbKI0Fr1MZVD0PstlAqb4N3V441E3/ZToMoUns7eNvwmiPIJEPic5UvvtpQV95ED3oyc3iCoYw==
   dependencies:
     fs-extra "^8.1.0"
     isomorphic-fetch "^2.2.1"
