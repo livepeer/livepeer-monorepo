@@ -18,7 +18,7 @@
     "coverage": "lerna run coverage --ignore @livepeer/explorer --ignore @livepeer/explorer-2.0 --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
     "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
     "docs": "lerna run docs && lerna run copy-docs && cp README.md docs/README.md",
-    "prepare": "lerna run prepare --stream --ignore @livepeer/explorer --ignore @livepeer/explorer-2.0 --ignore @livepeer/player",
+    "prepare": "lerna run prepare --stream --ignore @livepeer/explorer --ignore @livepeer/explorer-2.0 --ignore @livepeer/player && lerna run build --stream --ignore @livepeer/explorer --ignore @livepeer/explorer-2.0 --ignore @livepeer/player",
     "lerna-run": "lerna run --stream",
     "release:dry-run": "lerna publish --exact --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
     "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
