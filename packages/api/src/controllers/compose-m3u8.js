@@ -12,20 +12,16 @@ const PROTOCOL_RE = /^[a-zA-Z]+:\/\//
 
 export default async (urls, { limit, rewrite } = {}) => {
   const broadcasters = []
-  console.log(urls)
   await Promise.all(
     urls.map(async url => {
-      console.log(url)
       try {
         const res = await fetch(url)
         if (res.status !== 200) {
-          console.log(`${res.status} ${url}`)
           return
         }
         const text = await res.text()
         broadcasters.push([res, url, text])
       } catch (err) {
-        console.log(err)
         // No problem, we expect sometimes they don't exist
       }
     }),

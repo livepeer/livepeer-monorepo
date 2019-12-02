@@ -32,7 +32,7 @@ export default ({
     console.log(composed)
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Methods', 'GET')
-    res.header('Content-Type', 'application/x-mpegurl')
+    res.header('Content-Type', 'application/vnd.apple.mpegurl')
     res.send(composed)
     res.end()
   })
