@@ -101,4 +101,20 @@ describe('compose-m3u8', () => {
     )
     expect(allCombined).toEqual(testData.longPlaylistCombined)
   })
+
+  it('should rewrite urls in the output', async () => {
+    const combined = await composeM3U8(
+      [
+        'test://longPlaylistStoreRewritten/stream/playlist.m3u8',
+        'test://longPlaylistBroadcaster/stream/playlist.m3u8',
+      ],
+      {
+        rewrite: {
+          from: 'test://longPlaylistBroadcaster/stream',
+          to: 'https://example.com/store',
+        },
+      },
+    )
+    expect(combined).toEqual(testData.longPlaylistCombinedRewritten)
+  })
 })

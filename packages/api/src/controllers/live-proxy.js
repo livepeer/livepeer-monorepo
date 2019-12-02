@@ -4,7 +4,13 @@ import fetch from 'isomorphic-fetch'
 import { Parser } from 'm3u8-parser'
 import composeM3U8 from './compose-m3u8'
 
-export default ({ s3Url, s3Access, s3Secret, upstreamBroadcaster }) => {
+export default ({
+  s3Url,
+  s3UrlExternal,
+  s3Access,
+  s3Secret,
+  upstreamBroadcaster,
+}) => {
   const url = new URL(s3Url)
   const useSSL = url.protocol === 'https:'
 
@@ -52,6 +58,13 @@ export default ({ s3Url, s3Access, s3Secret, upstreamBroadcaster }) => {
     const parser = new Parser()
     parser.push(manifestText)
     parser.end()
+    let rewrite
+    if (s3UrlExternal) {
+      rewrite = {
+        from: s3Url,
+        to: s3UrlExternal,
+      }
+    }
 
     await Promise.all([
       upload(`${id}.m3u8`, manifestText),
@@ -61,7 +74,7 @@ export default ({ s3Url, s3Access, s3Secret, upstreamBroadcaster }) => {
             `${upstreamBroadcaster}/stream/${playlist.uri}`,
             `${s3Url}/${playlist.uri}`,
           ],
-          { limit: 10 },
+          { limit: 10, rewrite },
         )
 
         await upload(playlist.uri, composedManifest)

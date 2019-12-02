@@ -115,6 +115,11 @@ export default function parseCli(argv) {
           describe: 'address of s3 object store',
           type: 'string',
         },
+        's3-url-external': {
+          describe:
+            'externally-available s3 object store address for rewriting manifests',
+          type: 'string',
+        },
         's3-access': {
           describe: 's3 access key id',
           type: 'string',

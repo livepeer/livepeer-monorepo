@@ -33,6 +33,7 @@ export default async function makeApp(params) {
     orchestrators,
     broadcasters,
     s3Url,
+    s3UrlExternal,
     s3Access,
     s3Secret,
     upstreamBroadcaster,
@@ -59,7 +60,13 @@ export default async function makeApp(params) {
   if (s3Url && s3Access && s3Secret) {
     app.use(
       '/live',
-      liveProxy({ s3Url, s3Access, s3Secret, upstreamBroadcaster }),
+      liveProxy({
+        s3Url,
+        s3Access,
+        s3Secret,
+        upstreamBroadcaster,
+        s3UrlExternal,
+      }),
     )
   }
   app.use(jsonParser())

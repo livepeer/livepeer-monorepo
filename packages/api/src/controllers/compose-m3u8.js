@@ -10,7 +10,7 @@ import { basename, resolve } from 'path'
 
 const PROTOCOL_RE = /^[a-zA-Z]+:\/\//
 
-export default async (urls, { limit } = {}) => {
+export default async (urls, { limit, rewrite } = {}) => {
   const broadcasters = []
   await Promise.all(
     urls.map(async url => {
@@ -49,7 +49,7 @@ export default async (urls, { limit } = {}) => {
   if (isMasterPlaylist) {
     return handleMasterPlaylist(broadcasters)
   } else if (isMediaPlaylist) {
-    return handleMediaPlaylist(broadcasters, { limit })
+    return handleMediaPlaylist(broadcasters, { limit, rewrite })
   } else {
     throw new Error('unable to determine playlist type')
   }
@@ -66,7 +66,7 @@ export const truncate = (run, limit) => {
   return run.slice(run.length - limit, run.length)
 }
 
-export const handleMediaPlaylist = (broadcasters, { limit }) => {
+export const handleMediaPlaylist = (broadcasters, { limit, rewrite }) => {
   const segments = []
   let min = Infinity
   let max = -1
@@ -136,13 +136,18 @@ export const handleMediaPlaylist = (broadcasters, { limit }) => {
     const pair = []
     pair.push(`#EXTINF:${segment.duration.toFixed(3)},`)
     // If segment is a full URL leave it alone, otherwise add its host and whatnot
+    let text
     if (segment.uri.match(PROTOCOL_RE)) {
-      pair.push(segment.uri)
+      text = segment.uri
     } else {
       const fullUrl = new URL(segment.address)
       fullUrl.pathname = resolve(fullUrl.pathname, segment.uri)
-      pair.push(fullUrl.toString())
+      text = fullUrl.toString()
     }
+    if (rewrite) {
+      text = text.replace(rewrite.from, rewrite.to)
+    }
+    pair.push(text)
     pairs.push(pair)
   }
   const output = [
