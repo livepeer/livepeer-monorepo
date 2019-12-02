@@ -1,8 +1,8 @@
 import router from 'express/lib/router'
-import { Client } from 'minio'
 import fetch from 'isomorphic-fetch'
 import { Parser } from 'm3u8-parser'
 import composeM3U8 from './compose-m3u8'
+import minioClient from './minio-client'
 
 export default ({
   s3Url,
@@ -10,34 +10,13 @@ export default ({
   s3Access,
   s3Secret,
   upstreamBroadcaster,
+  hostname,
 }) => {
-  const url = new URL(s3Url)
-  const useSSL = url.protocol === 'https:'
-
-  let port = url.port
-  if (!port) {
-    port = useSSL ? '443' : '80'
-  }
-
-  const bucket = url.pathname.slice(1)
-
-  const client = new Client({
-    endPoint: url.hostname,
-    port: parseInt(port),
-    useSSL: useSSL,
-    accessKey: s3Access,
-    secretKey: s3Secret,
+  const client = minioClient({
+    s3Url,
+    s3Access,
+    s3Secret,
   })
-
-  const upload = (path, data) =>
-    new Promise((resolve, reject) => {
-      client.putObject(bucket, path, data, function(err, etag) {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(etag)
-      })
-    })
 
   const app = router()
 
@@ -67,17 +46,13 @@ export default ({
     }
 
     await Promise.all([
-      upload(`${id}.m3u8`, manifestText),
+      client.put(`${id}.m3u8/part/${hostname}`, manifestText),
       ...parser.manifest.playlists.map(async playlist => {
-        const composedManifest = await composeM3U8(
-          [
-            `${upstreamBroadcaster}/stream/${playlist.uri}`,
-            `${s3Url}/${playlist.uri}`,
-          ],
-          { limit: 10, rewrite },
+        const manifestRes = await fetch(
+          `${upstreamBroadcaster}/stream/${playlist.uri}`,
         )
-
-        await upload(playlist.uri, composedManifest)
+        const mediaManifest = await manifestRes.text()
+        await client.put(`${playlist.uri}/part/${hostname}`, mediaManifest)
       }),
     ])
 

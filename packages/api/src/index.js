@@ -8,8 +8,10 @@ import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import logger from './logger'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
+import streamProxyOS from './controllers/stream-proxy-os'
 import liveProxy from './controllers/live-proxy'
 import proxy from 'http-proxy-middleware'
+import os from 'os'
 
 export default async function makeApp(params) {
   const {
@@ -53,6 +55,14 @@ export default async function makeApp(params) {
   }
   await store.ready
 
+  // Generate a random hostname if I am a worker
+  let hostname
+  if (typeof os.hostname === 'function') {
+    hostname = os.hostname()
+  } else {
+    hostname = `api-${uuid()}`
+  }
+
   // Logging, JSON parsing, store injection
   const app = express()
   app.use(healthCheck)
@@ -66,8 +76,22 @@ export default async function makeApp(params) {
         s3Secret,
         upstreamBroadcaster,
         s3UrlExternal,
+        hostname,
       }),
     )
+    app.use(
+      '/stream',
+      streamProxyOS({
+        s3Url,
+        s3Access,
+        s3Secret,
+        upstreamBroadcaster,
+        s3UrlExternal,
+        hostname,
+      }),
+    )
+  } else {
+    app.use('/stream', streamProxy)
   }
   app.use(jsonParser())
   app.use((req, res, next) => {
@@ -99,7 +123,6 @@ export default async function makeApp(params) {
   }
   app.use(httpPrefix, prefixRouter)
   // Special case: handle /stream proxies off that endpoint
-  app.use('/stream', streamProxy)
 
   prefixRouter.get('/google-client', async (req, res, next) => {
     res.json({ clientId: req.config.clientId })

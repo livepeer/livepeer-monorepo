@@ -4,7 +4,6 @@
 
 import { Router } from 'express'
 import composeM3U8 from './compose-m3u8'
-
 const app = Router()
 
 app.use((req, res, next) => {
