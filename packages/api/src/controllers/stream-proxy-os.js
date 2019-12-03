@@ -5,18 +5,20 @@ import composeM3U8 from './compose-m3u8'
 import minioClient from './minio-client'
 import path from 'path'
 
-export default ({
-  s3Url,
-  s3UrlExternal,
-  s3Access,
-  s3Secret,
-  upstreamBroadcaster,
-}) => {
+export default ({ s3Url, s3UrlExternal, s3Access, s3Secret }) => {
   const client = minioClient({
     s3Url,
     s3Access,
     s3Secret,
   })
+
+  let rewrite
+  if (s3UrlExternal) {
+    rewrite = {
+      from: s3Url,
+      to: s3UrlExternal,
+    }
+  }
 
   const app = router()
 
@@ -27,9 +29,7 @@ export default ({
       return res.json({ errors: ['not found'] })
     }
     const urls = parts.map(p => `${s3Url}${p.name}`)
-    console.log(urls)
-    const composed = await composeM3U8(urls)
-    console.log(composed)
+    const composed = await composeM3U8(urls, { limit: 10, rewrite })
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Methods', 'GET')
     res.header('Content-Type', 'application/vnd.apple.mpegurl')
