@@ -24,12 +24,20 @@ type ThreeBoxSpace {
   url: String
   description: String
   image: String
+  defaultProfile: String
+}
+
+type ThreeBox {
+  id: ID!
+  did: String
+  addressLinks: [JSON]
 }
 
 type Query {
   account(id: ID!): Account
   protocol: Protocol
   getTxReceiptStatus(txHash: String!): TransactionStatus
+  threeBox(id: ID!): ThreeBox
   threeBoxSpace(id: ID!): ThreeBoxSpace
 }
 `

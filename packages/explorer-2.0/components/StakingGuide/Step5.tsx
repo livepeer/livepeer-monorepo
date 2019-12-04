@@ -18,7 +18,7 @@ export default ({ goTo, nextStep }) => {
       txHash: approve(type: $type, amount: $amount)
     }
   `
-  console.log(context.library)
+
   const {
     result: { mutate: approve, isBroadcasted, isMined, txHash },
     reset,

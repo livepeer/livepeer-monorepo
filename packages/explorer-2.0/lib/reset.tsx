@@ -22,7 +22,7 @@ const Reset = () =>
         textDecoration: 'none',
       },
       ul: {
-        paddingLeft: 20
+        paddingLeft: 20,
       },
       button: {
         border: 0,
@@ -31,10 +31,10 @@ const Reset = () =>
         backgroundColor: 'transparent',
       },
       '.MuiPaper-root div:nth-of-type(2)': {
-        overflow: 'initial !important'
+        overflow: 'initial !important',
       },
       '.MuiPaper-root div:nth-of-type(2) > div > div': {
-        overflow: 'initial !important'
+        overflow: 'initial !important',
       },
       ':root': {
         '--reach-dialog': 1,
@@ -62,9 +62,9 @@ const Reset = () =>
         maxWidth: 220,
         textTransform: 'initial',
         opacity: '1 !important',
-        borderRadius: '6px !important'
-      }
+        borderRadius: '6px !important',
+      },
     },
   })
 
-  export default Reset
+export default Reset

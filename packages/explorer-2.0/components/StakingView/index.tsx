@@ -56,7 +56,7 @@ export default () => {
       account: account.toLowerCase(),
     },
     ssr: false,
-    pollInterval: 5000,
+    //pollInterval: 10000,
   })
 
   if (error) {

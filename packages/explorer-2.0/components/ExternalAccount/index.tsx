@@ -1,41 +1,33 @@
 /** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { Styled, jsx } from 'theme-ui'
+import React, { useState } from 'react'
+import { jsx, Flex } from 'theme-ui'
 import { Collapse } from 'react-collapse'
-import { Flex } from 'theme-ui'
-import Textfield from '../Textfield'
 import gql from 'graphql-tag'
+import { useMutation } from '@apollo/react-hooks'
 import { useWeb3Context } from 'web3-react'
-import { useQuery } from '@apollo/react-hooks'
+import Utils from 'web3-utils'
+import Box from '3box'
 
-interface Props {
-  account: string
-}
-
-const GET_BOX = gql`
-  query getBox($id: ID!) {
-    getBox(id: $id) {
-      id
-      did
-    }
+const REMOVE_ADDRESS_LINK = gql`
+  mutation removeAddressLink($address: String) {
+    removeAddressLink(address: $address)
   }
 `
 
-export default ({ account, ...props }: Props) => {
+export default ({ threeBox, message, children }) => {
   const [open, setOpen] = useState()
   const context = useWeb3Context()
-  // const { data, error } = useQuery(GET_BOX, {
-  //   variables: {
-  //     id: context.account,
-  //     ethereumProvider: context.library.provider,
-  //   },
-  //   context: {
-  //     ethereumProvider: context.library.currentProvider,
-  //   },
-  // })
+  const [removeAddressLink] = useMutation(REMOVE_ADDRESS_LINK)
+  const addressLinks = threeBox.addressLinks.filter(
+    link =>
+      Utils.toChecksumAddress(link.address) !=
+      Utils.toChecksumAddress(context.account),
+  )
+  const [disconnecting, setDisconnecting] = useState({
+    address: '',
+    isDisconnecting: false,
+  })
 
-  // console.log('err', error)
-  // console.log('dat', data)
   return (
     <div
       sx={{
@@ -44,7 +36,6 @@ export default ({ account, ...props }: Props) => {
         borderRadius: '4px',
         p: 2,
       }}
-      {...props}
     >
       <Flex
         sx={{
@@ -54,7 +45,9 @@ export default ({ account, ...props }: Props) => {
           mb: 2,
         }}
       >
-        <div sx={{ color: 'muted' }}>External Account</div>
+        <div sx={{ color: 'muted' }}>
+          External Account{addressLinks.length > 1 ? 's' : ''}
+        </div>
         <div
           sx={{ borderRadius: 1000, width: 2, height: 2, bg: 'muted', mx: 1 }}
         />
@@ -64,18 +57,25 @@ export default ({ account, ...props }: Props) => {
           }}
           sx={{ color: 'primary', cursor: 'pointer' }}
         >
-          {open ? 'Cancel' : 'Edit'}
+          {open ? 'Cancel' : 'Add Account'}
         </div>
       </Flex>
-      <div sx={{ fontSize: 1, lineHeight: '24px', color: 'text' }}>
-        Add an external account. This is a required action for orchestrators
-        that wish to use their profiles with an external livepeer-cli account.
+      <div sx={{ lineHeight: '24px' }}>
+        If you operate an orchestrator, adding an external account allows you to
+        enjoy the benefits of a profile web UI, while keeping your keys in a
+        more secure environment.
       </div>
       <Collapse isOpened={open}>
-        <div sx={{ mt: 3 }}>
+        <div sx={{ pt: 4 }}>
           <div sx={{ mb: 3 }}>
             <div sx={{ mb: 2 }}>
-              1. Run livepeer-cli and select option #18 "Sign a message"
+              1. Run livepeer-cli and select option "Sign a message"
+            </div>
+          </div>
+          <div sx={{ mb: 3 }}>
+            <div sx={{ mb: 2 }}>
+              2. When prompted for the message to sign, copy and paste the
+              following message:
             </div>
             <div
               sx={{
@@ -85,37 +85,85 @@ export default ({ account, ...props }: Props) => {
                 borderRadius: 4,
                 fontFamily: 'monospace',
               }}
-            >{`~ livepeer-cli link-profile <did: 12kj21923hasdj>`}</div>
-          </div>
-          <div>
-            <div sx={{ mb: 2 }}>2. Paste the hex signature output here</div>
-            <Textfield
-              defaultValue=""
-              name="hexSignature"
-              label="Hex Signature"
-              as="textarea"
-              rows={4}
-              sx={{ width: '100%' }}
+              dangerouslySetInnerHTML={{
+                __html: message,
+              }}
             />
           </div>
-          <div
-            sx={{
-              pt: 3,
-              pb: 2,
-              cursor: 'pointer',
-              color: 'red',
-              paddingBottom: '16px',
-              display: 'inline-flex',
-              padding: '12px 16px',
-              marginTop: '16px',
-              background: 'rgba(211, 47, 47, .1)',
-              borderRadius: '6px',
-              justifyContent: 'center',
-              width: '100%',
-            }}
-          >
-            <span>Disconnect external account</span>
+          <div>
+            <div sx={{ mb: 2 }}>
+              3. The cli will copy the Ethereum signed message signature to your
+              clipboard. Paste it here:
+            </div>
+            {children}
           </div>
+        </div>
+      </Collapse>
+      <Collapse isOpened={addressLinks.length && !open}>
+        <div sx={{ pt: 2, color: 'text' }}>
+          {addressLinks.map(link => (
+            <Flex
+              key={link.address}
+              sx={{
+                alignItems: 'center',
+                p: 2,
+                borderRadius: 6,
+                mb: 2,
+                bg: 'rgba(255, 255, 255, .05)',
+                justifyContent: 'space-between',
+                '&:last-child': {
+                  mb: 0,
+                },
+              }}
+            >
+              <div sx={{ fontFamily: 'monospace', fontSize: 1 }}>
+                {link.address}
+              </div>
+              <div
+                onClick={async () => {
+                  setDisconnecting({
+                    address: link.address,
+                    isDisconnecting: true,
+                  })
+                  const box = await Box.openBox(
+                    context.account,
+                    context.library.currentProvider,
+                  )
+                  await removeAddressLink({
+                    variables: {
+                      address: link.address,
+                    },
+                    refetchQueries: ['threeBox'],
+                    context: {
+                      box,
+                    },
+                  })
+                  setDisconnecting({
+                    address: link.address,
+                    isDisconnecting: false,
+                  })
+                }}
+                sx={{
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  py: '6px',
+                  px: 2,
+                  backgroundColor: 'rgba(211, 47, 47, .1)',
+                  transition: '.2s background-color',
+                  color: 'red',
+                  '&:hover': {
+                    transition: '.2s background-color',
+                    backgroundColor: 'rgba(211, 47, 47, .2)',
+                  },
+                }}
+              >
+                {disconnecting.address == link.address &&
+                disconnecting.isDisconnecting
+                  ? 'Disconnecting...'
+                  : 'Disconnect'}
+              </div>
+            </Flex>
+          ))}
         </div>
       </Collapse>
     </div>

@@ -1,22 +1,24 @@
 /** @jsx jsx */
 import React, { useState } from 'react'
 import { jsx } from 'theme-ui'
-import { ThreeBoxSpace } from '../../@types'
+import { ThreeBoxSpace, ThreeBox } from '../../@types'
 import { Flex } from 'theme-ui'
 import Camera from '../../public/img/camera.svg'
 import Button from '../Button'
 import Textfield from '../Textfield'
 import { useWeb3Context } from 'web3-react'
 import useForm from 'react-hook-form'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import Modal from '../Modal'
 import ExternalAccount from '../ExternalAccount'
+import Box from '3box'
 
 interface Props {
   account: string
   threeBoxSpace?: ThreeBoxSpace
+  threeBox?: ThreeBox
 }
 
 const UPDATE_PROFILE = gql`
@@ -25,12 +27,16 @@ const UPDATE_PROFILE = gql`
     $url: String
     $description: String
     $image: String
+    $proof: JSON
+    $defaultProfile: String
   ) {
     updateProfile(
       name: $name
       url: $url
       description: $description
       image: $image
+      proof: $proof
+      defaultProfile: $defaultProfile
     ) {
       __typename
       id
@@ -38,25 +44,30 @@ const UPDATE_PROFILE = gql`
       url
       description
       image
+      defaultProfile
     }
   }
 `
 
-export default ({ threeBoxSpace, account }: Props) => {
+export default ({ threeBoxSpace, threeBox, account }: Props) => {
   const context = useWeb3Context()
   const { register, handleSubmit, watch, errors } = useForm()
   const [previewImage, setPreviewImage] = useState()
-  const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [open, setOpen] = useState(false)
+  const [timestamp] = useState(Math.floor(Date.now() / 1000))
 
   let name = watch('name')
   let url = watch('url')
   let description = watch('description')
   let image = watch('image')
+  let signature = watch('signature')
 
   let reader = new FileReader()
 
-  const [updateProfile] = useMutation(UPDATE_PROFILE)
+  const [updateProfile, error] = useMutation(UPDATE_PROFILE, {
+    refetchQueries: [`threeBox`],
+  })
 
   reader.onload = function(e) {
     setPreviewImage(e.target.result)
@@ -66,8 +77,29 @@ export default ({ threeBoxSpace, account }: Props) => {
     reader.readAsDataURL(image[0])
   }
 
+  const onClick = async () => {
+    if (threeBoxSpace.defaultProfile) {
+      setOpen(true)
+    } else {
+      await Box.openBox(context.account, context.library.currentProvider)
+      setOpen(true)
+    }
+  }
+
+  const message = `Create a new 3Box profile<br /><br />-<br />Your unique profile ID is ${threeBox.did}<br />Timestamp: ${timestamp}`
+
+  const proof = signature
+    ? {
+        version: 1,
+        type: 'ethereum-eoa',
+        message: message.replace(/<br ?\/?>/g, '\n'),
+        timestamp,
+        signature,
+      }
+    : null
+
   const onSubmit = async () => {
-    setLoading(true)
+    setSaving(true)
     let hash = threeBoxSpace.image ? threeBoxSpace.image : ''
     if (previewImage) {
       const formData = new window.FormData()
@@ -80,36 +112,49 @@ export default ({ threeBoxSpace, account }: Props) => {
       hash = infuraResponse['Hash']
     }
 
+    const box = await Box.openBox(
+      context.account,
+      context.library.currentProvider,
+    )
+
     updateProfile({
-      variables: { name, url, description, image: hash },
+      variables: {
+        name: name ? name : threeBoxSpace.name,
+        url: url ? url : threeBoxSpace.url,
+        description: description ? description : threeBoxSpace.description,
+        image: hash ? hash : threeBoxSpace.image,
+        proof,
+        defaultProfile: 'livepeer',
+      },
       context: {
-        ethereumProvider: context.library.currentProvider,
-        address: account.toLowerCase(),
+        box,
+        address: account,
       },
       optimisticResponse: {
         __typename: 'Mutation',
         updateProfile: {
           __typename: 'ThreeBoxSpace',
-          id: account.toLowerCase(),
+          id: account,
           name,
           url,
           description,
           image: hash,
+          defaultProfile: 'livepeer',
         },
       },
     })
-    setLoading(false)
+    setSaving(false)
     setOpen(false)
   }
 
   return (
     <>
       <Button
-        onClick={() => setOpen(true)}
-        sx={{ mt: '3px', ml: 2 }}
+        onClick={() => onClick()}
+        sx={{ mt: '3px', ml: 2, fontWeight: 600 }}
         variant="primaryOutlineSmall"
       >
-        Edit Profile
+        {threeBoxSpace.defaultProfile ? 'Edit Profile' : 'Set up my profile'}
       </Button>
       <Modal
         isOpen={open}
@@ -201,6 +246,7 @@ export default ({ threeBoxSpace, account }: Props) => {
               inputRef={register}
               defaultValue={threeBoxSpace ? threeBoxSpace.url : ''}
               label="Website"
+              type="url"
               name="url"
               sx={{ mb: 2, width: '100%' }}
             />
@@ -213,7 +259,16 @@ export default ({ threeBoxSpace, account }: Props) => {
               rows={4}
               sx={{ mb: 2, width: '100%' }}
             />
-            <ExternalAccount account={account} />
+            <ExternalAccount message={message} threeBox={threeBox}>
+              <Textfield
+                inputRef={register}
+                name="signature"
+                label="Signature"
+                as="textarea"
+                rows={4}
+                sx={{ width: '100%' }}
+              />
+            </ExternalAccount>
           </div>
 
           <footer>
@@ -225,8 +280,8 @@ export default ({ threeBoxSpace, account }: Props) => {
               >
                 Cancel
               </Button>
-              <Button disabled={loading} type="submit">
-                {loading ? 'Saving...' : 'Save'}
+              <Button disabled={saving} type="submit">
+                {saving ? 'Saving...' : 'Save'}
               </Button>
             </Flex>
           </footer>

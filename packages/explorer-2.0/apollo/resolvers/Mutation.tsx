@@ -196,26 +196,57 @@ export async function initializeRound(obj, args, ctx) {
 }
 
 /**
- * Submits a round initialization transaction
+ * Update's a user's 3box space
  * @param obj
  * @return {Promise}
  */
-export async function updateProfile(obj, args, ctx) {
-  const address = ctx.address
-  const ethereumProvider = ctx.ethereumProvider
-  const box = await Box.openBox(address, ethereumProvider)
-  const space = await box.openSpace('livepeer')
+export async function updateProfile(_obj, _args, _ctx) {
+  const address = _ctx.address
+  const box = _ctx.box
+  try {
+    const space = await box.openSpace('livepeer')
+    if (_args.proof) {
+      await box.linkAddress({
+        type: 'ethereum-eoa',
+        proof: _args.proof,
+      })
+    }
 
-  await space.public.setMultiple(
-    ['name', 'description', 'url', 'image'],
-    [args.name, args.description, args.url, args.image],
-  )
+    await space.public.setMultiple(
+      ['name', 'description', 'url', 'image', 'defaultProfile'],
+      [
+        _args.name,
+        _args.description,
+        _args.url,
+        _args.image,
+        _args.defaultProfile,
+      ],
+    )
 
-  return {
-    id: address,
-    name: args.name,
-    url: args.url,
-    description: args.description,
-    image: args.image,
+    return {
+      id: address,
+      name: _args.name,
+      url: _args.url,
+      description: _args.description,
+      image: _args.image,
+      defaultProfile: _args.defaultProfile,
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+/**
+ * Unlink an external account from a user's 3box
+ * @param obj
+ * @return {Promise}
+ */
+export async function removeAddressLink(_obj, _args, _ctx) {
+  const address = _args.address
+  const box = _ctx.box
+  try {
+    return await box.removeAddressLink(address.toLowerCase())
+  } catch (e) {
+    console.error(e)
   }
 }

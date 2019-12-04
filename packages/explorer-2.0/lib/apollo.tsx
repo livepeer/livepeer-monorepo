@@ -12,7 +12,7 @@ import initApolloClient from './initApolloClient'
  * @param {Object} [config]
  * @param {Boolean} [config.ssr=true]
  */
-export function withApollo (PageComponent, { ssr = true } = {}) {
+export function withApollo(PageComponent, { ssr = true } = {}) {
   const isAppHoc =
     PageComponent === App || PageComponent.prototype instanceof App
 
@@ -28,7 +28,7 @@ export function withApollo (PageComponent, { ssr = true } = {}) {
   if (process.env.NODE_ENV !== 'production') {
     if (isAppHoc && ssr) {
       console.warn(
-        'You are using the "withApollo" HOC on "_app.js" level. Please note that this disables project wide automatic static optimization. Better wrap your PageComponents directly.'
+        'You are using the "withApollo" HOC on "_app.js" level. Please note that this disables project wide automatic static optimization. Better wrap your PageComponents directly.',
       )
     }
   }
@@ -94,7 +94,7 @@ export function withApollo (PageComponent, { ssr = true } = {}) {
 
       return {
         ...pageProps,
-        apolloState
+        apolloState,
       }
     }
   }

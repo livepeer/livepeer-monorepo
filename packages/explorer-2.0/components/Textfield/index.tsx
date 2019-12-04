@@ -7,6 +7,7 @@ export default ({
   disabled = false,
   onFocus = null,
   onBlur = null,
+  type = 'text',
   autoFocus = false,
   required = false,
   defaultValue = undefined,
@@ -133,7 +134,7 @@ export default ({
             WebkitTapHighlightColor: 'transparent',
           }}
           id={id}
-          type="text"
+          type={type}
         />
       </div>
     </div>

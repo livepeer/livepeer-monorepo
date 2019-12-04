@@ -23,7 +23,7 @@ const GET_ROUND = gql`
 export default () => {
   const context = useWeb3Context()
   let { data, loading } = useQuery(GET_ROUND, {
-    pollInterval: 10000,
+    pollInterval: 20000,
     ssr: true,
   })
 

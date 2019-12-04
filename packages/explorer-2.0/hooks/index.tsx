@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
@@ -19,6 +18,7 @@ export function useAccount(address = null) {
         url
         description
         image
+        defaultProfile
       }
       delegator(id: $account) {
         id
@@ -38,7 +38,6 @@ export function useAccount(address = null) {
       }
     }
   `
-  const context = useWeb3Context()
   const [account, setAccount] = useState(null)
   const [delegator, setDelegator] = useState(null)
   const [threeBoxSpace, setThreeBoxSpace] = useState(null)
@@ -47,8 +46,6 @@ export function useAccount(address = null) {
     variables: {
       account: address && address.toLowerCase(),
     },
-    fetchPolicy: 'cache-and-network',
-    notifyOnNetworkStatusChange: true,
     skip: !address,
   })
 

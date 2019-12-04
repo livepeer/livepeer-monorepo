@@ -14,6 +14,8 @@ import Chip from '../Chip'
 import EditProfile from '../EditProfile'
 import gql from 'graphql-tag'
 import ShowMoreText from 'react-show-more-text'
+import { useQuery } from '@apollo/react-hooks'
+import { useWeb3Context } from 'web3-react'
 
 interface Props {
   account: string
@@ -26,6 +28,16 @@ interface Props {
   status: string
 }
 
+const GET_BOX = gql`
+  query threeBox($id: ID!) {
+    threeBox(id: $id) {
+      id
+      did
+      addressLinks
+    }
+  }
+`
+
 export default ({
   account,
   role = 'Orchestrator',
@@ -37,9 +49,20 @@ export default ({
   isMyAccount = false,
   ...props
 }: Props) => {
+  const context = useWeb3Context()
   const isLivepeerAware =
     hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
   const [copied, setCopied] = useState(false)
+
+  const { data } = useQuery(GET_BOX, {
+    variables: {
+      id: context.account,
+    },
+    context: {
+      ethereumProvider: context.active && context.library.currentProvider,
+    },
+    skip: !threeBoxSpace,
+  })
 
   useEffect(() => {
     if (copied) {
@@ -144,8 +167,12 @@ export default ({
             </Flex>
           </Styled.h1>
         </CopyToClipboard>
-        {isMyAccount && (
-          <EditProfile account={account} threeBoxSpace={threeBoxSpace} />
+        {isMyAccount && data && data.threeBox && threeBoxSpace && (
+          <EditProfile
+            account={account}
+            threeBox={data.threeBox}
+            threeBoxSpace={threeBoxSpace}
+          />
         )}
       </Flex>
       {threeBoxSpace && threeBoxSpace.url && (
@@ -153,7 +180,7 @@ export default ({
           <Link sx={{ color: 'muted', mr: 1 }} />
           <a
             sx={{ fontSize: 1, color: 'primary' }}
-            href=""
+            href={threeBoxSpace.url}
             target="__blank"
             rel="noopener noreferrer"
           >

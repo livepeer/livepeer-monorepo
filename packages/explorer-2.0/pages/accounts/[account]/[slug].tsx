@@ -51,7 +51,6 @@ const AccountPage = () => {
       account: query.account.toString().toLowerCase(),
     },
     ssr: false,
-    notifyOnNetworkStatusChange: true,
   })
 
   const myAccount = useAccount(context.account)

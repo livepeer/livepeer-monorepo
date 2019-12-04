@@ -43,6 +43,13 @@ export interface ThreeBoxSpace {
   url: string
   description: string
   image: string
+  defaultProfile: string
+}
+
+export interface ThreeBox {
+  id: string
+  did: string
+  addressLinks: [object]
 }
 
 export interface Round {
