@@ -59,10 +59,10 @@ export default stream => {
 
     const profile = {
       name: renditionName,
-      height: height,
-      width: width,
-      bitrate: parseInt(videoBitrate),
-      fps: sourceInfo.fps, // NOTE: or is this the `interval` field?
+      height: Math.round(height),
+      width: Math.round(width),
+      bitrate: Math.round((parseInt(videoBitrate) * 8) / 1000),
+      fps: Math.round(sourceInfo.fps),
     }
 
     renditions[renditionName] = `/stream/${stream.id}/${renditionName}.m3u8`
