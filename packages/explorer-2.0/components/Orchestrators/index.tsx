@@ -50,6 +50,11 @@ export default ({ currentRound, transcoders }) => {
         show: false,
       },
       {
+        Header: 'ThreeBoxSpace',
+        accessor: 'threeBoxSpace',
+        show: false,
+      },
+      {
         Header: 'Delegator',
         accessor: 'delegator',
         show: false,
@@ -230,7 +235,7 @@ export default ({ currentRound, transcoders }) => {
                             fontSize: 1,
                             pl: 2,
                             pr: 2,
-                            py: '12px',
+                            py: '16px',
                           }}
                           {...cell.getCellProps()}
                           onClick={() =>
@@ -390,6 +395,7 @@ function renderSwitch(cell, currentRound) {
         <AccountCell
           status={status}
           active={cell.row.values.active}
+          threeBoxSpace={cell.row.values.threeBoxSpace}
           address={cell.value}
         />
       )

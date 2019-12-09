@@ -39,17 +39,13 @@ export interface Delegator {
 
 export interface ThreeBoxSpace {
   id: string
+  did: string
   name: string
   url: string
   description: string
   image: string
+  addressLinks: Array
   defaultProfile: string
-}
-
-export interface ThreeBox {
-  id: string
-  did: string
-  addressLinks: [object]
 }
 
 export interface Round {

@@ -30,7 +30,10 @@ export default ({
       <Styled.div
         as={DialogOverlay}
         isOpen={isOpen}
-        sx={{ background: 'rgba(0, 0, 0, 0.5)', ...props }}
+        sx={{
+          background: 'rgba(0, 0, 0, 0.5)',
+          ...props,
+        }}
         onDismiss={onDismiss}
         {...props}
       >
@@ -40,7 +43,7 @@ export default ({
           as={DialogContent}
           sx={
             title
-              ? { p: 3, bg: 'surface', borderRadius: 10 }
+              ? { maxWidth: 700, p: 3, bg: 'surface', borderRadius: 10 }
               : {
                   borderRadius: 10,
                   margin: '40px auto',

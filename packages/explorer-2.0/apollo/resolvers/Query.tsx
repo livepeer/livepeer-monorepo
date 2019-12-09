@@ -1,6 +1,8 @@
 import fetch from 'isomorphic-unfetch'
 import LivepeerSDK from '@adamsoffer/livepeer-sdk'
+import { validateLink } from '3id-blockchain-utils'
 import Box from '3box'
+import Utils from 'web3-utils'
 
 export async function account(_obj, _args, _ctx, _info) {
   const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
@@ -38,27 +40,53 @@ export async function getTxReceiptStatus(_obj, _args, _ctx, _info) {
 }
 
 export async function threeBoxSpace(_obj, _args, _ctx, _info) {
-  const { name, url, description, image, defaultProfile } = await Box.getSpace(
-    _args.id,
-    'livepeer',
-  )
+  const id = _args.id.toLowerCase()
+  const space = await Box.getSpace(_args.id, 'livepeer')
 
-  return {
-    id: _args.id,
-    name,
-    url,
-    description,
-    image,
-    defaultProfile,
+  let useThreeBox = false
+  let box = {
+    name: '',
+    website: '',
+    description: '',
+    image: '',
   }
-}
 
-export async function threeBox(_obj, _args, _ctx, _info) {
-  const box = await Box.openBox(_args.id, _ctx.ethereumProvider)
-  const addressLinks = await box.listAddressLinks()
+  if (space.defaultProfile === '3box') {
+    box = await Box.getProfile(_args.id)
+    useThreeBox = true
+  }
+
+  let addressLinks = []
+  if (Object.entries(space).length) {
+    const conf = await Box.getConfig(id)
+    try {
+      const links = await Promise.all(
+        conf.links.map(link => validateLink(link)),
+      )
+      addressLinks = links.filter((link: any) => {
+        console.log(link)
+        return (
+          link &&
+          Utils.toChecksumAddress(link.address) != Utils.toChecksumAddress(id)
+        )
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return {
-    id: _args.id,
-    did: box.DID,
+    id,
+    name: useThreeBox ? box.name : space.name,
+    url: useThreeBox ? box.website : space.url,
+    description: useThreeBox ? box.description : space.description,
+    image: useThreeBox ? box.image : space.image,
+    defaultProfile: space.defaultProfile,
     addressLinks,
+    did: async () => {
+      const profile = await Box.getProfile(id)
+      const { did } = await Box.getVerifiedAccounts(profile)
+      return did
+    },
   }
 }

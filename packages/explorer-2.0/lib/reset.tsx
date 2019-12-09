@@ -8,6 +8,7 @@ const Reset = () =>
       '*': {
         boxSizing: 'border-box',
         fontFamily: theme.fonts.body,
+        outline: 'none',
       },
       body: {
         margin: '0',

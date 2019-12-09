@@ -20,24 +20,19 @@ type TransactionStatus {
 
 type ThreeBoxSpace {
   id: ID!
+  did: String
   name: String
   url: String
   description: String
   image: String
-  defaultProfile: String
-}
-
-type ThreeBox {
-  id: ID!
-  did: String
   addressLinks: [JSON]
+  defaultProfile: String
 }
 
 type Query {
   account(id: ID!): Account
   protocol: Protocol
   getTxReceiptStatus(txHash: String!): TransactionStatus
-  threeBox(id: ID!): ThreeBox
   threeBoxSpace(id: ID!): ThreeBoxSpace
 }
 `

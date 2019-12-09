@@ -10,7 +10,6 @@ import {
 
 const subgraphEndpoint =
   'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
-const threeBoxEndpoint = 'https://api.3box.io/graph'
 const isProd = process.env.NODE_ENV === 'production'
 
 const graphqlAPI = isProd
@@ -20,11 +19,6 @@ const graphqlAPI = isProd
 export default async () => {
   const subgraphServiceLink = new HttpLink({
     uri: subgraphEndpoint,
-    fetch,
-  })
-
-  const threeBoxServiceLink = new HttpLink({
-    uri: threeBoxEndpoint,
     fetch,
   })
 
@@ -41,14 +35,6 @@ export default async () => {
     return executableSchema
   }
 
-  const create3BoxServiceSchema = async () => {
-    const executableSchema = makeRemoteExecutableSchema({
-      schema: await introspectSchema(threeBoxServiceLink),
-      link: threeBoxServiceLink,
-    })
-    return executableSchema
-  }
-
   const createGraphqlAPIServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(graphqlAPIServiceLink),
@@ -58,14 +44,13 @@ export default async () => {
   }
 
   const subgraphSchema = await createSubgraphServiceSchema()
-  const threeBoxSchema = await create3BoxServiceSchema()
   const graphqlAPISchema = await createGraphqlAPIServiceSchema()
   const linkTypeDefs = `
-    extend type Profile {
-      transcoder: Transcoder
-    }
     extend type Transcoder {
-      profile: Profile
+      threeBoxSpace: ThreeBoxSpace
+    }
+    extend type ThreeBoxSpace {
+      transcoder: Transcoder
     }
     extend type Delegator {
       pendingStake: String
@@ -75,14 +60,25 @@ export default async () => {
   `
 
   const merged = mergeSchemas({
-    schemas: [
-      subgraphSchema,
-      threeBoxSchema,
-      schema,
-      graphqlAPISchema,
-      linkTypeDefs,
-    ],
+    schemas: [subgraphSchema, schema, graphqlAPISchema, linkTypeDefs],
     resolvers: {
+      Transcoder: {
+        threeBoxSpace: {
+          async resolve(_obj, _args, _context, _info) {
+            const threeBoxSpace = await _info.mergeInfo.delegateToSchema({
+              schema: schema,
+              operation: 'query',
+              fieldName: 'threeBoxSpace',
+              args: {
+                id: _obj.id,
+              },
+              context: _context,
+              info: _info,
+            })
+            return threeBoxSpace
+          },
+        },
+      },
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {

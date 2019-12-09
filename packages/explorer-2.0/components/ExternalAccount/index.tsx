@@ -5,8 +5,8 @@ import { Collapse } from 'react-collapse'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks'
 import { useWeb3Context } from 'web3-react'
-import Utils from 'web3-utils'
 import Box from '3box'
+import Button from '../Button'
 
 const REMOVE_ADDRESS_LINK = gql`
   mutation removeAddressLink($address: String) {
@@ -14,15 +14,26 @@ const REMOVE_ADDRESS_LINK = gql`
   }
 `
 
-export default ({ threeBox, message, children }) => {
-  const [open, setOpen] = useState()
+const GET_THREE_BOX_SPACE = gql`
+  query($id: ID!) {
+    threeBoxSpace(id: $id) {
+      __typename
+      id
+      did
+      name
+      url
+      description
+      image
+      addressLinks
+      defaultProfile
+    }
+  }
+`
+
+export default ({ threeBoxSpace, message, children }) => {
+  const [open, setOpen] = useState(false)
   const context = useWeb3Context()
   const [removeAddressLink] = useMutation(REMOVE_ADDRESS_LINK)
-  const addressLinks = threeBox.addressLinks.filter(
-    link =>
-      Utils.toChecksumAddress(link.address) !=
-      Utils.toChecksumAddress(context.account),
-  )
   const [disconnecting, setDisconnecting] = useState({
     address: '',
     isDisconnecting: false,
@@ -45,9 +56,7 @@ export default ({ threeBox, message, children }) => {
           mb: 2,
         }}
       >
-        <div sx={{ color: 'muted' }}>
-          External Account{addressLinks.length > 1 ? 's' : ''}
-        </div>
+        <div sx={{ color: 'muted' }}>External Accounts</div>
         <div
           sx={{ borderRadius: 1000, width: 2, height: 2, bg: 'muted', mx: 1 }}
         />
@@ -66,44 +75,13 @@ export default ({ threeBox, message, children }) => {
         more secure environment.
       </div>
       <Collapse isOpened={open}>
-        <div sx={{ pt: 4 }}>
-          <div sx={{ mb: 3 }}>
-            <div sx={{ mb: 2 }}>
-              1. Run livepeer-cli and select option "Sign a message"
-            </div>
-          </div>
-          <div sx={{ mb: 3 }}>
-            <div sx={{ mb: 2 }}>
-              2. When prompted for the message to sign, copy and paste the
-              following message:
-            </div>
-            <div
-              sx={{
-                p: 2,
-                color: 'primary',
-                bg: 'background',
-                borderRadius: 4,
-                fontFamily: 'monospace',
-              }}
-              dangerouslySetInnerHTML={{
-                __html: message,
-              }}
-            />
-          </div>
-          <div>
-            <div sx={{ mb: 2 }}>
-              3. The cli will copy the Ethereum signed message signature to your
-              clipboard. Paste it here:
-            </div>
-            {children}
-          </div>
-        </div>
+        {children}
       </Collapse>
-      <Collapse isOpened={addressLinks.length && !open}>
+      <Collapse isOpened={threeBoxSpace.addressLinks.length && !open}>
         <div sx={{ pt: 2, color: 'text' }}>
-          {addressLinks.map(link => (
+          {threeBoxSpace.addressLinks.map((link, i) => (
             <Flex
-              key={link.address}
+              key={i}
               sx={{
                 alignItems: 'center',
                 p: 2,
@@ -119,49 +97,48 @@ export default ({ threeBox, message, children }) => {
               <div sx={{ fontFamily: 'monospace', fontSize: 1 }}>
                 {link.address}
               </div>
-              <div
+              <Button
+                as="div"
+                variant="dangerSmall"
                 onClick={async () => {
-                  setDisconnecting({
-                    address: link.address,
-                    isDisconnecting: true,
-                  })
-                  const box = await Box.openBox(
-                    context.account,
-                    context.library.currentProvider,
+                  const r = confirm(
+                    'Are you sure you want to disconnect this account?',
                   )
-                  await removeAddressLink({
-                    variables: {
+                  if (r) {
+                    setDisconnecting({
                       address: link.address,
-                    },
-                    refetchQueries: ['threeBox'],
-                    context: {
-                      box,
-                    },
-                  })
-                  setDisconnecting({
-                    address: link.address,
-                    isDisconnecting: false,
-                  })
-                }}
-                sx={{
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  py: '6px',
-                  px: 2,
-                  backgroundColor: 'rgba(211, 47, 47, .1)',
-                  transition: '.2s background-color',
-                  color: 'red',
-                  '&:hover': {
-                    transition: '.2s background-color',
-                    backgroundColor: 'rgba(211, 47, 47, .2)',
-                  },
+                      isDisconnecting: true,
+                    })
+                    const box = await Box.openBox(
+                      context.account,
+                      context.library.currentProvider,
+                    )
+                    await removeAddressLink({
+                      variables: {
+                        address: link.address,
+                      },
+                      refetchQueries: [
+                        {
+                          query: GET_THREE_BOX_SPACE,
+                          variables: { id: context.account },
+                        },
+                      ],
+                      context: {
+                        box,
+                      },
+                    })
+                    setDisconnecting({
+                      address: link.address,
+                      isDisconnecting: false,
+                    })
+                  }
                 }}
               >
                 {disconnecting.address == link.address &&
                 disconnecting.isDisconnecting
                   ? 'Disconnecting...'
                   : 'Disconnect'}
-              </div>
+              </Button>
             </Flex>
           ))}
         </div>

@@ -11,18 +11,16 @@
     ipfs-log "~4.3.1"
     orbit-db-access-controllers "~0.2.0"
 
-"3box@^1.13.2":
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/3box/-/3box-1.14.0.tgz#2f468f8584ba38162b71b84aa9ec32b50e26d558"
-  integrity sha512-H+p7uKzyNHfWd4xCjw+sa2yZGQPUuX3x08kxQ9fmVeykNeF6g68fQuSen2SHcTs2Hf7PjAYysPZgX7egXtIgQw==
+"3box@1.13.2":
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/3box/-/3box-1.13.2.tgz#ef8c7830612c08b41970e70d309a417b4b2836ae"
+  integrity sha512-8VvSdFXLUmdwCN8/J7tTQoIh0vBq+wZmiIRHA9uc/uEYo03IkBxEGPzX9fHpRe9WKdpMuf/oBYON26Gu/2iw3w==
   dependencies:
     "3box-orbitdb-plugins" "^1.0.5"
-    "3id-blockchain-utils" "^0.3.2"
     "3id-resolver" "^0.0.5"
     "@babel/runtime" "^7.4.5"
-    "@ethersproject/hdnode" "^5.0.0-beta.133"
-    "@ethersproject/wallet" "^5.0.0-beta.133"
     did-jwt "^0.2.0"
+    ethers "^4.0.28"
     events "^3.0.0"
     graphql-request "^1.8.2"
     https-did-resolver "^0.1.0"
@@ -2206,7 +2204,7 @@
     "@ethersproject/logger" ">=5.0.0-beta.129"
     "@ethersproject/strings" ">=5.0.0-beta.130"
 
-"@ethersproject/hdnode@>=5.0.0-beta.130", "@ethersproject/hdnode@^5.0.0-beta.133":
+"@ethersproject/hdnode@>=5.0.0-beta.130":
   version "5.0.0-beta.135"
   resolved "https://registry.yarnpkg.com/@ethersproject/hdnode/-/hdnode-5.0.0-beta.135.tgz#d260faa2249f90abbca9a25ca4c7ccd43e296c9e"
   integrity sha512-xccjvR7mLfIWP48xJGO6GndyEJUx3xKpAoQFa4qe7HeWgmXy8AoC6cN27pshxlqHEfxwvpazvI0MgUAHfvxY3A==
@@ -14315,7 +14313,7 @@ ethers@4.0.0-beta.3:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@^4.0.20:
+ethers@^4.0.20, ethers@^4.0.28:
   version "4.0.40"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.40.tgz#6e1963d10b5d336a13cd81b519c230cc17624653"
   integrity sha512-MC9BtV7Hpq4dgFONEfanx9aU9GhhoWU270F+/wegHZXA7FR+2KXFdt36YIQYLmVY5ykUWswDxd+f9EVkIa7JOA==

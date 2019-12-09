@@ -28,6 +28,17 @@ const GET_DATA = gql`
       totalStake
       active
     }
+    threeBoxSpace(id: $account) {
+      __typename
+      id
+      did
+      name
+      url
+      description
+      image
+      addressLinks
+      defaultProfile
+    }
     protocol {
       totalTokenSupply
       totalBondedToken
@@ -45,7 +56,7 @@ const AccountPage = () => {
   const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
-  const { account, threeBoxSpace, delegator } = useAccount(query.account)
+  const { account, delegator } = useAccount(query.account)
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
@@ -54,10 +65,6 @@ const AccountPage = () => {
   })
 
   const myAccount = useAccount(context.account)
-
-  if (error) {
-    console.error(error)
-  }
 
   if (loading) {
     return (
@@ -112,7 +119,7 @@ const AccountPage = () => {
         <Profile
           account={query.account.toString()}
           delegator={delegator}
-          threeBoxSpace={threeBoxSpace}
+          threeBoxSpace={data.threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}
           isMyAccount={isMyAccount}
           role={role}

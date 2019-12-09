@@ -4,7 +4,7 @@ import { Styled, jsx } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Copy from '../../public/img/copy.svg'
 import Check from '../../public/img/check.svg'
-import Link from '../../public/img/link.svg'
+import LinkIcon from '../../public/img/link.svg'
 import { Transcoder, Delegator, ThreeBoxSpace } from '../../@types'
 import { getDelegationStatusColor } from '../../lib/utils'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
@@ -12,10 +12,8 @@ import { Flex } from 'theme-ui'
 import ReactTooltip from 'react-tooltip'
 import Chip from '../Chip'
 import EditProfile from '../EditProfile'
-import gql from 'graphql-tag'
 import ShowMoreText from 'react-show-more-text'
-import { useQuery } from '@apollo/react-hooks'
-import { useWeb3Context } from 'web3-react'
+import Link from 'next/link'
 
 interface Props {
   account: string
@@ -28,16 +26,6 @@ interface Props {
   status: string
 }
 
-const GET_BOX = gql`
-  query threeBox($id: ID!) {
-    threeBox(id: $id) {
-      id
-      did
-      addressLinks
-    }
-  }
-`
-
 export default ({
   account,
   role = 'Orchestrator',
@@ -49,20 +37,9 @@ export default ({
   isMyAccount = false,
   ...props
 }: Props) => {
-  const context = useWeb3Context()
   const isLivepeerAware =
     hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
   const [copied, setCopied] = useState(false)
-
-  const { data } = useQuery(GET_BOX, {
-    variables: {
-      id: context.account,
-    },
-    context: {
-      ethereumProvider: context.active && context.library.currentProvider,
-    },
-    skip: !threeBoxSpace,
-  })
 
   useEffect(() => {
     if (copied) {
@@ -167,17 +144,13 @@ export default ({
             </Flex>
           </Styled.h1>
         </CopyToClipboard>
-        {isMyAccount && data && data.threeBox && threeBoxSpace && (
-          <EditProfile
-            account={account}
-            threeBox={data.threeBox}
-            threeBoxSpace={threeBoxSpace}
-          />
+        {isMyAccount && threeBoxSpace && (
+          <EditProfile account={account} threeBoxSpace={threeBoxSpace} />
         )}
       </Flex>
       {threeBoxSpace && threeBoxSpace.url && (
         <Flex sx={{ mb: 2, alignItems: 'center' }}>
-          <Link sx={{ color: 'muted', mr: 1 }} />
+          <LinkIcon sx={{ color: 'muted', mr: 1 }} />
           <a
             sx={{ fontSize: 1, color: 'primary' }}
             href={threeBoxSpace.url}
@@ -189,6 +162,7 @@ export default ({
         </Flex>
       )}
       {isLivepeerAware && <Chip label={role} />}
+
       {threeBoxSpace && threeBoxSpace.description && (
         <div sx={{ mt: 3 }}>
           <ShowMoreText
@@ -200,6 +174,57 @@ export default ({
           </ShowMoreText>
         </div>
       )}
+      {threeBoxSpace &&
+        threeBoxSpace.addressLinks &&
+        threeBoxSpace.addressLinks.length > 0 &&
+        role != 'Orchestrator' && (
+          <div sx={{ mt: 3 }}>
+            <div
+              sx={{
+                display: 'inline-flex',
+                flexDirection: 'column',
+                p: '14px',
+                borderRadius: 10,
+                border: '1px dashed',
+                borderColor: 'border',
+              }}
+            >
+              <div
+                sx={{ mb: '6px', fontWeight: 600, fontSize: 0, color: 'muted' }}
+              >
+                External Account
+              </div>
+              <Flex>
+                {threeBoxSpace.addressLinks.map((link, i) => (
+                  <Link
+                    href={`/accounts/[account]/[slug]`}
+                    as={`/accounts/${link.address}/campaign`}
+                    passHref
+                    key={i}
+                  >
+                    <a
+                      sx={{
+                        mr: threeBoxSpace.addressLinks.length - 1 == i ? 0 : 1,
+                        borderRadius: 6,
+                        display: 'inline-flex',
+                        bg: 'surface',
+                        py: '4px',
+                        px: '12px',
+                        fontSize: 0,
+                        fontWeight: 600,
+                        color: 'primary',
+                      }}
+                    >
+                      {link.address
+                        .replace(link.address.slice(10, 34), '…')
+                        .toLowerCase()}
+                    </a>
+                  </Link>
+                ))}
+              </Flex>
+            </div>
+          </div>
+        )}
     </div>
   )
 }

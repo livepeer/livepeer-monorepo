@@ -1,8 +1,14 @@
 /** @jsx jsx */
 import { Styled, jsx } from 'theme-ui'
 
-export default ({ variant = 'primary', size = 'normal', ...props }) => (
-  <button
+export default ({
+  as = 'button',
+  variant = 'primary',
+  size = 'normal',
+  ...props
+}) => (
+  <Styled.div
+    as={as}
     {...props}
     sx={{
       appearance: 'none',

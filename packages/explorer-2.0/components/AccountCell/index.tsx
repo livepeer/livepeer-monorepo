@@ -25,19 +25,26 @@ const ActiveCircle = ({ status }, props) => {
   )
 }
 
-export default ({ status, active, address }) => {
+export default ({ status, threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
-      <Flex sx={{ minWidth: 32, minHeight: 32, position: 'relative', mr: 2 }}>
-        <QRCode
-          style={{
-            borderRadius: 1000,
-            width: 32,
-            height: 32,
-          }}
-          fgColor={`#${address.substr(2, 6)}`}
-          value={address}
-        />
+      <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
+        {threeBoxSpace.image ? (
+          <img
+            sx={{ borderRadius: 1000, width: 40, height: 40 }}
+            src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
+          />
+        ) : (
+          <QRCode
+            style={{
+              borderRadius: 1000,
+              width: 40,
+              height: 40,
+            }}
+            fgColor={`#${address.substr(2, 6)}`}
+            value={address}
+          />
+        )}
         <ActiveCircle status={status} />
       </Flex>
       <Flex sx={{ justifyContent: 'space-between', width: '100%' }}>
@@ -60,7 +67,11 @@ export default ({ status, active, address }) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <div>{address.replace(address.slice(5, 39), '…')}</div>
+              <div>
+                {threeBoxSpace.name
+                  ? threeBoxSpace.name
+                  : address.replace(address.slice(5, 39), '…')}
+              </div>
             </Flex>
           </a>
         </Link>

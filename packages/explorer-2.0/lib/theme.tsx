@@ -76,6 +76,30 @@ const theme = {
       px: 1,
       py: '2px',
     },
+    danger: {
+      borderRadius: 6,
+      cursor: 'pointer',
+      backgroundColor: 'rgba(211, 47, 47, .1)',
+      transition: '.2s background-color',
+      color: 'red',
+      '&:hover': {
+        transition: '.2s background-color',
+        backgroundColor: 'rgba(211, 47, 47, .2)',
+      },
+    },
+    dangerSmall: {
+      borderRadius: 6,
+      cursor: 'pointer',
+      py: '6px',
+      px: 2,
+      backgroundColor: 'rgba(211, 47, 47, .1)',
+      transition: '.2s background-color',
+      color: 'red',
+      '&:hover': {
+        transition: '.2s background-color',
+        backgroundColor: 'rgba(211, 47, 47, .2)',
+      },
+    },
     rainbow: {
       color: 'text',
       background:

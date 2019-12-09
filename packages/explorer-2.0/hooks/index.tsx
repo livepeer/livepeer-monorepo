@@ -14,10 +14,12 @@ export function useAccount(address = null) {
       threeBoxSpace(id: $account) {
         __typename
         id
+        did
         name
         url
         description
         image
+        addressLinks
         defaultProfile
       }
       delegator(id: $account) {

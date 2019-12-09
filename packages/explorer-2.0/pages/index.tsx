@@ -23,6 +23,15 @@ const GET_DATA = gql`
       status
       active
       totalStake
+      threeBoxSpace {
+        __typename
+        id
+        did
+        name
+        url
+        description
+        image
+      }
       delegator {
         startRound
         bondedAmount
@@ -62,6 +71,8 @@ const Index = () => {
   if (error) {
     console.log(error)
   }
+
+  console.log(data)
 
   return (
     <>
