@@ -57,11 +57,16 @@ export default stream => {
     if (width === 0) width = height * aspectRatio
     if (height === 0) height = (width * 1) / aspectRatio
 
+    let intHeight = Math.round(height)
+    let intWidth = Math.round(width)
+    if (intHeight % 2 !== 0) intHeight--
+    if (intWidth % 2 !== 0) intWidth--
+
     const profile = {
       name: renditionName,
-      height: Math.round(height),
-      width: Math.round(width),
-      bitrate: Math.round(parseInt(videoBitrate) / 1024),
+      height: intHeight,
+      width: intWidth,
+      bitrate: Math.round(parseInt(videoBitrate) / 1000),
       fps: Math.round(sourceInfo.fps),
     }
 
