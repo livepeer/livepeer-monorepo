@@ -18,7 +18,7 @@
     "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "postgres:stop": "docker rm -f postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
-    "prepare:dl-livepeer": "dl-livepeer -b media-integration -o ./bin",
+    "dl-livepeer": "dl-livepeer -b media-integration -o ./bin",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare:worker": "parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "prepare": "run-p \"prepare:**\"",
