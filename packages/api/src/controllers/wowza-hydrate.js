@@ -66,7 +66,7 @@ export default stream => {
       name: renditionName,
       height: intHeight,
       width: intWidth,
-      bitrate: Math.round(parseInt(videoBitrate) / 1000),
+      bitrate: Math.round(parseInt(videoBitrate)),
       fps: Math.round(sourceInfo.fps),
     }
 
