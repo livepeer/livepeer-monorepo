@@ -4,3 +4,4 @@ docs
 coverage*
 bin
 dist-worker
+minio
