@@ -5,10 +5,8 @@
   "scripts": {
     "dev": "run-p dev:next",
     "dev:next": "next -- -p 3009",
-    "build": "run-p build:next",
-    "build:next": "next build",
+    "build": "next build",
     "start": "NODE_ENV=production next start",
-    "now-build": "next build",
     "storybook": "start-storybook"
   },
   "devDependencies": {
@@ -81,7 +79,7 @@
     "match-sorter": "^4.0.1",
     "micro-cors": "^0.1.1",
     "moment": "^2.24.0",
-    "next": "9.1.3",
+    "next": "9.1.5",
     "qrcode.react": "^0.9.3",
     "react": "^16.8.6",
     "react-collapse": "^5.0.0",
@@ -112,5 +110,8 @@
     "web3-utils": "1.2.1",
     "ws": "^7.2.0"
   },
-  "main": "package.json"
+  "main": "package.json",
+  "engines": {
+    "node": "10.x"
+  }
 }
