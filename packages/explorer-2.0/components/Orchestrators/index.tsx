@@ -245,6 +245,7 @@ export default ({ currentRound, transcoders }) => {
                                   __typename: 'Transcoder',
                                   index: rowIndex,
                                   id: row.values.id,
+                                  threeBoxSpace: row.values.threeBoxSpace,
                                 },
                               },
                             })
