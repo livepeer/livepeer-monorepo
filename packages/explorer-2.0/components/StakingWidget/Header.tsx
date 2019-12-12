@@ -15,20 +15,34 @@ export default ({ transcoder }) => {
         fontWeight: 'bold',
       }}
     >
-      <Flex sx={{ minWidth: 32, minHeight: 32, position: 'relative', mr: 2 }}>
-        <QRCode
-          style={{
-            borderRadius: 1000,
-            width: 40,
-            height: 40,
-          }}
-          fgColor={`#${transcoder.id.substr(2, 6)}`}
-          value={transcoder.id}
-        />
+      <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
+        {transcoder.threeBoxSpace && transcoder.threeBoxSpace.image ? (
+          <img
+            sx={{
+              objectFit: 'cover',
+              borderRadius: 1000,
+              width: '100%',
+              height: '100%',
+            }}
+            src={`https://ipfs.infura.io/ipfs/${transcoder.threeBoxSpace.image}`}
+          />
+        ) : (
+          <QRCode
+            style={{
+              borderRadius: 1000,
+              width: 40,
+              height: 40,
+            }}
+            fgColor={`#${transcoder.id.substr(2, 6)}`}
+            value={transcoder.id}
+          />
+        )}
       </Flex>
       <Flex sx={{ flexDirection: 'column' }}>
         <Styled.h4 sx={{ fontSize: 20 }}>
-          {transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
+          {transcoder.threeBoxSpace.name
+            ? transcoder.threeBoxSpace.name
+            : transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
         </Styled.h4>
         <div
           sx={{

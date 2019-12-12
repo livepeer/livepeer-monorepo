@@ -13,7 +13,6 @@ export function useAccount(address = null) {
       }
       threeBoxSpace(id: $account) {
         __typename
-        id
         did
         name
         url
@@ -36,6 +35,13 @@ export function useAccount(address = null) {
         delegate {
           id
           rewardCut
+          threeBoxSpace {
+            __typename
+            name
+            url
+            image
+            description
+          }
         }
       }
     }
@@ -44,7 +50,7 @@ export function useAccount(address = null) {
   const [delegator, setDelegator] = useState(null)
   const [threeBoxSpace, setThreeBoxSpace] = useState(null)
 
-  const { data } = useQuery(GET_ACCOUNT, {
+  const { data, refetch } = useQuery(GET_ACCOUNT, {
     variables: {
       account: address && address.toLowerCase(),
     },
@@ -63,7 +69,7 @@ export function useAccount(address = null) {
     }
   }, [data])
 
-  return { account, delegator, threeBoxSpace }
+  return { account, delegator, threeBoxSpace, refetch }
 }
 
 export function useWeb3Mutation(mutation, options) {

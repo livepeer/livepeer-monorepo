@@ -25,7 +25,6 @@ const GET_DATA = gql`
       totalStake
       threeBoxSpace {
         __typename
-        id
         did
         name
         url
@@ -54,6 +53,13 @@ const GET_DATA = gql`
       index
       rewardCut
       id
+      threeBoxSpace {
+        __typename
+        name
+        url
+        description
+        image
+      }
     }
     currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
       id
@@ -71,8 +77,6 @@ const Index = () => {
   if (error) {
     console.log(error)
   }
-
-  console.log(data)
 
   return (
     <>

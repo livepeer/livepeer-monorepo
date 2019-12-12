@@ -238,7 +238,6 @@ export async function updateProfile(_obj, _args, _ctx) {
 
     if (_args.proof) {
       await box.linkAddress({
-        type: 'ethereum-eoa',
         proof: _args.proof,
       })
       console.log(_args.proof)

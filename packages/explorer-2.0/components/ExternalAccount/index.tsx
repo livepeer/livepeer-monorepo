@@ -14,23 +14,7 @@ const REMOVE_ADDRESS_LINK = gql`
   }
 `
 
-const GET_THREE_BOX_SPACE = gql`
-  query($id: ID!) {
-    threeBoxSpace(id: $id) {
-      __typename
-      id
-      did
-      name
-      url
-      description
-      image
-      addressLinks
-      defaultProfile
-    }
-  }
-`
-
-export default ({ threeBoxSpace, message, children }) => {
+export default ({ threeBoxSpace, refetch, children }) => {
   const [open, setOpen] = useState(false)
   const context = useWeb3Context()
   const [removeAddressLink] = useMutation(REMOVE_ADDRESS_LINK)
@@ -74,9 +58,7 @@ export default ({ threeBoxSpace, message, children }) => {
         enjoy the benefits of a profile web UI, while keeping your keys in a
         more secure environment.
       </div>
-      <Collapse isOpened={open}>
-        {children}
-      </Collapse>
+      <Collapse isOpened={open}>{children}</Collapse>
       <Collapse isOpened={threeBoxSpace.addressLinks.length && !open}>
         <div sx={{ pt: 2, color: 'text' }}>
           {threeBoxSpace.addressLinks.map((link, i) => (
@@ -117,15 +99,12 @@ export default ({ threeBoxSpace, message, children }) => {
                       variables: {
                         address: link.address,
                       },
-                      refetchQueries: [
-                        {
-                          query: GET_THREE_BOX_SPACE,
-                          variables: { id: context.account },
-                        },
-                      ],
                       context: {
                         box,
                       },
+                    })
+                    await refetch({
+                      variables: context.account,
                     })
                     setDisconnecting({
                       address: link.address,

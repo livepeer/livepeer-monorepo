@@ -8,12 +8,16 @@ export default ({
   onFocus = null,
   onBlur = null,
   type = 'text',
+  error = false,
   autoFocus = false,
   required = false,
+  messageFixed = false,
+  messageColor = 'text',
   defaultValue = undefined,
   value = undefined,
   inputRef = undefined,
   onChange = null,
+  message = null,
   as = 'input',
   rows = 2,
   name = '',
@@ -89,7 +93,7 @@ export default ({
             transition:
               'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
             borderBottom: '1px solid',
-            borderColor: 'text',
+            borderColor: error ? 'red' : 'text',
             pointerEvents: 'none',
           },
           '&:after': {
@@ -101,7 +105,7 @@ export default ({
             transform: 'scaleX(0)',
             transition: 'transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms',
             borderBottom: '2px solid',
-            borderColor: 'primary',
+            borderColor: error ? 'red' : 'text',
             pointerEvents: 'none',
           },
         }}
@@ -137,6 +141,19 @@ export default ({
           type={type}
         />
       </div>
+      {(messageFixed || message) && (
+        <div
+          sx={{
+            height: 16,
+            color: error ? 'red' : messageColor,
+            pt: '6px',
+            pl: '12px',
+            fontSize: 0,
+          }}
+        >
+          {message}
+        </div>
+      )}
     </div>
   )
 }

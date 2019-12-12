@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { jsx } from 'theme-ui'
 import { ThreeBoxSpace } from '../../@types'
 import { Flex } from 'theme-ui'
@@ -15,10 +15,12 @@ import Modal from '../Modal'
 import ExternalAccount from '../ExternalAccount'
 import Box from '3box'
 import Spinner from '../Spinner'
+import { useDebounce } from 'use-debounce'
 
 interface Props {
   account: string
   threeBoxSpace?: ThreeBoxSpace
+  refetch?: any
 }
 
 const GET_THREE_BOX_SPACE = gql`
@@ -36,42 +38,7 @@ const GET_THREE_BOX_SPACE = gql`
     }
   }
 `
-const GET_TRANSCODERS = gql`
-  {
-    transcoders(
-      where: { status: Registered }
-      orderBy: totalStake
-      orderDirection: desc
-    ) {
-      id
-      active
-      feeShare
-      rewardCut
-      status
-      active
-      totalStake
-      threeBoxSpace {
-        __typename
-        id
-        did
-        name
-        url
-        description
-        image
-      }
-      delegator {
-        startRound
-        bondedAmount
-        unbondingLocks {
-          withdrawRound
-        }
-      }
-      pools(first: 30, orderBy: id, orderDirection: desc) {
-        rewardTokens
-      }
-    }
-  }
-`
+
 const UPDATE_PROFILE = gql`
   mutation updateProfile(
     $name: String
@@ -100,14 +67,16 @@ const UPDATE_PROFILE = gql`
   }
 `
 
-export default ({ threeBoxSpace, account }: Props) => {
+export default ({ threeBoxSpace, refetch, account }: Props) => {
   const context = useWeb3Context()
   const { register, handleSubmit, watch } = useForm()
   const [previewImage, setPreviewImage] = useState(null)
   const [saving, setSaving] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [editProfileOpen, setEditProfileOpen] = useState(false)
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [existingProfileOpen, setExistingProfileOpen] = useState(false)
+  const [verified, setVerified] = useState(false)
+  const [message, setMessage] = useState('')
   const [timestamp] = useState(Math.floor(Date.now() / 1000))
   const name = watch('name')
   const url = watch('url')
@@ -117,6 +86,27 @@ export default ({ threeBoxSpace, account }: Props) => {
   const externalAccount = watch('externalAccount')
   const reader = new FileReader()
   const [updateProfile] = useMutation(UPDATE_PROFILE)
+  const [debouncedSignature] = useDebounce(signature, 200)
+  const [debouncedExsternalAccount] = useDebounce(externalAccount, 200)
+
+  useEffect(() => {
+    setMessage(
+      `Create a new 3Box profile<br /><br />-<br />Your unique profile ID is ${threeBoxSpace.did}<br />Timestamp: ${timestamp}`,
+    )
+    ;(async () => {
+      if (signature && externalAccount) {
+        const verifiedAccount = await context.library.eth.personal.ecRecover(
+          message.replace(/<br ?\/?>/g, '\n'),
+          signature,
+        )
+        if (verifiedAccount.toLowerCase() === externalAccount.toLowerCase()) {
+          setVerified(true)
+        } else {
+          setVerified(false)
+        }
+      }
+    })()
+  }, [debouncedSignature, debouncedExsternalAccount, message])
 
   reader.onload = function(e) {
     setPreviewImage(e.target.result)
@@ -128,41 +118,48 @@ export default ({ threeBoxSpace, account }: Props) => {
 
   const onClick = async () => {
     if (threeBoxSpace.defaultProfile) {
-      setOpen(true)
+      setEditProfileOpen(true)
     } else {
       setApproveModalOpen(true)
-      const box = await Box.openBox(
-        context.account,
-        context.library.currentProvider,
-      )
-      const space = await box.openSpace('livepeer')
-      const profile = await box.public.all()
-      await space.syncDone
+      let box = await Box.openBox(account, context.library.currentProvider)
       await box.syncDone
+      await box.linkAddress()
 
-      setApproveModalOpen(false)
-
+      let space = await box.openSpace('livepeer')
+      await space.syncDone
+      const profile = await box.public.all()
       if (
         profile.name ||
         profile.website ||
         profile.description ||
         profile.image
       ) {
+        setApproveModalOpen(false)
         setExistingProfileOpen(true)
       } else {
-        updateProfile({
+        await updateProfile({
           variables: { defaultProfile: 'livepeer' },
           context: {
             box,
             address: account.toLowerCase(),
           },
         })
-        setOpen(true)
+        box = await Box.openBox(
+          account.toLowerCase(),
+          context.library.currentProvider,
+        )
+        space = await box.openSpace('livepeer')
+        await box.syncDone
+        refetch({
+          variables: {
+            account: account,
+          },
+        })
+        setApproveModalOpen(false)
+        setEditProfileOpen(true)
       }
     }
   }
-
-  const message = `Create a new 3Box profile<br /><br />-<br />Your unique profile ID is ${threeBoxSpace.did}<br />Timestamp: ${timestamp}`
 
   const proof = signature
     ? {
@@ -219,25 +216,25 @@ export default ({ threeBoxSpace, account }: Props) => {
     const result = updateProfile({
       variables,
       optimisticResponse: !proof ? optimisticResponse : null,
-      refetchQueries: [
-        {
-          query: GET_THREE_BOX_SPACE,
-          variables: { id: account.toLowerCase() },
-        },
-        { query: GET_TRANSCODERS },
-      ],
       context: {
         box,
-        address: account.toLowerCase(),
+        address: account,
       },
     })
+
     // If a user is linking an external account, let's wait until it successfully
     // links before closing the modal since we're not optimistically responding
+    // in this case
     if (signature) {
       await result
+      await refetch({
+        variables: {
+          account,
+        },
+      })
     }
     setSaving(false)
-    setOpen(false)
+    setEditProfileOpen(false)
   }
 
   return (
@@ -249,7 +246,7 @@ export default ({ threeBoxSpace, account }: Props) => {
       >
         {threeBoxSpace.defaultProfile ? 'Edit Profile' : 'Set up my profile'}
       </Button>
-      <Modal isOpen={approveModalOpen} title="Sign Message">
+      <Modal isOpen={approveModalOpen} title="Sign Messages">
         <>
           <div
             sx={{
@@ -265,7 +262,7 @@ export default ({ threeBoxSpace, account }: Props) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <span>Sign the message in your wallet to continue.</span>
+              <span>Sign the messages in your wallet to continue.</span>
               <Spinner />
             </Flex>
           </div>
@@ -320,7 +317,7 @@ export default ({ threeBoxSpace, account }: Props) => {
                   },
                 })
                 setExistingProfileOpen(false)
-                setOpen(true)
+                setEditProfileOpen(true)
               }}
               sx={{ mr: 2 }}
               variant="outline"
@@ -345,7 +342,7 @@ export default ({ threeBoxSpace, account }: Props) => {
                   },
                 })
                 setExistingProfileOpen(false)
-                setOpen(true)
+                setEditProfileOpen(true)
               }}
             >
               Use Existing
@@ -354,8 +351,8 @@ export default ({ threeBoxSpace, account }: Props) => {
         </>
       </Modal>
       <Modal
-        isOpen={open}
-        onDismiss={() => setOpen(false)}
+        isOpen={editProfileOpen}
+        onDismiss={() => setEditProfileOpen(false)}
         title="Edit Profile"
       >
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -477,7 +474,7 @@ export default ({ threeBoxSpace, account }: Props) => {
                 />
               </>
             )}
-            <ExternalAccount message={message} threeBoxSpace={threeBoxSpace}>
+            <ExternalAccount refetch={refetch} threeBoxSpace={threeBoxSpace}>
               <ol sx={{ pl: 15, pt: 4 }}>
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
@@ -518,12 +515,29 @@ export default ({ threeBoxSpace, account }: Props) => {
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
                     Verify the signature by entering the public address of the
-                    external account you signed the message with below.
+                    external account you signed the message with below, then
+                    save.
                   </div>
                   <Textfield
                     inputRef={register}
                     name="externalAccount"
                     label="External Account"
+                    error={signature && externalAccount && !verified}
+                    messageFixed
+                    message={
+                      signature &&
+                      externalAccount &&
+                      (verified ? (
+                        <span sx={{ color: 'primary' }}>
+                          Signature message verification successful.
+                        </span>
+                      ) : (
+                        <span sx={{ color: 'red' }}>
+                          Sorry! The signature message verification failed.
+                        </span>
+                      ))
+                    }
+                    messageColor={'text'}
                     rows={4}
                     sx={{ width: '100%' }}
                   />
@@ -535,7 +549,7 @@ export default ({ threeBoxSpace, account }: Props) => {
           <footer>
             <Flex sx={{ justifyContent: 'flex-end' }}>
               <Button
-                onClick={() => setOpen(false)}
+                onClick={() => setEditProfileOpen(false)}
                 sx={{ mr: 2 }}
                 variant="outline"
               >
@@ -544,7 +558,10 @@ export default ({ threeBoxSpace, account }: Props) => {
               <Button
                 disabled={
                   saving ||
-                  (threeBoxSpace.defaultProfile === '3box' && !signature)
+                  (threeBoxSpace.defaultProfile === '3box' && !verified) ||
+                  (threeBoxSpace.defaultProfile === 'livepeer' &&
+                    (signature || externalAccount) &&
+                    !verified)
                 }
                 type="submit"
               >

@@ -41,18 +41,15 @@ export async function getTxReceiptStatus(_obj, _args, _ctx, _info) {
 
 export async function threeBoxSpace(_obj, _args, _ctx, _info) {
   const id = _args.id.toLowerCase()
-  const space = await Box.getSpace(_args.id, 'livepeer')
 
   let useThreeBox = false
-  let box = {
-    name: '',
-    website: '',
-    description: '',
-    image: '',
-  }
+  let profile
+  let space
+
+  profile = await Box.getProfile(_args.id)
+  space = await Box.getSpace(_args.id, 'livepeer')
 
   if (space.defaultProfile === '3box') {
-    box = await Box.getProfile(_args.id)
     useThreeBox = true
   }
 
@@ -64,7 +61,6 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
         conf.links.map(link => validateLink(link)),
       )
       addressLinks = links.filter((link: any) => {
-        console.log(link)
         return (
           link &&
           Utils.toChecksumAddress(link.address) != Utils.toChecksumAddress(id)
@@ -75,18 +71,16 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
     }
   }
 
+  const { did } = await Box.getVerifiedAccounts(profile)
+
   return {
     id,
-    name: useThreeBox ? box.name : space.name,
-    url: useThreeBox ? box.website : space.url,
-    description: useThreeBox ? box.description : space.description,
-    image: useThreeBox ? box.image : space.image,
+    name: useThreeBox ? profile.name : space.name,
+    url: useThreeBox ? profile.website : space.url,
+    description: useThreeBox ? profile.description : space.description,
+    image: useThreeBox ? profile.image : space.image,
     defaultProfile: space.defaultProfile,
     addressLinks,
-    did: async () => {
-      const profile = await Box.getProfile(id)
-      const { did } = await Box.getVerifiedAccounts(profile)
-      return did
-    },
+    did,
   }
 }

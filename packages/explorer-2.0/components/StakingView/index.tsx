@@ -23,6 +23,12 @@ const GET_DATA = gql`
       delegate {
         id
         totalStake
+        threeBoxSpace {
+          name
+          url
+          image
+          description
+        }
       }
       unbondingLocks {
         id

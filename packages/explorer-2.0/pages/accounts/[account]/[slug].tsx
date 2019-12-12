@@ -27,17 +27,13 @@ const GET_DATA = gql`
       feeShare
       totalStake
       active
-    }
-    threeBoxSpace(id: $account) {
-      __typename
-      id
-      did
-      name
-      url
-      description
-      image
-      addressLinks
-      defaultProfile
+      threeBoxSpace {
+        __typename
+        name
+        url
+        image
+        description
+      }
     }
     protocol {
       totalTokenSupply
@@ -56,7 +52,9 @@ const AccountPage = () => {
   const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
-  const { account, delegator } = useAccount(query.account)
+  const { account, delegator, threeBoxSpace, refetch } = useAccount(
+    query.account,
+  )
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
@@ -119,9 +117,10 @@ const AccountPage = () => {
         <Profile
           account={query.account.toString()}
           delegator={delegator}
-          threeBoxSpace={data.threeBoxSpace}
+          threeBoxSpace={threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}
           isMyAccount={isMyAccount}
+          refetch={refetch}
           role={role}
           sx={{ mb: 4 }}
           status={getDelegatorStatus(delegator, currentRound)}

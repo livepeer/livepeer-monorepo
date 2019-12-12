@@ -58,6 +58,13 @@ function createApolloClient(initialState = {}) {
         index: 0,
         rewardCut: null,
         id: null,
+        threeBoxSpace: {
+          __typename: 'ThreeBoxSpace',
+          name: '',
+          image: '',
+          url: '',
+          description: '',
+        },
       },
     },
   })

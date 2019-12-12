@@ -18,6 +18,7 @@ import Link from 'next/link'
 interface Props {
   account: string
   role: string
+  refetch?: any
   hasLivepeerToken: boolean
   threeBoxSpace: ThreeBoxSpace
   delegator: Delegator
@@ -32,6 +33,7 @@ export default ({
   hasLivepeerToken,
   delegator,
   status,
+  refetch,
   transcoder,
   threeBoxSpace,
   isMyAccount = false,
@@ -145,7 +147,11 @@ export default ({
           </Styled.h1>
         </CopyToClipboard>
         {isMyAccount && threeBoxSpace && (
-          <EditProfile account={account} threeBoxSpace={threeBoxSpace} />
+          <EditProfile
+            account={account}
+            refetch={refetch}
+            threeBoxSpace={threeBoxSpace}
+          />
         )}
       </Flex>
       {threeBoxSpace && threeBoxSpace.url && (

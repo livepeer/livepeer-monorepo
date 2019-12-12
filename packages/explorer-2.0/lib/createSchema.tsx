@@ -82,9 +82,12 @@ export default async () => {
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
-            const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
-            const { pendingStake } = await rpc.getDelegator(_delegator.id)
-            return pendingStake
+            const sdk = await LivepeerSDK({
+              gas: 2.1 * 1000000,
+            })
+
+            const delegator = await sdk.rpc.getDelegator(_delegator.id)
+            return delegator.pendingStake
           },
         },
         tokenBalance: {
