@@ -3,7 +3,7 @@ import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 import Utils from 'web3-utils'
 
 export async function account(_obj, _args, _ctx, _info) {
-  const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
+  const { rpc } = await LivepeerSDK({ gas: null })
   const { allowance } = await rpc.getDelegator(_args.id)
   return {
     id: _args.id,
@@ -14,7 +14,7 @@ export async function account(_obj, _args, _ctx, _info) {
 }
 
 export async function protocol(_obj, _args, _ctx, _info) {
-  const { rpc } = await LivepeerSDK({ gas: 2.1 * 1000000 })
+  const { rpc } = await LivepeerSDK({ gas: null })
   const { totalTokenSupply, totalBondedToken, paused } = await rpc.getProtocol()
   return {
     paused,
