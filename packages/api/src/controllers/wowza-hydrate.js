@@ -41,14 +41,28 @@ export default stream => {
   let profiles = []
   const encodeNameToRenditionName = {}
   const aspectRatio = sourceInfo.width / sourceInfo.height
-  for (const encode of enabledEncodes) {
-    let { width, height, name, streamName, videoCodec, videoBitrate } = encode
+  var i
+  for (i = 0; i < enabledEncodes.length; i++) {
+    let {
+      width,
+      height,
+      name,
+      streamName,
+      videoCodec,
+      videoBitrate,
+    } = enabledEncodes[i]
+    if (width === 0 && height === 0 && name != 'source') {
+      enabledEncodes.splice(i, 1)
+      continue
+    }
+
     let renditionName = replaceStreamName(streamName, stream.name)
     // These can be of the form mp4:name, let's ignore the first bit if present
     if (renditionName.includes(':')) {
       renditionName = renditionName.substr(renditionName.indexOf(':') + 1)
     }
     encodeNameToRenditionName[name] = renditionName
+
     if (videoCodec === 'PassThru') {
       renditions[renditionName] = `/stream/${stream.id}/source.m3u8`
       continue

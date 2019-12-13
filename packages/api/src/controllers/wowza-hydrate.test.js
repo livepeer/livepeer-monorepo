@@ -338,13 +338,6 @@ describe('wowzaHydrate', () => {
         bitrate: 4000000,
         fps: 25,
       },
-      {
-        name: 'stream1_1080',
-        height: 0,
-        width: 0,
-        bitrate: 4000000,
-        fps: 25,
-      },
     ])
   })
 })
