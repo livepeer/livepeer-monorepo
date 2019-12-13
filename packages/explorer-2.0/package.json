@@ -26,7 +26,7 @@
     "@types/react-table": "^6.8.5",
     "@types/storybook__react": "^4.0.2",
     "@types/styled-jsx": "^2.2.8",
-    "@types/theme-ui": "^0.2.2",
+    "@types/theme-ui": "0.2.2",
     "@types/use-global-hook": "^0.1.2",
     "@types/web3": "^1.0.19",
     "apollo-storybook-react": "^0.2.1",

@@ -13,7 +13,7 @@ const subgraphEndpoint =
 const isProd = process.env.NODE_ENV === 'production'
 
 const graphqlAPI = isProd
-  ? 'https://explorer-3box.now.sh/api/graphql'
+  ? 'https://beta.explorer.livepeer.org/api/graphql'
   : 'http://localhost:3009/api/graphql'
 
 export default async () => {

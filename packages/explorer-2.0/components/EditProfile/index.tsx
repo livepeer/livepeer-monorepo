@@ -86,7 +86,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
   const reader = new FileReader()
   const [updateProfile] = useMutation(UPDATE_PROFILE)
   const [debouncedSignature] = useDebounce(signature, 200)
-  const [debouncedExsternalAccount] = useDebounce(externalAccount, 200)
+  const [debouncedExternalAccount] = useDebounce(externalAccount, 200)
 
   useEffect(() => {
     setMessage(
@@ -105,7 +105,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         }
       }
     })()
-  }, [debouncedSignature, debouncedExsternalAccount, message])
+  }, [debouncedSignature, debouncedExternalAccount, message])
 
   reader.onload = function(e) {
     setPreviewImage(e.target.result)
@@ -441,12 +441,12 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                     id="threeBoxImage"
                     name="image"
                     sx={{
-                      width: '0.1px',
-                      height: '0.1px',
-                      opacity: '0',
+                      width: 0.1,
+                      height: 0.1,
+                      opacity: 0,
                       overflow: 'hidden',
                       position: 'absolute',
-                      zIndex: '-1',
+                      zIndex: -1,
                     }}
                     accept="image/jpeg,image/png,image/webp"
                     type="file"
