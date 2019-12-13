@@ -13,7 +13,6 @@ import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import Modal from '../Modal'
 import ExternalAccount from '../ExternalAccount'
-import Box from '3box'
 import Spinner from '../Spinner'
 import { useDebounce } from 'use-debounce'
 
@@ -30,7 +29,7 @@ const GET_THREE_BOX_SPACE = gql`
       id
       did
       name
-      url
+      website
       description
       image
       addressLinks
@@ -42,7 +41,7 @@ const GET_THREE_BOX_SPACE = gql`
 const UPDATE_PROFILE = gql`
   mutation updateProfile(
     $name: String
-    $url: String
+    $website: String
     $description: String
     $image: String
     $proof: JSON
@@ -50,7 +49,7 @@ const UPDATE_PROFILE = gql`
   ) {
     updateProfile(
       name: $name
-      url: $url
+      website: $website
       description: $description
       image: $image
       proof: $proof
@@ -59,7 +58,7 @@ const UPDATE_PROFILE = gql`
       __typename
       id
       name
-      url
+      website
       description
       image
       defaultProfile
@@ -79,7 +78,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
   const [message, setMessage] = useState('')
   const [timestamp] = useState(Math.floor(Date.now() / 1000))
   const name = watch('name')
-  const url = watch('url')
+  const website = watch('website')
   const description = watch('description')
   const image = watch('image')
   const signature = watch('signature')
@@ -117,6 +116,8 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
   }
 
   const onClick = async () => {
+    const Box = require('3box')
+
     if (threeBoxSpace.defaultProfile) {
       setEditProfileOpen(true)
     } else {
@@ -172,6 +173,8 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     : null
 
   const onSubmit = async () => {
+    const Box = require('3box')
+
     setSaving(true)
     const box = await Box.openBox(
       context.account,
@@ -191,7 +194,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
 
     const variables = {
       name: name ? name : threeBoxSpace.name,
-      url: url ? url : threeBoxSpace.url,
+      website: website ? website : threeBoxSpace.website,
       description: description ? description : threeBoxSpace.description,
       image: hash ? hash : threeBoxSpace.image,
       proof,
@@ -206,7 +209,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         __typename: 'ThreeBoxSpace',
         id: account.toLowerCase(),
         name: name ? name : threeBoxSpace.name,
-        url: url ? url : threeBoxSpace.url,
+        website: website ? website : threeBoxSpace.website,
         description: description ? description : threeBoxSpace.description,
         image: hash ? hash : threeBoxSpace.image,
         defaultProfile: threeBoxSpace.defaultProfile,
@@ -297,6 +300,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
           <Flex sx={{ justifyContent: 'flex-end' }}>
             <Button
               onClick={async () => {
+                const Box = require('3box')
                 const box = await Box.openBox(
                   context.account,
                   context.library.currentProvider,
@@ -457,10 +461,10 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 />
                 <Textfield
                   inputRef={register}
-                  defaultValue={threeBoxSpace ? threeBoxSpace.url : ''}
+                  defaultValue={threeBoxSpace ? threeBoxSpace.website : ''}
                   label="Website"
-                  type="url"
-                  name="url"
+                  type="website"
+                  name="website"
                   sx={{ mb: 2, width: '100%' }}
                 />
                 <Textfield

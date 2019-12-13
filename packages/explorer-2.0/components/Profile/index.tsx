@@ -154,16 +154,16 @@ export default ({
           />
         )}
       </Flex>
-      {threeBoxSpace && threeBoxSpace.url && (
+      {threeBoxSpace && threeBoxSpace.website && (
         <Flex sx={{ mb: 2, alignItems: 'center' }}>
           <LinkIcon sx={{ color: 'muted', mr: 1 }} />
           <a
             sx={{ fontSize: 1, color: 'primary' }}
-            href={threeBoxSpace.url}
+            href={threeBoxSpace.website}
             target="__blank"
             rel="noopener noreferrer"
           >
-            {threeBoxSpace.url.replace(/(^\w+:|^)\/\//, '')}
+            {threeBoxSpace.website.replace(/(^\w+:|^)\/\//, '')}
           </a>
         </Flex>
       )}

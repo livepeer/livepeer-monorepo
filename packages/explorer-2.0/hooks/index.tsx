@@ -13,9 +13,10 @@ export function useAccount(address = null) {
       }
       threeBoxSpace(id: $account) {
         __typename
+        id
         did
         name
-        url
+        website
         description
         image
         addressLinks
@@ -38,7 +39,7 @@ export function useAccount(address = null) {
           threeBoxSpace {
             __typename
             name
-            url
+            website
             image
             description
           }

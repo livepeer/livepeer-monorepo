@@ -1,7 +1,5 @@
 import fetch from 'isomorphic-unfetch'
 import LivepeerSDK from '@adamsoffer/livepeer-sdk'
-import { validateLink } from '3id-blockchain-utils'
-import Box from '3box'
 import Utils from 'web3-utils'
 
 export async function account(_obj, _args, _ctx, _info) {
@@ -40,6 +38,8 @@ export async function getTxReceiptStatus(_obj, _args, _ctx, _info) {
 }
 
 export async function threeBoxSpace(_obj, _args, _ctx, _info) {
+  const { validateLink } = require('3id-blockchain-utils')
+  const Box = require('3box')
   const id = _args.id.toLowerCase()
 
   let useThreeBox = false
@@ -76,7 +76,7 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
   return {
     id,
     name: useThreeBox ? profile.name : space.name,
-    url: useThreeBox ? profile.website : space.url,
+    websote: useThreeBox ? profile.website : space.website,
     description: useThreeBox ? profile.description : space.description,
     image: useThreeBox ? profile.image : space.image,
     defaultProfile: space.defaultProfile,

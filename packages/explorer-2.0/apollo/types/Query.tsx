@@ -22,7 +22,7 @@ type ThreeBoxSpace {
   id: ID!
   did: String
   name: String
-  url: String
+  website: String
   description: String
   image: String
   addressLinks: [JSON]

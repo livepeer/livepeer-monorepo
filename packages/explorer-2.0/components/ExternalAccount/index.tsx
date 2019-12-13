@@ -5,7 +5,6 @@ import { Collapse } from 'react-collapse'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks'
 import { useWeb3Context } from 'web3-react'
-import Box from '3box'
 import Button from '../Button'
 
 const REMOVE_ADDRESS_LINK = gql`
@@ -87,6 +86,8 @@ export default ({ threeBoxSpace, refetch, children }) => {
                     'Are you sure you want to disconnect this account?',
                   )
                   if (r) {
+                    const Box = require('3box')
+
                     setDisconnecting({
                       address: link.address,
                       isDisconnecting: true,

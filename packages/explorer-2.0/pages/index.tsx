@@ -27,7 +27,7 @@ const GET_DATA = gql`
         __typename
         did
         name
-        url
+        website
         description
         image
       }
@@ -56,7 +56,7 @@ const GET_DATA = gql`
       threeBoxSpace {
         __typename
         name
-        url
+        website
         description
         image
       }

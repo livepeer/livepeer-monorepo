@@ -41,7 +41,7 @@ export interface ThreeBoxSpace {
   id: string
   did: string
   name: string
-  url: string
+  website: string
   description: string
   image: string
   addressLinks: Array

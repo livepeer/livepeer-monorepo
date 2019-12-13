@@ -25,7 +25,7 @@ const GET_DATA = gql`
         totalStake
         threeBoxSpace {
           name
-          url
+          website
           image
           description
         }

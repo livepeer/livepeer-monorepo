@@ -62,7 +62,7 @@ function createApolloClient(initialState = {}) {
           __typename: 'ThreeBoxSpace',
           name: '',
           image: '',
-          url: '',
+          website: '',
           description: '',
         },
       },

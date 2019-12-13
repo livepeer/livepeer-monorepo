@@ -1,5 +1,4 @@
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
-import Box from '3box'
 import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 
 /**
@@ -243,7 +242,13 @@ export async function updateProfile(_obj, _args, _ctx) {
       console.log(_args.proof)
     }
 
-    const allowed = ['name', 'url', 'description', 'image', 'defaultProfile']
+    const allowed = [
+      'name',
+      'website',
+      'description',
+      'image',
+      'defaultProfile',
+    ]
     const filtered = Object.keys(_args)
       .filter(key => allowed.includes(key))
       .reduce((obj, key) => {
