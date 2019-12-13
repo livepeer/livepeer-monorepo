@@ -72,6 +72,22 @@ export default async function makeApp(params) {
     req.config = params
     next()
   })
+
+  // Populate Kubernetes getOrchestrators and getBroadcasters is provided
+  if (kubeNamespace) {
+    app.use(
+      kubernetes({
+        kubeNamespace,
+        kubeBroadcasterService,
+        kubeOrchestratorService,
+        kubeBroadcasterTemplate,
+        kubeOrchestratorTemplate,
+      }),
+    )
+  } else {
+    app.use(hardcodedNodes({ orchestrators, broadcasters }))
+  }
+
   if (s3Url && s3Access && s3Secret) {
     app.use(
       '/live',
@@ -100,21 +116,6 @@ export default async function makeApp(params) {
   }
   app.use(jsonParser())
   app.use(bearerToken())
-
-  // Populate Kubernetes getOrchestrators and getBroadcasters is provided
-  if (kubeNamespace) {
-    app.use(
-      kubernetes({
-        kubeNamespace,
-        kubeBroadcasterService,
-        kubeOrchestratorService,
-        kubeBroadcasterTemplate,
-        kubeOrchestratorTemplate,
-      }),
-    )
-  } else {
-    app.use(hardcodedNodes({ orchestrators, broadcasters }))
-  }
 
   // Add a controller for each route at the /${httpPrefix} route
   const prefixRouter = Router()
