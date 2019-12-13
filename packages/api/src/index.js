@@ -67,6 +67,11 @@ export default async function makeApp(params) {
   const app = express()
   app.use(healthCheck)
   app.use(morgan('combined'))
+  app.use((req, res, next) => {
+    req.store = store
+    req.config = params
+    next()
+  })
   if (s3Url && s3Access && s3Secret) {
     app.use(
       '/live',
@@ -94,11 +99,6 @@ export default async function makeApp(params) {
     app.use('/stream', streamProxy)
   }
   app.use(jsonParser())
-  app.use((req, res, next) => {
-    req.store = store
-    req.config = params
-    next()
-  })
   app.use(bearerToken())
 
   // Populate Kubernetes getOrchestrators and getBroadcasters is provided
