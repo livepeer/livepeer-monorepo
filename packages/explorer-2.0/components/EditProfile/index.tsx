@@ -249,7 +249,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       >
         {threeBoxSpace.defaultProfile ? 'Edit Profile' : 'Set up my profile'}
       </Button>
-      <Modal isOpen={approveModalOpen} title="Sign Messages">
+      <Modal isOpen={approveModalOpen} title="Profile Setup">
         <>
           <div
             sx={{
@@ -265,7 +265,10 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <span>Sign the messages in your wallet to continue.</span>
+              <span>
+                Sign the messages in your wallet to continue setting up your
+                profile.
+              </span>
               <Spinner />
             </Flex>
           </div>

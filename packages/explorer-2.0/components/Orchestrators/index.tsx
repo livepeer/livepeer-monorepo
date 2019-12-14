@@ -369,17 +369,6 @@ function renderTooltips(title) {
     default:
       return null
   }
-  return (
-    <>
-      <ReactTooltip
-        id="tooltip-stake"
-        className="tooltip"
-        place="top"
-        type="dark"
-        effect="solid"
-      />
-    </>
-  )
 }
 
 function renderSwitch(cell, currentRound) {
