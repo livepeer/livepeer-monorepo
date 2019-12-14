@@ -50,7 +50,7 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       ) : (
         <div>
           <div sx={{ lineHeight: 1.5 }}>
-            {threeBoxSpace && threeBoxSpace.name
+            {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
               ? threeBoxSpace.name
               : 'My Account'}
           </div>

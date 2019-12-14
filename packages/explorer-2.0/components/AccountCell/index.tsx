@@ -29,7 +29,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
       <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
-        {threeBoxSpace.image ? (
+        {process.env.THREEBOX_ENABLED && threeBoxSpace.image ? (
           <img
             sx={{ borderRadius: 1000, width: 40, height: 40 }}
             src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
@@ -68,7 +68,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
               <div>
-                {threeBoxSpace.name
+                {process.env.THREEBOX_ENABLED && threeBoxSpace.name
                   ? threeBoxSpace.name
                   : address.replace(address.slice(5, 39), '…')}
               </div>

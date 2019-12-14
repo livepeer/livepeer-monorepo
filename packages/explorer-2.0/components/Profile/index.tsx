@@ -61,7 +61,9 @@ export default ({
           position: 'relative',
         }}
       >
-        {threeBoxSpace && threeBoxSpace.image ? (
+        {process.env.THREEBOX_ENABLED &&
+        threeBoxSpace &&
+        threeBoxSpace.image ? (
           <img
             sx={{
               objectFit: 'cover',
@@ -101,7 +103,7 @@ export default ({
       <Flex sx={{ alignItems: 'center', mb: '10px' }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
           <Styled.h1 sx={{ display: 'flex', alignItems: 'center' }}>
-            {threeBoxSpace && threeBoxSpace.name
+            {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
               ? threeBoxSpace.name
               : account.replace(account.slice(7, 37), '…')}
             <Flex
@@ -146,7 +148,7 @@ export default ({
             </Flex>
           </Styled.h1>
         </CopyToClipboard>
-        {isMyAccount && threeBoxSpace && (
+        {process.env.THREEBOX_ENABLED && isMyAccount && threeBoxSpace && (
           <EditProfile
             account={account}
             refetch={refetch}
@@ -154,7 +156,7 @@ export default ({
           />
         )}
       </Flex>
-      {threeBoxSpace && threeBoxSpace.website && (
+      {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.website && (
         <Flex sx={{ mb: 2, alignItems: 'center' }}>
           <LinkIcon sx={{ color: 'muted', mr: 1 }} />
           <a
@@ -169,18 +171,21 @@ export default ({
       )}
       {isLivepeerAware && <Chip label={role} />}
 
-      {threeBoxSpace && threeBoxSpace.description && (
-        <div sx={{ mt: 3 }}>
-          <ShowMoreText
-            lines={3}
-            more={<span sx={{ color: 'primary' }}>Show more</span>}
-            less={<span sx={{ color: 'primary' }}>Show Less</span>}
-          >
-            {threeBoxSpace.description}
-          </ShowMoreText>
-        </div>
-      )}
-      {threeBoxSpace &&
+      {process.env.THREEBOX_ENABLED &&
+        threeBoxSpace &&
+        threeBoxSpace.description && (
+          <div sx={{ mt: 3 }}>
+            <ShowMoreText
+              lines={3}
+              more={<span sx={{ color: 'primary' }}>Show more</span>}
+              less={<span sx={{ color: 'primary' }}>Show Less</span>}
+            >
+              {threeBoxSpace.description}
+            </ShowMoreText>
+          </div>
+        )}
+      {process.env.THREEBOX_ENABLED &&
+        threeBoxSpace &&
         threeBoxSpace.addressLinks &&
         threeBoxSpace.addressLinks.length > 0 &&
         role != 'Orchestrator' && (

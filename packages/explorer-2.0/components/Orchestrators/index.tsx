@@ -352,7 +352,7 @@ function renderTooltips(title) {
             effect="solid"
           />
           <Help
-            data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
+            data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its tokenholders over the last 30 rounds."
             data-for="tooltip-calls"
             sx={{
               cursor: 'pointer',

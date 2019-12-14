@@ -61,8 +61,7 @@ export default () => {
     variables: {
       account: account.toLowerCase(),
     },
-    ssr: false,
-    //pollInterval: 10000,
+    ssr: false
   })
 
   if (error) {

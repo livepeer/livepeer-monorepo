@@ -16,7 +16,9 @@ export default ({ transcoder }) => {
       }}
     >
       <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
-        {transcoder.threeBoxSpace && transcoder.threeBoxSpace.image ? (
+        {process.env.THREEBOX_ENABLED &&
+        transcoder.threeBoxSpace &&
+        transcoder.threeBoxSpace.image ? (
           <img
             sx={{
               objectFit: 'cover',
@@ -40,7 +42,7 @@ export default ({ transcoder }) => {
       </Flex>
       <Flex sx={{ flexDirection: 'column' }}>
         <Styled.h4 sx={{ fontSize: 20 }}>
-          {transcoder.threeBoxSpace.name
+          {process.env.THREEBOX_ENABLED && transcoder.threeBoxSpace.name
             ? transcoder.threeBoxSpace.name
             : transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
         </Styled.h4>
