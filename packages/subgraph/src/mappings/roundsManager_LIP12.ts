@@ -2,8 +2,11 @@
 import { Address } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
-import { RoundsManager, NewRound } from '../types/RoundsManager/RoundsManager'
-import { BondingManager } from '../types/BondingManager_LIP11/BondingManager'
+import {
+  RoundsManager,
+  NewRound
+} from '../types/RoundsManager_LIP12/RoundsManager'
+import { BondingManager } from '../types/BondingManager_LIP12/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Pool, Round, InitializeRoundEvent } from '../types/schema'
@@ -24,38 +27,26 @@ export function newRound(event: NewRound): void {
   )
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
-  let active: boolean
   let poolId: string
   let pool: Pool
   let round: Round
 
-  // Iterate over all registered transcoders
+  // Iterate over all active transcoders
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
-    // Update transcoder active state
-    active = bondingManager.isActiveTranscoder(currentTranscoder, roundNumber)
-    transcoder.active = active
-    transcoder.rewardCut = transcoder.pendingRewardCut
-    transcoder.feeShare = transcoder.pendingFeeShare
-    transcoder.pricePerSegment = transcoder.pendingPricePerSegment
-    transcoder.save()
+    // create a unique "pool" for each active transcoder. If a transcoder calls
+    // reward() for a given round, we store its reward tokens inside this Pool
+    // entry in a field called "rewardTokens". If "rewardTokens" is null for a
+    // given transcoder and round then we know the transcoder failed to call reward()
+    poolId = makePoolId(currentTranscoder, roundNumber)
+    pool = new Pool(poolId)
+    pool.round = roundNumber.toString()
+    pool.delegate = currentTranscoder.toHex()
+    pool.totalStake = transcoder.totalStake
+    pool.rewardCut = transcoder.rewardCut
+    pool.feeShare = transcoder.feeShare
 
-    // create a unique "pool" for each active transcoder on every
-    // round. If a transcoder calls reward() for a given round, we store its
-    // reward tokens inside this Pool entry in a field called "rewardTokens". If
-    // "rewardTokens" is null for a given transcoder and round then we know
-    // the transcoder failed to call reward()
-    if (active) {
-      poolId = makePoolId(currentTranscoder, roundNumber)
-      pool = new Pool(poolId)
-      pool.round = roundNumber.toString()
-      pool.delegate = currentTranscoder.toHex()
-      pool.totalStake = transcoder.totalStake
-      pool.rewardCut = transcoder.rewardCut
-      pool.feeShare = transcoder.feeShare
-
-      // Apply store updates
-      pool.save()
-    }
+    // Apply store updates
+    pool.save()
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
       currentTranscoder

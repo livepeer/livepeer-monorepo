@@ -2,6 +2,12 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 const PERC_DIVISOR = 1000000
 
+let x = BigInt.fromI32(2)
+let y = <u8>255
+let z = BigInt.fromI32(1)
+
+export let MAXIMUM_VALUE_UINT256: BigInt = x.pow(y).minus(z)
+
 // Make a number the specified number of digits
 export function leftPad(str: string, size: i32): string {
   while (str.length < size) {

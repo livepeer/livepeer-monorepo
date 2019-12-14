@@ -5,7 +5,7 @@ import { Delegator, ApprovalEvent } from '../types/schema'
 
 // Bind RoundsManager contract
 let roundsManager = RoundsManager.bind(
-  Address.fromString('3984fc4ceeef1739135476f625d36d6c35c40dc3')
+  Address.fromString('572d1591bD41f50130FD0212058eAe34F1B17290')
 )
 
 // Handler for NewRound events

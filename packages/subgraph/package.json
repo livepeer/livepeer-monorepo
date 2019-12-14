@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/subgraph",
   "private": true,
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.6",
   "license": "MIT",
   "scripts": {
     "create": "graph create livepeer/livepeer --node https://api.thegraph.com/deploy/",
@@ -15,8 +15,8 @@
     "deploy-stage": "graph deploy livepeer/livepeer-canary --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.16.1",
-    "@graphprotocol/graph-ts": "^0.16.0"
+    "@graphprotocol/graph-cli": "^0.15.3",
+    "@graphprotocol/graph-ts": "^0.15.1"
   },
   "workspaces": {
     "packages": [
