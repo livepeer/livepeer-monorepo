@@ -40,7 +40,7 @@ type Transcoder @entity {
   "The delegators bonded to the transcoder"
   delegators: [Delegator!]
   "The delegator that registered this transcoder"
-  delegator: Delegator!
+  delegator: Delegator
 }
 
 """
