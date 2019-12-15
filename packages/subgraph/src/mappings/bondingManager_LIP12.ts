@@ -1,34 +1,31 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
   TranscoderUpdate,
   TranscoderActivated,
   TranscoderDeactivated,
-  EarningsClaimed
+  EarningsClaimed,
 } from '../types/BondingManager_LIP12/BondingManager'
 
-// Import entity types generated from the GraphQL schema
+import { RoundsManager } from '../types/RoundsManager_LIP12/RoundsManager'
+
 import {
   Transcoder,
   Delegator,
   TranscoderUpdatedEvent,
   ClaimEarningsEvent,
   TranscoderActivatedEvent,
-  TranscoderDeactivatedEvent
+  TranscoderDeactivatedEvent,
 } from '../types/schema'
-import { RoundsManager } from '../types/RoundsManager_LIP12/RoundsManager'
-import { MAXIMUM_VALUE_UINT256 } from './util'
 
-// Bind RoundsManager contract
-let roundsManager = RoundsManager.bind(
-  Address.fromString('572d1591bD41f50130FD0212058eAe34F1B17290')
-)
+import { MAXIMUM_VALUE_UINT256, getRoundsManagerInstance } from './util'
 
 export function transcoderUpdated(event: TranscoderUpdate): void {
   let transcoderAddress = event.params.transcoder
   let rewardCut = event.params.rewardCut
   let feeShare = event.params.feeShare
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let transcoder = Transcoder.load(transcoderAddress.toHex())
 
@@ -45,7 +42,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
 
   // Store transaction info
   let transcoderUpdatedEvent = new TranscoderUpdatedEvent(
-    event.transaction.hash.toHex() + '-TranscoderUpdate'
+    event.transaction.hash.toHex() + '-TranscoderUpdate',
   )
   transcoderUpdatedEvent.hash = event.block.hash.toHex()
   transcoderUpdatedEvent.blockNumber = event.block.number
@@ -63,6 +60,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
 
 export function transcoderActivated(event: TranscoderActivated): void {
   let transcoderAddress = event.params.transcoder
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   if (transcoder == null) {
@@ -76,7 +74,7 @@ export function transcoderActivated(event: TranscoderActivated): void {
 
   // Store transaction info
   let transcoderActivatedEvent = new TranscoderActivatedEvent(
-    event.transaction.hash.toHex() + '-TranscoderActivated'
+    event.transaction.hash.toHex() + '-TranscoderActivated',
   )
   transcoderActivatedEvent.hash = event.block.hash.toHex()
   transcoderActivatedEvent.blockNumber = event.block.number
@@ -94,6 +92,7 @@ export function transcoderActivated(event: TranscoderActivated): void {
 export function transcoderDeactivated(event: TranscoderDeactivated): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
 
   transcoder.deactivationRound = event.params.deactivationRound
@@ -101,7 +100,7 @@ export function transcoderDeactivated(event: TranscoderDeactivated): void {
 
   // Store transaction info
   let transcoderDeactivatedEvent = new TranscoderDeactivatedEvent(
-    event.transaction.hash.toHex() + '-TranscoderDeactivated'
+    event.transaction.hash.toHex() + '-TranscoderDeactivated',
   )
   transcoderDeactivatedEvent.hash = event.block.hash.toHex()
   transcoderDeactivatedEvent.blockNumber = event.block.number
@@ -123,6 +122,7 @@ export function earningsClaimed(event: EarningsClaimed): void {
   let fees = event.params.fees
   let startRound = event.params.startRound
   let endRound = event.params.startRound
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegator = Delegator.load(delegatorAddress.toHex())
 
@@ -132,7 +132,7 @@ export function earningsClaimed(event: EarningsClaimed): void {
   delegator.save()
 
   let claimEarningsEvent = new ClaimEarningsEvent(
-    event.transaction.hash.toHex() + '-ClaimEarnings'
+    event.transaction.hash.toHex() + '-ClaimEarnings',
   )
   claimEarningsEvent.hash = event.transaction.hash.toHex()
   claimEarningsEvent.blockNumber = event.block.number

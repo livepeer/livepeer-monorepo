@@ -1,4 +1,6 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { BondingManager } from '../types/BondingManager/BondingManager'
+import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
 const PERC_DIVISOR = 1000000
 
@@ -19,7 +21,7 @@ export function leftPad(str: string, size: i32): string {
 // Make a derived pool ID from a transcoder address
 export function makePoolId(
   transcoderAddress: Address,
-  roundId: BigInt
+  roundId: BigInt,
 ): string {
   return transcoderAddress.toHex() + '-' + leftPad(roundId.toString(), 40)
 }
@@ -27,7 +29,7 @@ export function makePoolId(
 // Make a derived share ID from a delegator address
 export function makeShareId(
   delegatorAddress: Address,
-  roundId: BigInt
+  roundId: BigInt,
 ): string {
   return delegatorAddress.toHex() + '-' + leftPad(roundId.toString(), 40)
 }
@@ -35,7 +37,7 @@ export function makeShareId(
 // Make a derived unlocking ID from a delegator address
 export function makeUnbondingLockId(
   delegatorAddress: Address,
-  unbondingLockId: BigInt
+  unbondingLockId: BigInt,
 ): string {
   return (
     delegatorAddress.toHex() + '-' + leftPad(unbondingLockId.toString(), 40)
@@ -45,7 +47,7 @@ export function makeUnbondingLockId(
 export function percOfWithDenom(
   _amount: BigInt,
   _fracNum: BigInt,
-  _fracDenom: BigInt
+  _fracDenom: BigInt,
 ): BigInt {
   return _amount
     .times(percPoints(_fracNum, _fracDenom))
@@ -58,4 +60,24 @@ export function percOf(_amount: BigInt, _fracNum: BigInt): BigInt {
 
 export function percPoints(_fracNum: BigInt, _fracDenom: BigInt): BigInt {
   return _fracNum.times(BigInt.fromI32(PERC_DIVISOR)).div(_fracDenom)
+}
+
+export function getRoundsManagerInstance(network: string): RoundsManager {
+  return RoundsManager.bind(
+    Address.fromString(
+      network == 'mainnet'
+        ? '3984fc4ceeef1739135476f625d36d6c35c40dc3'
+        : '572d1591bD41f50130FD0212058eAe34F1B17290',
+    ),
+  )
+}
+
+export function getBondingManagerInstance(network: string): BondingManager {
+  return BondingManager.bind(
+    Address.fromString(
+      network == 'mainnet'
+        ? '511bc4556d823ae99630ae8de28b9b80df90ea2e'
+        : 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95',
+    ),
+  )
 }

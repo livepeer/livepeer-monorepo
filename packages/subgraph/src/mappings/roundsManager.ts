@@ -1,27 +1,22 @@
 // Import types and APIs from graph-ts
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import { RoundsManager, NewRound } from '../types/RoundsManager/RoundsManager'
-import { BondingManager } from '../types/BondingManager_LIP11/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Pool, Round, InitializeRoundEvent } from '../types/schema'
 
-import { makePoolId } from './util'
-
-// Bind BondingManager contract
-let bondingManager = BondingManager.bind(
-  Address.fromString('e75a5DccfFe8939F7f16CC7f63EB252bB542FE95')
-)
+import { makePoolId, getBondingManagerInstance } from './util'
 
 // Handler for NewRound events
 export function newRound(event: NewRound): void {
   let roundsManager = RoundsManager.bind(event.address)
   let roundNumber = event.params.round
   let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000'
+    '0000000000000000000000000000000000000000',
   )
+  let bondingManager = getBondingManagerInstance(dataSource.network())
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
   let active: boolean
@@ -58,7 +53,7 @@ export function newRound(event: NewRound): void {
     }
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
-      currentTranscoder
+      currentTranscoder,
     )
 
     transcoder = Transcoder.load(currentTranscoder.toHex())
@@ -77,7 +72,7 @@ export function newRound(event: NewRound): void {
 
   // Store transaction info
   let initializeRoundEvent = new InitializeRoundEvent(
-    event.transaction.hash.toHex() + '-InitializeRound'
+    event.transaction.hash.toHex() + '-InitializeRound',
   )
   initializeRoundEvent.hash = event.transaction.hash.toHex()
   initializeRoundEvent.blockNumber = event.block.number

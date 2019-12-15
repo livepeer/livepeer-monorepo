@@ -1,7 +1,3 @@
-directive @deprecated(
-  reason: String = "No longer supported"
-) on FIELD_DEFINITION | ENUM_VALUE
-
 """
 Perform transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
 """
