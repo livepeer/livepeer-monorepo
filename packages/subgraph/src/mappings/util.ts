@@ -23,7 +23,7 @@ export function makePoolId(
   transcoderAddress: Address,
   roundId: BigInt,
 ): string {
-  return transcoderAddress.toHex() + '-' + leftPad(roundId.toString(), 40)
+  return leftPad(roundId.toString(), 10) + '-' + transcoderAddress.toHex()
 }
 
 // Make a derived share ID from a delegator address
@@ -31,7 +31,7 @@ export function makeShareId(
   delegatorAddress: Address,
   roundId: BigInt,
 ): string {
-  return delegatorAddress.toHex() + '-' + leftPad(roundId.toString(), 40)
+  return leftPad(roundId.toString(), 10) + '-' + delegatorAddress.toHex()
 }
 
 // Make a derived unlocking ID from a delegator address
@@ -40,7 +40,7 @@ export function makeUnbondingLockId(
   unbondingLockId: BigInt,
 ): string {
   return (
-    delegatorAddress.toHex() + '-' + leftPad(unbondingLockId.toString(), 40)
+    leftPad(unbondingLockId.toString(), 10) + '-' + delegatorAddress.toHex()
   )
 }
 
