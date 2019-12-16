@@ -5,11 +5,11 @@ export default ({ children }) => {
   return (
     <div
       sx={{
-        px: 2,
         pt: 2,
         color: 'muted',
         textAlign: 'center',
         fontSize: 0,
+        lineHeight: 1.7,
       }}
     >
       {children}

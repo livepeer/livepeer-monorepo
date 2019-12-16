@@ -20,7 +20,7 @@ export default ({ transcoder, amount, disabled }) => {
   const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
   const { width, height } = useWindowSize()
-
+  
   if (!context.active) {
     return null
   }

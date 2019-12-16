@@ -43,7 +43,7 @@ export async function bond(_obj, _args, _ctx) {
   const { to, amount } = _args
   const sdk = await LivepeerSDK({
     account: _ctx.account,
-    gas: 2.1 * 1000000,
+    gas: null,
     provider: _ctx.provider,
   })
 
@@ -118,7 +118,7 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
 export async function unbond(_obj, _args, _ctx) {
   const sdk = await LivepeerSDK({
     account: _ctx.account,
-    gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+    gas: null,
     provider: _ctx.provider,
   })
   const { amount } = _args
@@ -140,7 +140,7 @@ export async function unbond(_obj, _args, _ctx) {
 export async function rebond(_obj, _args, _ctx) {
   const sdk = await LivepeerSDK({
     account: _ctx.account,
-    gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+    gas: null,
     provider: _ctx.provider,
   })
   const { unbondingLockId } = _args
@@ -164,7 +164,7 @@ export async function rebond(_obj, _args, _ctx) {
 export async function withdrawStake(_obj, _args, _ctx) {
   const sdk = await LivepeerSDK({
     account: _ctx.account,
-    gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+    gas: null,
     provider: _ctx.provider,
   })
   const { unbondingLockId } = _args
@@ -188,7 +188,7 @@ export async function withdrawStake(_obj, _args, _ctx) {
 export async function rebondFromUnbonded(_obj, _args, _ctx) {
   const sdk = await LivepeerSDK({
     account: _ctx.account,
-    gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+    gas: null,
     provider: _ctx.provider,
   })
   const { delegate, unbondingLockId } = _args
@@ -213,7 +213,7 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
 export async function initializeRound(_obj, _args, _ctx) {
   const sdk = await LivepeerSDK({
     account: _ctx.account,
-    gas: 2.1 * 1000000, // Default gas limit to send with transactions (2.1m wei)
+    gas: null,
     provider: _ctx.provider,
   })
   const gas = await sdk.rpc.estimateGas('RoundsManager', 'initializeRound', [])
@@ -239,7 +239,6 @@ export async function updateProfile(_obj, _args, _ctx) {
       await box.linkAddress({
         proof: _args.proof,
       })
-      console.log(_args.proof)
     }
 
     const allowed = [

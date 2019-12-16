@@ -67,6 +67,12 @@ const theme = {
         transition: 'border-color .2s',
       },
     },
+    primarySmall: {
+      color: 'background',
+      bg: 'primary',
+      py: '6px',
+      px: 2,
+    },
     primaryOutlineSmall: {
       bg: 'transparent',
       color: 'primary',

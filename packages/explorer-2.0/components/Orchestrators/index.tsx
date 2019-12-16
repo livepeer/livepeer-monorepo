@@ -169,7 +169,7 @@ export default ({ currentRound, transcoders }) => {
                       <span sx={{ fontSize: 0 }}>
                         {column.render('Header')}
                       </span>
-                      {renderTooltips(column.render('Header'))}
+                      {renderTooltip(column.render('Header'))}
                     </Flex>
                   </th>
                 ))}
@@ -267,7 +267,7 @@ export default ({ currentRound, transcoders }) => {
   )
 }
 
-function renderTooltips(title) {
+function renderTooltip(title) {
   switch (title) {
     case 'Stake':
       return (

@@ -30,9 +30,6 @@ export default ({ transcoder, amount, disabled }) => {
     result: { mutate: unbond, isBroadcasted, isMined, txHash },
     reset,
   } = useWeb3Mutation(UNBOND, {
-    variables: {
-      amount: Utils.toWei(amount ? amount.toString() : '0'),
-    },
     context: {
       provider: context.library.currentProvider,
       account: context.account.toLowerCase(),
@@ -52,7 +49,11 @@ export default ({ transcoder, amount, disabled }) => {
         disabled={disabled}
         onClick={async () => {
           try {
-            await unbond()
+            await unbond({
+              variables: {
+                amount: Utils.toWei(amount ? amount.toString() : '0'),
+              },
+            })
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),

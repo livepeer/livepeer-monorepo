@@ -20,7 +20,7 @@ export default ({
       }}
       {...props}
     >
-      <div sx={{ mb: '4px', fontWeight: 500, fontSize: 0, color: 'muted' }}>
+      <div sx={{ mb: '8px', fontWeight: 500, fontSize: 0, color: 'muted' }}>
         {title}
       </div>
       {subtitle}

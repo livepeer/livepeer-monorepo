@@ -9,7 +9,7 @@ export default ({ transcoder }) => {
       sx={{
         pt: 2,
         pb: 1,
-        px: 3,
+        px: 2,
         display: 'flex',
         alignItems: 'center',
         fontWeight: 'bold',

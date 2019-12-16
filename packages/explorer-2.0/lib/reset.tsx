@@ -57,6 +57,7 @@ const Reset = () =>
         outline: 'none',
       },
       '.tooltip': {
+        boxShadow: '0px 4px 4px rgba(0,0,0,0.15)',
         backgroundColor: `${theme.colors.surface} !important`,
         fontWeight: 400,
         color: `${theme.colors.text} !important`,

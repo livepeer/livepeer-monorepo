@@ -63,7 +63,7 @@ export default ({
         }}
       >
         <Header transcoder={transcoder} />
-        <div sx={{ pt: 1, pb: 2, px: 3 }}>
+        <div sx={{ pt: 1, pb: 2, px: 2 }}>
           <Tabs
             onChange={(index: number) => setAction(index ? 'unstake' : 'stake')}
           >
@@ -101,7 +101,7 @@ export default ({
             delegator={delegator}
             transcoder={transcoder}
             action={action}
-            amount={parseFloat(amount)}
+            amount={amount}
           />
         </div>
       </Box>
