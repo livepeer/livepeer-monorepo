@@ -31,7 +31,12 @@ export default ({ status, threeBoxSpace, active, address }) => {
       <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
         {process.env.THREEBOX_ENABLED && threeBoxSpace.image ? (
           <img
-            sx={{ borderRadius: 1000, width: 40, height: 40 }}
+            sx={{
+              objectFit: 'cover',
+              borderRadius: 1000,
+              width: 40,
+              height: 40,
+            }}
             src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
           />
         ) : (

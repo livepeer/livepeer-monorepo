@@ -23,8 +23,8 @@ export default ({ transcoder }) => {
             sx={{
               objectFit: 'cover',
               borderRadius: 1000,
-              width: '100%',
-              height: '100%',
+              width: 40,
+              height: 40,
             }}
             src={`https://ipfs.infura.io/ipfs/${transcoder.threeBoxSpace.image}`}
           />
