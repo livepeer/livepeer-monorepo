@@ -14,6 +14,7 @@ import Chip from '../Chip'
 import EditProfile from '../EditProfile'
 import ShowMoreText from 'react-show-more-text'
 import Link from 'next/link'
+import Markdown from 'markdown-to-jsx'
 
 interface Props {
   account: string
@@ -80,7 +81,6 @@ export default ({
               width: '100%',
               height: '100%',
             }}
-            bgColor="#9326E9"
             fgColor={`#${account.substr(2, 6)}`}
             value={account}
           />
@@ -174,13 +174,13 @@ export default ({
       {process.env.THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.description && (
-          <div sx={{ mt: 3 }}>
+          <div sx={{ mt: 3, a: { color: 'primary' } }}>
             <ShowMoreText
               lines={3}
               more={<span sx={{ color: 'primary' }}>Show more</span>}
               less={<span sx={{ color: 'primary' }}>Show Less</span>}
             >
-              {threeBoxSpace.description}
+              <div>{threeBoxSpace.description}</div>
             </ShowMoreText>
           </div>
         )}
