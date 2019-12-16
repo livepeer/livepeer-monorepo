@@ -115,6 +115,33 @@ components:
           items:
             type: string
 
+    objectstores:
+      type: object
+      required:
+        - awsCredentials
+      additionalProperties: false
+      properties:
+        awsCredentials:
+          type: object
+          required:
+            - host
+            - region
+            - bucket
+            - accessKeyID
+            - secretAccessKey
+          additionalProperties: false
+          properties:
+            host:
+              type: string
+            region:
+              type: string
+            bucket:
+              type: string
+            accessKeyID:
+              type: string
+            secretAccessKey:
+              type: string
+
 paths:
   /stream:
     tags:
@@ -156,6 +183,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/stream'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /objectstores:
+    tags:
+      - stream
+    post:
+      description: receives store credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/objectstores'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/objectstores'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+    get:
+      description: list credentials
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/objectstores'
         default:
           description: Error
           content:
