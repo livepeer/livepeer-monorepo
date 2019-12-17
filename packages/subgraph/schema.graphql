@@ -38,7 +38,7 @@ type Transcoder @entity {
   "The pools associated with the transcoder"
   pools: [Pool!] @derivedFrom(field: "delegate")
   "The delegators bonded to the transcoder"
-  delegators: [Delegator!]
+  delegators: [Delegator!] @derivedFrom(field: "delegate")
   "The delegator that registered this transcoder"
   delegator: Delegator
 }

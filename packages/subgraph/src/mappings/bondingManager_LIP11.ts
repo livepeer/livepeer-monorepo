@@ -53,10 +53,6 @@ export function bond(event: Bond): void {
     delegator = new Delegator(delegatorAddress.toHex())
   }
 
-  if (transcoder.delegators == null) {
-    transcoder.delegators = new Array<string>()
-  }
-
   // If self delegating, assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
     transcoder.delegator = delegatorAddress.toHex()
@@ -76,25 +72,10 @@ export function bond(event: Bond): void {
     oldTranscoder.totalStake = oldTranscoderTotalStake
     oldDelegate.delegatedAmount = oldTranscoderTotalStake
 
-    // remove from old transcoder's array of delegators
-    let oldTranscoderDelegators = oldTranscoder.delegators
-    if (oldTranscoderDelegators.length) {
-      let i = oldTranscoderDelegators.indexOf(delegatorAddress.toHex())
-      oldTranscoderDelegators.splice(i, 1)
-      oldTranscoder.delegators = oldTranscoderDelegators
-    }
-
     oldDelegate.save()
     oldTranscoder.save()
   }
 
-  // Update transcoder / delegate
-  let delegators = transcoder.delegators
-  let i = delegators.indexOf(delegatorAddress.toHex())
-  if (i == -1) {
-    delegators.push(delegatorAddress.toHex())
-    transcoder.delegators = delegators
-  }
   transcoder.totalStake = transcoderTotalStake
   delegate.delegatedAmount = transcoderTotalStake
 
@@ -171,13 +152,6 @@ export function unbond(event: Unbond): void {
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
   if (delegatorData.value0.isZero()) {
-    let delegators = transcoder.delegators
-    if (delegators != null) {
-      let i = delegators.indexOf(delegatorAddress.toHex())
-      delegators.splice(i, 1)
-      transcoder.delegators = delegators
-    }
-
     // If unbonding from self and no longer has a bonded amount update
     // transcoder status and delegator
     if (delegatorAddress.toHex() == delegateAddress.toHex()) {

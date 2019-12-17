@@ -69,3 +69,6 @@ src/types/
 
 # docker-compose data directory
 data/
+
+# subgraph.yaml templatify output
+subgraph.yaml
