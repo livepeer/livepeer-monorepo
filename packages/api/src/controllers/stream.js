@@ -48,6 +48,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     kind: 'stream',
     userId: req.user.id,
     renditions: {},
+    objectStoreId: req.body.objectStoreId,
     id,
   })
 
@@ -109,11 +110,17 @@ app.post('/hook', async (req, res) => {
   }
 
   const stream = await req.store.get(`stream/${streamId}`)
+  const store = await req.store.get(`objectstores/${stream.objectStoreId}`)
 
   res.json({
     manifestId: streamId,
     presets: stream.presets,
     profiles: stream.profiles,
+    objectStore: {
+      type: store.type,
+      path: store.path,
+      credentials: store.credentials,
+    },
   })
 })
 

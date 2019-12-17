@@ -46,22 +46,20 @@ app.post(
   validatePost('objectstores'),
   async (req, res) => {
     const id = uuid()
-    const creds = req.body.awsCredentials
 
     await req.store.create({
       id: id,
-      host: creds.host,
-      region: creds.region,
-      bucket: creds.bucket,
-      accessKeyID: creds.accessKeyID,
-      secretAccessKey: creds.secretAccessKey,
+      credentials: req.body.credentials,
+      path: req.body.credentials,
       userId: req.user.id,
+      type: req.body.type,
       kind: 'objectstores',
     })
 
-    const credentials = await req.store.get(`objectstores/${id}`)
+    const store = await req.store.get(`objectstores/${id}`)
+    store.credentials = 'xxx'
     res.status(201)
-    res.json(credentials)
+    res.json(store)
   },
 )
 

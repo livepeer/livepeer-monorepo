@@ -15,6 +15,8 @@ components:
         - id
         - kind
         - name
+        - objectStoreId
+        - presets
       additionalProperties: false
       properties:
         id:
@@ -53,6 +55,8 @@ components:
               fps:
                 type: integer
                 minimum: 1
+        objectStoreId:
+          type: string
         presets:
           type: array
           items:
@@ -118,29 +122,17 @@ components:
     objectstores:
       type: object
       required:
-        - awsCredentials
+        - type
+        - path
+        - credentials
       additionalProperties: false
       properties:
-        awsCredentials:
-          type: object
-          required:
-            - host
-            - region
-            - bucket
-            - accessKeyID
-            - secretAccessKey
-          additionalProperties: false
-          properties:
-            host:
-              type: string
-            region:
-              type: string
-            bucket:
-              type: string
-            accessKeyID:
-              type: string
-            secretAccessKey:
-              type: string
+        type:
+          type: string
+        path:
+          type: string
+        credentials:
+          type: string
 
 paths:
   /stream:
