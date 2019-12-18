@@ -50,7 +50,7 @@ app.post(
     await req.store.create({
       id: id,
       credentials: req.body.credentials,
-      path: req.body.credentials,
+      path: req.body.path,
       userId: req.user.id,
       type: req.body.type,
       kind: 'objectstores',
