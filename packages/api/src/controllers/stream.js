@@ -47,7 +47,6 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     ...req.body,
     kind: 'stream',
     userId: req.user.id,
-    presets: req.body.presets || [],
     renditions: {},
     id,
   })
@@ -114,6 +113,7 @@ app.post('/hook', async (req, res) => {
   res.json({
     manifestId: streamId,
     presets: stream.presets,
+    profiles: stream.profiles,
   })
 })
 

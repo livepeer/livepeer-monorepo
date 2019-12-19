@@ -1,7 +1,7 @@
 FROM node:10 as base
 
 WORKDIR /app
-RUN npm install -g yarn
+RUN npm install -g --force yarn
 
 FROM base as builder
 ENV NODE_ENV development
