@@ -14,8 +14,7 @@ export default ({
   setAmount,
   protocol,
 }) => {
-  const tokenBalance =
-    account && parseFloat(Utils.fromWei(account.tokenBalance.toString()))
+  const tokenBalance = account && Utils.fromWei(account.tokenBalance.toString())
 
   let stake = '0'
   if (
@@ -61,7 +60,7 @@ export default ({
                   />
                   Balance:{' '}
                   <span sx={{ fontFamily: 'monospace' }}>
-                    {tokenBalance.toPrecision(4)}
+                    {parseFloat(tokenBalance)}
                   </span>
                 </div>
               ) : (
