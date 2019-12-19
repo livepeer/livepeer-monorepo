@@ -68,9 +68,14 @@ export default async function makeApp(params) {
   app.use(healthCheck)
   app.use(morgan('combined'))
   app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Methods', '*')
     req.store = store
     req.config = params
     next()
+  })
+  app.options('*', (req, res, next) => {
+    res.sendStatus(200)
   })
 
   // Populate Kubernetes getOrchestrators and getBroadcasters is provided
