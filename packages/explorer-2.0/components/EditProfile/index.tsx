@@ -613,7 +613,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
                     The Livepeer CLI will copy the Ethereum signed message
-                    signature to your clipboard. It should begin with `0x`.
+                    signature to your clipboard. It should begin with "0x".
                     Paste it here.
                   </div>
                   <Textfield
