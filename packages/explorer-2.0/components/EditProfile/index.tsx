@@ -114,6 +114,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     ;(async () => {
       const Box = require('3box')
       const profile = await Box.getProfile(context.account)
+
       if (hasExistingProfile(profile)) {
         setHasProfile(true)
       }
@@ -208,24 +209,30 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       context.account,
       context.library.currentProvider,
     )
-    let hash = threeBoxSpace.image ? threeBoxSpace.image : ''
-    if (previewImage) {
-      const formData = new window.FormData()
-      formData.append('path', image[0])
-      const resp = await fetch('https://ipfs.infura.io:5001/api/v0/add', {
-        method: 'post',
-        body: formData,
-      })
-      const infuraResponse = await resp.json()
-      hash = infuraResponse['Hash']
+
+    let hash = ''
+
+    if (previewImage && image.length) {
+      try {
+        const formData = new window.FormData()
+        formData.append('path', image[0])
+        const resp = await fetch('https://ipfs.infura.io:5001/api/v0/add', {
+          method: 'post',
+          body: formData,
+        })
+        const infuraResponse = await resp.json()
+        hash = infuraResponse['Hash']
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     const variables = {
-      name: name ? name : threeBoxSpace.name,
-      website: website ? website : threeBoxSpace.website,
-      description: description ? description : threeBoxSpace.description,
-      image: hash ? hash : threeBoxSpace.image,
-      proof,
+      ...(name && { name }),
+      ...(website && { website }),
+      ...(description && { description }),
+      ...(hash && { image: hash }),
+      ...(proof && { proof }),
       defaultProfile: threeBoxSpace.defaultProfile
         ? threeBoxSpace.defaultProfile
         : 'livepeer',
@@ -253,10 +260,9 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       },
     })
 
-    // If a user is linking an external account, let's wait until it successfully
-    // links before closing the modal since we're not optimistically responding
-    // in this case
-    if (signature) {
+    // We don't use an optimistic response if user is linking external account
+    // or updating image
+    if (signature || previewImage) {
       await result
       await refetch({
         variables: {
@@ -264,6 +270,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         },
       })
     }
+
     setSaving(false)
     setEditProfileOpen(false)
   }
@@ -492,7 +499,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                   inputRef={register}
                   defaultValue={threeBoxSpace ? threeBoxSpace.website : ''}
                   label="Website"
-                  type="website"
+                  type="url"
                   name="website"
                   sx={{ mb: 2, width: '100%' }}
                 />
@@ -532,7 +539,6 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                         __html: message,
                       }}
                     />
-
                     <CopyToClipboard
                       text={message.replace(/<br ?\/?>/g, '\n')}
                       onCopy={() => setCopied(true)}
@@ -607,7 +613,8 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
                     The Livepeer CLI will copy the Ethereum signed message
-                    signature to your clipboard. Paste it here.
+                    signature to your clipboard. It should begin with `0x`.
+                    Paste it here.
                   </div>
                   <Textfield
                     inputRef={register}
@@ -620,7 +627,8 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 <li sx={{ mb: 0 }}>
                   <div sx={{ mb: 2 }}>
                     Verify the message was signed correctly by pasting your
-                    Livepeer Node address used in the Livpeeer CLI.
+                    Livepeer Node address used to sign the message in the
+                    Livpeeer CLI.
                   </div>
                   <Textfield
                     inputRef={register}

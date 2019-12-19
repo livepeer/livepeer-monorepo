@@ -7,6 +7,7 @@ import gql from 'graphql-tag'
 import Card from '../components/Card'
 import moment from 'moment'
 import { getLayout } from '../layouts/main'
+import Markdown from 'markdown-to-jsx'
 
 const GET_CHANGEFEED = gql`
   {
@@ -83,7 +84,6 @@ const WhatsNew = () => {
             </Styled.h1>
             <Styled.h3>Coming Up</Styled.h3>
             <ul sx={{ mb: 5, lineHeight: 2 }}>
-              <li>3Box integration</li>
               <li>Mobile support</li>
               <li>Earnings View</li>
               <li>Network statistics view</li>
@@ -112,13 +112,14 @@ const WhatsNew = () => {
                           borderColor: 'border',
                           pb: 3,
                           mb: 3,
+                          a: { color: 'primary' },
                         }}
                       >
-                        {node.description}
+                        <Markdown>{node.description}</Markdown>
                       </div>
-                      {Object.keys(groupByType(node.changes)).map(key => {
+                      {Object.keys(groupByType(node.changes)).map((key, i) => {
                         return (
-                          <div sx={{ mb: 2 }}>
+                          <div key={i} sx={{ mb: 2 }}>
                             <div
                               sx={{
                                 fontSize: '14px',
@@ -137,7 +138,7 @@ const WhatsNew = () => {
                             >
                               {key}
                             </div>
-                            {groupByType(node.changes)[key].map(change => (
+                            {groupByType(node.changes)[key].map((change, i) => (
                               <div key={i} sx={{ alignSelf: 'flexStart' }}>
                                 <div sx={{ mb: 2 }}>{change.content}</div>
                               </div>
