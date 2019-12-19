@@ -56,6 +56,7 @@ export function useAccount(address = null) {
       account: address && address.toLowerCase(),
     },
     skip: !address,
+    pollInterval: 10000,
   })
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export function useAccount(address = null) {
     }
   }, [data])
 
-  return { account, delegator, threeBoxSpace, refetch }
+  return { account, delegator, threeBoxSpace, refetch, query: GET_ACCOUNT }
 }
 
 export function useWeb3Mutation(mutation, options) {

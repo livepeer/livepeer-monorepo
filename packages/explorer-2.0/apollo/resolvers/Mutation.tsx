@@ -255,10 +255,6 @@ export async function updateProfile(_obj, _args, _ctx) {
         return obj
       }, {})
 
-    if (_args.defaultProfile === '3box') {
-      return
-    }
-
     await space.public.setMultiple(
       Object.keys(filtered),
       Object.values(filtered),

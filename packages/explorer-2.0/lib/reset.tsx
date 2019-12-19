@@ -66,6 +66,32 @@ const Reset = () =>
         opacity: '1 !important',
         borderRadius: '6px !important',
       },
+      '.MuiStepper-vertical': {
+        marginBottom: '-8px',
+        padding: '0 !important',
+      },
+      '.MuiPaper-root': {
+        backgroundColor: 'transparent !important',
+        color: `${theme.colors.text} !important`,
+      },
+      '.MuiStepLabel-label': {
+        color: `${theme.colors.muted} !important`,
+      },
+      '.MuiStepLabel-active': {
+        color: `${theme.colors.text} !important`,
+      },
+      '.MuiStepIcon-completed': {
+        color: `${theme.colors.primary} !important`,
+      },
+      '.MuiStepIcon-active': {
+        color: `${theme.colors.primary} !important`,
+      },
+      '.MuiStepIcon-active .MuiStepIcon-text': {
+        fill: `${theme.colors.surface} !important`,
+      },
+      '.MuiStepIcon-text': {
+        fontFamily: `${theme.fonts.body} !important`,
+      },
     },
   })
 

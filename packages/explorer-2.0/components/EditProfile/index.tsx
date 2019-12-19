@@ -13,8 +13,8 @@ import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import Modal from '../Modal'
 import ExternalAccount from '../ExternalAccount'
-import Spinner from '../Spinner'
 import { useDebounce } from 'use-debounce'
+import ThreeBoxSteps from '../ThreeBoxSteps'
 
 interface Props {
   account: string
@@ -66,15 +66,21 @@ const UPDATE_PROFILE = gql`
   }
 `
 
+function hasExistingProfile(profile) {
+  return profile.name || profile.website || profile.description || profile.image
+}
+
 export default ({ threeBoxSpace, refetch, account }: Props) => {
   const context = useWeb3Context()
   const { register, handleSubmit, watch } = useForm()
   const [previewImage, setPreviewImage] = useState(null)
   const [saving, setSaving] = useState(false)
   const [editProfileOpen, setEditProfileOpen] = useState(false)
-  const [approveModalOpen, setApproveModalOpen] = useState(false)
+  const [createProfileModalOpen, setCreateProfileModalOpen] = useState(false)
   const [existingProfileOpen, setExistingProfileOpen] = useState(false)
+  const [activeStep, setActiveStep] = useState(0)
   const [verified, setVerified] = useState(false)
+  const [hasProfile, setHasProfile] = useState(false)
   const [message, setMessage] = useState('')
   const [timestamp] = useState(Math.floor(Date.now() / 1000))
   const name = watch('name')
@@ -93,6 +99,11 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       `Create a new 3Box profile<br /><br />-<br />Your unique profile ID is ${threeBoxSpace.did}<br />Timestamp: ${timestamp}`,
     )
     ;(async () => {
+      const Box = require('3box')
+      const profile = await Box.getProfile(context.account)
+      if (hasExistingProfile(profile)) {
+        setHasProfile(true)
+      }
       if (signature && externalAccount) {
         const verifiedAccount = await context.library.eth.personal.ecRecover(
           message.replace(/<br ?\/?>/g, '\n'),
@@ -121,28 +132,30 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     if (threeBoxSpace.defaultProfile) {
       setEditProfileOpen(true)
     } else {
-      setApproveModalOpen(true)
+      setCreateProfileModalOpen(true)
+
       let box = await Box.openBox(account, context.library.currentProvider)
+      setActiveStep(1)
       await box.syncDone
-      await box.linkAddress()
+
+      // Create a 3box account if a user doesn't already have one
+      if (!hasProfile) {
+        await box.linkAddress()
+        setActiveStep(2)
+      }
 
       let space = await box.openSpace('livepeer')
       await space.syncDone
-      const profile = await box.public.all()
-      if (
-        profile.name ||
-        profile.website ||
-        profile.description ||
-        profile.image
-      ) {
-        setApproveModalOpen(false)
+
+      if (hasProfile) {
+        setCreateProfileModalOpen(false)
         setExistingProfileOpen(true)
       } else {
         await updateProfile({
           variables: { defaultProfile: 'livepeer' },
           context: {
             box,
-            address: account.toLowerCase(),
+            address: account,
           },
         })
         box = await Box.openBox(
@@ -151,12 +164,14 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         )
         space = await box.openSpace('livepeer')
         await box.syncDone
-        refetch({
-          variables: {
-            account: account,
-          },
-        })
-        setApproveModalOpen(false)
+        if (refetch) {
+          refetch({
+            variables: {
+              account: account,
+            },
+          })
+        }
+        setCreateProfileModalOpen(false)
         setEditProfileOpen(true)
       }
     }
@@ -249,7 +264,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       >
         {threeBoxSpace.defaultProfile ? 'Edit Profile' : 'Set up my profile'}
       </Button>
-      <Modal isOpen={approveModalOpen} title="Profile Setup">
+      <Modal isOpen={createProfileModalOpen} title="Profile Setup">
         <>
           <div
             sx={{
@@ -265,17 +280,13 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
             <Flex
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <span>
-                Sign the messages in your wallet to continue setting up your
-                profile.
-              </span>
-              <Spinner />
+              <ThreeBoxSteps hasProfile={hasProfile} activeStep={activeStep} />
             </Flex>
           </div>
           <Flex sx={{ justifyContent: 'flex-end' }}>
             <Button
               variant="outline"
-              onClick={() => setApproveModalOpen(false)}
+              onClick={() => setCreateProfileModalOpen(false)}
             >
               Close
             </Button>
@@ -312,15 +323,14 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                   variables: {
                     defaultProfile: 'livepeer',
                   },
-                  refetchQueries: [
-                    {
-                      query: GET_THREE_BOX_SPACE,
-                      variables: { id: account.toLowerCase() },
-                    },
-                  ],
                   context: {
                     box,
                     address: account.toLowerCase(),
+                  },
+                })
+                await refetch({
+                  variables: {
+                    account: account.toLowerCase(),
                   },
                 })
                 setExistingProfileOpen(false)
@@ -333,18 +343,17 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
             </Button>
             <Button
               onClick={async () => {
+                const Box = require('3box')
+                const box = await Box.openBox(
+                  context.account,
+                  context.library.currentProvider,
+                )
                 await updateProfile({
                   variables: {
                     defaultProfile: '3box',
                   },
-                  refetchQueries: [
-                    {
-                      query: GET_THREE_BOX_SPACE,
-                      variables: { id: account.toLowerCase() },
-                    },
-                  ],
                   context: {
-                    ethereumProvider: context.library.currentProvider,
+                    box,
                     address: account.toLowerCase(),
                   },
                 })
@@ -485,13 +494,9 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
               <ol sx={{ pl: 15, pt: 4 }}>
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
-                    Run livepeer-cli and select option "Sign a message"
-                  </div>
-                </li>
-                <li sx={{ mb: 3 }}>
-                  <div sx={{ mb: 2 }}>
-                    When prompted for the message to sign, copy and paste the
-                    following message:
+                    Run livepeer-cli and select option "Sign a message". When
+                    prompted for the message to sign, copy and paste the message
+                    below.
                   </div>
                   <div
                     sx={{
@@ -521,9 +526,8 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 </li>
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
-                    Verify the signature by entering the public address of the
-                    external account you signed the message with below, then
-                    save.
+                    Verify the message was signed correctly by pasting your
+                    Livepeer Node address used in Livpeeer CLI.
                   </div>
                   <Textfield
                     inputRef={register}

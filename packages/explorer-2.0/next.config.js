@@ -1,6 +1,6 @@
 module.exports = {
   target: 'serverless',
   env: {
-    THREEBOX_ENABLED: false,
+    THREEBOX_ENABLED: true,
   },
 }
