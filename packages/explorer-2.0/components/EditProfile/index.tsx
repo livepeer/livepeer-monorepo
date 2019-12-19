@@ -5,6 +5,10 @@ import { ThreeBoxSpace } from '../../@types'
 import { Flex } from 'theme-ui'
 import Camera from '../../public/img/camera.svg'
 import Button from '../Button'
+import ReactTooltip from 'react-tooltip'
+import Check from '../../public/img/check.svg'
+import Copy from '../../public/img/copy.svg'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Textfield from '../Textfield'
 import { useWeb3Context } from 'web3-react'
 import useForm from 'react-hook-form'
@@ -82,6 +86,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
   const [verified, setVerified] = useState(false)
   const [hasProfile, setHasProfile] = useState(false)
   const [message, setMessage] = useState('')
+  const [copied, setCopied] = useState(false)
   const [timestamp] = useState(Math.floor(Date.now() / 1000))
   const name = watch('name')
   const website = watch('website')
@@ -93,6 +98,14 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
   const [updateProfile] = useMutation(UPDATE_PROFILE)
   const [debouncedSignature] = useDebounce(signature, 200)
   const [debouncedExternalAccount] = useDebounce(externalAccount, 200)
+
+  useEffect(() => {
+    if (copied) {
+      setTimeout(() => {
+        setCopied(false)
+      }, 2000)
+    }
+  }, [copied])
 
   useEffect(() => {
     setMessage(
@@ -266,6 +279,10 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       </Button>
       <Modal isOpen={createProfileModalOpen} title="Profile Setup">
         <>
+          <div sx={{ mb: 2 }}>
+            Approve the signing prompts in your web3 wallet to continue setting
+            up your profile.
+          </div>
           <div
             sx={{
               border: '1px solid',
@@ -491,30 +508,106 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
               </>
             )}
             <ExternalAccount refetch={refetch} threeBoxSpace={threeBoxSpace}>
-              <ol sx={{ pl: 15, pt: 4 }}>
-                <li sx={{ mb: 3 }}>
+              <div sx={{ pt: 2, mb: 1, fontSize: 4 }}>Instructions</div>
+              <ol sx={{ pl: 15 }}>
+                <li sx={{ mb: 4 }}>
                   <div sx={{ mb: 2 }}>
-                    Run livepeer-cli and select option "Sign a message". When
-                    prompted for the message to sign, copy and paste the message
-                    below.
+                    Run the Livepeer CLI* and select the option to "Sign a
+                    message". When prompted for a message to sign, copy and
+                    paste the following message:
                   </div>
                   <div
                     sx={{
                       p: 2,
+                      mb: 1,
+                      position: 'relative',
                       color: 'primary',
                       bg: 'background',
                       borderRadius: 4,
                       fontFamily: 'monospace',
                     }}
-                    dangerouslySetInnerHTML={{
-                      __html: message,
-                    }}
-                  />
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: message,
+                      }}
+                    />
+
+                    <CopyToClipboard
+                      text={message.replace(/<br ?\/?>/g, '\n')}
+                      onCopy={() => setCopied(true)}
+                    >
+                      <Flex
+                        data-for="copyMessage"
+                        data-tip={`${
+                          copied ? 'Copied' : 'Copy message to clipboard'
+                        }`}
+                        sx={{
+                          ml: 1,
+                          mt: '3px',
+                          position: 'absolute',
+                          right: 12,
+                          top: 10,
+                          cursor: 'pointer',
+                          borderRadius: 1000,
+                          bg: 'surface',
+                          width: 26,
+                          height: 26,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <ReactTooltip
+                          id="copyMessage"
+                          className="tooltip"
+                          place="left"
+                          type="dark"
+                          effect="solid"
+                        />
+                        {copied ? (
+                          <Check
+                            sx={{
+                              width: 12,
+                              height: 12,
+                              color: 'muted',
+                            }}
+                          />
+                        ) : (
+                          <Copy
+                            sx={{
+                              width: 12,
+                              height: 12,
+                              color: 'muted',
+                            }}
+                          />
+                        )}
+                      </Flex>
+                    </CopyToClipboard>
+                  </div>
+
+                  <div sx={{ fontSize: 0 }}>
+                    *
+                    <i>
+                      The option to sign a message via the Livepeer CLI will
+                      become available in an upcoming go-livepeer release. If
+                      you'd like to link an external account before then, we
+                      recommend signing this message offline using{' '}
+                      <a
+                        href="https://www.mycrypto.com/sign-and-verify-message/sign"
+                        rel="noopener noreferrer"
+                        target="__blank"
+                        sx={{ color: 'primary' }}
+                      >
+                        mycrypto.com
+                      </a>{' '}
+                      or geth.
+                    </i>
+                  </div>
                 </li>
                 <li sx={{ mb: 3 }}>
                   <div sx={{ mb: 2 }}>
-                    The cli will copy the Ethereum signed message signature to
-                    your clipboard. Paste it here.
+                    The Livepeer CLI will copy the Ethereum signed message
+                    signature to your clipboard. Paste it here.
                   </div>
                   <Textfield
                     inputRef={register}
@@ -524,10 +617,10 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                     sx={{ width: '100%' }}
                   />
                 </li>
-                <li sx={{ mb: 3 }}>
+                <li sx={{ mb: 0 }}>
                   <div sx={{ mb: 2 }}>
                     Verify the message was signed correctly by pasting your
-                    Livepeer Node address used in Livpeeer CLI.
+                    Livepeer Node address used in the Livpeeer CLI.
                   </div>
                   <Textfield
                     inputRef={register}

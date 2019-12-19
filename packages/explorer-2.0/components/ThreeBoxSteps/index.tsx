@@ -1,3 +1,6 @@
+/** @jsx jsx */
+import React from 'react'
+import { jsx, Flex, Box } from 'theme-ui'
 import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
@@ -5,20 +8,41 @@ import StepContent from '@material-ui/core/StepContent'
 
 function getSteps(hasProfile) {
   if (hasProfile) {
-    return ['Sign Message One', 'Sign Message Two']
+    return ['Sign message #1', 'Sign message #2']
   } else {
-    return ['Sign Message One', 'Sign Message Two', 'Sign Message Three']
+    return ['Sign message #1', 'Sign message #2', 'Sign message #3']
   }
 }
 
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return `Sign the message in your Web3 wallet to continue.`
+      return (
+        <Flex sx={{ flexDirection: 'column' }}>
+          <img
+            sx={{ borderRadius: 6, maxWidth: 200 }}
+            src="/img/sign-message-screenshot-1.png"
+          />
+        </Flex>
+      )
     case 1:
-      return `Sign another message in your Web3 wallet`
+      return (
+        <Flex sx={{ flexDirection: 'column' }}>
+          <img
+            sx={{ borderRadius: 6, maxWidth: 200 }}
+            src="/img/sign-message-screenshot-2.png"
+          />
+        </Flex>
+      )
     case 2:
-      return `Last one. Promise!`
+      return (
+        <Flex sx={{ flexDirection: 'column' }}>
+          <img
+            sx={{ borderRadius: 6, maxWidth: 200 }}
+            src="/img/sign-message-screenshot-3.png"
+          />
+        </Flex>
+      )
     default:
       return 'Unknown step'
   }
