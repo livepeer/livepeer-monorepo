@@ -1,8 +1,14 @@
 /** @jsx jsx */
 import { Styled, jsx } from 'theme-ui'
 
-export default ({ variant = 'primary', size = 'normal', ...props }) => (
+export default ({
+  as = 'button',
+  variant = 'primary',
+  size = 'normal',
+  ...props
+}) => (
   <Styled.div
+    as={as}
     {...props}
     sx={{
       appearance: 'none',
@@ -15,7 +21,7 @@ export default ({ variant = 'primary', size = 'normal', ...props }) => (
       fontWeight: '700',
       textTransform: 'uppercase',
       m: 0,
-      px: 2,
+      px: 3,
       py: 1,
       border: 0,
       borderRadius: 6,

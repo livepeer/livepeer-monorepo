@@ -27,7 +27,9 @@ export default ({ delegate = null }) => {
                 lineHeight: 'heading',
               }}
             >
-              {delegate.id.replace(delegate.id.slice(7, 37), '…')}
+              {process.env.THREEBOX_ENABLED && delegate.threeBoxSpace.name
+                ? delegate.threeBoxSpace.name
+                : delegate.id.replace(delegate.id.slice(7, 37), '…')}
             </div>
           }
         />

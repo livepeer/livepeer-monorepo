@@ -10,6 +10,7 @@ import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
 import Button from '../Button'
 import { useWeb3Mutation } from '../../hooks'
+import Utils from 'web3-utils'
 
 export default ({ lock }) => {
   const context = useWeb3Context()
@@ -75,7 +76,7 @@ export default ({ lock }) => {
           <StakingFlow
             action="withdraw"
             account={context.account}
-            amount={lock.amount}
+            amount={Utils.fromWei(lock.amount)}
           />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {txHash && !isMined && (

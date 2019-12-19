@@ -182,7 +182,7 @@ export default ({ items = [] }) => {
                           height: '100%',
                           border: '0',
                         }}
-                        src={`https://uniswap.livepeerorg.now.sh/swap/0x58b6a8a3302369daec383334672404ee733ab239?connector=${
+                        src={`https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239?connector=${
                           context.connectorName
                             ? context.connectorName
                             : 'Injected'

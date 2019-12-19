@@ -28,6 +28,12 @@ type Mutation {
   
   "Submits a round initialization transaction"
   initializeRound: JSON
+
+  "Update an account 3box space"
+  updateProfile(name: String, website: String, description: String, image: String, proof: JSON, defaultProfile: String): ThreeBoxSpace
+
+  "Unlink an external account from a user's 3box"
+  removeAddressLink(address: String): Boolean
 }`
 
 export default Mutation

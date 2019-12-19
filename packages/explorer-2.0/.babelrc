@@ -1,7 +1,6 @@
 {
   "presets": ["next/babel"],
   "plugins": [
-    "inline-react-svg",
-    ["@babel/plugin-proposal-optional-chaining"]
+    "inline-react-svg"
   ]
 }

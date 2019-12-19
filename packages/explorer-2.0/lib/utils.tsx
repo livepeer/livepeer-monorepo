@@ -68,22 +68,32 @@ export const MAXIUMUM_VALUE_UINT256 =
 export const MAX_EARNINGS_CLAIMS_ROUNDS = 100
 
 export function removeURLParameter(url, parameter) {
-    //prefer to use l.search if you have a location/link object
-    var urlparts = url.split('?');   
-    if (urlparts.length >= 2) {
+  //prefer to use l.search if you have a location/link object
+  var urlparts = url.split('?')
+  if (urlparts.length >= 2) {
+    var prefix = encodeURIComponent(parameter) + '='
+    var pars = urlparts[1].split(/[&;]/g)
 
-        var prefix = encodeURIComponent(parameter) + '=';
-        var pars = urlparts[1].split(/[&;]/g);
-
-        //reverse iteration as may be destructive
-        for (var i = pars.length; i-- > 0;) {    
-            //idiom for string.startsWith
-            if (pars[i].lastIndexOf(prefix, 0) !== -1) {  
-                pars.splice(i, 1);
-            }
-        }
-
-        return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+    //reverse iteration as may be destructive
+    for (var i = pars.length; i-- > 0; ) {
+      //idiom for string.startsWith
+      if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+        pars.splice(i, 1)
+      }
     }
-    return url;
+
+    return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '')
+  }
+  return url
+}
+
+export const nl2br = (str, is_xhtml = true) => {
+  if (typeof str === 'undefined' || str === null) {
+    return ''
+  }
+  var breakTag = is_xhtml || typeof is_xhtml === 'undefined' ? '<br />' : '<br>'
+  return (str + '').replace(
+    /([^>\r\n]?)(\r\n|\n\r|\r|\n)/g,
+    '$1' + breakTag + '$2',
+  )
 }

@@ -1,61 +1,77 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useWeb3Context } from 'web3-react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
-const GET_ACCOUNT = gql`
-  query($account: ID!) {
-    account(id: $account) {
-      id
-      tokenBalance
-      ethBalance
-      allowance
-    }
-    delegator(id: $account) {
-      id
-      pendingStake
-      startRound
-      lastClaimRound {
-        id
-      }
-      bondedAmount
-      unbondingLocks {
-        withdrawRound
-      }
-      delegate {
-        id
-        rewardCut
-      }
-    }
-  }
-`
-
 export function useAccount(address = null) {
-  const context = useWeb3Context()
+  const GET_ACCOUNT = gql`
+    query($account: ID!) {
+      account(id: $account) {
+        id
+        tokenBalance
+        ethBalance
+        allowance
+      }
+      threeBoxSpace(id: $account) {
+        __typename
+        id
+        did
+        name
+        website
+        description
+        image
+        addressLinks
+        defaultProfile
+      }
+      delegator(id: $account) {
+        id
+        pendingStake
+        startRound
+        lastClaimRound {
+          id
+        }
+        bondedAmount
+        unbondingLocks {
+          withdrawRound
+        }
+        delegate {
+          id
+          rewardCut
+          threeBoxSpace {
+            __typename
+            name
+            website
+            image
+            description
+          }
+        }
+      }
+    }
+  `
   const [account, setAccount] = useState(null)
   const [delegator, setDelegator] = useState(null)
+  const [threeBoxSpace, setThreeBoxSpace] = useState(null)
 
-  const { data } = useQuery(GET_ACCOUNT, {
+  const { data, refetch } = useQuery(GET_ACCOUNT, {
     variables: {
-      account: address
-        ? address.toLowerCase()
-        : context.account && context.account.toLowerCase(),
+      account: address && address.toLowerCase(),
     },
-    pollInterval: 5000,
-    skip: !context.account,
+    skip: !address,
+    pollInterval: 10000,
   })
 
   useEffect(() => {
-    if (data && context.active) {
+    if (data) {
       setAccount(data.account ? data.account : null)
       setDelegator(data.delegator ? data.delegator : null)
+      setThreeBoxSpace(data.threeBoxSpace ? data.threeBoxSpace : null)
     } else {
       setAccount(null)
       setDelegator(null)
+      setThreeBoxSpace(null)
     }
-  }, [data, context.active])
+  }, [data])
 
-  return { account, delegator }
+  return { account, delegator, threeBoxSpace, refetch, query: GET_ACCOUNT }
 }
 
 export function useWeb3Mutation(mutation, options) {

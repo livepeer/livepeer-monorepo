@@ -18,6 +18,7 @@ export default ({ goTo, nextStep }) => {
       txHash: approve(type: $type, amount: $amount)
     }
   `
+
   const {
     result: { mutate: approve, isBroadcasted, isMined, txHash },
     reset,

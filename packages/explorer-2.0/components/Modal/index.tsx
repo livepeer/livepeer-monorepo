@@ -2,7 +2,6 @@
 import React from 'react'
 import { jsx, Styled, Flex } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
-import { useTransition } from 'react-spring'
 
 interface Props {
   isOpen: boolean
@@ -31,7 +30,10 @@ export default ({
       <Styled.div
         as={DialogOverlay}
         isOpen={isOpen}
-        sx={{ background: 'rgba(0, 0, 0, 0.5)', ...props }}
+        sx={{
+          background: 'rgba(0, 0, 0, 0.5)',
+          ...props,
+        }}
         onDismiss={onDismiss}
         {...props}
       >
@@ -41,7 +43,7 @@ export default ({
           as={DialogContent}
           sx={
             title
-              ? { p: 3, bg: 'surface', borderRadius: 10 }
+              ? { maxWidth: 700, p: 3, bg: 'surface', borderRadius: 10 }
               : {
                   borderRadius: 10,
                   margin: '40px auto',
@@ -51,7 +53,7 @@ export default ({
           }
         >
           {title && (
-            <Flex sx={{ alignItems: 'center', mb: 3 }}>
+            <Flex sx={{ alignItems: 'center', mb: 4 }}>
               {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
               <Styled.h2>{title}</Styled.h2>
             </Flex>

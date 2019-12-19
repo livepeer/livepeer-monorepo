@@ -23,6 +23,14 @@ const GET_DATA = gql`
       status
       active
       totalStake
+      threeBoxSpace {
+        __typename
+        did
+        name
+        website
+        description
+        image
+      }
       delegator {
         startRound
         bondedAmount
@@ -45,6 +53,13 @@ const GET_DATA = gql`
       index
       rewardCut
       id
+      threeBoxSpace {
+        __typename
+        name
+        website
+        description
+        image
+      }
     }
     currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
       id
@@ -54,7 +69,7 @@ const GET_DATA = gql`
 
 const Index = () => {
   const context = useWeb3Context()
-  const myAccount = useAccount(context.account ? context.account : '')
+  const myAccount = useAccount(context.account)
   const { data, loading, error } = useQuery(GET_DATA, {
     ssr: false,
   })

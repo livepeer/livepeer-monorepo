@@ -13,7 +13,7 @@ import { useAccount } from '../../hooks'
 export default ({ goTo, nextStep }) => {
   const router = useRouter()
   const context = useWeb3Context()
-  const { account } = useAccount()
+  const { account } = useAccount(context.account)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {

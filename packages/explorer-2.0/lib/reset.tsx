@@ -8,6 +8,9 @@ const Reset = () =>
       '*': {
         boxSizing: 'border-box',
         fontFamily: theme.fonts.body,
+        outline: 'none',
+        lineHeight: 1.5,
+        color: 'text',
       },
       body: {
         margin: '0',
@@ -22,7 +25,7 @@ const Reset = () =>
         textDecoration: 'none',
       },
       ul: {
-        paddingLeft: 20
+        paddingLeft: 20,
       },
       button: {
         border: 0,
@@ -31,10 +34,10 @@ const Reset = () =>
         backgroundColor: 'transparent',
       },
       '.MuiPaper-root div:nth-of-type(2)': {
-        overflow: 'initial !important'
+        overflow: 'initial !important',
       },
       '.MuiPaper-root div:nth-of-type(2) > div > div': {
-        overflow: 'initial !important'
+        overflow: 'initial !important',
       },
       ':root': {
         '--reach-dialog': 1,
@@ -56,15 +59,42 @@ const Reset = () =>
         outline: 'none',
       },
       '.tooltip': {
+        boxShadow: '0px 4px 4px rgba(0,0,0,0.15)',
         backgroundColor: `${theme.colors.surface} !important`,
         fontWeight: 400,
         color: `${theme.colors.text} !important`,
         maxWidth: 220,
         textTransform: 'initial',
         opacity: '1 !important',
-        borderRadius: '6px !important'
-      }
+        borderRadius: '6px !important',
+      },
+      '.MuiStepper-vertical': {
+        marginBottom: '-8px',
+        padding: '0 !important',
+      },
+      '.MuiPaper-root': {
+        backgroundColor: 'transparent !important',
+        color: `${theme.colors.text} !important`,
+      },
+      '.MuiStepLabel-label': {
+        color: `${theme.colors.muted} !important`,
+      },
+      '.MuiStepLabel-active': {
+        color: `${theme.colors.text} !important`,
+      },
+      '.MuiStepIcon-completed': {
+        color: `${theme.colors.primary} !important`,
+      },
+      '.MuiStepIcon-active': {
+        color: `${theme.colors.primary} !important`,
+      },
+      '.MuiStepIcon-active .MuiStepIcon-text': {
+        fill: `${theme.colors.surface} !important`,
+      },
+      '.MuiStepIcon-text': {
+        fontFamily: `${theme.fonts.body} !important`,
+      },
     },
   })
 
-  export default Reset
+export default Reset

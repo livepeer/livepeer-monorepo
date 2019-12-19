@@ -6,14 +6,15 @@ import Modal from '../Modal'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
+import Help from '../../public/img/help.svg'
 import { useWeb3Mutation } from '../../hooks'
-import { useWeb3Context } from 'web3-react'
 import gql from 'graphql-tag'
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Banner from '../Banner'
+import ReactTooltip from 'react-tooltip'
 
 export default ({ account, delegator, currentRound, context }) => {
-  if (!account || (delegator && !delegator.lastClaimRound)) {
+  if (!account || !delegator || (delegator && !delegator.lastClaimRound)) {
     return null
   }
 
@@ -72,19 +73,31 @@ export default ({ account, delegator, currentRound, context }) => {
         label={
           <div sx={{ pr: 3 }}>
             It's been over 100 rounds since your last claim.
-            {/* <Help
-              sx={{
-                position: 'relative',
-                ml: 1,
-                top: '2px',
-                width: 12,
-                height: 12,
-              }}
-            /> */}
+            <div sx={{ display: 'inline-flex' }}>
+              <ReactTooltip
+                id="tooltip-claim"
+                className="tooltip"
+                place="top"
+                type="dark"
+                effect="solid"
+              />
+              <Help
+                data-tip="Anytime you stake, unstake or restake, your rewards are automatically claimed. However, if it's been over 100 rounds since you performed any of these actions, the protocol requires that you manually claim your earnings before taking any further action. Rewards will continue to compound, regardless of whether you claim or not."
+                data-for="tooltip-claim"
+                sx={{
+                  position: 'relative',
+                  top: '2px',
+                  color: 'muted',
+                  cursor: 'pointer',
+                  ml: 1,
+                }}
+              />
+            </div>
           </div>
         }
         button={
           <Button
+            variant="primarySmall"
             onClick={async () => {
               try {
                 await batchClaimEarnings()

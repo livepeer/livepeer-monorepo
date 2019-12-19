@@ -27,6 +27,13 @@ const GET_DATA = gql`
       feeShare
       totalStake
       active
+      threeBoxSpace {
+        __typename
+        name
+        website
+        image
+        description
+      }
     }
     protocol {
       totalTokenSupply
@@ -45,20 +52,17 @@ const AccountPage = () => {
   const context = useWeb3Context()
   const { query, asPath } = router
   const slug = query.slug
-  const { account, delegator } = useAccount(query.account.toString())
+  const { account, delegator, threeBoxSpace, refetch } = useAccount(
+    query.account,
+  )
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
     ssr: false,
-    pollInterval: 5000,
   })
 
   const myAccount = useAccount(context.account)
-
-  if (error) {
-    console.error(error)
-  }
 
   if (loading) {
     return (
@@ -113,8 +117,10 @@ const AccountPage = () => {
         <Profile
           account={query.account.toString()}
           delegator={delegator}
+          threeBoxSpace={threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}
           isMyAccount={isMyAccount}
+          refetch={refetch}
           role={role}
           sx={{ mb: 4 }}
           status={getDelegatorStatus(delegator, currentRound)}
@@ -170,12 +176,6 @@ function getTabs(
     },
   ]
   if (role == 'Orchestrator') {
-    // tabs.splice(0, 0, {
-    //   name: 'Tokenholders',
-    //   href: '/accounts/[account]/[slug]',
-    //   as: `/accounts/${account}/tokenholders`,
-    //   isActive: asPath == `/accounts/${account}/tokenholders`,
-    // })
     tabs.unshift({
       name: 'Campaign',
       href: '/accounts/[account]/[slug]',

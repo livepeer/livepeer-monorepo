@@ -50,7 +50,7 @@ export default () => {
       skip: 0,
     },
     ssr: false,
-    pollInterval: 5000,
+    pollInterval: 10000,
     notifyOnNetworkStatusChange: true,
   })
 

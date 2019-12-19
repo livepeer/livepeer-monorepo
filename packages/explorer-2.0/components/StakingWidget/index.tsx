@@ -33,11 +33,14 @@ export default ({
   const [amount, setAmount] = useState('')
   const [action, setAction] = useState('stake')
   const context = useWeb3Context()
+
   return (
     <div className="tour-step-7">
       {context.active && (
         <>
-          <GetLPTBanner account={account} context={context} />
+          {delegator && !delegator.bondedAmount && (
+            <GetLPTBanner account={account} context={context} />
+          )}
           {account &&
             parseFloat(Utils.fromWei(account.allowance)) == 0 &&
             parseFloat(Utils.fromWei(account.tokenBalance)) != 0 && (
@@ -60,7 +63,7 @@ export default ({
         }}
       >
         <Header transcoder={transcoder} />
-        <div sx={{ pt: 1, pb: 2, px: 3 }}>
+        <div sx={{ pt: 1, pb: 2, px: 2 }}>
           <Tabs
             onChange={(index: number) => setAction(index ? 'unstake' : 'stake')}
           >
@@ -98,7 +101,7 @@ export default ({
             delegator={delegator}
             transcoder={transcoder}
             action={action}
-            amount={parseFloat(amount)}
+            amount={amount}
           />
         </div>
       </Box>

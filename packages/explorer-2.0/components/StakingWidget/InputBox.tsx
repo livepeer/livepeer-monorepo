@@ -14,15 +14,21 @@ export default ({
   setAmount,
   protocol,
 }) => {
-  const tokenBalance =
-    account && parseFloat(Utils.fromWei(account.tokenBalance.toString()))
+  const tokenBalance = account && Utils.fromWei(account.tokenBalance.toString())
 
-  const stake =
-    delegator &&
-    Math.max(
-      delegator.bondedAmount ? Utils.fromWei(delegator.bondedAmount) : 0,
-      delegator.pendingStake ? Utils.fromWei(delegator.pendingStake) : 0,
+  let stake = '0'
+  if (
+    Utils.fromWei(delegator?.bondedAmount ? delegator?.bondedAmount : '0') >
+    Utils.fromWei(delegator?.pendingStake ? delegator?.pendingStake : '0')
+  ) {
+    stake = Utils.fromWei(
+      delegator?.bondedAmount ? delegator?.bondedAmount : '0',
     )
+  } else {
+    stake = Utils.fromWei(
+      delegator?.pendingStake ? delegator?.pendingStake : '0',
+    )
+  }
 
   return (
     <div
@@ -54,12 +60,12 @@ export default ({
                   />
                   Balance:{' '}
                   <span sx={{ fontFamily: 'monospace' }}>
-                    {tokenBalance.toPrecision(4)}
+                    {parseFloat(tokenBalance)}
                   </span>
                 </div>
               ) : (
                 <>
-                  {stake > 0 && (
+                  {stake && (
                     <div
                       data-tip="Enter max"
                       data-for="stake"
@@ -75,7 +81,7 @@ export default ({
                       />
                       Stake:{' '}
                       <span sx={{ fontFamily: 'monospace' }}>
-                        {stake.toPrecision(4)}
+                        {parseFloat(stake).toPrecision(4)}
                       </span>
                     </div>
                   )}

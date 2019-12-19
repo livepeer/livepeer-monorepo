@@ -13,6 +13,7 @@ import { getLayout } from '../layouts/main'
 import { useCookies } from 'react-cookie'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import Spinner from '../components/Spinner'
 
 const GET_TOUR_OPEN = gql`
   {
@@ -23,6 +24,7 @@ const GET_TOUR_OPEN = gql`
 const ConnectWallet = () => {
   const context = useWeb3Context()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
+  const [connecting, setConnecting] = useState(false)
   const [cookies, setCookie] = useCookies(['connector'])
   const { data } = useQuery(GET_TOUR_OPEN)
 
@@ -40,8 +42,6 @@ const ConnectWallet = () => {
   useEffect(() => {
     if (data.tourOpen && context.active) {
       Router.push('/connect-wallet?connected=true')
-    } else {
-      context.unsetConnector()
     }
   }, [context.active, cookies.connector])
 
@@ -91,16 +91,22 @@ const ConnectWallet = () => {
             sx={{ mb: 4 }}
             onClick={async () => {
               try {
+                setConnecting(true)
                 await context.setConnector(selectedProvider, {
                   suppressAndThrowErrors: true,
                 })
                 setCookie('connector', selectedProvider, { path: '/' })
+                setConnecting(false)
               } catch (e) {
                 console.warn(e)
+                setConnecting(false)
               }
             }}
           >
-            Connect
+            <Flex sx={{ alignItems: 'center' }}>
+              {connecting && <Spinner sx={{ width: 16, height: 16, mr: 1 }} />}
+              Connect
+            </Flex>
           </Button>
           <Flex
             sx={{

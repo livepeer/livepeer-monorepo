@@ -56,9 +56,61 @@ const theme = {
         transition: 'border-color .2s',
       },
     },
+    outline: {
+      color: 'text',
+      bg: 'transparent',
+      border: '1px solid',
+      borderColor: 'text',
+      transition: 'border-color .2s',
+      '&:hover': {
+        borderColor: 'text',
+        transition: 'border-color .2s',
+      },
+    },
+    primarySmall: {
+      color: 'background',
+      bg: 'primary',
+      py: '6px',
+      px: 2,
+    },
+    primaryOutlineSmall: {
+      bg: 'transparent',
+      color: 'primary',
+      border: '1px solid',
+      borderColor: 'primary',
+      fontSize: 0,
+      px: 1,
+      py: '2px',
+    },
+    danger: {
+      borderRadius: 6,
+      cursor: 'pointer',
+      backgroundColor: 'rgba(211, 47, 47, .1)',
+      transition: '.2s background-color',
+      color: 'red',
+      '&:hover': {
+        transition: '.2s background-color',
+        backgroundColor: 'rgba(211, 47, 47, .2)',
+      },
+    },
+    dangerSmall: {
+      borderRadius: 6,
+      cursor: 'pointer',
+      py: '6px',
+      px: 2,
+      backgroundColor: 'rgba(211, 47, 47, .1)',
+      transition: '.2s background-color',
+      color: 'red',
+      '&:hover': {
+        transition: '.2s background-color',
+        backgroundColor: 'rgba(211, 47, 47, .2)',
+      },
+    },
     rainbow: {
-      background: 'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)'
-    }
+      color: 'text',
+      background:
+        'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)',
+    },
   },
   styles: {
     root: {

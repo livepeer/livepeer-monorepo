@@ -136,7 +136,6 @@ export default () => {
       skip: 0,
     },
     ssr: false,
-    pollInterval: 5000,
     notifyOnNetworkStatusChange: true,
   })
 

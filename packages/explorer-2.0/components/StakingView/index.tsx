@@ -1,4 +1,5 @@
 /** @jsx jsx */
+import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
@@ -11,6 +12,8 @@ import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
 import DelegateCard from '../DelegateCard'
+import ReactTooltip from 'react-tooltip'
+import Help from '../../public/img/help.svg'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -23,6 +26,12 @@ const GET_DATA = gql`
       delegate {
         id
         totalStake
+        threeBoxSpace {
+          name
+          website
+          image
+          description
+        }
       }
       unbondingLocks {
         id
@@ -56,7 +65,6 @@ export default () => {
       account: account.toLowerCase(),
     },
     ssr: false,
-    pollInterval: 5000,
   })
 
   if (error) {
@@ -125,7 +133,29 @@ export default () => {
       >
         <Card
           sx={{ flex: 1, mb: 2 }}
-          title="Total Staked"
+          title={
+            <Flex sx={{ alignItems: 'center' }}>
+              <div sx={{ color: 'muted' }}>Total Staked</div>
+              <Flex>
+                <ReactTooltip
+                  id="tooltip-total-staked"
+                  className="tooltip"
+                  place="top"
+                  type="dark"
+                  effect="solid"
+                />
+                <Help
+                  data-tip="Your current total stake"
+                  data-for="tooltip-total-staked"
+                  sx={{
+                    color: 'muted',
+                    cursor: 'pointer',
+                    ml: 1,
+                  }}
+                />
+              </Flex>
+            </Flex>
+          }
           subtitle={
             <div
               sx={{
@@ -142,11 +172,29 @@ export default () => {
         >
           <div sx={{ mt: 3 }}>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
-              <span sx={{ color: 'muted' }}>Principal</span>
-              <span>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(principal, 3)}
-                </span>
+              <Flex sx={{ alignItems: 'center' }}>
+                <div sx={{ color: 'muted' }}>Principal</div>
+                <Flex>
+                  <ReactTooltip
+                    id="tooltip-principal"
+                    className="tooltip"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  />
+                  <Help
+                    data-tip="How much you've staked all-time, minus rewards"
+                    data-for="tooltip-principal"
+                    sx={{
+                      color: 'muted',
+                      cursor: 'pointer',
+                      ml: 1,
+                    }}
+                  />
+                </Flex>
+              </Flex>
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(principal, 3)}
               </span>
             </Flex>
             <Flex
@@ -156,21 +204,59 @@ export default () => {
                 justifyContent: 'space-between',
               }}
             >
-              <span sx={{ color: 'muted' }}>Unstaked</span>
-              <span>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {unbonded > 0 ? (
-                    <span sx={{ color: 'red' }}>
-                      -{abbreviateNumber(unbonded, 3)}
-                    </span>
-                  ) : (
-                    0
-                  )}
-                </span>
+              <Flex sx={{ alignItems: 'center' }}>
+                <div sx={{ color: 'muted' }}>Unstaked</div>
+                <Flex>
+                  <ReactTooltip
+                    id="tooltip-unstaked"
+                    className="tooltip"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  />
+                  <Help
+                    data-tip="How much you've unstaked, all-time"
+                    data-for="tooltip-unstaked"
+                    sx={{
+                      color: 'muted',
+                      cursor: 'pointer',
+                      ml: 1,
+                    }}
+                  />
+                </Flex>
+              </Flex>
+              <span sx={{ fontFamily: 'monospace' }}>
+                {unbonded > 0 ? (
+                  <span sx={{ color: 'red' }}>
+                    -{abbreviateNumber(unbonded, 3)}
+                  </span>
+                ) : (
+                  0
+                )}
               </span>
             </Flex>
             <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
-              <span sx={{ color: 'muted' }}>Rewards</span>
+              <Flex sx={{ alignItems: 'center' }}>
+                <div sx={{ color: 'muted' }}>Rewards</div>
+                <Flex>
+                  <ReactTooltip
+                    id="tooltip-rewards"
+                    className="tooltip"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  />
+                  <Help
+                    data-tip="Your total rewards earned, all-time. Rewards are automatically staked."
+                    data-for="tooltip-rewards"
+                    sx={{
+                      color: 'muted',
+                      cursor: 'pointer',
+                      ml: 1,
+                    }}
+                  />
+                </Flex>
+              </Flex>
               <span>
                 <span sx={{ color: 'primary', fontFamily: 'monospace' }}>
                   +{abbreviateNumber(rewards, 6)}
@@ -182,7 +268,29 @@ export default () => {
         {data.delegator.delegate && (
           <Card
             sx={{ flex: 1, mb: 2 }}
-            title="Stake Equity"
+            title={
+              <Flex sx={{ alignItems: 'center' }}>
+                <div sx={{ color: 'muted' }}>Stake Equity</div>
+                <Flex>
+                  <ReactTooltip
+                    id="tooltip-equity"
+                    className="tooltip"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  />
+                  <Help
+                    data-tip="Your stake equity relative to the entire network."
+                    data-for="tooltip-equity"
+                    sx={{
+                      color: 'muted',
+                      cursor: 'pointer',
+                      ml: 1,
+                    }}
+                  />
+                </Flex>
+              </Flex>
+            }
             subtitle={
               <div
                 sx={{
@@ -213,7 +321,7 @@ export default () => {
                 </span>
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
-                    {abbreviateNumber(pendingStake, 3)}
+                    {abbreviateNumber(pendingStake, 5)}
                   </span>
                 </span>
               </Flex>

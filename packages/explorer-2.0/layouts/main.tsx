@@ -12,10 +12,12 @@ import { useWeb3Context } from 'web3-react'
 import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
 import Snackbar from '../components/Snackbar'
+import { useAccount } from '../hooks'
 
 const Layout = ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
   const { account } = context
+  const { threeBoxSpace } = useAccount(account)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [cookies, setCookie, removeCookie] = useCookies([
     'dismissedOldExplorerSnackbar',
@@ -47,7 +49,11 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
         'Connect Wallet'
       ) : (
         <div>
-          <div sx={{ lineHeight: 1.5 }}>My Account</div>
+          <div sx={{ lineHeight: 1.5 }}>
+            {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
+              ? threeBoxSpace.name
+              : 'My Account'}
+          </div>
           <div sx={{ fontSize: 0 }}>
             {account.replace(account.slice(5, 39), '…')}
           </div>
