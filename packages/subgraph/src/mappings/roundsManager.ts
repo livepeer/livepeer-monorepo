@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, dataSource } from '@graphprotocol/graph-ts'
+import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import { RoundsManager, NewRound } from '../types/RoundsManager/RoundsManager'
@@ -45,8 +45,8 @@ export function newRound(event: NewRound): void {
       pool.round = roundNumber.toString()
       pool.delegate = currentTranscoder.toHex()
       pool.totalStake = transcoder.totalStake
-      pool.rewardCut = transcoder.rewardCut
-      pool.feeShare = transcoder.feeShare
+      pool.rewardCut = transcoder.pendingRewardCut
+      pool.feeShare = transcoder.pendingFeeShare
 
       // Apply store updates
       pool.save()

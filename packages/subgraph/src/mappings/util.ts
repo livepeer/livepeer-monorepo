@@ -67,7 +67,7 @@ export function getRoundsManagerInstance(network: string): RoundsManager {
     Address.fromString(
       network == 'mainnet'
         ? '3984fc4ceeef1739135476f625d36d6c35c40dc3'
-        : '572d1591bD41f50130FD0212058eAe34F1B17290',
+        : 'EB0EF46B5771D523402234FF0d7596d2C62411dE',
     ),
   )
 }
@@ -77,7 +77,7 @@ export function getBondingManagerInstance(network: string): BondingManager {
     Address.fromString(
       network == 'mainnet'
         ? '511bc4556d823ae99630ae8de28b9b80df90ea2e'
-        : 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95',
+        : 'F6b0Ceb5e3f25b6FBecf8186F8A68B4E42A96a17',
     ),
   )
 }

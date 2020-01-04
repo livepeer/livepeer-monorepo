@@ -25,24 +25,24 @@ mainnet:
 rinkeby:
   contracts:
     bondingManager:
-      address: "e75a5DccfFe8939F7f16CC7f63EB252bB542FE95"
+      address: "F6b0Ceb5e3f25b6FBecf8186F8A68B4E42A96a17"
       startBlock: 0
     bondingManagerLIP11:
-      address: "e75a5DccfFe8939F7f16CC7f63EB252bB542FE95"
+      address: "F6b0Ceb5e3f25b6FBecf8186F8A68B4E42A96a17"
       startBlock: 0
     bondingManagerLIP12:
-      address: "e75a5DccfFe8939F7f16CC7f63EB252bB542FE95"
+      address: "F6b0Ceb5e3f25b6FBecf8186F8A68B4E42A96a17"
       startBlock: 0
     roundsManager:
-      address: "572d1591bD41f50130FD0212058eAe34F1B17290"
+      address: "EB0EF46B5771D523402234FF0d7596d2C62411dE"
       startBlock: 0
     roundsManagerLIP12:
-      address: "572d1591bD41f50130FD0212058eAe34F1B17290"
+      address: "EB0EF46B5771D523402234FF0d7596d2C62411dE"
       startBlock: 0
     livepeerToken:
-      address: "23b814a57D53b1a7A860194F53401D0D639abED7"
+      address: "24f56eF2fED379421BEE64Ecafc2bC744f72522b"
       startBlock: 0
     minter:
-      address: "e5056d1fE48F562dd8AcB1BBFFa147223d448C1B"
+      address: "bbce46C5C018497f13197024171Fd442d9EF5a25"
       startBlock: 0
   networkName: rinkeby

@@ -53,9 +53,9 @@ dataSources:
           handler: withdrawStake
         - event: WithdrawFees(indexed address)
           handler: withdrawFees
-      callHandlers:
-        - function: claimEarnings(uint256)
-          handler: claimEarnings
+      # callHandlers:
+      #   - function: claimEarnings(uint256)
+      #     handler: claimEarnings
   - kind: ethereum/contract
     name: BondingManager_LIP11
     network: {{networkName}}
