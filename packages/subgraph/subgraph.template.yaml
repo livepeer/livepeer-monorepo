@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, earning pools, and staking rounds.
-repository: https://github.com/livepeer/livepeerjs/tree/streamflow/subgraph/packages/subgraph
+repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -53,9 +53,9 @@ dataSources:
           handler: withdrawStake
         - event: WithdrawFees(indexed address)
           handler: withdrawFees
-      # callHandlers:
-      #   - function: claimEarnings(uint256)
-      #     handler: claimEarnings
+      callHandlers:
+        - function: claimEarnings(uint256)
+          handler: claimEarnings
   - kind: ethereum/contract
     name: BondingManager_LIP11
     network: {{networkName}}
