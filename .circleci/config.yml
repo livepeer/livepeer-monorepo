@@ -75,7 +75,7 @@ aliases:
   # Install libsecret
   - &install-apt-packages
     name: Install apt packages
-    command: sudo apt install libsecret-1-0 libudev-dev
+    command: sudo apt install libsecret-1-0 libudev-dev libusb-1.0-0-dev
 
   # Extention of aws command
   - &s3-cmd-flags-values
