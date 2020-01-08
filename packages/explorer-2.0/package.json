@@ -114,5 +114,8 @@
   "main": "package.json",
   "engines": {
     "node": "10.x"
+  },
+  "resolutions": {
+    "web3-react/@0x/subproviders": "6.0.13"
   }
 }
