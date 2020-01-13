@@ -37,7 +37,7 @@
     tweetnacl "^1.0.1"
     tweetnacl-util "^0.15.0"
 
-"3id-blockchain-utils@^0.3.2":
+"3id-blockchain-utils@0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/3id-blockchain-utils/-/3id-blockchain-utils-0.3.2.tgz#25923311e88b71a53d6a7dd2d79b15ad23422c95"
   integrity sha512-5l8aZspimqrJPwJabcbz0fFsCwG0EO3f0A/peB7LPlwCZR0A6gbrwgKVY3NDXi45aaqJFTZ+1PmgLycB+iA/tQ==
@@ -211,10 +211,10 @@
     striptags "^3.0.1"
     word-wrap "^1.2.1"
 
-"@adamsoffer/livepeer-sdk@1.0.0-alpha.13":
-  version "1.0.0-alpha.13"
-  resolved "https://registry.yarnpkg.com/@adamsoffer/livepeer-sdk/-/livepeer-sdk-1.0.0-alpha.13.tgz#98e398a8910c5448cbc72b4fd0ec2cc089acab86"
-  integrity sha512-k7do3g2ZmtytQ7ZoPphabtZyg+PSltI8Mn38Tf5kHKri3l+aVSziLkIxW7Q368wQl+D4SJ0yyXiilQPUlrLAaw==
+"@adamsoffer/livepeer-sdk@1.0.0-streamflow-alpha.20":
+  version "1.0.0-streamflow-alpha.20"
+  resolved "https://registry.yarnpkg.com/@adamsoffer/livepeer-sdk/-/livepeer-sdk-1.0.0-streamflow-alpha.20.tgz#806c039b1e574cf303db6fff1069b1ea244f877a"
+  integrity sha512-hCPvLNTemRVsBVfVMy8408U7gwexg1HYlWbWuiopxvacJTTwgqLDCaVW/q6fo0oMBtE5EM86zK7DpocQTHOlPA==
   dependencies:
     "@babel/runtime" "^7.4.3"
     cross-env "^5.2.0"
@@ -29056,7 +29056,7 @@ react-select@^3.0.3:
     react-input-autosize "^2.2.2"
     react-transition-group "^2.2.1"
 
-react-show-more-text@^1.2.3:
+react-show-more-text@1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/react-show-more-text/-/react-show-more-text-1.2.3.tgz#c52ef8fd7901eee8f77d64b72eb7e51b15875baf"
   integrity sha512-Q0BOLtE5rD/zAoO+V1zioDvEp+Rsn2+t4V6i2uq4219oDg4PF+ZjriRuemE+HDnaEvfBS1nL/bky2DH5KdZn8A==
@@ -29245,11 +29245,6 @@ read-config-file@3.0.0:
     js-yaml "^3.10.0"
     json5 "^0.5.1"
     lazy-val "^1.0.3"
-
-read-more-react@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/read-more-react/-/read-more-react-1.0.9.tgz#8c32e5e5b23033be7b0b7a59b6d26980dcae473f"
-  integrity sha512-HOvuyxCD7BNYm7ncIpHx2ca5Deo5KSTRb9kYId/UakvYmrIY4H4wbxyrxXnynSqDTvVeTmLJxM0QLSra+TcheQ==
 
 "read-package-json@1 || 2", read-package-json@^2.0.0, read-package-json@^2.0.13:
   version "2.1.1"

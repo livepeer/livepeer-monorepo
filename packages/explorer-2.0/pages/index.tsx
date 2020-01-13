@@ -11,16 +11,13 @@ import { getLayout } from '../layouts/main'
 
 const GET_DATA = gql`
   {
-    transcoders(
-      where: { status: Registered }
-      orderBy: totalStake
-      orderDirection: desc
-    ) {
+    transcoders(orderBy: totalStake, orderDirection: desc) {
       id
       active
       feeShare
+      activationRound
+      deactivationRound
       rewardCut
-      status
       active
       totalStake
       threeBoxSpace {

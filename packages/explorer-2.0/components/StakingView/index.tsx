@@ -11,7 +11,6 @@ import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
-import DelegateCard from '../DelegateCard'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 
@@ -90,7 +89,10 @@ export default () => {
     if (isMyAccount) {
       return (
         <div sx={{ pt: 4 }}>
-          <span sx={{ mr: 2 }}>Time to get staking!</span>
+          <span sx={{ mr: 2 }}>
+            You haven't staked LPT. Stake LPT with an Orchestrator and begin
+            earnings rewards.
+          </span>
           <Link href="/" passHref>
             <Styled.a>View Orchestrators.</Styled.a>
           </Link>
@@ -121,7 +123,40 @@ export default () => {
   return (
     <div sx={{ pt: 4 }}>
       {data.delegator.delegate && (
-        <DelegateCard delegate={data.delegator.delegate} />
+        <Link
+          href={`/accounts/[account]/[slug]`}
+          as={`/accounts/${data.delegator.delegate.id}/campaign`}
+          passHref
+        >
+          <a>
+            <Card
+              sx={{
+                mb: 2,
+                cursor: 'pointer',
+                '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+              }}
+              title="Staked with"
+              subtitle={
+                <div
+                  sx={{
+                    fontSize: 5,
+                    fontWeight: 'text',
+                    color: 'text',
+                    lineHeight: 'heading',
+                  }}
+                >
+                  {process.env.THREEBOX_ENABLED &&
+                  data.delegator.delegate.threeBoxSpace.name
+                    ? data.delegator.delegate.threeBoxSpace.name
+                    : data.delegator.delegate.id.replace(
+                        data.delegator.delegate.id.slice(7, 37),
+                        '…',
+                      )}
+                </div>
+              }
+            />
+          </a>
+        </Link>
       )}
       <div
         sx={{
@@ -135,7 +170,7 @@ export default () => {
           sx={{ flex: 1, mb: 2 }}
           title={
             <Flex sx={{ alignItems: 'center' }}>
-              <div sx={{ color: 'muted' }}>Total Staked</div>
+              <div sx={{ color: 'muted' }}>Staked balance</div>
               <Flex>
                 <ReactTooltip
                   id="tooltip-total-staked"
@@ -145,7 +180,7 @@ export default () => {
                   effect="solid"
                 />
                 <Help
-                  data-tip="Your current total stake"
+                  data-tip="This is the amount currently delegated to an Orchestrator."
                   data-for="tooltip-total-staked"
                   sx={{
                     color: 'muted',
@@ -183,7 +218,7 @@ export default () => {
                     effect="solid"
                   />
                   <Help
-                    data-tip="How much you've staked all-time, minus rewards"
+                    data-tip="This is the amount initially staked."
                     data-for="tooltip-principal"
                     sx={{
                       color: 'muted',
@@ -215,7 +250,7 @@ export default () => {
                     effect="solid"
                   />
                   <Help
-                    data-tip="How much you've unstaked, all-time"
+                    data-tip="This is the amount unstaked over the lifetime of this account."
                     data-for="tooltip-unstaked"
                     sx={{
                       color: 'muted',
@@ -247,7 +282,7 @@ export default () => {
                     effect="solid"
                   />
                   <Help
-                    data-tip="Your total rewards earned, all-time. Rewards are automatically staked."
+                    data-tip="Account's total rewards earned all-time."
                     data-for="tooltip-rewards"
                     sx={{
                       color: 'muted',
@@ -280,7 +315,7 @@ export default () => {
                     effect="solid"
                   />
                   <Help
-                    data-tip="Your stake equity relative to the entire network."
+                    data-tip="Account's equity relative to the entire network."
                     data-for="tooltip-equity"
                     sx={{
                       color: 'muted',

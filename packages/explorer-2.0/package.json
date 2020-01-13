@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "3box": "1.13.2",
-    "3id-blockchain-utils": "^0.3.2",
-    "@adamsoffer/livepeer-sdk": "1.0.0-alpha.13",
+    "3id-blockchain-utils": "0.3.2",
+    "@adamsoffer/livepeer-sdk": "1.0.0-streamflow-alpha.20",
     "@apollo/react-hooks": "^3.1.3",
     "@apollo/react-ssr": "^3.1.3",
     "@babel/core": "^7.5.5",
@@ -95,13 +95,12 @@
     "react-inlinesvg": "^1.1.5",
     "react-joyride": "^2.1.1",
     "react-select": "^3.0.3",
-    "react-show-more-text": "^1.2.3",
+    "react-show-more-text": "1.2.3",
     "react-spring": "^8.0.27",
     "react-table": "7.0.0-beta.1",
     "react-tooltip": "^3.11.1",
     "react-use": "^12.2.0",
     "reactour": "1.15.4",
-    "read-more-react": "^1.0.9",
     "styled-components": "^4.4.0",
     "subscriptions-transport-ws": "^0.9.16",
     "theme-ui": "^0.2.43",
@@ -110,6 +109,9 @@
     "web3-react": "5.0.4",
     "web3-utils": "1.2.1",
     "ws": "^7.2.0"
+  },
+  "resolutions": {
+    "3box/**/multicodec": "0.5.6"
   },
   "main": "package.json",
   "engines": {

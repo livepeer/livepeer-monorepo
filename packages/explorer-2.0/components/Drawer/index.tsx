@@ -38,7 +38,7 @@ export default ({ items = [] }) => {
   return (
     <Flex
       sx={{
-        width: 256,
+        width: 275,
         flexDirection: 'column',
         height: '100vh',
       }}
@@ -50,7 +50,7 @@ export default ({ items = [] }) => {
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '100%',
-          width: 256,
+          width: 275,
           borderRight: '1px solid',
           borderColor: 'border',
           paddingTop: 5,

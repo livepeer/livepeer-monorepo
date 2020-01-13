@@ -45,6 +45,16 @@ export default ({ currentRound, transcoders }) => {
         Filter: DefaultColumnFilter,
       },
       {
+        Header: 'Activation Round',
+        accessor: 'activationRound',
+        show: false,
+      },
+      {
+        Header: 'Deactivation Round',
+        accessor: 'deactivationRound',
+        show: false,
+      },
+      {
         Header: 'Active',
         accessor: 'active',
         show: false,
@@ -146,6 +156,7 @@ export default ({ currentRound, transcoders }) => {
           sx={{
             display: 'table',
             width: '100%',
+            minWidth: 650,
             borderSpacing: '0',
             borderCollapse: 'collapse',
           }}
@@ -202,12 +213,13 @@ export default ({ currentRound, transcoders }) => {
                         '.orchestratorLink': {
                           borderBottom: '1px solid',
                           borderColor: 'text',
+                          display: 'inlineBlock',
                           transition: 'all .3s',
-                          '&:hover': {
-                            color: 'primary',
-                            borderColor: 'primary',
-                          },
                         },
+                      },
+                      '.orchestratorLink:hover': {
+                        color: 'primary',
+                        borderColor: 'primary',
                       },
                       '.status': {
                         borderColor:
@@ -234,7 +246,7 @@ export default ({ currentRound, transcoders }) => {
                             width: i > 0 ? 'auto' : 1,
                             fontSize: 1,
                             pl: 2,
-                            pr: 2,
+                            pr: i == 0 ? 0 : 2,
                             py: '16px',
                           }}
                           {...cell.getCellProps()}
@@ -381,13 +393,11 @@ function renderSwitch(cell, currentRound) {
       )
     case 'Account':
       const status = getDelegatorStatus(cell.row.values.delegator, currentRound)
+      const active =
+        cell.row.values.activationRound <= currentRound.id &&
+        cell.row.values.deactivationRound > currentRound.id
       return (
-        <AccountCell
-          status={status}
-          active={cell.row.values.active}
-          threeBoxSpace={cell.row.values.threeBoxSpace}
-          address={cell.value}
-        />
+        <AccountCell status={status} active={active} threeBoxSpace={cell.row.values.threeBoxSpace} address={cell.value} />
       )
     case 'Stake':
       return (

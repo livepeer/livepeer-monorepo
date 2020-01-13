@@ -19,6 +19,7 @@ import Modal from '../Modal'
 import ExternalAccount from '../ExternalAccount'
 import { useDebounce } from 'use-debounce'
 import ThreeBoxSteps from '../ThreeBoxSteps'
+import Spinner from '../Spinner'
 
 interface Props {
   account: string
@@ -93,11 +94,11 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
   const description = watch('description')
   const image = watch('image')
   const signature = watch('signature')
-  const externalAccount = watch('externalAccount')
+  const ethereumAccount = watch('ethereumAccount')
   const reader = new FileReader()
   const [updateProfile] = useMutation(UPDATE_PROFILE)
   const [debouncedSignature] = useDebounce(signature, 200)
-  const [debouncedExternalAccount] = useDebounce(externalAccount, 200)
+  const [debouncedEthereumAccount] = useDebounce(ethereumAccount, 200)
 
   useEffect(() => {
     if (copied) {
@@ -118,19 +119,19 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       if (hasExistingProfile(profile)) {
         setHasProfile(true)
       }
-      if (signature && externalAccount) {
+      if (signature && ethereumAccount) {
         const verifiedAccount = await context.library.eth.personal.ecRecover(
           message.replace(/<br ?\/?>/g, '\n'),
           signature,
         )
-        if (verifiedAccount.toLowerCase() === externalAccount.toLowerCase()) {
+        if (verifiedAccount.toLowerCase() === ethereumAccount.toLowerCase()) {
           setVerified(true)
         } else {
           setVerified(false)
         }
       }
     })()
-  }, [debouncedSignature, debouncedExternalAccount, message])
+  }, [debouncedSignature, debouncedEthereumAccount, message])
 
   reader.onload = function(e) {
     setPreviewImage(e.target.result)
@@ -261,8 +262,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     })
 
     // We don't use an optimistic response if user is linking external account
-    // or updating image
-    if (signature || previewImage) {
+    if (proof) {
       await result
       await refetch({
         variables: {
@@ -627,18 +627,18 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 <li sx={{ mb: 0 }}>
                   <div sx={{ mb: 2 }}>
                     Verify the message was signed correctly by pasting your
-                    Livepeer Node address used to sign the message in the
-                    Livpeeer CLI.
+                    Livepeer Node Ethereum account used to sign the message in
+                    the Livpeeer CLI.
                   </div>
                   <Textfield
                     inputRef={register}
-                    name="externalAccount"
-                    label="External Account"
-                    error={signature && externalAccount && !verified}
+                    name="ethereumAccount"
+                    label="Ethereum Account"
+                    error={signature && ethereumAccount && !verified}
                     messageFixed
                     message={
                       signature &&
-                      externalAccount &&
+                      ethereumAccount &&
                       (verified ? (
                         <span sx={{ color: 'primary' }}>
                           Signature message verification successful.
@@ -672,12 +672,15 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                   saving ||
                   (threeBoxSpace.defaultProfile === '3box' && !verified) ||
                   (threeBoxSpace.defaultProfile === 'livepeer' &&
-                    (signature || externalAccount) &&
+                    (signature || ethereumAccount) &&
                     !verified)
                 }
                 type="submit"
               >
-                {saving ? 'Saving...' : 'Save'}
+                <Flex sx={{ alignItems: 'center' }}>
+                  {saving && <Spinner sx={{ width: 16, height: 16, mr: 1 }} />}
+                  Save
+                </Flex>
               </Button>
             </Flex>
           </footer>

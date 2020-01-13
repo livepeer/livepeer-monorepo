@@ -9,7 +9,7 @@ import {
 } from 'graphql-tools'
 
 const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
+  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
 const isProd = process.env.NODE_ENV === 'production'
 
 const graphqlAPI = isProd
@@ -92,13 +92,17 @@ export default async () => {
         },
         tokenBalance: {
           async resolve(_delegator, _args, _context, _info) {
-            const { rpc } = await LivepeerSDK({ gas: null })
+            const { rpc } = await LivepeerSDK({
+              gas: null,
+            })
             return await rpc.getTokenBalance(_delegator.id)
           },
         },
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
-            const { rpc } = await LivepeerSDK({ gas: null })
+            const { rpc } = await LivepeerSDK({
+              gas: null,
+            })
             return await rpc.getEthBalance(_delegator.id)
           },
         },

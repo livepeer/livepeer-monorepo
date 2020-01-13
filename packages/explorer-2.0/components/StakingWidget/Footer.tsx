@@ -124,17 +124,6 @@ function renderStakeWarnings(
   isStaked,
   stake,
 ) {
-  if (
-    roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS &&
-    parseFloat(amount) >= 0
-  ) {
-    return (
-      <Warning>
-        You must claim your earnings before you can continue staking.
-      </Warning>
-    )
-  }
-
   if (parseFloat(amount) >= 0 && !sufficientBalance) {
     return <Warning>Insufficient Balance</Warning>
   }
@@ -144,6 +133,17 @@ function renderStakeWarnings(
       <Warning>
         Your transfer allowance is set too low.{' '}
         <Approve account={account} context={context} banner={false} />
+      </Warning>
+    )
+  }
+
+  if (
+    roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS &&
+    parseFloat(amount) >= 0
+  ) {
+    return (
+      <Warning>
+        You must claim your earnings before you can continue staking.
       </Warning>
     )
   }
