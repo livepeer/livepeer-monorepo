@@ -22,10 +22,10 @@ export default async () => {
     fetch,
   })
 
-  const graphqlAPIServiceLink = new HttpLink({
-    uri: graphqlAPI,
-    fetch,
-  })
+  // const graphqlAPIServiceLink = new HttpLink({
+  //   uri: graphqlAPI,
+  //   fetch,
+  // })
 
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
@@ -35,16 +35,16 @@ export default async () => {
     return executableSchema
   }
 
-  const createGraphqlAPIServiceSchema = async () => {
-    const executableSchema = makeRemoteExecutableSchema({
-      schema: await introspectSchema(graphqlAPIServiceLink),
-      link: graphqlAPIServiceLink,
-    })
-    return executableSchema
-  }
+  // const createGraphqlAPIServiceSchema = async () => {
+  //   const executableSchema = makeRemoteExecutableSchema({
+  //     schema: await introspectSchema(graphqlAPIServiceLink),
+  //     link: graphqlAPIServiceLink,
+  //   })
+  //   return executableSchema
+  // }
 
   const subgraphSchema = await createSubgraphServiceSchema()
-  const graphqlAPISchema = await createGraphqlAPIServiceSchema()
+  //const graphqlAPISchema = await createGraphqlAPIServiceSchema()
   const linkTypeDefs = `
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace
@@ -60,7 +60,7 @@ export default async () => {
   `
 
   const merged = mergeSchemas({
-    schemas: [subgraphSchema, schema, graphqlAPISchema, linkTypeDefs],
+    schemas: [subgraphSchema, schema, linkTypeDefs],
     resolvers: {
       Transcoder: {
         threeBoxSpace: {
