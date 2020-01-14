@@ -335,7 +335,10 @@ export default () => {
                   fontFamily: 'monospace',
                 }}
               >
-                {((pendingStake / totalBondedToken) * 100).toPrecision(4)}%
+                {totalBondedToken === '0'
+                  ? 0
+                  : ((pendingStake / totalBondedToken) * 100).toPrecision(4)}
+                %
               </div>
             }
           >
@@ -350,7 +353,12 @@ export default () => {
                 <span sx={{ color: 'muted' }}>
                   Account{' '}
                   <span sx={{ color: 'text' }}>
-                    ({((pendingStake / totalBondedToken) * 100).toPrecision(4)}
+                    (
+                    {totalBondedToken === '0'
+                      ? 0
+                      : ((pendingStake / totalBondedToken) * 100).toPrecision(
+                          4,
+                        )}
                     %)
                   </span>
                 </span>
@@ -367,11 +375,13 @@ export default () => {
                   Orchestrator{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {(
-                      (Utils.fromWei(data.delegator.delegate.totalStake) /
-                        totalBondedToken) *
-                      100
-                    ).toPrecision(4)}
+                    {totalBondedToken === '0'
+                      ? 0
+                      : (
+                          (Utils.fromWei(data.delegator.delegate.totalStake) /
+                            totalBondedToken) *
+                          100
+                        ).toPrecision(4)}
                     %)
                   </span>
                 </span>
@@ -395,22 +405,23 @@ export default () => {
                   Rest of Network{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {(
-                      ((totalBondedToken -
-                        Utils.fromWei(data.delegator.delegate.totalStake) -
-                        pendingStake) /
-                        totalBondedToken) *
-                      100
-                    ).toPrecision(4)}
+                    {(totalBondedToken === '0'
+                      ? 0
+                      : (totalBondedToken -
+                          Utils.fromWei(data.delegator.delegate.totalStake) -
+                          pendingStake) /
+                        totalBondedToken) * 100}
                     %)
                   </span>
                 </span>
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      totalBondedToken -
-                        Utils.fromWei(data.delegator.delegate.totalStake) -
-                        pendingStake,
+                      totalBondedToken === '0'
+                        ? 0
+                        : totalBondedToken -
+                            Utils.fromWei(data.delegator.delegate.totalStake) -
+                            pendingStake,
                       3,
                     )}
                   </span>

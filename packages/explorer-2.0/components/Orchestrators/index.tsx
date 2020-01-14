@@ -397,7 +397,12 @@ function renderSwitch(cell, currentRound) {
         cell.row.values.activationRound <= currentRound.id &&
         cell.row.values.deactivationRound > currentRound.id
       return (
-        <AccountCell status={status} active={active} threeBoxSpace={cell.row.values.threeBoxSpace} address={cell.value} />
+        <AccountCell
+          status={status}
+          active={active}
+          threeBoxSpace={cell.row.values.threeBoxSpace}
+          address={cell.value}
+        />
       )
     case 'Stake':
       return (
@@ -410,7 +415,10 @@ function renderSwitch(cell, currentRound) {
     case 'Fee Cut':
       return (
         <span sx={{ fontFamily: 'monospace' }}>
-          {(100 - cell.value / 10000).toFixed(2).replace(/[.,]00$/, '')}%
+          {!cell.value
+            ? 0
+            : (100 - cell.value / 10000).toFixed(2).replace(/[.,]00$/, '')}
+          %
         </span>
       )
     case 'Calls':

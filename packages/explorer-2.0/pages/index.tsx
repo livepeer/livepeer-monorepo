@@ -11,7 +11,7 @@ import { getLayout } from '../layouts/main'
 
 const GET_DATA = gql`
   {
-    transcoders(orderBy: totalStake, orderDirection: desc) {
+    transcoders(where: {id_not: "0x0000000000000000000000000000000000000000" } orderBy: totalStake, orderDirection: desc) {
       id
       active
       feeShare

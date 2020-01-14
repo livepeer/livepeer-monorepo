@@ -117,7 +117,10 @@ export default () => {
                     fontFamily: 'monospace',
                   }}
                 >
-                  {parseInt(data.transcoder.rewardCut, 10) / 10000}%
+                  {!data.transcoder.rewardCut
+                    ? 0
+                    : parseInt(data.transcoder.rewardCut, 10) / 10000}
+                  %
                 </div>
               }
             />
@@ -133,7 +136,10 @@ export default () => {
                     fontFamily: 'monospace',
                   }}
                 >
-                  {100 - parseInt(data.transcoder.feeShare, 10) / 10000}%
+                  {!data.transcoder.feeShare
+                    ? 0
+                    : 100 - parseInt(data.transcoder.feeShare, 10) / 10000}
+                  %
                 </div>
               }
             />
