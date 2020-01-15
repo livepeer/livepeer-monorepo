@@ -8,6 +8,8 @@ import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import logger from './logger'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
+import streamProxyOS from './controllers/stream-proxy-os'
+import liveProxy from './controllers/live-proxy'
 import proxy from 'http-proxy-middleware'
 import appRouter from './app-router'
 
@@ -37,6 +39,11 @@ export default async function makeApp(params) {
     fallbackProxy,
     orchestrators,
     broadcasters,
+    s3Url,
+    s3UrlExternal,
+    s3Access,
+    s3Secret,
+    upstreamBroadcaster,
   } = params
   // Storage init
 

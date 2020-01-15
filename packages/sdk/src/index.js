@@ -39,7 +39,7 @@ export const DEFAULTS = {
   provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
-  gas: 0,
+  gas: 2.1 * 1000000, // 2.1m wei
   artifacts: {
     LivepeerToken: LivepeerTokenArtifact,
     LivepeerTokenFaucet: LivepeerTokenFaucetArtifact,
@@ -243,18 +243,9 @@ const prop = (k: string | number) => (x): any => x[k]
 const toBool = (x: any): boolean => !!x
 const toString = (x: Eth.BN): string => x.toString(10)
 const toNumber = (x: Eth.BN): string => Number(x.toString(10))
-const headToBool = compose(
-  toBool,
-  prop(0),
-)
-const headToString = compose(
-  toString,
-  prop(0),
-)
-const headToNumber = compose(
-  toNumber,
-  prop(0),
-)
+const headToBool = compose(toBool, prop(0))
+const headToString = compose(toString, prop(0))
+const headToNumber = compose(toNumber, prop(0))
 const invariant = (name, pos, type) => {
   throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`)
 }

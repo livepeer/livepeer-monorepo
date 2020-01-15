@@ -89,7 +89,7 @@ export default function parseCli(argv) {
           default: 'https://{{ip}}:8935',
         },
         'http-prefix': {
-          describe: 'accept requests at this prefixs',
+          describe: 'accept requests at this prefix',
           default: '/api',
           demandOption: true,
           type: 'string',

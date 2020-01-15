@@ -12,8 +12,12 @@ export default function hardcodedNodes({ broadcasters, orchestrators }) {
     throw e
   }
   return (req, res, next) => {
-    req.getBroadcasters = async () => broadcasters
-    req.getOrchestrators = async () => orchestrators
+    if (!req.getBroadcasters) {
+      req.getBroadcasters = async () => broadcasters
+    }
+    if (!req.getOrchestrators) {
+      req.getOrchestrators = async () => orchestrators
+    }
     next()
   }
 }

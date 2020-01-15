@@ -35,9 +35,7 @@ export default class CloudflareStore {
 
     const values = []
     for (let i = 0; i < respData.result.length; i++) {
-      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${
-        respData.result[i].name
-      }`
+      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${respData.result[i].name}`
       const resp = await cloudflareFetch(reqUrl)
       await sleep(200)
       values.push(resp)
@@ -100,9 +98,6 @@ async function cloudflareFetch(
   if (data) {
     req.body = JSON.stringify(data)
   }
-
-  console.log(`req: ${JSON.stringify(req)}`)
-  console.log(`reqURL: ${JSON.stringify(reqUrl)}`)
 
   const res = await fetch(reqUrl, req)
   const respData = await res.json()

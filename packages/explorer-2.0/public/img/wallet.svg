@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="42px" height="43px" viewBox="0 0 42 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>wallet</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="wallet" transform="translate(1.000000, 1.000000)">
+            <path d="M35,10 C35,10 9.603,10 5,10 C1.924,10 0,13 0,15 L0,36.384 C0,38.934 2.066,41 4.616,41 L35.384,41 C37.933,41 40,38.934 40,36.384 L40,14.846 C40,12.299 37.549,10 35,10 Z" id="Path" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M32,7 L32,3.658 C32,0.327 31.281,-0.634 27.148,0.456 C24.112,1.257 6.347,6.182 6.347,6.182 C0.876,8.244 0.041,9.999 0.041,13.998 L0,16.453" id="Path" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+            <path d="M33.502,28 C32.121,28 31,26.882 31,25.501 C31,24.12 32.121,23 33.502,23 C34.879,23 36,24.12 36,25.501 C36,26.882 34.879,28 33.502,28 Z" id="Path" fill="currentColor" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</svg>

@@ -114,7 +114,7 @@ const geolocate = async (url, first = false) => {
     'mcw-staging.livepeer-staging.live',
   ]
   if (url.hostname === 'livepeer.live') {
-    servers = ['esh.livepeer.live', 'mcw.livepeer.live']
+    servers = ['esh.livepeer.live', 'chi.livepeer-ac.live']
   }
 
   let smallestServer
@@ -184,6 +184,7 @@ const amalgamateM3U8 = async req => {
     servers.map(({ server }) => {
       const newUrl = new URL(req.url)
       newUrl.hostname = server
+      newUrl.port = newUrl.protocol === 'https:' ? 443 : 80
       return newUrl.toString()
     }),
   )

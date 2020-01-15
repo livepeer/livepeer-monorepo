@@ -15,7 +15,6 @@ components:
         - id
         - kind
         - name
-        - presets
       additionalProperties: false
       properties:
         id:
@@ -26,6 +25,34 @@ components:
           readOnly: true
         name:
           type: string
+        profiles:
+          type: array
+          items:
+            type: object
+            required:
+              - width
+              - name
+              - height
+              - bitrate
+              - fps
+            additionalProperties: false
+            properties:
+              width:
+                type: integer
+                minimum: 128
+              name:
+                type: string
+                minLength: 1
+                maxLength: 500
+              height:
+                type: integer
+                minimum: 128
+              bitrate:
+                type: integer
+                minimum: 400
+              fps:
+                type: integer
+                minimum: 1
         presets:
           type: array
           items:

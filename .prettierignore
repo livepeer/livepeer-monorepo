@@ -3,6 +3,9 @@
 **/coverage
 **/dist
 **/docs
-**/lib
+**/sdk/lib
+**/apollo/lib
+**/graphql-sdk/lib
+**/chroma/lib
 **/public
 **/package.json

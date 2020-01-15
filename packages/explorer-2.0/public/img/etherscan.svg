@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 5</title>
+    <desc>Created with Sketch.</desc>
+    <g id="KyberSwap.com-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="swap-done--2" transform="translate(-553.000000, -404.000000)" fill-rule="nonzero">
+            <g id="Group-5" transform="translate(553.000000, 404.000000)">
+                <circle id="Oval" fill="#FFFFFF" opacity="0.554710751" cx="9" cy="9" r="9"></circle>
+                <path d="M17.8731086,7.48544766 C12.8812517,13.0602966 6.23758271,14.6125623 3.38175423,15 C3.03519238,15.0470165 2.71021045,15.089088 2.40680846,15.1262144 C0.913366036,13.5196641 -1.61648472e-13,11.3664961 -1.61648472e-13,9 C-1.61648472e-13,4.02943725 4.02943725,4.8316906e-13 9,4.8316906e-13 C13.454411,4.8316906e-13 17.1530045,3.23603978 17.8731086,7.48544766 Z" id="Combined-Shape" fill="#0C598B"></path>
+                <rect id="Rectangle" fill="#FFFFFF" x="3" y="8" width="3" height="8" rx="0.5"></rect>
+                <rect id="Rectangle" fill="#FFFFFF" x="7" y="6" width="3" height="9" rx="0.5"></rect>
+                <rect id="Rectangle" fill="#FFFFFF" x="11" y="4" width="3" height="9" rx="0.5"></rect>
+                <path d="M4.18235723,16.6033534 C7.28812677,16.3250765 9.86305611,15.457292 11.9071452,14 C14.350332,12.2581793 16.3791917,10.4784296 17.9937242,8.66075068 C17.9978958,8.77331775 18,8.88641314 18,9 C18,13.9705627 13.9705627,18 9,18 C7.22783255,18 5.57529671,17.4877962 4.18235723,16.6033534 Z" id="Combined-Shape" fill="#979695"></path>
+            </g>
+        </g>
+    </g>
+</svg>
