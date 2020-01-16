@@ -66,8 +66,8 @@ const GET_DATA = gql`
       }
       ... on TranscoderUpdatedEvent {
         __typename
-        pendingRewardCut
-        pendingFeeShare
+        rewardCut
+        feeShare
         round {
           id
         }
@@ -307,55 +307,55 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'ClaimEarningsEvent':
-      return (
-        <ListItem
-          sx={{
-            cursor: 'pointer',
-            px: 2,
-            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
-          }}
-          onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
-          }
-          key={i}
-          avatar={
-            <Claim sx={{ width: 16, height: 16, color: 'primary', mr: 2 }} />
-          }
-        >
-          <Flex
-            sx={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box>
-              <Box>Claimed Earnings</Box>
-              <Box sx={{ fontSize: 12, color: 'muted' }}>
-                {moment
-                  .unix(transaction.timestamp)
-                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
-              </Box>
-            </Box>
-            <div sx={{ textAlign: 'right', fontSize: 1, ml: 3 }}>
-              <Box>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(Utils.fromWei(transaction.rewardTokens), 3)}
-                </span>{' '}
-                LPT
-              </Box>
-              <Box>
-                <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(Utils.fromWei(transaction.fees), 3)}
-                </span>{' '}
-                ETH
-              </Box>
-            </div>
-          </Flex>
-        </ListItem>
-      )
+    // case 'ClaimEarningsEvent':
+    //   return (
+    //     <ListItem
+    //       sx={{
+    //         cursor: 'pointer',
+    //         px: 2,
+    //         '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+    //       }}
+    //       onClick={() =>
+    //         window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+    //       }
+    //       key={i}
+    //       avatar={
+    //         <Claim sx={{ width: 16, height: 16, color: 'primary', mr: 2 }} />
+    //       }
+    //     >
+    //       <Flex
+    //         sx={{
+    //           width: '100%',
+    //           alignItems: 'center',
+    //           justifyContent: 'space-between',
+    //         }}
+    //       >
+    //         <Box>
+    //           <Box>Claimed Earnings</Box>
+    //           <Box sx={{ fontSize: 12, color: 'muted' }}>
+    //             {moment
+    //               .unix(transaction.timestamp)
+    //               .format('MM/DD/YYYY h:mm:ss a')}{' '}
+    //             -- Round #{transaction.round.id}
+    //           </Box>
+    //         </Box>
+    //         <div sx={{ textAlign: 'right', fontSize: 1, ml: 3 }}>
+    //           <Box>
+    //             <span sx={{ fontFamily: 'monospace' }}>
+    //               {abbreviateNumber(Utils.fromWei(transaction.rewardTokens), 3)}
+    //             </span>{' '}
+    //             LPT
+    //           </Box>
+    //           <Box>
+    //             <span sx={{ fontFamily: 'monospace' }}>
+    //               {abbreviateNumber(Utils.fromWei(transaction.fees), 3)}
+    //             </span>{' '}
+    //             ETH
+    //           </Box>
+    //         </div>
+    //       </Flex>
+    //     </ListItem>
+    //   )
     case 'InitializeRoundEvent':
       return (
         <ListItem
@@ -566,12 +566,12 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ textAlign: 'right', fontSize: 1, ml: 3 }}>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {transaction.pendingRewardCut / 10000}% R
+                  {transaction.rewardCut / 10000}% R
                 </span>{' '}
               </Box>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {(100 - transaction.pendingFeeShare / 10000)
+                  {(100 - transaction.feeShare / 10000)
                     .toFixed(2)
                     .replace(/[.,]00$/, '')}
                   % F

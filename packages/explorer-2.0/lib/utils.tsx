@@ -97,3 +97,17 @@ export const nl2br = (str, is_xhtml = true) => {
     '$1' + breakTag + '$2',
   )
 }
+
+export const textTruncate = (str, length, ending) => {
+  if (length == null) {
+    length = 100
+  }
+  if (ending == null) {
+    ending = '...'
+  }
+  if (str.length > length) {
+    return str.substring(0, length - ending.length) + ending
+  } else {
+    return str
+  }
+}

@@ -106,5 +106,6 @@ function calculateAnnualROI({
         ? inflation - inflationChange
         : inflation + inflationChange
   }
-  return roi
+
+  return roi ? roi : 0
 }

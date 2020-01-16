@@ -10,7 +10,6 @@ const Reset = () =>
         fontFamily: theme.fonts.body,
         outline: 'none',
         lineHeight: 1.5,
-        color: 'text',
       },
       body: {
         margin: '0',

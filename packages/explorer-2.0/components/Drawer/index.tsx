@@ -38,7 +38,7 @@ export default ({ items = [] }) => {
   return (
     <Flex
       sx={{
-        width: 256,
+        width: 275,
         flexDirection: 'column',
         height: '100vh',
       }}
@@ -50,7 +50,7 @@ export default ({ items = [] }) => {
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '100%',
-          width: 256,
+          width: 275,
           borderRight: '1px solid',
           borderColor: 'border',
           paddingTop: 5,
@@ -116,7 +116,7 @@ export default ({ items = [] }) => {
                 borderColor: 'border',
               }}
             >
-              <div sx={{ mb: 2 }}>
+              {/* <div sx={{ mb: 2 }}>
                 <Link href="/whats-new" as="/whats-new" passHref>
                   <a
                     sx={{
@@ -137,7 +137,7 @@ export default ({ items = [] }) => {
                     What's New
                   </a>
                 </Link>
-              </div>
+              </div> */}
               <div sx={{ mb: context.active ? 2 : 0 }} className="tour-step-3">
                 <Link
                   href={`${pathname}?openExchange=true`}
