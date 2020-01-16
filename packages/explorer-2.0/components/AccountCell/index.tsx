@@ -74,7 +74,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
             >
               <div>
                 {process.env.THREEBOX_ENABLED && threeBoxSpace.name
-                  ? textTruncate(threeBoxSpace.name, 20, '…')
+                  ? textTruncate(threeBoxSpace.name, 17, '…')
                   : address.replace(address.slice(5, 39), '…')}
               </div>
             </Flex>

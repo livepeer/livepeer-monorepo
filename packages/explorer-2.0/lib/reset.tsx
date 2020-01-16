@@ -53,7 +53,7 @@ const Reset = () =>
       '[data-reach-dialog-content]': {
         width: '50vw',
         margin: '10vh auto',
-        background: 'white',
+        backgroundColor: `${theme.colors.surface} !important`,
         padding: '2rem',
         outline: 'none',
       },
