@@ -211,10 +211,10 @@
     striptags "^3.0.1"
     word-wrap "^1.2.1"
 
-"@adamsoffer/livepeer-sdk@1.0.0-streamflow-alpha.20":
-  version "1.0.0-streamflow-alpha.20"
-  resolved "https://registry.yarnpkg.com/@adamsoffer/livepeer-sdk/-/livepeer-sdk-1.0.0-streamflow-alpha.20.tgz#806c039b1e574cf303db6fff1069b1ea244f877a"
-  integrity sha512-hCPvLNTemRVsBVfVMy8408U7gwexg1HYlWbWuiopxvacJTTwgqLDCaVW/q6fo0oMBtE5EM86zK7DpocQTHOlPA==
+"@adamsoffer/livepeer-sdk@1.0.0-streamflow-alpha.25":
+  version "1.0.0-streamflow-alpha.25"
+  resolved "https://registry.yarnpkg.com/@adamsoffer/livepeer-sdk/-/livepeer-sdk-1.0.0-streamflow-alpha.25.tgz#15eb36846808dc6a507d1375281bcf212932338f"
+  integrity sha512-XK0RUyxdEnbzXjxEQT0Xn5ufd5E9F9g2OeKOvAf4TNUJdzceJJSnhMNvV5+96o0U7rmuWX02sVS1zNIHvhYccA==
   dependencies:
     "@babel/runtime" "^7.4.3"
     cross-env "^5.2.0"
