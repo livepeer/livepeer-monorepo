@@ -6,6 +6,8 @@ info:
 tags:
   - name: stream
     description: Wowza Stream Endpoints
+  - name: objectstores
+    description: Object Stores Endpoints
 
 components:
   schemas:
@@ -15,8 +17,6 @@ components:
         - id
         - kind
         - name
-        - objectStoreId
-        - presets
       additionalProperties: false
       properties:
         id:
@@ -184,7 +184,7 @@ paths:
 
   /objectstores:
     tags:
-      - stream
+      - objectstores
     post:
       description: receives store credentials
       requestBody:

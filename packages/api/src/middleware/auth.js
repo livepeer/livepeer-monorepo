@@ -100,16 +100,6 @@ function authFactory(params) {
       return res.sendStatus(401)
     }
 
-    if (req.body.objectStoreId) {
-      try {
-        const store = await req.store.get(
-          `objectstores/${req.body.objectStoreId}`,
-        )
-      } catch (e) {
-        throw e
-      }
-    }
-
     logger.info('authFactory params ', params)
     let tokenObject
     try {

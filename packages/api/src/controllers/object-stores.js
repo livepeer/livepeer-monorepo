@@ -21,23 +21,25 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   const nextCursor = resp.cursor
   res.status(200)
 
-  let baseUrl = new URL(
-    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-  )
   if (output.length > 0) {
-    let next = baseUrl
-    next.searchParams.set('cursor', nextCursor)
-    res.links({
-      next: next.href,
-    })
+    res.links({ next: makeNextHREF(req, nextCursor) })
   }
+
+  output.map(x => (x.credentials = null))
+
   res.json(output)
 })
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
-  const credentials = await req.store.get(`objectstores/${req.params.id}`)
-  res.status(200)
-  res.json(credentials)
+  const os = await req.store.get(`objectstores/${req.params.id}`)
+  if (req.user.id === os.userId) {
+    const secureOS = { ...os, credentials: null }
+    res.status(200)
+    res.json(secureOS)
+  } else {
+    res.status(200)
+    res.json({})
+  }
 })
 
 app.post(
@@ -57,10 +59,19 @@ app.post(
     })
 
     const store = await req.store.get(`objectstores/${id}`)
-    store.credentials = 'xxx'
+    store.credentials = null
     res.status(201)
     res.json(store)
   },
 )
+
+function makeNextHREF(req, nextCursor) {
+  let baseUrl = new URL(
+    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
+  )
+  let next = baseUrl
+  next.searchParams.set('cursor', nextCursor)
+  return next.href
+}
 
 export default app

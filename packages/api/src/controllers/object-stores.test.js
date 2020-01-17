@@ -64,12 +64,16 @@ describe('controllers/object-stores', () => {
     })
 
     it('should get all object stores with prior user created', async () => {
-      await server.store.create(user)
+      const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
+      storeGoogleAuthMockUser.userId = 'mock_sub'
       for (let i = 0; i < 4; i += 1) {
-        const storeChangeId = JSON.parse(JSON.stringify(store))
+        const storeChangeId = JSON.parse(
+          JSON.stringify(storeGoogleAuthMockUser),
+        )
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
         const res = await client.get(`/objectstores/${storeChangeId.id}`)
+        expect(res.status).toBe(200)
         const objStore = await res.json()
         expect(objStore.id).toEqual(storeChangeId.id)
       }
@@ -78,14 +82,20 @@ describe('controllers/object-stores', () => {
       expect(res.status).toBe(200)
       const objStores = await res.json()
       expect(objStores.length).toEqual(4)
+      expect(objStores[0].credentials).toEqual(null)
     })
 
     it('should get some of the object stores & get a working next Link', async () => {
+      const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
+      storeGoogleAuthMockUser.userId = 'mock_sub'
       for (let i = 0; i < 13; i += 1) {
-        const storeChangeId = JSON.parse(JSON.stringify(store))
+        const storeChangeId = JSON.parse(
+          JSON.stringify(storeGoogleAuthMockUser),
+        )
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
         const res = await client.get(`/objectstores/${storeChangeId.id}`)
+        expect(res.status).toBe(200)
         const objStore = await res.json()
         expect(objStore.id).toEqual(storeChangeId.id)
       }
