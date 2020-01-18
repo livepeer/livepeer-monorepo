@@ -10,7 +10,6 @@ const Reset = () =>
         fontFamily: theme.fonts.body,
         outline: 'none',
         lineHeight: 1.5,
-        color: 'text',
       },
       body: {
         margin: '0',
@@ -54,7 +53,7 @@ const Reset = () =>
       '[data-reach-dialog-content]': {
         width: '50vw',
         margin: '10vh auto',
-        background: 'white',
+        backgroundColor: `${theme.colors.surface} !important`,
         padding: '2rem',
         outline: 'none',
       },

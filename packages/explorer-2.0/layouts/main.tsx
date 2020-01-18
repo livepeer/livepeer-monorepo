@@ -100,7 +100,7 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
             sx={{
               paddingLeft: 40,
               paddingRight: 40,
-              width: 'calc(100% - 256px)',
+              width: 'calc(100% - 275px)',
             }}
           >
             <Flex sx={{ width: '100%' }} className="tour-step-6">

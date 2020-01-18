@@ -56,7 +56,7 @@ const geolocate = async (url, first = false) => {
     'mcw-staging.livepeer-staging.live',
   ]
   if (url.hostname === 'livepeer.live') {
-    servers = ['esh.livepeer.live', 'mcw.livepeer.live']
+    servers = ['esh.livepeer.live', 'chi.livepeer-ac.live']
   }
 
   let smallestServer
@@ -118,6 +118,15 @@ const amalgamate = async req => {
   })
 }
 
+function headersAsObject(inputHeaders) {
+  const headers = {}
+  const keyVals = [...inputHeaders.entries()]
+  keyVals.forEach(([key, val]) => {
+    headers[key] = val
+  })
+  return headers
+}
+
 // Similar to amalgamate, but for m3u8 files instead of JSON.
 const amalgamateM3U8 = async req => {
   const url = req.url
@@ -126,6 +135,7 @@ const amalgamateM3U8 = async req => {
     servers.map(({ server }) => {
       const newUrl = new URL(req.url)
       newUrl.hostname = server
+      newUrl.port = newUrl.protocol === 'https:' ? 443 : 80
       return newUrl.toString()
     }),
   )
@@ -165,6 +175,18 @@ async function handleEvent(event) {
   if (url.hostname.startsWith('docs.')) {
     if (url.pathname === '/') {
       return fetch('http://docs.livepeer.live/index.html')
+    }
+  }
+  if (url.pathname.startsWith('/.well-known')) {
+    try {
+      const newReq = new Request(req.url, {
+        headers: req.headers,
+        cf: { resolveOverride: 'mcw-command.livepeer-staging.live' },
+      })
+      return fetch(newReq)
+    } catch (err) {
+      console.log(err)
+      return new Response(err.stack, { status: 500 })
     }
   }
   if (url.hostname.startsWith('build.')) {

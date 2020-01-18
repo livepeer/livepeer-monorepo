@@ -73,9 +73,9 @@ aliases:
       fi
 
   # Install libsecret
-  - &install-libsecret
-    name: Install libsecret
-    command: sudo apt install libsecret-1-0
+  - &install-apt-packages
+    name: Install apt packages
+    command: sudo apt install libsecret-1-0 libudev-dev libusb-1.0-0-dev
 
   # Extention of aws command
   - &s3-cmd-flags-values
@@ -110,7 +110,7 @@ jobs:
           # This actually only exists for paid plans. But it's good luck!
           docker_layer_caching: true
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: *install-libsecret
+      - run: *install-apt-packages
       - run: *install-dependencies
       - run: *reporter
       - run: *install-gcloud
@@ -135,7 +135,7 @@ jobs:
 
     steps:
       - checkout
-      - run: *install-libsecret
+      - run: *install-apt-packages
       - run: *install-dependencies
       - run: *build-apps
       - save_cache: *save-apps
@@ -169,7 +169,7 @@ jobs:
 
     steps:
       - checkout
-      - run: *install-libsecret
+      - run: *install-apt-packages
       - run: *build-apps
 
       - run:

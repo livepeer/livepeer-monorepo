@@ -46,12 +46,14 @@ export default ({
             parseFloat(Utils.fromWei(account.tokenBalance)) != 0 && (
               <Approve account={account} context={context} banner={true} />
             )}
-          <ClaimBanner
-            account={account}
-            delegator={delegator}
-            currentRound={currentRound}
-            context={context}
-          />
+          {delegator && (
+            <ClaimBanner
+              account={account}
+              delegator={delegator}
+              currentRound={currentRound}
+              context={context}
+            />
+          )}
         </>
       )}
       <Box

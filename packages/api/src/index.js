@@ -84,9 +84,9 @@ export default async function makeApp(params) {
         kubeOrchestratorTemplate,
       }),
     )
-  } else {
-    app.use(hardcodedNodes({ orchestrators, broadcasters }))
   }
+  // This middleware knows to use itself as a fallback
+  app.use(hardcodedNodes({ orchestrators, broadcasters }))
 
   if (s3Url && s3Access && s3Secret) {
     app.use(

@@ -31,7 +31,7 @@ app.get('/:streamId.m3u8', async (req, res) => {
 app.get('/:streamId/:rendition.m3u8', async (req, res) => {
   const { streamId, rendition } = req.params
   // Fires 404 if we can't find it
-  await req.store.get(`stream/${streamId}`)
+  // await req.store.get(`stream/${streamId}`)
   let file = `${streamId}/${rendition}.m3u8`
   const broadcasters = await req.getBroadcasters()
   const urls = broadcasters.map(({ address }) => `${address}/stream/${file}`)

@@ -26,7 +26,8 @@
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
     "updated": "lerna updated --json",
     "wrangler:staging": "wrangler publish --env staging",
-    "wrangler:production": "wrangler publish --env production"
+    "wrangler:production": "wrangler publish --env production",
+    "postinstall": "lerna run --stream postinstall"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
