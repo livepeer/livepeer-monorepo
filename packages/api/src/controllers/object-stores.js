@@ -17,14 +17,14 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
   const resp = await req.store.list(`objectstores/`, cursor, limit)
-  const output = resp.data
+  let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
 
   if (output.length > 0) {
     res.links({ next: makeNextHREF(req, nextCursor) })
   }
-
+  output = output.filter(x => x.userId == req.user.id)
   output.map(x => (x.credentials = null))
 
   res.json(output)

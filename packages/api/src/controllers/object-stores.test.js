@@ -185,6 +185,22 @@ describe('controllers/object-stores', () => {
       const objStoreGet = await resp.json()
       expect(objStore.path).toEqual(objStoreGet.path)
       expect(objStore.userId).toBe(objStoreGet.userId)
+
+      // testing right number of object stores returned when multiple created by different users
+      const clientSecond = new TestClient({
+        server,
+        googleAuthorization: 'EXPECTED_TOKEN',
+      })
+      const resTwo = await clientSecond.post('/objectstores', {
+        ...postMockStore,
+      })
+      expect(resTwo.status).toBe(201)
+
+      const stores = await clientSecond.get('/objectstores')
+      expect(stores.status).toBe(200)
+      const objStores = await stores.json()
+      expect(objStores.length).toEqual(1)
+      expect(objStores[0].credentials).toEqual(null)
     })
 
     it('should create an object store, `token` registered, no userId', async () => {
