@@ -6,8 +6,9 @@ import Spinner from '../components/Spinner'
 import gql from 'graphql-tag'
 import Card from '../components/Card'
 import moment from 'moment'
-import { getLayout } from '../layouts/main'
+import Layout from '../layouts/main'
 import Markdown from 'markdown-to-jsx'
+import { withApollo } from '../lib/apollo'
 
 const GET_CHANGEFEED = gql`
   {
@@ -58,7 +59,7 @@ const WhatsNew = () => {
   const { data, loading } = useQuery(GET_CHANGEFEED)
 
   return (
-    <>
+    <Layout>
       {loading ? (
         <Flex
           sx={{
@@ -153,10 +154,8 @@ const WhatsNew = () => {
           </Flex>
         </>
       )}
-    </>
+    </Layout>
   )
 }
 
-WhatsNew.getLayout = getLayout
-WhatsNew.displayName = ''
-export default WhatsNew
+export default withApollo(WhatsNew)

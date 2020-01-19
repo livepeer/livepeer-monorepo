@@ -25,20 +25,22 @@ export function withApollo(PageComponent, { ssr = true } = {}) {
     )
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    if (isAppHoc && ssr) {
-      console.warn(
-        'You are using the "withApollo" HOC on "_app.js" level. Please note that this disables project wide automatic static optimization. Better wrap your PageComponents directly.',
-      )
-    }
-  }
-
   // Set the correct displayName in development
   if (process.env.NODE_ENV !== 'production') {
     const displayName =
       PageComponent.displayName || PageComponent.name || 'Component'
 
-    WithApollo.displayName = `withApollo(${displayName})`
+    if (displayName === 'App') {
+      console.warn('This withApollo HOC only works with PageComponents.')
+    }
+
+    if (isAppHoc && ssr) {
+      console.warn(
+        'You are using the "withApollo" HOC on "_app.js" level. Please note that this disables project wide automatic static optimization. Better wrap your PageComponents directly.',
+      )
+    }
+
+    WithApollo.displayName = ``
   }
 
   if (ssr || PageComponent.getInitialProps) {
