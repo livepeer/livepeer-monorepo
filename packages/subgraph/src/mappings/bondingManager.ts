@@ -97,6 +97,7 @@ export function transcoderResigned(event: TranscoderResigned): void {
   // Update transcoder
   transcoder.active = false
   transcoder.status = 'NotRegistered'
+  transcoder.delegator = null
 
   // Apply store updates
   transcoder.save()
