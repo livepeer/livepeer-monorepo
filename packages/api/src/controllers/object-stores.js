@@ -24,8 +24,11 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   if (output.length > 0) {
     res.links({ next: makeNextHREF(req, nextCursor) })
   }
-  output = output.filter(x => x.userId == req.user.id)
-  output.map(x => (x.credentials = null))
+  output = output.filter(x => x.userId === req.user.id)
+  output = output.map(x => ({
+    ...x,
+    credentials: null,
+  }))
 
   res.json(output)
 })

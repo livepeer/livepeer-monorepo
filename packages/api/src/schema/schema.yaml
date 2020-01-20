@@ -133,6 +133,10 @@ components:
           type: string
         credentials:
           type: string
+        id:
+          type: string
+        userId:
+          type: string
 
 paths:
   /stream:

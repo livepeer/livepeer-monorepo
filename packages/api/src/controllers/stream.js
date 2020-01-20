@@ -50,6 +50,9 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
       objectStoreID = req.body.objectStoreId
     } catch (e) {
       console.error(e)
+      if (e.type !== 'NotFoundError') {
+        throw e
+      }
     }
   }
 
