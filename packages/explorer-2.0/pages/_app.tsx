@@ -9,13 +9,10 @@ import { ethers } from 'ethers'
 import { CookiesProvider } from 'react-cookie'
 import Web3 from 'web3'
 import Layout from '../layouts/main'
-import { withApollo } from '../lib/apollo'
 
 class MyApp extends App {
   render() {
     const { Component, pageProps }: any = this.props
-    const getLayout =
-      Component.getLayout || (page => <Layout children={page} />)
 
     return (
       <>
@@ -36,7 +33,7 @@ class MyApp extends App {
             web3Api={Web3}
           >
             <CookiesProvider>
-              {getLayout(<Component {...pageProps} />)}
+              <Component {...pageProps} />
             </CookiesProvider>
           </Web3Provider>
         </ThemeProvider>
@@ -45,4 +42,4 @@ class MyApp extends App {
   }
 }
 
-export default withApollo(MyApp)
+export default MyApp

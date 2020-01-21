@@ -1,9 +1,10 @@
 /** @jsx jsx */
 import React from 'react'
 import { jsx, Flex, Styled } from 'theme-ui'
-import { getLayout } from '../layouts/main'
 import Search from '../public/img/search.svg'
 import Router from 'next/router'
+import { withApollo } from '../lib/apollo'
+import Layout from '../layouts/main'
 
 function handleSubmit(e) {
   e.preventDefault()
@@ -13,7 +14,7 @@ function handleSubmit(e) {
 
 const SearchPage: any = () => {
   return (
-    <>
+    <Layout>
       <Flex
         sx={{
           mt: 5,
@@ -75,10 +76,10 @@ const SearchPage: any = () => {
           />
         </form>
       </Flex>
-    </>
+    </Layout>
   )
 }
 
-SearchPage.getLayout = getLayout
 SearchPage.displayName = ''
-export default SearchPage
+
+export default withApollo(SearchPage)

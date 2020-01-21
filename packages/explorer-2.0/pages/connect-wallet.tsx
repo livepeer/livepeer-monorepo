@@ -9,11 +9,12 @@ import MetaMask from '../public/img/metamask.svg'
 import Secure from '../public/img/secure.svg'
 import ToggleCard from '../components/ToggleCard'
 import Button from '../components/Button'
-import { getLayout } from '../layouts/main'
+import Layout from '../layouts/main'
 import { useCookies } from 'react-cookie'
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../components/Spinner'
+import { withApollo } from '../lib/apollo'
 
 const GET_TOUR_OPEN = gql`
   {
@@ -46,7 +47,7 @@ const ConnectWallet = () => {
   }, [context.active, cookies.connector])
 
   return (
-    <>
+    <Layout>
       <div sx={{ pt: 5 }}>
         <Styled.h1
           sx={{
@@ -126,10 +127,10 @@ const ConnectWallet = () => {
           </Flex>
         </div>
       </div>
-    </>
+    </Layout>
   )
 }
 
-ConnectWallet.getLayout = getLayout
 ConnectWallet.displayName = ''
-export default ConnectWallet
+
+export default withApollo(ConnectWallet)
