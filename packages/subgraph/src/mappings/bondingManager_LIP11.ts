@@ -224,6 +224,7 @@ export function rebond(event: Rebond): void {
     delegateAddress.toHex() == delegatorAddress.toHex()
   ) {
     transcoder.status = 'Registered'
+    transcoder.delegator = delegatorAddress.toHex()
   }
 
   // update delegator
