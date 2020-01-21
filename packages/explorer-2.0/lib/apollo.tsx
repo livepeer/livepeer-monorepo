@@ -40,7 +40,7 @@ export function withApollo(PageComponent, { ssr = true } = {}) {
       )
     }
 
-    WithApollo.displayName = ``
+    WithApollo.displayName = `withApollo(${displayName})`
   }
 
   if (ssr || PageComponent.getInitialProps) {
