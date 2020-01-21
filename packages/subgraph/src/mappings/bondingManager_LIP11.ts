@@ -53,8 +53,9 @@ export function bond(event: Bond): void {
     delegator = new Delegator(delegatorAddress.toHex())
   }
 
-  // If self delegating, assign reference to self
+  // If self delegating, set status and assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
+    transcoder.status = 'Registered'
     transcoder.delegator = delegatorAddress.toHex()
   }
 
@@ -68,6 +69,12 @@ export function bond(event: Bond): void {
     let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
       oldDelegateAddress,
     )
+
+    // if previous delegate was itself, set status and unassign reference to self
+    if (oldDelegateAddress.toHex() == delegatorAddress.toHex()) {
+      oldTranscoder.status = 'NotRegistered'
+      oldTranscoder.delegator = null
+    }
 
     oldTranscoder.totalStake = oldTranscoderTotalStake
     oldDelegate.delegatedAmount = oldTranscoderTotalStake
@@ -152,10 +159,11 @@ export function unbond(event: Unbond): void {
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
   if (delegatorData.value0.isZero()) {
-    // If unbonding from self and no longer has a bonded amount update
-    // transcoder status and delegator
+    // If unbonding from self and no longer has a bonded amount
+    // update transcoder status and delegator
     if (delegatorAddress.toHex() == delegateAddress.toHex()) {
       transcoder.status = 'NotRegistered'
+      transcoder.delegator = null
     }
 
     // Update delegator's delegate

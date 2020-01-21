@@ -8,8 +8,6 @@ import {
   EarningsClaimed,
 } from '../types/BondingManager_LIP12/BondingManager'
 
-import { RoundsManager } from '../types/RoundsManager_LIP12/RoundsManager'
-
 import {
   Transcoder,
   Delegator,

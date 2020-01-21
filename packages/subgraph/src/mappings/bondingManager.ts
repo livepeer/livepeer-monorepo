@@ -15,8 +15,6 @@ import {
   Reward,
 } from '../types/BondingManager/BondingManager'
 
-import { RoundsManager } from '../types/RoundsManager/RoundsManager'
-
 // Import entity types generated from the GraphQL schema
 import {
   Transcoder,
@@ -127,7 +125,6 @@ export function transcoderEvicted(event: TranscoderEvicted): void {
 
   // Update transcoder
   transcoder.active = false
-  transcoder.status = 'NotRegistered'
 
   // Apply store updates
   transcoder.save()
@@ -219,6 +216,12 @@ export function bond(event: Bond): void {
     let oldTranscoder = Transcoder.load(delegator.delegate) as Transcoder
     let oldDelegate = Delegator.load(delegator.delegate) as Delegator
 
+    // if previous delegate was itself, set status and unassign reference to self
+    if (delegator.delegate == delegatorAddress.toHex()) {
+      oldTranscoder.status = 'NotRegistered'
+      oldTranscoder.delegator = null
+    }
+
     let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
       Address.fromString(oldTranscoder.id),
     )
@@ -301,6 +304,7 @@ export function unbond(event: Unbond): void {
 
   // Delegator no longer bonded to anyone
   delegator.delegate = null
+
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
