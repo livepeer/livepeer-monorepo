@@ -11,12 +11,12 @@ import path from 'path'
 
 const app = Router()
 
-app.get('/', authMiddleware({ admin: true }), async (req, res) => {
+app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const resp = await req.store.list(`objectstores/`, cursor, limit)
+  const resp = await req.store.list(`objectstores/${req.params.userId}`, cursor, limit)
   let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
@@ -24,7 +24,6 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   if (output.length > 0) {
     res.links({ next: makeNextHREF(req, nextCursor) })
   }
-  output = output.filter(x => x.userId === req.user.id)
   output = output.map(x => ({
     ...x,
     credentials: null,
@@ -33,8 +32,9 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(output)
 })
 
-app.get('/:id', authMiddleware({}), async (req, res) => {
-  const os = await req.store.get(`objectstores/${req.params.id}`)
+app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
+  const { id, userId } = req.params
+  const os = await req.store.get(`objectstores/${userId}/${id}`)
   if (req.user.id === os.userId) {
     const secureOS = { ...os, credentials: null }
     res.status(200)
@@ -58,10 +58,10 @@ app.post(
       path: req.body.path,
       userId: req.user.id,
       type: req.body.type,
-      kind: 'objectstores',
+      kind: `objectstores/${req.user.id}`,
     })
 
-    const store = await req.store.get(`objectstores/${id}`)
+    const store = await req.store.get(`objectstores/${req.user.id}/${id}`)
     store.credentials = null
     res.status(201)
     res.json(store)

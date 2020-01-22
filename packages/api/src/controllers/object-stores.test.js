@@ -5,6 +5,7 @@ import uuid from 'uuid/v4'
 let server
 let store
 let postMockStore
+const googleMockUserId = 'mock_sub'
 jest.setTimeout(70000)
 
 beforeAll(async () => {
@@ -55,30 +56,34 @@ describe('controllers/object-stores', () => {
         const storeChangeId = JSON.parse(JSON.stringify(store))
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
-        const res = await client.get(`/objectstores/${store.id}`)
+        const res = await client.get(`/objectstores/${user.id}/${store.id}`)
         expect(res.status).toBe(401)
       }
-
-      const res = await client.get('/objectstores')
+      const res = await client.get(`/objectstores/${user.id}`)
       expect(res.status).toBe(403)
     })
 
     it('should get all object stores with prior user created', async () => {
       const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
-      storeGoogleAuthMockUser.userId = 'mock_sub'
+      storeGoogleAuthMockUser.userId = googleMockUserId
       for (let i = 0; i < 4; i += 1) {
         const storeChangeId = JSON.parse(
           JSON.stringify(storeGoogleAuthMockUser),
         )
         storeChangeId.id = uuid()
+        storeChangeId.kind = `objectstores/${storeChangeId.userId}`
         await server.store.create(storeChangeId)
-        const res = await client.get(`/objectstores/${storeChangeId.id}`)
+        const res = await client.get(
+          `/objectstores/${storeChangeId.userId}/${storeChangeId.id}`,
+        )
         expect(res.status).toBe(200)
         const objStore = await res.json()
         expect(objStore.id).toEqual(storeChangeId.id)
       }
 
-      const res = await client.get('/objectstores')
+      const res = await client.get(
+        `/objectstores/${storeGoogleAuthMockUser.userId}`,
+      )
       expect(res.status).toBe(200)
       const objStores = await res.json()
       expect(objStores.length).toEqual(4)
@@ -87,19 +92,26 @@ describe('controllers/object-stores', () => {
 
     it('should get some of the object stores & get a working next Link', async () => {
       const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
-      storeGoogleAuthMockUser.userId = 'mock_sub'
+      storeGoogleAuthMockUser.userId = googleMockUserId
       for (let i = 0; i < 13; i += 1) {
         const storeChangeId = JSON.parse(
           JSON.stringify(storeGoogleAuthMockUser),
         )
         storeChangeId.id = uuid()
+        storeChangeId.kind = `objectstores/${storeChangeId.userId}`
         await server.store.create(storeChangeId)
-        const res = await client.get(`/objectstores/${storeChangeId.id}`)
+
+        const res = await client.get(
+          `/objectstores/${storeChangeId.userId}/${storeChangeId.id}`,
+        )
         expect(res.status).toBe(200)
         const objStore = await res.json()
         expect(objStore.id).toEqual(storeChangeId.id)
       }
-      const res = await client.get(`/objectstores?limit=11`)
+
+      const res = await client.get(
+        `/objectstores/${storeGoogleAuthMockUser.userId}?limit=11`,
+      )
       const objStores = await res.json()
       expect(res.headers._headers.link).toBeDefined()
       expect(res.headers._headers.link.length).toBe(1)
@@ -111,11 +123,14 @@ describe('controllers/object-stores', () => {
       expect(res.status).toBe(201)
       const objStore = await res.json()
       expect(objStore.id).toBeDefined()
-      expect(objStore.kind).toBe('objectstores')
-      expect(objStore.userId).toBe('mock_sub')
+      expect(objStore.kind).toBe(`objectstores/${googleMockUserId}`)
+      expect(objStore.userId).toBe(googleMockUserId)
       expect(objStore.path).toBe(postMockStore.path)
 
-      const resp = await client.get(`/objectstores/${objStore.id}`)
+      const resp = await client.get(
+        `/objectstores/${googleMockUserId}/${objStore.id}`,
+      )
+      expect(res.status).toBe(201)
       const objStoreGet = await resp.json()
       expect(objStore.path).toEqual(objStoreGet.path)
       expect(objStore.userId).toBe(objStoreGet.userId)
@@ -135,11 +150,14 @@ describe('controllers/object-stores', () => {
         const storeChangeId = JSON.parse(JSON.stringify(store))
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
-        const res = await client.get(`/objectstores/${storeChangeId.id}`)
+        let res = await client.get(
+          `/objectstores/${user.id}/${storeChangeId.id}`,
+        )
         expect(res.status).toBe(401)
+
+        res = await client.get(`/objectstores/${storeChangeId.userId}`)
+        expect(res.status).toBe(403)
       }
-      let res = await client.get('/objectstores')
-      expect(res.status).toBe(403)
     })
   })
 
@@ -154,8 +172,8 @@ describe('controllers/object-stores', () => {
     })
 
     it('should not get all object stores', async () => {
-      const res = await client.get('/objectstores')
-      expect(res.status).toBe(403)
+      const res = await client.get(`/objectstores`)
+      expect(res.status).toBe(404)
     })
   })
 
@@ -173,14 +191,16 @@ describe('controllers/object-stores', () => {
       expect(res.status).toBe(201)
       const objStore = await res.json()
       expect(objStore.id).toBeDefined()
-      expect(objStore.kind).toBe('objectstores')
+      expect(objStore.kind).toBeDefined()
       expect(objStore.userId).toBeDefined()
       expect(objStore.path).toBe(postMockStore.path)
 
       const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
       expect(tokenObject.userId).toBe(objStore.userId)
 
-      const resp = await client.get(`/objectstores/${objStore.id}`)
+      const resp = await client.get(
+        `/objectstores/${tokenObject.userId}/${objStore.id}`,
+      )
       expect(resp.status).toBe(200)
       const objStoreGet = await resp.json()
       expect(objStore.path).toEqual(objStoreGet.path)
@@ -196,7 +216,7 @@ describe('controllers/object-stores', () => {
       })
       expect(resTwo.status).toBe(201)
 
-      const stores = await clientSecond.get('/objectstores')
+      const stores = await clientSecond.get(`/objectstores/${objStore.userId}`)
       expect(stores.status).toBe(200)
       const objStores = await stores.json()
       expect(objStores.length).toEqual(1)
@@ -212,14 +232,16 @@ describe('controllers/object-stores', () => {
       expect(res.status).toBe(201)
       const objStore = await res.json()
       expect(objStore.id).toBeDefined()
-      expect(objStore.kind).toBe('objectstores')
+      expect(objStore.kind).toBeDefined()
       expect(objStore.userId).toBeDefined()
       expect(objStore.path).toBe(postMockStore.path)
 
       const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
       expect(tokenObject.userId).toBe(objStore.userId)
 
-      const resp = await client.get(`/objectstores/${objStore.id}`)
+      const resp = await client.get(
+        `/objectstores/${objStore.userId}/${objStore.id}`,
+      )
       expect(resp.status).toBe(200)
       const objStoreGet = await resp.json()
       expect(objStore.path).toEqual(objStoreGet.path)
