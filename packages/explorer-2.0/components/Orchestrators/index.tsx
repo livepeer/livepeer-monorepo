@@ -15,8 +15,10 @@ import matchSorter from 'match-sorter'
 import { Styled } from 'theme-ui'
 import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
+import useWindowSize from 'react-use/lib/useWindowSize'
 
 export default ({ currentRound, transcoders }) => {
+  const { width } = useWindowSize()
   const client = useApolloClient()
 
   const GET_ROI = gql`
@@ -195,6 +197,11 @@ export default ({ currentRound, transcoders }) => {
                   <tr
                     {...row.getRowProps()}
                     key={rowIndex}
+                    onClick={() => {
+                      if (width < 1380) {
+                        console.log('go')
+                      }
+                    }}
                     sx={{
                       height: 64,
                       'td:first-of-type': {
@@ -243,6 +250,12 @@ export default ({ currentRound, transcoders }) => {
                       return (
                         <td
                           sx={{
+                            cursor:
+                              i == 1
+                                ? 'pointer'
+                                : width < 1380
+                                ? 'pointer'
+                                : 'default',
                             width: i > 0 ? 'auto' : 1,
                             fontSize: 1,
                             pl: 2,
@@ -251,6 +264,7 @@ export default ({ currentRound, transcoders }) => {
                           }}
                           {...cell.getCellProps()}
                           onClick={() =>
+                            i != 1 &&
                             client.writeData({
                               data: {
                                 selectedTranscoder: {

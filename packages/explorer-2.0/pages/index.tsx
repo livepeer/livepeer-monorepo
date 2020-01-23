@@ -97,7 +97,13 @@ const Index = () => {
         </Flex>
       ) : (
         <Flex sx={{ width: '100%' }}>
-          <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
+          <Flex
+            sx={{
+              paddingTop: 5,
+              pr: [0, 0, 0, 0, 6],
+              width: ['100%', '100%', '100%', '100%', '70%'],
+            }}
+          >
             <Orchestrators
               currentRound={data.currentRound[0]}
               transcoders={data.transcoders}
@@ -105,6 +111,7 @@ const Index = () => {
           </Flex>
           <Flex
             sx={{
+              display: ['none', 'none', 'none', 'none', 'flex'],
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,

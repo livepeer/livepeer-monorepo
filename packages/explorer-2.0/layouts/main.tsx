@@ -77,22 +77,9 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       <Styled.root>
         <div
           sx={{
-            height: '100vh',
-            display: ['flex', 'flex', 'flex', 'none'],
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            padding: '0 32px',
-          }}
-        >
-          Mobile support coming soon.
-        </div>
-
-        <div
-          sx={{
             maxWidth: 1400,
             margin: '0 auto',
-            display: ['none', 'none', 'none', 'flex'],
+            display: 'flex',
           }}
         >
           <Drawer items={items} />

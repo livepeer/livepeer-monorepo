@@ -54,7 +54,7 @@ export default ({ items = [] }) => {
           borderRight: '1px solid',
           borderColor: 'border',
           paddingTop: 5,
-          pl: 2,
+          pl: 3,
         }}
       >
         <Flex

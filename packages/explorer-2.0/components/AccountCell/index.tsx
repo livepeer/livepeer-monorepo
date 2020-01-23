@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx, Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
-import Link from 'next/link'
 import { textTruncate, getDelegationStatusColor } from '../../lib/utils'
 
 const ActiveCircle = ({ status }, props) => {
@@ -52,34 +51,29 @@ export default ({ status, threeBoxSpace, active, address }) => {
         )}
         <ActiveCircle status={status} />
       </Flex>
-      <Flex sx={{ justifyContent: 'space-between', width: '100%' }}>
-        <Link
-          href="/accounts/[account]/[slug]"
-          as={`/accounts/${address}/campaign`}
-          passHref
+
+      <Flex
+        sx={{
+          mr: 2,
+          color: 'text',
+          transition: 'all .3s',
+          borderBottom: '1px solid',
+          borderColor: 'transparent',
+          justifyContent: 'space-between',
+          width: '100%',
+        }}
+      >
+        <Flex
+          className="orchestratorLink"
+          sx={{ justifyContent: 'space-between', alignItems: 'center' }}
         >
-          <a
-            className="orchestratorLink"
-            sx={{
-              mr: 2,
-              color: 'text',
-              cursor: 'pointer',
-              transition: 'all .3s',
-              borderBottom: '1px solid',
-              borderColor: 'transparent',
-            }}
-          >
-            <Flex
-              sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <div>
-                {process.env.THREEBOX_ENABLED && threeBoxSpace.name
-                  ? textTruncate(threeBoxSpace.name, 17, '…')
-                  : address.replace(address.slice(5, 39), '…')}
-              </div>
-            </Flex>
-          </a>
-        </Link>
+          <div>
+            {process.env.THREEBOX_ENABLED && threeBoxSpace.name
+              ? textTruncate(threeBoxSpace.name, 17, '…')
+              : address.replace(address.slice(5, 39), '…')}
+          </div>
+        </Flex>
+
         {active && (
           <div
             sx={{

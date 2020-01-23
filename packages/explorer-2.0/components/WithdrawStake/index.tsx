@@ -46,7 +46,7 @@ export default ({ lock }) => {
       setIsModalOpen(true)
     }
   }, [isBroadcasted])
-
+  console.log('is broadcasted', isBroadcasted)
   return (
     <>
       <Button
