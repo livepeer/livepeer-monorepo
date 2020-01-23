@@ -2,7 +2,7 @@
 import React from 'react'
 import { jsx, Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
-import { getLayout } from '../../../layouts/main'
+import Layout from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import Tabs, { TabType } from '../../../components/Tabs'
@@ -18,6 +18,7 @@ import Utils from 'web3-utils'
 import { useWeb3Context } from 'web3-react'
 import { getDelegatorStatus } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
+import { withApollo } from '../../../lib/apollo'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -66,7 +67,7 @@ const AccountPage = () => {
 
   if (loading) {
     return (
-      <>
+      <Layout>
         <Flex
           sx={{
             width: '100%',
@@ -76,7 +77,7 @@ const AccountPage = () => {
         >
           <Spinner />
         </Flex>
-      </>
+      </Layout>
     )
   }
 
@@ -90,18 +91,18 @@ const AccountPage = () => {
     account && Utils.fromWei(account.tokenBalance) > 0
   let role: string
 
-  if (data.transcoder && data.transcoder.id) {
+  if (data.transcoder && data.transcoder.id && isStaked) {
     role = 'Orchestrator'
   } else if ((data.delegator && data.delegator.id) || hasLivepeerToken) {
     role = 'Tokenholder'
   } else {
-    role = 'Observer'
+    role = 'Lurker'
   }
 
   const tabs: Array<TabType> = getTabs(role, query.account.toString(), asPath)
 
   return (
-    <>
+    <Layout>
       <Flex
         sx={{
           flexDirection: 'column',
@@ -152,7 +153,7 @@ const AccountPage = () => {
           />
         </Flex>
       )}
-    </>
+    </Layout>
   )
 }
 
@@ -187,6 +188,6 @@ function getTabs(
   return tabs
 }
 
-AccountPage.getLayout = getLayout
 AccountPage.displayName = ''
-export default AccountPage
+
+export default withApollo(AccountPage)

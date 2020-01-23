@@ -98,9 +98,9 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
           <Drawer items={items} />
           <Flex
             sx={{
-              paddingLeft: 40,
-              paddingRight: 40,
-              width: 'calc(100% - 256px)',
+              paddingLeft: 32,
+              paddingRight: 32,
+              width: 'calc(100% - 275px)',
             }}
           >
             <Flex sx={{ width: '100%' }} className="tour-step-6">
@@ -132,6 +132,6 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
   )
 }
 
-export const getLayout = page => <Layout>{page}</Layout>
 Layout.displayName = ''
+
 export default Layout

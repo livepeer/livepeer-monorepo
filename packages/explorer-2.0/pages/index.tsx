@@ -7,20 +7,25 @@ import Spinner from '../components/Spinner'
 import gql from 'graphql-tag'
 import { useAccount } from '../hooks'
 import { useWeb3Context } from 'web3-react'
-import { getLayout } from '../layouts/main'
+import Layout from '../layouts/main'
+import { withApollo } from '../lib/apollo'
 
 const GET_DATA = gql`
   {
     transcoders(
-      where: { status: Registered }
+      where: {
+        delegator_not: null
+        id_not: "0x0000000000000000000000000000000000000000"
+      }
       orderBy: totalStake
       orderDirection: desc
     ) {
       id
       active
       feeShare
+      activationRound
+      deactivationRound
       rewardCut
-      status
       active
       totalStake
       threeBoxSpace {
@@ -79,7 +84,7 @@ const Index = () => {
   }
 
   return (
-    <>
+    <Layout>
       {loading ? (
         <Flex
           sx={{
@@ -120,10 +125,10 @@ const Index = () => {
           </Flex>
         </Flex>
       )}
-    </>
+    </Layout>
   )
 }
 
-Index.getLayout = getLayout
 Index.displayName = ''
-export default () => Index()
+
+export default withApollo(Index)

@@ -156,7 +156,7 @@ export default ({
           />
         )}
       </Flex>
-      {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.website && (
+      {process.env.THREEBOX_ENABLED && threeBoxSpace?.website && (
         <Flex sx={{ mb: 2, alignItems: 'center' }}>
           <LinkIcon sx={{ color: 'muted', mr: 1 }} />
           <a
@@ -171,23 +171,22 @@ export default ({
       )}
       {isLivepeerAware && <Chip label={role} />}
 
-      {process.env.THREEBOX_ENABLED &&
-        threeBoxSpace &&
-        threeBoxSpace.description && (
-          <div sx={{ mt: 3, a: { color: 'primary' } }}>
-            <ShowMoreText
-              lines={3}
-              more={<span sx={{ color: 'primary' }}>Show more</span>}
-              less={<span sx={{ color: 'primary' }}>Show Less</span>}
-            >
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: nl2br(threeBoxSpace.description),
-                }}
-              />
-            </ShowMoreText>
-          </div>
-        )}
+      {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (
+        <div sx={{ mt: 3, a: { color: 'primary' } }}>
+          <ShowMoreText
+            lines={3}
+            more={<span sx={{ color: 'primary' }}>Show more</span>}
+            less={<span sx={{ color: 'primary' }}>Show Less</span>}
+          >
+            <div
+              sx={{ mt: 3, a: { color: 'primary' } }}
+              dangerouslySetInnerHTML={{
+                __html: nl2br(threeBoxSpace.description),
+              }}
+            />
+          </ShowMoreText>
+        </div>
+      )}
       {process.env.THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.addressLinks &&

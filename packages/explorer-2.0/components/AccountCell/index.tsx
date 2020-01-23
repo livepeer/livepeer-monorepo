@@ -2,7 +2,7 @@
 import { jsx, Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Link from 'next/link'
-import { getDelegationStatusColor } from '../../lib/utils'
+import { textTruncate, getDelegationStatusColor } from '../../lib/utils'
 
 const ActiveCircle = ({ status }, props) => {
   return (
@@ -61,7 +61,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
           <a
             className="orchestratorLink"
             sx={{
-              mr: 1,
+              mr: 2,
               color: 'text',
               cursor: 'pointer',
               transition: 'all .3s',
@@ -74,7 +74,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
             >
               <div>
                 {process.env.THREEBOX_ENABLED && threeBoxSpace.name
-                  ? threeBoxSpace.name
+                  ? textTruncate(threeBoxSpace.name, 17, '…')
                   : address.replace(address.slice(5, 39), '…')}
               </div>
             </Flex>

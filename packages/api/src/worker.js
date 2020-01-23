@@ -176,6 +176,15 @@ const amalgamate = async req => {
   })
 }
 
+function headersAsObject(inputHeaders) {
+  const headers = {}
+  const keyVals = [...inputHeaders.entries()]
+  keyVals.forEach(([key, val]) => {
+    headers[key] = val
+  })
+  return headers
+}
+
 // Similar to amalgamate, but for m3u8 files instead of JSON.
 const amalgamateM3U8 = async req => {
   const url = req.url
@@ -283,6 +292,18 @@ async function handleEvent(event) {
   if (url.hostname.startsWith('docs.')) {
     if (url.pathname === '/') {
       return fetch('http://docs.livepeer.live/index.html')
+    }
+  }
+  if (url.pathname.startsWith('/.well-known')) {
+    try {
+      const newReq = new Request(req.url, {
+        headers: req.headers,
+        cf: { resolveOverride: 'mcw-command.livepeer-staging.live' },
+      })
+      return fetch(newReq)
+    } catch (err) {
+      console.log(err)
+      return new Response(err.stack, { status: 500 })
     }
   }
   if (url.hostname.startsWith('build.')) {
