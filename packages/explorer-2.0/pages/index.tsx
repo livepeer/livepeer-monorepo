@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'

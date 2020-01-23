@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { Styled, jsx } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Styled } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Copy from '../../public/img/copy.svg'
 import Check from '../../public/img/check.svg'

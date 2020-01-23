@@ -1,6 +1,5 @@
 import App from 'next/app'
 import Head from 'next/head'
-import React from 'react'
 import { ThemeProvider, ColorMode } from 'theme-ui'
 import theme from '../lib/theme'
 import connectors from '../lib/connectors'
@@ -8,7 +7,6 @@ import Web3Provider from 'web3-react'
 import { ethers } from 'ethers'
 import { CookiesProvider } from 'react-cookie'
 import Web3 from 'web3'
-import Layout from '../layouts/main'
 
 class MyApp extends App {
   render() {

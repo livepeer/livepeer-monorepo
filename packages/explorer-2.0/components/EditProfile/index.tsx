@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import { ThreeBoxSpace } from '../../@types'
 import { Flex } from 'theme-ui'
 import Camera from '../../public/img/camera.svg'

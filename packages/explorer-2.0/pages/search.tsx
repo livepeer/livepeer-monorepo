@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex, Styled } from 'theme-ui'
+import { Flex, Styled } from 'theme-ui'
 import Search from '../public/img/search.svg'
 import Router from 'next/router'
 import { withApollo } from '../lib/apollo'

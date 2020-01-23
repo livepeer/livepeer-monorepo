@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'

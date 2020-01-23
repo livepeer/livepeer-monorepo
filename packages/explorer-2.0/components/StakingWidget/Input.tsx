@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
 import { useApolloClient } from '@apollo/react-hooks'
 import * as Utils from 'web3-utils'
 

@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import React from 'react'
-import { jsx, Styled, Flex } from 'theme-ui'
+import { Styled, Flex } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 
 interface Props {

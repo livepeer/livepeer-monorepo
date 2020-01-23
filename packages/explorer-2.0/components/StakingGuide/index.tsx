@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Styled, Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Styled, Flex } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import Button from '../Button'
 import dynamic from 'next/dynamic'
@@ -96,8 +95,8 @@ export default ({ children }) => {
       {
         action: node => node.focus(),
         selector: '.tour-step-7',
-        content: ({ goTo }) => {
-          return <Step7 goTo={goTo} nextStep={nextStep} />
+        content: () => {
+          return <Step7 />
         },
         style: tourStyles,
       },

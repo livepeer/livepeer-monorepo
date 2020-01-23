@@ -1,4 +1,4 @@
-/** @jsx jsx */
+
 import { jsx, Styled } from 'theme-ui'
 import { storiesOf } from '@storybook/react'
 import List from './index'

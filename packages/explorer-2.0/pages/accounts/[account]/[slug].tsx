@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
 import Layout from '../../../layouts/main'
 import gql from 'graphql-tag'

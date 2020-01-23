@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex, Styled } from 'theme-ui'
+import { Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import Unlink from '../../public/img/unlink.svg'
 import { abbreviateNumber } from '../../lib/utils'

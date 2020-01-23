@@ -1,7 +1,6 @@
-/** @jsx jsx */
-import { jsx, Flex, Box } from 'theme-ui'
+import { Flex, Box } from 'theme-ui'
 import { lighten } from '@theme-ui/color'
-import React from 'react'
+import { useMemo } from 'react'
 import { useTable, useFilters } from 'react-table'
 import * as Utils from 'web3-utils'
 import { getDelegatorStatus, abbreviateNumber } from '../../lib/utils'
@@ -33,7 +32,7 @@ export default ({ currentRound, transcoders }) => {
 
   const { data } = useQuery(GET_ROI)
 
-  const columns: any = React.useMemo(
+  const columns: any = useMemo(
     () => [
       {
         Header: '#',
@@ -91,7 +90,7 @@ export default ({ currentRound, transcoders }) => {
     [],
   )
 
-  const defaultColumn = React.useMemo(
+  const defaultColumn = useMemo(
     () => ({
       // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
@@ -99,7 +98,7 @@ export default ({ currentRound, transcoders }) => {
     [],
   )
 
-  const filterTypes = React.useMemo(
+  const filterTypes = useMemo(
     () => ({
       // Add a new fuzzyTextFilterFn filter type.
       fuzzyText: fuzzyTextFilterFn,

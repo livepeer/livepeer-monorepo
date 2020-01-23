@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-import { tint } from '@theme-ui/color'
 import { keyframes } from '@emotion/core'
 
 const rotate = keyframes`

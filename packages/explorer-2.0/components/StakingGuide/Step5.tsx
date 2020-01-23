@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { useEffect } from 'react'
-import { jsx, Styled } from 'theme-ui'
+import { Styled } from 'theme-ui'
 import Button from '../Button'
 import { useWeb3Mutation } from '../../hooks'
 import Spinner from '../Spinner'

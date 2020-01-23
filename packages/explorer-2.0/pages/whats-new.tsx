@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Styled, Flex } from 'theme-ui'
+import { Styled, Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import Spinner from '../components/Spinner'
 import gql from 'graphql-tag'

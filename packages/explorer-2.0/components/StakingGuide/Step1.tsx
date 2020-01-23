@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Styled } from 'theme-ui'
+import { Styled } from 'theme-ui'
 import Router from 'next/router'
 
 export default ({ goTo, nextStep }) => {

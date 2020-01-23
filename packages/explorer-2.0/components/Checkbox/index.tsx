@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-import React from 'react'
 import Check from '../../public/img/check.svg'
 
 export default ({ isActive = false, ...props }) => (

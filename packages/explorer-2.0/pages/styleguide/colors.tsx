@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Styled } from 'theme-ui'
+import { Styled } from 'theme-ui'
 import { ColorPalette } from '@theme-ui/style-guide'
 
 export default () => {

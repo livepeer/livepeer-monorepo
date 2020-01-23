@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import { jsx, Styled, Flex } from 'theme-ui'
-import React from 'react'
+import { Styled, Flex } from 'theme-ui'
 import ArrowRight from '../../public/img/arrow-right-long.svg'
 
 export default ({ action = 'stake', amount = 0, account }) => {

@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Flex } from 'theme-ui'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 import Button from '../Button'

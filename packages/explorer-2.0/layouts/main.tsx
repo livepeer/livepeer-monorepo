@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import { jsx, Styled, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import { Styled, Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'

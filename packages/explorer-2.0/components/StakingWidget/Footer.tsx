@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx } from 'theme-ui'
 import Button from '../Button'
 import Stake from './Stake'
 import Unstake from './Unstake'

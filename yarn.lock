@@ -640,7 +640,7 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0.tgz#bbb3fbee98661c569034237cc03967ba99b4f250"
   integrity sha512-CYAOUCARwExnEixLdB6sDm2dIJ/YgEAKDM1MOeMeZu9Ld/bDgVo8aiWrXwcY7OBh+1Ea2uUcVRcxKk0GJvW7QA==
 
-"@babel/helper-plugin-utils@^7.8.0", "@babel/helper-plugin-utils@^7.8.3":
+"@babel/helper-plugin-utils@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.8.3.tgz#9ea293be19babc0f52ff8ca88b34c3611b208670"
   integrity sha512-j+fq49Xds2smCUNYmEHF9kGNkhbet6yVIBp4e6oeQpH1RUs/Ir06xUKzDjDkGcaaokPiTNs2JBWHjaE4csUkZQ==
@@ -914,14 +914,6 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-optional-chaining" "^7.7.4"
 
-"@babel/plugin-proposal-optional-chaining@^7.6.0":
-  version "7.8.3"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-optional-chaining/-/plugin-proposal-optional-chaining-7.8.3.tgz#ae10b3214cb25f7adb1f3bc87ba42ca10b7e2543"
-  integrity sha512-QIoIR9abkVn+seDE3OjA08jWcs3eZ9+wJCKSRgo3WdEU2csFYgdScb+8qHB3+WXsGJD55u+5hWCISI7ejXS+kg==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.8.3"
-    "@babel/plugin-syntax-optional-chaining" "^7.8.0"
-
 "@babel/plugin-proposal-pipeline-operator@^7.0.0":
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-pipeline-operator/-/plugin-proposal-pipeline-operator-7.7.4.tgz#d61724b4f207b0a7c08e9182e8e36fda2d93e384"
@@ -1099,13 +1091,6 @@
   integrity sha512-2MqYD5WjZSbJdUagnJvIdSfkb/ucOC9/1fRJxm7GAxY6YQLWlUvkfxoNbUPcPLHJyetKUDQ4+yyuUyAoc0HriA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
-
-"@babel/plugin-syntax-optional-chaining@^7.8.0":
-  version "7.8.3"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-optional-chaining/-/plugin-syntax-optional-chaining-7.8.3.tgz#4f69c2ab95167e0180cd5336613f8c5788f7d48a"
-  integrity sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.8.0"
 
 "@babel/plugin-syntax-pipeline-operator@^7.7.4":
   version "7.7.4"
@@ -8329,6 +8314,17 @@ babel-plugin-inline-react-svg@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-inline-react-svg/-/babel-plugin-inline-react-svg-1.1.0.tgz#b39519c78249b3fcf895b541c38b485a2b11b0be"
   integrity sha512-Y/tBMi7Jh7Jh+DGcSNsY9/RW33nvcR067HFK0Dp+03jpidil1sJAffBdajK72xn3tbwMsgFLJubxW5xpQLJytA==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+    "@babel/parser" "^7.0.0"
+    lodash.isplainobject "^4.0.6"
+    resolve "^1.10.0"
+    svgo "^0.7.2"
+
+babel-plugin-inline-react-svg@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-inline-react-svg/-/babel-plugin-inline-react-svg-1.1.1.tgz#3fce30c5653a6c032c21ccc2b3e0141cd494b1d8"
+  integrity sha512-KCCzSKJUigDXd/dxJDE6uNyVTYE46FiTt8Md3vpYHtbADeTjOLJq5LkmaVpISplxKCK25VZU8sha2Km6uIEFJA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/parser" "^7.0.0"
@@ -24071,7 +24067,7 @@ multicast-dns@^7.2.0:
     dns-packet "^4.0.0"
     thunky "^1.0.2"
 
-multicodec@0.5.6, multicodec@~0.5.0, multicodec@~0.5.1, multicodec@~0.5.3:
+multicodec@~0.5.0, multicodec@~0.5.1, multicodec@~0.5.3:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/multicodec/-/multicodec-0.5.6.tgz#fdf250b6febe57053221f0aeeb83e6cae073a05e"
   integrity sha512-YQthT12rnqyAosc+xSprD3JpmrfxXYABM9FEFw7oVxTonsWmIYng1iIppqpIfGBFZ3YKMgJKx6UTREuv91EcKw==

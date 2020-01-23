@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import { Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
 import Modal from '../Modal'

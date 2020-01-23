@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import { jsx, Box } from 'theme-ui'
-import React, { useState } from 'react'
+import { Box } from 'theme-ui'
+import { useState } from 'react'
 import Header from './Header'
 import ProjectionBox from './ProjectionBox'
 import ArrowDown from '../../public/img/arrow-down.svg'

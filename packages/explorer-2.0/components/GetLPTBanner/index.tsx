@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-import React from 'react'
 import Button from '../Button'
 import Banner from '../Banner'
 import Router, { useRouter } from 'next/router'

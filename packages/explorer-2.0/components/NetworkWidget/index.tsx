@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import Play from '../../public/img/play.svg'
 import { useWeb3Context } from 'web3-react'
 import gql from 'graphql-tag'

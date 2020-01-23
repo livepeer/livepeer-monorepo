@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import React, { useState, useEffect } from 'react'
 import { useApolloClient } from '@apollo/react-hooks'
 import Utils from 'web3-utils'
@@ -20,7 +19,7 @@ export default ({ transcoder, amount, disabled }) => {
   const context = useWeb3Context()
   const [isOpen, setIsModalOpen] = useState(false)
   const { width, height } = useWindowSize()
-  
+
   if (!context.active) {
     return null
   }

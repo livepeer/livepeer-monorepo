@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Styled, Box } from 'theme-ui'
+import { Styled, Box } from 'theme-ui'
 import Typography from './typography'
 import Colors from './colors'
 

@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState } from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { useState } from 'react'
+import { Flex } from 'theme-ui'
 import { Collapse } from 'react-collapse'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks'

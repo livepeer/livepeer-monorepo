@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import { textTruncate, getDelegationStatusColor } from '../../lib/utils'
 

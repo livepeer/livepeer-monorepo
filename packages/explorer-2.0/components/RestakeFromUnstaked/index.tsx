@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import { Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import { useWeb3Context } from 'web3-react'
 import gql from 'graphql-tag'
 import StakingFlow from '../StakingFlow'

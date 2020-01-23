@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
-import React from 'react'
+import { Flex } from 'theme-ui'
+import { useMemo } from 'react'
 import { useTable } from 'react-table'
 import QRCode from 'qrcode.react'
 import Link from 'next/link'
@@ -8,7 +7,7 @@ import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 
 export default ({ protocol, delegators, ...props }) => {
-  const columns: any = React.useMemo(
+  const columns: any = useMemo(
     () => [
       {
         Header: '#',

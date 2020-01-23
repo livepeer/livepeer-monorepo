@@ -1,9 +1,7 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Flex, Box } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Flex, Box } from 'theme-ui'
 import Logo from '../../public/img/logo.svg'
 import LPT from '../../public/img/lpt.svg'
-import New from '../../public/img/new.svg'
 import Wallet from '../../public/img/wallet.svg'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'

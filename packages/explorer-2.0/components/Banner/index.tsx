@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import React from 'react'
 
 interface Props {

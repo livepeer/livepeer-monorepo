@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { Styled, jsx, Flex } from 'theme-ui'
+import { Styled, Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
 
 export default ({ transcoder }) => {

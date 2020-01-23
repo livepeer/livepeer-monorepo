@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Flex, Box, Styled } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Flex, Styled } from 'theme-ui'
 import Router from 'next/router'
 import { useWeb3Context } from 'web3-react'
 import Wallet from '../public/img/wallet.svg'
