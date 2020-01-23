@@ -1,5 +1,3 @@
-import { VIDEO_PROFILES } from '@livepeer/sdk/src/video_profiles.js'
-
 /**
  * Replace a string containing "${SourceStreamName}" with the appropriate stream name
  */

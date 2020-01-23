@@ -18,6 +18,8 @@ import MinterArtifact from '../etc/Minter'
 import { VIDEO_PROFILES } from './video_profiles.js'
 
 // Constants
+
+export { VIDEO_PROFILES }
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const ADDRESS_PAD = '0x000000000000000000000000'
 export const VIDEO_PROFILE_ID_SIZE = 8

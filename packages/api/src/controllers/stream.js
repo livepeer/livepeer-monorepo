@@ -14,7 +14,7 @@ const app = Router()
 // rewrite controllers to look like CF requests? simplifying!! res.json() for example.
 // or.
 
-app.get('/', async (req, res) => {
+app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
