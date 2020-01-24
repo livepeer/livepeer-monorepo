@@ -43,10 +43,14 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   const id = uuid()
 
+  console.log(`idddddd: ${req.body.objectStoreId}`)
+
   let objectStoreID
   if (req.body.objectStoreId) {
     try {
-      await req.store.get(`objectstores/${req.body.objectStoreId}`)
+      await req.store.get(
+        `objectstores/${req.user.id}/${req.body.objectStoreId}`,
+      )
       objectStoreID = req.body.objectStoreId
     } catch (e) {
       console.error(e)
@@ -123,17 +127,25 @@ app.post('/hook', async (req, res) => {
   }
 
   const stream = await req.store.get(`stream/${streamId}`)
-  const store = await req.store.get(`objectstores/${stream.objectStoreId}`)
+  let objectStore = { type: '', path: '' }
+  if (stream.objectStoreId && stream.userId) {
+    const store = await req.store.get(
+      `objectstores/${stream.userId}/${stream.objectStoreId}`,
+    )
+    if (store && 'type' in store && 'path' in store) {
+      objectStore = {
+        type: store.type,
+        path: store.path,
+        credentials: store.credentials,
+      }
+    }
+  }
 
   res.json({
     manifestId: streamId,
     presets: stream.presets,
     profiles: stream.profiles,
-    objectStore: {
-      type: store.type,
-      path: store.path,
-      credentials: store.credentials,
-    },
+    objectStore: objectStore,
   })
 })
 
