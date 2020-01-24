@@ -66,7 +66,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
           className="orchestratorLink"
           sx={{ justifyContent: 'space-between', alignItems: 'center' }}
         >
-          <div>
+          <div sx={{ fontWeight: 600 }}>
             {process.env.THREEBOX_ENABLED && threeBoxSpace.name
               ? textTruncate(threeBoxSpace.name, 17, '…')
               : address.replace(address.slice(5, 39), '…')}

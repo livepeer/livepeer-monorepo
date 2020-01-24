@@ -15,6 +15,7 @@ import { Styled } from 'theme-ui'
 import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
 import useWindowSize from 'react-use/lib/useWindowSize'
+import Router from 'next/router'
 
 export default ({ currentRound, transcoders }) => {
   const { width } = useWindowSize()
@@ -44,6 +45,7 @@ export default ({ currentRound, transcoders }) => {
         accessor: 'id',
         filter: 'fuzzyText',
         Filter: DefaultColumnFilter,
+        mobile: true,
       },
       {
         Header: 'Activation Round',
@@ -59,6 +61,7 @@ export default ({ currentRound, transcoders }) => {
         Header: 'Active',
         accessor: 'active',
         show: false,
+        mobile: true,
       },
       {
         Header: 'ThreeBoxSpace',
@@ -73,6 +76,7 @@ export default ({ currentRound, transcoders }) => {
       {
         Header: 'Stake',
         accessor: 'totalStake',
+        mobile: true,
       },
       {
         Header: 'Reward Cut',
@@ -136,34 +140,50 @@ export default ({ currentRound, transcoders }) => {
     <Box sx={{ width: '100%' }}>
       <Flex
         sx={{
+          position: ['sticky', 'sticky', 'sticky', 'relative'],
+          width: '100%',
+          top: [63, 63, 79, 0],
+          bg: 'background',
+          zIndex: 10,
           flexDirection: 'column',
           alignItems: 'flex-start',
-          mb: 3,
+          pt: [1, 1, 1, 0],
+          pb: [1, 1, 1, 3],
+          ml: [0, 0, 0, -2],
+          mr: [0, 0, 0, -2],
           justifyContent: 'space-between',
         }}
       >
-        <Styled.h1 sx={{ mb: 4, display: 'flex', alignItems: 'center' }}>
+        <Styled.h1
+          sx={{
+            mb: [4, 4, 4, 5],
+            display: ['none', 'none', 'none', 'flex'],
+            alignItems: 'center',
+          }}
+        >
           <Orchestrators
             sx={{ width: 32, height: 32, mr: 2, color: 'primary' }}
           />{' '}
           Orchestrators
         </Styled.h1>
-        <div>
+        <Box>
           {accountColumn.canFilter ? accountColumn.render('Filter') : null}
-        </div>
+        </Box>
       </Flex>
-      <Box>
+      <Box sx={{ ml: -2, mr: -2, overflow: 'scroll' }}>
         <table
           sx={{
             display: 'table',
             width: '100%',
-            minWidth: 650,
+            minWidth: ['100%', '100%', '100%', 650],
             borderSpacing: '0',
             borderCollapse: 'collapse',
           }}
           {...getTableProps()}
         >
-          <thead>
+          <thead
+            sx={{ display: ['none', 'none', 'none', 'table-header-group'] }}
+          >
             {headerGroups.map((headerGroup, i) => (
               <tr key={i}>
                 {headerGroup.headers.map((column: any, i) => (
@@ -171,6 +191,11 @@ export default ({ currentRound, transcoders }) => {
                     sx={{
                       pb: 1,
                       pl: 2,
+                      display: [
+                        column.mobile ? 'table-cell' : 'none',
+                        column.mobile ? 'table-cell' : 'none',
+                        'table-cell',
+                      ],
                       textTransform: 'uppercase',
                     }}
                     align="left"
@@ -197,8 +222,11 @@ export default ({ currentRound, transcoders }) => {
                     {...row.getRowProps()}
                     key={rowIndex}
                     onClick={() => {
-                      if (width < 1380) {
-                        console.log('go')
+                      if (width < 1020) {
+                        Router.push(
+                          '/accounts/[account]/[slug]',
+                          `/accounts/${row.values.id}/campaign`,
+                        )
                       }
                     }}
                     sx={{
@@ -212,7 +240,12 @@ export default ({ currentRound, transcoders }) => {
                         borderBottomRightRadius: 6,
                       },
                       '&:hover': {
-                        bg: lighten('#1E2026', 0.05),
+                        bg: [
+                          'transparent',
+                          'transparent',
+                          'transparent',
+                          lighten('#1E2026', 0.05),
+                        ],
                         '.status': {
                           borderColor: lighten('#1E2026', 0.05),
                         },
@@ -241,7 +274,12 @@ export default ({ currentRound, transcoders }) => {
                         (data &&
                           data.selectedTranscoder &&
                           data.selectedTranscoder.index)
-                          ? 'surface'
+                          ? [
+                              'transparent',
+                              'transparent',
+                              'transparent',
+                              'surface',
+                            ]
                           : 'transparent',
                     }}
                   >
@@ -249,10 +287,15 @@ export default ({ currentRound, transcoders }) => {
                       return (
                         <td
                           sx={{
+                            display: [
+                              cell.column.mobile ? 'table-cell' : 'none',
+                              cell.column.mobile ? 'table-cell' : 'none',
+                              'table-cell',
+                            ],
                             cursor:
                               i == 1
                                 ? 'pointer'
-                                : width < 1380
+                                : width < 1020
                                 ? 'pointer'
                                 : 'default',
                             width: i > 0 ? 'auto' : 1,
@@ -262,19 +305,25 @@ export default ({ currentRound, transcoders }) => {
                             py: '16px',
                           }}
                           {...cell.getCellProps()}
-                          onClick={() =>
-                            i != 1 &&
-                            client.writeData({
-                              data: {
-                                selectedTranscoder: {
-                                  __typename: 'Transcoder',
-                                  index: rowIndex,
-                                  id: row.values.id,
-                                  threeBoxSpace: row.values.threeBoxSpace,
+                          onClick={() => {
+                            if (i === 1 && width > 1020) {
+                              Router.push(
+                                '/accounts/[account]/[slug]',
+                                `/accounts/${row.values.id}/campaign`,
+                              )
+                            } else {
+                              client.writeData({
+                                data: {
+                                  selectedTranscoder: {
+                                    __typename: 'Transcoder',
+                                    index: rowIndex,
+                                    id: row.values.id,
+                                    threeBoxSpace: row.values.threeBoxSpace,
+                                  },
                                 },
-                              },
-                            })
-                          }
+                              })
+                            }
+                          }}
                           key={i}
                         >
                           {renderSwitch(cell, currentRound)}
@@ -300,7 +349,7 @@ function renderTooltip(title) {
           <ReactTooltip
             id="tooltip-stake"
             className="tooltip"
-            place="top"
+            place="bottom"
             type="dark"
             effect="solid"
           />
@@ -324,7 +373,7 @@ function renderTooltip(title) {
           <ReactTooltip
             id="tooltip-reward-cut"
             className="tooltip"
-            place="top"
+            place="bottom"
             type="dark"
             effect="solid"
           />
@@ -348,7 +397,7 @@ function renderTooltip(title) {
           <ReactTooltip
             id="tooltip-fee-cut"
             className="tooltip"
-            place="top"
+            place="bottom"
             type="dark"
             effect="solid"
           />
@@ -372,7 +421,7 @@ function renderTooltip(title) {
           <ReactTooltip
             id="tooltip-calls"
             className="tooltip"
-            place="top"
+            place="bottom"
             type="dark"
             effect="solid"
           />
@@ -458,6 +507,7 @@ function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     <Flex
       sx={{
         alignItems: 'center',
+        pl: 1,
       }}
     >
       <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
@@ -474,6 +524,7 @@ function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
           display: 'block',
           outline: 'none',
           width: '100%',
+
           appearance: 'none',
           fontSize: 2,
           lineHeight: 'inherit',

@@ -87,6 +87,7 @@ const Index = () => {
       {loading ? (
         <Flex
           sx={{
+            height: '100vh',
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
@@ -98,7 +99,7 @@ const Index = () => {
         <Flex sx={{ width: '100%' }}>
           <Flex
             sx={{
-              paddingTop: 5,
+              paddingTop: [0, 0, 0, 5],
               pr: [0, 0, 0, 0, 6],
               width: ['100%', '100%', '100%', '100%', '70%'],
             }}

@@ -12,16 +12,22 @@ import { useCookies } from 'react-cookie'
 import { removeURLParameter } from '../../lib/utils'
 import NetworkWidget from '../NetworkWidget'
 
-export default ({ items = [] }) => {
+export default ({ items = [], open, onDrawerOpen }) => {
   const router = useRouter()
   const { query, pathname, asPath } = router
   const context = useWeb3Context()
-  const [open, setOpen] = useState(query && query.openExchange ? true : false)
+  const [exchangeOpen, setOpen] = useState(
+    query && query.openExchange ? true : false,
+  )
   const [cookies, setCookie, removeCookie] = useCookies(['connector'])
 
   useEffect(() => {
     if (cookies.connector) {
       context.setConnector(cookies.connector)
+    } else {
+      if (window['web3']) {
+        context.setConnector('Injected')
+      }
     }
   }, [cookies])
 
@@ -33,26 +39,52 @@ export default ({ items = [] }) => {
     }
   }, [query.openExchange])
 
+  const visibility = open ? 'visible' : 'hidden'
+
   return (
-    <Flex
-      sx={{
-        width: 275,
-        flexDirection: 'column',
-        height: '100vh',
-      }}
-    >
+    <>
+      <Box
+        onClick={onDrawerOpen}
+        sx={{
+          left: 0,
+          top: 0,
+          position: 'fixed',
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0,0,0,.5)',
+          visibility: [visibility, visibility, visibility, 'hidden'],
+          zIndex: 100,
+        }}
+      />
       <Flex
         sx={{
-          position: 'fixed',
+          width: 275,
+          top: 0,
+          transition: 'transform .3s',
+          transform: [
+            `translateX(${open ? 0 : '-100%'})`,
+            `translateX(${open ? 0 : '-100%'})`,
+            `translateX(${open ? 0 : '-100%'})`,
+            'none',
+          ],
+          position: ['fixed', 'fixed', 'fixed', 'sticky'],
           flexDirection: 'column',
+          bg: 'background',
+          zIndex: 100,
+          height: '100vh',
+
+          pt: 5,
+          pl: 3,
+          borderRight: [0, 0, 0, '1px solid'],
+          borderColor: ['border', 'border', 'border', 'border'],
+          boxShadow: [
+            '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)',
+            '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)',
+            '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)',
+            'none',
+          ],
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '100%',
-          width: 275,
-          borderRight: '1px solid',
-          borderColor: 'border',
-          paddingTop: 5,
-          pl: 3,
         }}
       >
         <Flex
@@ -103,7 +135,9 @@ export default ({ items = [] }) => {
                 </a>
               </Link>
             ))}
-            <StakingGuide>Staking Guide</StakingGuide>
+            <StakingGuide sx={{ display: ['none', 'none', 'none', 'block'] }}>
+              Staking Guide
+            </StakingGuide>
           </Box>
           <div sx={{ mb: 4 }}>
             <div
@@ -164,7 +198,7 @@ export default ({ items = [] }) => {
                     Get LPT
                     <Modal
                       className="tour-step-4"
-                      isOpen={open}
+                      isOpen={exchangeOpen}
                       sx={{ maxWidth: 600 }}
                       onDismiss={() => {
                         Router.push(
@@ -220,6 +254,6 @@ export default ({ items = [] }) => {
           </div>
         </Flex>
       </Flex>
-    </Flex>
+    </>
   )
 }

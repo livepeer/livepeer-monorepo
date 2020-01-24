@@ -79,18 +79,24 @@ export default () => {
           <div
             sx={{
               display: 'grid',
-              gridGap: 2,
-              gridTemplateColumns: `repeat(auto-fit, minmax(128px, 1fr))`,
+              gridGap: [2, 2, 2],
+              gridTemplateColumns: [
+                'repeat(auto-fit, minmax(33%, 1fr))',
+                'repeat(auto-fit, minmax(33%, 1fr))',
+                'repeat(auto-fit, minmax(33%, 1fr))',
+                `repeat(auto-fit, minmax(30%, 1fr))`,
+              ],
             }}
           >
             <Card
-              sx={{ flex: 1, mb: 2 }}
+              sx={{ flex: 1 }}
               title="Total Stake"
               subtitle={
                 <div
                   sx={{
-                    fontSize: 5,
+                    fontSize: [3, 3, 4, 4, 5],
                     color: 'text',
+                    fontWeight: 500,
                     lineHeight: 'heading',
                     fontFamily: 'monospace',
                   }}
@@ -104,13 +110,14 @@ export default () => {
               }
             />
             <Card
-              sx={{ flex: 1, mb: 2 }}
+              sx={{ flex: 1 }}
               title="Reward Cut"
               subtitle={
                 <div
                   sx={{
-                    fontSize: 5,
+                    fontSize: [3, 3, 4, 4, 5],
                     color: 'text',
+                    fontWeight: 500,
                     lineHeight: 'heading',
                     fontFamily: 'monospace',
                   }}
@@ -123,13 +130,14 @@ export default () => {
               }
             />
             <Card
-              sx={{ flex: 1, mb: 2 }}
+              sx={{ flex: 1 }}
               title="Fee Cut"
               subtitle={
                 <div
                   sx={{
-                    fontSize: 5,
+                    fontSize: [3, 3, 4, 4, 5],
                     color: 'text',
+                    fontWeight: 500,
                     lineHeight: 'heading',
                     fontFamily: 'monospace',
                   }}
@@ -141,24 +149,25 @@ export default () => {
                 </div>
               }
             />
+            <Card
+              title="Reward Calls"
+              sx={{ gridColumn: [0, 0, 0, '1 / -1'] }}
+              subtitle={
+                <Flex
+                  sx={{
+                    alignItems: 'center',
+                    fontSize: [3, 3, 4, 4, 5],
+                    color: 'text',
+                    fontWeight: 500,
+                    lineHeight: 'heading',
+                    fontFamily: 'monospace',
+                  }}
+                >
+                  {callsMade}/{data.transcoder.pools.length}
+                </Flex>
+              }
+            />
           </div>
-          <Card
-            sx={{ mb: 2 }}
-            title="Reward Calls"
-            subtitle={
-              <Flex
-                sx={{
-                  alignItems: 'center',
-                  fontSize: 5,
-                  color: 'text',
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {callsMade}/{data.transcoder.pools.length}
-              </Flex>
-            }
-          />
         </>
       )}
     </div>

@@ -21,6 +21,8 @@ class MyApp extends App {
             href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500&display=swap"
             rel="stylesheet"
           />
+          {/* <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black" /> */}
         </Head>
 
         <ThemeProvider theme={theme}>

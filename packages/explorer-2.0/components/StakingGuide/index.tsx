@@ -15,6 +15,7 @@ import Step5 from './Step5'
 import Step6 from './Step6'
 import Step7 from './Step7'
 import gql from 'graphql-tag'
+import { Box } from 'theme-ui'
 
 const Tour: any = dynamic(() => import('reactour'), { ssr: false })
 
@@ -24,7 +25,7 @@ const GET_TOUR_OPEN = gql`
   }
 `
 
-export default ({ children }) => {
+export default ({ children, ...props }) => {
   const client = useApolloClient()
   const [open, setOpen] = useState(false)
   const [tourKey, setTourKey] = useState(0)
@@ -104,7 +105,7 @@ export default ({ children }) => {
   }, [account, context.active, nextStep, tourStyles])
 
   return (
-    <>
+    <Box {...props}>
       <Button
         sx={{ mt: 2, width: '100%' }}
         variant="rainbow"
@@ -250,6 +251,6 @@ export default ({ children }) => {
           </Flex>
         </Styled.div>
       )}
-    </>
+    </Box>
   )
 }

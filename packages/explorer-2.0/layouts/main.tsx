@@ -1,4 +1,4 @@
-import { Styled, Flex } from 'theme-ui'
+import { Styled, Box, Flex } from 'theme-ui'
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
@@ -12,12 +12,17 @@ import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
 import Snackbar from '../components/Snackbar'
 import { useAccount } from '../hooks'
+import Header from '../components/Header'
+import Router from 'next/router'
+import useWindowSize from 'react-use/lib/useWindowSize'
 
 const Layout = ({ children, title = 'Livepeer Explorer' }) => {
   const context = useWeb3Context()
   const { account } = context
   const { threeBoxSpace } = useAccount(account)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const { width } = useWindowSize()
   const [cookies, setCookie, removeCookie] = useCookies([
     'dismissedOldExplorerSnackbar',
   ])
@@ -27,6 +32,16 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       setSnackbarOpen(true)
     }
   }, [cookies])
+
+  useEffect(() => {
+    if (width > 1020) {
+      document.body.removeAttribute('style')
+    }
+
+    if (width < 1020 && drawerOpen) {
+      document.body.style.overflow = 'hidden'
+    }
+  })
 
   let items = [
     {
@@ -65,6 +80,20 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
     },
   ]
 
+  Router.events.on('routeChangeComplete', () =>
+    document.body.removeAttribute('style'),
+  )
+
+  const onDrawerOpen = () => {
+    if (drawerOpen) {
+      document.body.removeAttribute('style')
+      setDrawerOpen(false)
+    } else {
+      document.body.style.overflow = 'hidden'
+      setDrawerOpen(true)
+    }
+  }
+
   return (
     <>
       <Head>
@@ -74,19 +103,21 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       </Head>
       <Reset />
       <Styled.root>
-        <div
+        <Header onDrawerOpen={onDrawerOpen} />
+        <Box
           sx={{
             maxWidth: 1400,
             margin: '0 auto',
             display: 'flex',
           }}
         >
-          <Drawer items={items} />
+          <Drawer onDrawerOpen={onDrawerOpen} open={drawerOpen} items={items} />
           <Flex
             sx={{
-              paddingLeft: 32,
-              paddingRight: 32,
-              width: 'calc(100% - 275px)',
+              bg: 'background',
+              paddingLeft: [2, 2, 2, 32],
+              paddingRight: [2, 2, 2, 32],
+              width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
             }}
           >
             <Flex sx={{ width: '100%' }} className="tour-step-6">
@@ -112,7 +143,7 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
               </span>
             </Snackbar>
           )}
-        </div>
+        </Box>
       </Styled.root>
     </>
   )

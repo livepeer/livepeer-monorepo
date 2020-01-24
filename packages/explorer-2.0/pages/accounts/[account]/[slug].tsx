@@ -99,18 +99,21 @@ const AccountPage = () => {
 
   const tabs: Array<TabType> = getTabs(role, query.account.toString(), asPath)
 
+  const desktopWidth1 = [
+    role == 'Orchestrator' || (isMyAccount && isStaked) ? '65%' : '100%',
+  ]
+  const desktopWidth2 = [
+    role == 'Orchestrator' || (isMyAccount && isStaked) ? '70%' : '100%',
+  ]
   return (
     <Layout>
       <Flex
         sx={{
           flexDirection: 'column',
           mb: 8,
-          pr: 6,
-          pt: 5,
-          width:
-            role == 'Orchestrator' || (isMyAccount && isStaked)
-              ? '70%'
-              : '100%',
+          pr: [0, 0, 0, 6],
+          pt: [1, 1, 1, 4],
+          width: ['100%', '100%', '100%', desktopWidth1, desktopWidth2],
         }}
       >
         <Profile
@@ -134,10 +137,11 @@ const AccountPage = () => {
       {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
         <Flex
           sx={{
-            alignSelf: 'flex-start',
+            display: ['none', 'none', 'none', 'flex'],
             position: 'sticky',
+            alignSelf: 'flex-start',
             top: 5,
-            width: '30%',
+            width: ['40%', '40%', '40%', '35%', '30%'],
           }}
         >
           <StakingWidget

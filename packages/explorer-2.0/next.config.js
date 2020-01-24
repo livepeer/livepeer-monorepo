@@ -1,4 +1,6 @@
-module.exports = {
+const withOffline = require('next-offline')
+
+const nextConfig = {
   target: 'serverless',
   env: {
     THREEBOX_ENABLED: true,
@@ -8,3 +10,5 @@ module.exports = {
     return config
   },
 }
+
+module.exports = withOffline(nextConfig)

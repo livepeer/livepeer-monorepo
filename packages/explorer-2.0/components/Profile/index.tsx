@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Styled } from 'theme-ui'
+import { Styled, Box } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Copy from '../../public/img/copy.svg'
 import Check from '../../public/img/check.svg'
@@ -14,6 +14,7 @@ import EditProfile from '../EditProfile'
 import ShowMoreText from 'react-show-more-text'
 import Link from 'next/link'
 import { nl2br } from '../../lib/utils'
+import Button from '../Button'
 
 interface Props {
   account: string
@@ -52,12 +53,12 @@ export default ({
   }, [copied])
 
   return (
-    <div {...props}>
-      <div
+    <Box {...props}>
+      <Box
         sx={{
-          mb: 2,
-          width: 70,
-          height: 70,
+          mb: [1, 1, 1, 2],
+          width: [60, 60, 60, 70],
+          height: [60, 60, 60, 70],
           position: 'relative',
         }}
       >
@@ -85,7 +86,7 @@ export default ({
           />
         )}
 
-        <div
+        <Box
           sx={{
             position: 'absolute',
             right: 0,
@@ -98,10 +99,16 @@ export default ({
             borderRadius: 1000,
           }}
         />
-      </div>
+      </Box>
       <Flex sx={{ alignItems: 'center', mb: '10px' }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
-          <Styled.h1 sx={{ display: 'flex', alignItems: 'center' }}>
+          <Styled.h1
+            sx={{
+              fontSize: [3, 3, 3, 5],
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
               ? threeBoxSpace.name
               : account.replace(account.slice(7, 37), '…')}
@@ -168,31 +175,40 @@ export default ({
           </a>
         </Flex>
       )}
-      {isLivepeerAware && <Chip label={role} />}
+      {role === 'Tokenholder' && <Chip label={role} />}
 
+      <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
+        <Button>Stake</Button>
+        {/* <Button
+          sx={{ ml: 2, color: 'red', borderColor: 'red' }}
+          variant="outline"
+        >
+          Unstake
+        </Button> */}
+      </Flex>
       {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (
-        <div sx={{ mt: 3, a: { color: 'primary' } }}>
+        <Box sx={{ mt: 3, a: { color: 'primary' } }}>
           <ShowMoreText
             lines={3}
             more={<span sx={{ color: 'primary' }}>Show more</span>}
             less={<span sx={{ color: 'primary' }}>Show Less</span>}
           >
-            <div
+            <Box
               sx={{ mt: 3, a: { color: 'primary' } }}
               dangerouslySetInnerHTML={{
                 __html: nl2br(threeBoxSpace.description),
               }}
             />
           </ShowMoreText>
-        </div>
+        </Box>
       )}
       {process.env.THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.addressLinks &&
         threeBoxSpace.addressLinks.length > 0 &&
         role != 'Orchestrator' && (
-          <div sx={{ mt: 3 }}>
-            <div
+          <Box sx={{ mt: 3 }}>
+            <Box
               sx={{
                 display: 'inline-flex',
                 flexDirection: 'column',
@@ -202,11 +218,11 @@ export default ({
                 borderColor: 'border',
               }}
             >
-              <div
+              <Box
                 sx={{ mb: '6px', fontWeight: 600, fontSize: 0, color: 'muted' }}
               >
                 External Account
-              </div>
+              </Box>
               <Flex>
                 {threeBoxSpace.addressLinks.map((link, i) => (
                   <Link
@@ -235,9 +251,9 @@ export default ({
                   </Link>
                 ))}
               </Flex>
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-    </div>
+    </Box>
   )
 }

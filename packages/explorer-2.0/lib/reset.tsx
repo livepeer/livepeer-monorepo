@@ -49,6 +49,7 @@ const Reset = () =>
         bottom: '0',
         left: '0',
         overflow: 'auto',
+        zIndex: 1000,
       },
       '[data-reach-dialog-content]': {
         width: '50vw',

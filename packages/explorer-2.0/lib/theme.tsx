@@ -24,7 +24,7 @@ const theme = {
     body: 1.5,
     heading: 1.125,
   },
-  breakpoints: ['480px', '672px', '1160px', '1380px'],
+  breakpoints: ['480px', '672px', '1020px', '1380px'],
   colors: {
     text: 'rgba(255, 255, 255, .87)',
     background: '#131418',
@@ -37,7 +37,7 @@ const theme = {
     blue: '#0062eb',
     skyBlue: '#5bc2ee',
     teal: '#00bfb2',
-    border: 'rgba(255, 255, 255, .16)',
+    border: '#393a3d',
     modes: {},
   },
   buttons: {
