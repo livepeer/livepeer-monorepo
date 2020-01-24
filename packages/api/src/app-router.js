@@ -45,7 +45,7 @@ export default async function makeApp(params) {
       cloudflareAuth,
     })
   } else {
-    throw new Error('MISSING STORAGE!!!!')
+    throw new Error('Missing storage information')
   }
   await store.ready
 
@@ -81,7 +81,6 @@ export default async function makeApp(params) {
   for (const [name, controller] of Object.entries(controllers)) {
     prefixRouter.use(`/${name}`, controller)
   }
-  // app.use to different file. THEN translation compatibility ... res.json()
   app.use(httpPrefix, prefixRouter)
   // Special case: handle /stream proxies off that endpoint
   app.use('/stream', streamProxy)

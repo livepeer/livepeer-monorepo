@@ -1,14 +1,6 @@
 /**
- * Entrypoint for our CloudFlare worker. Eventually will have bits of the API compiled into it, for now it's
- * just separate.
+ * Entrypoint for our CloudFlare worker.
  */
-
-// global.process = {
-//   hrtime: require('browser-process-hrtime')
-//   // env: {
-//   //   DEBUG: 'express:*',
-//   // },
-// }
 
 process.hrtime = require('browser-process-hrtime')
 
@@ -17,7 +9,7 @@ self.localStorage = {
 }
 
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
-import 'express-async-errors' // it monkeypatches, i guess
+import 'express-async-errors'
 import composeM3U8 from './controllers/compose-m3u8'
 import appRouter from './app-router'
 import workerSecrets from './worker-secrets.json'
@@ -33,8 +25,6 @@ import camelcase from 'camelcase'
 
 self.setImmediate = fn => setTimeout(fn, 0)
 
-// process.env = workerSecrets
-
 const options = {}
 
 for (let [key, value] of Object.entries(workerSecrets)) {
@@ -43,9 +33,6 @@ for (let [key, value] of Object.entries(workerSecrets)) {
 }
 
 const routerPromise = appRouter(options)
-// default values of things
-
-// add defaults from yargs
 
 // staging, prod, and dev sets of secrets
 // env variables in a JSON blob, turn into file, import file as we're building worker
@@ -73,27 +60,6 @@ const mapRequestToAsset = request => {
 addEventListener('fetch', event => {
   event.respondWith(handleEvent(event))
 })
-
-// addEventListener('fetch', event => {
-//   event.respondWith(handleRequest(event.request))
-// })
-
-// async function handleRequest(request) {
-//   const token = request.headers.get('Authorization')
-//   if (!token)
-//     return new Response('An Authorization header is required', { status: 401 })
-
-//   const tokenInfo = await TOKEN_STORE.get(token, 'json')
-//   if (!tokenInfo) return new Response('Invalid token', { status: 403 })
-
-//   if (Date.parse(tokenInfo.expires) < Date.now())
-//     return new Response('Token expired', { status: 403 })
-
-//   request = new Request(request)
-//   request.headers.set('User-Id', tokenInfo.userId)
-//   return fetch(request)
-// }
-//
 
 const API_PREFIXES = ['/stream', '/api', '/live']
 
@@ -252,15 +218,10 @@ function expressRequest(req, router) {
       }
     })
   })
-} // sendStatus not good. JSON in 100% of cases. NOT okay when returning HLS ... but for now.
-// res.status and res.json
+}
 async function handleEvent(event) {
-  // call stream controller
   const path = new URL(event.request.url).pathname
   const fullUrl = new URL(event.request.url).href
-  // headers.host = 'host'
-  // const req = event.request
-  // const headers = event.request.headers
   const req = {
     url: path,
     query: {},
@@ -270,22 +231,19 @@ async function handleEvent(event) {
     method: event.request.method,
     headers: event.request.headers,
     get: header => event.request.headers[header],
-    // body: event.request.body,
   }
-  console.log(`REQQQ: ${JSON.stringify(req)}`)
   const func = function nextFunc(error) {
-    console.log(`Next function! ${error.stack}`)
+    console.log(`Next function error: ${error.stack}`)
   }
 
   try {
     const { router, store } = await routerPromise
-    return await expressRequest(req, router) // not async but returns promise .. same thing in JS
+    return await expressRequest(req, router)
   } catch (error) {
-    console.log(`ERRORRRR: ${error.stack}`)
+    console.log(`error: ${error.stack}`)
     return new Response('error')
   }
 
-  console.log('BEFORE HI')
   return new Response('hi')
 
   const url = new URL(req.url)
