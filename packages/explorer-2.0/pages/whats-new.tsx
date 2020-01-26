@@ -53,7 +53,7 @@ const groupBy = key => array =>
 
 const groupByType = groupBy('type')
 
-const WhatsNew = () => {
+export default withApollo(() => {
   const { data, loading } = useQuery(GET_CHANGEFEED)
 
   return (
@@ -154,6 +154,4 @@ const WhatsNew = () => {
       )}
     </Layout>
   )
-}
-
-export default withApollo(WhatsNew)
+})

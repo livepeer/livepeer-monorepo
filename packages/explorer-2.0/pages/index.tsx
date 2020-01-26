@@ -71,7 +71,7 @@ const GET_DATA = gql`
   }
 `
 
-const Index = () => {
+export default withApollo(() => {
   const context = useWeb3Context()
   const myAccount = useAccount(context.account)
   const { data, loading, error } = useQuery(GET_DATA, {
@@ -134,8 +134,4 @@ const Index = () => {
       )}
     </Layout>
   )
-}
-
-Index.displayName = ''
-
-export default withApollo(Index)
+})

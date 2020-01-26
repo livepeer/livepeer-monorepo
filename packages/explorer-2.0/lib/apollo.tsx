@@ -1,5 +1,4 @@
 import React from 'react'
-import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/react-hooks'
 import initApolloClient from './initApolloClient'
@@ -13,9 +12,6 @@ import initApolloClient from './initApolloClient'
  * @param {Boolean} [config.ssr=true]
  */
 export function withApollo(PageComponent, { ssr = true } = {}) {
-  const isAppHoc =
-    PageComponent === App || PageComponent.prototype instanceof App
-
   const WithApollo = ({ apolloClient, apolloState, ...pageProps }) => {
     const client = apolloClient || initApolloClient(apolloState)
     return (
@@ -26,22 +22,16 @@ export function withApollo(PageComponent, { ssr = true } = {}) {
   }
 
   // Set the correct displayName in development
-  // if (process.env.NODE_ENV !== 'production') {
-  //   const displayName =
-  //     PageComponent.displayName || PageComponent.name || 'Component'
+  if (process.env.NODE_ENV !== 'production') {
+    const displayName =
+      PageComponent.displayName || PageComponent.name || 'Component'
 
-  //   if (displayName === 'App') {
-  //     console.warn('This withApollo HOC only works with PageComponents.')
-  //   }
+    if (displayName === 'App') {
+      console.warn('This withApollo HOC only works with PageComponents.')
+    }
 
-  //   if (isAppHoc && ssr) {
-  //     console.warn(
-  //       'You are using the "withApollo" HOC on "_app.js" level. Please note that this disables project wide automatic static optimization. Better wrap your PageComponents directly.',
-  //     )
-  //   }
-
-  //   WithApollo.displayName = `withApollo(${displayName})`
-  // }
+    WithApollo.displayName = `withApollo(${displayName})`
+  }
 
   if (ssr || PageComponent.getInitialProps) {
     WithApollo.getInitialProps = async ctx => {
@@ -70,14 +60,14 @@ export function withApollo(PageComponent, { ssr = true } = {}) {
           try {
             // Run all GraphQL queries
             const { getDataFromTree } = await import('@apollo/react-ssr')
-
-            // Since AppComponents and PageComponents have different context types
-            // we need to modify their props a little.
-            const props = isAppHoc
-              ? { ...pageProps, apolloClient }
-              : { pageProps: { ...pageProps, apolloClient } }
-
-            await getDataFromTree(<AppTree {...props} />)
+            await getDataFromTree(
+              <AppTree
+                pageProps={{
+                  ...pageProps,
+                  apolloClient,
+                }}
+              />,
+            )
           } catch (error) {
             // Prevent Apollo Client GraphQL errors from crashing SSR.
             // Handle them in components via the data.error prop:

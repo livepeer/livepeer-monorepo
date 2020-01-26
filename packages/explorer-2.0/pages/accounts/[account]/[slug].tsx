@@ -46,7 +46,7 @@ const GET_DATA = gql`
   }
 `
 
-const AccountPage = () => {
+export default withApollo(() => {
   const router = useRouter()
   const context = useWeb3Context()
   const { query, asPath } = router
@@ -157,7 +157,7 @@ const AccountPage = () => {
       )}
     </Layout>
   )
-}
+})
 
 function getTabs(
   role: string,
@@ -189,7 +189,3 @@ function getTabs(
 
   return tabs
 }
-
-AccountPage.displayName = ''
-
-export default withApollo(AccountPage)

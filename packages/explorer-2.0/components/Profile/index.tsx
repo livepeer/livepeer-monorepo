@@ -40,8 +40,6 @@ export default ({
   isMyAccount = false,
   ...props
 }: Props) => {
-  const isLivepeerAware =
-    hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -177,15 +175,17 @@ export default ({
       )}
       {role === 'Tokenholder' && <Chip label={role} />}
 
-      <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
-        <Button>Stake</Button>
-        {/* <Button
+      {role === 'Orchestrator' && (
+        <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
+          <Button>Stake</Button>
+          {/* <Button
           sx={{ ml: 2, color: 'red', borderColor: 'red' }}
           variant="outline"
         >
           Unstake
         </Button> */}
-      </Flex>
+        </Flex>
+      )}
       {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (
         <Box sx={{ mt: 3, a: { color: 'primary' } }}>
           <ShowMoreText

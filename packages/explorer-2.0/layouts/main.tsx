@@ -7,7 +7,7 @@ import Orchestrators from '../public/img/orchestrators.svg'
 import Account from '../public/img/account.svg'
 import Wallet from '../public/img/wallet.svg'
 import Search from '../public/img/search.svg'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
 import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
 import Snackbar from '../components/Snackbar'
@@ -15,9 +15,10 @@ import { useAccount } from '../hooks'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
+import WalletModal from '../components/WalletModal'
 
 const Layout = ({ children, title = 'Livepeer Explorer' }) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { account } = context
   const { threeBoxSpace } = useAccount(account)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -94,6 +95,16 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
     }
   }
 
+  const onWalletModalOpen = () => {
+    // if (drawerOpen) {
+    //   document.body.removeAttribute('style')
+    //   setDrawerOpen(false)
+    // } else {
+    //   document.body.style.overflow = 'hidden'
+    //   setDrawerOpen(true)
+    // }
+  }
+
   return (
     <>
       <Head>
@@ -104,6 +115,7 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       <Reset />
       <Styled.root>
         <Header onDrawerOpen={onDrawerOpen} />
+        {/* <WalletModal onWalletModalOpen={onWalletModalOpen} /> */}
         <Box
           sx={{
             maxWidth: 1400,

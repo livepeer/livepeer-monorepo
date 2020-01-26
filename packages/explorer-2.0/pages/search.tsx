@@ -10,7 +10,7 @@ function handleSubmit(e) {
   Router.push(`/accounts/[account]/[slug]`, `/accounts/${input.value}/staking`)
 }
 
-const SearchPage: any = () => {
+export default withApollo(() => {
   return (
     <Layout>
       <Flex
@@ -76,8 +76,4 @@ const SearchPage: any = () => {
       </Flex>
     </Layout>
   )
-}
-
-SearchPage.displayName = ''
-
-export default withApollo(SearchPage)
+})
