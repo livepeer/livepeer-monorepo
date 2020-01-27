@@ -22,11 +22,14 @@ components:
         id:
           type: string
           readOnly: true
+          example: de7818e7-610a-4057-8f6f-b785dc1e6f88
         kind:
           type: string
           readOnly: true
+          example: stream
         name:
           type: string
+          example: test_stream
         profiles:
           type: array
           items:
@@ -46,6 +49,7 @@ components:
                 type: string
                 minLength: 1
                 maxLength: 500
+                example: aac
               height:
                 type: integer
                 minimum: 128
@@ -57,6 +61,7 @@ components:
                 minimum: 1
         objectStoreId:
           type: string
+          example: D8321C3E-B29C-45EB-A1BB-A623D8BE0F65
         presets:
           type: array
           items:
@@ -71,6 +76,7 @@ components:
               - P240p30fps16x9
               - P240p30fps4x3
               - P144p30fps16x9
+            example: P720p60fps16x9
         wowza:
           type: object
           required:
@@ -118,6 +124,7 @@ components:
           minItems: 1
           items:
             type: string
+            example: ['id not provided', 'user not found']
 
     objectstores:
       type: object
@@ -129,21 +136,29 @@ components:
       properties:
         type:
           type: string
+          description: type of object store used, such as 'aws'
+          example: aws
         path:
           type: string
+          description: formatted as 'region/bucket'
+          example: eu-central-1/testbucket
         credentials:
           type: string
+          description: formatted as 'accesskeyid/accesskey'
+          example: AKIAIOSFODNN7EXAMPLE/bPxRfiCYEXAMPLEKEY
         id:
           type: string
+          example: 09F8B46C-61A0-4254-9875-F71F4C605BC7
         userId:
           type: string
+          example: 66E2161C-7670-4D05-B71D-DA2D6979556F
 
 paths:
   /stream:
     tags:
       - stream
     post:
-      description: receives Wowza stream
+      description: Receives Wowza stream
       requestBody:
         required: true
         content:
@@ -169,7 +184,7 @@ paths:
                 $ref: '#/components/schemas/error'
 
     get:
-      description: list streams
+      description: Lists streams
       responses:
         200:
           description: Success
@@ -190,7 +205,7 @@ paths:
     tags:
       - objectstores
     post:
-      description: receives store credentials
+      description: Receives store credentials
       requestBody:
         required: true
         content:
@@ -216,7 +231,7 @@ paths:
                 $ref: '#/components/schemas/error'
 
     get:
-      description: list credentials
+      description: Lists object store credentials by userId
       responses:
         200:
           description: Success
