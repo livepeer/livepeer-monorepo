@@ -1,6 +1,6 @@
 import { Flex } from 'theme-ui'
 import Play from '../../public/img/play.svg'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 
@@ -13,7 +13,7 @@ const GET_ROUND = gql`
 `
 
 export default () => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   let { data, loading } = useQuery(GET_ROUND, {
     pollInterval: 20000,
   })
@@ -39,8 +39,8 @@ export default () => {
         sx={{ alignItems: 'center', fontFamily: 'monospace', color: 'primary' }}
       >
         <Play sx={{ width: 10, height: 10, mr: 1 }} />
-        {context.networkId
-          ? context.networkId == 1
+        {context.chainId
+          ? context.chainId == 1
             ? 'Mainnet'
             : 'Rinkeby'
           : 'Mainnet'}

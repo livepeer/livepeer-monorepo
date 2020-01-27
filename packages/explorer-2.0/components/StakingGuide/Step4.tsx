@@ -6,12 +6,12 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Button from '../Button'
 import { removeURLParameter } from '../../lib/utils'
 import Utils from 'web3-utils'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useAccount } from '../../hooks'
 
 export default ({ goTo, nextStep }) => {
   const router = useRouter()
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { account } = useAccount(context.account)
   const [copied, setCopied] = useState(false)
 

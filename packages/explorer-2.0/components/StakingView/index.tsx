@@ -1,7 +1,7 @@
 import { Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -54,7 +54,7 @@ export default () => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const isMyAccount = account == context.account
 
   const { data, loading, error } = useQuery(GET_DATA, {

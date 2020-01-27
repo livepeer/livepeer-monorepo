@@ -5,28 +5,41 @@ import LPT from '../../public/img/lpt.svg'
 import Wallet from '../../public/img/wallet.svg'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
 import Modal from '../Modal'
 import { useCookies } from 'react-cookie'
 import { removeURLParameter } from '../../lib/utils'
 import NetworkWidget from '../NetworkWidget'
+import { Injected, Network, Portis } from '../../lib/connectors'
+import { isMobile } from 'react-device-detect'
+import { useApolloClient } from '@apollo/react-hooks'
+
+const connectorsByName = {
+  MetaMask: Injected,
+  Injected: Injected,
+  Network: Network,
+  Portis: Portis,
+}
 
 export default ({ items = [], open, onDrawerOpen }) => {
   const router = useRouter()
+  const client = useApolloClient()
   const { query, pathname, asPath } = router
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [exchangeOpen, setOpen] = useState(
     query && query.openExchange ? true : false,
   )
   const [cookies, setCookie, removeCookie] = useCookies(['connector'])
 
+  // Eagerly connect to wallet
   useEffect(() => {
     if (cookies.connector) {
-      context.setConnector(cookies.connector)
+      context.activate(connectorsByName[cookies.connector])
     } else {
-      if (window['web3']) {
-        context.setConnector('Injected')
+      // automatically activate if on a web3 enabled mobile device
+      if (isMobile && window['web3']) {
+        context.activate(connectorsByName['Injected'])
       }
     }
   }, [cookies])
@@ -72,7 +85,6 @@ export default ({ items = [], open, onDrawerOpen }) => {
           bg: 'background',
           zIndex: 100,
           height: '100vh',
-
           pt: 5,
           pl: 3,
           borderRight: [0, 0, 0, '1px solid'],
@@ -99,21 +111,10 @@ export default ({ items = [], open, onDrawerOpen }) => {
           <Logo sx={{ mb: 3 }} />
           <Box sx={{ marginBottom: 'auto' }}>
             {items.map((item, i) => (
-              <Link
-                key={i}
-                href={item.href}
-                as={item.as ? item.as : item.href}
-                passHref
-              >
+              <Link key={i} href={item.href} as={item.as} passHref>
                 <a
-                  className={item.className ? item.className : ''}
                   sx={{
-                    color:
-                      asPath === (item.as ? item.as : item.href) ||
-                      (item.name == 'My Account' &&
-                        asPath.includes(context.account))
-                        ? 'primary'
-                        : 'muted',
+                    color: asPath === item.as ? 'primary' : 'muted',
                     lineHeight: 'initial',
                     display: 'flex',
                     fontSize: 3,
@@ -135,6 +136,38 @@ export default ({ items = [], open, onDrawerOpen }) => {
                 </a>
               </Link>
             ))}
+            {!context.active && (
+              <Box
+                onClick={() => {
+                  client.writeData({
+                    data: {
+                      walletModalOpen: true,
+                    },
+                  })
+                }}
+                sx={{
+                  color: 'muted',
+                  lineHeight: 'initial',
+                  display: 'flex',
+                  fontSize: 3,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  alignItems: 'center',
+                  py: 2,
+                  backgroundColor: 'transparent',
+                  borderRadius: 5,
+                  transition: 'color .3s',
+                  '&:hover': {
+                    color: 'primary',
+                    transition: 'color .3s',
+                  },
+                }}
+                className="tour-step-1"
+              >
+                <Wallet sx={{ width: 20, height: 20, mr: 2 }} />
+                Connect Wallet
+              </Box>
+            )}
             <StakingGuide sx={{ display: ['none', 'none', 'none', 'block'] }}>
               Staking Guide
             </StakingGuide>
@@ -215,9 +248,7 @@ export default ({ items = [], open, onDrawerOpen }) => {
                           border: '0',
                         }}
                         src={`https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239?connector=${
-                          context.connectorName
-                            ? context.connectorName
-                            : 'Injected'
+                          context.connector ? context.connector : 'Injected'
                         }`}
                       />
                     </Modal>
@@ -228,7 +259,7 @@ export default ({ items = [], open, onDrawerOpen }) => {
                 <div
                   onClick={() => {
                     removeCookie('connector', { path: '/' })
-                    context.unsetConnector()
+                    context.deactivate()
                   }}
                   sx={{
                     cursor: 'pointer',

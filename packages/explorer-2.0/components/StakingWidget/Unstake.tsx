@@ -8,11 +8,11 @@ import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useWeb3Mutation } from '../../hooks'
 
 export default ({ transcoder, amount, disabled }) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
 
   if (!context.active) {

@@ -7,12 +7,12 @@ import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
 import Button from '../Button'
 import { useWeb3Mutation } from '../../hooks'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 
 export default ({ lock }) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
 
   const REBOND = gql`

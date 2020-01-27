@@ -3,7 +3,7 @@ import { Flex } from 'theme-ui'
 import { Collapse } from 'react-collapse'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 
 const REMOVE_ADDRESS_LINK = gql`
@@ -14,7 +14,7 @@ const REMOVE_ADDRESS_LINK = gql`
 
 export default ({ threeBoxSpace, refetch, children }) => {
   const [open, setOpen] = useState(false)
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [removeAddressLink] = useMutation(REMOVE_ADDRESS_LINK)
   const [disconnecting, setDisconnecting] = useState({
     address: '',

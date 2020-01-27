@@ -1,10 +1,13 @@
 import { Injected, Portis } from './connectors'
+import MetaMaskIcon from '../public/img/metamask.svg'
+import PortisIcon from '../public/img/portis.svg'
+import InjectedIcon from '../public/img/arrow-right.svg'
 
 export const SUPPORTED_WALLETS = {
   INJECTED: {
     connector: Injected,
     name: 'Injected',
-    iconName: 'arrow-right.svg',
+    icon: InjectedIcon,
     description: 'Injected web3 provider.',
     href: null,
     color: '#010101',
@@ -13,7 +16,7 @@ export const SUPPORTED_WALLETS = {
   METAMASK: {
     connector: Injected,
     name: 'MetaMask',
-    iconName: 'metamask.svg',
+    icon: MetaMaskIcon,
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D',
@@ -21,7 +24,7 @@ export const SUPPORTED_WALLETS = {
   Portis: {
     connector: Portis,
     name: 'Portis',
-    iconName: 'portis.png',
+    icon: PortisIcon,
     description: 'Login using Portis hosted wallet',
     href: null,
     color: '#4A6C9B',

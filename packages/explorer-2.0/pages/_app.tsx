@@ -14,7 +14,6 @@ import Web3 from 'web3'
 import '@reach/dialog/styles.css'
 
 function getLibrary(provider) {
-  console.log('wat', provider)
   return new Web3(provider)
 }
 

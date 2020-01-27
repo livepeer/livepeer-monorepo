@@ -8,7 +8,7 @@ import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
 import { useWeb3Mutation } from '../../hooks'
@@ -16,7 +16,7 @@ import gql from 'graphql-tag'
 
 export default ({ transcoder, amount, disabled }) => {
   const client = useApolloClient()
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
   const { width, height } = useWindowSize()
 

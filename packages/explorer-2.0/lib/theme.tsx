@@ -63,15 +63,21 @@ const theme = {
       borderColor: 'text',
       transition: 'border-color .2s',
       '&:hover': {
-        borderColor: 'text',
+        borderColor: 'inherit',
         transition: 'border-color .2s',
       },
     },
     primarySmall: {
-      color: 'background',
-      bg: 'primary',
+      variant: 'buttons.primary',
       py: '6px',
       px: 2,
+    },
+    primaryOutline: {
+      variant: 'buttons.outline',
+      bg: 'transparent',
+      color: 'primary',
+      border: '1px solid',
+      borderColor: 'primary',
     },
     primaryOutlineSmall: {
       bg: 'transparent',
@@ -94,17 +100,9 @@ const theme = {
       },
     },
     dangerSmall: {
-      borderRadius: 6,
-      cursor: 'pointer',
+      variant: 'buttons.danger',
       py: '6px',
       px: 2,
-      backgroundColor: 'rgba(211, 47, 47, .1)',
-      transition: '.2s background-color',
-      color: 'red',
-      '&:hover': {
-        transition: '.2s background-color',
-        backgroundColor: 'rgba(211, 47, 47, .2)',
-      },
     },
     rainbow: {
       color: 'text',

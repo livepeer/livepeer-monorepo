@@ -8,7 +8,7 @@ import Check from '../../public/img/check.svg'
 import Copy from '../../public/img/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Textfield from '../Textfield'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import useForm from 'react-hook-form'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -74,7 +74,7 @@ function hasExistingProfile(profile) {
 }
 
 export default ({ threeBoxSpace, refetch, account }: Props) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { register, handleSubmit, watch } = useForm()
   const [previewImage, setPreviewImage] = useState(null)
   const [saving, setSaving] = useState(false)

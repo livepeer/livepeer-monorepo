@@ -50,6 +50,7 @@ function createApolloClient(initialState = {}) {
 
   cache.writeData({
     data: {
+      walletModalOpen: false,
       tourOpen: false,
       roi: 0.0,
       principle: 0.0,

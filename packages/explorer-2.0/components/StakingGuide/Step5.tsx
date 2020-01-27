@@ -7,10 +7,10 @@ import { Flex } from 'theme-ui'
 import Router from 'next/router'
 import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 
 export default ({ goTo, nextStep }) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
 
   const APPROVE = gql`
     mutation approve($type: String!, $amount: String!) {

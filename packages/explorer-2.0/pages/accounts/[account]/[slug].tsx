@@ -13,7 +13,7 @@ import { Transcoder, Protocol, Round } from '../../../@types'
 import Spinner from '../../../components/Spinner'
 import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { getDelegatorStatus } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
@@ -48,7 +48,7 @@ const GET_DATA = gql`
 
 export default withApollo(() => {
   const router = useRouter()
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { query, asPath } = router
   const slug = query.slug
   const { account, delegator, threeBoxSpace, refetch } = useAccount(

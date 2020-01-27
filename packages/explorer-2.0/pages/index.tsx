@@ -5,7 +5,7 @@ import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
 import gql from 'graphql-tag'
 import { useAccount } from '../hooks'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
 
@@ -72,7 +72,7 @@ const GET_DATA = gql`
 `
 
 export default withApollo(() => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const myAccount = useAccount(context.account)
   const { data, loading, error } = useQuery(GET_DATA, {
     ssr: false,

@@ -7,7 +7,7 @@ import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
 import { Account, Delegator, Transcoder, Protocol, Round } from '../../@types'
 import Approve from '../Approve'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import InputBox from './InputBox'
 import { Flex } from 'theme-ui'
 import ClaimBanner from '../ClaimBanner'
@@ -31,7 +31,7 @@ export default ({
 }: Props) => {
   const [amount, setAmount] = useState('')
   const [action, setAction] = useState('stake')
-  const context = useWeb3Context()
+  const context = useWeb3React()
 
   return (
     <div className="tour-step-7">

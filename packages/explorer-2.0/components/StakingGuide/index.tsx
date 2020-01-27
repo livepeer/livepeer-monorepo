@@ -3,7 +3,7 @@ import { Styled, Flex } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import Button from '../Button'
 import dynamic from 'next/dynamic'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useAccount } from '../../hooks'
 import { useCookies } from 'react-cookie'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
@@ -29,7 +29,7 @@ export default ({ children, ...props }) => {
   const client = useApolloClient()
   const [open, setOpen] = useState(false)
   const [tourKey, setTourKey] = useState(0)
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { account } = useAccount(context.account)
   const [nextStep, setNextStep] = useState(1)
   const inititalSteps = []
