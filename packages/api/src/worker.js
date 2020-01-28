@@ -11,7 +11,7 @@ self.localStorage = {
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import 'express-async-errors'
 import composeM3U8 from './controllers/compose-m3u8'
-import appRouter from './app-router'
+// import appRouter from './app-router'
 import workerSecrets from './worker-secrets.json'
 import camelcase from 'camelcase'
 
@@ -32,7 +32,7 @@ for (let [key, value] of Object.entries(workerSecrets)) {
   options[key] = value
 }
 
-const routerPromise = appRouter(options)
+// const routerPromise = appRouter(options)
 
 // staging, prod, and dev sets of secrets
 // env variables in a JSON blob, turn into file, import file as we're building worker
@@ -236,15 +236,13 @@ async function handleEvent(event) {
     console.log(`Next function error: ${error.stack}`)
   }
 
-  try {
-    const { router, store } = await routerPromise
-    return await expressRequest(req, router)
-  } catch (error) {
-    console.log(`error: ${error.stack}`)
-    return new Response('error')
-  }
-
-  return new Response('hi')
+  // try {
+  //   const { router, store } = await routerPromise
+  //   return await expressRequest(req, router)
+  // } catch (error) {
+  //   console.log(`error: ${error.stack}`)
+  //   return new Response('error')
+  // }
 
   const url = new URL(req.url)
   if (url.hostname.startsWith('docs.')) {
