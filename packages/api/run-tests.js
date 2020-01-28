@@ -18,6 +18,7 @@ const run = (name, args) => {
       path.resolve(__dirname, 'node_modules', '.bin', 'jest'),
       '--forceExit',
       '--coverage',
+      '--runInBand',
       `--coverage-directory=coverage-${name}`,
       'src',
     ],
