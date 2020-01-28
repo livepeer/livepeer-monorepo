@@ -3,8 +3,9 @@ import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
 
 let server
+let store
 let postMockStream
-jest.setTimeout(50000)
+jest.setTimeout(70000)
 
 beforeAll(async () => {
   server = await serverPromise
@@ -19,6 +20,7 @@ beforeAll(async () => {
     random_prefix_bbb_160p:
       '/stream/305b9fa7-c6b3-4690-8b2e-5652a2556524/P144p30fps16x9.m3u8',
   }
+  postMockStream.objectStoreId = 'mock_store_stream'
   postMockStream.wowza.streamNameGroups = [
     {
       name: 'bbb_all',
@@ -29,6 +31,15 @@ beforeAll(async () => {
       renditions: ['random_prefix_bbb_160p'],
     },
   ]
+
+  store = {
+    id: 'mock_store_stream',
+    credentials: 'abc123/abc123',
+    path: 'us-west-2/my-bucket',
+    userId: 'mock_sub_stream',
+    type: 's3',
+    kind: 'objectstores',
+  }
 })
 
 afterEach(async () => {
@@ -47,7 +58,7 @@ describe('controllers/stream', () => {
     })
 
     let user = {
-      id: 'mock_sub',
+      id: 'mock_sub_stream',
       name: 'User Name',
       email: 'user@livepeer.org',
       domain: 'livepeer.org',
@@ -72,7 +83,6 @@ describe('controllers/stream', () => {
     })
 
     it('should get all streams with prior user created', async () => {
-      await server.store.create(user)
       for (let i = 0; i < 4; i += 1) {
         const document = {
           id: uuid(),
@@ -91,7 +101,6 @@ describe('controllers/stream', () => {
     })
 
     it('should get some of the streams & get a working next Link', async () => {
-      await server.store.create(user)
       for (let i = 0; i < 13; i += 1) {
         const document = {
           id: uuid(),
@@ -110,7 +119,6 @@ describe('controllers/stream', () => {
     })
 
     it('should create a stream', async () => {
-      await server.store.create(user)
       const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
@@ -122,9 +130,10 @@ describe('controllers/stream', () => {
       expect(document).toEqual(stream)
     })
 
-    it('should not get all streams', async () => {
+    it('should not get all streams with non-admin user', async () => {
+      client.googleAuthorization = ''
       user = {
-        id: 'mock_sub',
+        id: 'mock_sub_stream2',
         name: 'User Name',
         email: 'user@angie.org',
         domain: 'angie.org',
@@ -165,11 +174,12 @@ describe('controllers/stream', () => {
 
   describe('basic CRUD with apiKey', () => {
     let client
-    beforeEach(() => {
+    beforeEach(async () => {
       client = new TestClient({
         server,
         apiKey: uuid(),
       })
+      await server.store.create(store)
     })
 
     it('should create a stream, no `token` registered', async () => {
@@ -231,10 +241,12 @@ describe('controllers/stream', () => {
       client = new TestClient({
         server,
       })
+      await server.store.create(store)
       stream = {
         id: uuid(),
         kind: 'stream',
         presets: ['P720p30fps16x9', 'P360p30fps4x3', 'P144p30fps16x9'],
+        objectStoreId: store.id,
       }
       await server.store.create(stream)
     })
