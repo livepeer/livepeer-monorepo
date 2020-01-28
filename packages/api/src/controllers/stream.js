@@ -127,7 +127,7 @@ app.post('/hook', async (req, res) => {
   }
 
   const stream = await req.store.get(`stream/${streamId}`)
-  let objectStore = { type: '', path: '' }
+  let objectStore = undefined
   if (stream.objectStoreId && stream.userId) {
     const store = await req.store.get(
       `objectstores/${stream.userId}/${stream.objectStoreId}`,
