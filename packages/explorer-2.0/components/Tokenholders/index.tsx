@@ -134,14 +134,14 @@ function renderSwitch(cell, protocol) {
     case 'Stake':
       return (
         <span sx={{ fontFamily: 'monospace' }}>
-          {abbreviateNumber(Utils.fromWei(cell.value), 4)}
+          {abbreviateNumber(parseFloat(Utils.fromWei(cell.value)), 4)}
         </span>
       )
     case 'Equity':
       return (
         <span sx={{ fontFamily: 'monospace' }}>{`${(
-          (Utils.fromWei(cell.value) /
-            Utils.fromWei(protocol.totalBondedToken)) *
+          (parseFloat(Utils.fromWei(cell.value)) /
+            parseFloat(Utils.fromWei(protocol.totalBondedToken))) *
           100
         ).toFixed(3)}%`}</span>
       )

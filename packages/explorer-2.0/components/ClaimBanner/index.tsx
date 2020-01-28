@@ -76,12 +76,12 @@ export default ({ account, delegator, currentRound, context }) => {
               <ReactTooltip
                 id="tooltip-claim"
                 className="tooltip"
-                place="top"
+                place="bottom"
                 type="dark"
                 effect="solid"
               />
               <Help
-                data-tip="Anytime you stake, unstake or restake, your rewards are automatically claimed. However, if it's been over 100 rounds since you performed any of these actions, the protocol requires that you manually claim your earnings before taking any further action. Rewards will continue to compound, regardless of whether you claim or not."
+                data-tip="When you stake, unstake or restake, your rewards are automatically claimed. However, if it's been over 100 rounds since you performed any of these actions, the protocol requires that you manually claim your earnings before taking any further action. Rewards will continue to compound, regardless of whether you claim or not."
                 data-for="tooltip-claim"
                 sx={{
                   position: 'relative',
@@ -131,7 +131,14 @@ export default ({ account, delegator, currentRound, context }) => {
         title={isMined ? 'Success!' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
-        <div sx={{ mb: 4 }}>
+        <div
+          sx={{
+            border: '1px solid',
+            borderRadius: 10,
+            borderColor: 'border',
+            p: 3,
+          }}
+        >
           {isMined ? (
             <div>Successfully claimed earnings.</div>
           ) : (

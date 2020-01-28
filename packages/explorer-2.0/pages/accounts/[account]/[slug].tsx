@@ -17,6 +17,7 @@ import { useWeb3React } from '@web3-react/core'
 import { getDelegatorStatus } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
+import StakingWidgetModal from '../../../components/StakingWidgetModal'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -84,9 +85,9 @@ export default withApollo(() => {
   const currentRound: Round = data.currentRound[0]
   const isMyAccount: boolean =
     context.account && context.account == query.account
-  const isStaked: boolean = !!(delegator && delegator.delegate)
+  const isStaked: boolean = !!(delegator && delegator?.delegate)
   const hasLivepeerToken: boolean =
-    account && Utils.fromWei(account.tokenBalance) > 0
+    account && parseFloat(Utils.fromWei(account.tokenBalance)) > 0
   let role: string
 
   if (data.transcoder && data.transcoder.id && isStaked) {
@@ -149,12 +150,21 @@ export default withApollo(() => {
             delegator={myAccount.delegator}
             account={myAccount.account}
             transcoder={
-              role == 'Orchestrator' ? transcoder : delegator.delegate
+              role == 'Orchestrator' ? transcoder : delegator?.delegate
             }
             protocol={protocol}
           />
         </Flex>
       )}
+      <StakingWidgetModal>
+        <StakingWidget
+          currentRound={data.currentRound[0]}
+          delegator={myAccount.delegator}
+          account={myAccount.account}
+          transcoder={role == 'Orchestrator' ? transcoder : delegator?.delegate}
+          protocol={protocol}
+        />
+      </StakingWidgetModal>
     </Layout>
   )
 })

@@ -89,7 +89,7 @@ export default () => {
         <div sx={{ pt: 4 }}>
           <span sx={{ mr: 2 }}>
             You haven't staked LPT. Stake LPT with an Orchestrator and begin
-            earnings rewards.
+            earning rewards.
           </span>
           <Link href="/" passHref>
             <Styled.a>View Orchestrators.</Styled.a>
@@ -105,18 +105,19 @@ export default () => {
   }
 
   const pendingStake = Math.max(
-    Utils.fromWei(data.delegator.bondedAmount),
-    Utils.fromWei(data.delegator.pendingStake),
+    parseFloat(Utils.fromWei(data.delegator.bondedAmount)),
+    parseFloat(Utils.fromWei(data.delegator.pendingStake)),
   )
 
   const unbonded = data.delegator.unbonded
-    ? Utils.fromWei(data.delegator.unbonded)
+    ? parseFloat(Utils.fromWei(data.delegator.unbonded))
     : 0
-  const principal = Utils.fromWei(data.delegator.principal)
+  const principal = parseFloat(Utils.fromWei(data.delegator.principal))
 
-  const rewards =
-    pendingStake + parseFloat(unbonded ? unbonded : 0) - parseFloat(principal)
-  const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
+  const rewards = pendingStake + unbonded ? unbonded : 0 - principal
+  const totalBondedToken = parseFloat(
+    Utils.fromWei(data.protocol.totalBondedToken),
+  )
 
   return (
     <div sx={{ pt: 4 }}>
@@ -333,7 +334,7 @@ export default () => {
                   fontFamily: 'monospace',
                 }}
               >
-                {totalBondedToken === '0'
+                {totalBondedToken === 0
                   ? 0
                   : ((pendingStake / totalBondedToken) * 100).toPrecision(4)}
                 %
@@ -352,7 +353,7 @@ export default () => {
                   Account{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {totalBondedToken === '0'
+                    {totalBondedToken === 0
                       ? 0
                       : ((pendingStake / totalBondedToken) * 100).toPrecision(
                           4,
@@ -373,10 +374,12 @@ export default () => {
                   Orchestrator{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {totalBondedToken === '0'
+                    {totalBondedToken === 0
                       ? 0
                       : (
-                          (Utils.fromWei(data.delegator.delegate.totalStake) /
+                          (parseFloat(
+                            Utils.fromWei(data.delegator.delegate.totalStake),
+                          ) /
                             totalBondedToken) *
                           100
                         ).toPrecision(4)}
@@ -386,7 +389,9 @@ export default () => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      Utils.fromWei(data.delegator.delegate.totalStake),
+                      parseFloat(
+                        Utils.fromWei(data.delegator.delegate.totalStake),
+                      ),
                       3,
                     )}
                   </span>
@@ -403,10 +408,12 @@ export default () => {
                   Rest of Network{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {(totalBondedToken === '0'
+                    {(totalBondedToken === 0
                       ? 0
                       : (totalBondedToken -
-                          Utils.fromWei(data.delegator.delegate.totalStake) -
+                          parseFloat(
+                            Utils.fromWei(data.delegator.delegate.totalStake),
+                          ) -
                           pendingStake) /
                         totalBondedToken) * 100}
                     %)
@@ -415,10 +422,12 @@ export default () => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      totalBondedToken === '0'
+                      totalBondedToken === 0
                         ? 0
                         : totalBondedToken -
-                            Utils.fromWei(data.delegator.delegate.totalStake) -
+                            parseFloat(
+                              Utils.fromWei(data.delegator.delegate.totalStake),
+                            ) -
                             pendingStake,
                       3,
                     )}

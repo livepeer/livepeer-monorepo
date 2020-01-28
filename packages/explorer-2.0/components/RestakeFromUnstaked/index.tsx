@@ -78,7 +78,7 @@ export default ({ lock }) => {
         <StakingFlow
           action="stake"
           account={lock.delegate.id}
-          amount={Utils.fromWei(lock.amount)}
+          amount={parseFloat(Utils.fromWei(lock.amount))}
         />
         <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
           {txHash && !isMined && (

@@ -15,6 +15,7 @@ import ShowMoreText from 'react-show-more-text'
 import Link from 'next/link'
 import { nl2br } from '../../lib/utils'
 import Button from '../Button'
+import { useApolloClient } from '@apollo/react-hooks'
 
 interface Props {
   account: string
@@ -40,6 +41,7 @@ export default ({
   isMyAccount = false,
   ...props
 }: Props) => {
+  const client = useApolloClient()
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -109,7 +111,7 @@ export default ({
           >
             {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
               ? threeBoxSpace.name
-              : account.replace(account.slice(7, 37), '…')}
+              : account.replace(account.slice(5, 39), '…')}
             <Flex
               data-for="copy"
               data-tip={`${copied ? 'Copied' : 'Copy address to clipboard'}`}
@@ -177,7 +179,17 @@ export default ({
 
       {role === 'Orchestrator' && (
         <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
-          <Button>Stake</Button>
+          <Button
+            onClick={() =>
+              client.writeData({
+                data: {
+                  stakingWidgetModalOpen: true,
+                },
+              })
+            }
+          >
+            Stake
+          </Button>
           {/* <Button
           sx={{ ml: 2, color: 'red', borderColor: 'red' }}
           variant="outline"

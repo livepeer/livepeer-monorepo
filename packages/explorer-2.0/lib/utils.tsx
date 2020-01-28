@@ -39,7 +39,7 @@ export const getDelegatorStatus = (
   if (
     !delegator ||
     !delegator.bondedAmount ||
-    Utils.fromWei(delegator.bondedAmount) == 0
+    parseFloat(Utils.fromWei(delegator.bondedAmount)) === 0
   ) {
     return 'Unbonded'
   } else if (

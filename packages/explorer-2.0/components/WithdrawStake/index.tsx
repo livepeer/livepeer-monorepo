@@ -45,7 +45,7 @@ export default ({ lock }) => {
       setIsModalOpen(true)
     }
   }, [isBroadcasted])
-  console.log('is broadcasted', isBroadcasted)
+
   return (
     <>
       <Button
@@ -75,7 +75,7 @@ export default ({ lock }) => {
           <StakingFlow
             action="withdraw"
             account={context.account}
-            amount={Utils.fromWei(lock.amount)}
+            amount={parseFloat(Utils.fromWei(lock.amount))}
           />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {txHash && !isMined && (

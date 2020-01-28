@@ -62,8 +62,12 @@ export default ({
   const stake =
     delegator &&
     Math.max(
-      delegator.bondedAmount ? Utils.fromWei(delegator.bondedAmount) : 0,
-      delegator.pendingStake ? Utils.fromWei(delegator.pendingStake) : 0,
+      delegator.bondedAmount
+        ? parseFloat(Utils.fromWei(delegator.bondedAmount))
+        : 0,
+      delegator.pendingStake
+        ? parseFloat(Utils.fromWei(delegator.pendingStake))
+        : 0,
     )
 
   const isMyTranscoder = delegator?.delegate?.id === transcoder?.id

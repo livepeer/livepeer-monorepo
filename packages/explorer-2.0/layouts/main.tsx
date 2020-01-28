@@ -60,16 +60,11 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
   if (context.active) {
     items.push({
       name: (
-        <div>
-          <div sx={{ lineHeight: 1.5 }}>
-            {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
-              ? threeBoxSpace.name
-              : 'My Account'}
-          </div>
-          <div sx={{ fontSize: 0 }}>
-            {account.replace(account.slice(5, 39), '…')}
-          </div>
-        </div>
+        <Box>
+          {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
+            ? threeBoxSpace.name
+            : 'My Account'}
+        </Box>
       ),
       href: '/accounts/[account]/[slug]',
       as: `/accounts/${account}/staking`,

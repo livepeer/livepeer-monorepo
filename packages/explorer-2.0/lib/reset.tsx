@@ -57,8 +57,9 @@ const Reset = () =>
         margin: '10vh auto',
         width: '85vw',
         maxHeight: '90vh',
-        backgroundColor: `${theme.colors.surface} !important`,
+        overflow: 'scroll',
         padding: 0,
+        backgroundColor: `${theme.colors.surface} !important`,
         outline: 'none',
         borderRadius: '10px',
         '@media (min-width: 672px)': {

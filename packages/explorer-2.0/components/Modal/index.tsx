@@ -1,5 +1,5 @@
 import React from 'react'
-import { Styled, Flex } from 'theme-ui'
+import { Styled, Flex, Box } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 
 interface Props {
@@ -26,7 +26,7 @@ export default ({
 }: Props) => {
   return (
     <>
-      <Styled.div
+      <Box
         as={DialogOverlay}
         isOpen={isOpen}
         sx={{
@@ -36,30 +36,31 @@ export default ({
         onDismiss={onDismiss}
         {...props}
       >
-        <Styled.div
+        <Box
           ref={ref}
           className={className}
           as={DialogContent}
           sx={
             title
-              ? { maxWidth: 700, p: 3, bg: 'surface', borderRadius: 10 }
+              ? { maxWidth: 700, bg: 'surface', borderRadius: 10 }
               : {
                   borderRadius: 10,
                   margin: '40px auto',
-                  p: 0,
                   height: 'calc(100vh - 80px)',
                 }
           }
         >
-          {title && (
-            <Flex sx={{ alignItems: 'center', mb: 4 }}>
-              {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
-              <Styled.h2>{title}</Styled.h2>
-            </Flex>
-          )}
-          {children}
-        </Styled.div>
-      </Styled.div>
+          <Box sx={{ p: 3 }}>
+            {title && (
+              <Flex sx={{ alignItems: 'center', mb: 4 }}>
+                {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
+                <Styled.h2>{title}</Styled.h2>
+              </Flex>
+            )}
+            {children}
+          </Box>
+        </Box>
+      </Box>
     </>
   )
 }

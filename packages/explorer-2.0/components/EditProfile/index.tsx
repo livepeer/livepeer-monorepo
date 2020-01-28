@@ -8,7 +8,6 @@ import Check from '../../public/img/check.svg'
 import Copy from '../../public/img/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Textfield from '../Textfield'
-import { useWeb3React } from '@web3-react/core'
 import useForm from 'react-hook-form'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -18,6 +17,7 @@ import ExternalAccount from '../ExternalAccount'
 import { useDebounce } from 'use-debounce'
 import ThreeBoxSteps from '../ThreeBoxSteps'
 import Spinner from '../Spinner'
+import { useWeb3React } from '@web3-react/core'
 
 interface Props {
   account: string

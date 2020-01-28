@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Flex, Box } from 'theme-ui'
 import Logo from '../../public/img/logo.svg'
 import LPT from '../../public/img/lpt.svg'
-import Wallet from '../../public/img/wallet.svg'
+import WalletIcon from '../../public/img/wallet.svg'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
@@ -53,6 +53,11 @@ export default ({ items = [], open, onDrawerOpen }) => {
   }, [query.openExchange])
 
   const visibility = open ? 'visible' : 'hidden'
+
+  const disconnect = () => {
+    removeCookie('connector', { path: '/' })
+    context.deactivate()
+  }
 
   return (
     <>
@@ -164,7 +169,7 @@ export default ({ items = [], open, onDrawerOpen }) => {
                 }}
                 className="tour-step-1"
               >
-                <Wallet sx={{ width: 20, height: 20, mr: 2 }} />
+                <WalletIcon sx={{ width: 20, height: 20, mr: 2 }} />
                 Connect Wallet
               </Box>
             )}
@@ -258,8 +263,11 @@ export default ({ items = [], open, onDrawerOpen }) => {
               {context.active && (
                 <div
                   onClick={() => {
-                    removeCookie('connector', { path: '/' })
-                    context.deactivate()
+                    client.writeData({
+                      data: {
+                        walletModalOpen: true,
+                      },
+                    })
                   }}
                   sx={{
                     cursor: 'pointer',
@@ -274,10 +282,10 @@ export default ({ items = [], open, onDrawerOpen }) => {
                     },
                   }}
                 >
-                  <Wallet
+                  <WalletIcon
                     sx={{ color: 'inherit', width: 18, height: 18, mr: 1 }}
                   />
-                  Disconnect
+                  {context.account.replace(context.account.slice(5, 39), '…')}
                 </div>
               )}
             </div>
