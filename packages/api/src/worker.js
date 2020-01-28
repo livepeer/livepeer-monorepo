@@ -220,21 +220,22 @@ function expressRequest(req, router) {
   })
 }
 async function handleEvent(event) {
-  const path = new URL(event.request.url).pathname
-  const fullUrl = new URL(event.request.url).href
-  const req = {
-    url: path,
-    query: {},
-    path: path,
-    params: path.split('/').filter(x => x),
-    protocol: 'http',
-    method: event.request.method,
-    headers: event.request.headers,
-    get: header => event.request.headers[header],
-  }
-  const func = function nextFunc(error) {
-    console.log(`Next function error: ${error.stack}`)
-  }
+  const req = event.request;
+  // const path = new URL(event.request.url).pathname
+  // const fullUrl = new URL(event.request.url).href
+  // const req = {
+  //   url: path,
+  //   query: {},
+  //   path: path,
+  //   params: path.split('/').filter(x => x),
+  //   protocol: 'http',
+  //   method: event.request.method,
+  //   headers: event.request.headers,
+  //   get: header => event.request.headers[header],
+  // }
+  // const func = function nextFunc(error) {
+  //   console.log(`Next function error: ${error.stack}`)
+  // }
 
   // try {
   //   const { router, store } = await routerPromise

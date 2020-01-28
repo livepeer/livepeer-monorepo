@@ -20,7 +20,7 @@
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare:worker": "echo ${WORKER_SECRETS:-'{}'} > src/worker-secrets.json && parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
-    "prepare": "run-p \"prepare:**\"",
+    "prepare": "js-yaml src/schema/schema.yaml > src/schema/schema.json && run-p \"prepare:**\"",
     "dev:live-server": "live-server --port=3005 docs",
     "redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "dev:server": "nodemon -w src -x node -r esm src/cli.js -e js,yaml",
