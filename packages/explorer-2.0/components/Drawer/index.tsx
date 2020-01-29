@@ -1,19 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Flex, Box } from 'theme-ui'
 import Logo from '../../public/img/logo.svg'
 import LPT from '../../public/img/lpt.svg'
 import WalletIcon from '../../public/img/wallet.svg'
 import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
-import Modal from '../Modal'
 import { useCookies } from 'react-cookie'
-import { removeURLParameter } from '../../lib/utils'
 import NetworkWidget from '../NetworkWidget'
 import { Injected, Network, Portis } from '../../lib/connectors'
 import { isMobile } from 'react-device-detect'
 import { useApolloClient } from '@apollo/react-hooks'
+import UniswapModal from '../UniswapModal'
 
 const connectorsByName = {
   MetaMask: Injected,
@@ -25,11 +24,8 @@ const connectorsByName = {
 export default ({ items = [], open, onDrawerOpen }) => {
   const router = useRouter()
   const client = useApolloClient()
-  const { query, pathname, asPath } = router
+  const { asPath } = router
   const context = useWeb3React()
-  const [exchangeOpen, setOpen] = useState(
-    query && query.openExchange ? true : false,
-  )
   const [cookies, setCookie, removeCookie] = useCookies(['connector'])
 
   // Eagerly connect to wallet
@@ -44,20 +40,7 @@ export default ({ items = [], open, onDrawerOpen }) => {
     }
   }, [cookies])
 
-  useEffect(() => {
-    if (query && query.openExchange) {
-      setOpen(true)
-    } else {
-      setOpen(false)
-    }
-  }, [query.openExchange])
-
   const visibility = open ? 'visible' : 'hidden'
-
-  const disconnect = () => {
-    removeCookie('connector', { path: '/' })
-    context.deactivate()
-  }
 
   return (
     <>
@@ -90,7 +73,7 @@ export default ({ items = [], open, onDrawerOpen }) => {
           bg: 'background',
           zIndex: 100,
           height: '100vh',
-          pt: 5,
+          pt: [3, 3, 5],
           pl: 3,
           borderRight: [0, 0, 0, '1px solid'],
           borderColor: ['border', 'border', 'border', 'border'],
@@ -177,8 +160,8 @@ export default ({ items = [], open, onDrawerOpen }) => {
               Staking Guide
             </StakingGuide>
           </Box>
-          <div sx={{ mb: 4 }}>
-            <div
+          <Box sx={{ mb: 4 }}>
+            <Box
               sx={{
                 mb: 3,
                 pb: 3,
@@ -186,7 +169,7 @@ export default ({ items = [], open, onDrawerOpen }) => {
                 borderColor: 'border',
               }}
             >
-              {/* <div sx={{ mb: 2 }}>
+              {/* <Box sx={{ mb: 2 }}>
                 <Link href="/whats-new" as="/whats-new" passHref>
                   <a
                     sx={{
@@ -207,61 +190,46 @@ export default ({ items = [], open, onDrawerOpen }) => {
                     What's New
                   </a>
                 </Link>
-              </div> */}
-              <div sx={{ mb: context.active ? 2 : 0 }} className="tour-step-3">
-                <Link
-                  href={`${pathname}?openExchange=true`}
-                  as={`${asPath +
-                    (/[?&]q=/.test(asPath)
-                      ? '&openExchange=true'
-                      : '?openExchange=true')}`}
-                  passHref
-                >
-                  <a
+              </Box> */}
+              <Flex
+                onClick={() =>
+                  client.writeData({
+                    data: {
+                      uniswapModalOpen: true,
+                    },
+                  })
+                }
+                sx={{
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  transition: 'color .3s',
+                  fontSize: 1,
+                  color: 'muted',
+                  '&:hover': {
+                    color: 'primary',
+                    transition: 'color .3s',
+                  },
+                }}
+                className="tour-step-3"
+              >
+                <LPT sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }} />{' '}
+                Get LPT
+                <UniswapModal>
+                  <Box
+                    as="iframe"
+                    className="tour-step-4"
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: 1,
-                      color: 'muted',
-                      transition: 'color .3s',
-                      '&:hover': {
-                        color: 'primary',
-                        transition: 'color .3s',
-                      },
+                      bg: '#323639',
+                      width: '100%',
+                      height: '100%',
+                      border: '0',
                     }}
-                  >
-                    <LPT
-                      sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
-                    />{' '}
-                    Get LPT
-                    <Modal
-                      className="tour-step-4"
-                      isOpen={exchangeOpen}
-                      sx={{ maxWidth: 600 }}
-                      onDismiss={() => {
-                        Router.push(
-                          removeURLParameter(pathname, 'openExchange'),
-                          removeURLParameter(asPath, 'openExchange'),
-                        )
-                      }}
-                    >
-                      <iframe
-                        sx={{
-                          bg: '#323639',
-                          width: '100%',
-                          height: '100%',
-                          border: '0',
-                        }}
-                        src={`https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239?connector=${
-                          context.connector ? context.connector : 'Injected'
-                        }`}
-                      />
-                    </Modal>
-                  </a>
-                </Link>
-              </div>
+                    src={`https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239`}
+                  />
+                </UniswapModal>
+              </Flex>
               {context.active && (
-                <div
+                <Flex
                   onClick={() => {
                     client.writeData({
                       data: {
@@ -270,8 +238,8 @@ export default ({ items = [], open, onDrawerOpen }) => {
                     })
                   }}
                   sx={{
+                    mt: 2,
                     cursor: 'pointer',
-                    display: 'flex',
                     alignItems: 'center',
                     fontSize: 1,
                     color: 'muted',
@@ -286,11 +254,11 @@ export default ({ items = [], open, onDrawerOpen }) => {
                     sx={{ color: 'inherit', width: 18, height: 18, mr: 1 }}
                   />
                   {context.account.replace(context.account.slice(5, 39), '…')}
-                </div>
+                </Flex>
               )}
-            </div>
+            </Box>
             <NetworkWidget />
-          </div>
+          </Box>
         </Flex>
       </Flex>
     </>

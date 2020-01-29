@@ -1,4 +1,4 @@
-import { Flex, Styled } from 'theme-ui'
+import { Box, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
@@ -86,7 +86,7 @@ export default () => {
   if (!(data && data.delegator && data.delegator.bondedAmount != null)) {
     if (isMyAccount) {
       return (
-        <div sx={{ pt: 4 }}>
+        <Box sx={{ pt: 4 }}>
           <span sx={{ mr: 2 }}>
             You haven't staked LPT. Stake LPT with an Orchestrator and begin
             earning rewards.
@@ -94,13 +94,13 @@ export default () => {
           <Link href="/" passHref>
             <Styled.a>View Orchestrators.</Styled.a>
           </Link>
-        </div>
+        </Box>
       )
     }
     return (
-      <div sx={{ pt: 4 }}>
+      <Box sx={{ pt: 4 }}>
         <span sx={{ mr: 2 }}>Nothing here.</span>
-      </div>
+      </Box>
     )
   }
 
@@ -120,7 +120,7 @@ export default () => {
   )
 
   return (
-    <div sx={{ pt: 4 }}>
+    <Box sx={{ pt: 4 }}>
       {data.delegator.delegate && (
         <Link
           href={`/accounts/[account]/[slug]`}
@@ -136,7 +136,7 @@ export default () => {
               }}
               title="Staked with"
               subtitle={
-                <div
+                <Box
                   sx={{
                     fontSize: 5,
                     fontWeight: 'text',
@@ -151,17 +151,21 @@ export default () => {
                         data.delegator.delegate.id.slice(7, 37),
                         '…',
                       )}
-                </div>
+                </Box>
               }
             />
           </a>
         </Link>
       )}
-      <div
+      <Box
         sx={{
           display: 'grid',
           gridGap: 2,
-          gridTemplateColumns: `repeat(auto-fit, minmax(128px, 1fr))`,
+          gridTemplateColumns: [
+            '100%',
+            '100%',
+            `repeat(auto-fit, minmax(128px, 1fr))`,
+          ],
           mb: 5,
         }}
       >
@@ -169,7 +173,7 @@ export default () => {
           sx={{ flex: 1, mb: 2 }}
           title={
             <Flex sx={{ alignItems: 'center' }}>
-              <div sx={{ color: 'muted' }}>Staked balance</div>
+              <Box sx={{ color: 'muted' }}>Staked balance</Box>
               <Flex>
                 <ReactTooltip
                   id="tooltip-total-staked"
@@ -191,7 +195,7 @@ export default () => {
             </Flex>
           }
           subtitle={
-            <div
+            <Box
               sx={{
                 fontSize: 5,
                 color: 'text',
@@ -201,13 +205,13 @@ export default () => {
             >
               {abbreviateNumber(pendingStake, 5)}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
-            </div>
+            </Box>
           }
         >
-          <div sx={{ mt: 3 }}>
+          <Box sx={{ mt: 3 }}>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Principal</div>
+                <Box sx={{ color: 'muted' }}>Principal</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-principal"
@@ -239,7 +243,7 @@ export default () => {
               }}
             >
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Unstaked</div>
+                <Box sx={{ color: 'muted' }}>Unstaked</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-unstaked"
@@ -271,7 +275,7 @@ export default () => {
             </Flex>
             <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Rewards</div>
+                <Box sx={{ color: 'muted' }}>Rewards</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-rewards"
@@ -297,14 +301,14 @@ export default () => {
                 </span>
               </span>
             </Flex>
-          </div>
+          </Box>
         </Card>
         {data.delegator.delegate && (
           <Card
             sx={{ flex: 1, mb: 2 }}
             title={
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Stake Equity</div>
+                <Box sx={{ color: 'muted' }}>Stake Equity</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-equity"
@@ -326,7 +330,7 @@ export default () => {
               </Flex>
             }
             subtitle={
-              <div
+              <Box
                 sx={{
                   fontSize: 5,
                   color: 'text',
@@ -338,10 +342,10 @@ export default () => {
                   ? 0
                   : ((pendingStake / totalBondedToken) * 100).toPrecision(4)}
                 %
-              </div>
+              </Box>
             }
           >
-            <div sx={{ mt: 3 }}>
+            <Box sx={{ mt: 3 }}>
               <Flex
                 sx={{
                   fontSize: 1,
@@ -434,15 +438,15 @@ export default () => {
                   </span>
                 </span>
               </Flex>
-            </div>
+            </Box>
           </Card>
         )}
-      </div>
+      </Box>
       <StakeTransactions
         delegator={data.delegator}
         currentRound={data.currentRound[0]}
         isMyAccount={isMyAccount}
       />
-    </div>
+    </Box>
   )
 }

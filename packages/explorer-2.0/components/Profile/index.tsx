@@ -254,6 +254,9 @@ export default ({
                         fontSize: 0,
                         fontWeight: 600,
                         color: 'primary',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                       }}
                     >
                       {link.address

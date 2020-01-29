@@ -12,7 +12,7 @@ function handleSubmit(e) {
 
 export default withApollo(() => {
   return (
-    <Layout>
+    <Layout title="Livepeer Explorer - Search" headerTitle="Search">
       <Flex
         sx={{
           mt: 5,

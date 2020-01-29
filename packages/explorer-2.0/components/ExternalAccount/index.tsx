@@ -74,7 +74,15 @@ export default ({ threeBoxSpace, refetch, children }) => {
                 },
               }}
             >
-              <div sx={{ fontFamily: 'monospace', fontSize: 1 }}>
+              <div
+                sx={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  fontFamily: 'monospace',
+                  fontSize: 1,
+                }}
+              >
                 {link.address}
               </div>
               <Button

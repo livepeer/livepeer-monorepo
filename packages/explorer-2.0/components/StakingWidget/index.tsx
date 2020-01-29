@@ -11,7 +11,6 @@ import { useWeb3React } from '@web3-react/core'
 import InputBox from './InputBox'
 import { Flex } from 'theme-ui'
 import ClaimBanner from '../ClaimBanner'
-import GetLPTBanner from '../GetLPTBanner'
 import Utils from 'web3-utils'
 
 interface Props {
@@ -36,10 +35,7 @@ export default ({
   return (
     <div className="tour-step-7">
       {context.active && (
-        <>
-          {delegator && !delegator.bondedAmount && (
-            <GetLPTBanner account={account} context={context} />
-          )}
+        <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
           {account &&
             parseFloat(Utils.fromWei(account.allowance)) == 0 &&
             parseFloat(Utils.fromWei(account.tokenBalance)) != 0 && (
@@ -53,7 +49,7 @@ export default ({
               context={context}
             />
           )}
-        </>
+        </Box>
       )}
       <Box
         sx={{

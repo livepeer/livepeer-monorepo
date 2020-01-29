@@ -4,13 +4,13 @@ import Router, { useRouter } from 'next/router'
 import Copy from '../../public/img/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Button from '../Button'
-import { removeURLParameter } from '../../lib/utils'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
 import { useAccount } from '../../hooks'
+import { useApolloClient } from '@apollo/react-hooks'
 
 export default ({ goTo, nextStep }) => {
-  const router = useRouter()
+  const client = useApolloClient()
   const context = useWeb3React()
   const { account } = useAccount(context.account)
   const [copied, setCopied] = useState(false)
@@ -90,11 +90,12 @@ export default ({ goTo, nextStep }) => {
         disabled={account && account.tokenBalance === '0'}
         sx={{ position: 'absolute', right: 30, bottom: 16 }}
         onClick={async () => {
+          client.writeData({
+            data: {
+              uniswapModalOpen: false,
+            },
+          })
           if (account && account.allowance === '0') {
-            Router.push(
-              removeURLParameter(router.pathname, 'openExchange'),
-              removeURLParameter(router.asPath, 'openExchange'),
-            ) // remove query param
             goTo(nextStep)
           } else {
             await Router.push('/')

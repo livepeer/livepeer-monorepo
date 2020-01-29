@@ -23,7 +23,11 @@ type DrawerItem = {
   className?: string
 }
 
-export default ({ children, title = 'Livepeer Explorer' }) => {
+export default ({
+  children,
+  title = 'Livepeer Explorer',
+  headerTitle = '',
+}) => {
   const context = useWeb3React()
   const { account } = context
   const { threeBoxSpace } = useAccount(account)
@@ -95,7 +99,7 @@ export default ({ children, title = 'Livepeer Explorer' }) => {
       </Head>
       <Reset />
       <Styled.root>
-        <Header onDrawerOpen={onDrawerOpen} />
+        <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
         <WalletModal />
         <Box
           sx={{

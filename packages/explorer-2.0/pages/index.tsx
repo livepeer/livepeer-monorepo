@@ -83,7 +83,7 @@ export default withApollo(() => {
   }
 
   return (
-    <Layout>
+    <Layout headerTitle="Orchestrators">
       {loading ? (
         <Flex
           sx={{

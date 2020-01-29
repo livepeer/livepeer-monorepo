@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import { useTransition, animated } from 'react-spring'
 import { Box } from 'theme-ui'
@@ -12,24 +11,20 @@ export default ({ children }) => {
   const AnimatedDialogOverlay = animated(DialogOverlay)
   const AnimatedDialogContent = animated(DialogContent)
 
-  const GET_STAKING_WIDGET_MODAL_STATUS = gql`
+  const GET_UNISWAP_MODAL_STATUS = gql`
     {
-      stakingWidgetModalOpen @client
+      uniswapModalOpen @client
     }
   `
 
-  const { data } = useQuery(GET_STAKING_WIDGET_MODAL_STATUS)
+  const { data } = useQuery(GET_UNISWAP_MODAL_STATUS)
 
   const animations = {
-    from: { opacity: 0, y: '100%' },
-    enter: { opacity: 1, y: '0%' },
-    leave: { opacity: 0, y: '100%' },
+    from: { opacity: 0, y: -10 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 10 },
   }
-  const transitions = useTransition(
-    data?.stakingWidgetModalOpen && width < 1020,
-    null,
-    animations,
-  )
+  const transitions = useTransition(data?.uniswapModalOpen, null, animations)
 
   return (
     <Box>
@@ -37,34 +32,21 @@ export default ({ children }) => {
         ({ item, props }: any) =>
           item && (
             <AnimatedDialogOverlay
+              style={{ opacity: props.opacity }}
               onDismiss={() =>
                 client.writeData({
                   data: {
-                    stakingWidgetModalOpen: false,
+                    uniswapModalOpen: false,
                   },
                 })
               }
-              style={{
-                overflow: 'hidden',
-                justifyContent: 'center',
-                opacity: props.opacity,
-              }}
             >
               <AnimatedDialogContent
                 style={{
+                  height: '100%',
                   transform: props.y.interpolate(
-                    value => `translate3d(0px, ${value}, 0px)`,
+                    value => `translate3d(0px, ${value}px, 0px)`,
                   ),
-                  position: 'fixed',
-                  bottom: 0,
-                  borderTopRightRadius: 10,
-                  borderTopLeftRadius: 10,
-                  borderBottomLeftRadius: 0,
-                  borderBottomRightRadius: 0,
-                  maxWidth: '100%',
-                  width: '100%',
-                  margin: 0,
-                  border: 0,
                 }}
               >
                 {children}

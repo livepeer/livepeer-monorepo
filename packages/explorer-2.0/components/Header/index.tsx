@@ -5,7 +5,7 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { useWeb3React } from '@web3-react/core'
 import WalletIcon from '../../public/img/wallet.svg'
 
-export default ({ onDrawerOpen }) => {
+export default ({ onDrawerOpen, title = '' }) => {
   const client = useApolloClient()
   const { active, account } = useWeb3React()
 
@@ -25,7 +25,7 @@ export default ({ onDrawerOpen }) => {
     >
       <Flex sx={{ alignItems: 'center' }}>
         <Hamburger onClick={onDrawerOpen} sx={{ mr: 2 }} />
-        <Box sx={{ fontWeight: 600 }}>Orchestrators</Box>
+        <Box sx={{ fontWeight: 600 }}>{title}</Box>
       </Flex>
       {active && (
         <Flex

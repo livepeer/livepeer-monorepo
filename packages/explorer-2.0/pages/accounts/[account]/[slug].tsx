@@ -55,7 +55,7 @@ export default withApollo(() => {
   const { account, delegator, threeBoxSpace, refetch } = useAccount(
     query.account,
   )
-  const { data, loading, error } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_DATA, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
@@ -106,8 +106,13 @@ export default withApollo(() => {
   const desktopWidth2 = [
     role == 'Orchestrator' || (isMyAccount && isStaked) ? '70%' : '100%',
   ]
+
+  const headerTitle =
+    process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
+      ? threeBoxSpace.name
+      : account.replace(account.slice(5, 39), '…')
   return (
-    <Layout>
+    <Layout headerTitle={headerTitle}>
       <Flex
         sx={{
           flexDirection: 'column',

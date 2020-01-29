@@ -55,7 +55,7 @@ const Reset = () =>
       },
       '[data-reach-dialog-content]': {
         margin: '10vh auto',
-        width: '85vw',
+        width: '90vw',
         maxHeight: '90vh',
         overflow: 'scroll',
         padding: 0,

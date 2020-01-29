@@ -57,7 +57,7 @@ export default withApollo(() => {
   const { data, loading } = useQuery(GET_CHANGEFEED)
 
   return (
-    <Layout>
+    <Layout title="Livepeer Explorer - What's New" headerTitle="What's New">
       {loading ? (
         <Flex
           sx={{
