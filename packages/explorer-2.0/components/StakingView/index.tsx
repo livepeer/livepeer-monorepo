@@ -114,7 +114,8 @@ export default () => {
     : 0
   const principal = parseFloat(Utils.fromWei(data.delegator.principal))
 
-  const rewards = pendingStake + unbonded ? unbonded : 0 - principal
+  const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
+
   const totalBondedToken = parseFloat(
     Utils.fromWei(data.protocol.totalBondedToken),
   )
