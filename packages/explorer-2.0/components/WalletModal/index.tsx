@@ -171,7 +171,6 @@ export default () => {
 
   function getModalContent() {
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      console.log('this should get returned')
       return (
         <AccountDetails
           onClose={close}

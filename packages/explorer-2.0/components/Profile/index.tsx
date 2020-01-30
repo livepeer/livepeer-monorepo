@@ -23,6 +23,7 @@ interface Props {
   refetch?: any
   hasLivepeerToken: boolean
   threeBoxSpace: ThreeBoxSpace
+  myAccount?: any
   delegator: Delegator
   transcoder: Transcoder
   isMyAccount: boolean
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export default ({
+  myAccount,
   account,
   role = 'Orchestrator',
   hasLivepeerToken,
@@ -184,18 +186,29 @@ export default ({
               client.writeData({
                 data: {
                   stakingWidgetModalOpen: true,
+                  selectedStakingAction: 'stake',
                 },
               })
             }
           >
             Stake
           </Button>
-          {/* <Button
-          sx={{ ml: 2, color: 'red', borderColor: 'red' }}
-          variant="outline"
-        >
-          Unstake
-        </Button> */}
+          {myAccount?.delegator?.delegate.id == transcoder.id && (
+            <Button
+              onClick={() =>
+                client.writeData({
+                  data: {
+                    stakingWidgetModalOpen: true,
+                    selectedStakingAction: 'unstake',
+                  },
+                })
+              }
+              sx={{ ml: 2, color: 'red', borderColor: 'red' }}
+              variant="outline"
+            >
+              Unstake
+            </Button>
+          )}
         </Flex>
       )}
       {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (

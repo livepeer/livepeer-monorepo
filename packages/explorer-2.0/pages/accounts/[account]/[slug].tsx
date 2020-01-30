@@ -18,6 +18,7 @@ import { getDelegatorStatus } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
 import StakingWidgetModal from '../../../components/StakingWidgetModal'
+import useWindowSize from 'react-use/lib/useWindowSize'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -50,6 +51,7 @@ const GET_DATA = gql`
 export default withApollo(() => {
   const router = useRouter()
   const context = useWeb3React()
+  const { width } = useWindowSize()
   const { query, asPath } = router
   const slug = query.slug
   const { account, delegator, threeBoxSpace, refetch } = useAccount(
@@ -61,6 +63,13 @@ export default withApollo(() => {
     },
     ssr: false,
   })
+
+  const SELECTED_STAKING_ACTION = gql`
+    {
+      selectedStakingAction @client
+    }
+  `
+  const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
 
   const myAccount = useAccount(context.account)
 
@@ -110,7 +119,9 @@ export default withApollo(() => {
   const headerTitle =
     process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
       ? threeBoxSpace.name
-      : account.replace(account.slice(5, 39), '…')
+      : query.account
+          .toString()
+          .replace(query.account.toString().slice(5, 39), '…')
   return (
     <Layout headerTitle={headerTitle}>
       <Flex
@@ -123,6 +134,7 @@ export default withApollo(() => {
         }}
       >
         <Profile
+          myAccount={myAccount}
           account={query.account.toString()}
           delegator={delegator}
           threeBoxSpace={threeBoxSpace}
@@ -140,36 +152,41 @@ export default withApollo(() => {
         {slug == 'staking' && <StakingView />}
         {slug == 'history' && <HistoryView />}
       </Flex>
-      {(role == 'Orchestrator' || (isMyAccount && isStaked)) && (
-        <Flex
-          sx={{
-            display: ['none', 'none', 'none', 'flex'],
-            position: 'sticky',
-            alignSelf: 'flex-start',
-            top: 5,
-            width: ['40%', '40%', '40%', '35%', '30%'],
-          }}
-        >
-          <StakingWidget
-            currentRound={data.currentRound[0]}
-            delegator={myAccount.delegator}
-            account={myAccount.account}
-            transcoder={
-              role == 'Orchestrator' ? transcoder : delegator?.delegate
-            }
-            protocol={protocol}
-          />
-        </Flex>
-      )}
-      <StakingWidgetModal>
-        <StakingWidget
-          currentRound={data.currentRound[0]}
-          delegator={myAccount.delegator}
-          account={myAccount.account}
-          transcoder={role == 'Orchestrator' ? transcoder : delegator?.delegate}
-          protocol={protocol}
-        />
-      </StakingWidgetModal>
+      {(role == 'Orchestrator' || (isMyAccount && isStaked)) &&
+        (width > 1020 ? (
+          <Flex
+            sx={{
+              display: ['none', 'none', 'none', 'flex'],
+              position: 'sticky',
+              alignSelf: 'flex-start',
+              top: 5,
+              width: ['40%', '40%', '40%', '35%', '30%'],
+            }}
+          >
+            <StakingWidget
+              currentRound={data.currentRound[0]}
+              delegator={myAccount.delegator}
+              account={myAccount.account}
+              transcoder={
+                role == 'Orchestrator' ? transcoder : delegator?.delegate
+              }
+              protocol={protocol}
+            />
+          </Flex>
+        ) : (
+          <StakingWidgetModal>
+            <StakingWidget
+              selectedAction={selectedStakingAction?.selectedStakingAction}
+              currentRound={data.currentRound[0]}
+              delegator={myAccount.delegator}
+              account={myAccount.account}
+              transcoder={
+                role == 'Orchestrator' ? transcoder : delegator?.delegate
+              }
+              protocol={protocol}
+            />
+          </StakingWidgetModal>
+        ))}
     </Layout>
   )
 })

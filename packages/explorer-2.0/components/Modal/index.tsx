@@ -3,7 +3,7 @@ import { Styled, Flex, Box } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 
 interface Props {
-  isOpen: boolean
+  isOpen?: boolean
   children: React.ReactNode
   setOpen?: Function
   title?: React.ReactNode

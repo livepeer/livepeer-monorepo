@@ -1,16 +1,22 @@
-import { useState } from 'react'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
-import { useTransition, animated } from 'react-spring'
 import { Box } from 'theme-ui'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import useWindowSize from 'react-use/lib/useWindowSize'
+import { css, keyframes } from '@emotion/core'
 
+const slideUp = keyframes`
+  0% {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  100% {
+    transform: translate3d(0,0%,0);
+  }
+`
 export default ({ children }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
-  const AnimatedDialogOverlay = animated(DialogOverlay)
-  const AnimatedDialogContent = animated(DialogContent)
 
   const GET_STAKING_WIDGET_MODAL_STATUS = gql`
     {
@@ -20,58 +26,44 @@ export default ({ children }) => {
 
   const { data } = useQuery(GET_STAKING_WIDGET_MODAL_STATUS)
 
-  const animations = {
-    from: { opacity: 0, y: '100%' },
-    enter: { opacity: 1, y: '0%' },
-    leave: { opacity: 0, y: '100%' },
-  }
-  const transitions = useTransition(
-    data?.stakingWidgetModalOpen && width < 1020,
-    null,
-    animations,
-  )
-
   return (
     <Box>
-      {transitions.map(
-        ({ item, props }: any) =>
-          item && (
-            <AnimatedDialogOverlay
-              onDismiss={() =>
-                client.writeData({
-                  data: {
-                    stakingWidgetModalOpen: false,
-                  },
-                })
-              }
-              style={{
-                overflow: 'hidden',
-                justifyContent: 'center',
-                opacity: props.opacity,
-              }}
-            >
-              <AnimatedDialogContent
-                style={{
-                  transform: props.y.interpolate(
-                    value => `translate3d(0px, ${value}, 0px)`,
-                  ),
-                  position: 'fixed',
-                  bottom: 0,
-                  borderTopRightRadius: 10,
-                  borderTopLeftRadius: 10,
-                  borderBottomLeftRadius: 0,
-                  borderBottomRightRadius: 0,
-                  maxWidth: '100%',
-                  width: '100%',
-                  margin: 0,
-                  border: 0,
-                }}
-              >
-                {children}
-              </AnimatedDialogContent>
-            </AnimatedDialogOverlay>
-          ),
-      )}
+      <Box
+        as={DialogOverlay}
+        isOpen={data?.stakingWidgetModalOpen && width < 1020}
+        onDismiss={() =>
+          client.writeData({
+            data: {
+              stakingWidgetModalOpen: false,
+            },
+          })
+        }
+        style={{
+          overflow: 'hidden',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          as={DialogContent}
+          css={css`
+            animation: ${slideUp} 0.3s ease;
+          `}
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            borderTopRightRadius: 10,
+            borderTopLeftRadius: 10,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            maxWidth: '100%',
+            width: '100%',
+            margin: 0,
+            border: 0,
+          }}
+        >
+          {children}
+        </Box>
+      </Box>
     </Box>
   )
 }

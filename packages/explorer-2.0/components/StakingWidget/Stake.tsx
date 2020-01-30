@@ -20,6 +20,7 @@ export default ({ transcoder, amount, disabled }) => {
   const [isOpen, setIsModalOpen] = useState(false)
   const { width, height } = useWindowSize()
 
+  // Can only stake if connected to wallet
   if (!context.active) {
     return null
   }
@@ -64,6 +65,7 @@ export default ({ transcoder, amount, disabled }) => {
               },
             })
           } catch (e) {
+            console.log(e)
             return {
               error: e.message.replace('GraphQL error: ', ''),
             }
@@ -90,7 +92,13 @@ export default ({ transcoder, amount, disabled }) => {
           />
         )}
         <StakingFlow action="stake" account={transcoder.id} amount={amount} />
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -101,7 +109,13 @@ export default ({ transcoder, amount, disabled }) => {
                 </div>
               </Flex>
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

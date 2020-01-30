@@ -19,6 +19,7 @@ interface Props {
   protocol: Protocol
   account: Account
   currentRound: Round
+  selectedAction?: string
 }
 
 export default ({
@@ -27,13 +28,14 @@ export default ({
   transcoder,
   protocol,
   currentRound,
+  selectedAction = 'stake',
 }: Props) => {
   const [amount, setAmount] = useState('')
-  const [action, setAction] = useState('stake')
+  const [action, setAction] = useState(selectedAction)
   const context = useWeb3React()
 
   return (
-    <div className="tour-step-7">
+    <Box className="tour-step-7">
       {context.active && (
         <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
           {account &&
@@ -60,8 +62,9 @@ export default ({
         }}
       >
         <Header transcoder={transcoder} />
-        <div sx={{ pt: 1, pb: 2, px: 2 }}>
+        <Box sx={{ pt: 1, pb: 2, px: 2 }}>
           <Tabs
+            defaultIndex={selectedAction === 'stake' ? 0 : 1}
             onChange={(index: number) => setAction(index ? 'unstake' : 'stake')}
           >
             <TabList>
@@ -100,8 +103,8 @@ export default ({
             action={action}
             amount={amount}
           />
-        </div>
+        </Box>
       </Box>
-    </div>
+    </Box>
   )
 }

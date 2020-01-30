@@ -170,7 +170,7 @@ export default () => {
         }}
       >
         <Card
-          sx={{ flex: 1, mb: 2 }}
+          sx={{ flex: 1, mb: 0 }}
           title={
             <Flex sx={{ alignItems: 'center' }}>
               <Box sx={{ color: 'muted' }}>Staked balance</Box>
@@ -305,7 +305,7 @@ export default () => {
         </Card>
         {data.delegator.delegate && (
           <Card
-            sx={{ flex: 1, mb: 2 }}
+            sx={{ flex: 1, mb: 0 }}
             title={
               <Flex sx={{ alignItems: 'center' }}>
                 <Box sx={{ color: 'muted' }}>Stake Equity</Box>

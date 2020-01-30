@@ -4,7 +4,7 @@ import Logo from '../../public/img/logo.svg'
 import LPT from '../../public/img/lpt.svg'
 import WalletIcon from '../../public/img/wallet.svg'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
 import { useCookies } from 'react-cookie'
@@ -21,7 +21,7 @@ const connectorsByName = {
   Portis: Portis,
 }
 
-export default ({ items = [], open, onDrawerOpen }) => {
+export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
   const router = useRouter()
   const client = useApolloClient()
   const { asPath } = router
@@ -41,6 +41,10 @@ export default ({ items = [], open, onDrawerOpen }) => {
   }, [cookies])
 
   const visibility = open ? 'visible' : 'hidden'
+
+  Router.events.on('routeChangeStart', () => {
+    onDrawerClose()
+  })
 
   return (
     <>

@@ -52,6 +52,7 @@ function createApolloClient(initialState = {}) {
     data: {
       walletModalOpen: false,
       stakingWidgetModalOpen: false,
+      selectedStakingAction: '',
       uniswapModalOpen: false,
       tourOpen: false,
       roi: 0.0,

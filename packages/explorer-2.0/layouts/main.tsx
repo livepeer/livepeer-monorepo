@@ -90,6 +90,11 @@ export default ({
     }
   }
 
+  const onDrawerClose = () => {
+    document.body.removeAttribute('style')
+    setDrawerOpen(false)
+  }
+
   return (
     <>
       <Head>
@@ -108,7 +113,12 @@ export default ({
             display: 'flex',
           }}
         >
-          <Drawer onDrawerOpen={onDrawerOpen} open={drawerOpen} items={items} />
+          <Drawer
+            onDrawerClose={onDrawerClose}
+            onDrawerOpen={onDrawerOpen}
+            open={drawerOpen}
+            items={items}
+          />
           <Flex
             sx={{
               bg: 'background',

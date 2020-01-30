@@ -81,13 +81,12 @@ export default withApollo(() => {
             <Styled.h1 sx={{ mb: 6, display: 'flex', alignItems: 'center' }}>
               <span sx={{ mr: 2 }}>🌟</span> What's New
             </Styled.h1>
-            <Styled.h3>Coming Up</Styled.h3>
+            {/* <Styled.h3>Coming Up</Styled.h3>
             <ul sx={{ mb: 5, lineHeight: 2 }}>
-              <li>Mobile support</li>
               <li>Earnings View</li>
               <li>Network statistics view</li>
               <li>Notifications system</li>
-            </ul>
+            </ul> */}
 
             <div>
               {data.projectBySlugs.releases.edges.map(
