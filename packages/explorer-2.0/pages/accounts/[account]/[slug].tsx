@@ -137,18 +137,16 @@ export default withApollo(() => {
           flexDirection: 'column',
           mb: 8,
           pr: [0, 0, 0, 6],
-          pt: [0, 0, 0, 5],
+          pt: [1, 1, 1, 5],
           width: ['100%', '100%', '100%', desktopWidth1, desktopWidth2],
         }}
       >
         {myAccount?.delegator?.lastClaimRound && (
-          <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
-            <ClaimBanner
-              account={myAccount.account}
-              delegator={myAccount.delegator}
-              currentRound={currentRound}
-            />
-          </Box>
+          <ClaimBanner
+            account={myAccount.account}
+            delegator={myAccount.delegator}
+            currentRound={currentRound}
+          />
         )}
         <Profile
           myAccount={myAccount}

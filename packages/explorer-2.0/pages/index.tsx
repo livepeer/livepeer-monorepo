@@ -113,13 +113,11 @@ export default withApollo(() => {
             }}
           >
             {myAccount.delegator?.lastClaimRound && (
-              <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
-                <ClaimBanner
-                  account={myAccount.account}
-                  delegator={myAccount.delegator}
-                  currentRound={data.currentRound[0]}
-                />
-              </Box>
+              <ClaimBanner
+                account={myAccount.account}
+                delegator={myAccount.delegator}
+                currentRound={data.currentRound[0]}
+              />
             )}
             <Orchestrators
               currentRound={data.currentRound[0]}

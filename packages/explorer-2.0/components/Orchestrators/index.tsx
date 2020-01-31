@@ -178,6 +178,8 @@ export default ({ currentRound, transcoders }) => {
             minWidth: ['100%', '100%', '100%', 650],
             borderSpacing: '0',
             borderCollapse: 'collapse',
+            ml: [-1, -1, -1, 0],
+            mr: [-1, -1, -1, 0],
           }}
           {...getTableProps()}
         >

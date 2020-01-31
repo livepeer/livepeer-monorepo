@@ -61,46 +61,48 @@ export default ({ account, delegator, currentRound }) => {
     roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS
   ) {
     banner = (
-      <Banner
-        label={
-          <Box sx={{ mb: 1 }}>
-            It's been over 100 rounds since your last claim.
-          </Box>
-        }
-        button={
-          <Flex sx={{ alignSelf: 'flex-end' }}>
-            <Button
-              onClick={() => setLearnMoreModalOpen(true)}
-              variant="text"
-              sx={{ mr: 2 }}
-            >
-              Learn More
-            </Button>
-            <Button
-              variant="text"
-              onClick={async () => {
-                try {
-                  await batchClaimEarnings()
-                } catch (e) {
-                  return {
-                    error: e.message.replace('GraphQL error: ', ''),
-                  }
-                }
-              }}
-            >
-              Claim Earnings
-              <Modal
-                title="Claiming Your Earnings"
-                showCloseButton
-                isOpen={learnMoreModalOpen}
-                onDismiss={() => setLearnMoreModalOpen(false)}
+      <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
+        <Banner
+          label={
+            <Box sx={{ mb: 1 }}>
+              It's been over 100 rounds since your last claim.
+            </Box>
+          }
+          button={
+            <Flex sx={{ alignSelf: 'flex-end' }}>
+              <Button
+                onClick={() => setLearnMoreModalOpen(true)}
+                variant="text"
+                sx={{ mr: 2 }}
               >
-                <MDXDocument />
-              </Modal>
-            </Button>
-          </Flex>
-        }
-      />
+                Learn More
+              </Button>
+              <Button
+                variant="text"
+                onClick={async () => {
+                  try {
+                    await batchClaimEarnings()
+                  } catch (e) {
+                    return {
+                      error: e.message.replace('GraphQL error: ', ''),
+                    }
+                  }
+                }}
+              >
+                Claim Earnings
+                <Modal
+                  title="Claiming Your Earnings"
+                  showCloseButton
+                  isOpen={learnMoreModalOpen}
+                  onDismiss={() => setLearnMoreModalOpen(false)}
+                >
+                  <MDXDocument />
+                </Modal>
+              </Button>
+            </Flex>
+          }
+        />
+      </Box>
     )
   }
 
