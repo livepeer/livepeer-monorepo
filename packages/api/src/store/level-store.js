@@ -74,7 +74,15 @@ export default class LevelStore {
 
   async get(key) {
     await this.ready
-    return JSON.parse(await this.db.get(key))
+    let res
+    try {
+      res = await this.db.get(key)
+    } catch (err) {
+      if (err.name === 'NotFoundError') {
+        return null
+      }
+    }
+    return JSON.parse(res)
   }
 
   async create(data) {
@@ -86,15 +94,14 @@ export default class LevelStore {
       throw new Error(`Missing required values: id, kind`)
     }
     await this.ready
-
+    let item
     try {
-      await this.db.get(`${kind}/${id}`)
-      throw new Error(`${id} already exists`)
-    } catch (err) {
-      if (!err.type === 'NotFoundError') {
-        throw err
+      item = await this.get(`${kind}/${id}`)
+      if (item) {
+        throw new Error(`${id} already exists`)
       }
-      // Not found - that's great!
+    } catch (err) {
+      throw err
     }
     await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }

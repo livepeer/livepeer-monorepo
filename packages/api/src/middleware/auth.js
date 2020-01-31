@@ -106,13 +106,14 @@ function authFactory(params) {
       // if tokenObject does not exist, create tokenObject and user
       tokenObject = await req.store.get(`apitoken/${req.token}`)
     } catch (e) {
-      if (e.type !== 'NotFoundError') {
-        throw e
-      }
+      throw e
+    }
 
+    if (!tokenObject) {
       logger.warn('api Token not found... generating one')
       tokenObject = await generateUserAndToken(req, res, next)
     }
+
     if (tokenObject && !tokenObject.userId) {
       // if tokenObject exists, but no userId, create user and add userId to tokenObject
       try {
@@ -170,10 +171,10 @@ async function getUserWithGoogleAuth(req, res, next) {
   try {
     user = await req.store.get(`user/${payload.sub}`)
   } catch (error) {
-    if (error.type !== 'NotFoundError') {
-      console.error(error)
-      throw error
-    }
+    console.error(error)
+    throw error
+  }
+  if (!user) {
     await req.store.create({
       id: payload.sub,
       name: payload.name,
@@ -181,9 +182,9 @@ async function getUserWithGoogleAuth(req, res, next) {
       domain: payload['hd'],
       kind: 'user',
     })
-    user = await req.store.get(`user/${payload.sub}`)
   }
 
+  user = await req.store.get(`user/${payload.sub}`)
   return user
 }
 
