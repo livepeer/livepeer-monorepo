@@ -1,7 +1,5 @@
-import { Styled, Flex } from 'theme-ui'
-import { useQuery } from '@apollo/react-hooks'
+import { Styled, Box, Flex } from 'theme-ui'
 import Spinner from '../components/Spinner'
-import gql from 'graphql-tag'
 import Card from '../components/Card'
 import moment from 'moment'
 import Layout from '../layouts/main'
@@ -84,13 +82,20 @@ export default withApollo(() => {
         <>
           <Flex
             sx={{
-              mt: 5,
+              mt: [3, 3, 3, 5],
               mb: 5,
               width: '100%',
               flexDirection: 'column',
             }}
           >
-            <Styled.h1 sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+            <Styled.h1
+              sx={{
+                fontSize: [3, 3, 4, 5],
+                mb: [3, 3, 3, 5],
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               <span sx={{ mr: 2 }}>🌟</span> What's New
             </Styled.h1>
             {/* <Styled.h3>Coming Up</Styled.h3>
@@ -100,13 +105,13 @@ export default withApollo(() => {
               <li>Notifications system</li>
             </ul> */}
 
-            <div>
+            <Box sx={{ img: { maxWidth: '100%' } }}>
               {data.projectBySlugs.releases.edges.map(
                 ({ node }, i) =>
                   node.isPublished && (
                     <Card key={i} sx={{ flex: 1, mb: 4 }}>
                       <Styled.h3>{node.title}</Styled.h3>
-                      <div
+                      <Box
                         sx={{
                           lineHeight: 2,
                           mb: 3,
@@ -115,8 +120,8 @@ export default withApollo(() => {
                         }}
                       >
                         {moment(node.publishedAt).format('MMM Do, YYYY')}
-                      </div>
-                      <div
+                      </Box>
+                      <Box
                         sx={{
                           borderBottom: '1px solid',
                           borderColor: 'border',
@@ -126,11 +131,11 @@ export default withApollo(() => {
                         }}
                       >
                         <Markdown>{node.description}</Markdown>
-                      </div>
+                      </Box>
                       {Object.keys(groupByType(node.changes)).map((key, i) => {
                         return (
-                          <div key={i} sx={{ mb: 2 }}>
-                            <div
+                          <Box key={i} sx={{ mb: 2 }}>
+                            <Box
                               sx={{
                                 fontSize: '14px',
                                 display: 'inline-flex',
@@ -147,19 +152,19 @@ export default withApollo(() => {
                               }}
                             >
                               {key}
-                            </div>
+                            </Box>
                             {groupByType(node.changes)[key].map((change, i) => (
-                              <div key={i} sx={{ alignSelf: 'flexStart' }}>
-                                <div sx={{ mb: 2 }}>{change.content}</div>
-                              </div>
+                              <Box key={i} sx={{ alignSelf: 'flexStart' }}>
+                                <Box sx={{ mb: 2 }}>{change.content}</Box>
+                              </Box>
                             ))}
-                          </div>
+                          </Box>
                         )
                       })}
                     </Card>
                   ),
               )}
-            </div>
+            </Box>
           </Flex>
         </>
       )}

@@ -103,7 +103,6 @@ export default ({ transcoder, amount, disabled }) => {
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
                 <Spinner sx={{ mr: 2 }} />
-
                 <div sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
                 </div>

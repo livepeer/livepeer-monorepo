@@ -134,17 +134,29 @@ export default ({ account, delegator, currentRound }) => {
             <Box>Claiming {totalRoundsToClaim} rounds worth of earnings. </Box>
           )}
         </Box>
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
                 <Spinner sx={{ mr: 2 }} />
-                <Box sx={{ color: 'text' }}>
+                <div sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
-                </Box>
+                </div>
               </Flex>
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

@@ -23,13 +23,14 @@ export default ({ action = 'stake', amount = 0, account }) => {
       </Flex>
       <ArrowRight
         sx={{
-          mx: 4,
+          mx: 3,
           transform: `rotate(${action == 'stake' ? '0' : '180deg'})`,
           color: action == 'stake' ? 'primary' : 'red',
         }}
       />
       <Styled.h3
         sx={{
+          maxWidth: 100,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',

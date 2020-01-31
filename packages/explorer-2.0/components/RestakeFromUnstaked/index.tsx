@@ -80,7 +80,13 @@ export default ({ lock }) => {
           account={lock.delegate.id}
           amount={parseFloat(Utils.fromWei(lock.amount))}
         />
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -89,9 +95,14 @@ export default ({ lock }) => {
                   Waiting for your transaction to be mined.
                 </div>
               </Flex>
-              )}
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"
