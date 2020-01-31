@@ -8,6 +8,8 @@ import { useAccount } from '../hooks'
 import { useWeb3React } from '@web3-react/core'
 import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
+import ClaimBanner from '../components/ClaimBanner'
+import { Box } from 'theme-ui'
 
 const GET_DATA = gql`
   {
@@ -99,11 +101,21 @@ export default withApollo(() => {
         <Flex sx={{ width: '100%' }}>
           <Flex
             sx={{
+              flexDirection: 'column',
               paddingTop: [0, 0, 0, 5],
               pr: [0, 0, 0, 0, 6],
               width: ['100%', '100%', '100%', '100%', '70%'],
             }}
           >
+            {myAccount.delegator?.lastClaimRound && (
+              <Box sx={{ mb: 4 }}>
+                <ClaimBanner
+                  account={myAccount.account}
+                  delegator={myAccount.delegator}
+                  currentRound={data.currentRound[0]}
+                />
+              </Box>
+            )}
             <Orchestrators
               currentRound={data.currentRound[0]}
               transcoders={data.transcoders}

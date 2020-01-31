@@ -26,6 +26,9 @@ const Reset = () =>
       ul: {
         paddingLeft: 20,
       },
+      code: {
+        fontFamily: theme.fonts.monospace,
+      },
       button: {
         border: 0,
         padding: 0,
@@ -57,7 +60,9 @@ const Reset = () =>
         margin: '10vh auto',
         width: '90vw',
         maxHeight: '90vh',
-        overflow: 'scroll',
+        overflowY: 'scroll',
+        msOverflowStyle: 'none', // IE 10+
+        scrollbarWidth: 'none', // Firefox
         padding: 0,
         backgroundColor: `${theme.colors.surface} !important`,
         outline: 'none',

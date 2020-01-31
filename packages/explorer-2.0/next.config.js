@@ -1,7 +1,9 @@
-const withOffline = require('next-offline')
-
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+})
 const nextConfig = {
   target: 'serverless',
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   env: {
     THREEBOX_ENABLED: true,
   },
@@ -11,4 +13,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withOffline(nextConfig)
+module.exports = withMDX(nextConfig)

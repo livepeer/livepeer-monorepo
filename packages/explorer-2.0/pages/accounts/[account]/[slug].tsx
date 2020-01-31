@@ -1,4 +1,4 @@
-import { Flex } from 'theme-ui'
+import { Flex, Box } from 'theme-ui'
 import { useRouter } from 'next/router'
 import Layout from '../../../layouts/main'
 import gql from 'graphql-tag'
@@ -19,6 +19,7 @@ import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
 import StakingWidgetModal from '../../../components/StakingWidgetModal'
 import useWindowSize from 'react-use/lib/useWindowSize'
+import ClaimBanner from '../../../components/ClaimBanner'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -122,6 +123,7 @@ export default withApollo(() => {
       : query.account
           .toString()
           .replace(query.account.toString().slice(5, 39), '…')
+
   return (
     <Layout headerTitle={headerTitle}>
       <Flex
@@ -129,10 +131,19 @@ export default withApollo(() => {
           flexDirection: 'column',
           mb: 8,
           pr: [0, 0, 0, 6],
-          pt: [1, 1, 1, 4],
+          pt: [0, 0, 0, 5],
           width: ['100%', '100%', '100%', desktopWidth1, desktopWidth2],
         }}
       >
+        {myAccount?.delegator?.lastClaimRound && (
+          <Box sx={{ mb: 4 }}>
+            <ClaimBanner
+              account={myAccount.account}
+              delegator={myAccount.delegator}
+              currentRound={currentRound}
+            />
+          </Box>
+        )}
         <Profile
           myAccount={myAccount}
           account={query.account.toString()}

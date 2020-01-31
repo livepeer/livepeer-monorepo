@@ -149,8 +149,8 @@ export default ({ currentRound, transcoders }) => {
           alignItems: 'flex-start',
           pt: [1, 1, 1, 0],
           pb: [1, 1, 1, 3],
-          ml: [0, 0, 0, -2],
-          mr: [0, 0, 0, -2],
+          ml: 0,
+          mr: 0,
           justifyContent: 'space-between',
         }}
       >
@@ -170,7 +170,7 @@ export default ({ currentRound, transcoders }) => {
           {accountColumn.canFilter ? accountColumn.render('Filter') : null}
         </Box>
       </Flex>
-      <Box sx={{ ml: -2, mr: -2, overflow: 'scroll' }}>
+      <Box sx={{ overflow: 'scroll' }}>
         <table
           sx={{
             display: 'table',

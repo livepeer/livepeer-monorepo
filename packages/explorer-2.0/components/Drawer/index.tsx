@@ -3,6 +3,7 @@ import { Flex, Box } from 'theme-ui'
 import Logo from '../../public/img/logo.svg'
 import LPT from '../../public/img/lpt.svg'
 import WalletIcon from '../../public/img/wallet.svg'
+import NewIcon from '../../public/img/new.svg'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
@@ -173,7 +174,7 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 borderColor: 'border',
               }}
             >
-              {/* <Box sx={{ mb: 2 }}>
+              <Box sx={{ mb: 2 }}>
                 <Link href="/whats-new" as="/whats-new" passHref>
                   <a
                     sx={{
@@ -188,13 +189,13 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                       },
                     }}
                   >
-                    <New
+                    <NewIcon
                       sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
                     />
                     What's New
                   </a>
                 </Link>
-              </Box> */}
+              </Box>
               <Flex
                 onClick={() =>
                   client.writeData({

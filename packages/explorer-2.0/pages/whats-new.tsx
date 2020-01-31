@@ -7,8 +7,10 @@ import moment from 'moment'
 import Layout from '../layouts/main'
 import Markdown from 'markdown-to-jsx'
 import { withApollo } from '../lib/apollo'
+import { createApolloFetch } from 'apollo-fetch'
+import { useEffect, useState } from 'react'
 
-const GET_CHANGEFEED = gql`
+const query = `
   {
     projectBySlugs(organizationSlug: "livepeer", projectSlug: "explorer") {
       name
@@ -54,11 +56,21 @@ const groupBy = key => array =>
 const groupByType = groupBy('type')
 
 export default withApollo(() => {
-  const { data, loading } = useQuery(GET_CHANGEFEED)
+  const uri = 'http://localhost:3009/api/graphql'
+  const [data, setData] = useState(null)
+  const apolloFetch = createApolloFetch({ uri })
+
+  useEffect(() => {
+    async function getChangefeed() {
+      const { data } = await apolloFetch({ query })
+      setData(data)
+    }
+    getChangefeed()
+  })
 
   return (
     <Layout title="Livepeer Explorer - What's New" headerTitle="What's New">
-      {loading ? (
+      {!data ? (
         <Flex
           sx={{
             width: '100%',
@@ -78,7 +90,7 @@ export default withApollo(() => {
               flexDirection: 'column',
             }}
           >
-            <Styled.h1 sx={{ mb: 6, display: 'flex', alignItems: 'center' }}>
+            <Styled.h1 sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
               <span sx={{ mr: 2 }}>🌟</span> What's New
             </Styled.h1>
             {/* <Styled.h3>Coming Up</Styled.h3>

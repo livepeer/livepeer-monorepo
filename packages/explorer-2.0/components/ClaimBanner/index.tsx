@@ -1,28 +1,21 @@
-import { Flex } from 'theme-ui'
+import { Flex, Box } from 'theme-ui'
 import { useState, useEffect } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import Help from '../../public/img/help.svg'
 import { useWeb3Mutation } from '../../hooks'
 import gql from 'graphql-tag'
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Banner from '../Banner'
-import ReactTooltip from 'react-tooltip'
+import { useWeb3React } from '@web3-react/core'
 
-export default ({ account, delegator, currentRound, context }) => {
-  if (!account || !delegator || (delegator && !delegator.lastClaimRound)) {
-    return null
-  }
-
-  // Display approve banner first
-  if (parseFloat(account.allowance) == 0) {
-    return null
-  }
-
+export default ({ account, delegator, currentRound }) => {
+  const context = useWeb3React()
   const [claimModalOpen, setClaimModalOpen] = useState(false)
+  const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
+  const MDXDocument = require('../../data/claim-earnings.mdx').default
 
   let lastClaimRound = parseInt(delegator.lastClaimRound.id, 10)
   let roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
@@ -70,45 +63,41 @@ export default ({ account, delegator, currentRound, context }) => {
     banner = (
       <Banner
         label={
-          <div sx={{ pr: 3 }}>
+          <Box sx={{ mb: 1 }}>
             It's been over 100 rounds since your last claim.
-            <div sx={{ display: 'inline-flex' }}>
-              <ReactTooltip
-                id="tooltip-claim"
-                className="tooltip"
-                place="bottom"
-                type="dark"
-                effect="solid"
-              />
-              <Help
-                data-tip="When you stake, unstake or restake, your rewards are automatically claimed. However, if it's been over 100 rounds since you performed any of these actions, the protocol requires that you manually claim your earnings before taking any further action. Rewards will continue to compound, regardless of whether you claim or not."
-                data-for="tooltip-claim"
-                sx={{
-                  position: 'relative',
-                  top: '2px',
-                  color: 'muted',
-                  cursor: 'pointer',
-                  ml: 1,
-                }}
-              />
-            </div>
-          </div>
+          </Box>
         }
         button={
-          <Button
-            variant="primarySmall"
-            onClick={async () => {
-              try {
-                await batchClaimEarnings()
-              } catch (e) {
-                return {
-                  error: e.message.replace('GraphQL error: ', ''),
+          <Flex sx={{ alignSelf: 'flex-end' }}>
+            <Button
+              onClick={() => setLearnMoreModalOpen(true)}
+              variant="text"
+              sx={{ mr: 2 }}
+            >
+              Learn More
+            </Button>
+            <Button
+              variant="text"
+              onClick={async () => {
+                try {
+                  await batchClaimEarnings()
+                } catch (e) {
+                  return {
+                    error: e.message.replace('GraphQL error: ', ''),
+                  }
                 }
-              }
-            }}
-          >
-            Claim
-          </Button>
+              }}
+            >
+              Claim Earnings
+              <Modal
+                title="Claiming Your Earnings"
+                isOpen={learnMoreModalOpen}
+                onDismiss={() => setLearnMoreModalOpen(false)}
+              >
+                <MDXDocument />
+              </Modal>
+            </Button>
+          </Flex>
         }
       />
     )
@@ -129,9 +118,9 @@ export default ({ account, delegator, currentRound, context }) => {
           setClaimModalOpen(false)
         }}
         title={isMined ? 'Success!' : 'Broadcasted'}
-        Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
+        Icon={isMined ? () => <Box sx={{ mr: 1 }}>🎊</Box> : Broadcast}
       >
-        <div
+        <Box
           sx={{
             border: '1px solid',
             borderRadius: 10,
@@ -140,19 +129,19 @@ export default ({ account, delegator, currentRound, context }) => {
           }}
         >
           {isMined ? (
-            <div>Successfully claimed earnings.</div>
+            <Box>Successfully claimed earnings.</Box>
           ) : (
-            <div>Claiming {totalRoundsToClaim} rounds worth of earnings. </div>
+            <Box>Claiming {totalRoundsToClaim} rounds worth of earnings. </Box>
           )}
-        </div>
+        </Box>
         <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
                 <Spinner sx={{ mr: 2 }} />
-                <div sx={{ color: 'text' }}>
+                <Box sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
-                </div>
+                </Box>
               </Flex>
               <Button
                 sx={{ display: 'flex', alignItems: 'center' }}

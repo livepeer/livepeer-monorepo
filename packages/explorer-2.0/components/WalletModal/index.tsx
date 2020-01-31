@@ -234,7 +234,7 @@ export default () => {
 
   return (
     data.walletModalOpen && (
-      <Dialog onDismiss={close}>
+      <Dialog style={{ overflow: 'hidden' }} onDismiss={close}>
         <Box className="tour-step-2">{getModalContent()}</Box>
       </Dialog>
     )

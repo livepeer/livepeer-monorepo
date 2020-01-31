@@ -88,6 +88,12 @@ const theme = {
       px: 1,
       py: '2px',
     },
+    text: {
+      color: 'primary',
+      border: 0,
+      bg: 'transparent',
+      p: 0,
+    },
     danger: {
       borderRadius: 6,
       cursor: 'pointer',
