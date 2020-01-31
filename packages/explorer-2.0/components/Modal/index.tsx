@@ -1,6 +1,7 @@
 import React from 'react'
 import { Styled, Flex, Box } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
+import CloseIcon from '../../public/img/close.svg'
 
 interface Props {
   isOpen?: boolean
@@ -8,6 +9,7 @@ interface Props {
   setOpen?: Function
   title?: React.ReactNode
   className?: string
+  showCloseButton?: boolean
   onDismiss?: Function
   Icon?: any
   ref?: any
@@ -21,6 +23,7 @@ export default ({
   className,
   children,
   ref,
+  showCloseButton = false,
   onDismiss,
   ...props
 }: Props) => {
@@ -50,12 +53,27 @@ export default ({
                 }
           }
         >
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ position: 'relative', p: 3 }}>
+            {showCloseButton && (
+              <CloseIcon
+                onClick={onDismiss}
+                sx={{
+                  cursor: 'pointer',
+                  position: 'absolute',
+                  zIndex: 1,
+                  right: 20,
+                  top: 20,
+                  color: 'white',
+                }}
+              />
+            )}
             {title && (
-              <Flex sx={{ alignItems: 'center', mb: 4 }}>
-                {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
-                <Styled.h2>{title}</Styled.h2>
-              </Flex>
+              <Box sx={{ position: 'relative' }}>
+                <Flex sx={{ alignItems: 'center', mb: 4 }}>
+                  {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
+                  <Styled.h2>{title}</Styled.h2>
+                </Flex>
+              </Box>
             )}
             {children}
           </Box>

@@ -91,6 +91,7 @@ export default ({ account, delegator, currentRound }) => {
               Claim Earnings
               <Modal
                 title="Claiming Your Earnings"
+                showCloseButton
                 isOpen={learnMoreModalOpen}
                 onDismiss={() => setLearnMoreModalOpen(false)}
               >

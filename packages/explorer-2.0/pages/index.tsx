@@ -89,7 +89,12 @@ export default withApollo(() => {
       {loading ? (
         <Flex
           sx={{
-            height: '100vh',
+            height: [
+              'calc(100vh - 100px)',
+              'calc(100vh - 100px)',
+              'calc(100vh - 100px)',
+              '100vh',
+            ],
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
@@ -108,7 +113,7 @@ export default withApollo(() => {
             }}
           >
             {myAccount.delegator?.lastClaimRound && (
-              <Box sx={{ mb: 4 }}>
+              <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
                 <ClaimBanner
                   account={myAccount.account}
                   delegator={myAccount.delegator}
