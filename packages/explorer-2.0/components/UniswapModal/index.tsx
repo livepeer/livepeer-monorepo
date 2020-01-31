@@ -1,16 +1,10 @@
-import { DialogOverlay, DialogContent } from '@reach/dialog'
-import { useTransition, animated } from 'react-spring'
-import { Box } from 'theme-ui'
+import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import useWindowSize from 'react-use/lib/useWindowSize'
+import CloseIcon from '../../public/img/close.svg'
 
 export default ({ children }) => {
   const client = useApolloClient()
-  const { width } = useWindowSize()
-  const AnimatedDialogOverlay = animated(DialogOverlay)
-  const AnimatedDialogContent = animated(DialogContent)
-
   const GET_UNISWAP_MODAL_STATUS = gql`
     {
       uniswapModalOpen @client
@@ -18,42 +12,42 @@ export default ({ children }) => {
   `
 
   const { data } = useQuery(GET_UNISWAP_MODAL_STATUS)
-
-  const animations = {
-    from: { opacity: 0, y: -10 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: 10 },
+  const close = () => {
+    client.writeData({
+      data: {
+        uniswapModalOpen: false,
+      },
+    })
   }
-  const transitions = useTransition(data?.uniswapModalOpen, null, animations)
 
   return (
-    <Box>
-      {transitions.map(
-        ({ item, props }: any) =>
-          item && (
-            <AnimatedDialogOverlay
-              style={{ opacity: props.opacity }}
-              onDismiss={() =>
-                client.writeData({
-                  data: {
-                    uniswapModalOpen: false,
-                  },
-                })
-              }
-            >
-              <AnimatedDialogContent
-                style={{
-                  height: '100%',
-                  transform: props.y.interpolate(
-                    value => `translate3d(0px, ${value}px, 0px)`,
-                  ),
-                }}
-              >
-                {children}
-              </AnimatedDialogContent>
-            </AnimatedDialogOverlay>
-          ),
-      )}
-    </Box>
+    <DialogOverlay
+      onDismiss={close}
+      isOpen={data?.uniswapModalOpen}
+      style={{ background: 'rgba(0, 0, 0, 0.8)' }}
+    >
+      <DialogContent
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          maxWidth: 600,
+          justifyContent: 'center',
+          height: '80vh',
+        }}
+      >
+        <CloseIcon
+          onClick={close}
+          sx={{
+            cursor: 'pointer',
+            position: 'fixed',
+            right: 20,
+            top: 20,
+            zIndex: 1000,
+            color: 'white',
+          }}
+        />
+        {children}
+      </DialogContent>
+    </DialogOverlay>
   )
 }
