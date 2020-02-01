@@ -31,7 +31,10 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
 
   // Eagerly connect to wallet
   useEffect(() => {
-    if (cookies.connector) {
+    if (
+      (cookies.connector && cookies.connector === 'MetaMask') ||
+      cookies.connector === 'Injected'
+    ) {
       context.activate(connectorsByName[cookies.connector])
     } else {
       // automatically activate if on a web3 enabled mobile device

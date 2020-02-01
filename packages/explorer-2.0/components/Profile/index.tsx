@@ -179,8 +179,8 @@ export default ({
       )}
       {role === 'Tokenholder' && <Chip label={role} />}
 
-      {role === 'Orchestrator' && (
-        <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
+      <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
+        {role === 'Orchestrator' && (
           <Button
             onClick={() =>
               client.writeData({
@@ -193,24 +193,25 @@ export default ({
           >
             Stake
           </Button>
-          {myAccount?.delegator?.delegate.id == transcoder.id && (
-            <Button
-              onClick={() =>
-                client.writeData({
-                  data: {
-                    stakingWidgetModalOpen: true,
-                    selectedStakingAction: 'unstake',
-                  },
-                })
-              }
-              sx={{ ml: 2, color: 'red', borderColor: 'red' }}
-              variant="outline"
-            >
-              Unstake
-            </Button>
-          )}
-        </Flex>
-      )}
+        )}
+        {myAccount?.delegator?.delegate?.id.toLowerCase() ===
+          account.toLowerCase() && (
+          <Button
+            onClick={() =>
+              client.writeData({
+                data: {
+                  stakingWidgetModalOpen: true,
+                  selectedStakingAction: 'unstake',
+                },
+              })
+            }
+            sx={{ ml: 2, color: 'red', borderColor: 'red' }}
+            variant="outline"
+          >
+            Unstake
+          </Button>
+        )}
+      </Flex>
       {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (
         <Box sx={{ mt: 3, a: { color: 'primary' } }}>
           <ShowMoreText

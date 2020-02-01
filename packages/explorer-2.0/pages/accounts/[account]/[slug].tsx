@@ -106,9 +106,9 @@ export default withApollo(() => {
     account && parseFloat(Utils.fromWei(account.tokenBalance)) > 0
   let role: string
 
-  if (data.transcoder && data.transcoder.id && isStaked) {
+  if (data?.transcoder?.id && isStaked) {
     role = 'Orchestrator'
-  } else if ((data.delegator && data.delegator.id) || hasLivepeerToken) {
+  } else if (data?.delegator?.id || hasLivepeerToken) {
     role = 'Tokenholder'
   } else {
     role = 'Lurker'
