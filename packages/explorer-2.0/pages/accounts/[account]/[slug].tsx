@@ -114,14 +114,21 @@ export default withApollo(() => {
     role = 'Lurker'
   }
 
-  const tabs: Array<TabType> = getTabs(role, query.account.toString(), asPath)
-
+  const isMyDelegate =
+    query.account.toString() === myAccount?.delegator?.delegate?.id
   const desktopWidth1 = [
-    role == 'Orchestrator' || (isMyAccount && isStaked) ? '65%' : '100%',
+    role == 'Orchestrator' || isMyDelegate ? '65%' : '100%',
   ]
   const desktopWidth2 = [
-    role == 'Orchestrator' || (isMyAccount && isStaked) ? '70%' : '100%',
+    role == 'Orchestrator' || isMyDelegate ? '70%' : '100%',
   ]
+
+  const tabs: Array<TabType> = getTabs(
+    role,
+    query.account.toString(),
+    asPath,
+    isMyDelegate,
+  )
 
   const headerTitle =
     process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
@@ -154,6 +161,7 @@ export default withApollo(() => {
           delegator={delegator}
           threeBoxSpace={threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}
+          isMyDelegate={isMyDelegate}
           isMyAccount={isMyAccount}
           refetch={refetch}
           role={role}
@@ -167,7 +175,7 @@ export default withApollo(() => {
         {slug == 'staking' && <StakingView />}
         {slug == 'history' && <HistoryView />}
       </Flex>
-      {(role == 'Orchestrator' || (isMyAccount && isStaked)) &&
+      {(role == 'Orchestrator' || isMyDelegate) &&
         (width > 1020 ? (
           <Flex
             sx={{
@@ -182,9 +190,7 @@ export default withApollo(() => {
               currentRound={data.currentRound[0]}
               delegator={myAccount.delegator}
               account={myAccount.account}
-              transcoder={
-                role == 'Orchestrator' ? transcoder : delegator?.delegate
-              }
+              transcoder={transcoder}
               protocol={protocol}
             />
           </Flex>
@@ -195,9 +201,7 @@ export default withApollo(() => {
               currentRound={data.currentRound[0]}
               delegator={myAccount.delegator}
               account={myAccount.account}
-              transcoder={
-                role == 'Orchestrator' ? transcoder : delegator?.delegate
-              }
+              transcoder={transcoder}
               protocol={protocol}
             />
           </StakingWidgetModal>
@@ -210,6 +214,7 @@ function getTabs(
   role: string,
   account: string,
   asPath: string,
+  isMyDelegate: boolean,
 ): Array<TabType> {
   let tabs: Array<TabType> = [
     {
@@ -225,7 +230,7 @@ function getTabs(
       isActive: asPath == `/accounts/${account}/history`,
     },
   ]
-  if (role == 'Orchestrator') {
+  if (role == 'Orchestrator' || isMyDelegate) {
     tabs.unshift({
       name: 'Campaign',
       href: '/accounts/[account]/[slug]',

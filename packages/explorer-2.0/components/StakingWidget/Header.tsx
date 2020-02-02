@@ -16,8 +16,8 @@ export default ({ transcoder }) => {
     >
       <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
         {process.env.THREEBOX_ENABLED &&
-        transcoder.threeBoxSpace &&
-        transcoder.threeBoxSpace.image ? (
+        transcoder?.threeBoxSpace &&
+        transcoder?.threeBoxSpace.image ? (
           <img
             sx={{
               objectFit: 'cover',
@@ -25,7 +25,7 @@ export default ({ transcoder }) => {
               width: 40,
               height: 40,
             }}
-            src={`https://ipfs.infura.io/ipfs/${transcoder.threeBoxSpace.image}`}
+            src={`https://ipfs.infura.io/ipfs/${transcoder?.threeBoxSpace.image}`}
           />
         ) : (
           <QRCode
@@ -34,16 +34,16 @@ export default ({ transcoder }) => {
               width: 40,
               height: 40,
             }}
-            fgColor={`#${transcoder.id.substr(2, 6)}`}
-            value={transcoder.id}
+            fgColor={`#${transcoder?.id.substr(2, 6)}`}
+            value={transcoder?.id}
           />
         )}
       </Flex>
       <Flex sx={{ flexDirection: 'column' }}>
         <Styled.h4 sx={{ fontSize: 20 }}>
-          {process.env.THREEBOX_ENABLED && transcoder.threeBoxSpace.name
-            ? transcoder.threeBoxSpace.name
-            : transcoder.id.replace(transcoder.id.slice(7, 37), '…')}
+          {process.env.THREEBOX_ENABLED && transcoder?.threeBoxSpace.name
+            ? transcoder?.threeBoxSpace.name
+            : transcoder?.id.replace(transcoder?.id.slice(7, 37), '…')}
         </Styled.h4>
         <div
           sx={{

@@ -12,7 +12,7 @@ export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
   const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
   const rewardCut =
-    transcoder.rewardCut > 0 ? transcoder.rewardCut / 1000000 : 0
+    transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0
   const inflation = protocol.inflation > 0 ? protocol.inflation / 1000000 : 0
   const inflationChange =
     protocol.inflationChange > 0 ? protocol.inflationChange / 1000000 : 0

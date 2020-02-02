@@ -22,6 +22,7 @@ interface Props {
   role: string
   refetch?: any
   hasLivepeerToken: boolean
+  isMyDelegate: boolean
   threeBoxSpace: ThreeBoxSpace
   myAccount?: any
   delegator: Delegator
@@ -35,6 +36,7 @@ export default ({
   account,
   role = 'Orchestrator',
   hasLivepeerToken,
+  isMyDelegate,
   delegator,
   status,
   refetch,
@@ -180,22 +182,23 @@ export default ({
       {role === 'Tokenholder' && <Chip label={role} />}
 
       <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
-        {role === 'Orchestrator' && (
-          <Button
-            onClick={() =>
-              client.writeData({
-                data: {
-                  stakingWidgetModalOpen: true,
-                  selectedStakingAction: 'stake',
-                },
-              })
-            }
-          >
-            Stake
-          </Button>
-        )}
-        {myAccount?.delegator?.delegate?.id.toLowerCase() ===
-          account.toLowerCase() && (
+        {role === 'Orchestrator' ||
+          (isMyDelegate && (
+            <Button
+              sx={{ mr: 2 }}
+              onClick={() =>
+                client.writeData({
+                  data: {
+                    stakingWidgetModalOpen: true,
+                    selectedStakingAction: 'stake',
+                  },
+                })
+              }
+            >
+              Stake
+            </Button>
+          ))}
+        {isMyDelegate && (
           <Button
             onClick={() =>
               client.writeData({
@@ -205,7 +208,7 @@ export default ({
                 },
               })
             }
-            sx={{ ml: 2, color: 'red', borderColor: 'red' }}
+            sx={{ color: 'red', borderColor: 'red' }}
             variant="outline"
           >
             Unstake

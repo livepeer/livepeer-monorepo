@@ -21,6 +21,10 @@ export default ({ account, delegator, currentRound }) => {
   let roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
   let totalRoundsToClaim = parseInt(currentRound.id, 10) - lastClaimRound
 
+  if (roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS) {
+    return null
+  }
+
   const BATCH_CLAIM_EARNINGS = gql`
     mutation batchClaimEarnings($lastClaimRound: String!, $endRound: String!) {
       txHash: batchClaimEarnings(

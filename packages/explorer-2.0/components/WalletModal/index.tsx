@@ -40,7 +40,7 @@ export default () => {
     setCookie('connector', name, { path: '/' })
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
-    activate(connector)
+    activate(connector, undefined, true)
   }
 
   const GET_WALLET_MODAL_STATUS = gql`

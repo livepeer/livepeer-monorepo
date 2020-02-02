@@ -6,7 +6,7 @@ import WalletIcon from '../../public/img/wallet.svg'
 import NewIcon from '../../public/img/new.svg'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
 import { useCookies } from 'react-cookie'
 import NetworkWidget from '../NetworkWidget'
@@ -35,7 +35,7 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
       (cookies.connector && cookies.connector === 'MetaMask') ||
       cookies.connector === 'Injected'
     ) {
-      context.activate(connectorsByName[cookies.connector])
+      context.activate(connectorsByName[cookies.connector], undefined, true)
     } else {
       // automatically activate if on a web3 enabled mobile device
       if (isMobile && window['web3']) {
