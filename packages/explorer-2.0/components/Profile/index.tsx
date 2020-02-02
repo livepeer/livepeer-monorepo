@@ -182,23 +182,22 @@ export default ({
       {role === 'Tokenholder' && <Chip label={role} />}
 
       <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
-        {role === 'Orchestrator' ||
-          (isMyDelegate && (
-            <Button
-              sx={{ mr: 2 }}
-              onClick={() =>
-                client.writeData({
-                  data: {
-                    stakingWidgetModalOpen: true,
-                    selectedStakingAction: 'stake',
-                  },
-                })
-              }
-            >
-              Stake
-            </Button>
-          ))}
-        {isMyDelegate && (
+        {(role === 'Orchestrator' || isMyDelegate) && (
+          <Button
+            sx={{ mr: 2 }}
+            onClick={() =>
+              client.writeData({
+                data: {
+                  stakingWidgetModalOpen: true,
+                  selectedStakingAction: 'stake',
+                },
+              })
+            }
+          >
+            Stake
+          </Button>
+        )}
+        {(role === 'Orchestrator' || isMyDelegate) && (
           <Button
             onClick={() =>
               client.writeData({
