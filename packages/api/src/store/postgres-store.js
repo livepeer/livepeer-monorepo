@@ -1,5 +1,6 @@
 import { Pool } from 'pg'
 import logger from '../logger'
+import { NotFoundError } from './errors'
 import { timeout } from '../util'
 import { parse as parseUrl, format as stringifyUrl } from 'url'
 
@@ -93,6 +94,10 @@ export default class PostgresStore {
       `UPDATE ${TABLE_NAME} SET data = $1 WHERE id = $2`,
       [JSON.stringify(data), key],
     )
+
+    if (res.rowCount < 1) {
+      throw new NotFoundError()
+    }
   }
 
   async delete(id) {

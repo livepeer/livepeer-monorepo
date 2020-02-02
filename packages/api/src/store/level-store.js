@@ -81,6 +81,7 @@ export default class LevelStore {
       if (err.name === 'NotFoundError') {
         return null
       }
+      throw err
     }
     return JSON.parse(res)
   }
@@ -94,14 +95,9 @@ export default class LevelStore {
       throw new Error(`Missing required values: id, kind`)
     }
     await this.ready
-    let item
-    try {
-      item = await this.get(`${kind}/${id}`)
-      if (item) {
-        throw new Error(`${id} already exists`)
-      }
-    } catch (err) {
-      throw err
+    const item = await this.get(`${kind}/${id}`)
+    if (item) {
+      throw new Error(`${id} already exists`)
     }
     await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }

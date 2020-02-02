@@ -37,7 +37,6 @@ async function generateUserAndToken(req, res, next) {
     const user = await req.store.get(`user/${userId}`)
     req.user = user
   } catch (error) {
-    console.error(error)
     throw error
   }
 
@@ -102,12 +101,8 @@ function authFactory(params) {
 
     logger.info('authFactory params ', params)
     let tokenObject
-    try {
-      // if tokenObject does not exist, create tokenObject and user
-      tokenObject = await req.store.get(`apitoken/${req.token}`)
-    } catch (e) {
-      throw e
-    }
+    // if tokenObject does not exist, create tokenObject and user
+    tokenObject = await req.store.get(`apitoken/${req.token}`)
 
     if (!tokenObject) {
       logger.warn('api Token not found... generating one')
@@ -135,7 +130,6 @@ function authFactory(params) {
         const user = await req.store.get(`user/${newTokenObject.userId}`)
         req.user = user
       } catch (error) {
-        console.log(error)
         res.status(403)
         return res.json({ errors: [error.toString()] })
       }
@@ -166,14 +160,10 @@ async function getUserWithGoogleAuth(req, res, next) {
   } catch (e) {
     throw new Error('invalid oauth token')
   }
+
   const payload = ticket.getPayload()
-  var user
-  try {
-    user = await req.store.get(`user/${payload.sub}`)
-  } catch (error) {
-    console.error(error)
-    throw error
-  }
+  let user = await req.store.get(`user/${payload.sub}`)
+
   if (!user) {
     await req.store.create({
       id: payload.sub,
