@@ -197,7 +197,7 @@ export default ({
             Stake
           </Button>
         )}
-        {(role === 'Orchestrator' || isMyDelegate) && (
+        {isMyDelegate && (
           <Button
             onClick={() =>
               client.writeData({
