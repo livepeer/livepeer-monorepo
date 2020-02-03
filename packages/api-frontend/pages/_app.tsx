@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import Head from "next/head";
-import { ThemeProvider, ColorMode, jsx } from "theme-ui";
-import { theme } from "@livepeer/ui";
+import Head from 'next/head'
+import { ThemeProvider, ColorMode, jsx } from 'theme-ui'
+import { theme } from '@livepeer/ui'
 
 export default ({ Component, pageProps }) => {
   return (
@@ -13,7 +13,7 @@ export default ({ Component, pageProps }) => {
           rel="stylesheet"
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
         />
-      </Head>{" "}
+      </Head>{' '}
       {/* <ApolloProvider client={apolloClient}> */}
       <ThemeProvider theme={theme}>
         <ColorMode />
@@ -27,5 +27,5 @@ export default ({ Component, pageProps }) => {
       </ThemeProvider>
       {/* </ApolloProvider> */}
     </>
-  );
-};
+  )
+}
