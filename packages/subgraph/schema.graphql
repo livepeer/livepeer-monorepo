@@ -1,11 +1,18 @@
 """
-Transcoders, also known as Orchestrators, perform and/or route transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
+Perform transcoding work for the network. The transcoders with the most delegated stake are elected as active transcoders that process transcode jobs for the network.
 """
 type Transcoder @entity {
   "The transcoder's ETH address"
   id: ID!
+  "Round in which the transcoder became active - 0 if inactive"
+  activationRound: BigInt
+  "Round in which the transcoder will become inactive"
+  deactivationRound: BigInt
+  "Round for which the stake was last updated while the transcoder is active"
+  lastActiveStakeUpdateRound: BigInt
   "Whether or not the transcoder is active"
   active: Boolean
+    @deprecated(reason: "Use `activationRound` and `deactivationRound`.")
   "The status of the transcoder"
   status: TranscoderStatus
   "Last round that the transcoder called reward"
@@ -16,19 +23,23 @@ type Transcoder @entity {
   feeShare: BigInt
   "Price per segment for a stream (LPTU)"
   pricePerSegment: BigInt
-  "Pending block reward cut for next round if the transcoder is active"
-  pendingRewardCut: BigInt
-  "Pending fee share for next round if the transcoder is active"
-  pendingFeeShare: BigInt
+    @deprecated(reason: "Price negotiation moved offchain")
   "Pending price per segment for next round if the transcoder is active"
   pendingPricePerSegment: BigInt
+    @deprecated(reason: "Price negotiation moved offchain")
+  "Pending block reward cut for next round if the transcoder is active"
+  pendingRewardCut: BigInt @deprecated(reason: "Field no longer used")
+  "Pending fee share for next round if the transcoder is active"
+  pendingFeeShare: BigInt @deprecated(reason: "Field no longer used")
   "Total tokens delegated toward a transcoder (including their own)"
   totalStake: BigInt
+  "The accrued fees claimed by the transcoder (before distribution to delegators)"
+  accruedFees: BigInt
   "The pools associated with the transcoder"
   pools: [Pool!] @derivedFrom(field: "delegate")
   "The delegators bonded to the transcoder"
-  delegators: [Delegator!]
-  "The delegator that registered as a transcoder"
+  delegators: [Delegator!] @derivedFrom(field: "delegate")
+  "The delegator that registered this transcoder"
   delegator: Delegator
 }
 
@@ -185,6 +196,34 @@ type RewardEvent implements Transaction @entity {
   delegate: Transcoder
 }
 
+type TranscoderActivatedEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+  activationRound: BigInt
+}
+
+type TranscoderDeactivatedEvent implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  delegate: Transcoder
+  deactivationRound: BigInt
+}
+
 type ClaimEarningsEvent implements Transaction @entity {
   id: ID!
   hash: String
@@ -230,9 +269,8 @@ type TranscoderUpdatedEvent implements Transaction @entity {
   to: String
   round: Round
   delegate: Transcoder
-  pendingRewardCut: BigInt
-  pendingFeeShare: BigInt
-  registered: Boolean
+  rewardCut: BigInt
+  feeShare: BigInt
 }
 
 type TranscoderSlashedEvent implements Transaction @entity {

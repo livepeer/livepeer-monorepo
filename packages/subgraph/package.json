@@ -4,19 +4,22 @@
   "version": "1.0.0-alpha.7",
   "license": "MIT",
   "scripts": {
-    "create": "graph create livepeer/livepeer --node https://api.thegraph.com/deploy/",
-    "create-local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
-    "create-stage": "graph create livepeer/livepeer-canary --node https://api.thegraph.com/deploy/",
-    "postinstall": "npm run codegen",
+    "create:local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
     "codegen": "graph codegen --debug --output-dir src/types/",
     "build": "graph build --debug",
-    "deploy": "graph deploy livepeer/livepeer --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy-local": "graph deploy livepeer/livepeer --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
-    "deploy-stage": "graph deploy livepeer/livepeer-canary --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
+    "deploy": "graph deploy $SUBGRAPH --debug --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy:mainnet": "yarn prepare:mainnet && SUBGRAPH=livepeer/livepeer yarn deploy",
+    "deploy:rinkeby": "yarn prepare:rinkeby && SUBGRAPH=livepeer/livepeer-rinkeby yarn deploy",
+    "prepare:mainnet": "NETWORK_NAME=mainnet node ./templatify.js",
+    "prepare:rinkeby": "NETWORK_NAME=rinkeby node ./templatify.js"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.16.1",
-    "@graphprotocol/graph-ts": "^0.16.0"
+    "@graphprotocol/graph-cli": "^0.17.1",
+    "@graphprotocol/graph-ts": "^0.17.0",
+    "fs-extra": "^8.1.0",
+    "handlebars": "^4.5.2",
+    "js-yaml": "^3.13.1",
+    "typy": "^3.3.0"
   },
   "workspaces": {
     "packages": [

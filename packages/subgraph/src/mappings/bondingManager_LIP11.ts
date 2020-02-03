@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, store, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, store, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -7,11 +7,9 @@ import {
   WithdrawStake,
   Bond,
   Unbond,
-  Rebond
+  Rebond,
 } from '../types/BondingManager_LIP11/BondingManager'
-import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
-// Import entity types generated from the GraphQL schema
 import {
   Transcoder,
   Delegator,
@@ -19,15 +17,10 @@ import {
   BondEvent,
   UnbondEvent,
   WithdrawStakeEvent,
-  RebondEvent
+  RebondEvent,
 } from '../types/schema'
 
-import { makeUnbondingLockId } from './util'
-
-// Bind RoundsManager contract
-let roundsManager = RoundsManager.bind(
-  Address.fromString('3984fc4ceeef1739135476f625d36d6c35c40dc3')
-)
+import { makeUnbondingLockId, getRoundsManagerInstance } from './util'
 
 export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
@@ -36,12 +29,13 @@ export function bond(event: Bond): void {
   let delegatorAddress = event.params.delegator
   let additionalAmount = event.params.additionalAmount
   let transcoderTotalStake = bondingManager.transcoderTotalStake(
-    newDelegateAddress
+    newDelegateAddress,
   )
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000'
+    '0000000000000000000000000000000000000000',
   )
 
   let transcoder = Transcoder.load(newDelegateAddress.toHex())
@@ -59,12 +53,9 @@ export function bond(event: Bond): void {
     delegator = new Delegator(delegatorAddress.toHex())
   }
 
-  if (transcoder.delegators == null) {
-    transcoder.delegators = new Array<string>()
-  }
-
-  // If self delegating, assign reference to self
+  // If self delegating, set status and assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
+    transcoder.status = 'Registered'
     transcoder.delegator = delegatorAddress.toHex()
   }
 
@@ -76,31 +67,22 @@ export function bond(event: Bond): void {
     let oldTranscoder = Transcoder.load(oldDelegateAddress.toHex())
     let oldDelegate = Delegator.load(oldDelegateAddress.toHex())
     let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
-      oldDelegateAddress
+      oldDelegateAddress,
     )
+
+    // if previous delegate was itself, set status and unassign reference to self
+    if (oldDelegateAddress.toHex() == delegatorAddress.toHex()) {
+      oldTranscoder.status = 'NotRegistered'
+      oldTranscoder.delegator = null
+    }
 
     oldTranscoder.totalStake = oldTranscoderTotalStake
     oldDelegate.delegatedAmount = oldTranscoderTotalStake
-
-    // remove from old transcoder's array of delegators
-    let oldTranscoderDelegators = oldTranscoder.delegators
-    if (oldTranscoderDelegators.length) {
-      let i = oldTranscoderDelegators.indexOf(delegatorAddress.toHex())
-      oldTranscoderDelegators.splice(i, 1)
-      oldTranscoder.delegators = oldTranscoderDelegators
-    }
 
     oldDelegate.save()
     oldTranscoder.save()
   }
 
-  // Update transcoder / delegate
-  let delegators = transcoder.delegators
-  let i = delegators.indexOf(delegatorAddress.toHex())
-  if (i == -1) {
-    delegators.push(delegatorAddress.toHex())
-    transcoder.delegators = delegators
-  }
   transcoder.totalStake = transcoderTotalStake
   delegate.delegatedAmount = transcoderTotalStake
 
@@ -140,12 +122,13 @@ export function unbond(event: Unbond): void {
   let unbondingLockId = event.params.unbondingLockId
   let uniqueUnbondingLockId = makeUnbondingLockId(
     delegatorAddress,
-    unbondingLockId
+    unbondingLockId,
   )
   let withdrawRound = event.params.withdrawRound
   let amount = event.params.amount
   let delegator = Delegator.load(delegatorAddress.toHex())
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress)
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
 
   let transcoder = Transcoder.load(delegateAddress.toHex())
@@ -176,11 +159,11 @@ export function unbond(event: Unbond): void {
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
   if (delegatorData.value0.isZero()) {
-    let delegators = transcoder.delegators
-    if (delegators != null) {
-      let i = delegators.indexOf(delegatorAddress.toHex())
-      delegators.splice(i, 1)
-      transcoder.delegators = delegators
+    // If unbonding from self and no longer has a bonded amount
+    // update transcoder status and delegator
+    if (delegatorAddress.toHex() == delegateAddress.toHex()) {
+      transcoder.status = 'NotRegistered'
+      transcoder.delegator = null
     }
 
     // Update delegator's delegate
@@ -226,13 +209,23 @@ export function rebond(event: Rebond): void {
   let unbondingLockId = event.params.unbondingLockId
   let uniqueUnbondingLockId = makeUnbondingLockId(
     delegatorAddress,
-    unbondingLockId
+    unbondingLockId,
   )
   let transcoder = Transcoder.load(delegateAddress.toHex())
   let delegate = Delegator.load(delegateAddress.toHex())
   let delegator = Delegator.load(delegatorAddress.toHex())
   let totalStake = bondingManager.transcoderTotalStake(delegateAddress)
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
+
+  // If rebonding from unbonded and is self-bonding then update transcoder status
+  if (
+    !delegator.delegate &&
+    delegateAddress.toHex() == delegatorAddress.toHex()
+  ) {
+    transcoder.status = 'Registered'
+    transcoder.delegator = delegatorAddress.toHex()
+  }
 
   // update delegator
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
@@ -275,16 +268,17 @@ export function withdrawStake(event: WithdrawStake): void {
   let delegatorAddress = event.params.delegator
   let unbondingLockId = event.params.unbondingLockId
   let amount = event.params.amount
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let uniqueUnbondingLockId = makeUnbondingLockId(
     delegatorAddress,
-    unbondingLockId
+    unbondingLockId,
   )
   store.remove('UnbondingLock', uniqueUnbondingLockId)
 
   // Store transaction info
   let withdrawStakeEvent = new WithdrawStakeEvent(
-    event.transaction.hash.toHex() + 'WithdrawStake'
+    event.transaction.hash.toHex() + 'WithdrawStake',
   )
   withdrawStakeEvent.hash = event.transaction.hash.toHex()
   withdrawStakeEvent.blockNumber = event.block.number
