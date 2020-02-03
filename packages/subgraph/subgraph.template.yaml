@@ -15,7 +15,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./src/mappings/bondingManager.ts
+      file: ./src/mappings/BondingManager.ts
       entities:
         - Transcoder
         - Pool
