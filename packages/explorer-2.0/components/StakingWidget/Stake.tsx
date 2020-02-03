@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import React, { useState, useEffect } from 'react'
 import { useApolloClient } from '@apollo/react-hooks'
 import Utils from 'web3-utils'
@@ -9,7 +8,7 @@ import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
 import { useWeb3Mutation } from '../../hooks'
@@ -17,10 +16,11 @@ import gql from 'graphql-tag'
 
 export default ({ transcoder, amount, disabled }) => {
   const client = useApolloClient()
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
   const { width, height } = useWindowSize()
-  
+
+  // Can only stake if connected to wallet
   if (!context.active) {
     return null
   }
@@ -65,6 +65,7 @@ export default ({ transcoder, amount, disabled }) => {
               },
             })
           } catch (e) {
+            console.log(e)
             return {
               error: e.message.replace('GraphQL error: ', ''),
             }
@@ -91,18 +92,29 @@ export default ({ transcoder, amount, disabled }) => {
           />
         )}
         <StakingFlow action="stake" account={transcoder.id} amount={amount} />
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
                 <Spinner sx={{ mr: 2 }} />
-
                 <div sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
                 </div>
               </Flex>
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

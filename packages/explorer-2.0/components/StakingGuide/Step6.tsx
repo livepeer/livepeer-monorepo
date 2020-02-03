@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Styled } from 'theme-ui'
+import { Styled } from 'theme-ui'
 import Button from '../Button'
 
 export default ({ goTo, nextStep }) => {

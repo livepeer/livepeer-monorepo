@@ -1,9 +1,6 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Styled } from 'theme-ui'
-import Button from '../Button'
+import { Styled } from 'theme-ui'
 
-export default ({ goTo, nextStep }) => {
+export default () => {
   return (
     <div sx={{ py: 1 }}>
       <Styled.h2 sx={{ mb: 2 }}>Stake</Styled.h2>

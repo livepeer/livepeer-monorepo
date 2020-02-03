@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-import { tint } from '@theme-ui/color'
 import { keyframes } from '@emotion/core'
 
 const rotate = keyframes`
@@ -9,7 +6,7 @@ const rotate = keyframes`
   }
 `
 
-export default ({ ...props }) => (
+export default ({ speed = '1s', ...props }) => (
   <div
     {...props}
     sx={{
@@ -19,7 +16,7 @@ export default ({ ...props }) => (
       borderTopColor: 'primary',
       width: 26,
       height: 26,
-      animation: `${rotate} 1s linear`,
+      animation: `${rotate} ${speed} linear`,
       animationIterationCount: 'infinite',
     }}
   ></div>

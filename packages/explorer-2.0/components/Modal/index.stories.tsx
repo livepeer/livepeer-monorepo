@@ -1,4 +1,4 @@
-/** @jsx jsx */
+
 import { jsx, Flex } from 'theme-ui'
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'

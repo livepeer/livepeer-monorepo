@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex, Styled } from 'theme-ui'
+import { Flex, Styled } from 'theme-ui'
 import Search from '../public/img/search.svg'
 import Router from 'next/router'
 import { withApollo } from '../lib/apollo'
@@ -12,21 +10,28 @@ function handleSubmit(e) {
   Router.push(`/accounts/[account]/[slug]`, `/accounts/${input.value}/staking`)
 }
 
-const SearchPage: any = () => {
+export default withApollo(() => {
   return (
-    <Layout>
+    <Layout title="Livepeer Explorer - Search" headerTitle="Search">
       <Flex
         sx={{
-          mt: 5,
+          mt: [3, 3, 3, 5],
           width: '100%',
           flexDirection: 'column',
         }}
       >
-        <Styled.h1 sx={{ display: 'flex', mb: 3, alignItems: 'center' }}>
+        <Styled.h1
+          sx={{
+            fontSize: [3, 3, 4, 5],
+            display: 'flex',
+            mb: 3,
+            alignItems: 'center',
+          }}
+        >
           <Search
             sx={{
-              width: 26,
-              height: 26,
+              width: [20, 20, 20, 26],
+              height: [20, 20, 20, 26],
               color: 'primary',
               mr: 2,
             }}
@@ -78,8 +83,4 @@ const SearchPage: any = () => {
       </Flex>
     </Layout>
   )
-}
-
-SearchPage.displayName = ''
-
-export default withApollo(SearchPage)
+})

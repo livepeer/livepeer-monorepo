@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Styled, useThemeUI } from 'theme-ui'
+import { Styled, useThemeUI } from 'theme-ui'
 import { TypeScale, TypeStyle } from '@theme-ui/style-guide'
 
 const Row = props => (
@@ -12,8 +11,8 @@ const Row = props => (
       mb: 6,
       mx: -3,
       '& > div': {
-        px: 3
-      }
+        px: 3,
+      },
     }}
   />
 )

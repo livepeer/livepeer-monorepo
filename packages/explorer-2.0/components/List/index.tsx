@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-
 interface Props {
   onScroll?: React.UIEventHandler
   header?: JSX.Element

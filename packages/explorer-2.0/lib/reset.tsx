@@ -26,6 +26,9 @@ const Reset = () =>
       ul: {
         paddingLeft: 20,
       },
+      code: {
+        fontFamily: theme.fonts.monospace,
+      },
       button: {
         border: 0,
         padding: 0,
@@ -43,19 +46,33 @@ const Reset = () =>
       },
       '[data-reach-dialog-overlay]': {
         background: 'hsla(0, 0%, 0%, 0.33)',
+        display: 'flex',
+        alignItems: 'center',
         position: 'fixed',
         top: '0',
         right: '0',
         bottom: '0',
         left: '0',
         overflow: 'auto',
+        zIndex: 1000,
       },
       '[data-reach-dialog-content]': {
-        width: '50vw',
         margin: '10vh auto',
+        width: '90vw',
+        maxHeight: '90vh',
+        overflowY: 'scroll',
+        msOverflowStyle: 'none', // IE 10+
+        scrollbarWidth: 'none', // Firefox
+        padding: 0,
         backgroundColor: `${theme.colors.surface} !important`,
-        padding: '2rem',
         outline: 'none',
+        borderRadius: '10px',
+        '@media (min-width: 672px)': {
+          width: '65vw',
+        },
+        '@media (min-width: 1020px)': {
+          maxWidth: 650,
+        },
       },
       '.tooltip': {
         boxShadow: '0px 4px 4px rgba(0,0,0,0.15)',

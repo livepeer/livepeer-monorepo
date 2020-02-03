@@ -1,35 +1,50 @@
-/** @jsx jsx */
-import { jsx, Styled, Flex } from 'theme-ui'
+import { Styled, Box, Flex } from 'theme-ui'
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
 import Orchestrators from '../public/img/orchestrators.svg'
-import Account from '../public/img/account.svg'
-import Wallet from '../public/img/wallet.svg'
 import Search from '../public/img/search.svg'
-import { useWeb3Context } from 'web3-react'
+import Account from '../public/img/account.svg'
+import { useWeb3React } from '@web3-react/core'
 import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
-import Snackbar from '../components/Snackbar'
 import { useAccount } from '../hooks'
+import Header from '../components/Header'
+import Router from 'next/router'
+import useWindowSize from 'react-use/lib/useWindowSize'
+import WalletModal from '../components/WalletModal'
 
-const Layout = ({ children, title = 'Livepeer Explorer' }) => {
-  const context = useWeb3Context()
+type DrawerItem = {
+  name: any
+  href: string
+  as: string
+  icon: React.ElementType
+  className?: string
+}
+
+export default ({
+  children,
+  title = 'Livepeer Explorer',
+  headerTitle = '',
+}) => {
+  const context = useWeb3React()
   const { account } = context
   const { threeBoxSpace } = useAccount(account)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [cookies, setCookie, removeCookie] = useCookies([
-    'dismissedOldExplorerSnackbar',
-  ])
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const { width } = useWindowSize()
 
   useEffect(() => {
-    if (!cookies.dismissedOldExplorerSnackbar) {
-      setSnackbarOpen(true)
+    if (width > 1020) {
+      document.body.removeAttribute('style')
     }
-  }, [cookies])
 
-  let items = [
+    if (width < 1020 && drawerOpen) {
+      document.body.style.overflow = 'hidden'
+    }
+  })
+
+  let items: DrawerItem[] = [
     {
       name: 'Orchestrators',
       href: '/',
@@ -44,27 +59,41 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       icon: Search,
       className: 'search',
     },
-    {
-      name: !account ? (
-        'Connect Wallet'
-      ) : (
-        <div>
-          <div sx={{ lineHeight: 1.5 }}>
-            {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
-              ? threeBoxSpace.name
-              : 'My Account'}
-          </div>
-          <div sx={{ fontSize: 0 }}>
-            {account.replace(account.slice(5, 39), '…')}
-          </div>
-        </div>
-      ),
-      className: 'tour-step-1',
-      href: !account ? '/connect-wallet' : '/accounts/[account]/[slug]',
-      as: !account ? '/connect-wallet' : `/accounts/${account}/staking`,
-      icon: !account ? Wallet : Account,
-    },
   ]
+
+  if (context.active) {
+    items.push({
+      name: (
+        <Box>
+          {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
+            ? threeBoxSpace.name
+            : 'My Account'}
+        </Box>
+      ),
+      href: '/accounts/[account]/[slug]',
+      as: `/accounts/${account}/staking`,
+      icon: Account,
+    })
+  }
+
+  Router.events.on('routeChangeComplete', () =>
+    document.body.removeAttribute('style'),
+  )
+
+  const onDrawerOpen = () => {
+    if (drawerOpen) {
+      document.body.removeAttribute('style')
+      setDrawerOpen(false)
+    } else {
+      document.body.style.overflow = 'hidden'
+      setDrawerOpen(true)
+    }
+  }
+
+  const onDrawerClose = () => {
+    document.body.removeAttribute('style')
+    setDrawerOpen(false)
+  }
 
   return (
     <>
@@ -75,63 +104,35 @@ const Layout = ({ children, title = 'Livepeer Explorer' }) => {
       </Head>
       <Reset />
       <Styled.root>
-        <div
-          sx={{
-            height: '100vh',
-            display: ['flex', 'flex', 'flex', 'none'],
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            padding: '0 32px',
-          }}
-        >
-          Mobile support coming soon.
-        </div>
-
-        <div
+        <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
+        <WalletModal />
+        <Box
           sx={{
             maxWidth: 1400,
             margin: '0 auto',
-            display: ['none', 'none', 'none', 'flex'],
+            display: 'flex',
           }}
         >
-          <Drawer items={items} />
+          <Drawer
+            onDrawerClose={onDrawerClose}
+            onDrawerOpen={onDrawerOpen}
+            open={drawerOpen}
+            items={items}
+          />
           <Flex
             sx={{
-              paddingLeft: 32,
-              paddingRight: 32,
-              width: 'calc(100% - 275px)',
+              bg: 'background',
+              paddingLeft: [2, 2, 2, 40],
+              paddingRight: [2, 2, 2, 40],
+              width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
             }}
           >
             <Flex sx={{ width: '100%' }} className="tour-step-6">
               {children}
             </Flex>
           </Flex>
-          {snackbarOpen && (
-            <Snackbar
-              onClose={() => {
-                setCookie('dismissedOldExplorerSnackbar', true, { path: '/' })
-                setSnackbarOpen(false)
-              }}
-            >
-              <span>
-                Prefer the old explorer? Visit{' '}
-                <a
-                  sx={{ color: 'background', textDecoration: 'underline' }}
-                  href="https://classic.explorer.livepeer.org"
-                  target="_blank"
-                >
-                  classic.explorer.livepeer.org
-                </a>
-              </span>
-            </Snackbar>
-          )}
-        </div>
+        </Box>
       </Styled.root>
     </>
   )
 }
-
-Layout.displayName = ''
-
-export default Layout

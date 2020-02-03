@@ -1,7 +1,4 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex, Box } from 'theme-ui'
-import Trending from '../../public/img/trending.svg'
+import { Flex, Box } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { abbreviateNumber } from '../../lib/utils'

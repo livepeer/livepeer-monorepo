@@ -24,7 +24,7 @@ const theme = {
     body: 1.5,
     heading: 1.125,
   },
-  breakpoints: ['480px', '672px', '1160px'],
+  breakpoints: ['480px', '672px', '1020px', '1380px'],
   colors: {
     text: 'rgba(255, 255, 255, .87)',
     background: '#131418',
@@ -37,7 +37,7 @@ const theme = {
     blue: '#0062eb',
     skyBlue: '#5bc2ee',
     teal: '#00bfb2',
-    border: 'rgba(255, 255, 255, .16)',
+    border: '#393a3d',
     modes: {},
   },
   buttons: {
@@ -63,15 +63,21 @@ const theme = {
       borderColor: 'text',
       transition: 'border-color .2s',
       '&:hover': {
-        borderColor: 'text',
+        borderColor: 'inherit',
         transition: 'border-color .2s',
       },
     },
     primarySmall: {
-      color: 'background',
-      bg: 'primary',
+      variant: 'buttons.primary',
       py: '6px',
       px: 2,
+    },
+    primaryOutline: {
+      variant: 'buttons.outline',
+      bg: 'transparent',
+      color: 'primary',
+      border: '1px solid',
+      borderColor: 'primary',
     },
     primaryOutlineSmall: {
       bg: 'transparent',
@@ -81,6 +87,12 @@ const theme = {
       fontSize: 0,
       px: 1,
       py: '2px',
+    },
+    text: {
+      color: 'primary',
+      border: 0,
+      bg: 'transparent',
+      p: 0,
     },
     danger: {
       borderRadius: 6,
@@ -94,17 +106,9 @@ const theme = {
       },
     },
     dangerSmall: {
-      borderRadius: 6,
-      cursor: 'pointer',
+      variant: 'buttons.danger',
       py: '6px',
       px: 2,
-      backgroundColor: 'rgba(211, 47, 47, .1)',
-      transition: '.2s background-color',
-      color: 'red',
-      '&:hover': {
-        transition: '.2s background-color',
-        backgroundColor: 'rgba(211, 47, 47, .2)',
-      },
     },
     rainbow: {
       color: 'text',

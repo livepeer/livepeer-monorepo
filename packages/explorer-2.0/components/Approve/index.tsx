@@ -1,13 +1,11 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import { Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
 import { useWeb3Mutation } from '../../hooks'
-import { useWeb3Context } from 'web3-react'
 import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import Banner from '../Banner'
@@ -117,7 +115,13 @@ export default ({ account, context, banner = true }) => {
             <div>Approving Livepeer tokens for staking...</div>
           )}
         </Flex>
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -127,7 +131,13 @@ export default ({ account, context, banner = true }) => {
                 </div>
               </Flex>
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

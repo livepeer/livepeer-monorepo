@@ -1,7 +1,6 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
 import { useApolloClient } from '@apollo/react-hooks'
 import * as Utils from 'web3-utils'
+import useWindowSize from 'react-use/lib/useWindowSize'
 
 let hoursPerYear = 8760
 let averageHoursPerRound = 21
@@ -9,10 +8,11 @@ let roundsPerYear = hoursPerYear / averageHoursPerRound
 
 export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const client = useApolloClient()
+  const { width } = useWindowSize()
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
   const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
   const rewardCut =
-    transcoder.rewardCut > 0 ? transcoder.rewardCut / 1000000 : 0
+    transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0
   const inflation = protocol.inflation > 0 ? protocol.inflation / 1000000 : 0
   const inflationChange =
     protocol.inflationChange > 0 ? protocol.inflationChange / 1000000 : 0
@@ -47,7 +47,7 @@ export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
       <input
         placeholder="0.0"
         type="number"
-        autoFocus
+        autoFocus={width > 1020}
         value={value}
         onChange={onChange}
         sx={{

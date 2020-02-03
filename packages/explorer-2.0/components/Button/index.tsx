@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { Styled, jsx } from 'theme-ui'
+import { Styled } from 'theme-ui'
 
 export default ({
   as = 'button',

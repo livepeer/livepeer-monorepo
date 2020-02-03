@@ -1,29 +1,21 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import { Flex, Box } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import Help from '../../public/img/help.svg'
 import { useWeb3Mutation } from '../../hooks'
 import gql from 'graphql-tag'
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Banner from '../Banner'
-import ReactTooltip from 'react-tooltip'
+import { useWeb3React } from '@web3-react/core'
 
-export default ({ account, delegator, currentRound, context }) => {
-  if (!account || !delegator || (delegator && !delegator.lastClaimRound)) {
-    return null
-  }
-
-  // Display approve banner first
-  if (parseFloat(account.allowance) == 0) {
-    return null
-  }
-
+export default ({ account, delegator, currentRound }) => {
+  const context = useWeb3React()
   const [claimModalOpen, setClaimModalOpen] = useState(false)
+  const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
+  const MDXDocument = require('../../data/claim-earnings.mdx').default
 
   let lastClaimRound = parseInt(delegator.lastClaimRound.id, 10)
   let roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
@@ -47,9 +39,9 @@ export default ({ account, delegator, currentRound, context }) => {
       endRound: currentRound.id,
     },
     context: {
-      web3: context.library,
-      provider: context.library.currentProvider,
-      account: context.account.toLowerCase(),
+      web3: context?.library,
+      provider: context?.library?.currentProvider,
+      account: context?.account?.toLowerCase(),
       returnTxHash: true,
     },
   })
@@ -69,49 +61,48 @@ export default ({ account, delegator, currentRound, context }) => {
     roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS
   ) {
     banner = (
-      <Banner
-        label={
-          <div sx={{ pr: 3 }}>
-            It's been over 100 rounds since your last claim.
-            <div sx={{ display: 'inline-flex' }}>
-              <ReactTooltip
-                id="tooltip-claim"
-                className="tooltip"
-                place="top"
-                type="dark"
-                effect="solid"
-              />
-              <Help
-                data-tip="Anytime you stake, unstake or restake, your rewards are automatically claimed. However, if it's been over 100 rounds since you performed any of these actions, the protocol requires that you manually claim your earnings before taking any further action. Rewards will continue to compound, regardless of whether you claim or not."
-                data-for="tooltip-claim"
-                sx={{
-                  position: 'relative',
-                  top: '2px',
-                  color: 'muted',
-                  cursor: 'pointer',
-                  ml: 1,
+      <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
+        <Banner
+          label={
+            <Box sx={{ mb: 1 }}>
+              It's been over 100 rounds since your last claim.
+            </Box>
+          }
+          button={
+            <Flex sx={{ alignSelf: 'flex-end' }}>
+              <Button
+                onClick={() => setLearnMoreModalOpen(true)}
+                variant="text"
+                sx={{ mr: 2 }}
+              >
+                Learn More
+              </Button>
+              <Button
+                variant="text"
+                onClick={async () => {
+                  try {
+                    await batchClaimEarnings()
+                  } catch (e) {
+                    return {
+                      error: e.message.replace('GraphQL error: ', ''),
+                    }
+                  }
                 }}
-              />
-            </div>
-          </div>
-        }
-        button={
-          <Button
-            variant="primarySmall"
-            onClick={async () => {
-              try {
-                await batchClaimEarnings()
-              } catch (e) {
-                return {
-                  error: e.message.replace('GraphQL error: ', ''),
-                }
-              }
-            }}
-          >
-            Claim
-          </Button>
-        }
-      />
+              >
+                Claim Earnings
+                <Modal
+                  title="Claiming Your Earnings"
+                  showCloseButton
+                  isOpen={learnMoreModalOpen}
+                  onDismiss={() => setLearnMoreModalOpen(false)}
+                >
+                  <MDXDocument />
+                </Modal>
+              </Button>
+            </Flex>
+          }
+        />
+      </Box>
     )
   }
 
@@ -130,16 +121,29 @@ export default ({ account, delegator, currentRound, context }) => {
           setClaimModalOpen(false)
         }}
         title={isMined ? 'Success!' : 'Broadcasted'}
-        Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
+        Icon={isMined ? () => <Box sx={{ mr: 1 }}>🎊</Box> : Broadcast}
       >
-        <div sx={{ mb: 4 }}>
+        <Box
+          sx={{
+            border: '1px solid',
+            borderRadius: 10,
+            borderColor: 'border',
+            p: 3,
+          }}
+        >
           {isMined ? (
-            <div>Successfully claimed earnings.</div>
+            <Box>Successfully claimed earnings.</Box>
           ) : (
-            <div>Claiming {totalRoundsToClaim} rounds worth of earnings. </div>
+            <Box>Claiming {totalRoundsToClaim} rounds worth of earnings. </Box>
           )}
-        </div>
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        </Box>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -149,7 +153,13 @@ export default ({ account, delegator, currentRound, context }) => {
                 </div>
               </Flex>
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

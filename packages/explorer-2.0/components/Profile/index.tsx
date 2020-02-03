@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { Styled, jsx } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Styled, Box } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import Copy from '../../public/img/copy.svg'
 import Check from '../../public/img/check.svg'
@@ -15,13 +14,17 @@ import EditProfile from '../EditProfile'
 import ShowMoreText from 'react-show-more-text'
 import Link from 'next/link'
 import { nl2br } from '../../lib/utils'
+import Button from '../Button'
+import { useApolloClient } from '@apollo/react-hooks'
 
 interface Props {
   account: string
   role: string
   refetch?: any
   hasLivepeerToken: boolean
+  isMyDelegate: boolean
   threeBoxSpace: ThreeBoxSpace
+  myAccount?: any
   delegator: Delegator
   transcoder: Transcoder
   isMyAccount: boolean
@@ -29,9 +32,11 @@ interface Props {
 }
 
 export default ({
+  myAccount,
   account,
   role = 'Orchestrator',
   hasLivepeerToken,
+  isMyDelegate,
   delegator,
   status,
   refetch,
@@ -40,8 +45,7 @@ export default ({
   isMyAccount = false,
   ...props
 }: Props) => {
-  const isLivepeerAware =
-    hasLivepeerToken || role == 'Orchestrator' || role == 'Tokenholder'
+  const client = useApolloClient()
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -53,12 +57,12 @@ export default ({
   }, [copied])
 
   return (
-    <div {...props}>
-      <div
+    <Box {...props}>
+      <Box
         sx={{
-          mb: 2,
-          width: 70,
-          height: 70,
+          mb: [1, 1, 1, 2],
+          width: [60, 60, 60, 70],
+          height: [60, 60, 60, 70],
           position: 'relative',
         }}
       >
@@ -86,7 +90,7 @@ export default ({
           />
         )}
 
-        <div
+        <Box
           sx={{
             position: 'absolute',
             right: 0,
@@ -99,13 +103,19 @@ export default ({
             borderRadius: 1000,
           }}
         />
-      </div>
+      </Box>
       <Flex sx={{ alignItems: 'center', mb: '10px' }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
-          <Styled.h1 sx={{ display: 'flex', alignItems: 'center' }}>
+          <Styled.h1
+            sx={{
+              fontSize: [3, 3, 3, 5],
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
               ? threeBoxSpace.name
-              : account.replace(account.slice(7, 37), '…')}
+              : account.replace(account.slice(5, 39), '…')}
             <Flex
               data-for="copy"
               data-tip={`${copied ? 'Copied' : 'Copy address to clipboard'}`}
@@ -169,31 +179,64 @@ export default ({
           </a>
         </Flex>
       )}
-      {isLivepeerAware && <Chip label={role} />}
+      {role === 'Tokenholder' && <Chip label={role} />}
 
+      <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
+        {(role === 'Orchestrator' || isMyDelegate) && (
+          <Button
+            sx={{ mr: 2 }}
+            onClick={() =>
+              client.writeData({
+                data: {
+                  stakingWidgetModalOpen: true,
+                  selectedStakingAction: 'stake',
+                },
+              })
+            }
+          >
+            Stake
+          </Button>
+        )}
+        {isMyDelegate && (
+          <Button
+            onClick={() =>
+              client.writeData({
+                data: {
+                  stakingWidgetModalOpen: true,
+                  selectedStakingAction: 'unstake',
+                },
+              })
+            }
+            sx={{ color: 'red', borderColor: 'red' }}
+            variant="outline"
+          >
+            Unstake
+          </Button>
+        )}
+      </Flex>
       {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (
-        <div sx={{ mt: 3, a: { color: 'primary' } }}>
+        <Box sx={{ mt: 3, a: { color: 'primary' } }}>
           <ShowMoreText
             lines={3}
             more={<span sx={{ color: 'primary' }}>Show more</span>}
             less={<span sx={{ color: 'primary' }}>Show Less</span>}
           >
-            <div
+            <Box
               sx={{ mt: 3, a: { color: 'primary' } }}
               dangerouslySetInnerHTML={{
                 __html: nl2br(threeBoxSpace.description),
               }}
             />
           </ShowMoreText>
-        </div>
+        </Box>
       )}
       {process.env.THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.addressLinks &&
         threeBoxSpace.addressLinks.length > 0 &&
         role != 'Orchestrator' && (
-          <div sx={{ mt: 3 }}>
-            <div
+          <Box sx={{ mt: 3 }}>
+            <Box
               sx={{
                 display: 'inline-flex',
                 flexDirection: 'column',
@@ -203,11 +246,11 @@ export default ({
                 borderColor: 'border',
               }}
             >
-              <div
+              <Box
                 sx={{ mb: '6px', fontWeight: 600, fontSize: 0, color: 'muted' }}
               >
                 External Account
-              </div>
+              </Box>
               <Flex>
                 {threeBoxSpace.addressLinks.map((link, i) => (
                   <Link
@@ -227,6 +270,9 @@ export default ({
                         fontSize: 0,
                         fontWeight: 600,
                         color: 'primary',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                       }}
                     >
                       {link.address
@@ -236,9 +282,9 @@ export default ({
                   </Link>
                 ))}
               </Flex>
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-    </div>
+    </Box>
   )
 }

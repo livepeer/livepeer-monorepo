@@ -1,9 +1,7 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Flex, Styled } from 'theme-ui'
+import { Box, Flex, Styled } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -56,7 +54,7 @@ export default () => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const isMyAccount = account == context.account
 
   const { data, loading, error } = useQuery(GET_DATA, {
@@ -88,40 +86,42 @@ export default () => {
   if (!(data && data.delegator && data.delegator.bondedAmount != null)) {
     if (isMyAccount) {
       return (
-        <div sx={{ pt: 4 }}>
+        <Box sx={{ pt: 4 }}>
           <span sx={{ mr: 2 }}>
             You haven't staked LPT. Stake LPT with an Orchestrator and begin
-            earnings rewards.
+            earning rewards.
           </span>
           <Link href="/" passHref>
             <Styled.a>View Orchestrators.</Styled.a>
           </Link>
-        </div>
+        </Box>
       )
     }
     return (
-      <div sx={{ pt: 4 }}>
+      <Box sx={{ pt: 4 }}>
         <span sx={{ mr: 2 }}>Nothing here.</span>
-      </div>
+      </Box>
     )
   }
 
   const pendingStake = Math.max(
-    Utils.fromWei(data.delegator.bondedAmount),
-    Utils.fromWei(data.delegator.pendingStake),
+    parseFloat(Utils.fromWei(data.delegator.bondedAmount)),
+    parseFloat(Utils.fromWei(data.delegator.pendingStake)),
   )
 
   const unbonded = data.delegator.unbonded
-    ? Utils.fromWei(data.delegator.unbonded)
+    ? parseFloat(Utils.fromWei(data.delegator.unbonded))
     : 0
-  const principal = Utils.fromWei(data.delegator.principal)
+  const principal = parseFloat(Utils.fromWei(data.delegator.principal))
 
-  const rewards =
-    pendingStake + parseFloat(unbonded ? unbonded : 0) - parseFloat(principal)
-  const totalBondedToken = Utils.fromWei(data.protocol.totalBondedToken)
+  const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
+
+  const totalBondedToken = parseFloat(
+    Utils.fromWei(data.protocol.totalBondedToken),
+  )
 
   return (
-    <div sx={{ pt: 4 }}>
+    <Box sx={{ pt: 4 }}>
       {data.delegator.delegate && (
         <Link
           href={`/accounts/[account]/[slug]`}
@@ -137,7 +137,7 @@ export default () => {
               }}
               title="Staked with"
               subtitle={
-                <div
+                <Box
                   sx={{
                     fontSize: 5,
                     fontWeight: 'text',
@@ -152,25 +152,29 @@ export default () => {
                         data.delegator.delegate.id.slice(7, 37),
                         '…',
                       )}
-                </div>
+                </Box>
               }
             />
           </a>
         </Link>
       )}
-      <div
+      <Box
         sx={{
           display: 'grid',
           gridGap: 2,
-          gridTemplateColumns: `repeat(auto-fit, minmax(128px, 1fr))`,
+          gridTemplateColumns: [
+            '100%',
+            '100%',
+            `repeat(auto-fit, minmax(128px, 1fr))`,
+          ],
           mb: 5,
         }}
       >
         <Card
-          sx={{ flex: 1, mb: 2 }}
+          sx={{ flex: 1, mb: 0 }}
           title={
             <Flex sx={{ alignItems: 'center' }}>
-              <div sx={{ color: 'muted' }}>Staked balance</div>
+              <Box sx={{ color: 'muted' }}>Staked balance</Box>
               <Flex>
                 <ReactTooltip
                   id="tooltip-total-staked"
@@ -192,7 +196,7 @@ export default () => {
             </Flex>
           }
           subtitle={
-            <div
+            <Box
               sx={{
                 fontSize: 5,
                 color: 'text',
@@ -202,13 +206,13 @@ export default () => {
             >
               {abbreviateNumber(pendingStake, 5)}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
-            </div>
+            </Box>
           }
         >
-          <div sx={{ mt: 3 }}>
+          <Box sx={{ mt: 3 }}>
             <Flex sx={{ fontSize: 1, mb: 1, justifyContent: 'space-between' }}>
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Principal</div>
+                <Box sx={{ color: 'muted' }}>Principal</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-principal"
@@ -240,7 +244,7 @@ export default () => {
               }}
             >
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Unstaked</div>
+                <Box sx={{ color: 'muted' }}>Unstaked</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-unstaked"
@@ -272,7 +276,7 @@ export default () => {
             </Flex>
             <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Rewards</div>
+                <Box sx={{ color: 'muted' }}>Rewards</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-rewards"
@@ -298,14 +302,14 @@ export default () => {
                 </span>
               </span>
             </Flex>
-          </div>
+          </Box>
         </Card>
         {data.delegator.delegate && (
           <Card
-            sx={{ flex: 1, mb: 2 }}
+            sx={{ flex: 1, mb: 0 }}
             title={
               <Flex sx={{ alignItems: 'center' }}>
-                <div sx={{ color: 'muted' }}>Stake Equity</div>
+                <Box sx={{ color: 'muted' }}>Stake Equity</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-equity"
@@ -327,7 +331,7 @@ export default () => {
               </Flex>
             }
             subtitle={
-              <div
+              <Box
                 sx={{
                   fontSize: 5,
                   color: 'text',
@@ -335,14 +339,14 @@ export default () => {
                   fontFamily: 'monospace',
                 }}
               >
-                {totalBondedToken === '0'
+                {totalBondedToken === 0
                   ? 0
                   : ((pendingStake / totalBondedToken) * 100).toPrecision(4)}
                 %
-              </div>
+              </Box>
             }
           >
-            <div sx={{ mt: 3 }}>
+            <Box sx={{ mt: 3 }}>
               <Flex
                 sx={{
                   fontSize: 1,
@@ -354,7 +358,7 @@ export default () => {
                   Account{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {totalBondedToken === '0'
+                    {totalBondedToken === 0
                       ? 0
                       : ((pendingStake / totalBondedToken) * 100).toPrecision(
                           4,
@@ -375,10 +379,12 @@ export default () => {
                   Orchestrator{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {totalBondedToken === '0'
+                    {totalBondedToken === 0
                       ? 0
                       : (
-                          (Utils.fromWei(data.delegator.delegate.totalStake) /
+                          (parseFloat(
+                            Utils.fromWei(data.delegator.delegate.totalStake),
+                          ) /
                             totalBondedToken) *
                           100
                         ).toPrecision(4)}
@@ -388,7 +394,9 @@ export default () => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      Utils.fromWei(data.delegator.delegate.totalStake),
+                      parseFloat(
+                        Utils.fromWei(data.delegator.delegate.totalStake),
+                      ),
                       3,
                     )}
                   </span>
@@ -405,10 +413,12 @@ export default () => {
                   Rest of Network{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {(totalBondedToken === '0'
+                    {(totalBondedToken === 0
                       ? 0
                       : (totalBondedToken -
-                          Utils.fromWei(data.delegator.delegate.totalStake) -
+                          parseFloat(
+                            Utils.fromWei(data.delegator.delegate.totalStake),
+                          ) -
                           pendingStake) /
                         totalBondedToken) * 100}
                     %)
@@ -417,25 +427,27 @@ export default () => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      totalBondedToken === '0'
+                      totalBondedToken === 0
                         ? 0
                         : totalBondedToken -
-                            Utils.fromWei(data.delegator.delegate.totalStake) -
+                            parseFloat(
+                              Utils.fromWei(data.delegator.delegate.totalStake),
+                            ) -
                             pendingStake,
                       3,
                     )}
                   </span>
                 </span>
               </Flex>
-            </div>
+            </Box>
           </Card>
         )}
-      </div>
+      </Box>
       <StakeTransactions
         delegator={data.delegator}
         currentRound={data.currentRound[0]}
         isMyAccount={isMyAccount}
       />
-    </div>
+    </Box>
   )
 }

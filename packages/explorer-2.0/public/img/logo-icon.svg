@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="31px" height="30px" viewBox="0 0 31 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
-    <title>Group</title>
-    <desc>Created with Sketch.</desc>
+<svg width="29px" height="30px" viewBox="0 0 29 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Livepeer</title>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group" transform="translate(0.000000, -0.000000)" fill="#000000">
-            <polygon id="Path" points="16.7565738 25.7857143 20.7410359 25.7857143 20.7410359 29.7485714 16.7565738 29.7485714"></polygon>
-            <polygon id="Path" points="16.7565738 8.30571429 20.7410359 8.30571429 20.7410359 12.2685714 16.7565738 12.2685714"></polygon>
-            <polygon id="Path" points="26.1446216 8.30571429 30.1290836 8.30571429 30.1290836 12.2685714 26.1446216 12.2685714"></polygon>
-            <polygon id="Path" points="7.42310755 8.30571429 11.4075697 8.30571429 11.4075697 12.2685714 7.42310755 12.2685714"></polygon>
-            <polygon id="Path" points="21.4505976 17.0457143 25.4350597 17.0457143 25.4350597 21.0085714 21.4505976 21.0085714"></polygon>
-            <polygon id="Path" points="12.0625498 17.0457143 16.047012 17.0457143 16.047012 21.0085714 12.0625498 21.0085714"></polygon>
-            <polygon id="Path" points="0 1.11022302e-15 3.98446215 1.11022302e-15 3.98446215 3.96285714 0 3.96285714"></polygon>
+        <g id="logo-mark" fill="currentColor">
+            <path d="M0.0714111,5.35714 L0.0714111,0 L5.42855,0 L5.42855,5.35714 L0.0714111,5.35714 Z M0.0714111,12.1429 L0.0714111,17.5 L5.42855,17.5 L5.42855,12.1429 L0.0714111,12.1429 Z M22.9286,12.1429 L22.9286,17.5 L28.2857,17.5 L28.2857,12.1429 L22.9286,12.1429 Z M0.0714111,24.6429 L0.0714111,30 L5.42855,30 L5.42855,24.6429 L0.0714111,24.6429 Z M11.5,11.4286 L11.5,6.07143 L16.8571,6.07143 L16.8571,11.4286 L11.5,11.4286 Z M11.5,18.5714 L11.5,23.9286 L16.8571,23.9286 L16.8571,18.5714 L11.5,18.5714 Z" id="Shape"></path>
         </g>
     </g>
 </svg>

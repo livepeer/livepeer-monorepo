@@ -1,14 +1,19 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx, Styled } from 'theme-ui'
-import Router from 'next/router'
+import { Styled } from 'theme-ui'
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
 export default ({ goTo, nextStep }) => {
-  Router.events.on('routeChangeComplete', url => {
-    if (url.includes('openExchange=true')) {
-      goTo(nextStep)
+  const GET_UNISWAP_MODAL_STATUS = gql`
+    {
+      uniswapModalOpen @client
     }
-  })
+  `
+
+  const { data } = useQuery(GET_UNISWAP_MODAL_STATUS)
+  if (data?.uniswapModalOpen) {
+    goTo(nextStep)
+  }
+
   return (
     <div>
       <Styled.h2 sx={{ mb: 2 }}>Get LPT</Styled.h2>

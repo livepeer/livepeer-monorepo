@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Box, Flex } from 'theme-ui'
 import React from 'react'
 
 interface Props {
@@ -11,21 +10,20 @@ interface Props {
 
 export default ({ open = true, label, button, ...props }: Props) =>
   !open ? null : (
-    <div
+    <Box
       sx={{
-        borderRadius: 5,
+        borderRadius: 10,
         border: '1px solid',
         borderColor: 'border',
         width: '100%',
-        mb: 2,
         p: 2,
         fontSize: 0,
         ...props.sx,
       }}
     >
-      <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+      <Box>
         {label}
         {button && button}
-      </Flex>
-    </div>
+      </Box>
+    </Box>
   )
