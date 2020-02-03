@@ -1,5 +1,6 @@
 import level from 'level'
 import fs from 'fs-extra'
+import { NotFoundError } from './errors'
 
 // default limit value in level is -1 , ref: https://github.com/Level/level#dbcreatereadstreamoptions
 const DEFAULT_LIMIT = -1
@@ -113,13 +114,19 @@ export default class LevelStore {
     await this.ready
 
     // Make sure it exists first, this throws if not
-    await this.db.get(`${kind}/${id}`)
+    const record = await this.db.get(`${kind}/${id}`)
+    if (!record) {
+      throw new NotFoundError()
+    }
     await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }
 
   async delete(id) {
     // Make sure it exists first, this throws if not
-    await this.db.get(id)
+    const record = await this.db.get(id)
+    if (!record) {
+      throw new NotFoundError()
+    }
     await this.db.del(id)
   }
 }

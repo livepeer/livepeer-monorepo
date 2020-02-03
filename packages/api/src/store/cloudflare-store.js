@@ -2,6 +2,7 @@ import logger from '../logger'
 import fetch from 'isomorphic-fetch'
 import { parse as parseUrl, format as stringifyUrl } from 'url'
 import querystring from 'querystring'
+import { NotFoundError } from './errors'
 
 const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/accounts'
 const DEFAULT_LIMIT = 10
@@ -75,12 +76,26 @@ export default class CloudflareStore {
     }
     const key = `${kind}/${id}`
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
-    await cloudflareFetch(reqUrl, { data: data, method: 'PUT', retries: 0 })
+    const resp = await cloudflareFetch(reqUrl, {
+      data: data,
+      method: 'PUT',
+      retries: 0,
+    })
+    if (!resp) {
+      throw new NotFoundError()
+    }
   }
 
   async delete(id) {
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${id}`
-    await cloudflareFetch(reqUrl, { data: null, method: 'DELETE', retries: 0 })
+    const resp = await cloudflareFetch(reqUrl, {
+      data: null,
+      method: 'DELETE',
+      retries: 0,
+    })
+    if (!resp) {
+      throw new NotFoundError()
+    }
   }
 }
 

@@ -130,6 +130,34 @@ describe('controllers/stream', () => {
       expect(document).toEqual(stream)
     })
 
+    it('should create a stream, delete it, and error when attempting additional detele or replace', async () => {
+      const res = await client.post('/stream', { ...postMockStream })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+
+      await server.store.delete(`stream/${stream.id}`)
+      const deleted = await server.store.get(`stream/${stream.id}`)
+      expect(deleted).toBe(null)
+
+      // it should return a NotFound Error when trying to delete a record that doesn't exist
+      try {
+        await server.store.delete(`stream/${stream.id}`)
+      } catch (err) {
+        expect(err.status).toBe(404)
+      }
+
+      // it should return a NotFound Error when trying to replace a record that doesn't exist
+      try {
+        await server.store.replace(document)
+      } catch (err) {
+        expect(err.status).toBe(404)
+      }
+    })
+
     it('should not get all streams with non-admin user', async () => {
       client.googleAuthorization = ''
       user = {
