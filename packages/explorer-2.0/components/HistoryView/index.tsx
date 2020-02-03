@@ -1,8 +1,6 @@
-/** @jsx jsx */
-import { jsx, Flex, Box, Styled } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import { Flex, Box } from 'theme-ui'
 import Utils from 'web3-utils'
-import { abbreviateNumber, MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
+import { abbreviateNumber } from '../../lib/utils'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'

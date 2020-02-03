@@ -1,6 +1,3 @@
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-
 export default ({ label, variant = 'primary', ...props }) => (
   <div
     sx={{

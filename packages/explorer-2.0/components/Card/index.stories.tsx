@@ -1,4 +1,3 @@
-/** @jsx jsx */
 import { jsx, Box, Styled } from 'theme-ui'
 import { storiesOf } from '@storybook/react'
 import Card from './index'

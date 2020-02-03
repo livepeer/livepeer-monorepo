@@ -10,22 +10,12 @@ import {
 
 const subgraphEndpoint =
   'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
-const isProd = process.env.NODE_ENV === 'production'
-
-const graphqlAPI = isProd
-  ? 'https://explorer.livepeer.org/api/graphql'
-  : 'http://localhost:3009/api/graphql'
 
 export default async () => {
   const subgraphServiceLink = new HttpLink({
     uri: subgraphEndpoint,
     fetch,
   })
-
-  // const graphqlAPIServiceLink = new HttpLink({
-  //   uri: graphqlAPI,
-  //   fetch,
-  // })
 
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
@@ -35,16 +25,8 @@ export default async () => {
     return executableSchema
   }
 
-  // const createGraphqlAPIServiceSchema = async () => {
-  //   const executableSchema = makeRemoteExecutableSchema({
-  //     schema: await introspectSchema(graphqlAPIServiceLink),
-  //     link: graphqlAPIServiceLink,
-  //   })
-  //   return executableSchema
-  // }
-
   const subgraphSchema = await createSubgraphServiceSchema()
-  //const graphqlAPISchema = await createGraphqlAPIServiceSchema()
+
   const linkTypeDefs = `
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace

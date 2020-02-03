@@ -1,18 +1,15 @@
-/** @jsx jsx */
-import React from 'react'
-import { jsx } from 'theme-ui'
 import Button from '../Button'
 import Stake from './Stake'
 import Unstake from './Unstake'
-import Link from 'next/link'
 import { Account, Delegator, Transcoder, Round } from '../../@types'
 import Utils from 'web3-utils'
 import { getDelegatorStatus, MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import Warning from './Warning'
 import Approve from '../Approve'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
+import { useApolloClient } from '@apollo/react-hooks'
 
 interface Props {
   action: string
@@ -31,14 +28,23 @@ export default ({
   account,
   currentRound,
 }: Props) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
+  const client = useApolloClient()
+
   if (!context.account) {
     return (
-      <Link href="/connect-wallet" passHref>
-        <a>
-          <Button sx={{ width: '100%' }}>Connect Wallet</Button>
-        </a>
-      </Link>
+      <Button
+        onClick={() =>
+          client.writeData({
+            data: {
+              walletModalOpen: true,
+            },
+          })
+        }
+        sx={{ width: '100%' }}
+      >
+        Connect Wallet
+      </Button>
     )
   }
 
@@ -56,8 +62,12 @@ export default ({
   const stake =
     delegator &&
     Math.max(
-      delegator.bondedAmount ? Utils.fromWei(delegator.bondedAmount) : 0,
-      delegator.pendingStake ? Utils.fromWei(delegator.pendingStake) : 0,
+      delegator.bondedAmount
+        ? parseFloat(Utils.fromWei(delegator.bondedAmount))
+        : 0,
+      delegator.pendingStake
+        ? parseFloat(Utils.fromWei(delegator.pendingStake))
+        : 0,
     )
 
   const isMyTranscoder = delegator?.delegate?.id === transcoder?.id

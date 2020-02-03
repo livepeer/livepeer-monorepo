@@ -1,14 +1,15 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
 import gql from 'graphql-tag'
 import { useAccount } from '../hooks'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
+import ClaimBanner from '../components/ClaimBanner'
+import { Box } from 'theme-ui'
 
 const GET_DATA = gql`
   {
@@ -72,8 +73,8 @@ const GET_DATA = gql`
   }
 `
 
-const Index = () => {
-  const context = useWeb3Context()
+export default withApollo(() => {
+  const context = useWeb3React()
   const myAccount = useAccount(context.account)
   const { data, loading, error } = useQuery(GET_DATA, {
     ssr: false,
@@ -84,10 +85,16 @@ const Index = () => {
   }
 
   return (
-    <Layout>
+    <Layout headerTitle="Orchestrators">
       {loading ? (
         <Flex
           sx={{
+            height: [
+              'calc(100vh - 100px)',
+              'calc(100vh - 100px)',
+              'calc(100vh - 100px)',
+              '100vh',
+            ],
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
@@ -97,7 +104,21 @@ const Index = () => {
         </Flex>
       ) : (
         <Flex sx={{ width: '100%' }}>
-          <Flex sx={{ paddingTop: 5, pr: 6, width: '70%' }}>
+          <Flex
+            sx={{
+              flexDirection: 'column',
+              paddingTop: [0, 0, 0, 5],
+              pr: [0, 0, 0, 0, 6],
+              width: ['100%', '100%', '100%', '100%', '70%'],
+            }}
+          >
+            {context.active && myAccount.delegator?.lastClaimRound && (
+              <ClaimBanner
+                account={myAccount.account}
+                delegator={myAccount.delegator}
+                currentRound={data.currentRound[0]}
+              />
+            )}
             <Orchestrators
               currentRound={data.currentRound[0]}
               transcoders={data.transcoders}
@@ -105,6 +126,7 @@ const Index = () => {
           </Flex>
           <Flex
             sx={{
+              display: ['none', 'none', 'none', 'none', 'flex'],
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
@@ -127,8 +149,4 @@ const Index = () => {
       )}
     </Layout>
   )
-}
-
-Index.displayName = ''
-
-export default withApollo(Index)
+})

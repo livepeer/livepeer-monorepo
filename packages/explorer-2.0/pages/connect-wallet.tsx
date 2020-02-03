@@ -1,11 +1,10 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Flex, Box, Styled } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Flex, Styled } from 'theme-ui'
 import Router from 'next/router'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import Wallet from '../public/img/wallet.svg'
-import Portis from '../public/img/portis.svg'
-import MetaMask from '../public/img/metamask.svg'
+import PortisIcon from '../public/img/portis.svg'
+import MetaMaskIcon from '../public/img/metamask.svg'
 import Secure from '../public/img/secure.svg'
 import ToggleCard from '../components/ToggleCard'
 import Button from '../components/Button'
@@ -15,6 +14,13 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Spinner from '../components/Spinner'
 import { withApollo } from '../lib/apollo'
+import { Injected, Network, Portis } from '../lib/connectors'
+
+const connectorsByName = {
+  Injected: Injected,
+  Network: Network,
+  Portis: Portis,
+}
 
 const GET_TOUR_OPEN = gql`
   {
@@ -22,8 +28,8 @@ const GET_TOUR_OPEN = gql`
   }
 `
 
-const ConnectWallet = () => {
-  const context = useWeb3Context()
+export default withApollo(() => {
+  const { active, account, connector, activate, error } = useWeb3React()
   const [selectedProvider, setSelectedProvider] = useState('Portis')
   const [connecting, setConnecting] = useState(false)
   const [cookies, setCookie] = useCookies(['connector'])
@@ -31,20 +37,17 @@ const ConnectWallet = () => {
 
   // Redirect to user's account upon connection to web3
   useEffect(() => {
-    if (context.active && !data.tourOpen) {
-      Router.push(
-        `/accounts/[account]/[slug]`,
-        `/accounts/${context.account}/staking`,
-      )
+    if (active && !data.tourOpen) {
+      Router.push(`/accounts/[account]/[slug]`, `/accounts/${account}/staking`)
     }
-  }, [context.account])
+  }, [account])
 
   // If product tour is open continue the tour upon connection to web3
   useEffect(() => {
-    if (data.tourOpen && context.active) {
+    if (data.tourOpen && active) {
       Router.push('/connect-wallet?connected=true')
     }
-  }, [context.active, cookies.connector])
+  }, [active, cookies.connector])
 
   return (
     <Layout>
@@ -73,7 +76,7 @@ const ConnectWallet = () => {
               onClick={() => setSelectedProvider('Portis')}
               sx={{ mr: 3, width: '50%' }}
               description="Recommended for new users. Connect in seconds to a secure wallet via email."
-              icon={Portis}
+              icon={PortisIcon}
               isActive={selectedProvider == 'Portis'}
               providerName="Portis"
             />
@@ -81,7 +84,7 @@ const ConnectWallet = () => {
               onClick={() => setSelectedProvider('Injected')}
               sx={{ width: '50%' }}
               description="Browser extension based wallet with a high degree of control."
-              icon={MetaMask}
+              icon={MetaMaskIcon}
               isActive={selectedProvider == 'Injected'}
               providerName="MetaMask"
             />
@@ -93,9 +96,7 @@ const ConnectWallet = () => {
             onClick={async () => {
               try {
                 setConnecting(true)
-                await context.setConnector(selectedProvider, {
-                  suppressAndThrowErrors: true,
-                })
+                await activate(connectorsByName[selectedProvider])
                 setCookie('connector', selectedProvider, { path: '/' })
                 setConnecting(false)
               } catch (e) {
@@ -129,8 +130,4 @@ const ConnectWallet = () => {
       </div>
     </Layout>
   )
-}
-
-ConnectWallet.displayName = ''
-
-export default withApollo(ConnectWallet)
+})

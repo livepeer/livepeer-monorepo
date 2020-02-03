@@ -1,27 +1,22 @@
 // Import types and APIs from graph-ts
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import { RoundsManager, NewRound } from '../types/RoundsManager/RoundsManager'
-import { BondingManager } from '../types/BondingManager_LIP11/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Pool, Round, InitializeRoundEvent } from '../types/schema'
 
-import { makePoolId } from './util'
-
-// Bind BondingManager contract
-let bondingManager = BondingManager.bind(
-  Address.fromString('511bc4556d823ae99630ae8de28b9b80df90ea2e')
-)
+import { makePoolId, getBondingManagerInstance } from './util'
 
 // Handler for NewRound events
 export function newRound(event: NewRound): void {
   let roundsManager = RoundsManager.bind(event.address)
   let roundNumber = event.params.round
   let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000'
+    '0000000000000000000000000000000000000000',
   )
+  let bondingManager = getBondingManagerInstance(dataSource.network())
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
   let active: boolean
@@ -50,15 +45,15 @@ export function newRound(event: NewRound): void {
       pool.round = roundNumber.toString()
       pool.delegate = currentTranscoder.toHex()
       pool.totalStake = transcoder.totalStake
-      pool.rewardCut = transcoder.rewardCut
-      pool.feeShare = transcoder.feeShare
+      pool.rewardCut = transcoder.pendingRewardCut
+      pool.feeShare = transcoder.pendingFeeShare
 
       // Apply store updates
       pool.save()
     }
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
-      currentTranscoder
+      currentTranscoder,
     )
 
     transcoder = Transcoder.load(currentTranscoder.toHex())
@@ -77,7 +72,7 @@ export function newRound(event: NewRound): void {
 
   // Store transaction info
   let initializeRoundEvent = new InitializeRoundEvent(
-    event.transaction.hash.toHex() + '-InitializeRound'
+    event.transaction.hash.toHex() + '-InitializeRound',
   )
   initializeRoundEvent.hash = event.transaction.hash.toHex()
   initializeRoundEvent.blockNumber = event.block.number

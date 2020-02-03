@@ -1,7 +1,6 @@
-/** @jsx jsx */
-import { jsx, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
-import { useWeb3Context } from 'web3-react'
+import { Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
 import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
@@ -13,7 +12,7 @@ import { useWeb3Mutation } from '../../hooks'
 import Utils from 'web3-utils'
 
 export default ({ lock }) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
 
   if (!context.active) {
@@ -79,9 +78,15 @@ export default ({ lock }) => {
         <StakingFlow
           action="stake"
           account={lock.delegate.id}
-          amount={Utils.fromWei(lock.amount)}
+          amount={parseFloat(Utils.fromWei(lock.amount))}
         />
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -90,9 +95,14 @@ export default ({ lock }) => {
                   Waiting for your transaction to be mined.
                 </div>
               </Flex>
-              )}
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

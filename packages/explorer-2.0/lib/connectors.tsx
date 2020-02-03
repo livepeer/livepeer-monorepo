@@ -1,34 +1,19 @@
-import { Connectors } from 'web3-react'
+import { InjectedConnector } from '@web3-react/injected-connector'
+import { PortisConnector } from '@web3-react/portis-connector'
+import { NetworkConnector } from '@web3-react/network-connector'
 
-let PortisApi
+const POLLING_INTERVAL = 10000
 
-if (typeof window !== 'undefined') {
-  PortisApi = require('@portis/web3')
-}
-
-const { InjectedConnector, PortisConnector, NetworkOnlyConnector } = Connectors
-
-const supportedNetworkURLs = {
-  1: 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
-  4: 'https://rinkeby.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e',
-}
-
-const Network = new NetworkOnlyConnector({
-  providerURL: supportedNetworkURLs[1],
+export const Network = new NetworkConnector({
+  urls: { 1: 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e' },
+  pollingInterval: POLLING_INTERVAL * 3,
 })
 
-const Injected = new InjectedConnector({
-  supportedNetworks: [1, 4],
+export const Injected = new InjectedConnector({
+  supportedChainIds: [1],
 })
 
-const Portis = new PortisConnector({
-  api: PortisApi,
+export const Portis = new PortisConnector({
   dAppId: '0e9ac0c3-9184-4660-8492-6989cf3dc5d4',
-  network: 'mainnet',
+  networks: [1],
 })
-
-export default {
-  Injected,
-  Network,
-  Portis,
-}

@@ -1,6 +1,5 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Flex } from 'theme-ui'
 import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 import Button from '../Button'
@@ -9,11 +8,11 @@ import StakingFlow from '../StakingFlow'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useWeb3Mutation } from '../../hooks'
 
 export default ({ transcoder, amount, disabled }) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
 
   if (!context.active) {
@@ -75,7 +74,13 @@ export default ({ transcoder, amount, disabled }) => {
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
         <StakingFlow action="unstake" account={transcoder.id} amount={amount} />
-        <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           {txHash && !isMined && (
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
@@ -85,7 +90,13 @@ export default ({ transcoder, amount, disabled }) => {
                 </div>
               </Flex>
               <Button
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"

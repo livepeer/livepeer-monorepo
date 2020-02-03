@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx } from 'theme-ui'
+import { useState, useEffect } from 'react'
 import { ThreeBoxSpace } from '../../@types'
 import { Flex } from 'theme-ui'
 import Camera from '../../public/img/camera.svg'
@@ -10,7 +8,6 @@ import Check from '../../public/img/check.svg'
 import Copy from '../../public/img/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Textfield from '../Textfield'
-import { useWeb3Context } from 'web3-react'
 import useForm from 'react-hook-form'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -20,6 +17,7 @@ import ExternalAccount from '../ExternalAccount'
 import { useDebounce } from 'use-debounce'
 import ThreeBoxSteps from '../ThreeBoxSteps'
 import Spinner from '../Spinner'
+import { useWeb3React } from '@web3-react/core'
 
 interface Props {
   account: string
@@ -76,7 +74,7 @@ function hasExistingProfile(profile) {
 }
 
 export default ({ threeBoxSpace, refetch, account }: Props) => {
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { register, handleSubmit, watch } = useForm()
   const [previewImage, setPreviewImage] = useState(null)
   const [saving, setSaving] = useState(false)

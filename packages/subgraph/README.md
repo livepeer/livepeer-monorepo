@@ -6,80 +6,18 @@
 This package contains the source code for the Livepeer Subgraph, a project for
 indexing and querying Livepeer data from the Ethereum blockchain using [The Graph](https://thegraph.com).
 
-## Quick Start
+## Contributing
 
-### Running a local Graph Node with Docker Compose
+Before you can build, create and deploy this subgraph, you have to execute the following commands in the terminal:
 
-The quickest way to run a Graph Node locally is to use the
-[graph-node docker image](https://hub.docker.com/r/graphprotocol/graph-node/).
-
-1. Install [Docker](https://docs.docker.com) and [Docker Compose](https://docs.docker.com/compose/install/)
-2. In the root of this project run `docker-compose up`
-
-This command will look for the `docker-compose.yml` file and automatically provision a server with rust, postgres, and ipfs, and
-spin up a graph node with a GraphiQL interface at `http://127.0.0.1:8000/`.
-Congrats, you're now ready to build and deploy the Livepeer subgraph.
-
-If you'd like to view the logs inside docker run `docker attach --sig-proxy=false graph-node`
-
-### Building and Deploying the Livepeer Subgraph
-
-Build types
-`yarn codegen`
-
-Compile subgraph
-`yarn build`
-
-Create subgraph
-`yarn create-local`
-
-Deploy subgraph
-`yarn deploy-local`
-
-After downloading the latest blocks from Ethereum, you should begin to see
-Livepeer smart contract events flying in. Open a GraphiQL browser at
-localhost:8000 to query the Graph Node.
-
-Here's an example query for fetching Livepeer transcoders:
-
-```
-query {
-  transcoders {
-    id
-    rewardCut
-    feeShare
-    pricePerSegment
-    pendingRewardCut
-    pendingFeeShare
-    pendingPricePerSegment
-    totalStake
-    lastRewardRound {
-      id
-    }
-    active
-    status
-    pools (orderBy: id, orderDirection: desc) {
-      rewardTokens
-      round {
-        id
-      }
-    }
-  }
-}
+```bash
+$ yarn
+$ yarn prepare:mainnet
 ```
 
-Here's another example query for fetching rounds:
+The first command installs all external dependencies, while the latter generates the `subgraph.yaml` file, which is
+required by The Graph.
 
-```
-query {
-  rounds(orderBy: timestamp, orderDirection: desc, first: 5) {
-    id
-    pools {
-      rewardTokens
-      transcoder {
-        id
-      }
-    }
-  }
-}
-```
+We use [Handlebars](https://github.com/wycats/handlebars.js/) to compile a [template subgraph](./subgraph.template.yaml) and add the parameters specific to each
+network (Mainnet, Goerli, Kovan, Rinkeby, Ropsten). The network can be changed via the `NETWORK_NAME` environment
+variable or directly by choosing a different "prepare" script. See [package.json](./package.json) for all options.

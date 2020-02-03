@@ -1,10 +1,9 @@
-/** @jsx jsx */
-import React, { useState, useEffect } from 'react'
-import { jsx, Styled, Flex } from 'theme-ui'
+import { useState, useEffect } from 'react'
+import { Styled, Flex } from 'theme-ui'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import Button from '../Button'
 import dynamic from 'next/dynamic'
-import { useWeb3Context } from 'web3-react'
+import { useWeb3React } from '@web3-react/core'
 import { useAccount } from '../../hooks'
 import { useCookies } from 'react-cookie'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
@@ -16,6 +15,7 @@ import Step5 from './Step5'
 import Step6 from './Step6'
 import Step7 from './Step7'
 import gql from 'graphql-tag'
+import { Box } from 'theme-ui'
 
 const Tour: any = dynamic(() => import('reactour'), { ssr: false })
 
@@ -25,11 +25,11 @@ const GET_TOUR_OPEN = gql`
   }
 `
 
-export default ({ children }) => {
+export default ({ children, ...props }) => {
   const client = useApolloClient()
   const [open, setOpen] = useState(false)
   const [tourKey, setTourKey] = useState(0)
-  const context = useWeb3Context()
+  const context = useWeb3React()
   const { account } = useAccount(context.account)
   const [nextStep, setNextStep] = useState(1)
   const inititalSteps = []
@@ -96,8 +96,8 @@ export default ({ children }) => {
       {
         action: node => node.focus(),
         selector: '.tour-step-7',
-        content: ({ goTo }) => {
-          return <Step7 goTo={goTo} nextStep={nextStep} />
+        content: () => {
+          return <Step7 />
         },
         style: tourStyles,
       },
@@ -105,7 +105,7 @@ export default ({ children }) => {
   }, [account, context.active, nextStep, tourStyles])
 
   return (
-    <>
+    <Box {...props}>
       <Button
         sx={{ mt: 2, width: '100%' }}
         variant="rainbow"
@@ -251,6 +251,6 @@ export default ({ children }) => {
           </Flex>
         </Styled.div>
       )}
-    </>
+    </Box>
   )
 }

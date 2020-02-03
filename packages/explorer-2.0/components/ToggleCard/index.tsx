@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import { Styled, Flex, jsx } from 'theme-ui'
-import React from 'react'
+import { Styled, Flex } from 'theme-ui'
 import Label from '../Label'
 import Checkbox from '../Checkbox'
 
