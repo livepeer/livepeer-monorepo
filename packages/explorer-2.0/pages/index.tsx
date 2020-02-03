@@ -112,7 +112,7 @@ export default withApollo(() => {
               width: ['100%', '100%', '100%', '100%', '70%'],
             }}
           >
-            {myAccount.delegator?.lastClaimRound && (
+            {context.active && myAccount.delegator?.lastClaimRound && (
               <ClaimBanner
                 account={myAccount.account}
                 delegator={myAccount.delegator}
