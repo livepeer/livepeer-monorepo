@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 export default ({ items = [] }) => {
   const router = useRouter()
-  const { asPath } = router
+  const asPath = router ? router.asPath : null
 
   return (
     <Flex

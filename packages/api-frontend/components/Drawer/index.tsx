@@ -1,32 +1,32 @@
 /** @jsx jsx */
-import { jsx, Flex, Box } from 'theme-ui'
-import { Logo } from '@livepeer/ui'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { jsx, Flex, Box } from "theme-ui";
+import { Logo } from "@livepeer/ui";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default ({ items = [] }) => {
-  const router = useRouter()
-  const { asPath } = router
+  const router = useRouter();
+  const asPath = router ? router.asPath : null;
 
   return (
     <Flex
       sx={{
         width: 256,
-        flexDirection: 'column',
-        height: '100vh',
+        flexDirection: "column",
+        height: "100vh"
       }}
     >
       <Flex
         sx={{
-          position: 'fixed',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '100%',
+          position: "fixed",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "100%",
           width: 256,
-          borderRight: '1px solid',
-          borderColor: 'border',
-          paddingTop: 5,
+          borderRight: "1px solid",
+          borderColor: "border",
+          paddingTop: 5
         }}
       >
         <Box sx={{ width: 256 }}>
@@ -43,22 +43,22 @@ export default ({ items = [] }) => {
                   sx={{
                     color:
                       asPath === (item.as ? item.as : item.href)
-                        ? 'primary'
-                        : 'muted',
-                    lineHeight: 'initial',
-                    display: 'flex',
+                        ? "primary"
+                        : "muted",
+                    lineHeight: "initial",
+                    display: "flex",
                     fontSize: 3,
                     fontWeight: 600,
-                    cursor: 'pointer',
-                    alignItems: 'center',
+                    cursor: "pointer",
+                    alignItems: "center",
                     p: 2,
-                    backgroundColor: 'transparent',
+                    backgroundColor: "transparent",
                     borderRadius: 5,
-                    transition: 'color .3s',
-                    '&:hover': {
-                      color: 'primary',
-                      transition: 'color .3s',
-                    },
+                    transition: "color .3s",
+                    "&:hover": {
+                      color: "primary",
+                      transition: "color .3s"
+                    }
                   }}
                 >
                   <item.icon sx={{ width: 20, mr: 2 }} />
@@ -70,5 +70,5 @@ export default ({ items = [] }) => {
         </Box>
       </Flex>
     </Flex>
-  )
-}
+  );
+};
