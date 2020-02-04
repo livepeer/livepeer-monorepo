@@ -67,7 +67,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./src/mappings/BondingManager_LIP11.ts
+      file: ./src/mappings/bondingManager_LIP11.ts
       entities:
         - Transcoder
         - Delegator
@@ -101,7 +101,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./src/mappings/BondingManager_LIP12.ts
+      file: ./src/mappings/bondingManager_LIP12.ts
       entities:
         - Transcoder
         - Delegator
