@@ -67,7 +67,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./src/mappings/bondingManager_LIP11.ts
+      file: ./src/mappings/BondingManager_LIP11.ts
       entities:
         - Transcoder
         - Delegator
@@ -101,7 +101,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
-      file: ./src/mappings/bondingManager_LIP12.ts
+      file: ./src/mappings/BondingManager_LIP12.ts
       entities:
         - Transcoder
         - Delegator
@@ -111,7 +111,7 @@ dataSources:
         - EarningsClaimedEvent
       abis:
         - name: BondingManager
-          file: ./abis/bondingManager_LIP12.json
+          file: ./abis/BondingManager_LIP12.json
         - name: RoundsManager
           file: ./abis/RoundsManager_LIP12.json
       eventHandlers:
