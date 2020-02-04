@@ -72,6 +72,9 @@ export default ({
           <img
             sx={{
               objectFit: 'cover',
+              border: '1px solid',
+              borderColor: 'muted',
+              padding: '4px',
               borderRadius: 1000,
               width: '100%',
               height: '100%',

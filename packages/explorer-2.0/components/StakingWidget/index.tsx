@@ -32,19 +32,9 @@ export default ({
 }: Props) => {
   const [amount, setAmount] = useState('')
   const [action, setAction] = useState(selectedAction)
-  const context = useWeb3React()
 
   return (
     <Box className="tour-step-7">
-      {context.active && (
-        <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
-          {account &&
-            parseFloat(Utils.fromWei(account.allowance)) == 0 &&
-            parseFloat(Utils.fromWei(account.tokenBalance)) != 0 && (
-              <Approve account={account} context={context} banner={true} />
-            )}
-        </Box>
-      )}
       <Box
         sx={{
           width: '100%',

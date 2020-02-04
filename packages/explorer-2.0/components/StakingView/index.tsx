@@ -55,7 +55,7 @@ export default () => {
   const query = router.query
   const account = query.account as string
   const context = useWeb3React()
-  const isMyAccount = account == context.account
+  const isMyAccount = account === context.account
 
   const { data, loading, error } = useQuery(GET_DATA, {
     variables: {
@@ -83,7 +83,7 @@ export default () => {
     )
   }
 
-  if (!(data && data.delegator && data.delegator.bondedAmount != null)) {
+  if (!data?.delegator?.bondedAmount) {
     if (isMyAccount) {
       return (
         <Box sx={{ pt: 4 }}>
@@ -96,26 +96,21 @@ export default () => {
           </Link>
         </Box>
       )
+    } else {
+      return (
+        <Box sx={{ pt: 4 }}>
+          <span sx={{ mr: 2 }}>Nothing here.</span>
+        </Box>
+      )
     }
-    return (
-      <Box sx={{ pt: 4 }}>
-        <span sx={{ mr: 2 }}>Nothing here.</span>
-      </Box>
-    )
   }
 
-  const pendingStake = Math.max(
-    parseFloat(Utils.fromWei(data.delegator.bondedAmount)),
-    parseFloat(Utils.fromWei(data.delegator.pendingStake)),
-  )
-
+  const pendingStake = parseFloat(Utils.fromWei(data.delegator.pendingStake))
   const unbonded = data.delegator.unbonded
     ? parseFloat(Utils.fromWei(data.delegator.unbonded))
     : 0
   const principal = parseFloat(Utils.fromWei(data.delegator.principal))
-
   const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
-
   const totalBondedToken = parseFloat(
     Utils.fromWei(data.protocol.totalBondedToken),
   )

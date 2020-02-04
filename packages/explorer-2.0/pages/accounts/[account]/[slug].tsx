@@ -20,6 +20,7 @@ import { withApollo } from '../../../lib/apollo'
 import StakingWidgetModal from '../../../components/StakingWidgetModal'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
+import Approve from '../../../components/Approve'
 
 const GET_DATA = gql`
   query($account: ID!) {
@@ -116,12 +117,6 @@ export default withApollo(() => {
 
   const isMyDelegate =
     query.account.toString() === myAccount?.delegator?.delegate?.id
-  const desktopWidth1 = [
-    role == 'Orchestrator' || isMyDelegate ? '65%' : '100%',
-  ]
-  const desktopWidth2 = [
-    role == 'Orchestrator' || isMyDelegate ? '70%' : '100%',
-  ]
 
   const tabs: Array<TabType> = getTabs(
     role,
@@ -145,9 +140,17 @@ export default withApollo(() => {
           mb: 8,
           pr: [0, 0, 0, 6],
           pt: [1, 1, 1, 5],
-          width: ['100%', '100%', '100%', desktopWidth1, desktopWidth2],
+          width: ['100%', '100%', '100%', '72%'],
         }}
       >
+        {context.active && (
+          <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
+            {myAccount.account &&
+              parseFloat(Utils.fromWei(myAccount.account.allowance)) === 0 &&
+              parseFloat(Utils.fromWei(myAccount.account.tokenBalance)) !==
+                0 && <Approve account={myAccount.account} banner={true} />}
+          </Box>
+        )}
         {context.active && myAccount?.delegator?.lastClaimRound && (
           <ClaimBanner
             account={myAccount.account}
@@ -183,7 +186,7 @@ export default withApollo(() => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
-              width: ['40%', '40%', '40%', '35%', '30%'],
+              width: ['40%', '40%', '40%', '28%'],
             }}
           >
             <StakingWidget

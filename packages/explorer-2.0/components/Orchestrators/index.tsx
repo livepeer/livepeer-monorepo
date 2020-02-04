@@ -36,11 +36,6 @@ export default ({ currentRound, transcoders }) => {
   const columns: any = useMemo(
     () => [
       {
-        Header: '#',
-        accessor: 'rank',
-      },
-
-      {
         Header: 'Account',
         accessor: 'id',
         filter: 'fuzzyText',
@@ -77,6 +72,10 @@ export default ({ currentRound, transcoders }) => {
         Header: 'Stake',
         accessor: 'totalStake',
         mobile: true,
+      },
+      {
+        Header: 'Fees',
+        accessor: 'accruedFees',
       },
       {
         Header: 'Reward Cut',
@@ -170,7 +169,7 @@ export default ({ currentRound, transcoders }) => {
           {accountColumn.canFilter ? accountColumn.render('Filter') : null}
         </Box>
       </Flex>
-      <Box sx={{ overflow: 'scroll' }}>
+      <Box>
         <table
           sx={{
             display: 'table',
@@ -252,15 +251,10 @@ export default ({ currentRound, transcoders }) => {
                           borderColor: lighten('#1E2026', 0.05),
                         },
                         '.orchestratorLink': {
-                          borderBottom: '1px solid',
                           borderColor: 'text',
                           display: 'inlineBlock',
                           transition: 'all .3s',
                         },
-                      },
-                      '.orchestratorLink:hover': {
-                        color: 'primary',
-                        borderColor: 'primary',
                       },
                       '.status': {
                         borderColor:
@@ -295,20 +289,20 @@ export default ({ currentRound, transcoders }) => {
                               'table-cell',
                             ],
                             cursor:
-                              i == 1
+                              i == 0
                                 ? 'pointer'
                                 : width < 1020
                                 ? 'pointer'
                                 : 'default',
-                            width: i > 0 ? 'auto' : 1,
+                            width: 'auto',
                             fontSize: 1,
                             pl: 2,
-                            pr: i == 0 ? 0 : 2,
-                            py: '16px',
+                            pr: 2,
+                            py: '24px',
                           }}
                           {...cell.getCellProps()}
                           onClick={() => {
-                            if (i === 1 && width > 1020) {
+                            if (i === 0 && width > 1020) {
                               Router.push(
                                 '/accounts/[account]/[slug]',
                                 `/accounts/${row.values.id}/campaign`,
@@ -356,8 +350,32 @@ function renderTooltip(title) {
             effect="solid"
           />
           <Help
-            data-tip="Total amount of LPT staked towards this node, including the orchestrator's own stake."
+            data-tip="Total LPT staked with an orchestrator, including its own stake."
             data-for="tooltip-stake"
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              ml: 1,
+              top: '2px',
+              width: 12,
+              height: 12,
+            }}
+          />
+        </>
+      )
+    case 'Fees':
+      return (
+        <>
+          <ReactTooltip
+            id="tooltip-fees"
+            className="tooltip"
+            place="bottom"
+            type="dark"
+            effect="solid"
+          />
+          <Help
+            data-tip="Total ETH earned from transcoding."
+            data-for="tooltip-fees"
             sx={{
               cursor: 'pointer',
               position: 'relative',
@@ -404,7 +422,7 @@ function renderTooltip(title) {
             effect="solid"
           />
           <Help
-            data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+            data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all delegators by how much they have staked relative to others."
             data-for="tooltip-fee-cut"
             sx={{
               cursor: 'pointer',
@@ -428,7 +446,7 @@ function renderTooltip(title) {
             effect="solid"
           />
           <Help
-            data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its tokenholders over the last 30 rounds."
+            data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
             data-for="tooltip-calls"
             sx={{
               cursor: 'pointer',
@@ -449,12 +467,6 @@ function renderTooltip(title) {
 
 function renderSwitch(cell, currentRound) {
   switch (cell.column.Header) {
-    case '#':
-      return (
-        <Flex sx={{ alignItems: 'center', fontFamily: 'monospace' }}>
-          {cell.row.index + 1}{' '}
-        </Flex>
-      )
     case 'Account':
       const status = getDelegatorStatus(cell.row.values.delegator, currentRound)
       const active =
@@ -472,6 +484,12 @@ function renderSwitch(cell, currentRound) {
       return (
         <span sx={{ fontFamily: 'monospace' }}>
           {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
+        </span>
+      )
+    case 'Fees':
+      return (
+        <span sx={{ fontFamily: 'monospace' }}>
+          {cell.value ? +parseFloat(Utils.fromWei(cell.value)).toFixed(2) : 0} Ξ
         </span>
       )
     case 'Reward Cut':

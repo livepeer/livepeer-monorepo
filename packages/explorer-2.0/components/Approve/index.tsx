@@ -1,4 +1,4 @@
-import { Flex } from 'theme-ui'
+import { Flex, Box } from 'theme-ui'
 import { useState, useEffect } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
@@ -9,13 +9,13 @@ import { useWeb3Mutation } from '../../hooks'
 import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import Banner from '../Banner'
+import { useWeb3React } from '@web3-react/core'
 
-export default ({ account, context, banner = true }) => {
-  if (!account) {
-    return null
-  }
-
+export default ({ account, banner = true }) => {
+  const context = useWeb3React()
   const [approveModalOpen, setApproveModalOpen] = useState(false)
+  const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
+  const MDXDocument = require('../../data/unlock-tokens.mdx').default
 
   const APPROVE = gql`
     mutation approve($type: String!, $amount: String!) {
@@ -48,28 +48,50 @@ export default ({ account, context, banner = true }) => {
   if (account && account.id.toLowerCase() == context.account.toLowerCase()) {
     if (banner) {
       element = (
-        <Banner
-          label={<div sx={{ pr: 3 }}>Approve Livepeer tokens for staking.</div>}
-          button={
-            <Button
-              onClick={async () => {
-                try {
-                  await approve()
-                } catch (e) {
-                  return {
-                    error: e.message.replace('GraphQL error: ', ''),
-                  }
-                }
-              }}
-            >
-              Approve
-            </Button>
-          }
-        />
+        <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
+          <Banner
+            label={
+              <Box sx={{ mb: 1 }}>Unlock your Livepeer tokens for staking.</Box>
+            }
+            button={
+              <Flex sx={{ alignSelf: 'flex-end' }}>
+                <Button
+                  onClick={() => setLearnMoreModalOpen(true)}
+                  variant="text"
+                  sx={{ mr: 2 }}
+                >
+                  Learn More
+                </Button>
+                <Button
+                  variant="text"
+                  onClick={async () => {
+                    try {
+                      await approve()
+                    } catch (e) {
+                      return {
+                        error: e.message.replace('GraphQL error: ', ''),
+                      }
+                    }
+                  }}
+                >
+                  Unlock LPT
+                  <Modal
+                    title="Unlocking Tokens"
+                    showCloseButton
+                    isOpen={learnMoreModalOpen}
+                    onDismiss={() => setLearnMoreModalOpen(false)}
+                  >
+                    <MDXDocument />
+                  </Modal>
+                </Button>
+              </Flex>
+            }
+          />
+        </Box>
       )
     } else {
       element = (
-        <div
+        <Box
           sx={{ cursor: 'pointer', color: 'primary' }}
           onClick={async () => {
             try {
@@ -81,8 +103,8 @@ export default ({ account, context, banner = true }) => {
             }
           }}
         >
-          Approve tokens for staking.
-        </div>
+          Unlock Livepeer tokens for staking.
+        </Box>
       )
     }
   }
@@ -96,7 +118,7 @@ export default ({ account, context, banner = true }) => {
           setApproveModalOpen(false)
         }}
         title={isMined ? 'Success!' : 'Broadcasted'}
-        Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
+        Icon={isMined ? () => <Box sx={{ mr: 1 }}>🎊</Box> : Broadcast}
       >
         <Flex
           sx={{
@@ -110,9 +132,9 @@ export default ({ account, context, banner = true }) => {
           }}
         >
           {isMined ? (
-            <div>All set! You're ready to begin staking.</div>
+            <Box>All set! You're ready to begin staking.</Box>
           ) : (
-            <div>Approving Livepeer tokens for staking...</div>
+            <Box>Unlocking Livepeer tokens for staking...</Box>
           )}
         </Flex>
         <Flex
@@ -126,9 +148,9 @@ export default ({ account, context, banner = true }) => {
             <>
               <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
                 <Spinner sx={{ mr: 2 }} />
-                <div sx={{ color: 'text' }}>
+                <Box sx={{ color: 'text' }}>
                   Waiting for your transaction to be mined.
-                </div>
+                </Box>
               </Flex>
               <Button
                 sx={{

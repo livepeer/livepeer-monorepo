@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Flex, Styled } from 'theme-ui'
-import Router, { useRouter } from 'next/router'
+import Router from 'next/router'
 import Copy from '../../public/img/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Button from '../Button'

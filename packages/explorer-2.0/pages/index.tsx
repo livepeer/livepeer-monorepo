@@ -10,6 +10,8 @@ import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
 import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
+import Approve from '../components/Approve'
+import Utils from 'web3-utils'
 
 const GET_DATA = gql`
   {
@@ -23,6 +25,7 @@ const GET_DATA = gql`
     ) {
       id
       active
+      accruedFees
       feeShare
       activationRound
       deactivationRound
@@ -108,10 +111,19 @@ export default withApollo(() => {
             sx={{
               flexDirection: 'column',
               paddingTop: [0, 0, 0, 5],
-              pr: [0, 0, 0, 0, 6],
-              width: ['100%', '100%', '100%', '100%', '70%'],
+              pr: [0, 0, 0, 0, 5],
+              width: ['100%', '100%', '100%', '100%', '72%'],
             }}
           >
+            {context.active && (
+              <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
+                {myAccount.account &&
+                  parseFloat(Utils.fromWei(myAccount.account.allowance)) ===
+                    0 &&
+                  parseFloat(Utils.fromWei(myAccount.account.tokenBalance)) !==
+                    0 && <Approve account={myAccount.account} banner={true} />}
+              </Box>
+            )}
             {context.active && myAccount.delegator?.lastClaimRound && (
               <ClaimBanner
                 account={myAccount.account}
@@ -130,7 +142,7 @@ export default withApollo(() => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
-              width: '30%',
+              width: '28%',
             }}
           >
             <StakingWidget
