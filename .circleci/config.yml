@@ -35,7 +35,7 @@ aliases:
   - &install-dependencies
     name: Install dependencies
     command: |
-      yarn install
+      yarn install || (cat yarn-error.log && exit 1)
       yarn postinstall
 
   # Runs reporter and shows test coverage
