@@ -111,7 +111,7 @@ dataSources:
         - EarningsClaimedEvent
       abis:
         - name: BondingManager
-          file: ./abis/bondingManager_LIP12.json
+          file: ./abis/BondingManager_LIP12.json
         - name: RoundsManager
           file: ./abis/RoundsManager_LIP12.json
       eventHandlers:
