@@ -7,6 +7,7 @@
     "create:local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
     "codegen": "graph codegen --debug --output-dir src/types/",
     "build": "graph build --debug",
+    "prepare": "yarn prepare:mainnet && yarn codegen",
     "deploy": "graph deploy $SUBGRAPH --debug --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
     "deploy:mainnet": "yarn prepare:mainnet && SUBGRAPH=livepeer/livepeer yarn deploy",
     "deploy:rinkeby": "yarn prepare:rinkeby && SUBGRAPH=livepeer/livepeer-rinkeby yarn deploy",
