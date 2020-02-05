@@ -4,8 +4,8 @@ Fees that an orchestrators earns in ETH, are immediately distributed into a dele
 
 While delegators do need to do this calculation for every single round (day), claiming earnings once can do the calculation for 100 rounds.
 
-- Delegators or orchestrators claim earnings whenever they want to change their delegation status: unstake, stake towards another orhcestrator, stake more.
-- Claiming earnings once can update their status for up to 100 rounds. So if it's been longer than 100 rounds since the last update, you may have to claim earnings multiple times.
-- If it's been less than 100 rounds, this happens in the background when you stake or unstake, you don't need to proactively claim earnings.
-- If you are not changing your stake, the most effective strategy is to just claim earnings once every 100 rounds. Or you can just wait and not do anything, and then call it, say 3 times if it's been 300 rounds.
-- **CAUTION**: After you claim earnings for a round, you can not call it again for that round. That means that if the orchestrator earns more fees or calls `reward()` later in that round, you can not access those rewards or fees. To really optimize, change your staking status late in the round after most of the fees have been collected and `reward()` has been called.
+* Delegators or orchestrators claim earnings whenever they want to change their delegation status: unstake, stake towards another orhcestrator, stake more.
+* Claiming earnings once can update their status for up to 100 rounds. So if it's been longer than 100 rounds since the last update, you may have to claim earnings multiple times.
+* If it's been less than 100 rounds, this happens in the background when you stake or unstake, you don't need to proactively claim earnings.
+* If you are not changing your stake, the most effective strategy is to just claim earnings once every 100 rounds. Or you can just wait and not do anything, and then call it, say 3 times if it's been 300 rounds.
+* **CAUTION**: After you claim earnings for a round, you can not call it again for that round. That means that if the orchestrator earns more fees or calls `reward()` later in that round, you can not access those rewards or fees. To really optimize, change your staking status late in the round after most of the fees have been collected and `reward()` has been called.

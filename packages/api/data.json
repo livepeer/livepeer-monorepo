@@ -427,7 +427,9 @@
       "CypherVersion": ""
     }
   },
-  "OrchestratorPool": ["https://127.0.0.1:3086"],
+  "OrchestratorPool": [
+    "https://127.0.0.1:3086"
+  ],
   "Version": "0.5.0-7d249b00",
   "GolangRuntimeVersion": "go1.13.4",
   "GOArch": "amd64",

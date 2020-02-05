@@ -67,7 +67,7 @@ export default async function makeApp(params) {
   }
 
   const close = async () => {
-    process.off('SIGTERM', sigterm) /// process and SIGTERM not applicable CF
+    process.off('SIGTERM', sigterm)
     process.off('unhandledRejection', unhandledRejection)
     listener.close()
     await store.close()
