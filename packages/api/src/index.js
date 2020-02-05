@@ -13,11 +13,6 @@ import liveProxy from './controllers/live-proxy'
 import proxy from 'http-proxy-middleware'
 import appRouter from './app-router'
 
-// parsel worker.js, concats into 1 blob, uploads to cloudflare.
-// cloudflare workers no file system ... you're just a blob of js
-// challenge: 1. api incompatibilities. "server assumptions"
-// 2. res, req, next ... CF different syntax. Service worker syntax. req & resp objects
-
 export default async function makeApp(params) {
   const {
     storage,
@@ -81,7 +76,7 @@ export default async function makeApp(params) {
   // Handle SIGTERM gracefully. It's polite, and Kubernetes likes it.
   const sigterm = handleSigterm(close)
 
-  process.on('SIGTERM', sigterm) // LISTENING TO PROCESS TERMINATION SIGNAL, then cleaning up from line 114
+  process.on('SIGTERM', sigterm)
 
   const unhandledRejection = err => {
     logger.error('fatal, unhandled promise rejection: ', err)

@@ -11,9 +11,6 @@ import path from 'path'
 
 const app = Router()
 
-// rewrite controllers to look like CF requests? simplifying!! res.json() for example.
-// or.
-
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
