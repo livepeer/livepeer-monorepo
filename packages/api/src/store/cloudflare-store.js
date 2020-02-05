@@ -1,8 +1,8 @@
 import logger from '../logger'
-import { NotFoundError } from './errors'
 import fetch from 'isomorphic-fetch'
 import { parse as parseUrl, format as stringifyUrl } from 'url'
 import querystring from 'querystring'
+import { NotFoundError } from './errors'
 
 const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/accounts'
 const DEFAULT_LIMIT = 10
@@ -35,9 +35,7 @@ export default class CloudflareStore {
 
     const values = []
     for (let i = 0; i < respData.result.length; i++) {
-      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${
-        respData.result[i].name
-      }`
+      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${respData.result[i].name}`
       const resp = await cloudflareFetch(reqUrl)
       await sleep(200)
       values.push(resp)
@@ -78,12 +76,26 @@ export default class CloudflareStore {
     }
     const key = `${kind}/${id}`
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
-    await cloudflareFetch(reqUrl, { data: data, method: 'PUT', retries: 0 })
+    const resp = await cloudflareFetch(reqUrl, {
+      data: data,
+      method: 'PUT',
+      retries: 0,
+    })
+    if (!resp) {
+      throw new NotFoundError()
+    }
   }
 
   async delete(id) {
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${id}`
-    await cloudflareFetch(reqUrl, { data: null, method: 'DELETE', retries: 0 })
+    const resp = await cloudflareFetch(reqUrl, {
+      data: null,
+      method: 'DELETE',
+      retries: 0,
+    })
+    if (!resp) {
+      throw new NotFoundError()
+    }
   }
 }
 
@@ -111,7 +123,7 @@ async function cloudflareFetch(
     console.log(errorMessage)
 
     if (res.status == 404) {
-      throw new NotFoundError()
+      return null
     } else if (res.status == 429) {
       console.log('Sleeping for 3 seconds')
       await sleep(3000)

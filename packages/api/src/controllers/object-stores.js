@@ -16,7 +16,11 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const resp = await req.store.list(`objectstores/${req.params.userId}`, cursor, limit)
+  const resp = await req.store.list(
+    `objectstores/${req.params.userId}`,
+    cursor,
+    limit,
+  )
   let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
@@ -35,7 +39,7 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
   const os = await req.store.get(`objectstores/${userId}/${id}`)
-  if (req.user.id === os.userId) {
+  if (os && req.user.id === os.userId) {
     const secureOS = { ...os, credentials: null }
     res.status(200)
     res.json(secureOS)
@@ -60,11 +64,16 @@ app.post(
       type: req.body.type,
       kind: `objectstores/${req.user.id}`,
     })
-
     const store = await req.store.get(`objectstores/${req.user.id}/${id}`)
-    store.credentials = null
-    res.status(201)
-    res.json(store)
+
+    if (store) {
+      store.credentials = null
+      res.status(201)
+      res.json(store)
+    } else {
+      res.status(403)
+      res.json({})
+    }
   },
 )
 

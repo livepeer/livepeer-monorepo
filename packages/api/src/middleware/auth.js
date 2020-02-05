@@ -37,7 +37,6 @@ async function generateUserAndToken(req, res, next) {
     const user = await req.store.get(`user/${userId}`)
     req.user = user
   } catch (error) {
-    console.error(error)
     throw error
   }
 
@@ -102,17 +101,14 @@ function authFactory(params) {
 
     logger.info('authFactory params ', params)
     let tokenObject
-    try {
-      // if tokenObject does not exist, create tokenObject and user
-      tokenObject = await req.store.get(`apitoken/${req.token}`)
-    } catch (e) {
-      if (e.type !== 'NotFoundError') {
-        throw e
-      }
+    // if tokenObject does not exist, create tokenObject and user
+    tokenObject = await req.store.get(`apitoken/${req.token}`)
 
+    if (!tokenObject) {
       logger.warn('api Token not found... generating one')
       tokenObject = await generateUserAndToken(req, res, next)
     }
+
     if (tokenObject && !tokenObject.userId) {
       // if tokenObject exists, but no userId, create user and add userId to tokenObject
       try {
@@ -134,7 +130,6 @@ function authFactory(params) {
         const user = await req.store.get(`user/${newTokenObject.userId}`)
         req.user = user
       } catch (error) {
-        console.log(error)
         res.status(403)
         return res.json({ errors: [error.toString()] })
       }
@@ -165,15 +160,11 @@ async function getUserWithGoogleAuth(req, res, next) {
   } catch (e) {
     throw new Error('invalid oauth token')
   }
+
   const payload = ticket.getPayload()
-  var user
-  try {
-    user = await req.store.get(`user/${payload.sub}`)
-  } catch (error) {
-    if (error.type !== 'NotFoundError') {
-      console.error(error)
-      throw error
-    }
+  let user = await req.store.get(`user/${payload.sub}`)
+
+  if (!user) {
     await req.store.create({
       id: payload.sub,
       name: payload.name,
@@ -181,9 +172,9 @@ async function getUserWithGoogleAuth(req, res, next) {
       domain: payload['hd'],
       kind: 'user',
     })
-    user = await req.store.get(`user/${payload.sub}`)
   }
 
+  user = await req.store.get(`user/${payload.sub}`)
   return user
 }
 

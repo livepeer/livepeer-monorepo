@@ -1,5 +1,6 @@
 import level from 'level'
 import fs from 'fs-extra'
+import { NotFoundError } from './errors'
 
 // default limit value in level is -1 , ref: https://github.com/Level/level#dbcreatereadstreamoptions
 const DEFAULT_LIMIT = -1
@@ -74,7 +75,16 @@ export default class LevelStore {
 
   async get(key) {
     await this.ready
-    return JSON.parse(await this.db.get(key))
+    let res
+    try {
+      res = await this.db.get(key)
+    } catch (err) {
+      if (err.name === 'NotFoundError') {
+        return null
+      }
+      throw err
+    }
+    return JSON.parse(res)
   }
 
   async create(data) {
@@ -86,15 +96,9 @@ export default class LevelStore {
       throw new Error(`Missing required values: id, kind`)
     }
     await this.ready
-
-    try {
-      await this.db.get(`${kind}/${id}`)
+    const item = await this.get(`${kind}/${id}`)
+    if (item) {
       throw new Error(`${id} already exists`)
-    } catch (err) {
-      if (!err.type === 'NotFoundError') {
-        throw err
-      }
-      // Not found - that's great!
     }
     await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }
@@ -110,13 +114,19 @@ export default class LevelStore {
     await this.ready
 
     // Make sure it exists first, this throws if not
-    await this.db.get(`${kind}/${id}`)
+    const record = await this.db.get(`${kind}/${id}`)
+    if (!record) {
+      throw new NotFoundError()
+    }
     await this.db.put(`${kind}/${id}`, JSON.stringify(data))
   }
 
   async delete(id) {
     // Make sure it exists first, this throws if not
-    await this.db.get(id)
+    const record = await this.db.get(id)
+    if (!record) {
+      throw new NotFoundError()
+    }
     await this.db.del(id)
   }
 }

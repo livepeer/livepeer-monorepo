@@ -43,21 +43,10 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   const id = uuid()
 
-  console.log(`idddddd: ${req.body.objectStoreId}`)
-
   let objectStoreID
   if (req.body.objectStoreId) {
-    try {
-      await req.store.get(
-        `objectstores/${req.user.id}/${req.body.objectStoreId}`,
-      )
-      objectStoreID = req.body.objectStoreId
-    } catch (e) {
-      console.error(e)
-      if (e.type !== 'NotFoundError') {
-        throw e
-      }
-    }
+    await req.store.get(`objectstores/${req.user.id}/${req.body.objectStoreId}`)
+    objectStoreID = req.body.objectStoreId
   }
 
   const doc = wowzaHydrate({
