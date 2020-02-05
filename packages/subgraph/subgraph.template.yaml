@@ -6,10 +6,10 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: BondingManager
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.bondingManager.startBlock } }
-      address: { { contracts.bondingManager.address } }
+      startBlock: {{contracts.bondingManager.startBlock}}
+      address: {{contracts.bondingManager.address}}
       abi: BondingManager
     mapping:
       kind: ethereum/events
@@ -58,10 +58,10 @@ dataSources:
           handler: claimEarnings
   - kind: ethereum/contract
     name: BondingManager_LIP11
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.bondingManagerLIP11.startBlock } }
-      address: { { contracts.bondingManagerLIP11.address } }
+      startBlock: {{contracts.bondingManagerLIP11.startBlock}}
+      address: {{contracts.bondingManagerLIP11.address}}
       abi: BondingManager
     mapping:
       kind: ethereum/events
@@ -92,10 +92,10 @@ dataSources:
           handler: withdrawStake
   - kind: ethereum/contract
     name: BondingManager_LIP12
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.bondingManagerLIP12.startBlock } }
-      address: { { contracts.bondingManagerLIP12.address } }
+      startBlock: {{contracts.bondingManagerLIP12.startBlock}}
+      address: {{contracts.bondingManagerLIP12.address}}
       abi: BondingManager
     mapping:
       kind: ethereum/events
@@ -125,10 +125,10 @@ dataSources:
           handler: earningsClaimed
   - kind: ethereum/contract
     name: RoundsManager
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.roundsManager.startBlock } }
-      address: { { contracts.roundsManager.address } }
+      startBlock: {{contracts.roundsManager.startBlock}}
+      address: {{contracts.roundsManager.address}}
       abi: RoundsManager
     mapping:
       kind: ethereum/events
@@ -149,10 +149,10 @@ dataSources:
           handler: newRound
   - kind: ethereum/contract
     name: RoundsManager_LIP12
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.roundsManagerLIP12.startBlock } }
-      address: { { contracts.roundsManagerLIP12.address } }
+      startBlock: {{contracts.roundsManagerLIP12.startBlock}}
+      address: {{contracts.roundsManagerLIP12.address}}
       abi: RoundsManager
     mapping:
       kind: ethereum/events
@@ -173,10 +173,10 @@ dataSources:
           handler: newRound
   - kind: ethereum/contract
     name: LivepeerToken
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.livepeerToken.startBlock } }
-      address: { { contracts.livepeerToken.address } }
+      startBlock: {{contracts.livepeerToken.startBlock}}
+      address: {{contracts.livepeerToken.address}}
       abi: LivepeerToken
     mapping:
       kind: ethereum/events
@@ -196,10 +196,10 @@ dataSources:
           handler: approval
   - kind: ethereum/contract
     name: Minter
-    network: { { networkName } }
+    network: {{networkName}}
     source:
-      startBlock: { { contracts.minter.startBlock } }
-      address: { { contracts.minter.address } }
+      startBlock: {{contracts.minter.startBlock}}
+      address: {{contracts.minter.address}}
       abi: Minter
     mapping:
       kind: ethereum/events
