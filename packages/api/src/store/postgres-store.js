@@ -105,6 +105,10 @@ export default class PostgresStore {
       `DELETE FROM ${TABLE_NAME} WHERE id = $1`,
       [id],
     )
+
+    if (res.rowCount < 1) {
+      throw new NotFoundError()
+    }
   }
 }
 
