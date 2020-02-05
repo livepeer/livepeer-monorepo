@@ -8,6 +8,8 @@ tags:
     description: Wowza Stream Endpoints
   - name: objectstores
     description: Object Stores Endpoints
+  - name: broadcasters
+    description: Broadcasters Endpoints
 
 components:
   schemas:
@@ -153,6 +155,25 @@ components:
           type: string
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
 
+    broadcasters:
+      type: object
+      required:
+        - address
+        - kind
+      additionalProperties: false
+      properties:
+        address:
+          type: string
+          description: broadcaster address
+          example: https://chi-broadcaster-charmander.livepeer-ac.live
+        id:
+          type: string
+          example: 09F8B46C-61A0-4254-9875-F71F4C605BC7
+        kind:
+          type: string
+          readOnly: true
+          example: broadcasters
+
 paths:
   /stream:
     tags:
@@ -241,6 +262,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/objectstores'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /broadcasters:
+    tags:
+      - broadcasters
+    post:
+      description: Receives store credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/broadcasters'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/broadcasters'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+    get:
+      description: Lists broadcasters
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/broadcasters'
         default:
           description: Error
           content:
