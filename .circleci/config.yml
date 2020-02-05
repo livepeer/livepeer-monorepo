@@ -34,8 +34,14 @@ aliases:
   # Installs dependencies for packages
   - &install-dependencies
     name: Install dependencies
+    # The retry logic here is a very ugly hack but nothing for it except to change CI providers..
     command: |
-      yarn install || (cat yarn-error.log && exit 1)
+      for i in {0..3}; do
+        if [[ "$i" == "3" ]]; then
+          echo "Failed `yarn install`" after $i retries
+        fi
+        yarn install && break || true
+      done
       yarn postinstall
 
   # Runs reporter and shows test coverage
