@@ -1,13 +1,8 @@
-import { parse as parsePath } from 'path'
-import { parse as parseQS } from 'querystring'
-import { parse as parseUrl } from 'url'
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
 import { Router } from 'express'
 import logger from '../logger'
 import uuid from 'uuid/v4'
-import wowzaHydrate from './wowza-hydrate'
-import path from 'path'
 
 const app = Router()
 
@@ -35,13 +30,8 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const broadcaster = await req.store.get(`broadcasters/${id}`)
-  if (broadcaster) {
-    res.status(200)
-    res.json(broadcaster)
-  } else {
-    res.status(200)
-    res.json({})
-  }
+  res.status(200)
+  res.json(broadcaster)
 })
 
 app.post(
@@ -50,12 +40,12 @@ app.post(
   validatePost('broadcasters'),
   async (req, res) => {
     const id = uuid()
-
     await req.store.create({
       id: id,
       address: req.body.address,
-      kind: `broadcasters`,
+      kind: 'broadcasters',
     })
+
     const broadcaster = await req.store.get(`broadcasters/${id}`)
 
     if (broadcaster) {
