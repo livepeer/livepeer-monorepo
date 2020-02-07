@@ -127,7 +127,6 @@ export function earningsClaimed(event: EarningsClaimed): void {
   delegator.lastClaimRound = event.params.endRound.toString()
   delegator.bondedAmount = delegator.bondedAmount.plus(rewards)
   delegator.fees = delegator.fees.plus(fees)
-  delegator.accruedFees = delegator.accruedFees.plus(fees)
   delegator.save()
 
   let claimEarningsEvent = new ClaimEarningsEvent(

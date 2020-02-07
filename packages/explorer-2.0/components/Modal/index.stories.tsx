@@ -7,7 +7,7 @@ import Button from '../Button'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
-import StakingFlow from '../StakingFlow'
+import Flow from '../Flow'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from 'react-confetti'
 
@@ -24,7 +24,7 @@ storiesOf('Modal', module)
           title="Broadcasted"
           Icon={Broadcast}
         >
-          <StakingFlow amount={100} action="stake" account="0x..." />
+          <Flow amount={100} action="stake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
               <Spinner sx={{ mr: 1 }} />
@@ -60,7 +60,7 @@ storiesOf('Modal', module)
             width={width}
             height={height}
           />
-          <StakingFlow amount={100} action="stake" account="0x..." />
+          <Flow amount={100} action="stake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Button
               sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}
@@ -83,7 +83,7 @@ storiesOf('Modal', module)
           onDismiss={() => setOpen(false)}
           title="Successfully Unstaked"
         >
-          <StakingFlow amount={100} action="unstake" account="0x..." />
+          <Flow amount={100} action="unstake" account="0x..." />
           <Flex sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Button
               sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}

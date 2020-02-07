@@ -11,7 +11,7 @@ import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
 
-export default ({ account, delegator, currentRound }) => {
+export default ({ delegator, currentRound }) => {
   const context = useWeb3React()
   const [claimModalOpen, setClaimModalOpen] = useState(false)
   const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
@@ -54,12 +54,7 @@ export default ({ account, delegator, currentRound }) => {
 
   let banner = null
 
-  if (
-    context.account &&
-    account &&
-    account.id.toLowerCase() == context.account.toLowerCase() &&
-    roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS
-  ) {
+  if (context.account && roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS) {
     banner = (
       <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
         <Banner

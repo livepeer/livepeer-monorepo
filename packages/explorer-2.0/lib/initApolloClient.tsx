@@ -9,6 +9,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import createSchema from './createSchema'
 import { execute } from 'graphql/execution/execute'
+import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 
 let apolloClient = null
 
@@ -76,12 +77,20 @@ function createApolloClient(initialState = {}) {
   const clientLink = new ApolloLink(operation => {
     return new Observable(observer => {
       Promise.resolve(createSchema())
-        .then(data => {
+        .then(async data => {
+          let context = operation.getContext()
+          let sdk = await LivepeerSDK({
+            ...(context.provider && { provider: context.provider }),
+            ...(context.account && { account: context.account }),
+          })
           return execute(
             data,
             operation.query,
             null,
-            operation.getContext(),
+            {
+              ...context,
+              livepeer: sdk,
+            },
             operation.variables,
             operation.operationName,
           )

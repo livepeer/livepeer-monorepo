@@ -392,7 +392,6 @@ export function claimEarnings(call: ClaimEarningsCall): void {
 
     delegator.bondedAmount = delegatorData.value0
     delegator.fees = delegatorData.value1
-    delegator.accruedFees = delegator.accruedFees.plus(delegatorData.value1)
     delegator.lastClaimRound = endRound.toString()
     delegator.save()
 
@@ -455,6 +454,7 @@ export function withdrawFees(event: WithdrawFees): void {
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let withdrawnFees = delegator.fees as BigInt
 
   // Store transaction info
   let withdrawFeesTransaction = new WithdrawFeesEvent(
@@ -468,12 +468,13 @@ export function withdrawFees(event: WithdrawFees): void {
   withdrawFeesTransaction.from = event.transaction.from.toHex()
   withdrawFeesTransaction.to = event.transaction.to.toHex()
   withdrawFeesTransaction.round = currentRound.toString()
-  withdrawFeesTransaction.amount = delegator.fees
+  withdrawFeesTransaction.amount = withdrawnFees
   withdrawFeesTransaction.delegator = delegatorAddress.toHex()
   withdrawFeesTransaction.save()
 
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.withdrawnFees = delegator.withdrawnFees.plus(withdrawnFees)
   delegator.lastClaimRound = currentRound.toString()
   delegator.save()
 }

@@ -16,6 +16,7 @@ export default withApollo(() => {
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
   const { data, loading, error } = useQuery(orchestratorsViewQuery, {
+    pollInterval: 10000,
     ssr: false,
   })
   const { data: myAccountData, loading: myAccountLoading } = useQuery(
@@ -25,6 +26,7 @@ export default withApollo(() => {
         account: context?.account?.toLowerCase(),
       },
       skip: !context.active,
+      ssr: false,
     },
   )
 
@@ -74,7 +76,6 @@ export default withApollo(() => {
             )}
             {context.active && myAccountData.delegator?.lastClaimRound && (
               <ClaimBanner
-                account={myAccountData.account}
                 delegator={myAccountData.delegator}
                 currentRound={data.currentRound[0]}
               />

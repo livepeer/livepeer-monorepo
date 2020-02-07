@@ -170,7 +170,7 @@ export default ({ children, ...props }) => {
               {[
                 'Connect Wallet',
                 'Get LPT',
-                'Set Permissions',
+                'Unlock LPT',
                 'Choose Orchestrator',
                 'Stake',
               ].map((title, i) => (

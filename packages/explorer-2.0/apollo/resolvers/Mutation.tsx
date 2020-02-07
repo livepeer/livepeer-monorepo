@@ -1,5 +1,4 @@
 import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
-import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 
 /**
  * Approve an amount for an ERC20 token transfer
@@ -9,21 +8,16 @@ import LivepeerSDK from '@adamsoffer/livepeer-sdk'
  * @return {Promise}
  */
 export async function approve(_obj, _args, _ctx) {
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
-
   const { type, amount } = _args
 
   switch (type) {
     case 'bond':
-      const gas = await sdk.rpc.estimateGas('LivepeerToken', 'approve', [
-        sdk.config.contracts.BondingManager.address,
-        amount,
-      ])
-      return await sdk.rpc.approveTokenBondAmount(amount, {
+      const gas = await _ctx.livepeer.rpc.estimateGas(
+        'LivepeerToken',
+        'approve',
+        [_ctx.livepeer.config.contracts.BondingManager.address, amount],
+      )
+      return await _ctx.livepeer.rpc.approveTokenBondAmount(amount, {
         gas,
         returnTxHash: true,
       })
@@ -41,15 +35,12 @@ export async function approve(_obj, _args, _ctx) {
  */
 export async function bond(_obj, _args, _ctx) {
   const { to, amount } = _args
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
+  const gas = await _ctx.livepeer.rpc.estimateGas('BondingManager', 'bond', [
+    amount,
+    to,
+  ])
 
-  const gas = await sdk.rpc.estimateGas('BondingManager', 'bond', [amount, to])
-
-  return await sdk.rpc.bondApprovedTokenAmount(to, amount, {
+  return await _ctx.livepeer.rpc.bondApprovedTokenAmount(to, amount, {
     gas: gas,
     returnTxHash: true,
   })
@@ -64,12 +55,7 @@ export async function bond(_obj, _args, _ctx) {
  */
 export async function batchClaimEarnings(_obj, _args, _ctx) {
   const { lastClaimRound, endRound } = _args
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
-  const { abi, address } = sdk.config.contracts.BondingManager
+  const { abi, address } = _ctx.livepeer.config.contracts.BondingManager
   const bondingManager = new _ctx.web3.eth.Contract(abi, address)
   const totalRoundsToClaim = parseInt(endRound) - parseInt(lastClaimRound)
   const quotient = Math.floor(totalRoundsToClaim / MAX_EARNINGS_CLAIMS_ROUNDS)
@@ -116,17 +102,13 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function unbond(_obj, _args, _ctx) {
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
   const { amount } = _args
+  const gas = await _ctx.livepeer.rpc.estimateGas('BondingManager', 'unbond', [
+    amount,
+  ])
 
-  const gas = await sdk.rpc.estimateGas('BondingManager', 'unbond', [amount])
-
-  return await sdk.rpc.unbond(amount, {
-    ...sdk.config.defaultTx,
+  return await _ctx.livepeer.rpc.unbond(amount, {
+    ..._ctx.livepeer.config.defaultTx,
     gas,
     returnTxHash: true,
   })
@@ -138,19 +120,13 @@ export async function unbond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function rebond(_obj, _args, _ctx) {
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
   const { unbondingLockId } = _args
-
-  const gas = await sdk.rpc.estimateGas('BondingManager', 'rebond', [
+  const gas = await _ctx.livepeer.rpc.estimateGas('BondingManager', 'rebond', [
     unbondingLockId,
   ])
 
-  return await sdk.rpc.rebond(unbondingLockId, {
-    ...sdk.config.defaultTx,
+  return await _ctx.livepeer.rpc.rebond(unbondingLockId, {
+    ..._ctx.livepeer.config.defaultTx,
     gas: gas,
     returnTxHash: true,
   })
@@ -162,19 +138,35 @@ export async function rebond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function withdrawStake(_obj, _args, _ctx) {
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
   const { unbondingLockId } = _args
 
-  const gas = await sdk.rpc.estimateGas('BondingManager', 'withdrawStake', [
-    unbondingLockId,
-  ])
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    'BondingManager',
+    'withdrawStake',
+    [unbondingLockId],
+  )
 
-  return await sdk.rpc.withdrawStake(unbondingLockId, {
-    ...sdk.config.defaultTx,
+  return await _ctx.livepeer.rpc.withdrawStake(unbondingLockId, {
+    ..._ctx.livepeer.config.defaultTx,
+    gas: gas,
+    returnTxHash: true,
+  })
+}
+
+/**
+ * Submits a withdrawFees transaction
+ * @param obj
+ * @return {Promise}
+ */
+export async function withdrawFees(_obj, _args, _ctx) {
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    'BondingManager',
+    'withdrawFees',
+    [],
+  )
+
+  return await _ctx.livepeer.rpc.withdrawFees({
+    ..._ctx.livepeer.config.defaultTx,
     gas: gas,
     returnTxHash: true,
   })
@@ -186,20 +178,15 @@ export async function withdrawStake(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function rebondFromUnbonded(_obj, _args, _ctx) {
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
   const { delegate, unbondingLockId } = _args
 
-  const gas = await sdk.rpc.estimateGas(
+  const gas = await _ctx.livepeer.rpc.estimateGas(
     'BondingManager',
     'rebondFromUnbonded',
     [delegate, unbondingLockId],
   )
 
-  return await sdk.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
+  return await _ctx.livepeer.rpc.rebondFromUnbonded(delegate, unbondingLockId, {
     gas: gas,
     returnTxHash: true,
   })
@@ -211,13 +198,12 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function initializeRound(_obj, _args, _ctx) {
-  const sdk = await LivepeerSDK({
-    account: _ctx.account,
-    gas: 2.1 * 1000000,
-    provider: _ctx.provider,
-  })
-  const gas = await sdk.rpc.estimateGas('RoundsManager', 'initializeRound', [])
-  return await sdk.rpc.initializeRound({
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    'RoundsManager',
+    'initializeRound',
+    [],
+  )
+  return await _ctx.livepeer.rpc.initializeRound({
     gas,
     returnTxHash: true,
   })

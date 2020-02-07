@@ -3,15 +3,13 @@ import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
-import { useDelegator } from '../../hooks'
+import Button from '../Button'
 
 const GET_DATA = gql`
   query {
@@ -36,21 +34,22 @@ export default ({ delegator, protocol, currentRound }) => {
     if (isMyAccount) {
       return (
         <Box sx={{ pt: 4 }}>
-          <span sx={{ mr: 2 }}>
-            You haven't staked LPT. Stake LPT with an Orchestrator and begin
-            earning rewards.
-          </span>
+          <Box sx={{ mr: 2, mb: 2 }}>
+            You haven't staked LPT. Stake with an Orchestrator to begin earning
+            rewards and a share of the fees being paid into the Livepeer
+            network.
+          </Box>
           <Link href="/" passHref>
-            <Styled.a>View Orchestrators.</Styled.a>
+            <a>
+              <Button variant="outline" as="div">
+                View Orchestrators
+              </Button>
+            </a>
           </Link>
         </Box>
       )
     } else {
-      return (
-        <Box sx={{ pt: 4 }}>
-          <span sx={{ mr: 2 }}>Nothing here.</span>
-        </Box>
-      )
+      return <Box sx={{ pt: 4 }}>Nothing here.</Box>
     }
   }
 

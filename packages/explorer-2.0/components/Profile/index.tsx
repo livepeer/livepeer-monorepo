@@ -61,6 +61,8 @@ export default ({
           mb: [1, 1, 1, 2],
           width: [60, 60, 60, 70],
           height: [60, 60, 60, 70],
+          maxWidth: [60, 60, 60, 70],
+          maxHeight: [60, 60, 60, 70],
           position: 'relative',
         }}
       >
@@ -82,9 +84,11 @@ export default ({
         ) : (
           <QRCode
             style={{
+              border: '1px solid',
+              padding: '4px',
               borderRadius: 1000,
-              width: '100%',
-              height: '100%',
+              width: 'inherit',
+              height: 'inherit',
             }}
             fgColor={`#${account.substr(2, 6)}`}
             value={account}

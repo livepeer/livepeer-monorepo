@@ -1,29 +1,30 @@
 import fetch from 'isomorphic-unfetch'
-import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 import Utils from 'web3-utils'
 
 export async function account(_obj, _args, _ctx, _info) {
-  const sdk = await LivepeerSDK({
-    gas: null,
-  })
-  const { allowance } = await sdk.rpc.getDelegator(_args.id.toLowerCase())
+  const { allowance } = await _ctx.livepeer.rpc.getDelegator(
+    _args.id.toLowerCase(),
+  )
   return {
     id: _args.id,
-    tokenBalance: await sdk.rpc.getTokenBalance(_args.id.toLowerCase()),
-    ethBalance: await sdk.rpc.getEthBalance(_args.id.toLowerCase()),
+    tokenBalance: await _ctx.livepeer.rpc.getTokenBalance(
+      _args.id.toLowerCase(),
+    ),
+    ethBalance: await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase()),
     allowance: allowance,
   }
 }
 
 export async function protocol(_obj, _args, _ctx, _info) {
-  const { rpc } = await LivepeerSDK({
-    gas: null,
-  })
-  const { totalTokenSupply, totalBondedToken, paused } = await rpc.getProtocol()
+  const {
+    totalTokenSupply,
+    totalBondedToken,
+    paused,
+  } = await _ctx.livepeer.rpc.getProtocol()
   return {
     paused,
-    inflation: await rpc.getInflation(),
-    inflationChange: await rpc.getInflationChange(),
+    inflation: await _ctx.livepeer.rpc.getInflation(),
+    inflationChange: await _ctx.livepeer.rpc.getInflationChange(),
     totalTokenSupply,
     totalBondedToken,
   }

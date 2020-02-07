@@ -19,6 +19,7 @@ import StakingWidgetModal from '../../../components/StakingWidgetModal'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
+import FeesView from '../../../components/FeesView'
 
 export default withApollo(() => {
   const accountViewQuery = require('../../../queries/accountView.gql')
@@ -32,6 +33,7 @@ export default withApollo(() => {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
+    pollInterval: 10000,
     ssr: false,
   })
 
@@ -41,8 +43,7 @@ export default withApollo(() => {
       variables: {
         account: context?.account?.toLowerCase(),
       },
-      skip: !context.active,
-      pollInterval: 10000,
+      skip: !context.active, // skip this query if wallet not connected
       ssr: false,
     },
   )
@@ -76,10 +77,10 @@ export default withApollo(() => {
     )
   }
 
-  const isMyAccount: boolean =
-    context.account && context.account == query.account
-  const isStaked: boolean = !!data.delegator?.delegate
-  const hasLivepeerToken: boolean =
+  const isMyAccount =
+    context?.account?.toLowerCase() == query.account.toString().toLowerCase()
+  const isStaked = !!data.delegator?.delegate
+  const hasLivepeerToken =
     data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0
   let role: string
 
@@ -135,7 +136,6 @@ export default withApollo(() => {
         )}
         {context.active && myAccountData?.delegator?.lastClaimRound && (
           <ClaimBanner
-            account={myAccountData.account}
             delegator={myAccountData.delegator}
             currentRound={data.currentRound[0]}
           />
@@ -155,6 +155,13 @@ export default withApollo(() => {
         />
         <Tabs tabs={tabs} />
         {slug == 'campaign' && <CampaignView transcoder={data.transcoder} />}
+        {slug == 'fees' && (
+          <FeesView
+            delegator={data.delegator}
+            currentRound={data.currentRound[0]}
+            isMyAccount={isMyAccount}
+          />
+        )}
         {slug == 'tokenholders' && <TokenholdersView />}
         {slug == 'staking' && (
           <StakingView

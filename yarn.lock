@@ -209,10 +209,10 @@
     striptags "^3.0.1"
     word-wrap "^1.2.1"
 
-"@adamsoffer/livepeer-sdk@1.0.0-streamflow-alpha.25":
-  version "1.0.0-streamflow-alpha.25"
-  resolved "https://registry.yarnpkg.com/@adamsoffer/livepeer-sdk/-/livepeer-sdk-1.0.0-streamflow-alpha.25.tgz#15eb36846808dc6a507d1375281bcf212932338f"
-  integrity sha512-XK0RUyxdEnbzXjxEQT0Xn5ufd5E9F9g2OeKOvAf4TNUJdzceJJSnhMNvV5+96o0U7rmuWX02sVS1zNIHvhYccA==
+"@adamsoffer/livepeer-sdk@1.0.0-streamflow-alpha.26":
+  version "1.0.0-streamflow-alpha.26"
+  resolved "https://registry.yarnpkg.com/@adamsoffer/livepeer-sdk/-/livepeer-sdk-1.0.0-streamflow-alpha.26.tgz#bb7f3c57131f9c6ac0e2da19226b889a07e1eadb"
+  integrity sha512-g5J6HsVzDqDTmmyo54fczokNkboyf6oV1gyugNUS7abqG+AQs8lqlL33ZsTbZsQNMSbYW0jgoBmCvXgTY5k5pQ==
   dependencies:
     "@babel/runtime" "^7.4.3"
     cross-env "^5.2.0"
@@ -11279,17 +11279,7 @@ concat-stream@1.6.2, concat-stream@^1.5.0, concat-stream@^1.5.1, concat-stream@^
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concat-stream@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-2.0.0.tgz#414cf5af790a48c60ab9be4527d56d5e41133cb1"
-  integrity sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==
-  dependencies:
-    buffer-from "^1.0.0"
-    inherits "^2.0.3"
-    readable-stream "^3.0.2"
-    typedarray "^0.0.6"
-
-"concat-stream@github:hugomrdias/concat-stream#feat/smaller":
+concat-stream@^2.0.0, "concat-stream@github:hugomrdias/concat-stream#feat/smaller":
   version "2.0.0"
   resolved "https://codeload.github.com/hugomrdias/concat-stream/tar.gz/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034"
   dependencies:
@@ -29331,6 +29321,13 @@ react-minimalist-portal@^2.3.1:
   integrity sha1-SFPj9Ip0oywbh2dgGIfN95Qe66M=
   dependencies:
     prop-types "^15.6.1"
+
+react-number-format@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-4.3.1.tgz#eccfc851d88d74c894ba463620ccb467defbdefb"
+  integrity sha512-ze6Lp7SGM71Jr0uZhUaN6grthv08NKTfJezS26zAWZq63ubmJ++FOX7ueGSK27EvpT7/e3ce9L3jlqr1YMFS7Q==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-popper-tooltip@^2.8.3:
   version "2.10.1"

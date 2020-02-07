@@ -1,5 +1,7 @@
 import { Flex } from 'theme-ui'
 import { useState, useEffect } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import gql from 'graphql-tag'
 import Flow from '../Flow'
 import Spinner from '../Spinner'
 import Modal from '../Modal'
@@ -7,27 +9,28 @@ import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
 import Button from '../Button'
 import { useWeb3Mutation } from '../../hooks'
-import { useWeb3React } from '@web3-react/core'
-import gql from 'graphql-tag'
 import Utils from 'web3-utils'
+import { Box } from 'theme-ui'
 
-export default ({ lock }) => {
+export default ({ delegator, ...props }) => {
   const context = useWeb3React()
   const [isOpen, setIsModalOpen] = useState(false)
 
-  const REBOND = gql`
-    mutation rebond($unbondingLockId: Int!) {
-      txHash: rebond(unbondingLockId: $unbondingLockId)
+  if (!context.active) {
+    return null
+  }
+
+  const WITHDRAW_FEES = gql`
+    mutation withdrawFees {
+      txHash: withdrawFees
     }
   `
 
   const {
-    result: { mutate: rebond, isBroadcasted, isMined, txHash },
+    result: { mutate: withdrawFees, isBroadcasted, isMined, txHash },
     reset,
-  } = useWeb3Mutation(REBOND, {
-    variables: {
-      unbondingLockId: lock.unbondingLockId,
-    },
+  } = useWeb3Mutation(WITHDRAW_FEES, {
+    notifyOnNetworkStatusChange: true,
     context: {
       provider: context.library.currentProvider,
       account: context.account.toLowerCase(),
@@ -46,32 +49,48 @@ export default ({ lock }) => {
       <Button
         onClick={async () => {
           try {
-            await rebond(lock.unbondingLockId)
+            await withdrawFees()
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),
             }
           }
         }}
-        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
+        {...props}
       >
-        Restake
+        Withdraw
       </Button>
-
       <Modal
         isOpen={isOpen}
         onDismiss={() => {
           reset()
           setIsModalOpen(false)
         }}
-        title={isMined ? 'Successfully Restaked' : 'Broadcasted'}
+        title={isMined ? 'Successfully Withdrawn' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
-        <Flow
-          action="stake"
-          account={lock.delegate.id}
-          amount={parseFloat(Utils.fromWei(lock.amount))}
-        />
+        {isMined ? (
+          <Box
+            sx={{
+              border: '1px solid',
+              borderColor: 'border',
+              borderRadius: 6,
+              p: 3,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            Your earned fees have been withdrawn into your wallet.
+          </Box>
+        ) : (
+          <Flow
+            action="withdraw"
+            reverse
+            currencyType="ETH"
+            account={context.account}
+            amount={Utils.fromWei(delegator.pendingFees)}
+          />
+        )}
         <Flex
           sx={{
             flexDirection: ['column-reverse', 'column-reverse', 'row'],
@@ -106,12 +125,7 @@ export default ({ lock }) => {
             </>
           )}
           {isMined && (
-            <Button
-              onClick={() => {
-                setIsModalOpen(false)
-              }}
-              sx={{ ml: 'auto' }}
-            >
+            <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>
               Done
             </Button>
           )}

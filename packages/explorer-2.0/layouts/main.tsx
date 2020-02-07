@@ -8,11 +8,11 @@ import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
 import { useWeb3React } from '@web3-react/core'
 import { ethers } from 'ethers'
-import { useThreeBoxSpace } from '../hooks'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import WalletModal from '../components/WalletModal'
+import { useQuery } from '@apollo/react-hooks'
 
 type DrawerItem = {
   name: any
@@ -27,9 +27,18 @@ export default ({
   title = 'Livepeer Explorer',
   headerTitle = '',
 }) => {
+  const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
   const { account } = context
-  const { threeBoxSpace } = useThreeBoxSpace(account)
+
+  const { data } = useQuery(threeBoxSpaceQuery, {
+    variables: {
+      account: context?.account,
+    },
+    skip: !context.account,
+    pollInterval: 10000,
+  })
+
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { width } = useWindowSize()
 
@@ -64,8 +73,8 @@ export default ({
     items.push({
       name: (
         <Box>
-          {process.env.THREEBOX_ENABLED && threeBoxSpace?.name
-            ? threeBoxSpace.name
+          {process.env.THREEBOX_ENABLED && data?.threeBoxSpace?.name
+            ? data.threeBoxSpace.name
             : 'My Account'}
         </Box>
       ),

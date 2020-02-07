@@ -104,8 +104,8 @@ type Delegator @entity {
   unbonded: BigInt
   "The amount of fees a delegator has collected"
   fees: BigInt
-  "The accrued fees claimed by the delegator"
-  accruedFees: BigInt
+  "The amount of fees withdrawn"
+  withdrawnFees: BigInt
   "The amount of Livepeer Token the delegator has delegated"
   delegatedAmount: BigInt
   "The delegator's token allowance"

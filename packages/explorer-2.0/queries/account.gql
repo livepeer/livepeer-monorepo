@@ -6,7 +6,6 @@ query($account: ID!) {
     principal
     unbonded
     pendingFees
-    accruedFees
     startRound
     lastClaimRound {
       id
