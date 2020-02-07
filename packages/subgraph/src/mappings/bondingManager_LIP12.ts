@@ -42,7 +42,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   let transcoderUpdatedEvent = new TranscoderUpdatedEvent(
     event.transaction.hash.toHex() + '-TranscoderUpdate',
   )
-  transcoderUpdatedEvent.hash = event.block.hash.toHex()
+  transcoderUpdatedEvent.hash = event.transaction.hash.toHex()
   transcoderUpdatedEvent.blockNumber = event.block.number
   transcoderUpdatedEvent.gasUsed = event.transaction.gasUsed
   transcoderUpdatedEvent.gasPrice = event.transaction.gasPrice
@@ -74,7 +74,7 @@ export function transcoderActivated(event: TranscoderActivated): void {
   let transcoderActivatedEvent = new TranscoderActivatedEvent(
     event.transaction.hash.toHex() + '-TranscoderActivated',
   )
-  transcoderActivatedEvent.hash = event.block.hash.toHex()
+  transcoderActivatedEvent.hash = event.transaction.hash.toHex()
   transcoderActivatedEvent.blockNumber = event.block.number
   transcoderActivatedEvent.gasUsed = event.transaction.gasUsed
   transcoderActivatedEvent.gasPrice = event.transaction.gasPrice
@@ -100,7 +100,7 @@ export function transcoderDeactivated(event: TranscoderDeactivated): void {
   let transcoderDeactivatedEvent = new TranscoderDeactivatedEvent(
     event.transaction.hash.toHex() + '-TranscoderDeactivated',
   )
-  transcoderDeactivatedEvent.hash = event.block.hash.toHex()
+  transcoderDeactivatedEvent.hash = event.transaction.hash.toHex()
   transcoderDeactivatedEvent.blockNumber = event.block.number
   transcoderDeactivatedEvent.gasUsed = event.transaction.gasUsed
   transcoderDeactivatedEvent.gasPrice = event.transaction.gasPrice
@@ -127,6 +127,7 @@ export function earningsClaimed(event: EarningsClaimed): void {
   delegator.lastClaimRound = event.params.endRound.toString()
   delegator.bondedAmount = delegator.bondedAmount.plus(rewards)
   delegator.fees = delegator.fees.plus(fees)
+  delegator.accruedFees = delegator.accruedFees.plus(fees)
   delegator.save()
 
   let claimEarningsEvent = new ClaimEarningsEvent(

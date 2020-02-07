@@ -24,7 +24,6 @@ interface Props {
   hasLivepeerToken: boolean
   isMyDelegate: boolean
   threeBoxSpace: ThreeBoxSpace
-  myAccount?: any
   delegator: Delegator
   transcoder: Transcoder
   isMyAccount: boolean
@@ -32,7 +31,6 @@ interface Props {
 }
 
 export default ({
-  myAccount,
   account,
   role = 'Orchestrator',
   hasLivepeerToken,

@@ -11,45 +11,9 @@ export function useAccount(address = null) {
         ethBalance
         allowance
       }
-      threeBoxSpace(id: $account) {
-        __typename
-        id
-        did
-        name
-        website
-        description
-        image
-        addressLinks
-        defaultProfile
-      }
-      delegator(id: $account) {
-        id
-        pendingStake
-        startRound
-        lastClaimRound {
-          id
-        }
-        bondedAmount
-        unbondingLocks {
-          withdrawRound
-        }
-        delegate {
-          id
-          rewardCut
-          threeBoxSpace {
-            __typename
-            name
-            website
-            image
-            description
-          }
-        }
-      }
     }
   `
   const [account, setAccount] = useState(null)
-  const [delegator, setDelegator] = useState(null)
-  const [threeBoxSpace, setThreeBoxSpace] = useState(null)
 
   const { data, refetch } = useQuery(GET_ACCOUNT, {
     variables: {
@@ -62,16 +26,160 @@ export function useAccount(address = null) {
   useEffect(() => {
     if (data) {
       setAccount(data.account ? data.account : null)
-      setDelegator(data.delegator ? data.delegator : null)
-      setThreeBoxSpace(data.threeBoxSpace ? data.threeBoxSpace : null)
     } else {
       setAccount(null)
-      setDelegator(null)
+    }
+  }, [data])
+
+  return { account, refetch, query: GET_ACCOUNT }
+}
+
+export function useThreeBoxSpace(address = null) {
+  const GET_THREE_BOX = gql`
+    query($account: ID!) {
+      threeBoxSpace(id: $account) {
+        __typename
+        id
+        did
+        name
+        website
+        description
+        image
+        addressLinks
+        defaultProfile
+      }
+    }
+  `
+  const [threeBoxSpace, setThreeBoxSpace] = useState(null)
+
+  const { data, refetch } = useQuery(GET_THREE_BOX, {
+    variables: {
+      account: address && address.toLowerCase(),
+    },
+    skip: !address,
+    pollInterval: 10000,
+  })
+
+  useEffect(() => {
+    if (data) {
+      setThreeBoxSpace(data.threeBoxSpace ? data.threeBoxSpace : null)
+    } else {
       setThreeBoxSpace(null)
     }
   }, [data])
 
-  return { account, delegator, threeBoxSpace, refetch, query: GET_ACCOUNT }
+  return { threeBoxSpace, refetch, query: GET_THREE_BOX }
+}
+
+export function useDelegator(address = null) {
+  const GET_DELEGATOR = gql`
+    query($account: ID!) {
+      delegator(id: $account) {
+        id
+        pendingStake
+        bondedAmount
+        principal
+        unbonded
+        pendingFees
+        accruedFees
+        startRound
+        lastClaimRound {
+          id
+        }
+        unbondingLocks {
+          id
+          amount
+          unbondingLockId
+          withdrawRound
+          delegate {
+            id
+          }
+        }
+        delegate {
+          id
+          rewardCut
+          totalStake
+          threeBoxSpace {
+            __typename
+            name
+            website
+            image
+            description
+          }
+        }
+      }
+    }
+  `
+
+  const [delegator, setDelegator] = useState(null)
+
+  const { data, refetch } = useQuery(GET_DELEGATOR, {
+    variables: {
+      account: address && address.toLowerCase(),
+    },
+    skip: !address,
+    pollInterval: 10000,
+  })
+
+  useEffect(() => {
+    if (data) {
+      setDelegator(data.delegator ? data.delegator : null)
+    } else {
+      setDelegator(null)
+    }
+  }, [data])
+
+  return { delegator, refetch, query: GET_DELEGATOR }
+}
+
+export function useTranscoder(address = null) {
+  const GET_TRANSCODER = gql`
+    query($account: ID!) {
+      transcoder(id: $account) {
+        id
+        active
+        feeShare
+        rewardCut
+        status
+        active
+        totalStake
+        accruedFees
+        pools(first: 30, orderBy: id, orderDirection: desc) {
+          rewardTokens
+        }
+        threeBoxSpace {
+          __typename
+          name
+          website
+          image
+          description
+        }
+      }
+    }
+  `
+
+  const [transcoder, setTranscoder] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const { data, loading: dataLoading, refetch } = useQuery(GET_TRANSCODER, {
+    variables: {
+      account: address && address.toLowerCase(),
+    },
+    skip: !address,
+    pollInterval: 10000,
+    ssr: true,
+  })
+
+  useEffect(() => {
+    setLoading(dataLoading)
+    if (data) {
+      setTranscoder(data.transcoder ? data.transcoder : null)
+    } else {
+      setTranscoder(null)
+    }
+  }, [data, dataLoading])
+
+  return { transcoder, loading, refetch, query: GET_TRANSCODER }
 }
 
 export function useWeb3Mutation(mutation, options) {

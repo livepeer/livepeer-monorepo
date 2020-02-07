@@ -374,48 +374,51 @@ export function reward(event: Reward): void {
 }
 
 export function claimEarnings(call: ClaimEarningsCall): void {
-  let claimEarningsEventID = call.transaction.hash.toHex() + '-ClaimEarnings'
-  let claimEarningsEvent = ClaimEarningsEvent.load(claimEarningsEventID)
-
   // The Streamflow release introduced an event emitter for EarningsClaimed, so
-  // we can ignore this call handler henceforth
-  if (claimEarningsEvent != null) {
-    return
+  // we can ignore this call handler henceforth after the block in which the
+  // protocol was paused prior to the streamflow upgrade
+  if (call.block.number.le(BigInt.fromI32(9274600))) {
+    let claimEarningsEventID = call.transaction.hash.toHex() + '-ClaimEarnings'
+    let claimEarningsEvent = ClaimEarningsEvent.load(claimEarningsEventID)
+    let delegatorAddress = call.from
+    let endRound = call.inputs._endRound
+    let roundsManager = getRoundsManagerInstance(dataSource.network())
+    let currentRound = roundsManager.currentRound()
+    let delegator = Delegator.load(delegatorAddress.toHex())
+    let bondingManager = BondingManager.bind(call.to)
+    let delegatorData = bondingManager.getDelegator(delegatorAddress)
+    let bondedAmount = delegator.bondedAmount
+    let lastClaimRound = delegator.lastClaimRound
+
+    delegator.bondedAmount = delegatorData.value0
+    delegator.fees = delegatorData.value1
+    delegator.accruedFees = delegator.accruedFees.plus(delegatorData.value1)
+    delegator.lastClaimRound = endRound.toString()
+    delegator.save()
+
+    claimEarningsEvent = new ClaimEarningsEvent(
+      call.transaction.hash.toHex() + '-ClaimEarnings',
+    )
+    claimEarningsEvent.hash = call.transaction.hash.toHex()
+    claimEarningsEvent.blockNumber = call.block.number
+    claimEarningsEvent.gasUsed = call.transaction.gasUsed
+    claimEarningsEvent.gasPrice = call.transaction.gasPrice
+    claimEarningsEvent.timestamp = call.block.timestamp
+    claimEarningsEvent.from = call.transaction.from.toHex()
+    claimEarningsEvent.to = call.transaction.to.toHex()
+    claimEarningsEvent.round = currentRound.toString()
+    claimEarningsEvent.delegate = delegator.id
+    claimEarningsEvent.delegator = delegatorAddress.toHex()
+    claimEarningsEvent.startRound = lastClaimRound.toString()
+    claimEarningsEvent.endRound = endRound.toString()
+    claimEarningsEvent.rewardTokens = delegatorData.value0.minus(
+      bondedAmount as BigInt,
+    )
+    claimEarningsEvent.fees = delegatorData.value1.minus(
+      delegator.fees as BigInt,
+    )
+    claimEarningsEvent.save()
   }
-
-  let delegatorAddress = call.from
-  let endRound = call.inputs._endRound
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-  let delegator = Delegator.load(delegatorAddress.toHex())
-  let bondingManager = BondingManager.bind(call.to)
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
-
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
-  delegator.lastClaimRound = endRound.toString()
-  delegator.save()
-
-  claimEarningsEvent = new ClaimEarningsEvent(
-    call.transaction.hash.toHex() + '-ClaimEarnings',
-  )
-  claimEarningsEvent.hash = call.transaction.hash.toHex()
-  claimEarningsEvent.blockNumber = call.block.number
-  claimEarningsEvent.gasUsed = call.transaction.gasUsed
-  claimEarningsEvent.gasPrice = call.transaction.gasPrice
-  claimEarningsEvent.timestamp = call.block.timestamp
-  claimEarningsEvent.from = call.transaction.from.toHex()
-  claimEarningsEvent.to = call.transaction.to.toHex()
-  claimEarningsEvent.round = currentRound.toString()
-  claimEarningsEvent.delegate = delegator.id
-  claimEarningsEvent.delegator = delegatorAddress.toHex()
-  claimEarningsEvent.startRound = delegator.lastClaimRound.toString()
-  claimEarningsEvent.endRound = endRound.toString()
-  claimEarningsEvent.rewardTokens = delegatorData.value0.minus(
-    delegator.bondedAmount as BigInt,
-  )
-  claimEarningsEvent.fees = delegatorData.value1.minus(delegator.fees as BigInt)
-  claimEarningsEvent.save()
 }
 
 // Handler for WithdrawStake events

@@ -8,7 +8,7 @@ import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
 import { useWeb3React } from '@web3-react/core'
 import { ethers } from 'ethers'
-import { useAccount } from '../hooks'
+import { useThreeBoxSpace } from '../hooks'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
@@ -29,7 +29,7 @@ export default ({
 }) => {
   const context = useWeb3React()
   const { account } = context
-  const { threeBoxSpace } = useAccount(account)
+  const { threeBoxSpace } = useThreeBoxSpace(account)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { width } = useWindowSize()
 

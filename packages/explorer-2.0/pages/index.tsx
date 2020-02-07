@@ -3,8 +3,6 @@ import { useQuery } from '@apollo/react-hooks'
 import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
-import gql from 'graphql-tag'
-import { useAccount } from '../hooks'
 import { useWeb3React } from '@web3-react/core'
 import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
@@ -13,75 +11,22 @@ import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Utils from 'web3-utils'
 
-const GET_DATA = gql`
-  {
-    transcoders(
-      where: {
-        delegator_not: null
-        id_not: "0x0000000000000000000000000000000000000000"
-      }
-      orderBy: totalStake
-      orderDirection: desc
-    ) {
-      id
-      active
-      accruedFees
-      feeShare
-      activationRound
-      deactivationRound
-      rewardCut
-      active
-      totalStake
-      threeBoxSpace {
-        __typename
-        did
-        name
-        website
-        description
-        image
-      }
-      delegator {
-        startRound
-        bondedAmount
-        unbondingLocks {
-          withdrawRound
-        }
-      }
-      pools(first: 30, orderBy: id, orderDirection: desc) {
-        rewardTokens
-      }
-    }
-    protocol {
-      totalTokenSupply
-      totalBondedToken
-      inflation
-      inflationChange
-    }
-    selectedTranscoder @client {
-      __typename
-      index
-      rewardCut
-      id
-      threeBoxSpace {
-        __typename
-        name
-        website
-        description
-        image
-      }
-    }
-    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-      id
-    }
-  }
-`
-
 export default withApollo(() => {
+  const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
+  const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
-  const myAccount = useAccount(context.account)
-  const { data, loading, error } = useQuery(GET_DATA, {
+  const { data, loading, error } = useQuery(orchestratorsViewQuery, {
     ssr: false,
   })
+  const { data: myAccountData, loading: myAccountLoading } = useQuery(
+    accountQuery,
+    {
+      variables: {
+        account: context?.account?.toLowerCase(),
+      },
+      skip: !context.active,
+    },
+  )
 
   if (error) {
     console.log(error)
@@ -89,7 +34,7 @@ export default withApollo(() => {
 
   return (
     <Layout headerTitle="Orchestrators">
-      {loading ? (
+      {loading || myAccountLoading ? (
         <Flex
           sx={{
             height: [
@@ -110,24 +55,27 @@ export default withApollo(() => {
           <Flex
             sx={{
               flexDirection: 'column',
-              paddingTop: [0, 0, 0, 5],
+              pt: [1, 1, 1, 5],
               pr: [0, 0, 0, 0, 5],
               width: ['100%', '100%', '100%', '100%', '72%'],
             }}
           >
             {context.active && (
-              <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
-                {myAccount.account &&
-                  parseFloat(Utils.fromWei(myAccount.account.allowance)) ===
+              <Box>
+                {myAccountData &&
+                  parseFloat(Utils.fromWei(myAccountData.account.allowance)) ===
                     0 &&
-                  parseFloat(Utils.fromWei(myAccount.account.tokenBalance)) !==
-                    0 && <Approve account={myAccount.account} banner={true} />}
+                  parseFloat(
+                    Utils.fromWei(myAccountData.account.tokenBalance),
+                  ) !== 0 && (
+                    <Approve account={myAccountData.account} banner={true} />
+                  )}
               </Box>
             )}
-            {context.active && myAccount.delegator?.lastClaimRound && (
+            {context.active && myAccountData.delegator?.lastClaimRound && (
               <ClaimBanner
-                account={myAccount.account}
-                delegator={myAccount.delegator}
+                account={myAccountData.account}
+                delegator={myAccountData.delegator}
                 currentRound={data.currentRound[0]}
               />
             )}
@@ -146,9 +94,9 @@ export default withApollo(() => {
             }}
           >
             <StakingWidget
-              delegator={myAccount.delegator}
+              delegator={myAccountData?.delegator}
               currentRound={data.currentRound[0]}
-              account={myAccount.account}
+              account={myAccountData?.account}
               transcoder={
                 data.selectedTranscoder.id
                   ? data.selectedTranscoder

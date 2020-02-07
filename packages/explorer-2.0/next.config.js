@@ -8,6 +8,11 @@ const nextConfig = {
     THREEBOX_ENABLED: true,
   },
   webpack(config, options) {
+    config.module.rules.push({
+      test: /\.(graphql|gql)$/,
+      exclude: /node_modules/,
+      loader: 'graphql-tag/loader',
+    })
     config.resolve.alias['scrypt'] = require.resolve('scrypt.js/js.js')
     return config
   },

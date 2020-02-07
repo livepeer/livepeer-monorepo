@@ -9,7 +9,7 @@ import {
 } from 'graphql-tools'
 
 const subgraphEndpoint =
-  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
+  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
 
 export default async () => {
   const subgraphServiceLink = new HttpLink({
@@ -36,6 +36,7 @@ export default async () => {
     }
     extend type Delegator {
       pendingStake: String
+      pendingFees: String
       tokenBalance: String
       ethBalance: String
     }
@@ -70,6 +71,16 @@ export default async () => {
 
             const delegator = await sdk.rpc.getDelegator(_delegator.id)
             return delegator.pendingStake
+          },
+        },
+        pendingFees: {
+          async resolve(_delegator, _args, _context, _info) {
+            const sdk = await LivepeerSDK({
+              gas: null,
+            })
+
+            const delegator = await sdk.rpc.getDelegator(_delegator.id)
+            return delegator.pendingFees
           },
         },
         tokenBalance: {

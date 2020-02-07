@@ -102,7 +102,7 @@ function createApolloClient(initialState = {}) {
 
   const wsLink: any = process.browser
     ? new WebSocketLink({
-        uri: `wss://api.thegraph.com/subgraphs/name/livepeer/livepeer`,
+        uri: `wss://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary`,
         options: {
           reconnect: true,
         },

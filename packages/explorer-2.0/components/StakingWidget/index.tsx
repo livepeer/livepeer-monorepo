@@ -6,12 +6,8 @@ import ArrowDown from '../../public/img/arrow-down.svg'
 import Footer from './Footer'
 import { Tabs, TabList, Tab } from './Tabs'
 import { Account, Delegator, Transcoder, Protocol, Round } from '../../@types'
-import Approve from '../Approve'
-import { useWeb3React } from '@web3-react/core'
 import InputBox from './InputBox'
 import { Flex } from 'theme-ui'
-import ClaimBanner from '../ClaimBanner'
-import Utils from 'web3-utils'
 
 interface Props {
   transcoder: Transcoder

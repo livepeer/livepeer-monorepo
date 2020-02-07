@@ -3,7 +3,6 @@ import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
 import Spinner from '../../components/Spinner'
 import ListItem from '../ListItem'
 import Unlink from '../../public/img/unlink.svg'
@@ -15,127 +14,24 @@ import Play from '../../public/img/play.svg'
 import moment from 'moment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-const GET_DATA = gql`
-  query($account: String!, $first: Int!, $skip: Int!) {
-    transactions(
-      orderBy: timestamp
-      orderDirection: desc
-      where: { from: $account }
-      first: $first
-      skip: $skip
-    ) {
-      hash
-      timestamp
-      ... on BondEvent {
-        __typename
-        delegator {
-          id
-        }
-        newDelegate {
-          id
-        }
-        oldDelegate {
-          id
-        }
-        round {
-          id
-        }
-        additionalAmount
-      }
-      ... on UnbondEvent {
-        __typename
-        round {
-          id
-        }
-        delegate {
-          id
-        }
-        amount
-      }
-      ... on RebondEvent {
-        __typename
-        delegate {
-          id
-        }
-        amount
-        round {
-          id
-        }
-      }
-      ... on TranscoderUpdatedEvent {
-        __typename
-        rewardCut
-        feeShare
-        round {
-          id
-        }
-      }
-      ... on RewardEvent {
-        __typename
-        rewardTokens
-        round {
-          id
-        }
-      }
-      ... on ClaimEarningsEvent {
-        __typename
-        startRound {
-          id
-        }
-        endRound {
-          id
-        }
-        rewardTokens
-        fees
-        round {
-          id
-        }
-      }
-      ... on WithdrawStakeEvent {
-        __typename
-        amount
-        round {
-          id
-        }
-      }
-      ... on WithdrawFeesEvent {
-        __typename
-        amount
-        round {
-          id
-        }
-      }
-      ... on ApprovalEvent {
-        __typename
-        round {
-          id
-        }
-        amount
-      }
-      ... on InitializeRoundEvent {
-        __typename
-        round {
-          id
-        }
-      }
-    }
-  }
-`
-
 export default () => {
+  const historyQuery = require('../../queries/historyView.gql')
   const router = useRouter()
   const query = router.query
   const account = query.account as string
 
-  const { data, loading, error, fetchMore, stopPolling } = useQuery(GET_DATA, {
-    variables: {
-      account: account.toLowerCase(),
-      first: 10,
-      skip: 0,
+  const { data, loading, error, fetchMore, stopPolling } = useQuery(
+    historyQuery,
+    {
+      variables: {
+        account: account.toLowerCase(),
+        first: 10,
+        skip: 0,
+      },
+      ssr: false,
+      notifyOnNetworkStatusChange: true,
     },
-    ssr: false,
-    notifyOnNetworkStatusChange: true,
-  })
+  )
 
   if (error) {
     console.error(error)
@@ -156,7 +52,7 @@ export default () => {
     )
   }
 
-  if (data && !data.transactions.length) {
+  if (!data?.transactions?.length) {
     return <div sx={{ pt: 5 }}>No history</div>
   }
 
