@@ -151,10 +151,10 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
   let bondingManager = BondingManager.bind(event.address)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
-  let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
+  let delegateData = bondingManager.getDelegator(transcoderAddress)
 
   // Update transcoder total stake
-  transcoder.totalStake = totalStake
+  transcoder.totalStake = delegateData.value3
 
   // Apply store updates
   transcoder.save()
@@ -180,13 +180,10 @@ export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
   let newDelegateAddress = event.params.delegate
   let delegatorAddress = event.params.delegator
-
-  let transcoderTotalStake = bondingManager.transcoderTotalStake(
-    newDelegateAddress,
-  )
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let delegateData = bondingManager.getDelegator(newDelegateAddress)
 
   let transcoder = Transcoder.load(newDelegateAddress.toHex())
   if (transcoder == null) {
@@ -203,8 +200,9 @@ export function bond(event: Bond): void {
     delegator = new Delegator(delegatorAddress.toHex())
   }
 
-  // If self delegating, assign reference to self
+  // If self delegating, set status and assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
+    transcoder.status = 'Registered'
     transcoder.delegator = delegatorAddress.toHex()
   }
 
@@ -222,19 +220,19 @@ export function bond(event: Bond): void {
       oldTranscoder.delegator = null
     }
 
-    let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
+    let delegateData = bondingManager.getDelegator(
       Address.fromString(oldTranscoder.id),
     )
 
-    oldTranscoder.totalStake = oldTranscoderTotalStake
-    oldDelegate.delegatedAmount = oldTranscoderTotalStake
+    oldTranscoder.totalStake = delegateData.value3
+    oldDelegate.delegatedAmount = delegateData.value3
 
     oldDelegate.save()
     oldTranscoder.save()
   }
 
-  transcoder.totalStake = transcoderTotalStake
-  delegate.delegatedAmount = transcoderTotalStake
+  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = delegateData.value3
 
   // additional amount == new bondedAmount minus previous bonded amount
   let additionalAmount = delegatorData.value0.minus(
@@ -293,18 +291,17 @@ export function unbond(event: Unbond): void {
     delegate = new Delegator(transcoderAddress)
   }
 
-  let totalStake = bondingManager.transcoderTotalStake(
+  let delegateData = bondingManager.getDelegator(
     Address.fromString(transcoderAddress),
   )
 
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  transcoder.totalStake = totalStake
-  delegate.delegatedAmount = totalStake
+  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = delegateData.value3
 
   // Delegator no longer bonded to anyone
   delegator.delegate = null
-
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
@@ -339,10 +336,9 @@ export function reward(event: Reward): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   let delegate = Delegator.load(transcoderAddress.toHex())
-  let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
+  let delegateData = bondingManager.getDelegator(transcoderAddress)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
-  let delegateData = bondingManager.getDelegator(transcoderAddress)
   let poolId = makePoolId(transcoderAddress, currentRound)
   let pool = Pool.load(poolId)
 
@@ -352,7 +348,7 @@ export function reward(event: Reward): void {
   pool.feeShare = transcoder.feeShare
   pool.rewardCut = transcoder.rewardCut
 
-  transcoder.totalStake = totalStake
+  transcoder.totalStake = delegateData.value3
   transcoder.lastRewardRound = currentRound.toString()
 
   transcoder.save()
