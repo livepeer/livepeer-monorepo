@@ -1,9 +1,19 @@
 /**
- * Entrypoint for our CloudFlare worker. Eventually will have bits of the API compiled into it, for now it's
- * just separate.
+ * Entrypoint for our CloudFlare worker.
  */
+
+process.hrtime = require('browser-process-hrtime')
+
+self.localStorage = {
+  debug: 'express:*',
+}
+
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
+import 'express-async-errors'
 import composeM3U8 from './controllers/compose-m3u8'
+// import appRouter from './app-router'
+import workerSecrets from './worker-secrets.json'
+import camelcase from 'camelcase'
 
 /**
  * maps the path of incoming request to the request pathKey to look up
@@ -12,6 +22,20 @@ import composeM3U8 from './controllers/compose-m3u8'
  * the content of bucket/index.html
  * @param {Request} request incoming request
  */
+
+self.setImmediate = fn => setTimeout(fn, 0)
+
+const options = {}
+
+for (let [key, value] of Object.entries(workerSecrets)) {
+  key = camelcase(key.slice(3))
+  options[key] = value
+}
+
+// const routerPromise = appRouter(options)
+
+// staging, prod, and dev sets of secrets
+// env variables in a JSON blob, turn into file, import file as we're building worker
 const mapRequestToAsset = request => {
   const parsedUrl = new URL(request.url)
   let pathname = parsedUrl.pathname
@@ -169,8 +193,58 @@ async function serveStaticAsset(event) {
  * Fetch and log a request
  * @param {Request} request
  */
+
+function expressRequest(req, router) {
+  return new Promise((resolve, reject) => {
+    let status = 200
+    const res = {
+      status: stat => {
+        status = stat
+      },
+      json: jsonObj => {
+        resolve(
+          new Response(JSON.stringify(jsonObj), {
+            status: status,
+            headers: {},
+          }),
+        )
+      },
+    }
+    router(req, res, error => {
+      if (!error) {
+        res.json('404!!!')
+      } else {
+        reject(error)
+      }
+    })
+  })
+}
 async function handleEvent(event) {
-  const req = event.request
+  const req = event.request;
+  // const path = new URL(event.request.url).pathname
+  // const fullUrl = new URL(event.request.url).href
+  // const req = {
+  //   url: path,
+  //   query: {},
+  //   path: path,
+  //   params: path.split('/').filter(x => x),
+  //   protocol: 'http',
+  //   method: event.request.method,
+  //   headers: event.request.headers,
+  //   get: header => event.request.headers[header],
+  // }
+  // const func = function nextFunc(error) {
+  //   console.log(`Next function error: ${error.stack}`)
+  // }
+
+  // try {
+  //   const { router, store } = await routerPromise
+  //   return await expressRequest(req, router)
+  // } catch (error) {
+  //   console.log(`error: ${error.stack}`)
+  //   return new Response('error')
+  // }
+
   const url = new URL(req.url)
   if (url.hostname.startsWith('docs.')) {
     if (url.pathname === '/') {

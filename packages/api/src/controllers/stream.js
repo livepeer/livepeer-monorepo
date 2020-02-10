@@ -3,7 +3,7 @@ import { parse as parseQS } from 'querystring'
 import { parse as parseUrl } from 'url'
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
-import { Router } from 'express'
+import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
@@ -30,7 +30,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
     res.links({
       next: next.href,
     })
-  }
+  } // CF doesn't know what this means
   res.json(output)
 })
 

@@ -5,3 +5,5 @@ coverage*
 bin
 dist-worker
 minio
+schema.json
+.cache

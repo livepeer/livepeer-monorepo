@@ -16,7 +16,8 @@ async function generateUserAndToken(req, res, next) {
   const id = req.token
   if (!id) {
     // for now send a 406 if the user doesn't provide any access_token
-    return res.sendStatus(406)
+    res.status(406)
+    return res.json({ errors: ['missing auth token'] })
   }
 
   try {
@@ -96,7 +97,8 @@ function authFactory(params) {
 
     if (!req || !req.token) {
       // if no apiToken provided, and no google credentials provided, deny access
-      return res.sendStatus(401)
+      res.status(401)
+      return res.json({ errors: ['missing auth token'] })
     }
 
     logger.info('authFactory params ', params)

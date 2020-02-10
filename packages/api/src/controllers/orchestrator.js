@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import Router from 'express/lib/router'
 
 const app = Router()
 

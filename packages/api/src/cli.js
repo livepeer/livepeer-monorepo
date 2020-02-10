@@ -111,28 +111,6 @@ export default function parseCli(argv) {
           type: 'string',
           default: '[]',
         },
-        's3-url': {
-          describe: 'address of s3 object store',
-          type: 'string',
-        },
-        's3-url-external': {
-          describe:
-            'externally-available s3 object store address for rewriting manifests',
-          type: 'string',
-        },
-        's3-access': {
-          describe: 's3 access key id',
-          type: 'string',
-        },
-        's3-secret': {
-          describe: 's3 secret access key',
-          type: 'string',
-        },
-        'upstream-broadcaster': {
-          describe:
-            'broadcaster to which we should proxy incoming /live requests',
-          type: 'string',
-        },
       })
       .help()
       .parse(argv)

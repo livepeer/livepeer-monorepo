@@ -11,7 +11,7 @@ import streamProxy from './controllers/stream-proxy'
 import streamProxyOS from './controllers/stream-proxy-os'
 import liveProxy from './controllers/live-proxy'
 import proxy from 'http-proxy-middleware'
-import os from 'os'
+import appRouter from './app-router'
 
 export default async function makeApp(params) {
   const {
@@ -41,93 +41,11 @@ export default async function makeApp(params) {
     upstreamBroadcaster,
   } = params
   // Storage init
-  let store
-  if (storage === 'level') {
-    store = new LevelStore({ dbPath })
-  } else if (storage === 'postgres') {
-    store = new PostgresStore({ postgresUrl })
-  } else if (storage === 'cloudflare') {
-    store = new CloudflareStore({
-      cloudflareNamespace,
-      cloudflareAccount,
-      cloudflareAuth,
-    })
-  }
-  await store.ready
 
-  // Generate a random hostname if I am a worker
-  let hostname
-  if (typeof os.hostname === 'function') {
-    hostname = os.hostname()
-  } else {
-    hostname = `api-${uuid()}`
-  }
-
-  // Logging, JSON parsing, store injection
+  const { router, store } = await appRouter(params)
   const app = express()
-  app.use(healthCheck)
   app.use(morgan('combined'))
-  app.use((req, res, next) => {
-    req.store = store
-    req.config = params
-    next()
-  })
-
-  // Populate Kubernetes getOrchestrators and getBroadcasters is provided
-  if (kubeNamespace) {
-    app.use(
-      kubernetes({
-        kubeNamespace,
-        kubeBroadcasterService,
-        kubeOrchestratorService,
-        kubeBroadcasterTemplate,
-        kubeOrchestratorTemplate,
-      }),
-    )
-  }
-  // This middleware knows to use itself as a fallback
-  app.use(hardcodedNodes({ orchestrators, broadcasters }))
-
-  if (s3Url && s3Access && s3Secret) {
-    app.use(
-      '/live',
-      liveProxy({
-        s3Url,
-        s3Access,
-        s3Secret,
-        upstreamBroadcaster,
-        s3UrlExternal,
-        hostname,
-      }),
-    )
-    app.use(
-      '/stream',
-      streamProxyOS({
-        s3Url,
-        s3Access,
-        s3Secret,
-        upstreamBroadcaster,
-        s3UrlExternal,
-        hostname,
-      }),
-    )
-  } else {
-    app.use('/stream', streamProxy)
-  }
-  app.use(jsonParser())
-  app.use(bearerToken())
-
-  // Add a controller for each route at the /${httpPrefix} route
-  const prefixRouter = Router()
-  for (const [name, controller] of Object.entries(controllers)) {
-    prefixRouter.use(`/${name}`, controller)
-  }
-  app.use(httpPrefix, prefixRouter)
-  // Special case: handle /stream proxies off that endpoint
-
-  prefixRouter.get('/google-client', async (req, res, next) => {
-    res.json({ clientId: req.config.clientId })
-  })
+  app.use(router)
 
   let listener
   let listenPort
@@ -166,22 +84,6 @@ export default async function makeApp(params) {
     sigterm()
   }
   process.on('unhandledRejection', unhandledRejection)
-
-  // This far down, this would otherwise be a 404... hit up the fallback proxy if we have it.
-  // Mostly this is used for proxying to the Next.js server in development.
-  if (fallbackProxy) {
-    app.use(proxy({ target: fallbackProxy, changeOrigin: true }))
-  }
-
-  // If we throw any errors with numerical statuses, use them.
-  app.use((err, req, res, next) => {
-    if (typeof err.status === 'number') {
-      res.status(err.status)
-      res.json({ errors: [err.message] })
-    }
-
-    next(err)
-  })
 
   return {
     ...params,

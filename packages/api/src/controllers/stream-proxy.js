@@ -2,7 +2,7 @@
 // /api/* that everything else lives at. This makes it follow the naming
 // conventions on the broadcasters themselves.
 
-import { Router } from 'express'
+import Router from 'express/lib/router'
 import composeM3U8 from './compose-m3u8'
 const app = Router()
 

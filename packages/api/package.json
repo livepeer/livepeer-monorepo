@@ -18,14 +18,15 @@
     "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "postgres:stop": "docker rm -f postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
-    "dl-livepeer": "dl-livepeer -b media-integration -o ./bin",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
-    "prepare:worker": "parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
-    "prepare": "run-p \"prepare:**\"",
+    "prepare:worker": "echo ${WORKER_SECRETS:-'{}'} > src/worker-secrets.json && parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
+    "prepare": "js-yaml src/schema/schema.yaml > src/schema/schema.json && run-p \"prepare:**\"",
     "dev:live-server": "live-server --port=3005 docs",
     "redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
     "dev:server": "nodemon -w src -x node -r esm src/cli.js -e js,yaml",
-    "dev:worker": "parcel watch --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
+    "dev:build-worker": "parcel watch --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
+    "dev:run-worker": "nodemon -w dist-worker/worker.js -x 'cloudworker -p 3011 -d dist-worker/worker.js'",
+    "dev:yaml-json": "nodemon -w src/schema/schema.yaml -x 'js-yaml src/schema/schema.yaml > src/schema/schema.json'",
     "dev": "run-p \"dev:**\"",
     "dev-with-minio": "cross-env LP_S3_URL=http://127.0.0.1:9000/store LP_S3_URL_EXTERNAL=http://localhost:9000/store LP_S3_ACCESS=devkey LP_S3_SECRET=devsecret LP_UPSTREAM_BROADCASTER=http://127.0.0.1:3085 run-p minio dev:server dev-with-minio:go-livepeer",
     "dev-with-minio:go-livepeer": "run-p 'go-livepeer:** -s3bucket=http://127.0.0.1:9000/store -s3creds=devkey/devsecret'",
@@ -45,6 +46,8 @@
     "any-base": "^1.1.0",
     "aws-serverless-express": "^3.3.6",
     "body-parser": "^1.19.0",
+    "browser-process-hrtime": "^1.0.0",
+    "camelcase": "^5.3.1",
     "cross-env": "^5.2.0",
     "dotenv": "^8.1.0",
     "express": "^4.16.4",
@@ -76,7 +79,6 @@
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@dollarshaveclub/cloudworker": "^0.1.2",
-    "dl-livepeer": "0.0.4",
     "esm": "^3.2.22",
     "istanbul-api": "^2.1.6",
     "istanbul-lib-coverage": "^2.0.5",
@@ -103,6 +105,8 @@
   ],
   "alias": {
     "pg-native": "./src/empty.js",
-    "level": "./src/empty.js"
+    "level": "./src/empty.js",
+    "@kubernetes/client-node": "./src/empty.js",
+    "./src/store/level-store.js": "./src/empty.js"
   }
 }

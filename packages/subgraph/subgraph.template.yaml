@@ -215,4 +215,4 @@ dataSources:
           file: ./abis/RoundsManager.json
       eventHandlers:
         - event: SetCurrentRewardTokens(uint256,uint256)
-          handler: setCurrentRewardTokens    
+          handler: setCurrentRewardTokens
