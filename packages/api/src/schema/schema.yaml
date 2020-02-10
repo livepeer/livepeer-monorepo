@@ -8,6 +8,8 @@ tags:
     description: Wowza Stream Endpoints
   - name: objectstores
     description: Object Stores Endpoints
+  - name: streaminstance
+    description: Stream Instance Endpoints
 
 components:
   schemas:
@@ -153,6 +155,30 @@ components:
           type: string
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
 
+    streaminstance:
+      type: object
+      required:
+        - broadcasterId
+        - streamId
+        - kind
+      additionalProperties: false
+      properties:
+        broadcasterId:
+          type: string
+          description: id of broadcaster through which stream is being broadcast
+          example: 6E58278E-C2A0-42F9-8FCB-5460C6B46007
+        streamId:
+          type: string
+          description: id of stream
+          example: AF6BFF97-8494-498A-B765-B28F239CF3FE
+        id:
+          type: string
+          example: 09F8B46C-61A0-4254-9875-F71F4C605BC7
+        kind:
+          type: string
+          readOnly: true
+          example: stream-instance
+
 paths:
   /stream:
     tags:
@@ -241,6 +267,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/objectstores'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /streaminstance:
+    tags:
+      - streaminstance
+    post:
+      description: Receives stream instances
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/streaminstance'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/streaminstance'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+    get:
+      description: Lists stream instances
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/streaminstance'
         default:
           description: Error
           content:
