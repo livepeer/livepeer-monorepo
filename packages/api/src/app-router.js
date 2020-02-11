@@ -72,9 +72,9 @@ export default async function makeApp(params) {
         kubeOrchestratorTemplate,
       }),
     )
-  } else {
-    app.use(hardcodedNodes({ orchestrators, broadcasters }))
   }
+
+  app.use(hardcodedNodes({ orchestrators, broadcasters }))
 
   // Add a controller for each route at the /${httpPrefix} route
   const prefixRouter = Router() // amalgamates our endpoints together and serves them out
