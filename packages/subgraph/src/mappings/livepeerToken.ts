@@ -7,6 +7,8 @@ import { getRoundsManagerInstance } from './util'
 export function approval(event: Approval): void {
   let owner = event.params.owner
   let amount = event.params.value
+  let spender = event.params.spender
+
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
 
@@ -30,6 +32,7 @@ export function approval(event: Approval): void {
   approvalEvent.timestamp = event.block.timestamp
   approvalEvent.from = event.transaction.from.toHex()
   approvalEvent.to = event.transaction.to.toHex()
+  approvalEvent.spender = spender.toHex()
   approvalEvent.round = currentRound.toString()
   approvalEvent.amount = amount
   approvalEvent.delegator = delegator.id

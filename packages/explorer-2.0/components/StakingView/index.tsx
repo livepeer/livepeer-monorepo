@@ -1,27 +1,14 @@
-import { Box, Flex, Styled } from 'theme-ui'
+import { Box, Flex } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
-import gql from 'graphql-tag'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 import Button from '../Button'
-
-const GET_DATA = gql`
-  query {
-    protocol {
-      totalTokenSupply
-      totalBondedToken
-    }
-    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-      id
-    }
-  }
-`
 
 export default ({ delegator, protocol, currentRound }) => {
   const router = useRouter()
@@ -354,12 +341,14 @@ export default ({ delegator, protocol, currentRound }) => {
                     (
                     {(totalBondedToken === 0
                       ? 0
-                      : (totalBondedToken -
+                      : ((totalBondedToken -
                           parseFloat(
                             Utils.fromWei(delegator.delegate.totalStake),
                           ) -
                           pendingStake) /
-                        totalBondedToken) * 100}
+                          totalBondedToken) *
+                        100
+                    ).toPrecision(4)}
                     %)
                   </span>
                 </span>

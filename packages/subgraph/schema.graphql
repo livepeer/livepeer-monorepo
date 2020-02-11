@@ -353,6 +353,7 @@ type ApprovalEvent implements Transaction @entity {
   gasUsed: BigInt!
   gasPrice: BigInt!
   timestamp: BigInt
+  spender: String
   from: String
   to: String
   round: Round

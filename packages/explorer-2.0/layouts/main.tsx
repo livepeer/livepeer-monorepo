@@ -37,6 +37,7 @@ export default ({
     },
     skip: !context.account,
     pollInterval: 10000,
+    ssr: false,
   })
 
   const [drawerOpen, setDrawerOpen] = useState(false)

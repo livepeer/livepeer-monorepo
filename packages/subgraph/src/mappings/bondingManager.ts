@@ -373,7 +373,7 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   // The Streamflow release introduced an event emitter for EarningsClaimed, so
   // we can ignore this call handler henceforth after the block in which the
   // protocol was paused prior to the streamflow upgrade
-  if (call.block.number.le(BigInt.fromI32(9274600))) {
+  if (call.block.number.le(BigInt.fromI32(9274414))) {
     let claimEarningsEventID = call.transaction.hash.toHex() + '-ClaimEarnings'
     let claimEarningsEvent = ClaimEarningsEvent.load(claimEarningsEventID)
     let delegatorAddress = call.from

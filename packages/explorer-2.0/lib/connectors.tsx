@@ -15,11 +15,11 @@ export const Injected = new InjectedConnector({
 })
 
 export const Portis = new PortisConnector({
-  dAppId: '0e9ac0c3-9184-4660-8492-6989cf3dc5d4',
+  dAppId: process.env.PORTIS_DAPP_ID,
   networks: [1],
 })
 
 export const Fortmatic = new FortmaticConnector({
-  apiKey: 'pk_live_48F5D30F4D931706',
+  apiKey: process.env.FORTMATIC_API_KEY,
   chainId: 1,
 })
