@@ -26,6 +26,10 @@ import camelcase from 'camelcase'
 self.setImmediate = fn => setTimeout(fn, 0)
 
 const options = {}
+let servers = [
+    'esh-staging.livepeer-staging.live',
+    'mcw-staging.livepeer-staging.live',
+  ]
 
 for (let [key, value] of Object.entries(workerSecrets)) {
   key = camelcase(key.slice(3))
@@ -72,16 +76,17 @@ const startsWithApiPrefix = pathname => {
   return false
 }
 
-const geolocate = async (url, first = false) => {
-  // Sometimes comes in as a string? Normalize.
-  url = new URL(url)
-  let servers = [
-    'esh-staging.livepeer-staging.live',
-    'mcw-staging.livepeer-staging.live',
-  ]
+const selectServers = (url, servers) => {
   if (url.hostname === 'livepeer.live') {
     servers = ['esh.livepeer.live', 'chi.livepeer-ac.live']
   }
+  return servers
+}
+
+const geolocate = async (url, first = false) => {
+  // Sometimes comes in as a string? Normalize.
+  url = new URL(url)
+  servers = selectServers(url, servers)
 
   let smallestServer
   let smallestDuration = Infinity
@@ -279,6 +284,23 @@ async function handleEvent(event) {
       302,
     )
   }
+
+  if (url.pathname.startsWith('/broadcaster/addresses')) {
+    const responses = []
+    const newUrl = new URL(req.url)
+    servers = selectServers(newUrl, servers)
+    servers.forEach(server => {
+      newUrl.hostname = server
+      newUrl.protocol = 'https:'
+      newUrl.port = 443
+      const newRequest = new Request(newUrl.toString(), new Request(req))
+      const resp = fetch(newRequest)
+      responses.push(resp)
+    })
+
+    return responses
+  }
+
   if (url.pathname.startsWith('/api/broadcaster/status')) {
     return amalgamate(req)
   }

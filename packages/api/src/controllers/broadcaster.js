@@ -26,4 +26,24 @@ app.get('/status', authMiddleware({}), async (req, res, next) => {
   res.json(statuses)
 })
 
+app.get('/addresses', async (req, res, next) => {
+  const broadcasters = await req.getBroadcasters(req)
+  const ethAddresses = {}
+  for (const broadcaster of broadcasters) {
+    const addrRes = await fetch(`${broadcaster.cliAddress}/ethAddr`)
+    let ethAddr
+    try {
+      ethAddr = await addrRes.json()
+    } catch (e) {
+      break
+    }
+
+    if (ethAddr) {
+      ethAddresses[broadcaster.address] = await addrRes.json()
+    }
+  }
+
+  res.json(ethAddresses)
+})
+
 export default app
