@@ -9,9 +9,7 @@ import StakingWidget from '../../../components/StakingWidget'
 import TokenholdersView from '../../../components/TokenholdersView'
 import CampaignView from '../../../components/CampaignView'
 import StakingView from '../../../components/StakingView'
-import { Transcoder, Protocol, Round } from '../../../@types'
 import Spinner from '../../../components/Spinner'
-import { useAccount } from '../../../hooks'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
 import { getDelegatorStatus } from '../../../lib/utils'
@@ -21,50 +19,34 @@ import StakingWidgetModal from '../../../components/StakingWidgetModal'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
-
-const GET_DATA = gql`
-  query($account: ID!) {
-    transcoder(id: $account) {
-      id
-      rewardCut
-      feeShare
-      totalStake
-      active
-      threeBoxSpace {
-        __typename
-        name
-        website
-        image
-        description
-      }
-    }
-    protocol {
-      totalTokenSupply
-      totalBondedToken
-      inflation
-      inflationChange
-    }
-    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-      id
-    }
-  }
-`
+import FeesView from '../../../components/FeesView'
 
 export default withApollo(() => {
+  const accountViewQuery = require('../../../queries/accountView.gql')
+  const accountQuery = require('../../../queries/account.gql')
   const router = useRouter()
   const context = useWeb3React()
   const { width } = useWindowSize()
   const { query, asPath } = router
   const slug = query.slug
-  const { account, delegator, threeBoxSpace, refetch } = useAccount(
-    query.account,
-  )
-  const { data, loading } = useQuery(GET_DATA, {
+  const { data, loading, refetch } = useQuery(accountViewQuery, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
+    pollInterval: 10000,
     ssr: false,
   })
+
+  const { data: myAccountData, loading: myAccountLoading } = useQuery(
+    accountQuery,
+    {
+      variables: {
+        account: context?.account?.toLowerCase(),
+      },
+      skip: !context.active, // skip this query if wallet not connected
+      ssr: false,
+    },
+  )
 
   const SELECTED_STAKING_ACTION = gql`
     {
@@ -73,9 +55,7 @@ export default withApollo(() => {
   `
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
 
-  const myAccount = useAccount(context.account)
-
-  if (loading) {
+  if (loading || myAccountLoading) {
     return (
       <Layout>
         <Flex
@@ -97,14 +77,11 @@ export default withApollo(() => {
     )
   }
 
-  const transcoder: Transcoder = data.transcoder
-  const protocol: Protocol = data.protocol
-  const currentRound: Round = data.currentRound[0]
-  const isMyAccount: boolean =
-    context.account && context.account == query.account
-  const isStaked: boolean = !!(delegator && delegator?.delegate)
-  const hasLivepeerToken: boolean =
-    account && parseFloat(Utils.fromWei(account.tokenBalance)) > 0
+  const isMyAccount =
+    context?.account?.toLowerCase() == query.account.toString().toLowerCase()
+  const isStaked = !!data.delegator?.delegate
+  const hasLivepeerToken =
+    data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0
   let role: string
 
   if (data?.transcoder?.id && isStaked) {
@@ -116,7 +93,7 @@ export default withApollo(() => {
   }
 
   const isMyDelegate =
-    query.account.toString() === myAccount?.delegator?.delegate?.id
+    query.account.toString() === myAccountData?.delegator?.delegate?.id
 
   const tabs: Array<TabType> = getTabs(
     role,
@@ -126,8 +103,8 @@ export default withApollo(() => {
   )
 
   const headerTitle =
-    process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
-      ? threeBoxSpace.name
+    process.env.THREEBOX_ENABLED && data?.threeBoxSpace?.name
+      ? data.threeBoxSpace.name
       : query.account
           .toString()
           .replace(query.account.toString().slice(5, 39), '…')
@@ -140,42 +117,59 @@ export default withApollo(() => {
           mb: 8,
           pr: [0, 0, 0, 6],
           pt: [1, 1, 1, 5],
-          width: ['100%', '100%', '100%', '72%'],
+          width: [
+            '100%',
+            '100%',
+            '100%',
+            role == 'Orchestrator' || isMyDelegate ? '72%' : '100%',
+          ],
         }}
       >
         {context.active && (
-          <Box sx={{ display: ['none', 'none', 'none', 'block'] }}>
-            {myAccount.account &&
-              parseFloat(Utils.fromWei(myAccount.account.allowance)) === 0 &&
-              parseFloat(Utils.fromWei(myAccount.account.tokenBalance)) !==
-                0 && <Approve account={myAccount.account} banner={true} />}
+          <Box>
+            {myAccountData.account &&
+              parseFloat(Utils.fromWei(myAccountData.account.allowance)) ===
+                0 &&
+              parseFloat(Utils.fromWei(myAccountData.account.tokenBalance)) !==
+                0 && <Approve account={myAccountData.account} banner={true} />}
           </Box>
         )}
-        {context.active && myAccount?.delegator?.lastClaimRound && (
+        {context.active && myAccountData?.delegator?.lastClaimRound && (
           <ClaimBanner
-            account={myAccount.account}
-            delegator={myAccount.delegator}
-            currentRound={currentRound}
+            delegator={myAccountData.delegator}
+            currentRound={data.currentRound[0]}
           />
         )}
         <Profile
-          myAccount={myAccount}
           account={query.account.toString()}
-          delegator={delegator}
-          threeBoxSpace={threeBoxSpace}
+          delegator={data.delegator}
+          threeBoxSpace={data.threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}
           isMyDelegate={isMyDelegate}
           isMyAccount={isMyAccount}
           refetch={refetch}
           role={role}
           sx={{ mb: 4 }}
-          status={getDelegatorStatus(delegator, currentRound)}
-          transcoder={transcoder}
+          status={getDelegatorStatus(data.delegator, data.currentRound[0])}
+          transcoder={data.transcoder}
         />
         <Tabs tabs={tabs} />
-        {slug == 'campaign' && <CampaignView />}
+        {slug == 'campaign' && <CampaignView transcoder={data.transcoder} />}
+        {slug == 'fees' && (
+          <FeesView
+            delegator={data.delegator}
+            currentRound={data.currentRound[0]}
+            isMyAccount={isMyAccount}
+          />
+        )}
         {slug == 'tokenholders' && <TokenholdersView />}
-        {slug == 'staking' && <StakingView />}
+        {slug == 'staking' && (
+          <StakingView
+            delegator={data.delegator}
+            protocol={data.protocol}
+            currentRound={data.currentRound[0]}
+          />
+        )}
         {slug == 'history' && <HistoryView />}
       </Flex>
       {(role == 'Orchestrator' || isMyDelegate) &&
@@ -191,10 +185,10 @@ export default withApollo(() => {
           >
             <StakingWidget
               currentRound={data.currentRound[0]}
-              delegator={myAccount.delegator}
-              account={myAccount.account}
-              transcoder={transcoder}
-              protocol={protocol}
+              delegator={myAccountData?.delegator}
+              account={myAccountData?.account}
+              transcoder={data.transcoder}
+              protocol={data.protocol}
             />
           </Flex>
         ) : (
@@ -202,10 +196,10 @@ export default withApollo(() => {
             <StakingWidget
               selectedAction={selectedStakingAction?.selectedStakingAction}
               currentRound={data.currentRound[0]}
-              delegator={myAccount.delegator}
-              account={myAccount.account}
-              transcoder={transcoder}
-              protocol={protocol}
+              delegator={myAccountData?.delegator}
+              account={myAccountData?.account}
+              transcoder={data.transcoder}
+              protocol={data.protocol}
             />
           </StakingWidgetModal>
         ))}
@@ -225,6 +219,12 @@ function getTabs(
       href: '/accounts/[account]/[slug]',
       as: `/accounts/${account}/staking`,
       isActive: asPath == `/accounts/${account}/staking`,
+    },
+    {
+      name: 'Earned Fees',
+      href: '/accounts/[account]/[slug]',
+      as: `/accounts/${account}/fees`,
+      isActive: asPath == `/accounts/${account}/fees`,
     },
     {
       name: 'History',

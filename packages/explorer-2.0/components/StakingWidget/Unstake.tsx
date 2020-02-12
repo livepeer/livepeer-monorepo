@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import Utils from 'web3-utils'
 import Button from '../Button'
 import Modal from '../Modal'
-import StakingFlow from '../StakingFlow'
+import Flow from '../Flow'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
@@ -73,7 +73,7 @@ export default ({ transcoder, amount, disabled }) => {
         title={isMined ? 'Success!' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
-        <StakingFlow action="unstake" account={transcoder.id} amount={amount} />
+        <Flow action="unstake" account={transcoder.id} amount={amount} />
         <Flex
           sx={{
             flexDirection: ['column-reverse', 'column-reverse', 'row'],

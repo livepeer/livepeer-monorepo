@@ -6,14 +6,20 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Button from '../Button'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
-import { useAccount } from '../../hooks'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
 
 export default ({ goTo, nextStep }) => {
+  const accountQuery = require('../../queries/account.gql')
   const client = useApolloClient()
   const context = useWeb3React()
-  const { account } = useAccount(context.account)
   const [copied, setCopied] = useState(false)
+  const { data: myAccountData } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
+    },
+    skip: !context.active,
+    ssr: false,
+  })
 
   useEffect(() => {
     if (copied) {
@@ -76,18 +82,25 @@ export default ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace', mb: 1 }}>
         ETH Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {account && parseFloat(Utils.fromWei(account.ethBalance)).toFixed(2)}
+          {myAccountData.account &&
+            parseFloat(Utils.fromWei(myAccountData.account.ethBalance)).toFixed(
+              2,
+            )}
         </span>
       </div>
       <div sx={{ fontFamily: 'monospace' }}>
         LPT Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {account &&
-            parseFloat(Utils.fromWei(account.tokenBalance)).toFixed(2)}
+          {myAccountData.account &&
+            parseFloat(
+              Utils.fromWei(myAccountData.account.tokenBalance),
+            ).toFixed(2)}
         </span>
       </div>
       <Button
-        disabled={account && account.tokenBalance === '0'}
+        disabled={
+          myAccountData.account && myAccountData.account.tokenBalance === '0'
+        }
         sx={{ position: 'absolute', right: 30, bottom: 16 }}
         onClick={async () => {
           client.writeData({
@@ -95,7 +108,10 @@ export default ({ goTo, nextStep }) => {
               uniswapModalOpen: false,
             },
           })
-          if (account && account.allowance === '0') {
+          if (
+            myAccountData.account &&
+            myAccountData.account.allowance === '0'
+          ) {
             goTo(nextStep)
           } else {
             await Router.push('/')

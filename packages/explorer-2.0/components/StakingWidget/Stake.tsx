@@ -4,7 +4,7 @@ import { useApolloClient } from '@apollo/react-hooks'
 import Utils from 'web3-utils'
 import Button from '../Button'
 import Modal from '../Modal'
-import StakingFlow from '../StakingFlow'
+import Flow from '../Flow'
 import Spinner from '../Spinner'
 import Broadcast from '../../public/img/wifi.svg'
 import NewTab from '../../public/img/open-in-new.svg'
@@ -91,7 +91,7 @@ export default ({ transcoder, amount, disabled }) => {
             height={height}
           />
         )}
-        <StakingFlow action="stake" account={transcoder.id} amount={amount} />
+        <Flow action="stake" account={transcoder.id} amount={amount} />
         <Flex
           sx={{
             flexDirection: ['column-reverse', 'column-reverse', 'row'],

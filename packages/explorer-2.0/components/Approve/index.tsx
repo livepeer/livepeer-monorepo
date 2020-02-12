@@ -48,7 +48,7 @@ export default ({ account, banner = true }) => {
   if (account && account.id.toLowerCase() == context.account.toLowerCase()) {
     if (banner) {
       element = (
-        <Box sx={{ mt: [2, 2, 2, 0], mb: 4 }}>
+        <Box sx={{ mb: [3, 3, 3, 4] }}>
           <Banner
             label={
               <Box sx={{ mb: 1 }}>Unlock your Livepeer tokens for staking.</Box>

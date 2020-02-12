@@ -1,8 +1,23 @@
 import { Styled, Flex } from 'theme-ui'
 import ArrowRight from '../../public/img/arrow-right-long.svg'
 import { Box } from 'theme-ui'
+import NumberFormat from 'react-number-format'
 
-export default ({ action = 'stake', amount = 0, account }) => {
+interface Props {
+  action: string
+  amount?: number | string
+  account?: string
+  reverse?: boolean
+  currencyType?: string
+}
+
+export default ({
+  action = 'stake',
+  reverse = false,
+  amount = 0,
+  currencyType = 'LPT',
+  account,
+}: Props) => {
   return (
     <Flex
       sx={{
@@ -12,14 +27,15 @@ export default ({ action = 'stake', amount = 0, account }) => {
         p: 3,
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: reverse ? 'row-reverse' : 'row',
         my: [4, 4, 4, 5],
       }}
     >
       <Flex sx={{ alignItems: 'center' }}>
-        <Box sx={{ mr: 2, fontFamily: 'monospace', fontSize: [3, 3, 3, 4] }}>
-          {amount}
+        <Box sx={{ mr: 2, fontFamily: 'monospace', fontSize: [2, 2, 2, 4] }}>
+          <NumberFormat value={amount} displayType="text" decimalScale={13} />{' '}
+          <span sx={{ fontSize: 1 }}>{currencyType}</span>
         </Box>
-        <Box sx={{ fontSize: 1 }}>LPT</Box>
       </Flex>
       <ArrowRight
         sx={{

@@ -28,9 +28,7 @@ export function bond(event: Bond): void {
   let oldDelegateAddress = event.params.oldDelegate
   let delegatorAddress = event.params.delegator
   let additionalAmount = event.params.additionalAmount
-  let transcoderTotalStake = bondingManager.transcoderTotalStake(
-    newDelegateAddress,
-  )
+  let delegateData = bondingManager.getDelegator(newDelegateAddress)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
@@ -66,9 +64,7 @@ export function bond(event: Bond): void {
   ) {
     let oldTranscoder = Transcoder.load(oldDelegateAddress.toHex())
     let oldDelegate = Delegator.load(oldDelegateAddress.toHex())
-    let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
-      oldDelegateAddress,
-    )
+    let delegateData = bondingManager.getDelegator(oldDelegateAddress)
 
     // if previous delegate was itself, set status and unassign reference to self
     if (oldDelegateAddress.toHex() == delegatorAddress.toHex()) {
@@ -76,15 +72,15 @@ export function bond(event: Bond): void {
       oldTranscoder.delegator = null
     }
 
-    oldTranscoder.totalStake = oldTranscoderTotalStake
-    oldDelegate.delegatedAmount = oldTranscoderTotalStake
+    oldTranscoder.totalStake = delegateData.value3
+    oldDelegate.delegatedAmount = delegateData.value3
 
     oldDelegate.save()
     oldTranscoder.save()
   }
 
-  transcoder.totalStake = transcoderTotalStake
-  delegate.delegatedAmount = transcoderTotalStake
+  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = delegateData.value3
 
   delegator.delegate = newDelegateAddress.toHex()
   delegator.lastClaimRound = currentRound.toString()
@@ -127,7 +123,7 @@ export function unbond(event: Unbond): void {
   let withdrawRound = event.params.withdrawRound
   let amount = event.params.amount
   let delegator = Delegator.load(delegatorAddress.toHex())
-  let totalStake = bondingManager.transcoderTotalStake(delegateAddress)
+  let delegateData = bondingManager.getDelegator(delegateAddress)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
 
@@ -146,8 +142,8 @@ export function unbond(event: Unbond): void {
     unbondingLock = new UnbondingLock(uniqueUnbondingLockId)
   }
 
-  delegate.delegatedAmount = totalStake
-  transcoder.totalStake = totalStake
+  delegate.delegatedAmount = delegateData.value3
+  transcoder.totalStake = delegateData.value3
 
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   delegator.lastClaimRound = currentRound.toString()
@@ -214,7 +210,8 @@ export function rebond(event: Rebond): void {
   let transcoder = Transcoder.load(delegateAddress.toHex())
   let delegate = Delegator.load(delegateAddress.toHex())
   let delegator = Delegator.load(delegatorAddress.toHex())
-  let totalStake = bondingManager.transcoderTotalStake(delegateAddress)
+  let delegateData = bondingManager.getDelegator(delegateAddress)
+
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
 
@@ -237,8 +234,8 @@ export function rebond(event: Rebond): void {
   delegator.unbonded = delegator.unbonded.minus(amount)
 
   // update delegate
-  delegate.delegatedAmount = totalStake
-  transcoder.totalStake = totalStake
+  delegate.delegatedAmount = delegateData.value3
+  transcoder.totalStake = delegateData.value3
 
   // Apply store updates
   delegate.save()

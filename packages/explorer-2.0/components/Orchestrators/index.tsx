@@ -61,6 +61,8 @@ export default ({ currentRound, transcoders }) => {
       {
         Header: 'ThreeBoxSpace',
         accessor: 'threeBoxSpace',
+        filter: 'fuzzyText',
+        Filter: DefaultColumnFilter,
         show: false,
       },
       {
@@ -133,16 +135,16 @@ export default ({ currentRound, transcoders }) => {
     useFilters,
   )
 
-  const accountColumn: any = headerGroups[0].headers[1]
+  const accountColumn: any = headerGroups[0].headers[0]
 
   return (
     <Box sx={{ width: '100%' }}>
       <Flex
         sx={{
+          bg: 'background',
           position: ['sticky', 'sticky', 'sticky', 'relative'],
           width: '100%',
           top: [63, 63, 79, 0],
-          bg: 'background',
           zIndex: 10,
           flexDirection: 'column',
           alignItems: 'flex-start',
@@ -165,9 +167,7 @@ export default ({ currentRound, transcoders }) => {
           />{' '}
           Orchestrators
         </Styled.h1>
-        <Box>
-          {accountColumn.canFilter ? accountColumn.render('Filter') : null}
-        </Box>
+        <Box>{accountColumn.render('Filter')}</Box>
       </Flex>
       <Box>
         <table
@@ -516,7 +516,9 @@ function renderSwitch(cell, currentRound) {
 }
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, { keys: [row => row.values[id]] })
+  return matchSorter(rows, filterValue, {
+    keys: [row => row.values[id]],
+  })
 }
 
 // Let the table remove the filter if the string is empty
@@ -544,13 +546,12 @@ function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
           display: 'block',
           outline: 'none',
           width: '100%',
-
           appearance: 'none',
           fontSize: 2,
           lineHeight: 'inherit',
           border: 0,
           color: 'inherit',
-          bg: 'transparent',
+          bg: 'background',
         }}
       />
     </Flex>
