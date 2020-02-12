@@ -1,0 +1,104 @@
+query($account: String!, $first: Int!, $skip: Int!) {
+  transactions(
+    orderBy: timestamp
+    orderDirection: desc
+    where: { from: $account }
+    first: $first
+    skip: $skip
+  ) {
+    hash
+    timestamp
+    ... on BondEvent {
+      __typename
+      delegator {
+        id
+      }
+      newDelegate {
+        id
+      }
+      oldDelegate {
+        id
+      }
+      round {
+        id
+      }
+      additionalAmount
+    }
+    ... on UnbondEvent {
+      __typename
+      round {
+        id
+      }
+      delegate {
+        id
+      }
+      amount
+    }
+    ... on RebondEvent {
+      __typename
+      delegate {
+        id
+      }
+      amount
+      round {
+        id
+      }
+    }
+    ... on TranscoderUpdatedEvent {
+      __typename
+      rewardCut
+      feeShare
+      round {
+        id
+      }
+    }
+    ... on RewardEvent {
+      __typename
+      rewardTokens
+      round {
+        id
+      }
+    }
+    ... on ClaimEarningsEvent {
+      __typename
+      startRound {
+        id
+      }
+      endRound {
+        id
+      }
+      rewardTokens
+      fees
+      round {
+        id
+      }
+    }
+    ... on WithdrawStakeEvent {
+      __typename
+      amount
+      round {
+        id
+      }
+    }
+    ... on WithdrawFeesEvent {
+      __typename
+      amount
+      round {
+        id
+      }
+    }
+    ... on ApprovalEvent {
+      __typename
+      round {
+        id
+      }
+      amount
+    }
+    ... on InitializeRoundEvent {
+      __typename
+      round {
+        id
+      }
+    }
+  }
+}

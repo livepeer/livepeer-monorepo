@@ -7,13 +7,12 @@ import Orchestrators from '../public/img/orchestrators.svg'
 import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
 import { useWeb3React } from '@web3-react/core'
-import { useCookies } from 'react-cookie'
 import { ethers } from 'ethers'
-import { useAccount } from '../hooks'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import WalletModal from '../components/WalletModal'
+import { useQuery } from '@apollo/react-hooks'
 
 type DrawerItem = {
   name: any
@@ -28,9 +27,19 @@ export default ({
   title = 'Livepeer Explorer',
   headerTitle = '',
 }) => {
+  const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
   const { account } = context
-  const { threeBoxSpace } = useAccount(account)
+
+  const { data } = useQuery(threeBoxSpaceQuery, {
+    variables: {
+      account: context?.account,
+    },
+    skip: !context.account,
+    pollInterval: 10000,
+    ssr: false,
+  })
+
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { width } = useWindowSize()
 
@@ -65,8 +74,8 @@ export default ({
     items.push({
       name: (
         <Box>
-          {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
-            ? threeBoxSpace.name
+          {process.env.THREEBOX_ENABLED && data?.threeBoxSpace?.name
+            ? data.threeBoxSpace.name
             : 'My Account'}
         </Box>
       ),
@@ -108,7 +117,7 @@ export default ({
         <WalletModal />
         <Box
           sx={{
-            maxWidth: 1400,
+            maxWidth: 1500,
             margin: '0 auto',
             display: 'flex',
           }}
@@ -122,8 +131,8 @@ export default ({
           <Flex
             sx={{
               bg: 'background',
-              paddingLeft: [2, 2, 2, 40],
-              paddingRight: [2, 2, 2, 40],
+              paddingLeft: [2, 2, 2, 32],
+              paddingRight: [2, 2, 2, 32],
               width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
             }}
           >

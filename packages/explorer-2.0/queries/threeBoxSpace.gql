@@ -1,0 +1,13 @@
+query($account: ID!) {
+  threeBoxSpace(id: $account) {
+    __typename
+    id
+    did
+    name
+    website
+    description
+    image
+    addressLinks
+    defaultProfile
+  }
+}

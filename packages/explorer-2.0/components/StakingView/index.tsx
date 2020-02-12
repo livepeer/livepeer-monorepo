@@ -1,131 +1,59 @@
-import { Box, Flex, Styled } from 'theme-ui'
+import { Box, Flex } from 'theme-ui'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
-import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import Link from 'next/link'
 import StakeTransactions from '../StakeTransactions'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
+import Button from '../Button'
 
-const GET_DATA = gql`
-  query($account: ID!) {
-    delegator(id: $account) {
-      id
-      pendingStake
-      bondedAmount
-      principal
-      unbonded
-      delegate {
-        id
-        totalStake
-        threeBoxSpace {
-          name
-          website
-          image
-          description
-        }
-      }
-      unbondingLocks {
-        id
-        amount
-        unbondingLockId
-        withdrawRound
-        delegate {
-          id
-        }
-      }
-    }
-    protocol {
-      totalTokenSupply
-      totalBondedToken
-    }
-    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-      id
-    }
-  }
-`
-
-export default () => {
+export default ({ delegator, protocol, currentRound }) => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
   const context = useWeb3React()
-  const isMyAccount = account == context.account
+  const isMyAccount = account === context.account
 
-  const { data, loading, error } = useQuery(GET_DATA, {
-    variables: {
-      account: account.toLowerCase(),
-    },
-    ssr: false,
-  })
-
-  if (error) {
-    console.error(error)
-  }
-
-  if (loading) {
-    return (
-      <Flex
-        sx={{
-          pt: 4,
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Spinner />
-      </Flex>
-    )
-  }
-
-  if (!(data && data.delegator && data.delegator.bondedAmount != null)) {
+  if (!delegator?.bondedAmount) {
     if (isMyAccount) {
       return (
         <Box sx={{ pt: 4 }}>
-          <span sx={{ mr: 2 }}>
-            You haven't staked LPT. Stake LPT with an Orchestrator and begin
-            earning rewards.
-          </span>
+          <Box sx={{ mr: 2, mb: 2 }}>
+            You haven't staked LPT. Stake with an Orchestrator to begin earning
+            rewards and a share of the fees being paid into the Livepeer
+            network.
+          </Box>
           <Link href="/" passHref>
-            <Styled.a>View Orchestrators.</Styled.a>
+            <a>
+              <Button variant="outline" as="div">
+                View Orchestrators
+              </Button>
+            </a>
           </Link>
         </Box>
       )
+    } else {
+      return <Box sx={{ pt: 4 }}>Nothing here.</Box>
     }
-    return (
-      <Box sx={{ pt: 4 }}>
-        <span sx={{ mr: 2 }}>Nothing here.</span>
-      </Box>
-    )
   }
 
-  const pendingStake = Math.max(
-    parseFloat(Utils.fromWei(data.delegator.bondedAmount)),
-    parseFloat(Utils.fromWei(data.delegator.pendingStake)),
-  )
-
-  const unbonded = data.delegator.unbonded
-    ? parseFloat(Utils.fromWei(data.delegator.unbonded))
+  const pendingStake = parseFloat(Utils.fromWei(delegator.pendingStake))
+  const unbonded = delegator.unbonded
+    ? parseFloat(Utils.fromWei(delegator.unbonded))
     : 0
-  const principal = parseFloat(Utils.fromWei(data.delegator.principal))
-
+  const principal = parseFloat(Utils.fromWei(delegator.principal))
   const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
-
-  const totalBondedToken = parseFloat(
-    Utils.fromWei(data.protocol.totalBondedToken),
-  )
+  const totalBondedToken = parseFloat(Utils.fromWei(protocol.totalBondedToken))
 
   return (
     <Box sx={{ pt: 4 }}>
-      {data.delegator.delegate && (
+      {delegator.delegate && (
         <Link
           href={`/accounts/[account]/[slug]`}
-          as={`/accounts/${data.delegator.delegate.id}/campaign`}
+          as={`/accounts/${delegator.delegate.id}/campaign`}
           passHref
         >
           <a>
@@ -146,10 +74,10 @@ export default () => {
                   }}
                 >
                   {process.env.THREEBOX_ENABLED &&
-                  data.delegator.delegate.threeBoxSpace.name
-                    ? data.delegator.delegate.threeBoxSpace.name
-                    : data.delegator.delegate.id.replace(
-                        data.delegator.delegate.id.slice(7, 37),
+                  delegator.delegate.threeBoxSpace.name
+                    ? delegator.delegate.threeBoxSpace.name
+                    : delegator.delegate.id.replace(
+                        delegator.delegate.id.slice(7, 37),
                         '…',
                       )}
                 </Box>
@@ -304,7 +232,7 @@ export default () => {
             </Flex>
           </Box>
         </Card>
-        {data.delegator.delegate && (
+        {delegator.delegate && (
           <Card
             sx={{ flex: 1, mb: 0 }}
             title={
@@ -383,7 +311,7 @@ export default () => {
                       ? 0
                       : (
                           (parseFloat(
-                            Utils.fromWei(data.delegator.delegate.totalStake),
+                            Utils.fromWei(delegator.delegate.totalStake),
                           ) /
                             totalBondedToken) *
                           100
@@ -394,9 +322,7 @@ export default () => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      parseFloat(
-                        Utils.fromWei(data.delegator.delegate.totalStake),
-                      ),
+                      parseFloat(Utils.fromWei(delegator.delegate.totalStake)),
                       3,
                     )}
                   </span>
@@ -415,12 +341,14 @@ export default () => {
                     (
                     {(totalBondedToken === 0
                       ? 0
-                      : (totalBondedToken -
+                      : ((totalBondedToken -
                           parseFloat(
-                            Utils.fromWei(data.delegator.delegate.totalStake),
+                            Utils.fromWei(delegator.delegate.totalStake),
                           ) -
                           pendingStake) /
-                        totalBondedToken) * 100}
+                          totalBondedToken) *
+                        100
+                    ).toPrecision(4)}
                     %)
                   </span>
                 </span>
@@ -431,7 +359,7 @@ export default () => {
                         ? 0
                         : totalBondedToken -
                             parseFloat(
-                              Utils.fromWei(data.delegator.delegate.totalStake),
+                              Utils.fromWei(delegator.delegate.totalStake),
                             ) -
                             pendingStake,
                       3,
@@ -444,8 +372,8 @@ export default () => {
         )}
       </Box>
       <StakeTransactions
-        delegator={data.delegator}
-        currentRound={data.currentRound[0]}
+        delegator={delegator}
+        currentRound={currentRound}
         isMyAccount={isMyAccount}
       />
     </Box>

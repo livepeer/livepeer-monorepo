@@ -99,7 +99,6 @@ export default ({
           amount,
           sufficientBalance,
           sufficientTransferAllowance,
-          context,
           account,
           isMyTranscoder,
           isStaked,
@@ -128,7 +127,6 @@ function renderStakeWarnings(
   amount,
   sufficientBalance,
   sufficientTransferAllowance,
-  context,
   account,
   isMyTranscoder,
   isStaked,
@@ -142,7 +140,7 @@ function renderStakeWarnings(
     return (
       <Warning>
         Your transfer allowance is set too low.{' '}
-        <Approve account={account} context={context} banner={false} />
+        <Approve account={account} banner={false} />
       </Warning>
     )
   }

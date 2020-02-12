@@ -3,82 +3,32 @@ import { useQuery } from '@apollo/react-hooks'
 import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
-import gql from 'graphql-tag'
-import { useAccount } from '../hooks'
 import { useWeb3React } from '@web3-react/core'
 import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
 import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
-
-const GET_DATA = gql`
-  {
-    transcoders(
-      where: {
-        delegator_not: null
-        id_not: "0x0000000000000000000000000000000000000000"
-      }
-      orderBy: totalStake
-      orderDirection: desc
-    ) {
-      id
-      active
-      feeShare
-      activationRound
-      deactivationRound
-      rewardCut
-      active
-      totalStake
-      threeBoxSpace {
-        __typename
-        did
-        name
-        website
-        description
-        image
-      }
-      delegator {
-        startRound
-        bondedAmount
-        unbondingLocks {
-          withdrawRound
-        }
-      }
-      pools(first: 30, orderBy: id, orderDirection: desc) {
-        rewardTokens
-      }
-    }
-    protocol {
-      totalTokenSupply
-      totalBondedToken
-      inflation
-      inflationChange
-    }
-    selectedTranscoder @client {
-      __typename
-      index
-      rewardCut
-      id
-      threeBoxSpace {
-        __typename
-        name
-        website
-        description
-        image
-      }
-    }
-    currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-      id
-    }
-  }
-`
+import Approve from '../components/Approve'
+import Utils from 'web3-utils'
 
 export default withApollo(() => {
+  const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
+  const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
-  const myAccount = useAccount(context.account)
-  const { data, loading, error } = useQuery(GET_DATA, {
+  const { data, loading, error } = useQuery(orchestratorsViewQuery, {
+    pollInterval: 10000,
     ssr: false,
   })
+  const { data: myAccountData, loading: myAccountLoading } = useQuery(
+    accountQuery,
+    {
+      variables: {
+        account: context?.account?.toLowerCase(),
+      },
+      skip: !context.active,
+      ssr: false,
+    },
+  )
 
   if (error) {
     console.log(error)
@@ -86,7 +36,7 @@ export default withApollo(() => {
 
   return (
     <Layout headerTitle="Orchestrators">
-      {loading ? (
+      {loading || myAccountLoading ? (
         <Flex
           sx={{
             height: [
@@ -107,15 +57,26 @@ export default withApollo(() => {
           <Flex
             sx={{
               flexDirection: 'column',
-              paddingTop: [0, 0, 0, 5],
-              pr: [0, 0, 0, 0, 6],
-              width: ['100%', '100%', '100%', '100%', '70%'],
+              pt: [1, 1, 1, 5],
+              pr: [0, 0, 0, 0, 5],
+              width: ['100%', '100%', '100%', '100%', '72%'],
             }}
           >
-            {context.active && myAccount.delegator?.lastClaimRound && (
+            {context.active && (
+              <Box>
+                {myAccountData &&
+                  parseFloat(Utils.fromWei(myAccountData.account.allowance)) ===
+                    0 &&
+                  parseFloat(
+                    Utils.fromWei(myAccountData.account.tokenBalance),
+                  ) !== 0 && (
+                    <Approve account={myAccountData.account} banner={true} />
+                  )}
+              </Box>
+            )}
+            {context.active && myAccountData.delegator?.lastClaimRound && (
               <ClaimBanner
-                account={myAccount.account}
-                delegator={myAccount.delegator}
+                delegator={myAccountData.delegator}
                 currentRound={data.currentRound[0]}
               />
             )}
@@ -130,13 +91,13 @@ export default withApollo(() => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
-              width: '30%',
+              width: '28%',
             }}
           >
             <StakingWidget
-              delegator={myAccount.delegator}
+              delegator={myAccountData?.delegator}
               currentRound={data.currentRound[0]}
-              account={myAccount.account}
+              account={myAccountData?.account}
               transcoder={
                 data.selectedTranscoder.id
                   ? data.selectedTranscoder

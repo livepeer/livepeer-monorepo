@@ -4,8 +4,6 @@ import { DialogOverlay, DialogContent } from '@reach/dialog'
 import Button from '../Button'
 import dynamic from 'next/dynamic'
 import { useWeb3React } from '@web3-react/core'
-import { useAccount } from '../../hooks'
-import { useCookies } from 'react-cookie'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import Step1 from './Step1'
 import Step2 from './Step2'
@@ -26,20 +24,26 @@ const GET_TOUR_OPEN = gql`
 `
 
 export default ({ children, ...props }) => {
+  const accountQuery = require('../../queries/account.gql')
   const client = useApolloClient()
   const [open, setOpen] = useState(false)
   const [tourKey, setTourKey] = useState(0)
   const context = useWeb3React()
-  const { account } = useAccount(context.account)
   const [nextStep, setNextStep] = useState(1)
   const inititalSteps = []
   const [steps, setSteps] = useState([...inititalSteps])
-  const [cookies, setCookie, removeCookie] = useCookies(['connector'])
   const [tourStyles, setTourStyles] = useState({
     backgroundColor: '#131418',
     maxWidth: 'auto',
   })
 
+  const { data: myAccountData } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
+    },
+    skip: !context.active,
+    ssr: false,
+  })
   const { data } = useQuery(GET_TOUR_OPEN)
 
   useEffect(() => {
@@ -102,7 +106,7 @@ export default ({ children, ...props }) => {
         style: tourStyles,
       },
     ])
-  }, [account, context.active, nextStep, tourStyles])
+  }, [myAccountData?.account, context.active, nextStep, tourStyles])
 
   return (
     <Box {...props}>
@@ -123,7 +127,7 @@ export default ({ children, ...props }) => {
         showButtons={false}
         accentColor="#E926BE"
         maskSpace={10}
-        startAt={cookies.connector ? 2 : 0}
+        startAt={context.active ? 2 : 0}
         isOpen={data ? data.tourOpen : false}
         nextButton={<Button>Next</Button>}
         closeWithMask={false}
@@ -166,7 +170,7 @@ export default ({ children, ...props }) => {
               {[
                 'Connect Wallet',
                 'Get LPT',
-                'Set Permissions',
+                'Unlock LPT',
                 'Choose Orchestrator',
                 'Stake',
               ].map((title, i) => (

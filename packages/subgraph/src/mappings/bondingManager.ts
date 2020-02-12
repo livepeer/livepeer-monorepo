@@ -71,7 +71,7 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   let transcoderUpdatedEvent = new TranscoderUpdatedEvent(
     event.transaction.hash.toHex() + '-TranscoderUpdate',
   )
-  transcoderUpdatedEvent.hash = event.block.hash.toHex()
+  transcoderUpdatedEvent.hash = event.transaction.hash.toHex()
   transcoderUpdatedEvent.blockNumber = event.block.number
   transcoderUpdatedEvent.gasUsed = event.transaction.gasUsed
   transcoderUpdatedEvent.gasPrice = event.transaction.gasPrice
@@ -104,7 +104,7 @@ export function transcoderResigned(event: TranscoderResigned): void {
   let transcoderResignedEvent = new TranscoderResignedEvent(
     event.transaction.hash.toHex() + '-TranscoderResigned',
   )
-  transcoderResignedEvent.hash = event.block.hash.toHex()
+  transcoderResignedEvent.hash = event.transaction.hash.toHex()
   transcoderResignedEvent.blockNumber = event.block.number
   transcoderResignedEvent.gasUsed = event.transaction.gasUsed
   transcoderResignedEvent.gasPrice = event.transaction.gasPrice
@@ -132,7 +132,7 @@ export function transcoderEvicted(event: TranscoderEvicted): void {
   let transcoderEvictedEvent = new TranscoderEvictedEvent(
     event.transaction.hash.toHex() + '-TranscoderEvicted',
   )
-  transcoderEvictedEvent.hash = event.block.hash.toHex()
+  transcoderEvictedEvent.hash = event.transaction.hash.toHex()
   transcoderEvictedEvent.blockNumber = event.block.number
   transcoderEvictedEvent.gasUsed = event.transaction.gasUsed
   transcoderEvictedEvent.gasPrice = event.transaction.gasPrice
@@ -151,10 +151,10 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
   let bondingManager = BondingManager.bind(event.address)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
-  let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
+  let delegateData = bondingManager.getDelegator(transcoderAddress)
 
   // Update transcoder total stake
-  transcoder.totalStake = totalStake
+  transcoder.totalStake = delegateData.value3
 
   // Apply store updates
   transcoder.save()
@@ -164,7 +164,7 @@ export function transcoderSlashed(event: TranscoderSlashed): void {
     event.transaction.hash.toHex() + '-TranscoderSlashed',
   )
 
-  transcoderSlashedEvent.hash = event.block.hash.toHex()
+  transcoderSlashedEvent.hash = event.transaction.hash.toHex()
   transcoderSlashedEvent.blockNumber = event.block.number
   transcoderSlashedEvent.gasUsed = event.transaction.gasUsed
   transcoderSlashedEvent.gasPrice = event.transaction.gasPrice
@@ -180,13 +180,10 @@ export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
   let newDelegateAddress = event.params.delegate
   let delegatorAddress = event.params.delegator
-
-  let transcoderTotalStake = bondingManager.transcoderTotalStake(
-    newDelegateAddress,
-  )
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let delegateData = bondingManager.getDelegator(newDelegateAddress)
 
   let transcoder = Transcoder.load(newDelegateAddress.toHex())
   if (transcoder == null) {
@@ -203,8 +200,9 @@ export function bond(event: Bond): void {
     delegator = new Delegator(delegatorAddress.toHex())
   }
 
-  // If self delegating, assign reference to self
+  // If self delegating, set status and assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
+    transcoder.status = 'Registered'
     transcoder.delegator = delegatorAddress.toHex()
   }
 
@@ -222,19 +220,19 @@ export function bond(event: Bond): void {
       oldTranscoder.delegator = null
     }
 
-    let oldTranscoderTotalStake = bondingManager.transcoderTotalStake(
+    let delegateData = bondingManager.getDelegator(
       Address.fromString(oldTranscoder.id),
     )
 
-    oldTranscoder.totalStake = oldTranscoderTotalStake
-    oldDelegate.delegatedAmount = oldTranscoderTotalStake
+    oldTranscoder.totalStake = delegateData.value3
+    oldDelegate.delegatedAmount = delegateData.value3
 
     oldDelegate.save()
     oldTranscoder.save()
   }
 
-  transcoder.totalStake = transcoderTotalStake
-  delegate.delegatedAmount = transcoderTotalStake
+  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = delegateData.value3
 
   // additional amount == new bondedAmount minus previous bonded amount
   let additionalAmount = delegatorData.value0.minus(
@@ -262,7 +260,7 @@ export function bond(event: Bond): void {
 
   // Store transaction info
   let bondEvent = new BondEvent(event.transaction.hash.toHex() + '-Bond')
-  bondEvent.hash = event.block.hash.toHex()
+  bondEvent.hash = event.transaction.hash.toHex()
   bondEvent.blockNumber = event.block.number
   bondEvent.gasUsed = event.transaction.gasUsed
   bondEvent.gasPrice = event.transaction.gasPrice
@@ -293,18 +291,17 @@ export function unbond(event: Unbond): void {
     delegate = new Delegator(transcoderAddress)
   }
 
-  let totalStake = bondingManager.transcoderTotalStake(
+  let delegateData = bondingManager.getDelegator(
     Address.fromString(transcoderAddress),
   )
 
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
 
-  transcoder.totalStake = totalStake
-  delegate.delegatedAmount = totalStake
+  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = delegateData.value3
 
   // Delegator no longer bonded to anyone
   delegator.delegate = null
-
   delegator.lastClaimRound = currentRound.toString()
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
@@ -318,7 +315,7 @@ export function unbond(event: Unbond): void {
 
   // Store transaction info
   let unbondEvent = new UnbondEvent(event.transaction.hash.toHex() + '-Unbond')
-  unbondEvent.hash = event.block.hash.toHex()
+  unbondEvent.hash = event.transaction.hash.toHex()
   unbondEvent.blockNumber = event.block.number
   unbondEvent.gasUsed = event.transaction.gasUsed
   unbondEvent.gasPrice = event.transaction.gasPrice
@@ -339,10 +336,9 @@ export function reward(event: Reward): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   let delegate = Delegator.load(transcoderAddress.toHex())
-  let totalStake = bondingManager.transcoderTotalStake(transcoderAddress)
+  let delegateData = bondingManager.getDelegator(transcoderAddress)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
-  let delegateData = bondingManager.getDelegator(transcoderAddress)
   let poolId = makePoolId(transcoderAddress, currentRound)
   let pool = Pool.load(poolId)
 
@@ -352,7 +348,7 @@ export function reward(event: Reward): void {
   pool.feeShare = transcoder.feeShare
   pool.rewardCut = transcoder.rewardCut
 
-  transcoder.totalStake = totalStake
+  transcoder.totalStake = delegateData.value3
   transcoder.lastRewardRound = currentRound.toString()
 
   transcoder.save()
@@ -374,48 +370,50 @@ export function reward(event: Reward): void {
 }
 
 export function claimEarnings(call: ClaimEarningsCall): void {
-  let claimEarningsEventID = call.transaction.hash.toHex() + '-ClaimEarnings'
-  let claimEarningsEvent = ClaimEarningsEvent.load(claimEarningsEventID)
-
   // The Streamflow release introduced an event emitter for EarningsClaimed, so
-  // we can ignore this call handler henceforth
-  if (claimEarningsEvent != null) {
-    return
+  // we can ignore this call handler henceforth after the block in which the
+  // protocol was paused prior to the streamflow upgrade
+  if (call.block.number.le(BigInt.fromI32(9274414))) {
+    let claimEarningsEventID = call.transaction.hash.toHex() + '-ClaimEarnings'
+    let claimEarningsEvent = ClaimEarningsEvent.load(claimEarningsEventID)
+    let delegatorAddress = call.from
+    let endRound = call.inputs._endRound
+    let roundsManager = getRoundsManagerInstance(dataSource.network())
+    let currentRound = roundsManager.currentRound()
+    let delegator = Delegator.load(delegatorAddress.toHex())
+    let bondingManager = BondingManager.bind(call.to)
+    let delegatorData = bondingManager.getDelegator(delegatorAddress)
+    let bondedAmount = delegator.bondedAmount
+    let lastClaimRound = delegator.lastClaimRound
+
+    delegator.bondedAmount = delegatorData.value0
+    delegator.fees = delegatorData.value1
+    delegator.lastClaimRound = endRound.toString()
+    delegator.save()
+
+    claimEarningsEvent = new ClaimEarningsEvent(
+      call.transaction.hash.toHex() + '-ClaimEarnings',
+    )
+    claimEarningsEvent.hash = call.transaction.hash.toHex()
+    claimEarningsEvent.blockNumber = call.block.number
+    claimEarningsEvent.gasUsed = call.transaction.gasUsed
+    claimEarningsEvent.gasPrice = call.transaction.gasPrice
+    claimEarningsEvent.timestamp = call.block.timestamp
+    claimEarningsEvent.from = call.transaction.from.toHex()
+    claimEarningsEvent.to = call.transaction.to.toHex()
+    claimEarningsEvent.round = currentRound.toString()
+    claimEarningsEvent.delegate = delegator.id
+    claimEarningsEvent.delegator = delegatorAddress.toHex()
+    claimEarningsEvent.startRound = lastClaimRound.toString()
+    claimEarningsEvent.endRound = endRound.toString()
+    claimEarningsEvent.rewardTokens = delegatorData.value0.minus(
+      bondedAmount as BigInt,
+    )
+    claimEarningsEvent.fees = delegatorData.value1.minus(
+      delegator.fees as BigInt,
+    )
+    claimEarningsEvent.save()
   }
-
-  let delegatorAddress = call.from
-  let endRound = call.inputs._endRound
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-  let delegator = Delegator.load(delegatorAddress.toHex())
-  let bondingManager = BondingManager.bind(call.to)
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
-
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
-  delegator.lastClaimRound = endRound.toString()
-  delegator.save()
-
-  claimEarningsEvent = new ClaimEarningsEvent(
-    call.transaction.hash.toHex() + '-ClaimEarnings',
-  )
-  claimEarningsEvent.hash = call.transaction.hash.toHex()
-  claimEarningsEvent.blockNumber = call.block.number
-  claimEarningsEvent.gasUsed = call.transaction.gasUsed
-  claimEarningsEvent.gasPrice = call.transaction.gasPrice
-  claimEarningsEvent.timestamp = call.block.timestamp
-  claimEarningsEvent.from = call.transaction.from.toHex()
-  claimEarningsEvent.to = call.transaction.to.toHex()
-  claimEarningsEvent.round = currentRound.toString()
-  claimEarningsEvent.delegate = delegator.id
-  claimEarningsEvent.delegator = delegatorAddress.toHex()
-  claimEarningsEvent.startRound = delegator.lastClaimRound.toString()
-  claimEarningsEvent.endRound = endRound.toString()
-  claimEarningsEvent.rewardTokens = delegatorData.value0.minus(
-    delegator.bondedAmount as BigInt,
-  )
-  claimEarningsEvent.fees = delegatorData.value1.minus(delegator.fees as BigInt)
-  claimEarningsEvent.save()
 }
 
 // Handler for WithdrawStake events
@@ -429,7 +427,7 @@ export function withdrawStake(event: WithdrawStake): void {
   let withdrawStakeEvent = new WithdrawStakeEvent(
     event.transaction.hash.toHex() + '-WithdrawStake',
   )
-  withdrawStakeEvent.hash = event.block.hash.toHex()
+  withdrawStakeEvent.hash = event.transaction.hash.toHex()
   withdrawStakeEvent.blockNumber = event.block.number
   withdrawStakeEvent.gasUsed = event.transaction.gasUsed
   withdrawStakeEvent.gasPrice = event.transaction.gasPrice
@@ -452,12 +450,13 @@ export function withdrawFees(event: WithdrawFees): void {
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let withdrawnFees = delegator.fees as BigInt
 
   // Store transaction info
   let withdrawFeesTransaction = new WithdrawFeesEvent(
     event.transaction.hash.toHex() + '-WithdrawFeesEvent',
   )
-  withdrawFeesTransaction.hash = event.block.hash.toHex()
+  withdrawFeesTransaction.hash = event.transaction.hash.toHex()
   withdrawFeesTransaction.blockNumber = event.block.number
   withdrawFeesTransaction.gasUsed = event.transaction.gasUsed
   withdrawFeesTransaction.gasPrice = event.transaction.gasPrice
@@ -465,12 +464,13 @@ export function withdrawFees(event: WithdrawFees): void {
   withdrawFeesTransaction.from = event.transaction.from.toHex()
   withdrawFeesTransaction.to = event.transaction.to.toHex()
   withdrawFeesTransaction.round = currentRound.toString()
-  withdrawFeesTransaction.amount = delegator.fees
+  withdrawFeesTransaction.amount = withdrawnFees
   withdrawFeesTransaction.delegator = delegatorAddress.toHex()
   withdrawFeesTransaction.save()
 
   delegator.bondedAmount = delegatorData.value0
   delegator.fees = delegatorData.value1
+  delegator.withdrawnFees = delegator.withdrawnFees.plus(withdrawnFees)
   delegator.lastClaimRound = currentRound.toString()
   delegator.save()
 }
