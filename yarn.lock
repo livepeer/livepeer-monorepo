@@ -5872,10 +5872,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-table@^6.8.5":
-  version "6.8.7"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-6.8.7.tgz#210ffa2862dd3711350676c0bdbbfbff45f14b84"
-  integrity sha512-1U0xl47jk0BzE+HNHgxZYSLvtybSvnlLhOpW9Mfqf9iuRm/fGqgRab3TKivPCY6Tl7WPFM2hWEJ1GnsuSFc9AQ==
+"@types/react-table@7.0.5":
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.0.5.tgz#7f5973ff7046b9823c9a8a7014a275b4c33884d7"
+  integrity sha512-bK8hBsowHVxXHXpaqguJg0LDQrNfxfmgILjeSEXZUOgZunHYSJVK5FaOaWVBitnCYKKMJZnfg1PHiJPm5rwFuQ==
   dependencies:
     "@types/react" "*"
 
@@ -29682,10 +29682,10 @@ react-syntax-highlighter@^11.0.2:
     prismjs "^1.8.4"
     refractor "^2.4.1"
 
-react-table@7.0.0-beta.1:
-  version "7.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.0-beta.1.tgz#9e27e559a0e145f0d615fab398f9c635212510fb"
-  integrity sha512-63fZR8yo0g+OHAEo+DAbmcczLaxBi1lJmGgSH6+lziZnaOfYPhu+gSFzW03BCzdk19oyS/2MQjU1EjviwJeAKw==
+react-table@7.0.0-rc.15:
+  version "7.0.0-rc.15"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.0-rc.15.tgz#bb855e4e2abbb4aaf0ed2334404a41f3ada8e13a"
+  integrity sha512-ofMOlgrioHhhvHjvjsQkxvfQzU98cqwy6BjPGNwhLN1vhgXeWi0mUGreaCPvRenEbTiXsQbMl4k3Xmx3Mut8Rw==
 
 react-table@next:
   version "7.0.0-beta.20"

@@ -64,7 +64,7 @@ export default withApollo(() => {
       setData(data)
     }
     getChangefeed()
-  })
+  }, [])
 
   return (
     <Layout title="Livepeer Explorer - What's New" headerTitle="What's New">
