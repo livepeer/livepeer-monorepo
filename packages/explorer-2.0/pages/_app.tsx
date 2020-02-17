@@ -30,8 +30,15 @@ class MyApp extends App {
             href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500&display=swap"
             rel="stylesheet"
           />
-          {/* <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="black" /> */}
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GA_TRACKING_ID}`}
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${process.env.GA_TRACKING_ID}');`,
+            }}
+          />
         </Head>
 
         <ThemeProvider theme={theme}>

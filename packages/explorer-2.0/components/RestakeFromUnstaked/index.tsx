@@ -2,7 +2,7 @@ import { Flex } from 'theme-ui'
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
-import StakingFlow from '../StakingFlow'
+import Flow from '../Flow'
 import Spinner from '../Spinner'
 import Modal from '../Modal'
 import Broadcast from '../../public/img/wifi.svg'
@@ -75,7 +75,7 @@ export default ({ lock }) => {
         title={isMined ? 'Successfully Rebonded' : 'Broadcasted'}
         Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
       >
-        <StakingFlow
+        <Flow
           action="stake"
           account={lock.delegate.id}
           amount={parseFloat(Utils.fromWei(lock.amount))}

@@ -104,6 +104,8 @@ type Delegator @entity {
   unbonded: BigInt
   "The amount of fees a delegator has collected"
   fees: BigInt
+  "The amount of fees withdrawn"
+  withdrawnFees: BigInt
   "The amount of Livepeer Token the delegator has delegated"
   delegatedAmount: BigInt
   "The delegator's token allowance"
@@ -351,6 +353,7 @@ type ApprovalEvent implements Transaction @entity {
   gasUsed: BigInt!
   gasPrice: BigInt!
   timestamp: BigInt
+  spender: String
   from: String
   to: String
   round: Round
@@ -370,4 +373,22 @@ type InitializeRoundEvent implements Transaction @entity {
   round: Round
   delegator: Delegator
   amount: BigInt
+}
+
+type WinningTicket @entity {
+  id: ID!
+  sender: String
+  recipient: String
+  faceValue: BigInt
+  winProb: BigInt
+  senderNonce: BigInt
+  recipientRand: BigInt
+  auxData: Bytes
+  txHash: String
+}
+
+type Stat @entity {
+  id: ID!
+  totalTickets: BigInt
+  totalFees: BigInt
 }

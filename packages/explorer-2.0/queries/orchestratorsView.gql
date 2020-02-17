@@ -1,0 +1,60 @@
+{
+  transcoders(
+    where: {
+      delegator_not: null
+      id_not: "0x0000000000000000000000000000000000000000"
+    }
+    orderBy: totalStake
+    orderDirection: desc
+  ) {
+    id
+    active
+    accruedFees
+    feeShare
+    activationRound
+    deactivationRound
+    rewardCut
+    active
+    totalStake
+    threeBoxSpace {
+      __typename
+      did
+      name
+      website
+      description
+      image
+    }
+    delegator {
+      startRound
+      bondedAmount
+      unbondingLocks {
+        withdrawRound
+      }
+    }
+    pools(first: 30, orderBy: id, orderDirection: desc) {
+      rewardTokens
+    }
+  }
+  protocol {
+    totalTokenSupply
+    totalBondedToken
+    inflation
+    inflationChange
+  }
+  selectedTranscoder @client {
+    __typename
+    index
+    rewardCut
+    id
+    threeBoxSpace {
+      __typename
+      name
+      website
+      description
+      image
+    }
+  }
+  currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
+    id
+  }
+}

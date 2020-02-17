@@ -216,3 +216,23 @@ dataSources:
       eventHandlers:
         - event: SetCurrentRewardTokens(uint256,uint256)
           handler: setCurrentRewardTokens
+  - kind: ethereum/contract
+    name: TicketBroker
+    network: mainnet
+    source:
+      startBlock: {{contracts.ticketBroker.startBlock}}
+      address: {{contracts.ticketBroker.address}}
+      abi: TicketBroker
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/ticketBroker.ts   
+      entities:
+        - WinningTicket
+      abis:
+        - name: TicketBroker
+          file: ./abis/TicketBroker.json
+      eventHandlers:
+        - event: WinningTicketRedeemed(indexed address,indexed address,uint256,uint256,uint256,uint256,bytes)
+          handler: winningTicketRedeemed

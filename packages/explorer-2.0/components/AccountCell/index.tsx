@@ -26,14 +26,17 @@ const ActiveCircle = ({ status }, props) => {
 export default ({ status, threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
-      <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
+      <Flex sx={{ minWidth: 36, minHeight: 36, position: 'relative', mr: 2 }}>
         {process.env.THREEBOX_ENABLED && threeBoxSpace.image ? (
           <img
             sx={{
               objectFit: 'cover',
               borderRadius: 1000,
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
+              padding: '2px',
+              border: '1px solid',
+              borderColor: 'muted',
             }}
             src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
           />
@@ -41,8 +44,11 @@ export default ({ status, threeBoxSpace, active, address }) => {
           <QRCode
             style={{
               borderRadius: 1000,
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
+              padding: '2px',
+              border: '1px solid',
+              borderColor: 'muted',
             }}
             fgColor={`#${address.substr(2, 6)}`}
             value={address}
@@ -53,7 +59,6 @@ export default ({ status, threeBoxSpace, active, address }) => {
 
       <Flex
         sx={{
-          mr: 2,
           color: 'text',
           transition: 'all .3s',
           borderBottom: '1px solid',
@@ -76,6 +81,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
         {active && (
           <div
             sx={{
+              ml: 1,
               display: 'inline-flex',
               padding: '3px 6px',
               border: '1px solid',

@@ -20,7 +20,6 @@ export default ({ goTo, nextStep }) => {
 
   const {
     result: { mutate: approve, isBroadcasted, isMined, txHash },
-    reset,
   } = useWeb3Mutation(APPROVE, {
     variables: {
       type: 'bond',
@@ -46,9 +45,10 @@ export default ({ goTo, nextStep }) => {
 
   return (
     <div sx={{ py: 1 }}>
-      <Styled.h2 sx={{ mb: 2 }}>Set Permissions</Styled.h2>
+      <Styled.h2 sx={{ mb: 2 }}>Unlock Livepeer Tokens</Styled.h2>
       <Styled.p>
-        Allow Livepeer smart contracts to transfer tokens on your behalf?
+        Allow Livepeer smart contracts to transfer Livepeer tokens on your
+        behalf?
       </Styled.p>
       {isBroadcasted && (
         <Flex
@@ -96,7 +96,7 @@ export default ({ goTo, nextStep }) => {
             Submitting
           </Flex>
         ) : (
-          'Approve'
+          'Unlock LPT'
         )}
       </Button>
     </div>

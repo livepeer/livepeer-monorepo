@@ -2,7 +2,7 @@ import { Flex } from 'theme-ui'
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
-import StakingFlow from '../StakingFlow'
+import Flow from '../Flow'
 import Spinner from '../Spinner'
 import Modal from '../Modal'
 import Broadcast from '../../public/img/wifi.svg'
@@ -62,62 +62,60 @@ export default ({ lock }) => {
       >
         Withdraw
       </Button>
-      {isBroadcasted && (
-        <Modal
-          isOpen={isOpen}
-          onDismiss={() => {
-            reset()
-            setIsModalOpen(false)
+      <Modal
+        isOpen={isOpen}
+        onDismiss={() => {
+          reset()
+          setIsModalOpen(false)
+        }}
+        title={isMined ? 'Successfully Withdrawn' : 'Broadcasted'}
+        Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
+      >
+        <Flow
+          action="withdraw"
+          account={context.account}
+          amount={Utils.fromWei(lock.amount)}
+        />
+        <Flex
+          sx={{
+            flexDirection: ['column-reverse', 'column-reverse', 'row'],
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
-          title={isMined ? 'Successfully Withdrawn' : 'Broadcasted'}
-          Icon={isMined ? () => <div sx={{ mr: 1 }}>🎊</div> : Broadcast}
         >
-          <StakingFlow
-            action="withdraw"
-            account={context.account}
-            amount={parseFloat(Utils.fromWei(lock.amount))}
-          />
-          <Flex
-            sx={{
-              flexDirection: ['column-reverse', 'column-reverse', 'row'],
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            {txHash && !isMined && (
-              <>
-                <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-                  <Spinner sx={{ mr: 2 }} />
-                  <div sx={{ color: 'text' }}>
-                    Waiting for your transaction to be mined.
-                  </div>
-                </Flex>
-                <Button
-                  sx={{
-                    mb: [2, 2, 0],
-                    justifyContent: 'center',
-                    width: ['100%', '100%', 'auto'],
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                  as="a"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://etherscan.io/tx/${txHash}`}
-                >
-                  View on Etherscan{' '}
-                  <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
-                </Button>
-              </>
-            )}
-            {isMined && (
-              <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>
-                Done
+          {txHash && !isMined && (
+            <>
+              <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
+                <Spinner sx={{ mr: 2 }} />
+                <div sx={{ color: 'text' }}>
+                  Waiting for your transaction to be mined.
+                </div>
+              </Flex>
+              <Button
+                sx={{
+                  mb: [2, 2, 0],
+                  justifyContent: 'center',
+                  width: ['100%', '100%', 'auto'],
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                as="a"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://etherscan.io/tx/${txHash}`}
+              >
+                View on Etherscan{' '}
+                <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
               </Button>
-            )}
-          </Flex>
-        </Modal>
-      )}
+            </>
+          )}
+          {isMined && (
+            <Button onClick={() => setIsModalOpen(false)} sx={{ ml: 'auto' }}>
+              Done
+            </Button>
+          )}
+        </Flex>
+      </Modal>
     </>
   )
 }
