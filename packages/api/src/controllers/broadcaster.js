@@ -31,15 +31,17 @@ app.get('/addresses', async (req, res, next) => {
   const ethAddresses = {}
   for (const broadcaster of broadcasters) {
     const addrRes = await fetch(`${broadcaster.cliAddress}/ethAddr`)
+
     let ethAddr
     try {
-      ethAddr = await addrRes.json()
+      ethAddr = addrRes.body._readableState.buffer.head.data
     } catch (e) {
+      console.log(`broadcaster/addresses error: ${JSON.stringify(e)}`)
       break
     }
 
     if (ethAddr) {
-      ethAddresses[broadcaster.address] = await addrRes.json()
+      ethAddresses[broadcaster.address] = `${ethAddr}`
     }
   }
 
