@@ -3,22 +3,29 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { FortmaticConnector } from '@web3-react/fortmatic-connector'
 
-const POLLING_INTERVAL = 10000
+const POLLING_INTERVAL = 12000
+const RPC_URLS: { [chainId: number]: string } = {
+  1: process.env.RPC_URL_1 as string,
+  4: process.env.RPC_URL_4 as string,
+}
 
 export const Network = new NetworkConnector({
-  urls: { 1: 'https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e' },
+  defaultChainId: 1,
+  urls: { 1: RPC_URLS[1], 4: RPC_URLS[4] },
   pollingInterval: POLLING_INTERVAL * 3,
 })
 
 export const Injected = new InjectedConnector({
-  supportedChainIds: [1],
+  supportedChainIds: [1, 4],
 })
 
+// mainnet only
 export const Portis = new PortisConnector({
   dAppId: process.env.PORTIS_DAPP_ID,
   networks: [1],
 })
 
+// mainnet only
 export const Fortmatic = new FortmaticConnector({
   apiKey: process.env.FORTMATIC_API_KEY,
   chainId: 1,
