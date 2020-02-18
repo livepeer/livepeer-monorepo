@@ -37,7 +37,7 @@ export default ({ children, ...props }) => {
     maxWidth: 'auto',
   })
 
-  const { data: myAccountData } = useQuery(accountQuery, {
+  const { data: dataMyAccount } = useQuery(accountQuery, {
     variables: {
       account: context?.account?.toLowerCase(),
     },
@@ -106,7 +106,7 @@ export default ({ children, ...props }) => {
         style: tourStyles,
       },
     ])
-  }, [myAccountData?.account, context.active, nextStep, tourStyles])
+  }, [dataMyAccount?.account, context.active, nextStep, tourStyles])
 
   return (
     <Box {...props}>

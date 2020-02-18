@@ -18,7 +18,6 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "components/0xInstant/index.js"
+    "**/*.tsx"
   ]
 }

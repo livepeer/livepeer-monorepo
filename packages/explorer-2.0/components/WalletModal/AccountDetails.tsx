@@ -1,7 +1,7 @@
 import { Box } from 'theme-ui'
 import { useWeb3React } from '@web3-react/core'
 import { isMobile } from 'react-device-detect'
-import { Injected, Portis } from '../../lib/connectors'
+import { Injected } from '../../lib/connectors'
 import CloseIcon from '../../public/img/close.svg'
 import { Flex } from 'theme-ui'
 import Button from '../Button'

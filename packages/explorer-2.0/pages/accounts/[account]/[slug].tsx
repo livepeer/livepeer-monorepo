@@ -20,6 +20,7 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
 import FeesView from '../../../components/FeesView'
+import { useEffect } from 'react'
 
 export default withApollo(() => {
   const accountViewQuery = require('../../../queries/accountView.gql')
@@ -29,7 +30,7 @@ export default withApollo(() => {
   const { width } = useWindowSize()
   const { query, asPath } = router
   const slug = query.slug
-  const { data, loading, refetch } = useQuery(accountViewQuery, {
+  const { data, loading, error, refetch } = useQuery(accountViewQuery, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
@@ -37,16 +38,19 @@ export default withApollo(() => {
     ssr: false,
   })
 
-  const { data: myAccountData, loading: myAccountLoading } = useQuery(
-    accountQuery,
-    {
-      variables: {
-        account: context?.account?.toLowerCase(),
-      },
-      skip: !context.active, // skip this query if wallet not connected
-      ssr: false,
+  const {
+    data: dataMyAccount,
+    loading: loadingMyAccount,
+    error: errorMyAccount,
+    refetch: refetchMyAccount,
+  } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
     },
-  )
+    pollInterval: 10000,
+    skip: !context.active, // skip this query if wallet not connected
+    ssr: false,
+  })
 
   const SELECTED_STAKING_ACTION = gql`
     {
@@ -55,7 +59,23 @@ export default withApollo(() => {
   `
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
 
-  if (loading || myAccountLoading) {
+  if (error) {
+    console.log(error)
+  }
+
+  if (errorMyAccount) {
+    console.log(errorMyAccount)
+  }
+
+  // Refetch data if we detect a network change
+  useEffect(() => {
+    refetch()
+    if (context.account) {
+      refetchMyAccount()
+    }
+  }, [context.chainId])
+
+  if (loading || loadingMyAccount) {
     return (
       <Layout>
         <Flex
@@ -93,7 +113,7 @@ export default withApollo(() => {
   }
 
   const isMyDelegate =
-    query.account.toString() === myAccountData?.delegator?.delegate?.id
+    query.account.toString() === dataMyAccount?.delegator?.delegate?.id
 
   const tabs: Array<TabType> = getTabs(
     role,
@@ -127,16 +147,16 @@ export default withApollo(() => {
       >
         {context.active && (
           <Box>
-            {myAccountData.account &&
-              parseFloat(Utils.fromWei(myAccountData.account.allowance)) ===
+            {dataMyAccount.account &&
+              parseFloat(Utils.fromWei(dataMyAccount.account.allowance)) ===
                 0 &&
-              parseFloat(Utils.fromWei(myAccountData.account.tokenBalance)) !==
-                0 && <Approve account={myAccountData.account} banner={true} />}
+              parseFloat(Utils.fromWei(dataMyAccount.account.tokenBalance)) !==
+                0 && <Approve account={dataMyAccount.account} banner={true} />}
           </Box>
         )}
-        {context.active && myAccountData?.delegator?.lastClaimRound && (
+        {context.active && dataMyAccount?.delegator?.lastClaimRound && (
           <ClaimBanner
-            delegator={myAccountData.delegator}
+            delegator={dataMyAccount.delegator}
             currentRound={data.currentRound[0]}
           />
         )}
@@ -185,8 +205,8 @@ export default withApollo(() => {
           >
             <StakingWidget
               currentRound={data.currentRound[0]}
-              delegator={myAccountData?.delegator}
-              account={myAccountData?.account}
+              delegator={dataMyAccount?.delegator}
+              account={dataMyAccount?.account}
               transcoder={data.transcoder}
               protocol={data.protocol}
             />
@@ -196,8 +216,8 @@ export default withApollo(() => {
             <StakingWidget
               selectedAction={selectedStakingAction?.selectedStakingAction}
               currentRound={data.currentRound[0]}
-              delegator={myAccountData?.delegator}
-              account={myAccountData?.account}
+              delegator={dataMyAccount?.delegator}
+              account={dataMyAccount?.account}
               transcoder={data.transcoder}
               protocol={data.protocol}
             />

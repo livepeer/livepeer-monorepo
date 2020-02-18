@@ -30,7 +30,7 @@ export default ({ transcoder, amount, disabled }) => {
     reset,
   } = useWeb3Mutation(UNBOND, {
     context: {
-      provider: context.library.currentProvider,
+      provider: context.library._web3Provider,
       account: context.account.toLowerCase(),
       returnTxHash: true,
     },

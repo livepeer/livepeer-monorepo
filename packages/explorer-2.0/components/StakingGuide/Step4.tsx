@@ -13,7 +13,7 @@ export default ({ goTo, nextStep }) => {
   const client = useApolloClient()
   const context = useWeb3React()
   const [copied, setCopied] = useState(false)
-  const { data: myAccountData } = useQuery(accountQuery, {
+  const { data: dataMyAccount } = useQuery(accountQuery, {
     variables: {
       account: context?.account?.toLowerCase(),
     },
@@ -82,8 +82,8 @@ export default ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace', mb: 1 }}>
         ETH Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {myAccountData.account &&
-            parseFloat(Utils.fromWei(myAccountData.account.ethBalance)).toFixed(
+          {dataMyAccount.account &&
+            parseFloat(Utils.fromWei(dataMyAccount.account.ethBalance)).toFixed(
               2,
             )}
         </span>
@@ -91,15 +91,15 @@ export default ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace' }}>
         LPT Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {myAccountData.account &&
+          {dataMyAccount.account &&
             parseFloat(
-              Utils.fromWei(myAccountData.account.tokenBalance),
+              Utils.fromWei(dataMyAccount.account.tokenBalance),
             ).toFixed(2)}
         </span>
       </div>
       <Button
         disabled={
-          myAccountData.account && myAccountData.account.tokenBalance === '0'
+          dataMyAccount.account && dataMyAccount.account.tokenBalance === '0'
         }
         sx={{ position: 'absolute', right: 30, bottom: 16 }}
         onClick={async () => {
@@ -109,8 +109,8 @@ export default ({ goTo, nextStep }) => {
             },
           })
           if (
-            myAccountData.account &&
-            myAccountData.account.allowance === '0'
+            dataMyAccount.account &&
+            dataMyAccount.account.allowance === '0'
           ) {
             goTo(nextStep)
           } else {

@@ -2,19 +2,31 @@ import App from 'next/app'
 import Head from 'next/head'
 import { ThemeProvider, ColorMode } from 'theme-ui'
 import theme from '../lib/theme'
-import { Injected, Network, Portis } from '../lib/connectors'
-import {
-  Web3ReactProvider,
-  useWeb3React,
-  UnsupportedChainIdError,
-} from '@web3-react/core'
+import { Web3ReactProvider } from '@web3-react/core'
 import { ethers } from 'ethers'
 import { CookiesProvider } from 'react-cookie'
-import Web3 from 'web3'
 import '@reach/dialog/styles.css'
+import Web3ReactManager from '../components/Web3ReactManager'
+import ReactGA from 'react-ga'
+import { isMobile } from 'react-device-detect'
 
 function getLibrary(provider) {
-  return new Web3(provider)
+  const library = new ethers.providers.Web3Provider(provider)
+  library.pollingInterval = 10000
+  return library
+}
+
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize(process.env.GA_TRACKING_ID)
+  ReactGA.set({
+    customBrowserType: !isMobile
+      ? 'desktop'
+      : window['web3'] || window['ethereum']
+      ? 'mobileWeb3'
+      : 'mobileRegular',
+  })
+} else {
+  ReactGA.initialize('test', { testMode: true })
 }
 
 class MyApp extends App {
@@ -24,29 +36,22 @@ class MyApp extends App {
     return (
       <>
         <Head>
-          <title>Tokenholder App</title>
+          <title>Livepeer Explorer</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link
             href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500&display=swap"
             rel="stylesheet"
-          />
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GA_TRACKING_ID}`}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${process.env.GA_TRACKING_ID}');`,
-            }}
           />
         </Head>
 
         <ThemeProvider theme={theme}>
           <ColorMode />
           <Web3ReactProvider getLibrary={getLibrary}>
-            <CookiesProvider>
-              <Component {...pageProps} />
-            </CookiesProvider>
+            <Web3ReactManager>
+              <CookiesProvider>
+                <Component {...pageProps} />
+              </CookiesProvider>
+            </Web3ReactManager>
           </Web3ReactProvider>
         </ThemeProvider>
       </>
