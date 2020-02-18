@@ -10,3 +10,15 @@ export const timeout = (ms, fn) => {
     })
   })
 }
+
+/**
+ * Returns the input array, shuffled.
+ */
+export const shuffle = arr => {
+  const randos = arr.map(() => Math.random())
+  return Object.keys(arr)
+    .sort((idx1, idx2) => {
+      return randos[idx1] - randos[idx2]
+    })
+    .map(idx => arr[idx])
+}
