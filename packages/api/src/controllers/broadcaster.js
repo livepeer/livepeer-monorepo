@@ -44,28 +44,34 @@ app.get('/addresses', async (req, res, next) => {
     }
 
     if (ethAddr) {
-      ethAddresses[broadcaster.address] = `${ethAddr}`
+      ethAddresses[ethAddr] = {broadcasterAddress: `${broadcaster.address}`, deposit: 0}
     }
   }
 
   // Request funds of all available Broadcasters using their Eth Addresses
-  const addresses = Object.keys(ethAddresses)
-  const graphUrl = 'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
+  const addresses = Object.values(ethAddresses)
+  const graphUrl = 'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
   const query = `{
     broadcasters(where: {id_in: ["${addresses}"]}) {
-      balance
+      id
+      deposit
+      reserve
     }
   }`
 
   request(graphUrl, query)
-    // TO DO: once GraphQL supports this query, parse through data, add to ethAddresses object (renamed),
-    // and return in res.json. Perhaps also refactor this bit into another function. Confirmed: request works, though errs.
-    .then(broadcasterFunds => console.log(`broadcaster wallet funds: ${JSON.stringify(broadcasterFunds)}`))
+    .then(broadcasterFunds => {
+      const bFunded = broadcasterFunds['broadcasters']
+      for (const b of bFunded) {
+        if (ethAddresses[b['id']]) {
+          ethAddresses[b['id']]['deposit'] = b['deposit']
+        }
+      }
+      res.json(ethAddresses)
+    })
     .catch(e => {
       console.error(`Error fetching data from GraphQL: ${e}`)
     })
-
-  res.json(ethAddresses)
 })
 
 export default app
