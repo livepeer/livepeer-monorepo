@@ -15,7 +15,7 @@ export default ({ delegator, protocol, currentRound }) => {
   const query = router.query
   const account = query.account as string
   const context = useWeb3React()
-  const isMyAccount = account === context.account
+  const isMyAccount = account.toLowerCase() === context?.account?.toLowerCase()
 
   if (!delegator?.bondedAmount) {
     if (isMyAccount) {
