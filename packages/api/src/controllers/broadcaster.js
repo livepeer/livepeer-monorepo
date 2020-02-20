@@ -30,7 +30,7 @@ app.get('/status', authMiddleware({}), async (req, res, next) => {
 
 app.get('/addresses', async (req, res, next) => {
   const broadcasters = await req.getBroadcasters(req)
-  const ethAddresses = {}
+  let ethAddresses = {}
   for (const broadcaster of broadcasters) {
     // Fetch Eth Addresses of all available Broadcasters
     const addrRes = await fetch(`${broadcaster.cliAddress}/ethAddr`)
@@ -44,15 +44,15 @@ app.get('/addresses', async (req, res, next) => {
     }
 
     if (ethAddr) {
-      ethAddresses[ethAddr] = {broadcasterAddress: `${broadcaster.address}`, deposit: 0}
+      ethAddresses[ethAddr] = {broadcasterAddress: `${broadcaster.address}`, deposit: 0, reserve: 0}
     }
   }
 
   // Request funds of all available Broadcasters using their Eth Addresses
-  const addresses = Object.values(ethAddresses)
+  const addresses = Object.keys(ethAddresses)
   const graphUrl = 'https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary'
   const query = `{
-    broadcasters(where: {id_in: ["${addresses}"]}) {
+    broadcasters(where: {id_in: ${JSON.stringify(addresses)}}) {
       id
       deposit
       reserve
@@ -65,12 +65,13 @@ app.get('/addresses', async (req, res, next) => {
       for (const b of bFunded) {
         if (ethAddresses[b['id']]) {
           ethAddresses[b['id']]['deposit'] = b['deposit']
+          ethAddresses[b['id']]['reserve'] = b['reserve']
         }
       }
       res.json(ethAddresses)
     })
     .catch(e => {
-      console.error(`Error fetching data from GraphQL: ${e}`)
+      console.error(`Error fetching dataa from GraphQL: ${e}`)
     })
 })
 
