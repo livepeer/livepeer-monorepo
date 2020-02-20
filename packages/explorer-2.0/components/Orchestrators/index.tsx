@@ -145,8 +145,9 @@ export default ({ currentRound, transcoders }) => {
   const tableOptions: any = {
     columns,
     data: transcoders,
-    disableSortRemove: false,
+    disableSortRemove: true,
     initialState: {
+      sortBy: [{ id: 'totalStake', desc: true }],
       hiddenColumns: [
         'activationRound',
         'deactivationRound',
