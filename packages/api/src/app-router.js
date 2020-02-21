@@ -70,9 +70,11 @@ export default async function makeApp(params) {
         kubeOrchestratorService,
         kubeBroadcasterTemplate,
         kubeOrchestratorTemplate,
+        broadcasters,
+        orchestrators
       }),
-    )
-  }
+      )
+    }
 
   app.use(hardcodedNodes({ orchestrators, broadcasters }))
 

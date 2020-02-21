@@ -5,6 +5,7 @@
 import { render } from 'mustache'
 import * as k8s from '@kubernetes/client-node'
 import { timeout } from '../util'
+import { hardcodedNodes } from '.'
 
 export default function kubernetesMiddleware({
   kubeNamespace,
@@ -12,6 +13,8 @@ export default function kubernetesMiddleware({
   kubeOrchestratorService,
   kubeBroadcasterTemplate,
   kubeOrchestratorTemplate,
+  broadcasters,
+  orchestrators
 }) {
   const kc = new k8s.KubeConfig()
   kc.loadFromDefault()
@@ -68,11 +71,19 @@ export default function kubernetesMiddleware({
 
   return (req, res, next) => {
     if (kubeBroadcasterService) {
-      req.getBroadcasters = getBroadcasters
+      if (broadcasters && req.headers.host.endsWith('cluster.local')) {
+        req.getBroadcasters = getBroadcasters
+      } else {
+        hardcodedNodes({ orchestrators, broadcasters })
+      }
     }
 
     if (kubeOrchestratorService) {
-      req.getOrchestrators = getOrchestrators
+      if (orchestrators && req.headers.host.endsWith('cluster.local')) {
+        req.getOrchestrators = getOrchestrators
+      } else {
+        hardcodedNodes({ orchestrators, broadcasters })
+      }
     }
 
     return next()
