@@ -5,9 +5,16 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
+          "internalType": "uint256",
           "name": "round",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "blockHash",
+          "type": "bytes32"
         }
       ],
       "name": "NewRound",
@@ -28,6 +35,7 @@
       "name": "blockNum",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -40,6 +48,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_block",
           "type": "uint256"
         }
@@ -47,6 +56,28 @@
       "name": "blockHash",
       "outputs": [
         {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "blockHashForRound",
+      "outputs": [
+        {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -61,6 +92,7 @@
       "name": "currentRound",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -75,6 +107,7 @@
       "name": "currentRoundStartBlock",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -89,6 +122,7 @@
       "name": "currentRoundInitialized",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -103,6 +137,7 @@
       "name": "currentRoundLocked",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }

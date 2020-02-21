@@ -7,6 +7,7 @@
       "name": "lastRoundLengthUpdateRound",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -21,6 +22,7 @@
       "name": "targetContractId",
       "outputs": [
         {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -35,6 +37,7 @@
       "name": "lastRoundLengthUpdateStartBlock",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -49,6 +52,7 @@
       "name": "lastInitializedRound",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -63,6 +67,7 @@
       "name": "roundLength",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -75,6 +80,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -91,6 +97,7 @@
       "name": "roundLockAmount",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -105,6 +112,7 @@
       "name": "controller",
       "outputs": [
         {
+          "internalType": "contract IController",
           "name": "",
           "type": "address"
         }
@@ -116,6 +124,7 @@
     {
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -128,9 +137,16 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
+          "internalType": "uint256",
           "name": "round",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "blockHash",
+          "type": "bytes32"
         }
       ],
       "name": "NewRound",
@@ -141,6 +157,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
           "name": "controller",
           "type": "address"
         }
@@ -153,6 +170,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "string",
           "name": "param",
           "type": "string"
         }
@@ -164,6 +182,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_roundLength",
           "type": "uint256"
         }
@@ -178,6 +197,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_roundLockAmount",
           "type": "uint256"
         }
@@ -203,6 +223,7 @@
       "name": "blockNum",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -215,6 +236,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_block",
           "type": "uint256"
         }
@@ -222,6 +244,28 @@
       "name": "blockHash",
       "outputs": [
         {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "blockHashForRound",
+      "outputs": [
+        {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -236,6 +280,7 @@
       "name": "currentRound",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -250,6 +295,7 @@
       "name": "currentRoundStartBlock",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -264,6 +310,7 @@
       "name": "currentRoundInitialized",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -278,6 +325,7 @@
       "name": "currentRoundLocked",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }

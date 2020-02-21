@@ -7,6 +7,7 @@
       "name": "mintingFinished",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -19,17 +20,20 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_spender",
+          "internalType": "address",
+          "name": "spender",
           "type": "address"
         },
         {
-          "name": "_value",
+          "internalType": "uint256",
+          "name": "value",
           "type": "uint256"
         }
       ],
       "name": "approve",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -44,6 +48,7 @@
       "name": "totalSupply",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -56,21 +61,25 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_from",
+          "internalType": "address",
+          "name": "sender",
           "type": "address"
         },
         {
-          "name": "_to",
+          "internalType": "address",
+          "name": "recipient",
           "type": "address"
         },
         {
-          "name": "_value",
+          "internalType": "uint256",
+          "name": "amount",
           "type": "uint256"
         }
       ],
       "name": "transferFrom",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -83,10 +92,38 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "addedValue",
+          "type": "uint256"
+        }
+      ],
+      "name": "increaseAllowance",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "_to",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
         }
@@ -94,29 +131,7 @@
       "name": "mint",
       "outputs": [
         {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_spender",
-          "type": "address"
-        },
-        {
-          "name": "_subtractedValue",
-          "type": "uint256"
-        }
-      ],
-      "name": "decreaseApproval",
-      "outputs": [
-        {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -129,14 +144,16 @@
       "constant": true,
       "inputs": [
         {
-          "name": "_owner",
+          "internalType": "address",
+          "name": "account",
           "type": "address"
         }
       ],
       "name": "balanceOf",
       "outputs": [
         {
-          "name": "balance",
+          "internalType": "uint256",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -150,6 +167,7 @@
       "name": "finishMinting",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -164,6 +182,7 @@
       "name": "owner",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -176,17 +195,20 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_to",
+          "internalType": "address",
+          "name": "spender",
           "type": "address"
         },
         {
-          "name": "_value",
+          "internalType": "uint256",
+          "name": "subtractedValue",
           "type": "uint256"
         }
       ],
-      "name": "transfer",
+      "name": "decreaseAllowance",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -199,17 +221,20 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_spender",
+          "internalType": "address",
+          "name": "recipient",
           "type": "address"
         },
         {
-          "name": "_addedValue",
+          "internalType": "uint256",
+          "name": "amount",
           "type": "uint256"
         }
       ],
-      "name": "increaseApproval",
+      "name": "transfer",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -222,17 +247,20 @@
       "constant": true,
       "inputs": [
         {
-          "name": "_owner",
+          "internalType": "address",
+          "name": "owner",
           "type": "address"
         },
         {
-          "name": "_spender",
+          "internalType": "address",
+          "name": "spender",
           "type": "address"
         }
       ],
       "name": "allowance",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -245,6 +273,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -260,11 +289,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "burner",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "value",
           "type": "uint256"
         }
@@ -277,11 +308,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "to",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
         }
@@ -300,11 +333,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "previousOwner",
           "type": "address"
         },
         {
           "indexed": true,
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -317,38 +352,19 @@
       "inputs": [
         {
           "indexed": true,
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "Approval",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
+          "internalType": "address",
           "name": "from",
           "type": "address"
         },
         {
           "indexed": true,
+          "internalType": "address",
           "name": "to",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "value",
           "type": "uint256"
         }
@@ -357,9 +373,35 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
         }

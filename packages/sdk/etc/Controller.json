@@ -16,6 +16,7 @@
       "name": "paused",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -39,6 +40,7 @@
       "name": "owner",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -51,6 +53,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -72,16 +75,19 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "bytes32",
           "name": "id",
           "type": "bytes32"
         },
         {
           "indexed": false,
+          "internalType": "address",
           "name": "contractAddress",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "bytes20",
           "name": "gitCommitHash",
           "type": "bytes20"
         }
@@ -106,11 +112,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "previousOwner",
           "type": "address"
         },
         {
           "indexed": true,
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -122,14 +130,17 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes32",
           "name": "_id",
           "type": "bytes32"
         },
         {
+          "internalType": "address",
           "name": "_contractAddress",
           "type": "address"
         },
         {
+          "internalType": "bytes20",
           "name": "_gitCommitHash",
           "type": "bytes20"
         }
@@ -144,10 +155,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes32",
           "name": "_id",
           "type": "bytes32"
         },
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -162,6 +175,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "bytes32",
           "name": "_id",
           "type": "bytes32"
         }
@@ -169,10 +183,12 @@
       "name": "getContractInfo",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         },
         {
+          "internalType": "bytes20",
           "name": "",
           "type": "bytes20"
         }
@@ -185,6 +201,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "bytes32",
           "name": "_id",
           "type": "bytes32"
         }
@@ -192,6 +209,7 @@
       "name": "getContract",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
