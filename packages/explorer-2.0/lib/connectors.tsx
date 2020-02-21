@@ -11,7 +11,7 @@ const RPC_URLS: { [chainId: number]: string } = {
 
 export const Network = new NetworkConnector({
   defaultChainId: 1,
-  urls: { 1: RPC_URLS[1], 4: RPC_URLS[4] },
+  urls: RPC_URLS,
   pollingInterval: POLLING_INTERVAL * 3,
 })
 
