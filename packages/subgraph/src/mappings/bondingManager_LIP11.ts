@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, store, dataSource } from '@graphprotocol/graph-ts'
+import { Address, store, dataSource, BigInt } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -18,6 +18,7 @@ import {
   UnbondEvent,
   WithdrawStakeEvent,
   RebondEvent,
+  Round,
 } from '../types/schema'
 
 import { makeUnbondingLockId, getRoundsManagerInstance } from './util'
@@ -27,11 +28,13 @@ export function bond(event: Bond): void {
   let newDelegateAddress = event.params.newDelegate
   let oldDelegateAddress = event.params.oldDelegate
   let delegatorAddress = event.params.delegator
+  let bondedAmount = event.params.bondedAmount
   let additionalAmount = event.params.additionalAmount
   let delegateData = bondingManager.getDelegator(newDelegateAddress)
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let round = Round.load(currentRound.toString())
   let EMPTY_ADDRESS = Address.fromString(
     '0000000000000000000000000000000000000000',
   )
@@ -77,6 +80,16 @@ export function bond(event: Bond): void {
 
     oldDelegate.save()
     oldTranscoder.save()
+
+    // keep track of how much stake moved during this round.
+    round.totalMovedStake = round.totalMovedStake.plus(
+      delegatorData.value0.minus(additionalAmount),
+    )
+
+    // keep track of how much new stake was introduced this round
+    round.totalNewStake = round.totalNewStake.plus(additionalAmount)
+
+    round.save()
   }
 
   transcoder.totalStake = delegateData.value3
@@ -106,6 +119,7 @@ export function bond(event: Bond): void {
   bondEvent.newDelegate = newDelegateAddress.toHex()
   bondEvent.oldDelegate = oldDelegateAddress.toHex()
   bondEvent.delegator = delegatorAddress.toHex()
+  bondEvent.bondedAmount = bondedAmount
   bondEvent.additionalAmount = additionalAmount
   bondEvent.save()
 }

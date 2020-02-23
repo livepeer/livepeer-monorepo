@@ -8,13 +8,11 @@
     orderDirection: desc
   ) {
     id
-    active
-    accruedFees
+    totalGeneratedFees
     feeShare
     activationRound
     deactivationRound
     rewardCut
-    active
     totalStake
     threeBoxSpace {
       __typename

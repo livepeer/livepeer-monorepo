@@ -30,6 +30,7 @@ import {
   ClaimEarningsEvent,
   WithdrawStakeEvent,
   WithdrawFeesEvent,
+  Round,
 } from '../types/schema'
 
 import { makePoolId, getRoundsManagerInstance } from './util'
@@ -51,7 +52,6 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
     transcoderAddress,
     currentRound,
   )
-  let registered = event.params.registered
   let pendingRewardCut = event.params.pendingRewardCut
   let pendingFeeShare = event.params.pendingFeeShare
   let pendingPricePerSegment = event.params.pendingPricePerSegment
@@ -62,7 +62,6 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   transcoder.pendingFeeShare = pendingFeeShare
   transcoder.pendingPricePerSegment = pendingPricePerSegment
   transcoder.active = active
-  transcoder.status = registered ? 'Registered' : 'NotRegistered'
 
   // Apply store updates
   transcoder.save()
@@ -184,6 +183,7 @@ export function bond(event: Bond): void {
   let currentRound = roundsManager.currentRound()
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   let delegateData = bondingManager.getDelegator(newDelegateAddress)
+  let round = Round.load(currentRound.toString())
 
   let transcoder = Transcoder.load(newDelegateAddress.toHex())
   if (transcoder == null) {
@@ -199,6 +199,11 @@ export function bond(event: Bond): void {
   if (delegator == null) {
     delegator = new Delegator(delegatorAddress.toHex())
   }
+
+  let bondedAmount = delegator.bondedAmount as BigInt
+
+  // additional amount == new bondedAmount minus previous bonded amount
+  let additionalAmount = delegatorData.value0.minus(bondedAmount)
 
   // If self delegating, set status and assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
@@ -229,22 +234,25 @@ export function bond(event: Bond): void {
 
     oldDelegate.save()
     oldTranscoder.save()
+
+    // keep track of how much stake moved during this round.
+    round.totalMovedStake = round.totalMovedStake.plus(
+      delegatorData.value0.minus(additionalAmount),
+    )
+
+    // keep track of how much new stake was introduced this round
+    round.totalNewStake = round.totalNewStake.plus(additionalAmount)
+
+    round.save()
   }
 
   transcoder.totalStake = delegateData.value3
   delegate.delegatedAmount = delegateData.value3
 
-  // additional amount == new bondedAmount minus previous bonded amount
-  let additionalAmount = delegatorData.value0.minus(
-    delegator.bondedAmount as BigInt,
-  )
-
   // no existing delegate && has bondedAmount == rebonding
   // Subtract bondedAmount from unbonded
   if (!delegator.delegate && delegator.bondedAmount.gt(BigInt.fromI32(0))) {
-    delegator.unbonded = delegator.unbonded.minus(
-      delegator.bondedAmount as BigInt,
-    )
+    delegator.unbonded = delegator.unbonded.minus(bondedAmount)
   }
 
   delegator.delegate = newDelegateAddress.toHex()
@@ -269,7 +277,9 @@ export function bond(event: Bond): void {
   bondEvent.to = event.transaction.to.toHex()
   bondEvent.round = currentRound.toString()
   bondEvent.newDelegate = newDelegateAddress.toHex()
+  bondEvent.bondedAmount = delegatorData.value0
   bondEvent.additionalAmount = additionalAmount
+  bondEvent.delegator = delegatorAddress.toHex()
   bondEvent.save()
 }
 

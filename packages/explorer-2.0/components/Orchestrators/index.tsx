@@ -77,7 +77,7 @@ export default ({ currentRound, transcoders }) => {
       },
       {
         Header: 'Fees',
-        accessor: 'accruedFees',
+        accessor: 'totalGeneratedFees',
       },
       {
         Header: 'Reward Cut',

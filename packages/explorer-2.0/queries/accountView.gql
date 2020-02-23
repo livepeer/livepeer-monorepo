@@ -52,7 +52,7 @@ query($account: ID!) {
     status
     active
     totalStake
-    accruedFees
+    totalGeneratedFees
     pools(first: 30, orderBy: id, orderDirection: desc) {
       rewardTokens
     }

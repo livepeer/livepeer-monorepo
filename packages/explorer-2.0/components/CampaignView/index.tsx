@@ -52,8 +52,11 @@ export default ({ transcoder }) => {
                   fontFamily: 'monospace',
                 }}
               >
-                {transcoder.accruedFees
-                  ? abbreviateNumber(Utils.fromWei(transcoder.accruedFees), 3)
+                {transcoder.totalGeneratedFees
+                  ? abbreviateNumber(
+                      Utils.fromWei(transcoder.totalGeneratedFees),
+                      3,
+                    )
                   : 0}
                 <span sx={{ ml: 1, fontSize: 1 }}>ETH</span>
               </Box>

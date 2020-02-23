@@ -218,7 +218,7 @@ dataSources:
           handler: setCurrentRewardTokens
   - kind: ethereum/contract
     name: TicketBroker
-    network: mainnet
+    network: {{networkName}}
     source:
       startBlock: {{contracts.ticketBroker.startBlock}}
       address: {{contracts.ticketBroker.address}}
@@ -230,9 +230,22 @@ dataSources:
       file: ./src/mappings/ticketBroker.ts   
       entities:
         - WinningTicket
+        - Protocol
+        - Broadcaster
+        - WinningTicketRedeemedEvent
       abis:
         - name: TicketBroker
           file: ./abis/TicketBroker.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
       eventHandlers:
         - event: WinningTicketRedeemed(indexed address,indexed address,uint256,uint256,uint256,uint256,bytes)
           handler: winningTicketRedeemed
+        - event: DepositFunded(indexed address,uint256)
+          handler: depositFunded
+        - event: ReserveFunded(indexed address,uint256)
+          handler: reserveFunded
+        - event: ReserveClaimed(indexed address,address,uint256)
+          handler: reserveClaimed
+        - event: Withdrawal(indexed address,uint256,uint256)
+          handler: withdrawal
