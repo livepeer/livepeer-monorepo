@@ -29,7 +29,7 @@ export default ({ lock }) => {
       unbondingLockId: lock.unbondingLockId,
     },
     context: {
-      provider: context.library.currentProvider,
+      provider: context.library._web3Provider,
       account: context.account.toLowerCase(),
       returnTxHash: true,
     },

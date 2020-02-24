@@ -1,5 +1,4 @@
-import { Flex } from 'theme-ui'
-import { Box } from 'theme-ui'
+import { Flex, Box } from 'theme-ui'
 
 export default ({
   link = null,

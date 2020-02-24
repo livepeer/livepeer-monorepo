@@ -54,9 +54,11 @@ export async function bond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function batchClaimEarnings(_obj, _args, _ctx) {
+  const Web3 = require('web3') // use web3 lib for batching transactions
+  const web3 = new Web3(_ctx.provider)
   const { lastClaimRound, endRound } = _args
   const { abi, address } = _ctx.livepeer.config.contracts.BondingManager
-  const bondingManager = new _ctx.web3.eth.Contract(abi, address)
+  const bondingManager = new web3.eth.Contract(abi, address)
   const totalRoundsToClaim = parseInt(endRound) - parseInt(lastClaimRound)
   const quotient = Math.floor(totalRoundsToClaim / MAX_EARNINGS_CLAIMS_ROUNDS)
   const remainder = totalRoundsToClaim % MAX_EARNINGS_CLAIMS_ROUNDS
@@ -75,7 +77,7 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
   }
 
   function makeBatchRequest(calls) {
-    let batch = new _ctx.web3.BatchRequest()
+    let batch = new web3.BatchRequest()
     let promises = calls.map(call => {
       return new Promise((res, rej) => {
         let req = call.request({ from: _ctx.account }, (err, txHash) => {

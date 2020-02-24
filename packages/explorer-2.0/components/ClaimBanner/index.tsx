@@ -39,8 +39,7 @@ export default ({ delegator, currentRound }) => {
       endRound: currentRound.id,
     },
     context: {
-      web3: context?.library,
-      provider: context?.library?.currentProvider,
+      provider: context?.library?._web3Provider,
       account: context?.account?.toLowerCase(),
       returnTxHash: true,
     },

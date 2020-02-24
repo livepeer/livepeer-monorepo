@@ -37,7 +37,7 @@ export default ({ lock }) => {
       delegate: lock.delegate.id,
     },
     context: {
-      provider: context.library.currentProvider,
+      provider: context.library._web3Provider,
       account: context.account.toLowerCase(),
       returnTxHash: true,
     },

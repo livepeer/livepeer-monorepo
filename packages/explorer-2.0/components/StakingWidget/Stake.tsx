@@ -40,7 +40,7 @@ export default ({ transcoder, amount, disabled }) => {
       amount: Utils.toWei(amount ? amount.toString() : '0'),
     },
     context: {
-      provider: context.library.currentProvider,
+      provider: context.library._web3Provider,
       account: context.account.toLowerCase(),
       returnTxHash: true,
     },

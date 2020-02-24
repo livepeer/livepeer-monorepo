@@ -147,7 +147,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     } else {
       setCreateProfileModalOpen(true)
 
-      let box = await Box.openBox(account, context.library.currentProvider)
+      let box = await Box.openBox(account, context.library._web3Provider)
       setActiveStep(1)
       await box.syncDone
 
@@ -173,7 +173,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         })
         box = await Box.openBox(
           account.toLowerCase(),
-          context.library.currentProvider,
+          context.library._web3Provider,
         )
         space = await box.openSpace('livepeer')
         await box.syncDone
@@ -206,7 +206,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     setSaving(true)
     const box = await Box.openBox(
       context.account,
-      context.library.currentProvider,
+      context.library._web3Provider,
     )
 
     let hash = ''
@@ -339,7 +339,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 const Box = require('3box')
                 const box = await Box.openBox(
                   context.account,
-                  context.library.currentProvider,
+                  context.library._web3Provider,
                 )
                 await updateProfile({
                   variables: {
@@ -368,7 +368,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                 const Box = require('3box')
                 const box = await Box.openBox(
                   context.account,
-                  context.library.currentProvider,
+                  context.library._web3Provider,
                 )
                 await updateProfile({
                   variables: {
