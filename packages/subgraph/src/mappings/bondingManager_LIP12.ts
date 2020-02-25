@@ -2,24 +2,24 @@ import { dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
-  TranscoderUpdate,
-  TranscoderActivated,
-  TranscoderDeactivated,
-  EarningsClaimed,
+  TranscoderUpdate as TranscoderUpdateEvent,
+  TranscoderActivated as TranscoderActivatedEvent,
+  TranscoderDeactivated as TranscoderDeactivatedEvent,
+  EarningsClaimed as EarningsClaimedEvent,
 } from '../types/BondingManager_LIP12/BondingManager'
 
 import {
   Transcoder,
   Delegator,
-  TranscoderUpdatedEvent,
-  ClaimEarningsEvent,
-  TranscoderActivatedEvent,
-  TranscoderDeactivatedEvent,
+  TranscoderUpdated,
+  ClaimEarnings,
+  TranscoderActivated,
+  TranscoderDeactivated,
 } from '../types/schema'
 
 import { MAXIMUM_VALUE_UINT256, getRoundsManagerInstance } from './util'
 
-export function transcoderUpdated(event: TranscoderUpdate): void {
+export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   let transcoderAddress = event.params.transcoder
   let rewardCut = event.params.rewardCut
   let feeShare = event.params.feeShare
@@ -39,24 +39,24 @@ export function transcoderUpdated(event: TranscoderUpdate): void {
   transcoder.save()
 
   // Store transaction info
-  let transcoderUpdatedEvent = new TranscoderUpdatedEvent(
-    event.transaction.hash.toHex() + '-TranscoderUpdate',
+  let transcoderUpdated = new TranscoderUpdated(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
   )
-  transcoderUpdatedEvent.hash = event.transaction.hash.toHex()
-  transcoderUpdatedEvent.blockNumber = event.block.number
-  transcoderUpdatedEvent.gasUsed = event.transaction.gasUsed
-  transcoderUpdatedEvent.gasPrice = event.transaction.gasPrice
-  transcoderUpdatedEvent.timestamp = event.block.timestamp
-  transcoderUpdatedEvent.from = event.transaction.from.toHex()
-  transcoderUpdatedEvent.to = event.transaction.to.toHex()
-  transcoderUpdatedEvent.round = currentRound.toString()
-  transcoderUpdatedEvent.rewardCut = rewardCut
-  transcoderUpdatedEvent.feeShare = feeShare
-  transcoderUpdatedEvent.delegate = transcoderAddress.toHex()
-  transcoderUpdatedEvent.save()
+  transcoderUpdated.hash = event.transaction.hash.toHex()
+  transcoderUpdated.blockNumber = event.block.number
+  transcoderUpdated.gasUsed = event.transaction.gasUsed
+  transcoderUpdated.gasPrice = event.transaction.gasPrice
+  transcoderUpdated.timestamp = event.block.timestamp
+  transcoderUpdated.from = event.transaction.from.toHex()
+  transcoderUpdated.to = event.transaction.to.toHex()
+  transcoderUpdated.round = currentRound.toString()
+  transcoderUpdated.rewardCut = rewardCut
+  transcoderUpdated.feeShare = feeShare
+  transcoderUpdated.delegate = transcoderAddress.toHex()
+  transcoderUpdated.save()
 }
 
-export function transcoderActivated(event: TranscoderActivated): void {
+export function transcoderActivated(event: TranscoderActivatedEvent): void {
   let transcoderAddress = event.params.transcoder
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
@@ -65,55 +65,57 @@ export function transcoderActivated(event: TranscoderActivated): void {
     transcoder = new Transcoder(transcoderAddress.toHex())
   }
 
+  transcoder.active = true
   transcoder.lastActiveStakeUpdateRound = event.params.activationRound
   transcoder.activationRound = event.params.activationRound
   transcoder.deactivationRound = MAXIMUM_VALUE_UINT256
   transcoder.save()
 
   // Store transaction info
-  let transcoderActivatedEvent = new TranscoderActivatedEvent(
-    event.transaction.hash.toHex() + '-TranscoderActivated',
+  let transcoderActivated = new TranscoderActivated(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
   )
-  transcoderActivatedEvent.hash = event.transaction.hash.toHex()
-  transcoderActivatedEvent.blockNumber = event.block.number
-  transcoderActivatedEvent.gasUsed = event.transaction.gasUsed
-  transcoderActivatedEvent.gasPrice = event.transaction.gasPrice
-  transcoderActivatedEvent.timestamp = event.block.timestamp
-  transcoderActivatedEvent.from = event.transaction.from.toHex()
-  transcoderActivatedEvent.to = event.transaction.to.toHex()
-  transcoderActivatedEvent.round = currentRound.toString()
-  transcoderActivatedEvent.activationRound = event.params.activationRound
-  transcoderActivatedEvent.delegate = transcoderAddress.toHex()
-  transcoderActivatedEvent.save()
+  transcoderActivated.hash = event.transaction.hash.toHex()
+  transcoderActivated.blockNumber = event.block.number
+  transcoderActivated.gasUsed = event.transaction.gasUsed
+  transcoderActivated.gasPrice = event.transaction.gasPrice
+  transcoderActivated.timestamp = event.block.timestamp
+  transcoderActivated.from = event.transaction.from.toHex()
+  transcoderActivated.to = event.transaction.to.toHex()
+  transcoderActivated.round = currentRound.toString()
+  transcoderActivated.activationRound = event.params.activationRound
+  transcoderActivated.delegate = transcoderAddress.toHex()
+  transcoderActivated.save()
 }
 
-export function transcoderDeactivated(event: TranscoderDeactivated): void {
+export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
 
+  transcoder.active = false
   transcoder.deactivationRound = event.params.deactivationRound
   transcoder.save()
 
   // Store transaction info
-  let transcoderDeactivatedEvent = new TranscoderDeactivatedEvent(
-    event.transaction.hash.toHex() + '-TranscoderDeactivated',
+  let transcoderDeactivated = new TranscoderDeactivated(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
   )
-  transcoderDeactivatedEvent.hash = event.transaction.hash.toHex()
-  transcoderDeactivatedEvent.blockNumber = event.block.number
-  transcoderDeactivatedEvent.gasUsed = event.transaction.gasUsed
-  transcoderDeactivatedEvent.gasPrice = event.transaction.gasPrice
-  transcoderDeactivatedEvent.timestamp = event.block.timestamp
-  transcoderDeactivatedEvent.from = event.transaction.from.toHex()
-  transcoderDeactivatedEvent.to = event.transaction.to.toHex()
-  transcoderDeactivatedEvent.round = currentRound.toString()
-  transcoderDeactivatedEvent.deactivationRound = event.params.deactivationRound
-  transcoderDeactivatedEvent.delegate = transcoderAddress.toHex()
-  transcoderDeactivatedEvent.save()
+  transcoderDeactivated.hash = event.transaction.hash.toHex()
+  transcoderDeactivated.blockNumber = event.block.number
+  transcoderDeactivated.gasUsed = event.transaction.gasUsed
+  transcoderDeactivated.gasPrice = event.transaction.gasPrice
+  transcoderDeactivated.timestamp = event.block.timestamp
+  transcoderDeactivated.from = event.transaction.from.toHex()
+  transcoderDeactivated.to = event.transaction.to.toHex()
+  transcoderDeactivated.round = currentRound.toString()
+  transcoderDeactivated.deactivationRound = event.params.deactivationRound
+  transcoderDeactivated.delegate = transcoderAddress.toHex()
+  transcoderDeactivated.save()
 }
 
-export function earningsClaimed(event: EarningsClaimed): void {
+export function earningsClaimed(event: EarningsClaimedEvent): void {
   let delegateAddress = event.params.delegate
   let delegatorAddress = event.params.delegator
   let rewards = event.params.rewards
@@ -129,22 +131,22 @@ export function earningsClaimed(event: EarningsClaimed): void {
   delegator.fees = delegator.fees.plus(fees)
   delegator.save()
 
-  let claimEarningsEvent = new ClaimEarningsEvent(
-    event.transaction.hash.toHex() + '-ClaimEarnings',
+  let claimEarnings = new ClaimEarnings(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
   )
-  claimEarningsEvent.hash = event.transaction.hash.toHex()
-  claimEarningsEvent.blockNumber = event.block.number
-  claimEarningsEvent.gasUsed = event.transaction.gasUsed
-  claimEarningsEvent.gasPrice = event.transaction.gasPrice
-  claimEarningsEvent.timestamp = event.block.timestamp
-  claimEarningsEvent.from = event.transaction.from.toHex()
-  claimEarningsEvent.to = event.transaction.to.toHex()
-  claimEarningsEvent.round = currentRound.toString()
-  claimEarningsEvent.delegate = delegateAddress.toHex()
-  claimEarningsEvent.delegator = delegatorAddress.toHex()
-  claimEarningsEvent.startRound = startRound.toString()
-  claimEarningsEvent.endRound = endRound.toString()
-  claimEarningsEvent.rewardTokens = rewards
-  claimEarningsEvent.fees = fees
-  claimEarningsEvent.save()
+  claimEarnings.hash = event.transaction.hash.toHex()
+  claimEarnings.blockNumber = event.block.number
+  claimEarnings.gasUsed = event.transaction.gasUsed
+  claimEarnings.gasPrice = event.transaction.gasPrice
+  claimEarnings.timestamp = event.block.timestamp
+  claimEarnings.from = event.transaction.from.toHex()
+  claimEarnings.to = event.transaction.to.toHex()
+  claimEarnings.round = currentRound.toString()
+  claimEarnings.delegate = delegateAddress.toHex()
+  claimEarnings.delegator = delegatorAddress.toHex()
+  claimEarnings.startRound = startRound.toString()
+  claimEarnings.endRound = endRound.toString()
+  claimEarnings.rewardTokens = rewards
+  claimEarnings.fees = fees
+  claimEarnings.save()
 }

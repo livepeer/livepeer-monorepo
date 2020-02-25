@@ -8,7 +8,7 @@ query($account: String!, $first: Int!, $skip: Int!) {
   ) {
     hash
     timestamp
-    ... on BondEvent {
+    ... on Bond {
       __typename
       delegator {
         id
@@ -24,7 +24,7 @@ query($account: String!, $first: Int!, $skip: Int!) {
       }
       additionalAmount
     }
-    ... on UnbondEvent {
+    ... on Unbond {
       __typename
       round {
         id
@@ -34,7 +34,7 @@ query($account: String!, $first: Int!, $skip: Int!) {
       }
       amount
     }
-    ... on RebondEvent {
+    ... on Rebond {
       __typename
       delegate {
         id
@@ -44,7 +44,7 @@ query($account: String!, $first: Int!, $skip: Int!) {
         id
       }
     }
-    ... on TranscoderUpdatedEvent {
+    ... on TranscoderUpdated {
       __typename
       rewardCut
       feeShare
@@ -52,14 +52,14 @@ query($account: String!, $first: Int!, $skip: Int!) {
         id
       }
     }
-    ... on RewardEvent {
+    ... on Reward {
       __typename
       rewardTokens
       round {
         id
       }
     }
-    ... on ClaimEarningsEvent {
+    ... on ClaimEarnings {
       __typename
       startRound {
         id
@@ -73,28 +73,28 @@ query($account: String!, $first: Int!, $skip: Int!) {
         id
       }
     }
-    ... on WithdrawStakeEvent {
+    ... on WithdrawStake {
       __typename
       amount
       round {
         id
       }
     }
-    ... on WithdrawFeesEvent {
+    ... on WithdrawFees {
       __typename
       amount
       round {
         id
       }
     }
-    ... on ApprovalEvent {
+    ... on Approval {
       __typename
       round {
         id
       }
       amount
     }
-    ... on InitializeRoundEvent {
+    ... on InitializeRound {
       __typename
       round {
         id

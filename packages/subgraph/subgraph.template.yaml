@@ -20,15 +20,15 @@ dataSources:
         - Transcoder
         - Pool
         - Delegator
-        - TranscoderUpdatedEvent
-        - TranscoderResignedEvent
-        - TranscoderEvictedEvent
-        - TranscoderSlashedEvent
-        - BondEvent
-        - UnbondEvent
-        - RewardEvent
-        - ClaimEarningsEvent
-        - WithdrawFeesEvent
+        - TranscoderUpdated
+        - TranscoderResigned
+        - TranscoderEvicted
+        - TranscoderSlashed
+        - Bond
+        - Unbond
+        - Reward
+        - ClaimEarnings
+        - WithdrawFees
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -43,8 +43,6 @@ dataSources:
           handler: transcoderEvicted
         - event: TranscoderSlashed(indexed address,address,uint256,uint256)
           handler: transcoderSlashed
-        - event: Bond(indexed address,indexed address)
-          handler: bond
         - event: Unbond(indexed address,indexed address)
           handler: unbond
         - event: Reward(indexed address,uint256)
@@ -56,6 +54,8 @@ dataSources:
       callHandlers:
         - function: claimEarnings(uint256)
           handler: claimEarnings
+        - function: bond(uint256,address)
+          handler: bond
   - kind: ethereum/contract
     name: BondingManager_LIP11
     network: {{networkName}}
@@ -72,10 +72,10 @@ dataSources:
         - Transcoder
         - Delegator
         - UnbondingLock
-        - BondEvent
-        - UnbondEvent
-        - RebondEvent
-        - WithdrawStakeEvent
+        - Bond
+        - Unbond
+        - Rebond
+        - WithdrawStake
       abis:
         - name: BondingManager
           file: ./abis/BondingManager_LIP11.json
@@ -105,10 +105,10 @@ dataSources:
       entities:
         - Transcoder
         - Delegator
-        - TranscoderUpdatedEvent
-        - TranscoderActivatedEvent
-        - TranscoderDeactivatedEvent
-        - EarningsClaimedEvent
+        - TranscoderUpdated
+        - TranscoderActivated
+        - TranscoderDeactivated
+        - EarningsClaimed
       abis:
         - name: BondingManager
           file: ./abis/BondingManager_LIP12.json
@@ -185,7 +185,7 @@ dataSources:
       file: ./src/mappings/livepeerToken.ts
       entities:
         - Delegator
-        - ApprovalEvent
+        - Approval
       abis:
         - name: LivepeerToken
           file: ./abis/LivepeerToken.json
@@ -232,7 +232,7 @@ dataSources:
         - WinningTicket
         - Protocol
         - Broadcaster
-        - WinningTicketRedeemedEvent
+        - WinningTicketRedeemed
       abis:
         - name: TicketBroker
           file: ./abis/TicketBroker.json

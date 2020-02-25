@@ -28,8 +28,8 @@ Follow the instructions documented [here](https://thegraph.com/docs/deploy-a-sub
 ### Deploy the Livepeer Subgraph locally
 
 1. Install [Docker](https://docs.docker.com) and [Docker Compose](https://docs.docker.com/compose/install/)
-2. Inside `docker-compose.yml` set the ethereum network to an archive node that has tracing enabled. If you don't have access to an archive node we recommend using [Alchemy](https://alchemyapi.io/). 
-3. In the root of this project run `docker-compose up`. This command will look for the `docker-compose.yml` file and automatically provision a server with rust, postgres, and ipfs, and spin up a graph node with a GraphiQL interface at `http://127.0.0.1:8000/`.)
+2. Inside `docker-compose.yml`, set the `ethereum` value under the `environment` section to an archive node that has tracing enabled. If you don't have access to an archive node we recommend using [Alchemy](https://alchemyapi.io/). 
+3. In the root of this project run `docker-compose up`. This command will look for the `docker-compose.yml` file and automatically provision a server with rust, postgres, and ipfs, and spin up a graph node with a GraphiQL interface at `http://127.0.0.1:8000/`.
 
 4. Run `yarn create:local` to create the subgraph
 5. Run `yarn deploy:local` to deploy it

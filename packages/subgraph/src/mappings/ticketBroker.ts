@@ -1,57 +1,47 @@
 import {
-  WinningTicketRedeemed,
-  ReserveFunded,
-  DepositFunded,
-  ReserveClaimed,
-  Withdrawal,
+  WinningTicketRedeemed as WinningTicketRedeemedEvent,
+  ReserveFunded as ReserveFundedEvent,
+  DepositFunded as DepositFundedEvent,
+  ReserveClaimed as ReserveClaimedEvent,
+  Withdrawal as WithdrawalEvent,
 } from '../types/TicketBroker/TicketBroker'
 import {
-  WinningTicket,
-  WinningTicketRedeemedEvent,
+  WinningTicketRedeemed,
   Protocol,
   Transcoder,
   Broadcaster,
   Round,
+  ReserveFunded,
+  ReserveClaimed,
+  DepositFunded,
+  Withdrawal,
 } from '../types/schema'
 import { BigInt, dataSource } from '@graphprotocol/graph-ts'
 import { getRoundsManagerInstance } from './util'
 
-export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
+export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let round = Round.load(currentRound.toString())
-  let winningTicket = new WinningTicket(
+  let winningTicketRedeemed = new WinningTicketRedeemed(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
   )
-  winningTicket.sender = event.params.sender.toHex()
-  winningTicket.recipient = event.params.recipient.toHex()
-  winningTicket.faceValue = event.params.faceValue
-  winningTicket.winProb = event.params.winProb
-  winningTicket.senderNonce = event.params.senderNonce
-  winningTicket.recipientRand = event.params.recipientRand
-  winningTicket.auxData = event.params.auxData
-  winningTicket.txHash = event.transaction.hash.toHex()
-  winningTicket.save()
-
-  let winningTicketRedeemedEvent = new WinningTicketRedeemedEvent(
-    event.transaction.hash.toHex() + 'WinningTicketRedeemedEvent',
-  )
-  winningTicketRedeemedEvent.hash = event.transaction.hash.toHex()
-  winningTicketRedeemedEvent.blockNumber = event.block.number
-  winningTicketRedeemedEvent.gasUsed = event.transaction.gasUsed
-  winningTicketRedeemedEvent.gasPrice = event.transaction.gasPrice
-  winningTicketRedeemedEvent.timestamp = event.block.timestamp
-  winningTicketRedeemedEvent.from = event.transaction.from.toHex()
-  winningTicketRedeemedEvent.to = event.transaction.to.toHex()
-  winningTicketRedeemedEvent.round = currentRound.toString()
-  winningTicketRedeemedEvent.sender = event.params.sender.toHex()
-  winningTicketRedeemedEvent.recipient = event.params.recipient.toHex()
-  winningTicketRedeemedEvent.faceValue = event.params.faceValue
-  winningTicketRedeemedEvent.winProb = event.params.winProb
-  winningTicketRedeemedEvent.senderNonce = event.params.senderNonce
-  winningTicketRedeemedEvent.recipientRand = event.params.recipientRand
-  winningTicketRedeemedEvent.auxData = event.params.auxData
-  winningTicketRedeemedEvent.save()
+  winningTicketRedeemed.hash = event.transaction.hash.toHex()
+  winningTicketRedeemed.blockNumber = event.block.number
+  winningTicketRedeemed.gasUsed = event.transaction.gasUsed
+  winningTicketRedeemed.gasPrice = event.transaction.gasPrice
+  winningTicketRedeemed.timestamp = event.block.timestamp
+  winningTicketRedeemed.from = event.transaction.from.toHex()
+  winningTicketRedeemed.to = event.transaction.to.toHex()
+  winningTicketRedeemed.round = currentRound.toString()
+  winningTicketRedeemed.sender = event.params.sender.toHex()
+  winningTicketRedeemed.recipient = event.params.recipient.toHex()
+  winningTicketRedeemed.faceValue = event.params.faceValue
+  winningTicketRedeemed.winProb = event.params.winProb
+  winningTicketRedeemed.senderNonce = event.params.senderNonce
+  winningTicketRedeemed.recipientRand = event.params.recipientRand
+  winningTicketRedeemed.auxData = event.params.auxData
+  winningTicketRedeemed.save()
 
   // Update broadcaster's deposit & reserve
   let broadcaster = Broadcaster.load(event.params.sender.toHex())
@@ -92,33 +82,103 @@ export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
   round.save()
 }
 
-export function depositFunded(event: DepositFunded): void {
+export function depositFunded(event: DepositFundedEvent): void {
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
+  let currentRound = roundsManager.currentRound()
   let broadcaster = Broadcaster.load(event.params.sender.toHex())
   if (broadcaster == null) {
     broadcaster = new Broadcaster(event.params.sender.toHex())
   }
   broadcaster.deposit = broadcaster.deposit.plus(event.params.amount)
   broadcaster.save()
+
+  let depositFunded = new DepositFunded(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+  )
+  depositFunded.hash = event.transaction.hash.toHex()
+  depositFunded.blockNumber = event.block.number
+  depositFunded.gasUsed = event.transaction.gasUsed
+  depositFunded.gasPrice = event.transaction.gasPrice
+  depositFunded.timestamp = event.block.timestamp
+  depositFunded.from = event.transaction.from.toHex()
+  depositFunded.to = event.transaction.to.toHex()
+  depositFunded.round = currentRound.toString()
+  depositFunded.sender = event.params.sender.toHex()
+  depositFunded.amount = event.params.amount
+  depositFunded.save()
 }
 
-export function reserveFunded(event: ReserveFunded): void {
+export function reserveFunded(event: ReserveFundedEvent): void {
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
+  let currentRound = roundsManager.currentRound()
   let broadcaster = Broadcaster.load(event.params.reserveHolder.toHex())
   if (broadcaster == null) {
     broadcaster = new Broadcaster(event.params.reserveHolder.toHex())
   }
   broadcaster.reserve = broadcaster.reserve.plus(event.params.amount)
   broadcaster.save()
+
+  let reserveFunded = new ReserveFunded(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+  )
+  reserveFunded.hash = event.transaction.hash.toHex()
+  reserveFunded.blockNumber = event.block.number
+  reserveFunded.gasUsed = event.transaction.gasUsed
+  reserveFunded.gasPrice = event.transaction.gasPrice
+  reserveFunded.timestamp = event.block.timestamp
+  reserveFunded.from = event.transaction.from.toHex()
+  reserveFunded.to = event.transaction.to.toHex()
+  reserveFunded.round = currentRound.toString()
+  reserveFunded.reserveHolder = event.params.reserveHolder.toHex()
+  reserveFunded.amount = event.params.amount
+  reserveFunded.save()
 }
 
-export function reserveClaimed(event: ReserveClaimed): void {
+export function reserveClaimed(event: ReserveClaimedEvent): void {
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
+  let currentRound = roundsManager.currentRound()
   let broadcaster = Broadcaster.load(event.params.reserveHolder.toHex())
   broadcaster.reserve = broadcaster.reserve.minus(event.params.amount)
   broadcaster.save()
+
+  let reserveClaimed = new ReserveClaimed(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+  )
+  reserveClaimed.hash = event.transaction.hash.toHex()
+  reserveClaimed.blockNumber = event.block.number
+  reserveClaimed.gasUsed = event.transaction.gasUsed
+  reserveClaimed.gasPrice = event.transaction.gasPrice
+  reserveClaimed.timestamp = event.block.timestamp
+  reserveClaimed.from = event.transaction.from.toHex()
+  reserveClaimed.to = event.transaction.to.toHex()
+  reserveClaimed.round = currentRound.toString()
+  reserveClaimed.reserveHolder = event.params.reserveHolder.toHex()
+  reserveClaimed.claimant = event.params.claimant.toHex()
+  reserveClaimed.amount = event.params.amount
+  reserveClaimed.save()
 }
 
-export function withdrawal(event: Withdrawal): void {
+export function withdrawal(event: WithdrawalEvent): void {
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
+  let currentRound = roundsManager.currentRound()
   let broadcaster = Broadcaster.load(event.params.sender.toHex())
   broadcaster.deposit = BigInt.fromI32(0)
   broadcaster.reserve = BigInt.fromI32(0)
   broadcaster.save()
+
+  let withdrawal = new Withdrawal(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+  )
+  withdrawal.hash = event.transaction.hash.toHex()
+  withdrawal.blockNumber = event.block.number
+  withdrawal.gasUsed = event.transaction.gasUsed
+  withdrawal.gasPrice = event.transaction.gasPrice
+  withdrawal.timestamp = event.block.timestamp
+  withdrawal.from = event.transaction.from.toHex()
+  withdrawal.to = event.transaction.to.toHex()
+  withdrawal.round = currentRound.toString()
+  withdrawal.sender = event.params.sender.toHex()
+  withdrawal.deposit = event.params.deposit
+  withdrawal.reserve = event.params.reserve
+  withdrawal.save()
 }
