@@ -235,7 +235,6 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mappings/ticketBroker.ts   
       entities:
-        - WinningTicket
         - Protocol
         - Broadcaster
         - WinningTicketRedeemed

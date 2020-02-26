@@ -153,18 +153,6 @@ type UnbondingLock @entity {
   withdrawRound: BigInt
 }
 
-type WinningTicket @entity {
-  id: ID!
-  sender: String
-  recipient: String
-  faceValue: BigInt
-  winProb: BigInt
-  senderNonce: BigInt
-  recipientRand: BigInt
-  auxData: Bytes
-  txHash: String
-}
-
 type Protocol @entity {
   id: ID!
   totalWinningTickets: BigInt
