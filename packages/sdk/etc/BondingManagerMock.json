@@ -1,0 +1,166 @@
+{
+  "name": "BondingManagerMock",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_target",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "execute",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "_func",
+          "type": "bytes4"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMockUint256",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "_func",
+          "type": "bytes4"
+        },
+        {
+          "internalType": "address",
+          "name": "_value",
+          "type": "address"
+        }
+      ],
+      "name": "setMockAddress",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "_func",
+          "type": "bytes4"
+        },
+        {
+          "internalType": "bool",
+          "name": "_value",
+          "type": "bool"
+        }
+      ],
+      "name": "setMockBool",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "_func",
+          "type": "bytes4"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setMockBytes32",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "fees",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "round",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdateTranscoderWithFees",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_transcoder",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_fees",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_round",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateTranscoderWithFees",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "name": "MixinReserve",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "reserveHolder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReserveFunded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "reserveHolder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "claimant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReserveClaimed",
+      "type": "event"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_reserveHolder",
+          "type": "address"
+        }
+      ],
+      "name": "getReserveInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "fundsRemaining",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "claimedInCurrentRound",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct MReserve.ReserveInfo",
+          "name": "info",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_reserveHolder",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimant",
+          "type": "address"
+        }
+      ],
+      "name": "claimableReserve",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_reserveHolder",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimant",
+          "type": "address"
+        }
+      ],
+      "name": "claimedReserve",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

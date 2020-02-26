@@ -10,10 +10,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_target",
           "type": "address"
         },
         {
+          "internalType": "bytes",
           "name": "_data",
           "type": "bytes"
         }
@@ -28,10 +30,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes4",
           "name": "_func",
           "type": "bytes4"
         },
         {
+          "internalType": "uint256",
           "name": "_value",
           "type": "uint256"
         }
@@ -39,6 +43,7 @@
       "name": "setMockUint256",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -51,10 +56,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes4",
           "name": "_func",
           "type": "bytes4"
         },
         {
+          "internalType": "bytes32",
           "name": "_value",
           "type": "bytes32"
         }
@@ -69,10 +76,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes4",
           "name": "_func",
           "type": "bytes4"
         },
         {
+          "internalType": "bool",
           "name": "_value",
           "type": "bool"
         }
@@ -87,10 +96,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes4",
           "name": "_func",
           "type": "bytes4"
         },
         {
+          "internalType": "address",
           "name": "_value",
           "type": "address"
         }

@@ -1,0 +1,24 @@
+{
+  "name": "AssertBytes32Array",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "name": "TestEvent",
+      "type": "event"
+    }
+  ]
+}

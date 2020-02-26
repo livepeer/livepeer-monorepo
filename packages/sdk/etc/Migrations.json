@@ -7,6 +7,7 @@
       "name": "last_completed_migration",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -21,6 +22,7 @@
       "name": "owner",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -39,6 +41,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "completed",
           "type": "uint256"
         }
@@ -53,6 +56,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "new_address",
           "type": "address"
         }

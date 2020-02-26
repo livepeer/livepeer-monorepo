@@ -5,6 +5,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_size",
           "type": "uint256"
         }
@@ -19,18 +20,22 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_key",
           "type": "uint256"
         },
         {
+          "internalType": "address",
           "name": "_prevId",
           "type": "address"
         },
         {
+          "internalType": "address",
           "name": "_nextId",
           "type": "address"
         }
@@ -45,6 +50,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         }
@@ -59,18 +65,22 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_newKey",
           "type": "uint256"
         },
         {
+          "internalType": "address",
           "name": "_prevId",
           "type": "address"
         },
         {
+          "internalType": "address",
           "name": "_nextId",
           "type": "address"
         }
@@ -85,6 +95,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         }
@@ -92,6 +103,7 @@
       "name": "contains",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -106,6 +118,7 @@
       "name": "getSize",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -120,6 +133,7 @@
       "name": "getMaxSize",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -132,6 +146,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         }
@@ -139,6 +154,7 @@
       "name": "getKey",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -153,6 +169,7 @@
       "name": "getFirst",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -167,6 +184,7 @@
       "name": "getLast",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -179,6 +197,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         }
@@ -186,6 +205,7 @@
       "name": "getNext",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -198,6 +218,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_id",
           "type": "address"
         }
@@ -205,6 +226,7 @@
       "name": "getPrev",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }

@@ -7,6 +7,7 @@
       "name": "targetContractId",
       "outputs": [
         {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -19,6 +20,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -35,6 +37,7 @@
       "name": "controller",
       "outputs": [
         {
+          "internalType": "contract IController",
           "name": "",
           "type": "address"
         }
@@ -48,6 +51,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
           "name": "controller",
           "type": "address"
         }
@@ -60,6 +64,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "string",
           "name": "param",
           "type": "string"
         }

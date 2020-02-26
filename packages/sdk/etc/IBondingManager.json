@@ -6,28 +6,21 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "transcoder",
           "type": "address"
         },
         {
           "indexed": false,
-          "name": "pendingRewardCut",
+          "internalType": "uint256",
+          "name": "rewardCut",
           "type": "uint256"
         },
         {
           "indexed": false,
-          "name": "pendingFeeShare",
+          "internalType": "uint256",
+          "name": "feeShare",
           "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "name": "pendingPricePerSegment",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "name": "registered",
-          "type": "bool"
         }
       ],
       "name": "TranscoderUpdate",
@@ -38,45 +31,63 @@
       "inputs": [
         {
           "indexed": true,
-          "name": "transcoder",
-          "type": "address"
-        }
-      ],
-      "name": "TranscoderEvicted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "transcoder",
-          "type": "address"
-        }
-      ],
-      "name": "TranscoderResigned",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
+          "internalType": "address",
           "name": "transcoder",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
+          "name": "activationRound",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscoderActivated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "deactivationRound",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscoderDeactivated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "transcoder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
           "name": "finder",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "penalty",
           "type": "uint256"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "finderReward",
           "type": "uint256"
         }
@@ -89,11 +100,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "transcoder",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
         }
@@ -106,13 +119,33 @@
       "inputs": [
         {
           "indexed": true,
-          "name": "delegate",
+          "internalType": "address",
+          "name": "newDelegate",
           "type": "address"
         },
         {
           "indexed": true,
+          "internalType": "address",
+          "name": "oldDelegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
           "name": "delegator",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "additionalAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "bondedAmount",
+          "type": "uint256"
         }
       ],
       "name": "Bond",
@@ -123,13 +156,33 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "delegate",
           "type": "address"
         },
         {
           "indexed": true,
+          "internalType": "address",
           "name": "delegator",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "unbondingLockId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "withdrawRound",
+          "type": "uint256"
         }
       ],
       "name": "Unbond",
@@ -140,8 +193,58 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
           "name": "delegator",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "unbondingLockId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Rebond",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "delegator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "unbondingLockId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "withdrawRound",
+          "type": "uint256"
         }
       ],
       "name": "WithdrawStake",
@@ -152,6 +255,7 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "delegator",
           "type": "address"
         }
@@ -160,26 +264,63 @@
       "type": "event"
     },
     {
-      "constant": false,
-      "inputs": [],
-      "name": "setActiveTranscoders",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "delegator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rewards",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "fees",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startRound",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "endRound",
+          "type": "uint256"
+        }
+      ],
+      "name": "EarningsClaimed",
+      "type": "event"
     },
     {
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_transcoder",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_fees",
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
           "name": "_round",
           "type": "uint256"
         }
@@ -194,18 +335,22 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_transcoder",
           "type": "address"
         },
         {
+          "internalType": "address",
           "name": "_finder",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_slashAmount",
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
           "name": "_finderFee",
           "type": "uint256"
         }
@@ -217,26 +362,23 @@
       "type": "function"
     },
     {
+      "constant": false,
+      "inputs": [],
+      "name": "setCurrentRoundTotalActiveStake",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": true,
-      "inputs": [
-        {
-          "name": "_maxPricePerSegment",
-          "type": "uint256"
-        },
-        {
-          "name": "_blockHash",
-          "type": "bytes32"
-        },
-        {
-          "name": "_round",
-          "type": "uint256"
-        }
-      ],
-      "name": "electActiveTranscoder",
+      "inputs": [],
+      "name": "getTranscoderPoolSize",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
-          "type": "address"
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -247,6 +389,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_transcoder",
           "type": "address"
         }
@@ -254,6 +397,7 @@
       "name": "transcoderTotalStake",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -266,36 +410,15 @@
       "constant": true,
       "inputs": [
         {
-          "name": "_transcoder",
-          "type": "address"
-        },
-        {
-          "name": "_round",
-          "type": "uint256"
-        }
-      ],
-      "name": "activeTranscoderTotalStake",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
+          "internalType": "address",
           "name": "_transcoder",
           "type": "address"
         }
       ],
-      "name": "isRegisteredTranscoder",
+      "name": "isActiveTranscoder",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -310,6 +433,7 @@
       "name": "getTotalBonded",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }

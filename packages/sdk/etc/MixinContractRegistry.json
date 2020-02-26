@@ -1,10 +1,26 @@
 {
-  "name": "IdentityVerifier",
+  "name": "MixinContractRegistry",
   "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "targetContractId",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
     {
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -21,6 +37,7 @@
       "name": "controller",
       "outputs": [
         {
+          "internalType": "contract IController",
           "name": "",
           "type": "address"
         }
@@ -32,6 +49,7 @@
     {
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -45,6 +63,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
           "name": "controller",
           "type": "address"
         }
@@ -57,60 +76,13 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "string",
           "name": "param",
           "type": "string"
         }
       ],
       "name": "ParameterUpdate",
       "type": "event"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_jobId",
-          "type": "uint256"
-        },
-        {
-          "name": "_claimId",
-          "type": "uint256"
-        },
-        {
-          "name": "_segmentNumber",
-          "type": "uint256"
-        },
-        {
-          "name": "_transcodingOptions",
-          "type": "string"
-        },
-        {
-          "name": "_dataStorageHash",
-          "type": "string"
-        },
-        {
-          "name": "_dataHashes",
-          "type": "bytes32[2]"
-        }
-      ],
-      "name": "verify",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getPrice",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
     }
   ]
 }

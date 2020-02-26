@@ -7,6 +7,7 @@
       "name": "paused",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -21,6 +22,7 @@
       "name": "owner",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -33,6 +35,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -60,11 +63,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "previousOwner",
           "type": "address"
         },
         {
           "indexed": true,
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }

@@ -6,11 +6,13 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "currentMintableTokens",
           "type": "uint256"
         },
         {
           "indexed": false,
+          "internalType": "uint256",
           "name": "currentInflation",
           "type": "uint256"
         }
@@ -22,10 +24,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_fracNum",
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
           "name": "_fracDenom",
           "type": "uint256"
         }
@@ -33,6 +37,7 @@
       "name": "createReward",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -45,10 +50,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_to",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
         }
@@ -63,6 +70,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
         }
@@ -77,10 +85,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address payable",
           "name": "_to",
           "type": "address"
         },
         {
+          "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
         }
@@ -97,6 +107,7 @@
       "name": "depositETH",
       "outputs": [
         {
+          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
@@ -120,6 +131,7 @@
       "name": "getController",
       "outputs": [
         {
+          "internalType": "contract IController",
           "name": "",
           "type": "address"
         }

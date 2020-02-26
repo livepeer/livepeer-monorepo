@@ -7,6 +7,7 @@
       "name": "uint64Value",
       "outputs": [
         {
+          "internalType": "uint64",
           "name": "",
           "type": "uint64"
         }
@@ -21,6 +22,7 @@
       "name": "initValue",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -35,6 +37,7 @@
       "name": "targetContractId",
       "outputs": [
         {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -49,6 +52,7 @@
       "name": "uint256Value",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -63,6 +67,7 @@
       "name": "bytes32Value",
       "outputs": [
         {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -75,6 +80,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -82,6 +88,7 @@
       "name": "kvMap",
       "outputs": [
         {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
@@ -94,6 +101,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -110,6 +118,7 @@
       "name": "uint8Value",
       "outputs": [
         {
+          "internalType": "uint8",
           "name": "",
           "type": "uint8"
         }
@@ -124,6 +133,7 @@
       "name": "addressValue",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -138,6 +148,7 @@
       "name": "controller",
       "outputs": [
         {
+          "internalType": "contract IController",
           "name": "",
           "type": "address"
         }
@@ -149,6 +160,7 @@
     {
       "inputs": [
         {
+          "internalType": "address",
           "name": "_controller",
           "type": "address"
         }
@@ -162,6 +174,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
           "name": "controller",
           "type": "address"
         }
@@ -174,6 +187,7 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "string",
           "name": "param",
           "type": "string"
         }
@@ -185,6 +199,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint8",
           "name": "_value",
           "type": "uint8"
         }
@@ -199,6 +214,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint64",
           "name": "_value",
           "type": "uint64"
         }
@@ -213,6 +229,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_value",
           "type": "uint256"
         }
@@ -227,6 +244,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "bytes32",
           "name": "_value",
           "type": "bytes32"
         }
@@ -241,6 +259,7 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "address",
           "name": "_value",
           "type": "address"
         }
@@ -255,10 +274,12 @@
       "constant": false,
       "inputs": [
         {
+          "internalType": "uint256",
           "name": "_key",
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
           "name": "_value",
           "type": "uint256"
         }
