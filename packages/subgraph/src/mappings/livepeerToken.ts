@@ -1,10 +1,10 @@
 import { dataSource } from '@graphprotocol/graph-ts'
-import { Approval } from '../types/LivepeerToken/LivepeerToken'
-import { Delegator, ApprovalEvent } from '../types/schema'
-import { getRoundsManagerInstance } from './util'
+import { Approval as ApprovalEvent } from '../types/LivepeerToken/LivepeerToken'
+import { Delegator, Approval } from '../types/schema'
+import { getRoundsManagerInstance, makeEventId } from './util'
 
 // Handler for NewRound events
-export function approval(event: Approval): void {
+export function approval(event: ApprovalEvent): void {
   let owner = event.params.owner
   let amount = event.params.value
   let spender = event.params.spender
@@ -22,19 +22,19 @@ export function approval(event: Approval): void {
   delegator.save()
 
   // Store transaction info
-  let approvalEvent = new ApprovalEvent(
-    event.transaction.hash.toHex() + '-Approval',
+  let approval = new Approval(
+    makeEventId(event.transaction.hash, event.logIndex),
   )
-  approvalEvent.hash = event.transaction.hash.toHex()
-  approvalEvent.blockNumber = event.block.number
-  approvalEvent.gasUsed = event.transaction.gasUsed
-  approvalEvent.gasPrice = event.transaction.gasPrice
-  approvalEvent.timestamp = event.block.timestamp
-  approvalEvent.from = event.transaction.from.toHex()
-  approvalEvent.to = event.transaction.to.toHex()
-  approvalEvent.spender = spender.toHex()
-  approvalEvent.round = currentRound.toString()
-  approvalEvent.amount = amount
-  approvalEvent.delegator = delegator.id
-  approvalEvent.save()
+  approval.hash = event.transaction.hash.toHex()
+  approval.blockNumber = event.block.number
+  approval.gasUsed = event.transaction.gasUsed
+  approval.gasPrice = event.transaction.gasPrice
+  approval.timestamp = event.block.timestamp
+  approval.from = event.transaction.from.toHex()
+  approval.to = event.transaction.to.toHex()
+  approval.spender = spender.toHex()
+  approval.round = currentRound.toString()
+  approval.amount = amount
+  approval.delegator = delegator.id
+  approval.save()
 }

@@ -1,16 +1,19 @@
 // Import types and APIs from graph-ts
-import { Address, dataSource, log } from '@graphprotocol/graph-ts'
+import { Address, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
-import { RoundsManager, NewRound } from '../types/RoundsManager/RoundsManager'
+import {
+  RoundsManager,
+  NewRound as NewRoundEvent,
+} from '../types/RoundsManager/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
-import { Transcoder, Pool, Round, InitializeRoundEvent } from '../types/schema'
+import { Transcoder, Pool, Round, InitializeRound } from '../types/schema'
 
-import { makePoolId, getBondingManagerInstance } from './util'
+import { makePoolId, getBondingManagerInstance, makeEventId } from './util'
 
 // Handler for NewRound events
-export function newRound(event: NewRound): void {
+export function newRound(event: NewRoundEvent): void {
   let roundsManager = RoundsManager.bind(event.address)
   let roundNumber = event.params.round
   let EMPTY_ADDRESS = Address.fromString(
@@ -71,16 +74,16 @@ export function newRound(event: NewRound): void {
   round.save()
 
   // Store transaction info
-  let initializeRoundEvent = new InitializeRoundEvent(
-    event.transaction.hash.toHex() + '-InitializeRound',
+  let initializeRound = new InitializeRound(
+    makeEventId(event.transaction.hash, event.logIndex),
   )
-  initializeRoundEvent.hash = event.transaction.hash.toHex()
-  initializeRoundEvent.blockNumber = event.block.number
-  initializeRoundEvent.gasUsed = event.transaction.gasUsed
-  initializeRoundEvent.gasPrice = event.transaction.gasPrice
-  initializeRoundEvent.timestamp = event.block.timestamp
-  initializeRoundEvent.from = event.transaction.from.toHex()
-  initializeRoundEvent.to = event.transaction.to.toHex()
-  initializeRoundEvent.round = roundNumber.toString()
-  initializeRoundEvent.save()
+  initializeRound.hash = event.transaction.hash.toHex()
+  initializeRound.blockNumber = event.block.number
+  initializeRound.gasUsed = event.transaction.gasUsed
+  initializeRound.gasPrice = event.transaction.gasPrice
+  initializeRound.timestamp = event.block.timestamp
+  initializeRound.from = event.transaction.from.toHex()
+  initializeRound.to = event.transaction.to.toHex()
+  initializeRound.round = roundNumber.toString()
+  initializeRound.save()
 }
