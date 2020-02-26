@@ -112,7 +112,7 @@ export default () => {
 
 function renderSwitch(transaction: any, i: number) {
   switch (transaction.__typename) {
-    case 'ApprovalEvent':
+    case 'Approval':
       return (
         <ListItem
           sx={{
@@ -151,7 +151,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'BondEvent':
+    case 'Bond':
       return (
         <ListItem
           onClick={() =>
@@ -201,7 +201,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'ClaimEarningsEvent':
+    case 'EarningsClaimed':
       return (
         <ListItem
           sx={{
@@ -250,7 +250,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'InitializeRoundEvent':
+    case 'InitializeRound':
       return (
         <ListItem
           sx={{
@@ -291,7 +291,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'RebondEvent':
+    case 'Rebond':
       return (
         <ListItem
           sx={{
@@ -337,7 +337,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'UnbondEvent':
+    case 'Unbond':
       return (
         <ListItem
           sx={{
@@ -383,7 +383,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'RewardEvent':
+    case 'Reward':
       return (
         <ListItem
           sx={{
@@ -425,7 +425,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'TranscoderUpdatedEvent':
+    case 'TranscoderUpdated':
       return (
         <ListItem
           sx={{
@@ -475,7 +475,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'WithdrawStakeEvent':
+    case 'WithdrawStake':
       return (
         <ListItem
           sx={{

@@ -59,7 +59,7 @@ query($account: String!, $first: Int!, $skip: Int!) {
         id
       }
     }
-    ... on ClaimEarnings {
+    ... on EarningsClaimed {
       __typename
       startRound {
         id
