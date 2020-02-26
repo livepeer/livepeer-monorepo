@@ -34,7 +34,7 @@ export default ({ lock }) => {
     },
     notifyOnNetworkStatusChange: true,
     context: {
-      provider: context.library.currentProvider,
+      provider: context.library._web3Provider,
       account: context.account.toLowerCase(),
       returnTxHash: true,
     },

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Flex, Box } from 'theme-ui'
 import Logo from '../../public/img/logo.svg'
 import LPT from '../../public/img/lpt.svg'
@@ -8,42 +7,15 @@ import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
-import { useCookies } from 'react-cookie'
 import NetworkWidget from '../NetworkWidget'
-import { Injected, Network, Portis } from '../../lib/connectors'
-import { isMobile } from 'react-device-detect'
 import { useApolloClient } from '@apollo/react-hooks'
 import UniswapModal from '../UniswapModal'
-
-const connectorsByName = {
-  MetaMask: Injected,
-  Injected: Injected,
-  Network: Network,
-  Portis: Portis,
-}
 
 export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
   const router = useRouter()
   const client = useApolloClient()
   const { asPath } = router
   const context = useWeb3React()
-  const [cookies, setCookie, removeCookie] = useCookies(['connector'])
-
-  // Eagerly connect to wallet
-  useEffect(() => {
-    if (
-      (cookies.connector && cookies.connector === 'MetaMask') ||
-      cookies.connector === 'Injected'
-    ) {
-      context.activate(connectorsByName[cookies.connector], undefined, true)
-    } else {
-      // automatically activate if on a web3 enabled mobile device
-      if (isMobile && window['web3']) {
-        context.activate(connectorsByName['Injected'])
-      }
-    }
-  }, [cookies])
-
   const visibility = open ? 'visible' : 'hidden'
 
   Router.events.on('routeChangeStart', () => {

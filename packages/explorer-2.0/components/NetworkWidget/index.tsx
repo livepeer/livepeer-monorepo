@@ -16,6 +16,7 @@ export default () => {
   const context = useWeb3React()
   let { data, loading } = useQuery(GET_ROUND, {
     pollInterval: 20000,
+    ssr: false,
   })
 
   if (loading) {

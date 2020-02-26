@@ -10,33 +10,40 @@ import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Utils from 'web3-utils'
+import { useEffect } from 'react'
 
 export default withApollo(() => {
   const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
-  const { data, loading, error } = useQuery(orchestratorsViewQuery, {
+  const { data, loading, refetch } = useQuery(orchestratorsViewQuery, {
     pollInterval: 10000,
     ssr: false,
   })
-  const { data: myAccountData, loading: myAccountLoading } = useQuery(
-    accountQuery,
-    {
-      variables: {
-        account: context?.account?.toLowerCase(),
-      },
-      skip: !context.active,
-      ssr: false,
+  const {
+    data: dataMyAccount,
+    loading: loadingMyAccount,
+    refetch: refetchMyAccount,
+  } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
     },
-  )
+    pollInterval: 10000,
+    skip: !context.active,
+    ssr: false,
+  })
 
-  if (error) {
-    console.log(error)
-  }
+  // Refetch data if we detect a network change
+  useEffect(() => {
+    refetch()
+    if (context.account) {
+      refetchMyAccount()
+    }
+  }, [context.chainId])
 
   return (
     <Layout headerTitle="Orchestrators">
-      {loading || myAccountLoading ? (
+      {loading || loadingMyAccount ? (
         <Flex
           sx={{
             height: [
@@ -64,19 +71,19 @@ export default withApollo(() => {
           >
             {context.active && (
               <Box>
-                {myAccountData &&
-                  parseFloat(Utils.fromWei(myAccountData.account.allowance)) ===
+                {dataMyAccount &&
+                  parseFloat(Utils.fromWei(dataMyAccount.account.allowance)) ===
                     0 &&
                   parseFloat(
-                    Utils.fromWei(myAccountData.account.tokenBalance),
+                    Utils.fromWei(dataMyAccount.account.tokenBalance),
                   ) !== 0 && (
-                    <Approve account={myAccountData.account} banner={true} />
+                    <Approve account={dataMyAccount.account} banner={true} />
                   )}
               </Box>
             )}
-            {context.active && myAccountData.delegator?.lastClaimRound && (
+            {context.active && dataMyAccount.delegator?.lastClaimRound && (
               <ClaimBanner
-                delegator={myAccountData.delegator}
+                delegator={dataMyAccount.delegator}
                 currentRound={data.currentRound[0]}
               />
             )}
@@ -95,9 +102,9 @@ export default withApollo(() => {
             }}
           >
             <StakingWidget
-              delegator={myAccountData?.delegator}
+              delegator={dataMyAccount?.delegator}
               currentRound={data.currentRound[0]}
-              account={myAccountData?.account}
+              account={dataMyAccount?.account}
               transcoder={
                 data.selectedTranscoder.id
                   ? data.selectedTranscoder

@@ -101,7 +101,7 @@ export default ({ threeBoxSpace, refetch, children }) => {
                     })
                     const box = await Box.openBox(
                       context.account,
-                      context.library.currentProvider,
+                      context.library._web3Provider,
                     )
                     await removeAddressLink({
                       variables: {

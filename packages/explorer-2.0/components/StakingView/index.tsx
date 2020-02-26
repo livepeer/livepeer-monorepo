@@ -1,6 +1,6 @@
 import { Box, Flex } from 'theme-ui'
 import * as Utils from 'web3-utils'
-import { abbreviateNumber } from '../../lib/utils'
+import { abbreviateNumber, checkAddressEquality } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'
 import Card from '../../components/Card'
@@ -13,9 +13,11 @@ import Button from '../Button'
 export default ({ delegator, protocol, currentRound }) => {
   const router = useRouter()
   const query = router.query
-  const account = query.account as string
   const context = useWeb3React()
-  const isMyAccount = account === context.account
+  const isMyAccount = checkAddressEquality(
+    context?.account,
+    query.account.toString(),
+  )
 
   if (!delegator?.bondedAmount) {
     if (isMyAccount) {

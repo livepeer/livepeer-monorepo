@@ -62,24 +62,24 @@ export default ({ protocol, delegators, ...props }) => {
         ))}
       </thead>
       <tbody>
-        {rows.map(
-          (row, i) =>
-            prepareRow(row) || (
-              <tr {...row.getRowProps()} key={i}>
-                {row.cells.map((cell, i) => {
-                  return (
-                    <td
-                      sx={{ fontSize: 1, pb: 3 }}
-                      {...cell.getCellProps()}
-                      key={i}
-                    >
-                      {renderSwitch(cell, protocol)}
-                    </td>
-                  )
-                })}
-              </tr>
-            ),
-        )}
+        {rows.map((row, i) => {
+          prepareRow(row)
+          return (
+            <tr {...row.getRowProps()} key={i}>
+              {row.cells.map((cell, i) => {
+                return (
+                  <td
+                    sx={{ fontSize: 1, pb: 3 }}
+                    {...cell.getCellProps()}
+                    key={i}
+                  >
+                    {renderSwitch(cell, protocol)}
+                  </td>
+                )
+              })}
+            </tr>
+          )
+        })}
       </tbody>
     </table>
   )

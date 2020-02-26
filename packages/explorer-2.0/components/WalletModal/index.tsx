@@ -6,7 +6,6 @@ import { Dialog } from '@reach/dialog'
 import { SUPPORTED_WALLETS } from '../../lib/constants'
 import { Injected } from '../../lib/connectors'
 import { isMobile } from 'react-device-detect'
-import { useCookies } from 'react-cookie'
 import { useWeb3React } from '@web3-react/core'
 import Option from './Option'
 import PendingView from './PendingView'
@@ -14,6 +13,7 @@ import AccountDetails from './AccountDetails'
 import gql from 'graphql-tag'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { usePrevious } from '../../hooks'
+import ReactGA from 'react-ga'
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -24,7 +24,6 @@ const WALLET_VIEWS = {
 // Borrowed from uniswap's WalletModal component implementation
 export default () => {
   const { active, account, connector, activate, error } = useWeb3React()
-  const [cookies, setCookie] = useCookies(['connector'])
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState()
   const client = useApolloClient()
@@ -37,7 +36,13 @@ export default () => {
       }
       return true
     })
-    setCookie('connector', name, { path: '/' })
+    // log selected wallet
+    ReactGA.event({
+      category: 'Wallet',
+      action: 'Change Wallet',
+      label: name,
+    })
+
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
     activate(connector, undefined, true)

@@ -111,3 +111,74 @@ export const textTruncate = (str, length, ending) => {
     return str
   }
 }
+
+const url = require('url')
+const parseDomain = require('parse-domain')
+
+const networksTypes = {
+  1: 'mainnet',
+  2: 'morden',
+  3: 'ropsten',
+  42: 'kovan',
+  4: 'rinkeby',
+}
+
+const networksIds = {
+  main: 1,
+  mainnet: 1,
+  morden: 2,
+  ropsten: 3,
+  kovan: 42,
+  rinkeby: 4,
+}
+
+export const detectNetwork = async provider => {
+  let netId = null
+
+  if (provider instanceof Object) {
+    // MetamaskInpageProvider
+    if (
+      provider.publicConfigStore &&
+      provider.publicConfigStore._state &&
+      provider.publicConfigStore._state.networkVersion
+    ) {
+      netId = provider.publicConfigStore._state.networkVersion
+
+      // Web3.providers.HttpProvider
+    } else if (provider.host) {
+      const parsed = url.parse(provider.host)
+      const { subdomain, domain, tld } = parseDomain(parsed.host)
+
+      if (domain === 'infura' && tld === 'io') {
+        netId = networksIds[subdomain]
+      }
+    }
+  } else if (typeof window !== 'undefined' && window['web3']) {
+    if (window['web3'].version && window['web3'].version.getNetwork) {
+      netId = await window['web3'].version.getNetwork()
+
+      // web3.js v1.0+
+    } else if (
+      window['web3'].eth &&
+      window['web3'].eth.net &&
+      window['web3'].eth.net.getId
+    ) {
+      netId = await window['web3'].eth.net.getId()
+    }
+  }
+
+  if (netId === undefined) {
+    netId = null
+  }
+
+  const type = networksTypes[netId] || 'unknown'
+
+  return {
+    id: netId,
+    type: type,
+  }
+}
+
+export const checkAddressEquality = (address1, address2) => {
+  return Utils.toChecksumAddress(address1) === Utils.toChecksumAddress(address2)
+}

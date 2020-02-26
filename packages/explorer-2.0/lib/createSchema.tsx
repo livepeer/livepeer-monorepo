@@ -1,19 +1,23 @@
 import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
-import LivepeerSDK from '@adamsoffer/livepeer-sdk'
 import schema from '../apollo'
 import {
   mergeSchemas,
   introspectSchema,
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
+import { detectNetwork } from './utils'
 
-const subgraphEndpoint =
+const SUBGRAPH_MAINNET =
   'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
 
+const SUBGRAPH_RINKEBY =
+  'https://api.thegraph.com/subgraphs/name/adamsoffer/livepeer-rinkeby'
+
 export default async () => {
+  const network = await detectNetwork(window['web3']?.currentProvider)
   const subgraphServiceLink = new HttpLink({
-    uri: subgraphEndpoint,
+    uri: network?.type === 'rinkeby' ? SUBGRAPH_RINKEBY : SUBGRAPH_MAINNET,
     fetch,
   })
 
@@ -65,38 +69,28 @@ export default async () => {
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _context, _info) {
-            const sdk = await LivepeerSDK({
-              gas: null,
-            })
-
-            const delegator = await sdk.rpc.getDelegator(_delegator.id)
+            const delegator = await _context.livepeer.rpc.getDelegator(
+              _delegator.id,
+            )
             return delegator.pendingStake
           },
         },
         pendingFees: {
           async resolve(_delegator, _args, _context, _info) {
-            const sdk = await LivepeerSDK({
-              gas: null,
-            })
-
-            const delegator = await sdk.rpc.getDelegator(_delegator.id)
+            const delegator = await _context.livepeer.rpc.getDelegator(
+              _delegator.id,
+            )
             return delegator.pendingFees
           },
         },
         tokenBalance: {
           async resolve(_delegator, _args, _context, _info) {
-            const { rpc } = await LivepeerSDK({
-              gas: null,
-            })
-            return await rpc.getTokenBalance(_delegator.id)
+            return await _context.livepeer.rpc.getTokenBalance(_delegator.id)
           },
         },
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
-            const { rpc } = await LivepeerSDK({
-              gas: null,
-            })
-            return await rpc.getEthBalance(_delegator.id)
+            return await _context.livepeer.rpc.getEthBalance(_delegator.id)
           },
         },
       },

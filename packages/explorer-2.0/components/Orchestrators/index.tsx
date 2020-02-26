@@ -1,7 +1,7 @@
 import { Flex, Box } from 'theme-ui'
 import { lighten } from '@theme-ui/color'
 import { useMemo } from 'react'
-import { useTable, useFilters } from 'react-table'
+import { useTable, useFilters, useSortBy } from 'react-table'
 import * as Utils from 'web3-utils'
 import { getDelegatorStatus, abbreviateNumber } from '../../lib/utils'
 import Orchestrators from '../../public/img/orchestrators.svg'
@@ -16,6 +16,7 @@ import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Router from 'next/router'
+import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 
 export default ({ currentRound, transcoders }) => {
   const { width } = useWindowSize()
@@ -32,7 +33,6 @@ export default ({ currentRound, transcoders }) => {
   `
 
   const { data } = useQuery(GET_ROI)
-
   const columns: any = useMemo(
     () => [
       {
@@ -41,34 +41,35 @@ export default ({ currentRound, transcoders }) => {
         filter: 'fuzzyText',
         Filter: DefaultColumnFilter,
         mobile: true,
+        sortType: (rowA, rowB, columnID) => {
+          let a = getRowValueByColumnID(rowA, columnID)
+          let b = getRowValueByColumnID(rowB, columnID)
+          let aThreeBoxSpace = getRowValueByColumnID(rowA, 'threeBoxSpace')
+          let bThreeBoxSpace = getRowValueByColumnID(rowB, 'threeBoxSpace')
+
+          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a
+          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b
+
+          return compareBasic(rowAIdentity, rowBIdentity)
+        },
       },
       {
         Header: 'Activation Round',
         accessor: 'activationRound',
-        show: false,
       },
       {
         Header: 'Deactivation Round',
         accessor: 'deactivationRound',
-        show: false,
-      },
-      {
-        Header: 'Active',
-        accessor: 'active',
-        show: false,
-        mobile: true,
       },
       {
         Header: 'ThreeBoxSpace',
         accessor: 'threeBoxSpace',
         filter: 'fuzzyText',
         Filter: DefaultColumnFilter,
-        show: false,
       },
       {
         Header: 'Delegator',
         accessor: 'delegator',
-        show: false,
       },
       {
         Header: 'Stake',
@@ -86,14 +87,32 @@ export default ({ currentRound, transcoders }) => {
       {
         Header: 'Fee Cut',
         accessor: 'feeShare',
+        sortInverted: true,
       },
       {
         Header: 'Calls',
         accessor: 'pools',
+        sortType: (rowA, rowB, columnID) => {
+          let a = getRowValueByColumnID(rowA, columnID)
+          let b = getRowValueByColumnID(rowB, columnID)
+
+          let rowACallsMade = a.filter(r => r.rewardTokens != null).length
+          let rowBCallsMade = b.filter(r => r.rewardTokens != null).length
+
+          return compareBasic(rowACallsMade, rowBCallsMade)
+        },
       },
     ],
     [],
   )
+
+  function getRowValueByColumnID(row, columnID) {
+    return row.values[columnID]
+  }
+
+  function compareBasic(a, b) {
+    return a === b ? 0 : a > b ? 1 : -1
+  }
 
   const defaultColumn = useMemo(
     () => ({
@@ -126,14 +145,28 @@ export default ({ currentRound, transcoders }) => {
   const tableOptions: any = {
     columns,
     data: transcoders,
+    disableSortRemove: true,
+    initialState: {
+      sortBy: [{ id: 'totalStake', desc: true }],
+      hiddenColumns: [
+        'activationRound',
+        'deactivationRound',
+        'threeBoxSpace',
+        'active',
+        'delegator',
+      ],
+    },
     defaultColumn,
     filterTypes,
   }
 
-  const { getTableProps, headerGroups, rows, prepareRow } = useTable(
-    tableOptions,
-    useFilters,
-  )
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable(tableOptions, useFilters, useSortBy)
 
   const accountColumn: any = headerGroups[0].headers[0]
 
@@ -186,7 +219,7 @@ export default ({ currentRound, transcoders }) => {
             sx={{ display: ['none', 'none', 'none', 'table-header-group'] }}
           >
             {headerGroups.map((headerGroup, i) => (
-              <tr key={i}>
+              <tr key={i} {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column: any, i) => (
                   <th
                     sx={{
@@ -200,13 +233,29 @@ export default ({ currentRound, transcoders }) => {
                       textTransform: 'uppercase',
                     }}
                     align="left"
-                    {...column.getHeaderProps()}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
                     key={i}
                   >
                     <Flex>
-                      <span sx={{ fontSize: 0 }}>
+                      <span
+                        sx={{
+                          fontSize: 0,
+                        }}
+                      >
+                        <span>
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <MdKeyboardArrowDown sx={{ ml: '-12px' }} />
+                            ) : (
+                              <MdKeyboardArrowUp sx={{ ml: '-12px' }} />
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </span>
                         {column.render('Header')}
                       </span>
+
                       {renderTooltip(column.render('Header'))}
                     </Flex>
                   </th>
@@ -215,119 +264,118 @@ export default ({ currentRound, transcoders }) => {
             ))}
           </thead>
 
-          <tbody>
+          <tbody {...getTableBodyProps()}>
             {rows.map((row: any, rowIndex) => {
+              prepareRow(row)
               return (
-                prepareRow(row) || (
-                  <tr
-                    {...row.getRowProps()}
-                    key={rowIndex}
-                    onClick={() => {
-                      if (width < 1020) {
-                        Router.push(
-                          '/accounts/[account]/[slug]',
-                          `/accounts/${row.values.id}/campaign`,
-                        )
-                      }
-                    }}
-                    sx={{
-                      height: 64,
-                      'td:first-of-type': {
-                        borderTopLeftRadius: 6,
-                        borderBottomLeftRadius: 6,
-                      },
-                      'td:last-of-type': {
-                        borderTopRightRadius: 6,
-                        borderBottomRightRadius: 6,
-                      },
-                      '&:hover': {
-                        bg: [
-                          'transparent',
-                          'transparent',
-                          'transparent',
-                          lighten('#1E2026', 0.05),
-                        ],
-                        '.status': {
-                          borderColor: lighten('#1E2026', 0.05),
-                        },
-                        '.orchestratorLink': {
-                          borderColor: 'text',
-                          display: 'inlineBlock',
-                          transition: 'all .3s',
-                        },
-                      },
+                <tr
+                  {...row.getRowProps()}
+                  key={rowIndex}
+                  onClick={() => {
+                    if (width < 1020) {
+                      Router.push(
+                        '/accounts/[account]/[slug]',
+                        `/accounts/${row.values.id}/campaign`,
+                      )
+                    }
+                  }}
+                  sx={{
+                    height: 64,
+                    'td:first-of-type': {
+                      borderTopLeftRadius: 6,
+                      borderBottomLeftRadius: 6,
+                    },
+                    'td:last-of-type': {
+                      borderTopRightRadius: 6,
+                      borderBottomRightRadius: 6,
+                    },
+                    '&:hover': {
+                      bg: [
+                        'transparent',
+                        'transparent',
+                        'transparent',
+                        lighten('#1E2026', 0.05),
+                      ],
                       '.status': {
-                        borderColor:
-                          rowIndex ==
-                          (data &&
-                            data.selectedTranscoder &&
-                            data.selectedTranscoder.index)
-                            ? 'surface'
-                            : 'background',
+                        borderColor: lighten('#1E2026', 0.05),
                       },
-                      bg:
+                      '.orchestratorLink': {
+                        borderColor: 'text',
+                        display: 'inlineBlock',
+                        transition: 'all .3s',
+                      },
+                    },
+                    '.status': {
+                      borderColor:
                         rowIndex ==
                         (data &&
                           data.selectedTranscoder &&
                           data.selectedTranscoder.index)
-                          ? [
-                              'transparent',
-                              'transparent',
-                              'transparent',
-                              'surface',
-                            ]
-                          : 'transparent',
-                    }}
-                  >
-                    {row.cells.map((cell, i) => {
-                      return (
-                        <td
-                          sx={{
-                            display: [
-                              cell.column.mobile ? 'table-cell' : 'none',
-                              cell.column.mobile ? 'table-cell' : 'none',
-                              'table-cell',
-                            ],
-                            cursor:
-                              i == 0
-                                ? 'pointer'
-                                : width < 1020
-                                ? 'pointer'
-                                : 'default',
-                            width: 'auto',
-                            fontSize: 1,
-                            pl: 2,
-                            pr: 2,
-                            py: '24px',
-                          }}
-                          {...cell.getCellProps()}
-                          onClick={() => {
-                            if (i === 0 && width > 1020) {
-                              Router.push(
-                                '/accounts/[account]/[slug]',
-                                `/accounts/${row.values.id}/campaign`,
-                              )
-                            } else {
-                              client.writeData({
-                                data: {
-                                  selectedTranscoder: {
-                                    __typename: 'Transcoder',
-                                    index: rowIndex,
-                                    id: row.values.id,
-                                    threeBoxSpace: row.values.threeBoxSpace,
-                                  },
+                          ? 'surface'
+                          : 'background',
+                    },
+                    bg:
+                      rowIndex ==
+                      (data &&
+                        data.selectedTranscoder &&
+                        data.selectedTranscoder.index)
+                        ? [
+                            'transparent',
+                            'transparent',
+                            'transparent',
+                            'surface',
+                          ]
+                        : 'transparent',
+                  }}
+                >
+                  {row.cells.map((cell, i) => {
+                    return (
+                      <td
+                        sx={{
+                          display: [
+                            cell.column.mobile ? 'table-cell' : 'none',
+                            cell.column.mobile ? 'table-cell' : 'none',
+                            'table-cell',
+                          ],
+                          cursor:
+                            i == 0
+                              ? 'pointer'
+                              : width < 1020
+                              ? 'pointer'
+                              : 'default',
+                          width: 'auto',
+                          fontSize: 1,
+                          pl: 2,
+                          pr: 2,
+                          py: '24px',
+                        }}
+                        {...cell.getCellProps()}
+                        onClick={() => {
+                          if (i === 0 && width > 1020) {
+                            Router.push(
+                              '/accounts/[account]/[slug]',
+                              `/accounts/${row.values.id}/campaign`,
+                            )
+                          } else {
+                            client.writeData({
+                              data: {
+                                selectedTranscoder: {
+                                  __typename: 'Transcoder',
+                                  index: rowIndex,
+                                  id: row.values.id,
+                                  threeBoxSpace: row.values.threeBoxSpace,
                                 },
-                              })
-                            }
-                          }}
-                          key={i}
-                        >
-                          {renderSwitch(cell, currentRound)}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                )
+                              },
+                            })
+                          }
+                        }}
+                        key={i}
+                      >
+                        {renderSwitch(cell, currentRound)}
+                      </td>
+                    )
+                  })}
+                </tr>
               )
             })}
           </tbody>
@@ -497,10 +545,11 @@ function renderSwitch(cell, currentRound) {
     case 'Fee Cut':
       return (
         <span sx={{ fontFamily: 'monospace' }}>
-          {!cell.value
-            ? 0
-            : (100 - cell.value / 10000).toFixed(2).replace(/[.,]00$/, '')}
-          %
+          {cell.value === '0' || !cell.value
+            ? '100%'
+            : `${(100 - cell.value / 10000)
+                .toFixed(2)
+                .replace(/[.,]00$/, '')}%`}
         </span>
       )
     case 'Calls':

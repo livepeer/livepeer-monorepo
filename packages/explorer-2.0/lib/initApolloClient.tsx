@@ -10,6 +10,7 @@ import { getMainDefinition } from 'apollo-utilities'
 import createSchema from './createSchema'
 import { execute } from 'graphql/execution/execute'
 import LivepeerSDK from '@adamsoffer/livepeer-sdk'
+import { detectNetwork } from './utils'
 
 let apolloClient = null
 
@@ -78,9 +79,20 @@ function createApolloClient(initialState = {}) {
     return new Observable(observer => {
       Promise.resolve(createSchema())
         .then(async data => {
-          let context = operation.getContext()
-          let sdk = await LivepeerSDK({
-            ...(context.provider && { provider: context.provider }),
+          const context = operation.getContext()
+          const network = await detectNetwork(window['web3']?.currentProvider)
+          const sdk = await LivepeerSDK({
+            provider:
+              network?.type === 'rinkeby'
+                ? process.env.RPC_URL_4
+                : process.env.RPC_URL_1,
+            controllerAddress:
+              network?.type === 'rinkeby'
+                ? process.env.CONTROLLER_ADDRESS_RINKEBY
+                : process.env.CONTROLLER_ADDRESS_MAINNET,
+            ...(context.provider && {
+              provider: context.provider,
+            }),
             ...(context.account && { account: context.account }),
           })
           return execute(
@@ -88,8 +100,8 @@ function createApolloClient(initialState = {}) {
             operation.query,
             null,
             {
-              ...context,
               livepeer: sdk,
+              ...context,
             },
             operation.variables,
             operation.operationName,
@@ -111,7 +123,7 @@ function createApolloClient(initialState = {}) {
 
   const wsLink: any = process.browser
     ? new WebSocketLink({
-        uri: `wss://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary`,
+        uri: `wss://api.thegraph.com/subgraphs/name/livepeer/livepeer`,
         options: {
           reconnect: true,
         },
