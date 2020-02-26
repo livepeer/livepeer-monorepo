@@ -31,10 +31,7 @@ export function newRound(event: NewRoundEvent): void {
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
     // Update transcoder active state
     active = bondingManager.isActiveTranscoder(currentTranscoder, roundNumber)
-    transcoder.active = bondingManager.isActiveTranscoder(
-      currentTranscoder,
-      roundNumber,
-    )
+    transcoder.active = active
     transcoder.rewardCut = transcoder.pendingRewardCut
     transcoder.feeShare = transcoder.pendingFeeShare
     transcoder.pricePerSegment = transcoder.pendingPricePerSegment
