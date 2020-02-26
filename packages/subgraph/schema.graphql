@@ -266,7 +266,7 @@ type TranscoderDeactivated implements Transaction @entity {
   deactivationRound: BigInt
 }
 
-type ClaimEarnings implements Transaction @entity {
+type EarningsClaimed implements Transaction @entity {
   id: ID!
   hash: String
   blockNumber: BigInt!

@@ -12,12 +12,16 @@ import {
   Transcoder,
   Delegator,
   TranscoderUpdated,
-  ClaimEarnings,
+  EarningsClaimed,
   TranscoderActivated,
   TranscoderDeactivated,
 } from '../types/schema'
 
-import { MAXIMUM_VALUE_UINT256, getRoundsManagerInstance } from './util'
+import {
+  MAXIMUM_VALUE_UINT256,
+  getRoundsManagerInstance,
+  makeEventId,
+} from './util'
 
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   let transcoderAddress = event.params.transcoder
@@ -40,7 +44,7 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
 
   // Store transaction info
   let transcoderUpdated = new TranscoderUpdated(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   transcoderUpdated.hash = event.transaction.hash.toHex()
   transcoderUpdated.blockNumber = event.block.number
@@ -73,7 +77,7 @@ export function transcoderActivated(event: TranscoderActivatedEvent): void {
 
   // Store transaction info
   let transcoderActivated = new TranscoderActivated(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   transcoderActivated.hash = event.transaction.hash.toHex()
   transcoderActivated.blockNumber = event.block.number
@@ -100,7 +104,7 @@ export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
 
   // Store transaction info
   let transcoderDeactivated = new TranscoderDeactivated(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   transcoderDeactivated.hash = event.transaction.hash.toHex()
   transcoderDeactivated.blockNumber = event.block.number
@@ -131,22 +135,22 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   delegator.fees = delegator.fees.plus(fees)
   delegator.save()
 
-  let claimEarnings = new ClaimEarnings(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+  let earningsClaimed = new EarningsClaimed(
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
-  claimEarnings.hash = event.transaction.hash.toHex()
-  claimEarnings.blockNumber = event.block.number
-  claimEarnings.gasUsed = event.transaction.gasUsed
-  claimEarnings.gasPrice = event.transaction.gasPrice
-  claimEarnings.timestamp = event.block.timestamp
-  claimEarnings.from = event.transaction.from.toHex()
-  claimEarnings.to = event.transaction.to.toHex()
-  claimEarnings.round = currentRound.toString()
-  claimEarnings.delegate = delegateAddress.toHex()
-  claimEarnings.delegator = delegatorAddress.toHex()
-  claimEarnings.startRound = startRound.toString()
-  claimEarnings.endRound = endRound.toString()
-  claimEarnings.rewardTokens = rewards
-  claimEarnings.fees = fees
-  claimEarnings.save()
+  earningsClaimed.hash = event.transaction.hash.toHex()
+  earningsClaimed.blockNumber = event.block.number
+  earningsClaimed.gasUsed = event.transaction.gasUsed
+  earningsClaimed.gasPrice = event.transaction.gasPrice
+  earningsClaimed.timestamp = event.block.timestamp
+  earningsClaimed.from = event.transaction.from.toHex()
+  earningsClaimed.to = event.transaction.to.toHex()
+  earningsClaimed.round = currentRound.toString()
+  earningsClaimed.delegate = delegateAddress.toHex()
+  earningsClaimed.delegator = delegatorAddress.toHex()
+  earningsClaimed.startRound = startRound.toString()
+  earningsClaimed.endRound = endRound.toString()
+  earningsClaimed.rewardTokens = rewards
+  earningsClaimed.fees = fees
+  earningsClaimed.save()
 }

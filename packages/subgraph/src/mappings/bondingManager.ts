@@ -27,13 +27,13 @@ import {
   Bond,
   Unbond,
   Reward,
-  ClaimEarnings,
+  EarningsClaimed,
   WithdrawStake,
   WithdrawFees,
   Round,
 } from '../types/schema'
 
-import { makePoolId, getRoundsManagerInstance } from './util'
+import { makePoolId, getRoundsManagerInstance, makeEventId } from './util'
 
 // Handler for TranscoderUpdate events
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
@@ -68,7 +68,7 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
 
   // Store transaction info
   let transcoderUpdated = new TranscoderUpdated(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   transcoderUpdated.hash = event.transaction.hash.toHex()
   transcoderUpdated.blockNumber = event.block.number
@@ -101,7 +101,7 @@ export function transcoderResigned(event: TranscoderResignedEvent): void {
 
   // Store transaction info
   let transcoderResigned = new TranscoderResigned(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   transcoderResigned.hash = event.transaction.hash.toHex()
   transcoderResigned.blockNumber = event.block.number
@@ -129,7 +129,7 @@ export function transcoderEvicted(event: TranscoderEvictedEvent): void {
   transcoder.save()
 
   let transcoderEvicted = new TranscoderEvicted(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   transcoderEvicted.hash = event.transaction.hash.toHex()
   transcoderEvicted.blockNumber = event.block.number
@@ -160,7 +160,7 @@ export function transcoderSlashed(event: TranscoderSlashedEvent): void {
 
   // Store transaction info
   let transcoderSlashed = new TranscoderSlashed(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
 
   transcoderSlashed.hash = event.transaction.hash.toHex()
@@ -266,7 +266,7 @@ export function bond(call: BondCall): void {
 
   // Store transaction info
   let bond = new Bond(
-    call.transaction.hash.toHex() + '-' + call.transaction.index.toString(),
+    makeEventId(call.transaction.hash, call.transaction.index),
   )
   bond.hash = call.transaction.hash.toHex()
   bond.blockNumber = call.block.number
@@ -325,7 +325,7 @@ export function unbond(event: UnbondEvent): void {
 
   // Store transaction info
   let unbond = new Unbond(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   unbond.hash = event.transaction.hash.toHex()
   unbond.blockNumber = event.block.number
@@ -368,7 +368,7 @@ export function reward(event: RewardEvent): void {
   pool.save()
 
   let reward = new Reward(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   reward.hash = event.transaction.hash.toHex()
   reward.blockNumber = event.block.number
@@ -388,8 +388,6 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   // we can ignore this call handler henceforth after the block in which the
   // protocol was paused prior to the streamflow upgrade
   if (call.block.number.le(BigInt.fromI32(9274414))) {
-    let claimEarningsID =
-      call.transaction.hash.toHex() + '-' + call.transaction.index.toString()
     let delegatorAddress = call.from
     let endRound = call.inputs._endRound
     let roundsManager = getRoundsManagerInstance(dataSource.network())
@@ -405,24 +403,26 @@ export function claimEarnings(call: ClaimEarningsCall): void {
     delegator.lastClaimRound = endRound.toString()
     delegator.save()
 
-    let claimEarnings = new ClaimEarnings(claimEarningsID)
-    claimEarnings.hash = call.transaction.hash.toHex()
-    claimEarnings.blockNumber = call.block.number
-    claimEarnings.gasUsed = call.transaction.gasUsed
-    claimEarnings.gasPrice = call.transaction.gasPrice
-    claimEarnings.timestamp = call.block.timestamp
-    claimEarnings.from = call.transaction.from.toHex()
-    claimEarnings.to = call.transaction.to.toHex()
-    claimEarnings.round = currentRound.toString()
-    claimEarnings.delegate = delegator.id
-    claimEarnings.delegator = delegatorAddress.toHex()
-    claimEarnings.startRound = lastClaimRound.toString()
-    claimEarnings.endRound = endRound.toString()
-    claimEarnings.rewardTokens = delegatorData.value0.minus(
+    let earningsClaimed = new EarningsClaimed(
+      makeEventId(call.transaction.hash, call.transaction.index),
+    )
+    earningsClaimed.hash = call.transaction.hash.toHex()
+    earningsClaimed.blockNumber = call.block.number
+    earningsClaimed.gasUsed = call.transaction.gasUsed
+    earningsClaimed.gasPrice = call.transaction.gasPrice
+    earningsClaimed.timestamp = call.block.timestamp
+    earningsClaimed.from = call.transaction.from.toHex()
+    earningsClaimed.to = call.transaction.to.toHex()
+    earningsClaimed.round = currentRound.toString()
+    earningsClaimed.delegate = delegator.id
+    earningsClaimed.delegator = delegatorAddress.toHex()
+    earningsClaimed.startRound = lastClaimRound.toString()
+    earningsClaimed.endRound = endRound.toString()
+    earningsClaimed.rewardTokens = delegatorData.value0.minus(
       bondedAmount as BigInt,
     )
-    claimEarnings.fees = delegatorData.value1.minus(delegator.fees as BigInt)
-    claimEarnings.save()
+    earningsClaimed.fees = delegatorData.value1.minus(delegator.fees as BigInt)
+    earningsClaimed.save()
   }
 }
 
@@ -435,7 +435,7 @@ export function withdrawStake(event: WithdrawStakeEvent): void {
 
   // Store transaction info
   let withdrawStake = new WithdrawStake(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   withdrawStake.hash = event.transaction.hash.toHex()
   withdrawStake.blockNumber = event.block.number
@@ -464,7 +464,7 @@ export function withdrawFees(event: WithdrawFeesEvent): void {
 
   // Store transaction info
   let withdrawFeesTransaction = new WithdrawFees(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   withdrawFeesTransaction.hash = event.transaction.hash.toHex()
   withdrawFeesTransaction.blockNumber = event.block.number

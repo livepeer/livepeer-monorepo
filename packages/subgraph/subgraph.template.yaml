@@ -27,8 +27,11 @@ dataSources:
         - Bond
         - Unbond
         - Reward
-        - ClaimEarnings
+        - EarningsClaimed
         - WithdrawFees
+        - WithdrawStake
+        - WithdrawFees
+        - Round
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -76,6 +79,7 @@ dataSources:
         - Unbond
         - Rebond
         - WithdrawStake
+        - Round
       abis:
         - name: BondingManager
           file: ./abis/BondingManager_LIP11.json
@@ -139,6 +143,7 @@ dataSources:
         - Transcoder
         - Pool
         - Round
+        - InitializeRound
       abis:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
@@ -163,6 +168,7 @@ dataSources:
         - Transcoder
         - Pool
         - Round
+        - InitializeRound
       abis:
         - name: RoundsManager
           file: ./abis/RoundsManager_LIP12.json
@@ -233,6 +239,11 @@ dataSources:
         - Protocol
         - Broadcaster
         - WinningTicketRedeemed
+        - Round
+        - ReserveFunded
+        - ReserveClaimed
+        - DepositFunded
+        - Withdrawal
       abis:
         - name: TicketBroker
           file: ./abis/TicketBroker.json

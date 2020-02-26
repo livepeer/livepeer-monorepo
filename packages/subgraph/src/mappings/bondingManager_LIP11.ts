@@ -21,7 +21,11 @@ import {
   Round,
 } from '../types/schema'
 
-import { makeUnbondingLockId, getRoundsManagerInstance } from './util'
+import {
+  makeUnbondingLockId,
+  getRoundsManagerInstance,
+  makeEventId,
+} from './util'
 
 export function bond(event: BondEvent): void {
   let bondingManager = BondingManager.bind(event.address)
@@ -108,7 +112,7 @@ export function bond(event: BondEvent): void {
 
   // Store transaction info
   let bond = new Bond(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   bond.hash = event.transaction.hash.toHex()
   bond.blockNumber = event.block.number
@@ -196,7 +200,7 @@ export function unbond(event: UnbondEvent): void {
 
   // Store transaction info
   let unbond = new Unbond(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   unbond.hash = event.transaction.hash.toHex()
   unbond.blockNumber = event.block.number
@@ -262,7 +266,9 @@ export function rebond(event: RebondEvent): void {
   store.remove('UnbondingLock', uniqueUnbondingLockId)
 
   // Store transaction info
-  let rebond = new Rebond(event.transaction.hash.toHex() + 'Rebond')
+  let rebond = new Rebond(
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
+  )
   rebond.hash = event.transaction.hash.toHex()
   rebond.blockNumber = event.block.number
   rebond.gasUsed = event.transaction.gasUsed
@@ -293,7 +299,7 @@ export function withdrawStake(event: WithdrawStakeEvent): void {
 
   // Store transaction info
   let withdrawStake = new WithdrawStake(
-    event.transaction.hash.toHex() + 'WithdrawStake',
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   withdrawStake.hash = event.transaction.hash.toHex()
   withdrawStake.blockNumber = event.block.number

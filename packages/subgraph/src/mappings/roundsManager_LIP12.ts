@@ -10,7 +10,7 @@ import {
 // Import entity types generated from the GraphQL schema
 import { Transcoder, Pool, Round, InitializeRound } from '../types/schema'
 
-import { makePoolId, getBondingManagerInstance } from './util'
+import { makePoolId, getBondingManagerInstance, makeEventId } from './util'
 
 // Handler for NewRound events
 export function newRound(event: NewRoundEvent): void {
@@ -63,7 +63,7 @@ export function newRound(event: NewRoundEvent): void {
 
   // Store transaction info
   let initializeRound = new InitializeRound(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   initializeRound.hash = event.transaction.hash.toHex()
   initializeRound.blockNumber = event.block.number

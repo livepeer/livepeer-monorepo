@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { BondingManager } from '../types/BondingManager/BondingManager'
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
@@ -42,6 +42,10 @@ export function makeUnbondingLockId(
   return (
     leftPad(unbondingLockId.toString(), 10) + '-' + delegatorAddress.toHex()
   )
+}
+
+export function makeEventId(hash: Bytes, index: BigInt): string {
+  return hash.toHex() + '-' + index.toString()
 }
 
 export function percOfWithDenom(

@@ -1,7 +1,7 @@
 import { dataSource } from '@graphprotocol/graph-ts'
 import { Approval as ApprovalEvent } from '../types/LivepeerToken/LivepeerToken'
 import { Delegator, Approval } from '../types/schema'
-import { getRoundsManagerInstance } from './util'
+import { getRoundsManagerInstance, makeEventId } from './util'
 
 // Handler for NewRound events
 export function approval(event: ApprovalEvent): void {
@@ -23,7 +23,7 @@ export function approval(event: ApprovalEvent): void {
 
   // Store transaction info
   let approval = new Approval(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   approval.hash = event.transaction.hash.toHex()
   approval.blockNumber = event.block.number

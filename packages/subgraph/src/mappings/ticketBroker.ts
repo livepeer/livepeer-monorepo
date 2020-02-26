@@ -17,14 +17,14 @@ import {
   Withdrawal,
 } from '../types/schema'
 import { BigInt, dataSource } from '@graphprotocol/graph-ts'
-import { getRoundsManagerInstance } from './util'
+import { getRoundsManagerInstance, makeEventId } from './util'
 
 export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   let roundsManager = getRoundsManagerInstance(dataSource.network())
   let currentRound = roundsManager.currentRound()
   let round = Round.load(currentRound.toString())
   let winningTicketRedeemed = new WinningTicketRedeemed(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   winningTicketRedeemed.hash = event.transaction.hash.toHex()
   winningTicketRedeemed.blockNumber = event.block.number
@@ -93,7 +93,7 @@ export function depositFunded(event: DepositFundedEvent): void {
   broadcaster.save()
 
   let depositFunded = new DepositFunded(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   depositFunded.hash = event.transaction.hash.toHex()
   depositFunded.blockNumber = event.block.number
@@ -119,7 +119,7 @@ export function reserveFunded(event: ReserveFundedEvent): void {
   broadcaster.save()
 
   let reserveFunded = new ReserveFunded(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   reserveFunded.hash = event.transaction.hash.toHex()
   reserveFunded.blockNumber = event.block.number
@@ -142,7 +142,7 @@ export function reserveClaimed(event: ReserveClaimedEvent): void {
   broadcaster.save()
 
   let reserveClaimed = new ReserveClaimed(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   reserveClaimed.hash = event.transaction.hash.toHex()
   reserveClaimed.blockNumber = event.block.number
@@ -167,7 +167,7 @@ export function withdrawal(event: WithdrawalEvent): void {
   broadcaster.save()
 
   let withdrawal = new Withdrawal(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+    makeEventId(event.transaction.hash, event.transactionLogIndex),
   )
   withdrawal.hash = event.transaction.hash.toHex()
   withdrawal.blockNumber = event.block.number
