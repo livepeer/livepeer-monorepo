@@ -16,7 +16,7 @@ export default withApollo(() => {
   const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
-  const { data, loading, refetch, error } = useQuery(orchestratorsViewQuery, {
+  const { data, loading, refetch } = useQuery(orchestratorsViewQuery, {
     pollInterval: 10000,
     ssr: false,
   })
@@ -24,7 +24,6 @@ export default withApollo(() => {
     data: dataMyAccount,
     loading: loadingMyAccount,
     refetch: refetchMyAccount,
-    error: myAccountError,
   } = useQuery(accountQuery, {
     variables: {
       account: context?.account?.toLowerCase(),
@@ -33,14 +32,6 @@ export default withApollo(() => {
     skip: !context.active,
     ssr: false,
   })
-
-  if (error) {
-    console.log(error)
-  }
-
-  if (myAccountError) {
-    console.log(myAccountError)
-  }
 
   // Refetch data if we detect a network change
   useEffect(() => {

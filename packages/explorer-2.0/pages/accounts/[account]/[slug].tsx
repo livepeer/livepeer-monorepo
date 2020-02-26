@@ -12,7 +12,7 @@ import StakingView from '../../../components/StakingView'
 import Spinner from '../../../components/Spinner'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
-import { getDelegatorStatus } from '../../../lib/utils'
+import { getDelegatorStatus, checkAddressEquality } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
 import StakingWidgetModal from '../../../components/StakingWidgetModal'
@@ -30,7 +30,7 @@ export default withApollo(() => {
   const { width } = useWindowSize()
   const { query, asPath } = router
   const slug = query.slug
-  const { data, loading, error, refetch } = useQuery(accountViewQuery, {
+  const { data, loading, refetch } = useQuery(accountViewQuery, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
@@ -41,7 +41,6 @@ export default withApollo(() => {
   const {
     data: dataMyAccount,
     loading: loadingMyAccount,
-    error: errorMyAccount,
     refetch: refetchMyAccount,
   } = useQuery(accountQuery, {
     variables: {
@@ -58,14 +57,6 @@ export default withApollo(() => {
     }
   `
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
-
-  if (error) {
-    console.log(error)
-  }
-
-  if (errorMyAccount) {
-    console.log(errorMyAccount)
-  }
 
   // Refetch data if we detect a network change
   useEffect(() => {
@@ -97,8 +88,10 @@ export default withApollo(() => {
     )
   }
 
-  const isMyAccount =
-    context?.account?.toLowerCase() == query.account.toString().toLowerCase()
+  const isMyAccount = checkAddressEquality(
+    context?.account,
+    query.account.toString(),
+  )
   const isStaked = !!data.delegator?.delegate
   const hasLivepeerToken =
     data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0

@@ -178,3 +178,7 @@ export const detectNetwork = async provider => {
     type: type,
   }
 }
+
+export const checkAddressEquality = (address1, address2) => {
+  return Utils.toChecksumAddress(address1) === Utils.toChecksumAddress(address2)
+}

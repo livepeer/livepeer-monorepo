@@ -14,17 +14,13 @@ const GET_ROUND = gql`
 
 export default () => {
   const context = useWeb3React()
-  let { data, loading, error } = useQuery(GET_ROUND, {
+  let { data, loading } = useQuery(GET_ROUND, {
     pollInterval: 20000,
     ssr: false,
   })
 
   if (loading) {
     return null
-  }
-
-  if (error) {
-    console.log(error)
   }
 
   return (
