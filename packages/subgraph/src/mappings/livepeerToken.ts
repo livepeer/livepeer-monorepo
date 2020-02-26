@@ -23,7 +23,7 @@ export function approval(event: ApprovalEvent): void {
 
   // Store transaction info
   let approval = new Approval(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   approval.hash = event.transaction.hash.toHex()
   approval.blockNumber = event.block.number

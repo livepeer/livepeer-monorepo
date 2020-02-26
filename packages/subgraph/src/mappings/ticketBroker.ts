@@ -24,7 +24,7 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   let currentRound = roundsManager.currentRound()
   let round = Round.load(currentRound.toString())
   let winningTicketRedeemed = new WinningTicketRedeemed(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   winningTicketRedeemed.hash = event.transaction.hash.toHex()
   winningTicketRedeemed.blockNumber = event.block.number
@@ -93,7 +93,7 @@ export function depositFunded(event: DepositFundedEvent): void {
   broadcaster.save()
 
   let depositFunded = new DepositFunded(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   depositFunded.hash = event.transaction.hash.toHex()
   depositFunded.blockNumber = event.block.number
@@ -119,7 +119,7 @@ export function reserveFunded(event: ReserveFundedEvent): void {
   broadcaster.save()
 
   let reserveFunded = new ReserveFunded(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   reserveFunded.hash = event.transaction.hash.toHex()
   reserveFunded.blockNumber = event.block.number
@@ -142,7 +142,7 @@ export function reserveClaimed(event: ReserveClaimedEvent): void {
   broadcaster.save()
 
   let reserveClaimed = new ReserveClaimed(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   reserveClaimed.hash = event.transaction.hash.toHex()
   reserveClaimed.blockNumber = event.block.number
@@ -167,7 +167,7 @@ export function withdrawal(event: WithdrawalEvent): void {
   broadcaster.save()
 
   let withdrawal = new Withdrawal(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   withdrawal.hash = event.transaction.hash.toHex()
   withdrawal.blockNumber = event.block.number

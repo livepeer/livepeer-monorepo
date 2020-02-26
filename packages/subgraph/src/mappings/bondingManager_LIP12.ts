@@ -44,7 +44,7 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
 
   // Store transaction info
   let transcoderUpdated = new TranscoderUpdated(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   transcoderUpdated.hash = event.transaction.hash.toHex()
   transcoderUpdated.blockNumber = event.block.number
@@ -77,7 +77,7 @@ export function transcoderActivated(event: TranscoderActivatedEvent): void {
 
   // Store transaction info
   let transcoderActivated = new TranscoderActivated(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   transcoderActivated.hash = event.transaction.hash.toHex()
   transcoderActivated.blockNumber = event.block.number
@@ -104,7 +104,7 @@ export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
 
   // Store transaction info
   let transcoderDeactivated = new TranscoderDeactivated(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   transcoderDeactivated.hash = event.transaction.hash.toHex()
   transcoderDeactivated.blockNumber = event.block.number
@@ -136,7 +136,7 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   delegator.save()
 
   let earningsClaimed = new EarningsClaimed(
-    makeEventId(event.transaction.hash, event.transactionLogIndex),
+    makeEventId(event.transaction.hash, event.logIndex),
   )
   earningsClaimed.hash = event.transaction.hash.toHex()
   earningsClaimed.blockNumber = event.block.number
