@@ -66,7 +66,10 @@ export default withApollo(() => {
     }
   }, [context.chainId])
 
-  if (loading || loadingMyAccount) {
+  if (
+    ((loading || loadingMyAccount) && !data) ||
+    (context.active && !dataMyAccount)
+  ) {
     return (
       <Layout>
         <Flex

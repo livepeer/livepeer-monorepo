@@ -117,8 +117,12 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       if (hasExistingProfile(profile)) {
         setHasProfile(true)
       }
+
+      const Web3 = require('web3') // use web3 lib for ecRecover method
+      const web3 = new Web3(context.library._web3Provider)
+
       if (signature && ethereumAccount) {
-        const verifiedAccount = await context.library.eth.personal.ecRecover(
+        const verifiedAccount = await web3.eth.personal.ecRecover(
           message.replace(/<br ?\/?>/g, '\n'),
           signature,
         )
