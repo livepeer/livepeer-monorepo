@@ -18,6 +18,7 @@ import { useDebounce } from 'use-debounce'
 import ThreeBoxSteps from '../ThreeBoxSteps'
 import Spinner from '../Spinner'
 import { useWeb3React } from '@web3-react/core'
+import { ethers } from 'ethers'
 
 interface Props {
   account: string
@@ -118,11 +119,8 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         setHasProfile(true)
       }
 
-      const Web3 = require('web3') // use web3 lib for ecRecover method
-      const web3 = new Web3(context.library._web3Provider)
-
       if (signature && ethereumAccount) {
-        const verifiedAccount = await web3.eth.personal.ecRecover(
+        let verifiedAccount = ethers.utils.verifyMessage(
           message.replace(/<br ?\/?>/g, '\n'),
           signature,
         )
