@@ -43,8 +43,7 @@
     "env": {
       "ETHERSCAN_API_KEY": "@etherscan_api_key",
       "FORTMATIC_API_KEY": "@fortmatic_api_key",
-      "PORTIS_DAPP_ID": "@portis_dapp_id",
-      "GA_TRACKING_ID": "@ga_tracking_id"
+      "PORTIS_DAPP_ID": "@portis_dapp_id"
     }
   }
 }
