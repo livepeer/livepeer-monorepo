@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "packages/explorer-2.0/next.config.js", "use": "@now/next" }
+  ],
+  "routes": [
+    {
+      "src": "/transcoders",
+      "status": 301,
+      "headers": { "Location": "/" }
+    },
+    {
+      "src": "/accounts/(.*)/transcoding",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/campaign"
+      }
+    },
+    {
+      "src": "/accounts/(.*)/delegating",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/staking"
+      }
+    },
+    {
+      "src": "/accounts/(.*)/overview",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/staking"
+      }
+    },
+    {
+      "src": "/accounts/(.*)/",
+      "status": 301,
+      "headers": {
+        "Location": "/accounts/$1/staking"
+      }
+    }
+  ],
+  "env": {
+    "CHANGEFEED_ACCESS_TOKEN": "@changefeed_access_token"
+  },
+  "build": {
+    "env": {
+      "ETHERSCAN_API_KEY": "@etherscan_api_key",
+      "FORTMATIC_API_KEY": "@fortmatic_api_key",
+      "PORTIS_DAPP_ID": "@portis_dapp_id"
+    }
+  }
+}
