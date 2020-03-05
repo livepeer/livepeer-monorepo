@@ -16,6 +16,7 @@ const nextConfig = {
     FORTMATIC_API_KEY: process.env.FORTMATIC_API_KEY,
     ETHERSCAN_API_KEY: process.env.ETHERSCAN_API_KEY,
     PORTIS_DAPP_ID: process.env.PORTIS_DAPP_ID,
+    GA_TRACKING_ID: process.env.GA_TRACKING_ID,
   },
   webpack(config, options) {
     config.module.rules.push({

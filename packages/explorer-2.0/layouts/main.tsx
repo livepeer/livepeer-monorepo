@@ -16,7 +16,7 @@ import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 
 if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize('UA-111259858-1')
+  ReactGA.initialize(process.env.GA_TRACKING_ID)
 } else {
   ReactGA.initialize('test', { testMode: true })
 }
