@@ -15,7 +15,7 @@ const menuItems = [
 ]
 
 const Layout = ({ children, title = 'Livepeer.live' }: any) => (
-  <>
+  <div>
     <Head>
       <title>{title}</title>
       <meta charSet="utf-8" />
@@ -28,7 +28,7 @@ const Layout = ({ children, title = 'Livepeer.live' }: any) => (
         {children}
       </Flex>
     </Styled.root>
-  </>
+  </div>
 )
 
 export default Layout

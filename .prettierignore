@@ -4,7 +4,6 @@
 **/dist
 **/docs
 **/sdk/lib
-**/apollo/lib
 **/graphql-sdk/lib
 **/chroma/lib
 **/public

@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "public": true,
+  "builds": [
+    { "src": "www/package.json", "use": "@now/next" },
+    { "src": "admin/package.json", "use": "@now/static-build" }
+  ],
+  "routes": [
+    { "src": "^/admin/static/(.*)", "dest": "/admin/static/$1" },
+    { "src": "^/admin/(.*)", "dest": "/admin/index.html" },
+    {
+      "src": "/tv",
+      "status": 301,
+      "headers": {
+        "Location": "https://media.livepeer.org/play?url=https%3A%2F%2Fingest-crypto-rinkeby-distro.livepeer.org%2Fstream%2Fcurrent.m3u8"
+      }
+    },
+    { "src": "^/(.*)", "dest": "/www/$1" }
+  ],
+  "build": {
+    "env": {
+      "HUBSPOT_PORTAL_ID": "@hubspot_portal_id",
+      "HUBSPOT_FORM_ID": "@hubspot_form_id",
+      "GA_TRACKING_ID": "@ga_tracking_id_dot_com"
+    }
+  }
+}
