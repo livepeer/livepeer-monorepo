@@ -14,6 +14,7 @@ import appRouter from './app-router'
 import workerSecrets from './worker-secrets.json'
 import camelcase from 'camelcase'
 import Router from 'express/lib/router'
+import EE from 'wolfy87-eventemitter'
 
 // Populate env with precompiled secrets for yargs
 process.env = workerSecrets
@@ -175,14 +176,61 @@ async function serveStaticAsset(event) {
   }
 }
 
+class ExpressResponse {
+  constructor(args) {
+    this.handlers = {};
+    for (const [key, value] of Object.entries(args)) {
+      this[key] = value
+    }
+  }
+
+  on(name, fn) {
+    if (!this.handlers[name]) {
+      this.handlers[name] = [];
+    }
+    this.handlers[name].push(fn);
+  }
+
+  emit(name, ...args) {
+    if (!this.handlers[name]) {
+      return;
+    }
+    for (const fn of this.handlers[name]) {
+      fn(...args)
+    }
+  }
+
+  removeListener(name, fn) {
+    this.handlers[name] = this.handlers[name].filter(x => x !== fn)
+  }
+
+  listeners(name) {
+    return this.handlers[name]
+  }
+
+  resume() {}
+}
+
 /**
  * Fetch and log a request
  * @param {Request} request
  */
 
-function expressRequest(req, router) {
+async function expressRequest(cfReq, router) {
+  const buf = Buffer.from(await cfReq.arrayBuffer());
   return new Promise((resolve, reject) => {
     let status = 200
+    const path = new URL(cfReq.url).pathname
+    const req = new ExpressResponse({
+      url: path,
+      query: {},
+      path: path,
+      params: path.split('/').filter(x => x),
+      protocol: 'http',
+      method: cfReq.method,
+      headers: headersAsObject(cfReq.headers),
+      get: header => cfReq.headers[header],
+    })
     const res = {
       status: stat => {
         status = stat
@@ -197,42 +245,33 @@ function expressRequest(req, router) {
       },
     }
 
-    const ret = router(req, res, (err) => {
+    router(req, res, err => {
       if (!err) {
-        res.status(404);
-        res.json({errors: ["not found"]})
-      }
-      else {
-        res.status(500);
-        res.json({errors: [err.message || err]})
+        res.status(404)
+        res.json({ errors: ['not found'] })
+      } else {
+        res.status(500)
+        res.json({ errors: [err.message || err] })
       }
     })
-    console.log({ ret })
+
+    setTimeout(() => {
+      req.emit('data', buf)
+      req.emit('end')
+      setImmediate(() => {
+        req.emit('close')
+      })
+    }, 10)
   })
 }
 async function handleEvent(event) {
   const req = event.request
-  const path = new URL(event.request.url).pathname
-  const fullUrl = new URL(event.request.url).href
-  const expressReq = {
-    url: path,
-    query: {},
-    path: path,
-    params: path.split('/').filter(x => x),
-    protocol: 'http',
-    method: event.request.method,
-    headers: headersAsObject(event.request.headers),
-    get: header => event.request.headers[header],
-  }
-  const func = function nextFunc(error) {
-    console.log(`Next function error: ${error.stack}`)
-  }
 
   try {
     const { router, store } = await routerPromise
-    return await expressRequest(expressReq, router)
+    return await expressRequest(req, router)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return new Response('error', { status: 500 })
   }
 

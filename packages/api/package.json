@@ -71,6 +71,7 @@
     "string-template": "^1.0.0",
     "uuid": "^3.3.2",
     "winston": "^3.2.1",
+    "wolfy87-eventemitter": "^5.2.9",
     "yargs": "^13.2.2"
   },
   "devDependencies": {

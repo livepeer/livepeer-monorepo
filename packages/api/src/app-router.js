@@ -6,6 +6,7 @@ import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
+import { json as jsonParser } from 'body-parser'
 
 export default async function makeApp(params) {
   const {
@@ -50,7 +51,9 @@ export default async function makeApp(params) {
 
   const app = Router()
   app.use(healthCheck)
+  app.use(jsonParser())
   app.use((req, res, next) => {
+    console.log('past jsonparser')
     req.store = store
     req.config = params
     next()
@@ -103,11 +106,6 @@ export default async function makeApp(params) {
 
     // console.log("got past that")
     // throw err
-    next(err)
-  })
-
-  app.use(async (err, req, res, next) => {
-    console.log("SECOND HANDLER!!!", err)
     next(err)
   })
 
