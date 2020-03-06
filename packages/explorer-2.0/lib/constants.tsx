@@ -1,7 +1,8 @@
-import { Injected, Portis, Fortmatic } from './connectors'
+import { Injected, Portis, Fortmatic, walletlink } from './connectors'
 import MetaMaskIcon from '../public/img/metamask.svg'
 import PortisIcon from '../public/img/portis.svg'
 import FortmaticIcon from '../public/img/fortmatic.svg'
+import CoinbaseWalletIcon from '../public/img/coinbase-wallet.svg'
 import InjectedIcon from '../public/img/arrow-right.svg'
 
 export const SUPPORTED_WALLETS = {
@@ -21,6 +22,23 @@ export const SUPPORTED_WALLETS = {
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D',
+  },
+  WALLET_LINK: {
+    connector: walletlink,
+    name: 'Coinbase Wallet',
+    icon: CoinbaseWalletIcon,
+    description: 'Use Coinbase Wallet app on mobile device',
+    href: null,
+    color: '#315CF5',
+  },
+  COINBASE_LINK: {
+    name: 'Open in Coinbase Wallet',
+    icon: CoinbaseWalletIcon,
+    description: 'Open in Coinbase Wallet app.',
+    href: 'https://go.cb-w.com/0T8By93MA4',
+    color: '#315CF5',
+    mobile: true,
+    mobileOnly: true,
   },
   FORTMATIC: {
     connector: Fortmatic,
