@@ -45,6 +45,7 @@ export default async function makeApp(params) {
   const { router, store } = await appRouter(params)
   const app = express()
   app.use(morgan('combined'))
+  app.use(jsonParser())
   app.use(router)
 
   let listener

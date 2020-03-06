@@ -116,33 +116,29 @@ async function cloudflareFetch(
   const res = await fetch(reqUrl, req)
   const respData = await res.json()
 
-  if (res.status != 200) {
-    const errorMessage = `Cloudflare ${res.status} error: ${
-      res.statusText
-    }, error_messages: ${JSON.stringify(respData.errors)}`
-    console.log(errorMessage)
-
-    if (res.status == 404) {
-      return null
-    } else if (res.status == 429) {
-      console.log('Sleeping for 3 seconds')
-      await sleep(3000)
-      if (retries < retryLimit) {
-        retries++
-        await cloudflareFetch(reqUrl, {
-          data: data,
-          method: method,
-          retries: retries,
-        })
-      } else {
-        throw new Error(errorMessage)
-      }
-    }
-
+  if (res.status === 200) {
     return respData
   }
+  const errorMessage = `Cloudflare ${res.status} error: ${
+    res.statusText
+  }, error_messages: ${JSON.stringify(respData.errors)}`
+  console.log(errorMessage)
 
-  return respData
+  if (res.status == 404) {
+    return null
+  } else if (res.status == 429) {
+    console.log('Sleeping for 3 seconds')
+    await sleep(3000)
+    if (retries < retryLimit) {
+      return await cloudflareFetch(reqUrl, {
+        data: data,
+        method: method,
+        retries: retries + 1,
+      })
+    }
+  } else {
+    throw new Error(errorMessage)
+  }
 }
 
 function sleep(ms) {

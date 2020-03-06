@@ -1,11 +1,8 @@
+// import 'express-async-errors' // it monkeypatches, i guess
 import Router from 'express/lib/router'
-import 'express-async-errors' // it monkeypatches, i guess
-import morgan from 'morgan'
-import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
 import { LevelStore, PostgresStore, CloudflareStore } from './store'
 import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
-import logger from './logger'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
@@ -53,7 +50,6 @@ export default async function makeApp(params) {
 
   const app = Router()
   app.use(healthCheck)
-  app.use(jsonParser())
   app.use((req, res, next) => {
     req.store = store
     req.config = params
@@ -96,12 +92,22 @@ export default async function makeApp(params) {
   }
 
   // If we throw any errors with numerical statuses, use them.
-  app.use((err, req, res, next) => {
+  app.use(async (err, req, res, next) => {
+    console.log('end:')
+    console.log(err)
     if (typeof err.status === 'number') {
       res.status(err.status)
       res.json({ errors: [err.message] })
+      return
     }
 
+    // console.log("got past that")
+    // throw err
+    next(err)
+  })
+
+  app.use(async (err, req, res, next) => {
+    console.log("SECOND HANDLER!!!", err)
     next(err)
   })
 

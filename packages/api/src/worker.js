@@ -2,37 +2,23 @@
  * Entrypoint for our CloudFlare worker.
  */
 
+// First, some shims to polyfill expectations elsewhere...
 process.hrtime = require('browser-process-hrtime')
+self.setImmediate = (fn, ...args) => setTimeout(() => fn(...args), 0)
 
-self.localStorage = {
-  debug: 'express:*',
-}
-
+import 'express-async-errors' // it monkeypatches, i guess
+import parseCli from './parse-cli.js'
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
-import 'express-async-errors'
 import composeM3U8 from './controllers/compose-m3u8'
-// import appRouter from './app-router'
+import appRouter from './app-router'
 import workerSecrets from './worker-secrets.json'
 import camelcase from 'camelcase'
+import Router from 'express/lib/router'
 
-/**
- * maps the path of incoming request to the request pathKey to look up
- * in bucket and in cache
- * e.g.  for a path '/' returns '/index.html' which serves
- * the content of bucket/index.html
- * @param {Request} request incoming request
- */
-
-self.setImmediate = fn => setTimeout(fn, 0)
-
-const options = {}
-
-for (let [key, value] of Object.entries(workerSecrets)) {
-  key = camelcase(key.slice(3))
-  options[key] = value
-}
-
-// const routerPromise = appRouter(options)
+// Populate env with precompiled secrets for yargs
+process.env = workerSecrets
+const params = parseCli()
+const routerPromise = appRouter(params)
 
 // staging, prod, and dev sets of secrets
 // env variables in a JSON blob, turn into file, import file as we're building worker
@@ -210,40 +196,45 @@ function expressRequest(req, router) {
         )
       },
     }
-    router(req, res, error => {
-      if (!error) {
-        res.json('404!!!')
-      } else {
-        reject(error)
+
+    const ret = router(req, res, (err) => {
+      if (!err) {
+        res.status(404);
+        res.json({errors: ["not found"]})
+      }
+      else {
+        res.status(500);
+        res.json({errors: [err.message || err]})
       }
     })
+    console.log({ ret })
   })
 }
 async function handleEvent(event) {
-  const req = event.request;
-  // const path = new URL(event.request.url).pathname
-  // const fullUrl = new URL(event.request.url).href
-  // const req = {
-  //   url: path,
-  //   query: {},
-  //   path: path,
-  //   params: path.split('/').filter(x => x),
-  //   protocol: 'http',
-  //   method: event.request.method,
-  //   headers: event.request.headers,
-  //   get: header => event.request.headers[header],
-  // }
-  // const func = function nextFunc(error) {
-  //   console.log(`Next function error: ${error.stack}`)
-  // }
+  const req = event.request
+  const path = new URL(event.request.url).pathname
+  const fullUrl = new URL(event.request.url).href
+  const expressReq = {
+    url: path,
+    query: {},
+    path: path,
+    params: path.split('/').filter(x => x),
+    protocol: 'http',
+    method: event.request.method,
+    headers: headersAsObject(event.request.headers),
+    get: header => event.request.headers[header],
+  }
+  const func = function nextFunc(error) {
+    console.log(`Next function error: ${error.stack}`)
+  }
 
-  // try {
-  //   const { router, store } = await routerPromise
-  //   return await expressRequest(req, router)
-  // } catch (error) {
-  //   console.log(`error: ${error.stack}`)
-  //   return new Response('error')
-  // }
+  try {
+    const { router, store } = await routerPromise
+    return await expressRequest(expressReq, router)
+  } catch (error) {
+    console.log(error);
+    return new Response('error', { status: 500 })
+  }
 
   const url = new URL(req.url)
   if (url.hostname.startsWith('docs.')) {
@@ -300,3 +291,5 @@ async function handleEvent(event) {
   const newRequest = new Request(newUrl.toString(), new Request(req))
   return fetch(newRequest)
 }
+
+console.log('Worker started.')
