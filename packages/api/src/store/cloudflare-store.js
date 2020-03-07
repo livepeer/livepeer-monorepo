@@ -5,7 +5,7 @@ import querystring from 'querystring'
 import { NotFoundError } from './errors'
 
 const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/accounts'
-const DEFAULT_LIMIT = 10
+const DEFAULT_LIMIT = 100
 const retryLimit = 3
 let namespace
 let accountId
@@ -22,6 +22,9 @@ export default class CloudflareStore {
     accountId = cloudflareAccount
     auth = cloudflareAuth
   }
+
+  // Nothing necessary here.
+  async close() {}
 
   async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
     const params = querystring.stringify({
@@ -119,14 +122,17 @@ async function cloudflareFetch(
   if (res.status === 200) {
     return respData
   }
+
+  if (res.status === 404) {
+    return null
+  }
+
   const errorMessage = `Cloudflare ${res.status} error: ${
     res.statusText
   }, error_messages: ${JSON.stringify(respData.errors)}`
   console.log(errorMessage)
 
-  if (res.status == 404) {
-    return null
-  } else if (res.status == 429) {
+  if (res.status === 429) {
     console.log('Sleeping for 3 seconds')
     await sleep(3000)
     if (retries < retryLimit) {

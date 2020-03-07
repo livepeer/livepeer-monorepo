@@ -2,7 +2,7 @@
  * This file is imported from all the integration tests. It boots up a server based on the provided argv.
  */
 
-import argParser from './cli'
+import argParser from './parse-cli'
 import makeApp from './index'
 import fs from 'fs-extra'
 import uuid from 'uuid/v4'
@@ -41,7 +41,7 @@ console.log(`test run parameters: ${JSON.stringify(params)}`)
 
 export default makeApp(params).then(s => {
   server = s
-  return s
+  return { ...s, port: 3011 }
 })
 
 afterAll(() => {

@@ -53,7 +53,6 @@ export default async function makeApp(params) {
   app.use(healthCheck)
   app.use(jsonParser())
   app.use((req, res, next) => {
-    console.log('past jsonparser')
     req.store = store
     req.config = params
     next()

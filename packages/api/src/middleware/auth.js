@@ -66,12 +66,14 @@ function authFactory(params) {
           return next()
         } else {
           res.status(403)
+          console.log([`not ${req.config.trustedDomain} email address`])
           return res.json({
             errors: [`not ${req.config.trustedDomain} email address`],
           })
         }
       } catch (error) {
         res.status(403)
+        console.log(error)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
     } else if (
@@ -90,6 +92,7 @@ function authFactory(params) {
           return next()
         }
       } catch (error) {
+        console.log(error)
         res.status(403)
         return res.json({ errors: ['not logged in', error.toString()] })
       }
@@ -160,6 +163,7 @@ async function getUserWithGoogleAuth(req, res, next) {
       audience: clientId,
     })
   } catch (e) {
+    console.error(e)
     throw new Error('invalid oauth token')
   }
 

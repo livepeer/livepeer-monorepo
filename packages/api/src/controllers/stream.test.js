@@ -210,7 +210,7 @@ describe('controllers/stream', () => {
       await server.store.create(store)
     })
 
-    it('should create a stream, no `token` registered', async () => {
+    it.only('should create a stream, no `token` registered', async () => {
       const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()

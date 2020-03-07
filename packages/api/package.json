@@ -106,7 +106,7 @@
   "alias": {
     "pg-native": "./src/empty.js",
     "level": "./src/empty.js",
-    "@kubernetes/client-node": "./src/empty.js",
-    "./src/store/level-store.js": "./src/empty.js"
+    "@kubernetes/client-node": "./__mocks__/@kubernetes/client-node.js",
+    "google-auth-library": "./__mocks__/google-auth-library.js"
   }
 }

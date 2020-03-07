@@ -176,9 +176,9 @@ async function serveStaticAsset(event) {
   }
 }
 
-class ExpressResponse {
+class ExpressRequest {
   constructor(args) {
-    this.handlers = {};
+    this.handlers = {}
     for (const [key, value] of Object.entries(args)) {
       this[key] = value
     }
@@ -186,14 +186,14 @@ class ExpressResponse {
 
   on(name, fn) {
     if (!this.handlers[name]) {
-      this.handlers[name] = [];
+      this.handlers[name] = []
     }
-    this.handlers[name].push(fn);
+    this.handlers[name].push(fn)
   }
 
   emit(name, ...args) {
     if (!this.handlers[name]) {
-      return;
+      return
     }
     for (const fn of this.handlers[name]) {
       fn(...args)
@@ -211,27 +211,58 @@ class ExpressResponse {
   resume() {}
 }
 
+class ExpressResponse {
+  constructor(args) {
+    this.headers = {}
+    for (const [key, value] of Object.entries(args)) {
+      this[key] = value
+    }
+  }
+
+  links(links) {
+    var link = this.get('Link') || ''
+    if (link) link += ', '
+    return this.set(
+      'Link',
+      link +
+        Object.keys(links)
+          .map(function(rel) {
+            return '<' + links[rel] + '>; rel="' + rel + '"'
+          })
+          .join(', '),
+    )
+  }
+
+  get(key) {
+    return this.headers[key]
+  }
+
+  set(key, value) {
+    this.headers[key] = value
+  }
+}
+
 /**
  * Fetch and log a request
  * @param {Request} request
  */
 
 async function expressRequest(cfReq, router) {
-  const buf = Buffer.from(await cfReq.arrayBuffer());
+  const buf = Buffer.from(await cfReq.arrayBuffer())
   return new Promise((resolve, reject) => {
     let status = 200
-    const path = new URL(cfReq.url).pathname
-    const req = new ExpressResponse({
-      url: path,
-      query: {},
-      path: path,
-      params: path.split('/').filter(x => x),
+    const { pathname, searchParams } = new URL(cfReq.url)
+    const req = new ExpressRequest({
+      url: pathname,
+      query: headersAsObject(searchParams),
+      path: pathname,
+      params: pathname.split('/').filter(x => x),
       protocol: 'http',
       method: cfReq.method,
       headers: headersAsObject(cfReq.headers),
       get: header => cfReq.headers[header],
     })
-    const res = {
+    const res = new ExpressResponse({
       status: stat => {
         status = stat
       },
@@ -239,11 +270,11 @@ async function expressRequest(cfReq, router) {
         resolve(
           new Response(JSON.stringify(jsonObj), {
             status: status,
-            headers: {},
+            headers: res.headers,
           }),
         )
       },
-    }
+    })
 
     router(req, res, err => {
       if (!err) {
