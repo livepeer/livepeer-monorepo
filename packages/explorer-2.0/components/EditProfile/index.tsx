@@ -26,22 +26,6 @@ interface Props {
   refetch?: any
 }
 
-const GET_THREE_BOX_SPACE = gql`
-  query($id: ID!) {
-    threeBoxSpace(id: $id) {
-      __typename
-      id
-      did
-      name
-      website
-      description
-      image
-      addressLinks
-      defaultProfile
-    }
-  }
-`
-
 const UPDATE_PROFILE = gql`
   mutation updateProfile(
     $name: String
@@ -179,13 +163,6 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
         )
         space = await box.openSpace('livepeer')
         await box.syncDone
-        if (refetch) {
-          refetch({
-            variables: {
-              account: account,
-            },
-          })
-        }
         setCreateProfileModalOpen(false)
         setEditProfileOpen(true)
       }
