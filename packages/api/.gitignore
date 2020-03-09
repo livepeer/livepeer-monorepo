@@ -8,3 +8,4 @@ minio
 schema.json
 .cache
 worker-secrets.json
+src/schema/validators

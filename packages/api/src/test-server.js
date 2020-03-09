@@ -41,7 +41,10 @@ console.log(`test run parameters: ${JSON.stringify(params)}`)
 
 export default makeApp(params).then(s => {
   server = s
-  return { ...s, port: 3011 }
+  return {
+    ...s,
+    // port: 3011
+  }
 })
 
 afterAll(() => {

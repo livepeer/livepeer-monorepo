@@ -10,16 +10,12 @@ import 'express-async-errors' // it monkeypatches, i guess
 import parseCli from './parse-cli.js'
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import composeM3U8 from './controllers/compose-m3u8'
-import appRouter from './app-router'
 import workerSecrets from './worker-secrets.json'
-import camelcase from 'camelcase'
-import Router from 'express/lib/router'
-import EE from 'wolfy87-eventemitter'
 
 // Populate env with precompiled secrets for yargs
 process.env = workerSecrets
 const params = parseCli()
-const routerPromise = appRouter(params)
+let routerPromise
 
 // staging, prod, and dev sets of secrets
 // env variables in a JSON blob, turn into file, import file as we're building worker
@@ -299,11 +295,16 @@ async function handleEvent(event) {
   const req = event.request
 
   try {
+    if (!routerPromise) {
+      const appRouter = require('./app-router').default
+      routerPromise = appRouter(params)
+    }
     const { router, store } = await routerPromise
+    console.log('initialization complete')
     return await expressRequest(req, router)
   } catch (error) {
-    console.log(error)
-    return new Response('error', { status: 500 })
+    console.error(error)
+    return new Response('500', { status: 500 })
   }
 
   const url = new URL(req.url)
