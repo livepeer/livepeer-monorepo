@@ -39,14 +39,20 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
   const os = await req.store.get(`objectstores/${userId}/${id}`)
-  if (os && req.user.id === os.userId) {
-    const secureOS = { ...os, credentials: null }
-    res.status(200)
-    res.json(secureOS)
-  } else {
-    res.status(200)
-    res.json({})
+  if (!os) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
   }
+  if (!req.user.id !== os.userId) {
+    console.log(`"${req.user.id}" !== "${os.userId}"`)
+    console.log(req.user.id instanceof String, os.userId instanceof String)
+    console.log(typeof req.user.id, typeof os.userId)
+    res.status(403)
+    return res.json({ errors: ['forbidden'] })
+  }
+  const secureOS = { ...os, credentials: null }
+  res.status(200)
+  res.json(secureOS)
 })
 
 app.post(

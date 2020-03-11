@@ -43,7 +43,7 @@ export default makeApp(params).then(s => {
   server = s
   return {
     ...s,
-    // port: 3011
+    port: 3011,
   }
 })
 

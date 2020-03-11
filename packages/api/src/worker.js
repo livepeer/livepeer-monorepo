@@ -304,7 +304,7 @@ async function handleEvent(event) {
     return await expressRequest(req, router)
   } catch (error) {
     console.error(error)
-    return new Response('500', { status: 500 })
+    return new Response(error.stack, { status: 500 })
   }
 
   const url = new URL(req.url)

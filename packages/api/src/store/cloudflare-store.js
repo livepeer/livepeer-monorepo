@@ -119,6 +119,12 @@ async function cloudflareFetch(
   const res = await fetch(reqUrl, req)
   const respData = await res.json()
 
+  console.log(
+    `${method} ${reqUrl}: ${res.status} ${JSON.stringify(
+      Object.keys(respData),
+    )}`,
+  )
+
   if (res.status === 200) {
     return respData
   }

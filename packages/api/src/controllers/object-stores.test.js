@@ -63,7 +63,7 @@ describe('controllers/object-stores', () => {
       expect(res.status).toBe(403)
     })
 
-    it('should get all object stores with prior user created', async () => {
+    it.only('should get all object stores with prior user created', async () => {
       const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
       storeGoogleAuthMockUser.userId = googleMockUserId
       for (let i = 0; i < 4; i += 1) {
@@ -72,10 +72,12 @@ describe('controllers/object-stores', () => {
         )
         storeChangeId.id = uuid()
         storeChangeId.kind = `objectstores/${storeChangeId.userId}`
+        console.log(storeChangeId)
         await server.store.create(storeChangeId)
         const res = await client.get(
           `/objectstores/${storeChangeId.userId}/${storeChangeId.id}`,
         )
+        console.log(await res.text())
         expect(res.status).toBe(200)
         const objStore = await res.json()
         expect(objStore.id).toEqual(storeChangeId.id)

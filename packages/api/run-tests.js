@@ -45,7 +45,7 @@ run('postgres', [
   '--storage=postgres',
   '--postgres-url=postgresql://postgres@localhost/livepeerapi',
 ])
-// run('cloudflare', ['--storage=cloudflare'])
+run('cloudflare', ['--storage=cloudflare'])
 
 // https://github.com/facebook/jest/issues/2418#issuecomment-423806659
 const normalizeJestCoverage = obj => {
