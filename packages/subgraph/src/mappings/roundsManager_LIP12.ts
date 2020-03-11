@@ -1,5 +1,10 @@
 // Import types and APIs from graph-ts
-import { Address, dataSource } from '@graphprotocol/graph-ts'
+import {
+  Address,
+  dataSource,
+  EthereumBlock,
+  BigInt,
+} from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -8,7 +13,13 @@ import {
 } from '../types/RoundsManager_LIP12/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
-import { Transcoder, Pool, Round, InitializeRound } from '../types/schema'
+import {
+  Transcoder,
+  Pool,
+  Round,
+  InitializeRound,
+  Protocol,
+} from '../types/schema'
 
 import { makePoolId, getBondingManagerInstance, makeEventId } from './util'
 
@@ -54,12 +65,18 @@ export function newRound(event: NewRoundEvent): void {
   round = new Round(roundNumber.toString())
   round.initialized = true
   round.timestamp = event.block.timestamp
-  round.lastInitializedRound = roundsManager.lastInitializedRound()
   round.length = roundsManager.roundLength()
   round.startBlock = roundsManager.currentRoundStartBlock()
-
-  // Apply store updates
   round.save()
+
+  // Update protocol
+  let protocol = Protocol.load('0')
+  if (protocol == null) {
+    protocol = new Protocol('0')
+  }
+  protocol.lastInitializedRound = roundsManager.lastInitializedRound()
+  protocol.currentRound = roundNumber.toString()
+  protocol.save()
 
   // Store transaction info
   let initializeRound = new InitializeRound(

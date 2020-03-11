@@ -77,8 +77,6 @@ type Round @entity {
   length: BigInt
   "The time at which this round was initialized"
   timestamp: BigInt
-  "Last initialized round. After first round, this is the last round during which initializeRound() was called"
-  lastInitializedRound: BigInt
   "The block number at which this round was initialized"
   startBlock: BigInt
   "The pools associated with the round"
@@ -155,8 +153,22 @@ type UnbondingLock @entity {
 
 type Protocol @entity {
   id: ID!
-  totalWinningTickets: BigInt
+  currentRound: Round
+  inflation: BigInt
+  inflationChange: BigInt
+  lastInitializedRound: BigInt
+  lastRoundLengthUpdateRound: BigInt
+  lastRoundLengthUpdateStartBlock: BigInt
+  lockPeriod: BigInt
+  maxEarningsClaimsRounds: BigInt
+  numActiveTranscoders: BigInt
+  paused: Boolean
+  roundLength: BigInt
+  roundLockAmount: BigInt
+  targetBondingRate: BigInt
   totalGeneratedFees: BigInt
+  totalWinningTickets: BigInt
+  unbondingPeriod: BigInt
 }
 
 """
@@ -478,4 +490,55 @@ type Withdrawal implements Transaction @entity {
   sender: String
   deposit: BigInt
   reserve: BigInt
+}
+
+type SetCurrentRewardTokens implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  currentMintableTokens: BigInt
+  currentInflation: BigInt
+}
+
+type Pause implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+}
+
+type Unpause implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+}
+
+type ParameterUpdate implements Transaction @entity {
+  id: ID!
+  hash: String
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  timestamp: BigInt
+  from: String
+  to: String
+  round: Round
+  param: String
 }

@@ -12,6 +12,7 @@ import {
   TranscoderEvicted as TranscoderEvictedEvent,
   TranscoderSlashed as TranscoderSlashedEvent,
   WithdrawFees as WithdrawFeesEvent,
+  ParameterUpdate as ParameterUpdateEvent,
   Reward as RewardEvent,
 } from '../types/BondingManager/BondingManager'
 
@@ -30,7 +31,9 @@ import {
   EarningsClaimed,
   WithdrawStake,
   WithdrawFees,
+  ParameterUpdate,
   Round,
+  Protocol,
 } from '../types/schema'
 
 import { makePoolId, getRoundsManagerInstance, makeEventId } from './util'
@@ -484,4 +487,48 @@ export function withdrawFees(event: WithdrawFeesEvent): void {
   delegator.withdrawnFees = delegator.withdrawnFees.plus(withdrawnFees)
   delegator.lastClaimRound = currentRound.toString()
   delegator.save()
+}
+
+export function parameterUpdate(event: ParameterUpdateEvent): void {
+  let bondingManager = BondingManager.bind(event.address)
+  let roundsManager = getRoundsManagerInstance(dataSource.network())
+  let currentRound = roundsManager.try_currentRound()
+
+  let protocol = Protocol.load('0')
+  if (protocol == null) {
+    protocol = new Protocol('0')
+  }
+
+  if (event.params.param == 'unbondingPeriod') {
+    protocol.unbondingPeriod = bondingManager.unbondingPeriod()
+  }
+
+  if (event.params.param == 'numActiveTranscoders') {
+    protocol.numActiveTranscoders = bondingManager.getTranscoderPoolMaxSize()
+  }
+
+  if (event.params.param == 'maxEarningsClaimsRounds') {
+    protocol.maxEarningsClaimsRounds = bondingManager.maxEarningsClaimsRounds()
+  }
+
+  protocol.save()
+
+  let parameterUpdate = new ParameterUpdate(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  parameterUpdate.hash = event.transaction.hash.toHex()
+  parameterUpdate.blockNumber = event.block.number
+  parameterUpdate.gasUsed = event.transaction.gasUsed
+  parameterUpdate.gasPrice = event.transaction.gasPrice
+  parameterUpdate.timestamp = event.block.timestamp
+  parameterUpdate.from = event.transaction.from.toHex()
+  parameterUpdate.to = event.transaction.to.toHex()
+  parameterUpdate.param = event.params.param
+
+  // The first time this event was emitted the first round was not yet set
+  if (!currentRound.reverted) {
+    parameterUpdate.round = currentRound.value.toString()
+  }
+
+  parameterUpdate.save()
 }

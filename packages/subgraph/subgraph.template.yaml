@@ -32,6 +32,8 @@ dataSources:
         - WithdrawStake
         - WithdrawFees
         - Round
+        - ParameterUpdate
+        - Protocol
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
@@ -54,6 +56,8 @@ dataSources:
           handler: withdrawStake
         - event: WithdrawFees(indexed address)
           handler: withdrawFees
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
       callHandlers:
         - function: claimEarnings(uint256)
           handler: claimEarnings
@@ -144,6 +148,8 @@ dataSources:
         - Pool
         - Round
         - InitializeRound
+        - ParameterUpdate
+        - Protocol
       abis:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
@@ -152,6 +158,8 @@ dataSources:
       eventHandlers:
         - event: NewRound(uint256)
           handler: newRound
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
   - kind: ethereum/contract
     name: RoundsManager_LIP12
     network: {{networkName}}
@@ -214,6 +222,9 @@ dataSources:
       file: ./src/mappings/minter.ts
       entities:
         - Round
+        - Protocol
+        - ParameterUpdate
+        - SetCurrentRewardTokens
       abis:
         - name: Minter
           file: ./abis/Minter.json
@@ -222,6 +233,8 @@ dataSources:
       eventHandlers:
         - event: SetCurrentRewardTokens(uint256,uint256)
           handler: setCurrentRewardTokens
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
   - kind: ethereum/contract
     name: TicketBroker
     network: {{networkName}}
@@ -259,3 +272,30 @@ dataSources:
           handler: reserveClaimed
         - event: Withdrawal(indexed address,uint256,uint256)
           handler: withdrawal
+  - kind: ethereum/contract
+    name: Controller
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.controller.startBlock}}
+      address: {{contracts.controller.address}}
+      abi: Controller
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/controller.ts   
+      entities:
+        - Protocol
+        - Pause
+        - Unpause
+      abis:
+        - name: Controller
+          file: ./abis/Controller.json
+        - name: RoundsManager
+          file: ./abis/RoundsManager.json
+      eventHandlers:
+        - event: Pause()
+          handler: pause
+        - event: Unpause()
+          handler: unpause
+    
