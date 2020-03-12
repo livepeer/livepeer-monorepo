@@ -66,7 +66,7 @@ const Reset = () =>
         padding: 0,
         backgroundColor: `${theme.colors.surface} !important`,
         outline: 'none',
-        borderRadius: '10px',
+        borderRadius: '16px',
         '@media (min-width: 672px)': {
           width: '65vw',
         },

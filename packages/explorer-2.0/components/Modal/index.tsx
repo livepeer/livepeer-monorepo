@@ -45,15 +45,15 @@ export default ({
           as={DialogContent}
           sx={
             title
-              ? { maxWidth: 700, bg: 'surface', borderRadius: 10 }
+              ? { maxWidth: 700, bg: 'surface', borderRadius: 16 }
               : {
-                  borderRadius: 10,
+                  borderRadius: 16,
                   margin: '40px auto',
                   height: 'calc(100vh - 80px)',
                 }
           }
         >
-          <Box sx={{ position: 'relative', p: 3 }}>
+          <Box sx={{ position: 'relative', px: 4, pt: 3, pb: 4 }}>
             {showCloseButton && (
               <CloseIcon
                 onClick={onDismiss}
@@ -69,9 +69,9 @@ export default ({
             )}
             {title && (
               <Box sx={{ position: 'relative' }}>
-                <Flex sx={{ alignItems: 'center', mb: 4 }}>
+                <Flex sx={{ alignItems: 'center', mb: 5 }}>
                   {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
-                  <Styled.h2>{title}</Styled.h2>
+                  <Styled.h3 sx={{ width: '100%' }}>{title}</Styled.h3>
                 </Flex>
               </Box>
             )}

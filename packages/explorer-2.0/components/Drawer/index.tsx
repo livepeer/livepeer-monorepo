@@ -7,7 +7,7 @@ import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
-import NetworkWidget from '../NetworkWidget'
+import RoundStatus from '../RoundStatus'
 import { useApolloClient } from '@apollo/react-hooks'
 import UniswapModal from '../UniswapModal'
 
@@ -237,7 +237,7 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 </Flex>
               )}
             </Box>
-            <NetworkWidget />
+            <RoundStatus />
           </Box>
         </Flex>
       </Flex>
