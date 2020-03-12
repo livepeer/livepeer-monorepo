@@ -156,6 +156,7 @@ components:
         userId:
           type: string
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
+          index: true
 
     user:
       type: object
@@ -168,6 +169,8 @@ components:
           type: string
           description: user email address
           example: useremail@gmail.com
+          unique: true
+          index: true
         password:
           type: string
           example: thisisapassword
