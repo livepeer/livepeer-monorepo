@@ -60,11 +60,11 @@ app.post('/', authMiddleware({}), validatePost('user'), async (req, res) => {
   }
 
   const [hashedPassword, salt] = await hash(req.body.password)
-//   TODO: if (hashedPassword.length != req.body.password.length) {
-//     res.status(422)
-//     res.json({ error: 'invalid password' })
-//     return
-//   }
+  //   TODO: if (hashedPassword.length != req.body.password.length) {
+  //     res.status(422)
+  //     res.json({ error: 'invalid password' })
+  //     return
+  //   }
 
   const id = uuid()
   await Promise.all([
@@ -94,42 +94,46 @@ app.post('/', authMiddleware({}), validatePost('user'), async (req, res) => {
   }
 })
 
-app.post('/token', authMiddleware({}), async (req, res) => {
-  const email = req.body.email
-  const password = req.body.password
+app.post(
+  '/token',
+  authMiddleware({}),
+  validatePost('user'),
+  async (req, res) => {
+    const email = req.body.email
+    const password = req.body.password
+    if (!email || !password) {
+      res.status(422)
+      res.json({ error: 'missing email or password' })
+      return
+    }
 
-  if (!email || !password) {
-    res.status(422)
-    res.json({ error: 'missing email or password' })
-    return
-  }
-
-  const userEmail = await req.store.get(`user-emails/${email}`)
-  if (!userEmail) {
-    res.status(404)
-    res.json({ error: `user ${email} not found` })
-    return
-  }
-  const user = await req.store.get(`user/${userEmail.userId}`)
-  if (!user) {
-    res.status(404)
-    res.json({
-      error: `data integrity exception: user registered for ${email} does not exist at user/${userEmail.userId}`,
+    const userEmail = await req.store.get(`user-emails/${email}`)
+    if (!userEmail) {
+      res.status(404)
+      res.json({ error: `user ${email} not found` })
+      return
+    }
+    const user = await req.store.get(`user/${userEmail.userId}`)
+    if (!user) {
+      res.status(404)
+      res.json({
+        error: `data integrity exception: user registered for ${email} does not exist at user/${userEmail.userId}`,
+      })
+      return
+    }
+    const [hashedPassword] = await hash(password, user.salt)
+    if (hashedPassword !== user.password) {
+      res.status(403)
+      res.json({ error: 'incorrect password' })
+      return
+    }
+    const token = jwt.sign({ sub: user.id }, 'secret', {
+      algorithm: 'HS256',
     })
-    return
-  }
-  const [hashedPassword] = await hash(password, user.salt)
-  if (hashedPassword !== user.password) {
-    res.status(403)
-    res.json({ error: 'incorrect password' })
-    return
-  }
-  const token = jwt.sign({ sub: user.id }, 'secret', {
-    algorithm: 'HS256',
-  })
-  res.status(201)
-  res.json({ id: user.id, email: user.email, token: token })
-})
+    res.status(201)
+    res.json({ id: user.id, email: user.email, token: token })
+  },
+)
 
 function makeNextHREF(req, nextCursor) {
   let baseUrl = new URL(

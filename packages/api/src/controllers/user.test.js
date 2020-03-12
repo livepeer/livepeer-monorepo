@@ -200,9 +200,7 @@ describe('controllersuser', () => {
       expect(user.id).toBeDefined()
       expect(user.kind).toBe('user')
       expect(user.email).toBe(mockUser.email)
-      const resUser = await server.store.get(
-        `user/${user.id}`,
-      )
+      const resUser = await server.store.get(`user/${user.id}`)
       expect(resUser.id).toEqual(user.id)
     })
 
@@ -219,9 +217,7 @@ describe('controllersuser', () => {
       expect(user.id).toBeDefined()
       expect(user.kind).toBe('user')
       expect(user.email).toBe(mockUser.email)
-      const resUser = await server.store.get(
-        `user/${user.id}`,
-      )
+      const resUser = await server.store.get(`user/${user.id}`)
       expect(resUser.id).toEqual(user.id)
 
       // if same request is made, should return a 403
@@ -237,9 +233,7 @@ describe('controllersuser', () => {
     })
 
     it('should not accept additional properties for creating a user', async () => {
-      const postMockUser = JSON.parse(
-        JSON.stringify(mockUser),
-      )
+      const postMockUser = JSON.parse(JSON.stringify(mockUser))
       postMockUser.name = 'livepeer'
       const res = await client.post('/user', {
         ...postMockUser,
@@ -247,6 +241,77 @@ describe('controllersuser', () => {
       expect(res.status).toBe(422)
       const user = await res.json()
       expect(user.id).toBeUndefined()
+    })
+  })
+
+  describe('basic CRUD /token endpoint with apiKey', () => {
+    let client
+    beforeEach(async () => {
+      client = new TestClient({
+        server,
+        apiKey: uuid(),
+      })
+    })
+
+    it('should return an token, no `authtoken` previously created', async () => {
+      // response should contain error - no user previously created
+      let res = await client.post('/user/token', {
+        ...mockUser,
+      })
+      expect(res.status).toBe(404)
+      let tokenRes = await res.json()
+      expect(tokenRes.error).toBe(`user ${mockUser.email} not found`)
+
+      // create user
+      res = await client.post('/user', {
+        ...mockUser,
+      })
+      expect(res.status).toBe(201)
+
+      // token request missing field, should return error
+      const postMockUserNoPassword = JSON.parse(JSON.stringify(mockUser))
+      postMockUserNoPassword.password = ''
+      res = await client.post('/user/token', {
+        ...postMockUserNoPassword,
+      })
+      expect(res.status).toBe(422)
+
+      tokenRes = await res.json()
+      expect(tokenRes.error).toBe(`missing email or password`)
+
+      // token request wrong password, should return error
+      const postMockUserWrongPassword = JSON.parse(JSON.stringify(mockUser))
+      postMockUserWrongPassword.password = 'wrongpassword'
+      res = await client.post('/user/token', {
+        ...postMockUserWrongPassword,
+      })
+      expect(res.status).toBe(403)
+
+      tokenRes = await res.json()
+      expect(tokenRes.error).toBe(`incorrect password`)
+
+      // token request additional properties, should return error
+      const postMockUserAdditionalProp = JSON.parse(JSON.stringify(mockUser))
+      postMockUserAdditionalProp.livepeer = 'livepeer'
+      res = await client.post('/user/token', {
+        ...postMockUserAdditionalProp,
+      })
+      expect(res.status).toBe(422)
+
+      // should not accept empty body for requesting a token
+      res = await client.post('/user/token')
+      expect(res.status).toBe(422)
+
+      // token should be returned without error
+      res = await client.post('/user/token', {
+        ...mockUser,
+      })
+
+      expect(res.status).toBe(201)
+      tokenRes = await res.json()
+      expect(tokenRes.id).toBeDefined()
+      expect(tokenRes.email).toBe(mockUser.email)
+      expect(tokenRes.token).toBeDefined()
     })
   })
 })
