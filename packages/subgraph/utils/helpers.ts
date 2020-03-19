@@ -1,14 +1,14 @@
 import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
-import { BondingManager } from '../types/BondingManager/BondingManager'
-import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
 let x = BigInt.fromI32(2)
 let y = <u8>255
 let z = BigInt.fromI32(1)
 
 export let MAXIMUM_VALUE_UINT256: BigInt = x.pow(y).minus(z)
-
-export const PERC_DIVISOR = 1000000
+export let EMPTY_ADDRESS = Address.fromString(
+  '0000000000000000000000000000000000000000',
+)
+export let PERC_DIVISOR = 1000000
 
 // Make a number the specified number of digits
 export function leftPad(str: string, size: i32): string {
@@ -19,19 +19,21 @@ export function leftPad(str: string, size: i32): string {
 }
 
 // Make a derived pool ID from a transcoder address
-export function makePoolId(
-  transcoderAddress: Address,
-  roundId: string,
-): string {
-  return leftPad(roundId, 10) + '-' + transcoderAddress.toHex()
+export function makePoolId(transcoderAddress: string, roundId: string): string {
+  return leftPad(roundId, 10) + '-' + transcoderAddress
 }
 
 // Make a derived share ID from a delegator address
-export function makeShareId(
-  delegatorAddress: Address,
-  roundId: string,
+export function makeShareId(delegatorAddress: string, roundId: string): string {
+  return leftPad(roundId, 10) + '-' + delegatorAddress
+}
+
+// Make a vote id
+export function makeVoteId(
+  delegatorAddress: string,
+  pollAddress: string,
 ): string {
-  return leftPad(roundId, 10) + '-' + delegatorAddress.toHex()
+  return delegatorAddress + '-' + pollAddress
 }
 
 // Make a derived unlocking ID from a delegator address
@@ -66,22 +68,12 @@ export function percPoints(_fracNum: BigInt, _fracDenom: BigInt): BigInt {
   return _fracNum.times(BigInt.fromI32(PERC_DIVISOR)).div(_fracDenom)
 }
 
-export function getRoundsManagerInstance(network: string): RoundsManager {
-  return RoundsManager.bind(
-    Address.fromString(
-      network == 'mainnet'
-        ? '3984fc4ceeef1739135476f625d36d6c35c40dc3'
-        : '572d1591bD41f50130FD0212058eAe34F1B17290',
-    ),
-  )
-}
-
-export function getBondingManagerInstance(network: string): BondingManager {
-  return BondingManager.bind(
-    Address.fromString(
-      network == 'mainnet'
-        ? '511bc4556d823ae99630ae8de28b9b80df90ea2e'
-        : 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95',
-    ),
-  )
+export function getBondingManagerAddress(network: string): string {
+  if (network == 'mainnet') {
+    return '511bc4556d823ae99630ae8de28b9b80df90ea2e'
+  } else if (network == 'rinkeby') {
+    return 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
+  } else {
+    return 'A94B7f0465E98609391C623d0560C5720a3f2D33'
+  }
 }

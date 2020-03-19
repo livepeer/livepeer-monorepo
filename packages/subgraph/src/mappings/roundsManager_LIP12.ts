@@ -6,6 +6,7 @@ import {
   RoundsManager,
   NewRound as NewRoundEvent,
 } from '../types/RoundsManager_LIP12/RoundsManager'
+import { BondingManager } from '../types/BondingManager/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import {
@@ -16,17 +17,23 @@ import {
   Protocol,
 } from '../types/schema'
 
-import { makePoolId, getBondingManagerInstance, makeEventId } from './util'
+import {
+  makePoolId,
+  getBondingManagerAddress,
+  makeEventId,
+  EMPTY_ADDRESS,
+} from '../../utils/helpers'
 
 // Handler for NewRound events
 export function newRound(event: NewRoundEvent): void {
   let roundsManager = RoundsManager.bind(event.address)
   let roundNumber = event.params.round
-  let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000',
+  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
+  let bondingManager = BondingManager.bind(
+    Address.fromString(bondingManagerAddress),
   )
-  let bondingManager = getBondingManagerInstance(dataSource.network())
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
+  let totalActiveStake = bondingManager.getTotalBonded()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
   let poolId: string
   let pool: Pool
@@ -38,7 +45,7 @@ export function newRound(event: NewRoundEvent): void {
     // reward() for a given round, we store its reward tokens inside this Pool
     // entry in a field called "rewardTokens". If "rewardTokens" is null for a
     // given transcoder and round then we know the transcoder failed to call reward()
-    poolId = makePoolId(currentTranscoder, roundNumber.toString())
+    poolId = makePoolId(currentTranscoder.toHex(), roundNumber.toString())
     pool = new Pool(poolId)
     pool.round = roundNumber.toString()
     pool.delegate = currentTranscoder.toHex()
@@ -67,6 +74,7 @@ export function newRound(event: NewRoundEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
+  protocol.totalActiveStake = totalActiveStake
   protocol.save()
 
   // Store transaction info

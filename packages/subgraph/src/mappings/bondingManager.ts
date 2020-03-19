@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, DataSourceContext } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -15,6 +15,8 @@ import {
   ParameterUpdate as ParameterUpdateEvent,
   Reward as RewardEvent,
 } from '../types/BondingManager/BondingManager'
+
+import { BondingManager as BondingManagerTemplate } from '../types/templates'
 
 // Import entity types generated from the GraphQL schema
 import {
@@ -36,7 +38,7 @@ import {
   Protocol,
 } from '../types/schema'
 
-import { makePoolId, makeEventId } from './util'
+import { makePoolId, makeEventId } from '../../utils/helpers'
 
 // Handler for TranscoderUpdate events
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
@@ -182,6 +184,7 @@ export function bond(call: BondCall): void {
     let amount = call.inputs._amount
     let delegatorData = bondingManager.getDelegator(delegatorAddress)
     let delegateData = bondingManager.getDelegator(newDelegateAddress)
+    let totalActiveStake = bondingManager.getTotalBonded()
     let protocol = Protocol.load('0') || new Protocol('0')
     let round = Round.load(protocol.currentRound)
     let transcoder =
@@ -193,6 +196,8 @@ export function bond(call: BondCall): void {
     let delegator =
       Delegator.load(delegatorAddress.toHex()) ||
       new Delegator(delegatorAddress.toHex())
+
+    protocol.totalActiveStake = totalActiveStake
 
     // If self delegating, set status and assign reference to self
     if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
@@ -238,8 +243,7 @@ export function bond(call: BondCall): void {
     transcoder.totalStake = delegateData.value3
     delegate.delegatedAmount = delegateData.value3
 
-    // no existing delegate && has bondedAmount == rebonding
-    // Subtract bondedAmount from unbonded
+    // no existing delegate && delegator has bondedAmount then it is rebonding
     if (!delegator.delegate && delegator.bondedAmount.gt(BigInt.fromI32(0))) {
       delegator.unbonded = delegator.unbonded.minus(
         delegator.bondedAmount as BigInt,
@@ -249,6 +253,7 @@ export function bond(call: BondCall): void {
     delegator.delegate = newDelegateAddress.toHex()
     delegator.lastClaimRound = protocol.currentRound
     delegator.bondedAmount = delegatorData.value0
+    delegator.pendingStake = delegatorData.value0
     delegator.fees = delegatorData.value1
     delegator.startRound = delegatorData.value4
     delegator.principal = delegator.principal.plus(amount)
@@ -256,6 +261,7 @@ export function bond(call: BondCall): void {
     delegate.save()
     delegator.save()
     transcoder.save()
+    protocol.save()
 
     // Store transaction info
     let bond = new Bond(
@@ -274,6 +280,12 @@ export function bond(call: BondCall): void {
     bond.additionalAmount = amount
     bond.delegator = delegatorAddress.toHex()
     bond.save()
+
+    // Watch for events specified in BondingManagerTemplate and trigger handlers
+    // with this context
+    let context = new DataSourceContext()
+    context.setString('delegator', delegatorAddress.toHex())
+    BondingManagerTemplate.createWithContext(call.to, context)
   }
 }
 
@@ -287,12 +299,13 @@ export function unbond(event: UnbondEvent): void {
     Transcoder.load(transcoderAddress) || new Transcoder(transcoderAddress)
   let delegate =
     Delegator.load(transcoderAddress) || new Delegator(transcoderAddress)
-
   let delegateData = bondingManager.getDelegator(
     Address.fromString(transcoderAddress),
   )
-
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let totalActiveStake = bondingManager.getTotalBonded()
+
+  protocol.totalActiveStake = totalActiveStake
 
   transcoder.totalStake = delegateData.value3
   delegate.delegatedAmount = delegateData.value3
@@ -301,6 +314,7 @@ export function unbond(event: UnbondEvent): void {
   delegator.delegate = null
   delegator.lastClaimRound = protocol.currentRound
   delegator.bondedAmount = delegatorData.value0
+  delegator.pendingStake = delegatorData.value0
   delegator.fees = delegatorData.value1
   delegator.startRound = delegatorData.value4
   delegator.unbonded = delegator.unbonded.plus(delegatorData.value0)
@@ -309,6 +323,7 @@ export function unbond(event: UnbondEvent): void {
   delegate.save()
   delegator.save()
   transcoder.save()
+  protocol.save()
 
   // Store transaction info
   let unbond = new Unbond(makeEventId(event.transaction.hash, event.logIndex))
@@ -335,8 +350,11 @@ export function reward(event: RewardEvent): void {
   let delegate = Delegator.load(transcoderAddress.toHex())
   let delegateData = bondingManager.getDelegator(transcoderAddress)
   let protocol = Protocol.load('0') || new Protocol('0')
-  let poolId = makePoolId(transcoderAddress, protocol.currentRound)
+  let totalActiveStake = bondingManager.getTotalBonded()
+  let poolId = makePoolId(transcoderAddress.toHex(), protocol.currentRound)
   let pool = Pool.load(poolId)
+
+  protocol.totalActiveStake = totalActiveStake
 
   delegate.delegatedAmount = delegateData.value3
 
@@ -350,6 +368,7 @@ export function reward(event: RewardEvent): void {
   transcoder.save()
   delegate.save()
   pool.save()
+  protocol.save()
 
   let reward = new Reward(makeEventId(event.transaction.hash, event.logIndex))
   reward.hash = event.transaction.hash.toHex()
@@ -373,7 +392,9 @@ export function claimEarnings(call: ClaimEarningsCall): void {
     let delegatorAddress = call.from
     let endRound = call.inputs._endRound
     let protocol = Protocol.load('0') || new Protocol('0')
-    let delegator = Delegator.load(delegatorAddress.toHex())
+    let delegator =
+      Delegator.load(delegatorAddress.toHex()) ||
+      new Delegator(delegatorAddress.toHex())
     let bondingManager = BondingManager.bind(call.to)
     let delegatorData = bondingManager.getDelegator(delegatorAddress)
     let bondedAmount = delegator.bondedAmount
@@ -430,6 +451,7 @@ export function withdrawStake(event: WithdrawStakeEvent): void {
   withdrawStake.save()
 
   delegator.bondedAmount = BigInt.fromI32(0)
+  delegator.pendingStake = BigInt.fromI32(0)
   delegator.save()
 }
 
