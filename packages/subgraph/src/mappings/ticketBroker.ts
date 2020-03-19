@@ -16,8 +16,8 @@ import {
   DepositFunded,
   Withdrawal,
 } from '../types/schema'
-import { BigInt, dataSource } from '@graphprotocol/graph-ts'
-import { getRoundsManagerInstance, makeEventId } from './util'
+import { BigInt } from '@graphprotocol/graph-ts'
+import { makeEventId } from '../../utils/helpers'
 
 export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')

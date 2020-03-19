@@ -9,7 +9,7 @@ import {
   ParameterUpdate,
   SetCurrentRewardTokens,
 } from '../types/schema'
-import { makeEventId } from './util'
+import { makeEventId } from '../../utils/helpers'
 
 export function setCurrentRewardTokens(
   event: SetCurrentRewardTokensEvent,
