@@ -9,3 +9,4 @@ schema.json
 .cache
 worker-secrets.json
 src/schema/validators
+test-build
