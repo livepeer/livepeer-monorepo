@@ -1,5 +1,5 @@
 import { Protocol, Pause, Unpause } from '../types/schema'
-import { makeEventId } from './util'
+import { makeEventId } from '../../utils/helpers'
 import {
   Pause as PauseEvent,
   Unpause as UnpauseEvent,
