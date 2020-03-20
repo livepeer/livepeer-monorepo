@@ -11,7 +11,7 @@ import path from 'path'
 
 const app = Router()
 
-app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
+app.get('/:userId', async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
@@ -21,6 +21,7 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
     cursor,
     limit,
   )
+  console.log(`THIS IS THE OUTPUT: ${JSON.stringify(resp)}`)
   let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
