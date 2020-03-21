@@ -1,4 +1,3 @@
-import { dataSource } from '@graphprotocol/graph-ts'
 import {
   Minter,
   SetCurrentRewardTokens as SetCurrentRewardTokensEvent,
@@ -10,25 +9,23 @@ import {
   ParameterUpdate,
   SetCurrentRewardTokens,
 } from '../types/schema'
-import { getRoundsManagerInstance, makeEventId } from './util'
+import { makeEventId } from './util'
 
 export function setCurrentRewardTokens(
   event: SetCurrentRewardTokensEvent,
 ): void {
   let minter = Minter.bind(event.address)
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-  let round = new Round(currentRound.toString())
+  let protocol = Protocol.load('0')
+  if (protocol == null) {
+    protocol = new Protocol('0')
+  }
+  let round = new Round(protocol.currentRound)
   round.mintableTokens = event.params.currentMintableTokens
   round.save()
 
   // The variables targetBondingRate, inflationChange, and inflation are
   // initially set inside the Minter's constructor, however constructors are
   // currently disallowed in call handlers so we'll set them in here for now
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
   protocol.targetBondingRate = minter.targetBondingRate()
   protocol.inflationChange = minter.inflationChange()
   protocol.inflation = minter.inflation()
@@ -44,7 +41,7 @@ export function setCurrentRewardTokens(
   setCurrentRewardTokens.timestamp = event.block.timestamp
   setCurrentRewardTokens.from = event.transaction.from.toHex()
   setCurrentRewardTokens.to = event.transaction.to.toHex()
-  setCurrentRewardTokens.round = currentRound.toString()
+  setCurrentRewardTokens.round = protocol.currentRound
   setCurrentRewardTokens.currentMintableTokens =
     event.params.currentMintableTokens
   setCurrentRewardTokens.currentInflation = event.params.currentInflation
@@ -53,8 +50,6 @@ export function setCurrentRewardTokens(
 
 export function parameterUpdate(event: ParameterUpdateEvent): void {
   let minter = Minter.bind(event.address)
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
 
   let protocol = Protocol.load('0')
   if (protocol == null) {
@@ -81,7 +76,7 @@ export function parameterUpdate(event: ParameterUpdateEvent): void {
   parameterUpdate.timestamp = event.block.timestamp
   parameterUpdate.from = event.transaction.from.toHex()
   parameterUpdate.to = event.transaction.to.toHex()
-  parameterUpdate.round = currentRound.toString()
+  parameterUpdate.round = protocol.currentRound
   parameterUpdate.param = event.params.param
   parameterUpdate.save()
 }

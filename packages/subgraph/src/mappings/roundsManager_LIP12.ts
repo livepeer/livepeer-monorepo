@@ -1,10 +1,5 @@
 // Import types and APIs from graph-ts
-import {
-  Address,
-  dataSource,
-  EthereumBlock,
-  BigInt,
-} from '@graphprotocol/graph-ts'
+import { Address, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -43,7 +38,7 @@ export function newRound(event: NewRoundEvent): void {
     // reward() for a given round, we store its reward tokens inside this Pool
     // entry in a field called "rewardTokens". If "rewardTokens" is null for a
     // given transcoder and round then we know the transcoder failed to call reward()
-    poolId = makePoolId(currentTranscoder, roundNumber)
+    poolId = makePoolId(currentTranscoder, roundNumber.toString())
     pool = new Pool(poolId)
     pool.round = roundNumber.toString()
     pool.delegate = currentTranscoder.toHex()

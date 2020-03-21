@@ -1,7 +1,6 @@
-import { dataSource } from '@graphprotocol/graph-ts'
 import { Approval as ApprovalEvent } from '../types/LivepeerToken/LivepeerToken'
-import { Delegator, Approval } from '../types/schema'
-import { getRoundsManagerInstance, makeEventId } from './util'
+import { Delegator, Approval, Protocol } from '../types/schema'
+import { makeEventId } from './util'
 
 // Handler for NewRound events
 export function approval(event: ApprovalEvent): void {
@@ -9,8 +8,10 @@ export function approval(event: ApprovalEvent): void {
   let amount = event.params.value
   let spender = event.params.spender
 
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
+  let protocol = Protocol.load('0')
+  if (protocol == null) {
+    protocol = new Protocol('0')
+  }
 
   // Create delegator if it does not yet exist
   let delegator = Delegator.load(owner.toHex())
@@ -33,7 +34,7 @@ export function approval(event: ApprovalEvent): void {
   approval.from = event.transaction.from.toHex()
   approval.to = event.transaction.to.toHex()
   approval.spender = spender.toHex()
-  approval.round = currentRound.toString()
+  approval.round = protocol.currentRound
   approval.amount = amount
   approval.delegator = delegator.id
   approval.save()

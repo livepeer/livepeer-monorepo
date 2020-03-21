@@ -56,7 +56,7 @@ export function newRound(event: NewRoundEvent): void {
     // "rewardTokens" is null for a given transcoder and round then we know
     // the transcoder failed to call reward()
     if (active) {
-      poolId = makePoolId(currentTranscoder, roundNumber)
+      poolId = makePoolId(currentTranscoder, roundNumber.toString())
       pool = new Pool(poolId)
       pool.round = roundNumber.toString()
       pool.delegate = currentTranscoder.toHex()
@@ -109,7 +109,6 @@ export function newRound(event: NewRoundEvent): void {
 
 export function parameterUpdate(event: ParameterUpdateEvent): void {
   let roundsManager = RoundsManager.bind(event.address)
-  let currentRound = roundsManager.currentRound()
 
   let protocol = Protocol.load('0')
   if (protocol == null) {
@@ -143,7 +142,7 @@ export function parameterUpdate(event: ParameterUpdateEvent): void {
   parameterUpdate.timestamp = event.block.timestamp
   parameterUpdate.from = event.transaction.from.toHex()
   parameterUpdate.to = event.transaction.to.toHex()
-  parameterUpdate.round = currentRound.toString()
+  parameterUpdate.round = protocol.currentRound
   parameterUpdate.param = event.params.param
   parameterUpdate.save()
 }

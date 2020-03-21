@@ -1,15 +1,11 @@
-import { dataSource } from '@graphprotocol/graph-ts'
 import { Protocol, Pause, Unpause } from '../types/schema'
-import { getRoundsManagerInstance, makeEventId } from './util'
+import { makeEventId } from './util'
 import {
   Pause as PauseEvent,
   Unpause as UnpauseEvent,
 } from '../types/Controller/Controller'
 
 export function pause(event: PauseEvent): void {
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-
   let protocol = Protocol.load('0')
   if (protocol == null) {
     protocol = new Protocol('0')
@@ -25,14 +21,11 @@ export function pause(event: PauseEvent): void {
   pause.timestamp = event.block.timestamp
   pause.from = event.transaction.from.toHex()
   pause.to = event.transaction.to.toHex()
-  pause.round = currentRound.toString()
+  pause.round = protocol.currentRound
   pause.save()
 }
 
 export function unpause(event: UnpauseEvent): void {
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-
   let protocol = Protocol.load('0')
   if (protocol == null) {
     protocol = new Protocol('0')
@@ -48,6 +41,6 @@ export function unpause(event: UnpauseEvent): void {
   unpause.timestamp = event.block.timestamp
   unpause.from = event.transaction.from.toHex()
   unpause.to = event.transaction.to.toHex()
-  unpause.round = currentRound.toString()
+  unpause.round = protocol.currentRound
   unpause.save()
 }
