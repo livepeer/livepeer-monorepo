@@ -4,8 +4,9 @@ import theme from '../lib/theme'
 import { Web3ReactProvider } from '@web3-react/core'
 import { ethers } from 'ethers'
 import { CookiesProvider } from 'react-cookie'
-import '@reach/dialog/styles.css'
 import Web3ReactManager from '../components/Web3ReactManager'
+import 'react-circular-progressbar/dist/styles.css'
+import '@reach/dialog/styles.css'
 
 function getLibrary(provider) {
   const library = new ethers.providers.Web3Provider(provider)
