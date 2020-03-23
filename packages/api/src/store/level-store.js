@@ -10,7 +10,6 @@ export default class LevelStore {
     if (!dbPath) {
       throw new Error('no database path provided')
     }
-    console.log(`DB PATHHH: ${dbPath}`)
     this.ready = (async () => {
       await fs.ensureDir(dbPath)
       await new Promise((resolve, reject) => {
@@ -57,23 +56,15 @@ export default class LevelStore {
 
     await this.ready
     for await (const { value } of this.db.createReadStream(filter)) {
-      console.log(`valueee???? ${JSON.stringify(value)}`)
-      console.log(`valueee???? with no JSON formatting ${value}`)
-
       yield JSON.parse(value)
     }
   }
 
   async list(prefix = '', cursor, limit = DEFAULT_LIMIT) {
-    console.log( `prefiXXXXx ${prefix}`)
-    console.log( `cursorrrr ${cursor}`)
-    console.log( `limit ${limit}`)
     const ret = []
     for await (const val of this.listStream(prefix, cursor, limit)) {
       ret.push(val)
     }
-
-    console.log(`responseee?? ${JSON.stringify(ret)}`)
 
     if (ret.length < 1) {
       return { data: ret, cursor: null }
@@ -107,8 +98,6 @@ export default class LevelStore {
       }
       throw err
     }
-    console.log(`resss??? ${res}`)
-    console.log(`resss JSON??? ${JSON.stringify(res)}`)
     return JSON.parse(res)
   }
 
@@ -116,10 +105,8 @@ export default class LevelStore {
     if (!key) {
       throw new Error(`invalid value: ${key}`)
     }
-    console.log(`here is valueee: ${JSON.stringify(value)}`)
-    console.log(`here is key: ${JSON.stringify(key)}`)
     await this.ready
-    await this.db.put(key, value)
+    await this.db.put(key, JSON.stringify(value))
   }
 
   async create(data) {
