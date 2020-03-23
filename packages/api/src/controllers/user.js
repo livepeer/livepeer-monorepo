@@ -10,15 +10,13 @@ import validator from 'email-validator'
 
 const app = Router()
 const crypto = new Crypto()
-const iterations = 10000
+const ITERATIONS = 10000
 
-app.get('/', async (req, res) => {
+app.get('/', authMiddleware({ admin : true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
-  console.log("HIIII")
   const resp = await req.store.list(`user/`, cursor, limit)
-  console.log('HIIII222')
   let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
@@ -37,9 +35,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
-  console.log("helloooo")
   const user = await req.store.get(`user/${req.params.id}`)
-  console.log('helloooo2222')
   const secureUser = { ...user, password: null, salt: null }
   res.status(200)
   res.json(secureUser)
@@ -55,33 +51,8 @@ app.post('/', authMiddleware({}), validatePost('user'), async (req, res) => {
     return
   }
 
-  // const userEmail = await req.store.get(`user-email/${req.body.email}`)
-  // if (userEmail) {
-  //   res.status(403)
-  //   res.json({ error: 'user already exists' })
-  //   return
-  // }
-
   const [hashedPassword, salt] = await hash(req.body.password)
-  //   TODO: if (hashedPassword.length != req.body.password.length) {
-  //     res.status(422)
-  //     res.json({ error: 'invalid password' })
-  //     return
-  //   }
-
   const id = uuid()
-  // await req.store.create({
-
-  // })
-  // // const idEmail = uuid()
-  // await Promise.all([
-  //   req.store.create({
-  //     kind: 'user-email',
-  //     email: req.body.email,
-  //     id: idEmail,
-  //     userId: id,
-  //   }),
-
   await req.store.create({
       kind: 'user',
       id: id,
@@ -89,17 +60,11 @@ app.post('/', authMiddleware({}), validatePost('user'), async (req, res) => {
       email: req.body.email,
       salt: salt,
     })
-  // ])
 
   const user = await req.store.get(`user/${id}`)
-  console.log(`HERE IS THE USER: ${JSON.stringify(user)}`)
-
-  const userEmail = await req.store.get(`useremail/${req.body.email}`)
-  console.log(`HERE ARE THE USER EMAILS: ${JSON.stringify(userEmail)}`)
 
   if (user) {
     const secureUser = { ...user, password: null, salt: null }
-    console.log(`HERE is the SECURE user: ${JSON.stringify(userEmail)}`)
 
     res.status(201)
     res.json(secureUser)
@@ -128,7 +93,7 @@ app.post(
       res.json({ error: `user ${email} not found` })
       return
     }
-    const user = await req.store.get(`user/${userEmail.userId}`) // MAYBE we don't have userId
+    const user = await req.store.get(`user/${userEmail.userId}`)
     if (!user) {
       res.status(404)
       res.json({
@@ -183,7 +148,7 @@ async function hash(password, salt) {
       salt: saltBuffer,
       // don't get too ambitious, or at least remember
       // that low-power phones will access your app
-      iterations: iterations,
+      iterations: ITERATIONS,
       hash: 'SHA-256',
     },
     key,
