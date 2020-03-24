@@ -1,0 +1,22 @@
+{
+  "name": "mist-proxy",
+  "version": "0.0.1",
+  "description": "MistServer API proxy",
+  "main": "dist/mist-proxy.js",
+  "repository": "https://github.com/livepeer/livepeerjs.git",
+  "author": "Livepeer",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "http-proxy-middleware": "^1.0.3",
+    "isomorphic-fetch": "^2.2.1",
+    "morgan": "^1.10.0",
+    "uuid": "^7.0.2"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25"
+  }
+}
