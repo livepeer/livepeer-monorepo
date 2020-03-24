@@ -77,7 +77,6 @@ describe('controllers/stream', () => {
         const res = await client.get(`/stream/${document.id}`)
         expect(res.status).toBe(401)
       }
-
       const res = await client.get('/stream')
       expect(res.status).toBe(403)
     })

@@ -65,26 +65,10 @@ export default class LevelStore {
     for await (const val of this.listStream(prefix, cursor, limit)) {
       ret.push(val)
     }
-
     if (ret.length < 1) {
       return { data: ret, cursor: null }
     }
-    // return ret
     return { data: ret, cursor: ret[ret.length - 1].id }
-  }
-
-  async newGet() {
-    await this.ready
-    let res
-    try {
-      res = await this.db.get(key)
-    } catch (err) {
-      if (err.name === 'NotFoundError') {
-        return null
-      }
-      throw err
-    }
-    return res
   }
 
   async get(key) {
