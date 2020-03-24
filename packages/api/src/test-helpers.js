@@ -6,7 +6,7 @@ import isoFetch from 'isomorphic-fetch'
 export async function clearDatabase(server) {
   let output = await server.store.list()
   for (const doc of output.data) {
-    await server.store.delete(`${doc.kind}/${doc.id}`)
+    await server.store.deleteDb(`${doc.kind}/${doc.id}`)
   }
 }
 

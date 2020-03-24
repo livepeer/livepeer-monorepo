@@ -87,13 +87,15 @@ app.post(
       return
     }
 
-    const userEmail = await req.store.get(`useremail/${email}`)
-    if (!userEmail) {
+    const userEmail = await req.store.list(`useremail/${email}`)
+    const userData = userEmail.data
+    if (userData.length === 0) {
       res.status(404)
       res.json({ error: `user ${email} not found` })
       return
     }
-    const user = await req.store.get(`user/${userEmail.userId}`)
+    const user = await req.store.get(`user/${userData[0].id}`)
+
     if (!user) {
       res.status(404)
       res.json({

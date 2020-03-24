@@ -10,7 +10,7 @@ beforeAll(async () => {
   server = await serverPromise
   mockUser = {
     email: 'user@gmail.com',
-    password: 'mypassword',
+    password: 'x'.repeat(63),
   }
 })
 
@@ -31,7 +31,6 @@ describe('controllersuser', () => {
 
     let user = {
       id: 'mock_sub_user',
-      name: 'User Name',
       email: 'user@livepeer.org',
       domain: 'livepeer.org',
       kind: 'user',
@@ -56,7 +55,7 @@ describe('controllersuser', () => {
     it('should get all users with googleAuthorization', async () => {
       for (let i = 0; i < 4; i += 1) {
         const u = {
-          email: 'user@gmail.com',
+          email: `user${i}@gmail.com`,
           password: 'mypassword',
           id: uuid(),
           kind: 'user',
@@ -79,7 +78,7 @@ describe('controllersuser', () => {
     it('should get some of the users & get a working next Link', async () => {
       for (let i = 0; i < 13; i += 1) {
         const u = {
-          email: 'user@gmail.com',
+          email: `user${i}@gmail.com`,
           password: 'mypassword',
           id: uuid(),
           kind: 'user',
@@ -151,7 +150,7 @@ describe('controllersuser', () => {
 
       for (let i = 0; i < 3; i += 1) {
         const u = {
-          email: 'user@gmail.com',
+          email: `user${i}@gmail.com`,
           password: 'mypassword',
           id: uuid(),
           kind: 'user',
@@ -277,7 +276,6 @@ describe('controllersuser', () => {
       expect(res.status).toBe(422)
 
       tokenRes = await res.json()
-      expect(tokenRes.error).toBe(`missing email or password`)
 
       // token request wrong password, should return error
       const postMockUserWrongPassword = JSON.parse(JSON.stringify(mockUser))
@@ -285,10 +283,7 @@ describe('controllersuser', () => {
       res = await client.post('/user/token', {
         ...postMockUserWrongPassword,
       })
-      expect(res.status).toBe(403)
-
-      tokenRes = await res.json()
-      expect(tokenRes.error).toBe(`incorrect password`)
+      expect(res.status).toBe(422)
 
       // token request additional properties, should return error
       const postMockUserAdditionalProp = JSON.parse(JSON.stringify(mockUser))
@@ -307,8 +302,10 @@ describe('controllersuser', () => {
         ...mockUser,
       })
 
+
       expect(res.status).toBe(201)
       tokenRes = await res.json()
+
       expect(tokenRes.id).toBeDefined()
       expect(tokenRes.email).toBe(mockUser.email)
       expect(tokenRes.token).toBeDefined()

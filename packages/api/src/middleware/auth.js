@@ -97,7 +97,6 @@ function authFactory(params) {
 
     if (!req || !req.token) {
       // if no apiToken provided, and no google credentials provided, deny access
-      console.log("HEREEEE")
       res.status(401)
       return res.json({ errors: ['missing auth token'] })
     }
