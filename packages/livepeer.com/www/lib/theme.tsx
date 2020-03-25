@@ -68,7 +68,8 @@ export const theme = {
     },
     text: {
       variant: "buttons.default",
-      border: 0
+      border: 0,
+      fontWeight: 300
     },
     large: {
       variant: "buttons.default",

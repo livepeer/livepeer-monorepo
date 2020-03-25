@@ -9,18 +9,32 @@ export default () => {
       sx={{
         py: 3,
         px: [3, 4, 4, 5],
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         alignItems: "center"
       }}
     >
       <Link href="/">
-        <a>
+        <a
+          sx={{
+            marginRight: "auto"
+          }}
+        >
           <Logo sx={{ width: 120, color: "primary" }} />
         </a>
       </Link>
       <Link href="/#contactSection">
         <a>
-          <Button variant="outline">Contact Us</Button>
+          <Button variant="text">Contact Us</Button>
+        </a>
+      </Link>
+      <Link href="/app/login">
+        <a>
+          <Button variant="text">Log in</Button>
+        </a>
+      </Link>
+      <Link href="/app/register">
+        <a>
+          <Button variant="outline">Sign up</Button>
         </a>
       </Link>
     </Flex>
