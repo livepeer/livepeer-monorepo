@@ -90,7 +90,8 @@ export const theme = {
       fontFamily: "body",
       lineHeight: "body",
       fontWeight: "body",
-      letterSpacing: "body"
+      letterSpacing: "body",
+      height: "100%"
     },
     h1: {
       color: "text",
