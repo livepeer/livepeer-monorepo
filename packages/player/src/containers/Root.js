@@ -1,8 +1,5 @@
 import React from 'react'
-import { ApolloProvider } from 'react-apollo'
 
-const Root = ({ client, history, store, children }) => (
-  <ApolloProvider client={client}>{children}</ApolloProvider>
-)
+const Root = ({ history, store, children }) => <div>{children}</div>
 
 export default Root

@@ -18,12 +18,13 @@ const nextConfig = {
     PORTIS_DAPP_ID: process.env.PORTIS_DAPP_ID,
     GA_TRACKING_ID: process.env.GA_TRACKING_ID,
   },
-  webpack(config, options) {
+  webpack(config, { webpack }) {
     config.module.rules.push({
       test: /\.(graphql|gql)$/,
       exclude: /node_modules/,
       loader: 'graphql-tag/loader',
     })
+    config.plugins.push(new webpack.IgnorePlugin(/^(?:electron)$/))
     config.resolve.alias['scrypt'] = require.resolve('scrypt.js/js.js')
     return config
   },

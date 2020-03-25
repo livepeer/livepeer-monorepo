@@ -31,33 +31,33 @@ yarn add @livepeer/graphql-sdk
 <details>
   <summary><strong>Table of Contents</strong></summary>
 
-- [Query](#query)
-- [Objects](#objects)
-  - [Account](#account)
-  - [Block](#block)
-  - [Broadcaster](#broadcaster)
-  - [Delegator](#delegator)
-  - [Job](#job)
-  - [JobProfile](#jobprofile)
-  - [Mutation](#mutation)
-  - [Protocol](#protocol)
-  - [Round](#round)
-  - [Subscription](#subscription)
-  - [Transaction](#transaction)
-  - [Transcoder](#transcoder)
-- [Enums](#enums)
-  - [DelegatorStatus](#delegatorstatus)
-  - [TranscoderStatus](#transcoderstatus)
-- [Scalars](#scalars)
-  - [Boolean](#boolean)
-  - [Int](#int)
-  - [JSON](#json)
-  - [String](#string)
+  * [Query](#query)
+  * [Mutation](#mutation)
+  * [Objects](#objects)
+    * [Account](#account)
+    * [Block](#block)
+    * [Broadcaster](#broadcaster)
+    * [Delegator](#delegator)
+    * [Job](#job)
+    * [JobProfile](#jobprofile)
+    * [Protocol](#protocol)
+    * [Round](#round)
+    * [Subscription](#subscription)
+    * [Transaction](#transaction)
+    * [Transcoder](#transcoder)
+    * [UnbondLock](#unbondlock)
+  * [Enums](#enums)
+    * [DelegatorStatus](#delegatorstatus)
+    * [TranscoderStatus](#transcoderstatus)
+  * [Scalars](#scalars)
+    * [Boolean](#boolean)
+    * [Int](#int)
+    * [JSON](#json)
+    * [String](#string)
 
 </details>
 
 ### Query
-
 Contains all protocol data-fetching queries
 
 <table>
@@ -267,6 +267,177 @@ The protocol as a whole
 
 </td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>unbondlocks</strong></td>
+<td valign="top">[<a href="#unbondlock">UnbondLock</a>]!</td>
+<td>
+
+The unbonding locks for an account 
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>unbondlock</strong></td>
+<td valign="top"><a href="#unbondlock">UnbondLock</a>!</td>
+<td>
+
+An unbond lock for an account
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">lockId</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### Mutation
+Contains all protocol transaction queries
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>approve</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a></td>
+<td>
+
+Approve an amount for an ERC20 token transfer
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">type</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">amount</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>bond</strong></td>
+<td valign="top"><a href="#json">JSON</a></td>
+<td>
+
+Submits a bond transaction for a previously approved amount
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">to</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">amount</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>claimEarnings</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a></td>
+<td>
+
+Claims earnings from your last claim round through specified round
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">endRound</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>sendTransaction</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a></td>
+<td>
+
+Sends a transaction based on an input object
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">options</td>
+<td valign="top"><a href="#json">JSON</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>unbond</strong></td>
+<td valign="top"><a href="#json">JSON</a></td>
+<td>
+
+Submits a bond transaction for a previously approved amount
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">amount</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>rebond</strong></td>
+<td valign="top"><a href="#json">JSON</a></td>
+<td>
+
+Rebond tokens for an unbonding lock to a delegator's current delegate while a delegator is in the Bonded or Pending states
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">unbondingLockId</td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>rebondFromUnbonded</strong></td>
+<td valign="top"><a href="#json">JSON</a></td>
+<td>
+
+Rebond tokens for an unbonding lock to a delegate while a delegator is in the Unbonded state 
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">delegate</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">unbondingLockId</td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>initializeRound</strong></td>
+<td valign="top"><a href="#json">JSON</a></td>
+<td>
+
+Submits a round initialization transaction
+
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -348,6 +519,29 @@ The delegator info for an account
 The transcoder info for an account
 
 </td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>unbondlocks</strong></td>
+<td valign="top">[<a href="#unbondlock">UnbondLock</a>]!</td>
+<td>
+
+The unbonding locks for an account 
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>unbondlock</strong></td>
+<td valign="top"><a href="#unbondlock">UnbondLock</a>!</td>
+<td>
+
+An unbond lock for an account
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">lockId</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -720,98 +914,6 @@ The profile framerate
 <td>
 
 The screen resolution of the profile
-
-</td>
-</tr>
-</tbody>
-</table>
-
-#### Mutation
-
-Contains all protocol transaction queries
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>approve</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a></td>
-<td>
-
-Approve an amount for an ERC20 token transfer
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">type</td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">amount</td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>bond</strong></td>
-<td valign="top"><a href="#json">JSON</a></td>
-<td>
-
-Submits a bond transaction for a previously approved amount
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">to</td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">amount</td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>claimEarnings</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a></td>
-<td>
-
-Claims earnings from your last claim round through specified round
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">endRound</td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>sendTransaction</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a></td>
-<td>
-
-Sends a transaction based on an input object
-
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">options</td>
-<td valign="top"><a href="#json">JSON</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>unbond</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a></td>
-<td>
-
-Submits a bond transaction for a previously approved amount
 
 </td>
 </tr>
@@ -1242,6 +1344,59 @@ Total tokens delegated toward a transcoder (including their own)
 </tbody>
 </table>
 
+#### UnbondLock
+
+Get an unbonding lock for a delegator
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+unbonding lock id
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>delegator</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The address of delegator unbonding from
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>amount</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+The amount being unbonded
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>withdrawRound</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+When the unbonding amount will be available for withdrawal
+
+</td>
+</tr>
+</tbody>
+</table>
+
 ### Enums
 
 #### DelegatorStatus
@@ -1315,5 +1470,6 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 #### String
 
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+
 
 <!-- END graphql-markdown -->

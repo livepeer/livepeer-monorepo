@@ -5,7 +5,7 @@ import { theme } from '@livepeer/ui'
 
 export default ({ Component, pageProps }) => {
   return (
-    <>
+    <div>
       <Head>
         <title>Livepeer.live</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,6 +26,6 @@ export default ({ Component, pageProps }) => {
         {/* </Web3Provider> */}
       </ThemeProvider>
       {/* </ApolloProvider> */}
-    </>
+    </div>
   )
 }
