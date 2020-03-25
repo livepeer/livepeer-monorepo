@@ -160,10 +160,6 @@ jobs:
       - run:
           name: Deploy to S3
           command: |
-            aws s3 rm s3://$EXPLORER_STAGING_BUCKET_NAME --recursive
-            aws s3 sync packages/explorer/build s3://$EXPLORER_STAGING_BUCKET_NAME \
-            --delete \
-            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
             aws s3 rm s3://$PLAYER_STAGING_BUCKET_NAME --recursive
             aws s3 sync packages/player/build s3://$PLAYER_STAGING_BUCKET_NAME \
             --delete \
