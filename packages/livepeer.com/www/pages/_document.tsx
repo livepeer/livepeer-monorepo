@@ -9,6 +9,13 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
+        <style jsx global>{`
+          html,
+          body,
+          #__next {
+            height: 100%;
+          }
+        `}</style>
         <Head />
         <body>
           <Main />

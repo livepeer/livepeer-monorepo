@@ -20,7 +20,7 @@ export default class MyApp extends App {
         </Head>
         <>
           <ThemeProvider>
-            <Box>
+            <Box sx={{ height: "100%" }}>
               <DefaultSeo {...SEO} />
               <Reset />
               <Component {...pageProps} />
