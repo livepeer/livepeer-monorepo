@@ -21,16 +21,10 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   let transcoderAddress = event.params.transcoder
   let rewardCut = event.params.rewardCut
   let feeShare = event.params.feeShare
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
-
-  // Create transcoder if it does not yet exist
-  if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+  let transcoder =
+    Transcoder.load(transcoderAddress.toHex()) ||
+    new Transcoder(transcoderAddress.toHex())
 
   transcoder.rewardCut = rewardCut
   transcoder.feeShare = feeShare
@@ -58,14 +52,11 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
 
 export function transcoderActivated(event: TranscoderActivatedEvent): void {
   let transcoderAddress = event.params.transcoder
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
-  if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+
+  let transcoder =
+    Transcoder.load(transcoderAddress.toHex()) ||
+    new Transcoder(transcoderAddress.toHex())
 
   transcoder.active = true
   transcoder.lastActiveStakeUpdateRound = event.params.activationRound
@@ -93,10 +84,7 @@ export function transcoderActivated(event: TranscoderActivatedEvent): void {
 export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   transcoder.active = false
   transcoder.deactivationRound = event.params.deactivationRound
@@ -126,10 +114,7 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   let fees = event.params.fees
   let startRound = event.params.startRound
   let endRound = event.params.startRound
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   let delegator = Delegator.load(delegatorAddress.toHex())
 
   delegator.lastClaimRound = event.params.endRound.toString()

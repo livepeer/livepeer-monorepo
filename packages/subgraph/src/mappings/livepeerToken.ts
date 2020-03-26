@@ -7,17 +7,8 @@ export function approval(event: ApprovalEvent): void {
   let owner = event.params.owner
   let amount = event.params.value
   let spender = event.params.spender
-
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
-
-  // Create delegator if it does not yet exist
-  let delegator = Delegator.load(owner.toHex())
-  if (delegator == null) {
-    delegator = new Delegator(owner.toHex())
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+  let delegator = Delegator.load(owner.toHex()) || new Delegator(owner.toHex())
 
   delegator.allowance = amount
   delegator.save()

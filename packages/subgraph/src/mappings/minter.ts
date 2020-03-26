@@ -15,10 +15,7 @@ export function setCurrentRewardTokens(
   event: SetCurrentRewardTokensEvent,
 ): void {
   let minter = Minter.bind(event.address)
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   let round = new Round(protocol.currentRound)
   round.mintableTokens = event.params.currentMintableTokens
   round.save()
@@ -50,11 +47,7 @@ export function setCurrentRewardTokens(
 
 export function parameterUpdate(event: ParameterUpdateEvent): void {
   let minter = Minter.bind(event.address)
-
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   if (event.params.param == 'targetBondingRate') {
     protocol.targetBondingRate = minter.targetBondingRate()

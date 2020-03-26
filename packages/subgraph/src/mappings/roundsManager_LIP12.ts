@@ -64,11 +64,7 @@ export function newRound(event: NewRoundEvent): void {
   round.startBlock = roundsManager.currentRoundStartBlock()
   round.save()
 
-  // Update protocol
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
   protocol.save()

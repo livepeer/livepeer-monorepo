@@ -6,10 +6,7 @@ import {
 } from '../types/Controller/Controller'
 
 export function pause(event: PauseEvent): void {
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   protocol.paused = true
   protocol.save()
 
@@ -26,10 +23,7 @@ export function pause(event: PauseEvent): void {
 }
 
 export function unpause(event: UnpauseEvent): void {
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   protocol.paused = false
   protocol.save()
 

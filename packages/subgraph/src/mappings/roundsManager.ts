@@ -84,10 +84,7 @@ export function newRound(event: NewRoundEvent): void {
   round.save()
 
   // Update protocol
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
   protocol.save()
@@ -109,11 +106,7 @@ export function newRound(event: NewRoundEvent): void {
 
 export function parameterUpdate(event: ParameterUpdateEvent): void {
   let roundsManager = RoundsManager.bind(event.address)
-
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   if (event.params.param == 'roundLength') {
     protocol.roundLength = roundsManager.roundLength()

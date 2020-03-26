@@ -42,16 +42,10 @@ import { makePoolId, makeEventId } from './util'
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   let transcoderAddress = event.params.transcoder
   let bondingManager = BondingManager.bind(event.address)
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
-
-  // Create transcoder if it does not yet exist
-  if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+  let transcoder =
+    Transcoder.load(transcoderAddress.toHex()) ||
+    new Transcoder(transcoderAddress.toHex())
 
   let active = bondingManager.isActiveTranscoder(
     transcoderAddress,
@@ -93,10 +87,7 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
 export function transcoderResigned(event: TranscoderResignedEvent): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   // Update transcoder
   transcoder.active = false
@@ -126,10 +117,7 @@ export function transcoderResigned(event: TranscoderResignedEvent): void {
 export function transcoderEvicted(event: TranscoderEvictedEvent): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   // Update transcoder
   transcoder.active = false
@@ -157,10 +145,7 @@ export function transcoderSlashed(event: TranscoderSlashedEvent): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   let bondingManager = BondingManager.bind(event.address)
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   let delegateData = bondingManager.getDelegator(transcoderAddress)
 
   // Update transcoder total stake
@@ -197,26 +182,17 @@ export function bond(call: BondCall): void {
     let amount = call.inputs._amount
     let delegatorData = bondingManager.getDelegator(delegatorAddress)
     let delegateData = bondingManager.getDelegator(newDelegateAddress)
-    let protocol = Protocol.load('0')
-    if (protocol == null) {
-      protocol = new Protocol('0')
-    }
+    let protocol = Protocol.load('0') || new Protocol('0')
     let round = Round.load(protocol.currentRound)
-
-    let transcoder = Transcoder.load(newDelegateAddress.toHex())
-    if (transcoder == null) {
-      transcoder = new Transcoder(newDelegateAddress.toHex())
-    }
-
-    let delegate = Delegator.load(newDelegateAddress.toHex())
-    if (delegate == null) {
-      delegate = new Delegator(newDelegateAddress.toHex())
-    }
-
-    let delegator = Delegator.load(delegatorAddress.toHex())
-    if (delegator == null) {
-      delegator = new Delegator(delegatorAddress.toHex())
-    }
+    let transcoder =
+      Transcoder.load(newDelegateAddress.toHex()) ||
+      new Transcoder(newDelegateAddress.toHex())
+    let delegate =
+      Delegator.load(newDelegateAddress.toHex()) ||
+      new Delegator(newDelegateAddress.toHex())
+    let delegator =
+      Delegator.load(delegatorAddress.toHex()) ||
+      new Delegator(delegatorAddress.toHex())
 
     // If self delegating, set status and assign reference to self
     if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
@@ -306,20 +282,11 @@ export function unbond(event: UnbondEvent): void {
   let delegatorAddress = event.params.delegator
   let delegator = Delegator.load(delegatorAddress.toHex())
   let transcoderAddress = delegator.delegate
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
-
-  let transcoder = Transcoder.load(transcoderAddress)
-  if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress)
-  }
-
-  let delegate = Delegator.load(transcoderAddress)
-  if (delegate == null) {
-    delegate = new Delegator(transcoderAddress)
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+  let transcoder =
+    Transcoder.load(transcoderAddress) || new Transcoder(transcoderAddress)
+  let delegate =
+    Delegator.load(transcoderAddress) || new Delegator(transcoderAddress)
 
   let delegateData = bondingManager.getDelegator(
     Address.fromString(transcoderAddress),
@@ -367,10 +334,7 @@ export function reward(event: RewardEvent): void {
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   let delegate = Delegator.load(transcoderAddress.toHex())
   let delegateData = bondingManager.getDelegator(transcoderAddress)
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   let poolId = makePoolId(transcoderAddress, protocol.currentRound)
   let pool = Pool.load(poolId)
 
@@ -408,10 +372,7 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   if (call.block.number.le(BigInt.fromI32(9274414))) {
     let delegatorAddress = call.from
     let endRound = call.inputs._endRound
-    let protocol = Protocol.load('0')
-    if (protocol == null) {
-      protocol = new Protocol('0')
-    }
+    let protocol = Protocol.load('0') || new Protocol('0')
     let delegator = Delegator.load(delegatorAddress.toHex())
     let bondingManager = BondingManager.bind(call.to)
     let delegatorData = bondingManager.getDelegator(delegatorAddress)
@@ -450,10 +411,7 @@ export function claimEarnings(call: ClaimEarningsCall): void {
 export function withdrawStake(event: WithdrawStakeEvent): void {
   let delegatorAddress = event.params.delegator
   let delegator = Delegator.load(delegatorAddress.toHex())
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   // Store transaction info
   let withdrawStake = new WithdrawStake(
@@ -479,10 +437,7 @@ export function withdrawFees(event: WithdrawFeesEvent): void {
   let bondingManager = BondingManager.bind(event.address)
   let delegatorAddress = event.params.delegator
   let delegator = Delegator.load(delegatorAddress.toHex())
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   let withdrawnFees = delegator.fees as BigInt
 
@@ -511,10 +466,7 @@ export function withdrawFees(event: WithdrawFeesEvent): void {
 
 export function parameterUpdate(event: ParameterUpdateEvent): void {
   let bondingManager = BondingManager.bind(event.address)
-  let protocol = Protocol.load('0')
-  if (protocol == null) {
-    protocol = new Protocol('0')
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   if (event.params.param == 'unbondingPeriod') {
     protocol.unbondingPeriod = bondingManager.unbondingPeriod()
