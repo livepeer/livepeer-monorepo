@@ -3,10 +3,6 @@ name = "livepeerjs"
 type = "javascript"
 workers_dev = false
 
-[site]
-bucket = './packages/api-frontend/out'
-entry-point = './packages/api/dist-worker'
-
 [env.staging]
 domain = "livepeer-staging.live"
 zone_id = "4d3b36a8ea59b1ec5c9ccd76e033e485"
