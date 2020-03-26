@@ -39,7 +39,7 @@ aliases:
         if [[ "$i" == "3" ]]; then
           echo "Failed `yarn install`" after $i retries
         fi
-        yarn install && break || true
+        yarn install --frozen-lockfile && break || true
       done
       yarn postinstall
 
@@ -53,7 +53,7 @@ aliases:
   - &build-apps
     name: Build React applications
     command: |
-      yarn install
+      yarn install --frozen-lockfile
       yarn postinstall
       # TODO: Fix linting errors so this can be true
       export CI=false
