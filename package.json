@@ -25,8 +25,8 @@
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer-2.0 --ignore @livepeer/www --ignore @livepeer/admin --ignore @livepeer/player --ignore @livepeer/chroma",
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
     "updated": "lerna updated --json",
-    "wrangler:staging": "wrangler publish --env staging",
-    "wrangler:production": "wrangler publish --env production",
+    "wrangler:staging": "cd ./packages/api/dist-worker && wrangler publish --env staging",
+    "wrangler:production": "cd ./packages/api/dist-worker && wrangler publish --env production",
     "postinstall": "lerna run --stream postinstall"
   },
   "devDependencies": {
