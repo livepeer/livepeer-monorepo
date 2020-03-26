@@ -1,6 +1,7 @@
 import Router from 'express/lib/router'
 import fetch from 'isomorphic-fetch'
 import { authMiddleware } from '../middleware'
+import { shuffle } from '../util'
 
 const app = Router()
 
@@ -17,8 +18,8 @@ export const getBroadcasterStatuses = async req => {
 // Right now this is very deployment-specific
 app.get('/', async (req, res, next) => {
   const broadcasters = await req.getBroadcasters(req)
-
-  return res.json(broadcasters.map(({ address }) => ({ address })))
+  const broadcasterData = broadcasters.map(({ address }) => ({ address }))
+  return res.json(shuffle(broadcasterData))
 })
 
 app.get('/status', authMiddleware({}), async (req, res, next) => {
