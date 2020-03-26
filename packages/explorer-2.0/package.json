@@ -107,7 +107,7 @@
     "reactour": "1.15.4",
     "styled-components": "^4.4.0",
     "subscriptions-transport-ws": "^0.9.16",
-    "theme-ui": "0.2.43",
+    "theme-ui": "^0.2.43",
     "use-debounce": "^3.3.0",
     "web3": "^1.2.6",
     "web3-utils": "1.2.1"
