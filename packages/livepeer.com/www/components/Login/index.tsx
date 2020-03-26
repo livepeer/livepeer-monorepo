@@ -30,10 +30,11 @@ export default () => (
       <Textfield
         htmlFor="password"
         id="password"
-        sx={{ width: ["100%", "50%"], mx: [1, 3] }}
+        sx={{ width: ["100%", "50%"], mb: [3, 3], mx: [1, 3] }}
         name="password"
         type="password"
         label="Password"
+        required
       />
 
       <Button sx={{ mt: 4, px: 5 }} variant="primary">

@@ -51,7 +51,13 @@ export default ({ title, description, children, image, url }: Props) => {
       }}
     >
       <DefaultSeo {...seo} />
-      <Box>
+      <Flex
+        sx={{
+          flexGrow: 1,
+          flexDirection: "column",
+          justifyContent: "flex-start"
+        }}
+      >
         <Box
           sx={{
             bg: "background",
@@ -64,7 +70,7 @@ export default ({ title, description, children, image, url }: Props) => {
           <Navigation />
         </Box>
         {children}
-      </Box>
+      </Flex>
       <Footer />
     </Flex>
   );
