@@ -2,13 +2,13 @@ import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { BondingManager } from '../types/BondingManager/BondingManager'
 import { RoundsManager } from '../types/RoundsManager/RoundsManager'
 
-const PERC_DIVISOR = 1000000
-
 let x = BigInt.fromI32(2)
 let y = <u8>255
 let z = BigInt.fromI32(1)
 
 export let MAXIMUM_VALUE_UINT256: BigInt = x.pow(y).minus(z)
+
+export const PERC_DIVISOR = 1000000
 
 // Make a number the specified number of digits
 export function leftPad(str: string, size: i32): string {
@@ -21,17 +21,17 @@ export function leftPad(str: string, size: i32): string {
 // Make a derived pool ID from a transcoder address
 export function makePoolId(
   transcoderAddress: Address,
-  roundId: BigInt,
+  roundId: string,
 ): string {
-  return leftPad(roundId.toString(), 10) + '-' + transcoderAddress.toHex()
+  return leftPad(roundId, 10) + '-' + transcoderAddress.toHex()
 }
 
 // Make a derived share ID from a delegator address
 export function makeShareId(
   delegatorAddress: Address,
-  roundId: BigInt,
+  roundId: string,
 ): string {
-  return leftPad(roundId.toString(), 10) + '-' + delegatorAddress.toHex()
+  return leftPad(roundId, 10) + '-' + delegatorAddress.toHex()
 }
 
 // Make a derived unlocking ID from a delegator address

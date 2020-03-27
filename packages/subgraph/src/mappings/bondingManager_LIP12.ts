@@ -1,6 +1,3 @@
-import { dataSource } from '@graphprotocol/graph-ts'
-
-// Import event types from the registrar contract ABIs
 import {
   TranscoderUpdate as TranscoderUpdateEvent,
   TranscoderActivated as TranscoderActivatedEvent,
@@ -15,26 +12,19 @@ import {
   EarningsClaimed,
   TranscoderActivated,
   TranscoderDeactivated,
+  Protocol,
 } from '../types/schema'
 
-import {
-  MAXIMUM_VALUE_UINT256,
-  getRoundsManagerInstance,
-  makeEventId,
-} from './util'
+import { MAXIMUM_VALUE_UINT256, makeEventId } from './util'
 
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   let transcoderAddress = event.params.transcoder
   let rewardCut = event.params.rewardCut
   let feeShare = event.params.feeShare
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
-
-  // Create transcoder if it does not yet exist
-  if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+  let transcoder =
+    Transcoder.load(transcoderAddress.toHex()) ||
+    new Transcoder(transcoderAddress.toHex())
 
   transcoder.rewardCut = rewardCut
   transcoder.feeShare = feeShare
@@ -53,7 +43,7 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   transcoderUpdated.timestamp = event.block.timestamp
   transcoderUpdated.from = event.transaction.from.toHex()
   transcoderUpdated.to = event.transaction.to.toHex()
-  transcoderUpdated.round = currentRound.toString()
+  transcoderUpdated.round = protocol.currentRound
   transcoderUpdated.rewardCut = rewardCut
   transcoderUpdated.feeShare = feeShare
   transcoderUpdated.delegate = transcoderAddress.toHex()
@@ -62,12 +52,11 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
 
 export function transcoderActivated(event: TranscoderActivatedEvent): void {
   let transcoderAddress = event.params.transcoder
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
-  if (transcoder == null) {
-    transcoder = new Transcoder(transcoderAddress.toHex())
-  }
+  let protocol = Protocol.load('0') || new Protocol('0')
+
+  let transcoder =
+    Transcoder.load(transcoderAddress.toHex()) ||
+    new Transcoder(transcoderAddress.toHex())
 
   transcoder.active = true
   transcoder.lastActiveStakeUpdateRound = event.params.activationRound
@@ -86,7 +75,7 @@ export function transcoderActivated(event: TranscoderActivatedEvent): void {
   transcoderActivated.timestamp = event.block.timestamp
   transcoderActivated.from = event.transaction.from.toHex()
   transcoderActivated.to = event.transaction.to.toHex()
-  transcoderActivated.round = currentRound.toString()
+  transcoderActivated.round = protocol.currentRound
   transcoderActivated.activationRound = event.params.activationRound
   transcoderActivated.delegate = transcoderAddress.toHex()
   transcoderActivated.save()
@@ -95,8 +84,7 @@ export function transcoderActivated(event: TranscoderActivatedEvent): void {
 export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
+  let protocol = Protocol.load('0') || new Protocol('0')
 
   transcoder.active = false
   transcoder.deactivationRound = event.params.deactivationRound
@@ -113,7 +101,7 @@ export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
   transcoderDeactivated.timestamp = event.block.timestamp
   transcoderDeactivated.from = event.transaction.from.toHex()
   transcoderDeactivated.to = event.transaction.to.toHex()
-  transcoderDeactivated.round = currentRound.toString()
+  transcoderDeactivated.round = protocol.currentRound
   transcoderDeactivated.deactivationRound = event.params.deactivationRound
   transcoderDeactivated.delegate = transcoderAddress.toHex()
   transcoderDeactivated.save()
@@ -126,8 +114,7 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   let fees = event.params.fees
   let startRound = event.params.startRound
   let endRound = event.params.startRound
-  let roundsManager = getRoundsManagerInstance(dataSource.network())
-  let currentRound = roundsManager.currentRound()
+  let protocol = Protocol.load('0') || new Protocol('0')
   let delegator = Delegator.load(delegatorAddress.toHex())
 
   delegator.lastClaimRound = event.params.endRound.toString()
@@ -145,7 +132,7 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   earningsClaimed.timestamp = event.block.timestamp
   earningsClaimed.from = event.transaction.from.toHex()
   earningsClaimed.to = event.transaction.to.toHex()
-  earningsClaimed.round = currentRound.toString()
+  earningsClaimed.round = protocol.currentRound
   earningsClaimed.delegate = delegateAddress.toHex()
   earningsClaimed.delegator = delegatorAddress.toHex()
   earningsClaimed.startRound = startRound.toString()

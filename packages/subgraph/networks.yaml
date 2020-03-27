@@ -1,32 +1,38 @@
 mainnet:
   contracts:
+    controller:
+      address: 'f96d54e490317c557a967abfa5d6e33006be69b3'
+      startBlock: 5533890
     bondingManager:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
-      startBlock: 5533890
+      startBlock: 5533958
     bondingManagerLIP11:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
-      startBlock: 5533890
+      startBlock: 5533958
     bondingManagerLIP12:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
-      startBlock: 5533890
+      startBlock: 5533958
     roundsManager:
       address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
-      startBlock: 5533890
+      startBlock: 5533997
     roundsManagerLIP12:
       address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
-      startBlock: 5533890
+      startBlock: 5533997
     livepeerToken:
       address: '58b6a8a3302369daec383334672404ee733ab239'
-      startBlock: 5533890
+      startBlock: 5533907
     minter:
       address: '8573f2f5a3bd960eee3d998473e50c75cdbe6828'
-      startBlock: 5533890
+      startBlock: 5533913
     ticketBroker:
       address: '5b1ce829384eebfa30286f12d1e7a695ca45f5d2'
       startBlock: 9274420
   networkName: mainnet
 rinkeby:
   contracts:
+    controller:
+      address: 'A268AEa9D048F8d3A592dD7f1821297972D4C8Ea'
+      startBlock: 5325848
     bondingManager:
       address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
       startBlock: 5325862
