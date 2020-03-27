@@ -45,7 +45,7 @@ export default ({ title, description, children, image, url }: Props) => {
   return (
     <Flex
       sx={{
-        height: "100%",
+        minHeight: "100vh",
         flexDirection: "column",
         justifyContent: "space-between"
       }}

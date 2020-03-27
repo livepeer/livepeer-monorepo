@@ -27,12 +27,12 @@ export default () => {
           <Button variant="text">Contact Us</Button>
         </a>
       </Link>
-      <Link href="/app/login">
+      <Link href="/login">
         <a>
           <Button variant="text">Log in</Button>
         </a>
       </Link>
-      <Link href="/app/register">
+      <Link href="/register">
         <a>
           <Button variant="outline">Sign up</Button>
         </a>
