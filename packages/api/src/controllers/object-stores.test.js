@@ -5,7 +5,10 @@ import uuid from 'uuid/v4'
 let server
 let store
 let postMockStore
-const googleMockUserId = 'mock_sub'
+let mockUser
+let mockAdminUser
+let mockNonAdminUser
+
 jest.setTimeout(70000)
 
 beforeAll(async () => {
@@ -20,9 +23,25 @@ beforeAll(async () => {
     id: 'mock_store',
     credentials: 'abc123/abc123',
     path: 'us-west-1/my-bucket',
-    userId: 'mock_user_store',
     type: 's3',
     kind: 'objectstores',
+  }
+
+  mockUser = {
+    email: `mock_user@gmail.com`,
+    password: 'z'.repeat(64),
+  }
+
+  mockAdminUser = {
+    email: 'user_admin@gmail.com',
+    password: 'x'.repeat(64),
+    admin: true,
+  }
+
+  mockNonAdminUser = {
+    email: 'user_non_admin@gmail.com',
+    password: 'y'.repeat(64),
+    admin: false,
   }
 })
 
@@ -31,47 +50,51 @@ afterEach(async () => {
 })
 
 describe('controllers/object-stores', () => {
-  describe('basic CRUD with google auth', () => {
+  describe('basic CRUD with JWT authorization', () => {
     let client
+    let nonAdminToken
+    let nonAdminUser
+    let adminUser
 
-    beforeEach(() => {
-      client = new TestClient({
-        server,
-        googleAuthorization: 'EXPECTED_TOKEN',
-      })
-    })
+     beforeEach(async () => {
+       client = new TestClient({
+         server,
+       })
+       // setting up admin user and token
+       const userRes = await client.post(`/user/`, { ...mockAdminUser })
+       adminUser = await userRes.json()
 
-    let user = {
-      id: 'mock_sub_store',
-      name: 'User Name',
-      email: 'user@livepeer.org',
-      domain: 'livepeer.org',
-      kind: 'user',
-    }
+       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
+       const adminToken = await tokenRes.json()
+       client.jwtAuth = `${adminToken['token']}`
 
-    it('should not get all object stores without googleAuthorization', async () => {
-      client.googleAuthorization = ''
-      await server.store.create(user)
+       // setting up non-admin user
+      const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
+      nonAdminUser = await nonAdminRes.json()
+      tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
+      nonAdminToken = await tokenRes.json()
+     })
+
+    it('should not get all object stores without admin authorization', async () => {
+      client.jwtAuth = ''
       for (let i = 0; i < 10; i += 1) {
         const storeChangeId = JSON.parse(JSON.stringify(store))
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
-        const res = await client.get(`/objectstores/${user.id}/${store.id}`)
-        expect(res.status).toBe(401)
+        const res = await client.get(`/objectstores/${store.userId}/${store.id}`)
+        expect(res.status).toBe(403)
       }
-      const res = await client.get(`/objectstores/${user.id}`)
+      const res = await client.get(`/objectstores/${store.userId}`)
       expect(res.status).toBe(403)
     })
 
-    it('should get all object stores with prior user created', async () => {
-      const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
-      storeGoogleAuthMockUser.userId = googleMockUserId
+    it('should get all object stores with admin authorization', async () => {
+      store.userId = adminUser.id
       for (let i = 0; i < 4; i += 1) {
         const storeChangeId = JSON.parse(
-          JSON.stringify(storeGoogleAuthMockUser),
+          JSON.stringify(store),
         )
         storeChangeId.id = uuid()
-        storeChangeId.kind = `objectstores/${storeChangeId.userId}`
         await server.store.create(storeChangeId)
         const res = await client.get(
           `/objectstores/${storeChangeId.userId}/${storeChangeId.id}`,
@@ -82,25 +105,22 @@ describe('controllers/object-stores', () => {
       }
 
       const res = await client.get(
-        `/objectstores/${storeGoogleAuthMockUser.userId}`,
+        `/objectstores/${store.userId}`,
       )
       expect(res.status).toBe(200)
       const objStores = await res.json()
       expect(objStores.length).toEqual(4)
+
+      // making sure credentials are coming back as null
       expect(objStores[0].credentials).toEqual(null)
     })
 
     it('should get some of the object stores & get a working next Link', async () => {
-      const storeGoogleAuthMockUser = JSON.parse(JSON.stringify(store))
-      storeGoogleAuthMockUser.userId = googleMockUserId
+      store.userId = adminUser.id
       for (let i = 0; i < 13; i += 1) {
-        const storeChangeId = JSON.parse(
-          JSON.stringify(storeGoogleAuthMockUser),
-        )
+        const storeChangeId = JSON.parse(JSON.stringify(store))
         storeChangeId.id = uuid()
-        storeChangeId.kind = `objectstores/${storeChangeId.userId}`
         await server.store.create(storeChangeId)
-
         const res = await client.get(
           `/objectstores/${storeChangeId.userId}/${storeChangeId.id}`,
         )
@@ -110,7 +130,7 @@ describe('controllers/object-stores', () => {
       }
 
       const res = await client.get(
-        `/objectstores/${storeGoogleAuthMockUser.userId}?limit=11`,
+        `/objectstores/${store.userId}?limit=11`,
       )
       const objStores = await res.json()
       expect(res.headers._headers.link).toBeDefined()
@@ -118,141 +138,38 @@ describe('controllers/object-stores', () => {
       expect(objStores.length).toEqual(11)
     })
 
-    it('should create an object stores', async () => {
-      const res = await client.post('/objectstores', { ...postMockStore })
-      expect(res.status).toBe(201)
-      const objStore = await res.json()
-      expect(objStore.id).toBeDefined()
-      expect(objStore.kind).toBe(`objectstores/${googleMockUserId}`)
-      expect(objStore.userId).toBe(googleMockUserId)
-      expect(objStore.path).toBe(postMockStore.path)
-
-      const resp = await client.get(
-        `/objectstores/${googleMockUserId}/${objStore.id}`,
-      )
-      expect(res.status).toBe(201)
-      const objStoreGet = await resp.json()
-      expect(objStore.path).toEqual(objStoreGet.path)
-      expect(objStore.userId).toBe(objStoreGet.userId)
-    })
-
-    it('should not get all object stores with non-admin user', async () => {
-      client.googleAuthorization = ''
-      let user = {
-        id: 'user_sub',
-        name: 'User Name',
-        email: 'user@angie.org',
-        domain: 'angie.org',
-        kind: 'user',
-      }
-      await server.store.create(user)
-      for (let i = 0; i < 3; i += 1) {
-        const storeChangeId = JSON.parse(JSON.stringify(store))
-        storeChangeId.id = uuid()
-        await server.store.create(storeChangeId)
-        let res = await client.get(
-          `/objectstores/${user.id}/${storeChangeId.id}`,
-        )
-        expect(res.status).toBe(401)
-
-        res = await client.get(`/objectstores/${storeChangeId.userId}`)
-        expect(res.status).toBe(403)
-      }
-    })
-  })
-
-  describe('basic CRUD without valid logged in user', () => {
-    let client
-
-    beforeEach(() => {
-      client = new TestClient({
-        server,
-        googleAuthorization: 'nonsense',
-      })
-    })
-
-    it('should not get all object stores', async () => {
-      const res = await client.get(`/objectstores`)
-      expect(res.status).toBe(404)
-    })
-  })
-
-  describe('basic CRUD with apiKey', () => {
-    let client
-    beforeEach(async () => {
-      client = new TestClient({
-        server,
-        apiKey: uuid(),
-      })
-    })
-
-    it('should create an object store, no `token` registered', async () => {
-      const res = await client.post('/objectstores', { ...postMockStore })
-      expect(res.status).toBe(201)
-      const objStore = await res.json()
-      expect(objStore.id).toBeDefined()
-      expect(objStore.kind).toBeDefined()
-      expect(objStore.userId).toBeDefined()
-      expect(objStore.path).toBe(postMockStore.path)
-
-      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
-      expect(tokenObject.userId).toBe(objStore.userId)
-
-      const resp = await client.get(
-        `/objectstores/${tokenObject.userId}/${objStore.id}`,
-      )
-      expect(resp.status).toBe(200)
-      const objStoreGet = await resp.json()
-      expect(objStore.path).toEqual(objStoreGet.path)
-      expect(objStore.userId).toBe(objStoreGet.userId)
-
-      // testing right number of object stores returned when multiple created by different users
-      const clientSecond = new TestClient({
-        server,
-        googleAuthorization: 'EXPECTED_TOKEN',
-      })
-      const resTwo = await clientSecond.post('/objectstores', {
-        ...postMockStore,
-      })
-      expect(resTwo.status).toBe(201)
-
-      const stores = await clientSecond.get(`/objectstores/${objStore.userId}`)
-      expect(stores.status).toBe(200)
-      const objStores = await stores.json()
-      expect(objStores.length).toEqual(1)
-      expect(objStores[0].credentials).toEqual(null)
-    })
-
-    it('should create an object store, `token` registered, no userId', async () => {
-      await server.store.create({
-        id: 'token_id',
-        kind: 'apitoken',
-      })
+    it('should create an object store', async () => {
+      postMockStore.userId = adminUser.id
       let res = await client.post('/objectstores', { ...postMockStore })
       expect(res.status).toBe(201)
       const objStore = await res.json()
       expect(objStore.id).toBeDefined()
-      expect(objStore.kind).toBeDefined()
-      expect(objStore.userId).toBeDefined()
+      expect(objStore.kind).toBe(`objectstores`)
       expect(objStore.path).toBe(postMockStore.path)
-
-      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
-      expect(tokenObject.userId).toBe(objStore.userId)
+      expect(objStore.userId).toBe(adminUser.id)
 
       const resp = await client.get(
-        `/objectstores/${objStore.userId}/${objStore.id}`,
+        `/objectstores/${adminUser.id}/${objStore.id}`,
       )
       expect(resp.status).toBe(200)
       const objStoreGet = await resp.json()
       expect(objStore.path).toEqual(objStoreGet.path)
       expect(objStore.userId).toBe(objStoreGet.userId)
 
-      // if same request is made, should return a 201
+       // if same request is made, should return a 201
       res = await client.post('/objectstores', { ...postMockStore })
       expect(res.status).toBe(201)
     })
 
     it('should not accept empty body for creating an object store', async () => {
+      const id = uuid()
+      const resp = await client.get(
+        `/objectstores/${adminUser.id}/${id}`,
+      )
+      expect(resp.status).toBe(404)
+    })
+
+    it('should return a 404 if objectStore not found', async () => {
       const res = await client.post('/objectstores')
       expect(res.status).toBe(422)
     })
@@ -285,6 +202,91 @@ describe('controllers/object-stores', () => {
       })
       expect(res.status).toBe(422)
       expect(res.statusText).toBe('Unprocessable Entity')
+    })
+
+    it('should not get all object stores with non-admin user', async () => {
+      client.jwtAuth = nonAdminToken['token']
+      store.userId = nonAdminUser.id
+      for (let i = 0; i < 3; i += 1) {
+        const storeChangeId = JSON.parse(JSON.stringify(store))
+        storeChangeId.id = uuid()
+        await server.store.create(storeChangeId)
+        let res = await client.get(
+          `/objectstores/${nonAdminUser.id}/${storeChangeId.id}`,
+        )
+        expect(res.status).toBe(200)
+
+        res = await client.get(`/objectstores/${nonAdminUser.id}`)
+        expect(res.status).toBe(403)
+      }
+
+      // error if non-admin user tries to get object store that belongs to another user
+      store.userId = adminUser.id
+      const storeChangeId = JSON.parse(JSON.stringify(store))
+      storeChangeId.id = uuid()
+      await server.store.create(storeChangeId)
+      let res = await client.get(
+        `/objectstores/${adminUser.id}/${storeChangeId.id}`,
+      )
+      expect(res.status).toBe(403)
+    })
+
+    it('should not get another users object store with non-admin user', async () => {
+      client.jwtAuth = nonAdminToken['token']
+
+      const storeChangeId = JSON.parse(JSON.stringify(store))
+      storeChangeId.userId = adminUser.id
+      storeChangeId.id = uuid()
+      await server.store.create(storeChangeId)
+
+      let res = await client.get(
+        `/objectstores/${adminUser.id}/${storeChangeId.id}`,
+      )
+      expect(res.status).toBe(403)
+
+      res = await client.get(`/objectstores/${nonAdminUser.id}`)
+      expect(res.status).toBe(403)
+    })
+  })
+
+  describe('object stores endpoint with api key', () => {
+    let client
+    const adminApiKey = uuid()
+    const nonAdminApiKey = uuid()
+
+    beforeEach(async () => {
+      client = new TestClient({
+        server,
+        apiKey: uuid(),
+      })
+
+      const userRes = await client.post(`/user/`, { ...mockAdminUser })
+      const adminUser = await userRes.json()
+
+      const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
+      const nonAdminUser = await nonAdminRes.json()
+
+      await server.store.create({
+        id: adminApiKey,
+        kind: 'apitoken',
+        userId: adminUser.id,
+      })
+
+      await server.store.create({
+        id: nonAdminApiKey,
+        kind: 'apitoken',
+        userId: nonAdminUser.id,
+      })
+    })
+
+    it('should not get all object stores', async () => {
+      client.apiKey = nonAdminApiKey
+      let res = await client.get(`/objectstores/${mockAdminUser.id}`)
+      expect(res.status).toBe(403)
+
+      client.apiKey = adminApiKey
+      res = await client.get(`/objectstores/${mockNonAdminUser.id}`)
+      expect(res.status).toBe(403)
     })
   })
 })

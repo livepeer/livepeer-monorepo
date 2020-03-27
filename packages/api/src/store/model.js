@@ -1,27 +1,52 @@
 import schema from '../schema/schema.json'
-import { NotFoundError , ForbiddenError } from './errors'
+import { NotFoundError, ForbiddenError, InternalServerError } from './errors'
 
 export default class Model {
   constructor(backend) {
     this.backend = backend
   }
 
-  // Get one by id
-  async get(id) {
-    return await this.backend.get(id)
+  async get(id, cleanWriteOnly = true) {
+    const responses = await this.backend.get(id)
+    if (responses && cleanWriteOnly) {
+      return this.cleanWriteOnlyResponses(id, responses)
+    }
+    return responses
   }
 
   async replace(doc) {
-    // TO-DO (angie): need to update this
-    return await this.backend.replace(doc)
+    throw new InternalServerError('replace method not yet supported')
+    // method to be added and editted when necessary
+    // return await this.backend.replace(doc)
   }
 
-  async list(prefix, cursor, limit) {
-    return await this.backend.list(prefix, cursor, limit)
+  async list(prefix, cursor, limit, cleanWriteOnly = true) {
+    const responses = await this.backend.list(prefix, cursor, limit)
+
+    if (responses.data.length > 0 && cleanWriteOnly) {
+      return this.cleanWriteOnlyResponses(prefix, responses)
+    }
+    return responses
   }
 
-  async deleteDb(doc) {
-    return await this.backend.delete(doc)
+  async getPropertyIds(prefix, cursor, limit, cleanWriteOnly) {
+    const responses = await this.list(prefix, cursor, limit, cleanWriteOnly)
+
+    if (responses.data.length === 0) {
+      throw new NotFoundError(`Not found: ${prefix}`)
+    }
+    const ids = []
+    for (const res of responses.data) {
+      const key = Object.keys(res)
+      ids.push(key[0].split('/').pop())
+    }
+
+    responses.data = ids
+    return responses
+  }
+
+  async deleteKey(key) {
+    return await this.backend.delete(key)
   }
 
   async delete(id) {
@@ -42,7 +67,9 @@ export default class Model {
       if (fieldArray.unique || fieldArray.index) {
         const existing = await this.find(kind, fieldName, value)
         if (existing) {
-          operations.push(`${kind}${fieldName}/${value}/${existing['id']}`)
+          for (const item of existing) {
+            operations.push(Object.keys(item)[0])
+          }
         }
       }
     }
@@ -59,25 +86,10 @@ export default class Model {
     if (!records || records.data.length == 0) {
       return null
     }
-    return await this.backend.get(
-      `${kind}${fieldName}/${value}/${records.data[0]['id']}`,
-    )
+    return records.data
   }
 
-  cleanKind(kind) {
-    let cleanKind = kind.charAt(0) === '/' ? kind.substring(1) : kind
-    return cleanKind.indexOf('/') > -1 ? cleanKind.substr(0, cleanKind.indexOf('/')) : cleanKind
-  }
-
-  getSchema(kind) {
-    const cleanKind = this.cleanKind(kind)
-    const schemas = schema.components.schemas[cleanKind]
-    if (!schemas) {
-      return [null, null]
-    }
-    return [schemas.properties, cleanKind]
-  }
-
+  // before sending object back to user, pipe it through function. Write-only.
   async create(doc) {
     if (typeof doc !== 'object' || typeof doc.id !== 'string') {
       throw new Error(`invalid values: ${JSON.stringify(doc)}`)
@@ -86,8 +98,8 @@ export default class Model {
     if (!id || !kind || typeof doc.kind !== 'string') {
       throw new Error(`Missing required values: id, kind`)
     }
-    // TO-DO (angie): figure out how to remove kindish here
-    const [properties, kindish] = this.getSchema(kind)
+
+    const [properties] = this.getSchema(kind)
     if (properties) {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
         const value = doc[fieldName]
@@ -100,24 +112,15 @@ export default class Model {
       }
     }
 
-    // ok, cool, verified uniqueness, now...
     const operations = [[`${kind}/${id}`, doc]]
 
     if (properties) {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
         if (fieldArray.index === true) {
-          // TO-DO (angie): once we remove objectStores userId, this should not be necessary
-          const cleanKind = this.cleanKind(kind)
+          const cleanKind = this.getCleanKind(kind)
           operations.push(
             // ex. user-emails/eli@iame.li/abc123
-            [
-              `${cleanKind}${fieldName}/${doc[fieldName]}/${id}`,
-              {
-                id: id,
-                [fieldName]: doc[fieldName],
-                kind: `${cleanKind}${fieldName}/${doc[fieldName]}`,
-              },
-            ],
+            [`${cleanKind}${fieldName}/${doc[fieldName]}/${id}`, {}],
           )
         }
       }
@@ -129,4 +132,44 @@ export default class Model {
       }),
     )
   }
+
+  getSchema(kind) {
+    const cleanKind = this.getCleanKind(kind)
+    const schemas = schema.components.schemas[cleanKind]
+    if (!schemas) {
+      return [null, null]
+    }
+    return [schemas.properties, cleanKind]
+  }
+
+  getCleanKind(kind) {
+    let cleanKind = kind.charAt(0) === '/' ? kind.substring(1) : kind
+    return cleanKind.indexOf('/') > -1 ? cleanKind.substr(0, cleanKind.indexOf('/')) : cleanKind
+  }
+
+  cleanWriteOnlyResponses(id, responses) {
+    // obfuscate writeOnly fields in objects returned
+    const [properties] = this.getSchema(id)
+    const writeOnlyFields = {}
+    if (properties) {
+      for (const [fieldName, fieldArray] of Object.entries(properties)) {
+        if (fieldArray.writeOnly) { writeOnlyFields[fieldName] = null }
+      }
+    }
+
+    if ('data' in responses) {
+      responses.data = responses.data.map(x => ({
+        ...x,
+        ...writeOnlyFields,
+      }))
+    } else {
+      responses = {
+        ...responses,
+        ...writeOnlyFields,
+      }
+    }
+
+    return responses
+  }
+
 }

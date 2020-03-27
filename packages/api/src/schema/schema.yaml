@@ -150,6 +150,7 @@ components:
           type: string
           description: formatted as 'accesskeyid/accesskey'
           example: AKIAIOSFODNN7EXAMPLE/bPxRfiCYEXAMPLEKEY
+          writeOnly: true
         id:
           type: string
           example: 09F8B46C-61A0-4254-9875-F71F4C605BC7
@@ -174,8 +175,16 @@ components:
         password:
           type: string
           example: thisisapassword
-          minLength: 63
-          maxLength: 63
+          minLength: 64
+          maxLength: 64
+          writeOnly: true
+        salt:
+          type: string
+          example: E1F53135E559C253
+          writeOnly: true
+        admin:
+            type: boolean
+            example: true
         kind:
           type: string
           readOnly: true

@@ -15,3 +15,12 @@ export class ForbiddenError extends Error {
   }
 }
 
+export class InternalServerError extends Error {
+  constructor(message) {
+    super(message)
+    this.type = 'InternalServerError'
+    this.status = 500
+    this.message = message
+  }
+}
+

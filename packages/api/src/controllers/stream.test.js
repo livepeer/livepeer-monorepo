@@ -4,6 +4,9 @@ import uuid from 'uuid/v4'
 
 let server
 let store
+let mockUser
+let mockAdminUser
+let mockNonAdminUser
 let postMockStream
 jest.setTimeout(70000)
 
@@ -32,11 +35,28 @@ beforeAll(async () => {
     },
   ]
 
+  mockUser = {
+    email: `mock_user@gmail.com`,
+    password: 'z'.repeat(64),
+  }
+
+  mockAdminUser = {
+    email: 'user_admin@gmail.com',
+    password: 'x'.repeat(64),
+    admin: true,
+  }
+
+  mockNonAdminUser = {
+    email: 'user_non_admin@gmail.com',
+    password: 'y'.repeat(64),
+    admin: false,
+  }
+
   store = {
-    id: 'mock_store_stream',
+    id: 'mock_store',
     credentials: 'abc123/abc123',
-    path: 'us-west-2/my-bucket',
-    userId: 'mock_sub_stream',
+    path: 'us-west-1/my-bucket',
+    userId: mockAdminUser.id,
     type: 's3',
     kind: 'objectstores',
   }
@@ -47,27 +67,23 @@ afterEach(async () => {
 })
 
 describe('controllers/stream', () => {
-  describe('basic CRUD with google auth', () => {
+  describe('basic CRUD with JWT authorization', () => {
     let client
 
-    beforeEach(() => {
-      client = new TestClient({
-        server,
-        googleAuthorization: 'EXPECTED_TOKEN',
-      })
-    })
+     beforeEach(async () => {
+       client = new TestClient({
+         server,
+       })
+       // setting up admin user and token
+       const userRes = await client.post(`/user/`, { ...mockAdminUser })
 
-    let user = {
-      id: 'mock_sub_stream',
-      name: 'User Name',
-      email: 'user@livepeer.org',
-      domain: 'livepeer.org',
-      kind: 'user',
-    }
+       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
+       const adminToken = await tokenRes.json()
+       client.jwtAuth = `${adminToken['token']}`
+     })
 
-    it('should not get all streams without googleAuthorization', async () => {
-      client.googleAuthorization = ''
-      await server.store.create(user)
+    it('should not get all streams without admin authorization', async () => {
+      client.jwtAuth = ''
       for (let i = 0; i < 10; i += 1) {
         const document = {
           id: uuid(),
@@ -75,13 +91,13 @@ describe('controllers/stream', () => {
         }
         await server.store.create(document)
         const res = await client.get(`/stream/${document.id}`)
-        expect(res.status).toBe(401)
+        expect(res.status).toBe(403)
       }
       const res = await client.get('/stream')
       expect(res.status).toBe(403)
     })
 
-    it('should get all streams with prior user created', async () => {
+    it('should get all streams with admin authorization', async () => {
       for (let i = 0; i < 4; i += 1) {
         const document = {
           id: uuid(),
@@ -124,7 +140,6 @@ describe('controllers/stream', () => {
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
       expect(stream.name).toBe('test_stream')
-      expect(stream.userId).toBe('mock_sub')
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
     })
@@ -153,20 +168,16 @@ describe('controllers/stream', () => {
       try {
         await server.store.replace(document)
       } catch (err) {
-        expect(err.status).toBe(404)
+        expect(err.status).toBe(500)
       }
     })
 
     it('should not get all streams with non-admin user', async () => {
-      client.googleAuthorization = ''
-      user = {
-        id: 'mock_sub_stream2',
-        name: 'User Name',
-        email: 'user@angie.org',
-        domain: 'angie.org',
-        kind: 'user',
-      }
-      await server.store.create(user)
+      // setting up non-admin user
+      await client.post(`/user/`, { ...mockNonAdminUser })
+      const tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
+      const nonAdminToken = await tokenRes.json()
+      client.jwtAuth = nonAdminToken['token']
 
       for (let i = 0; i < 3; i += 1) {
         const document = {
@@ -175,72 +186,11 @@ describe('controllers/stream', () => {
         }
         await server.store.create(document)
         const res = await client.get(`/stream/${document.id}`)
-        expect(res.status).toBe(401)
+        expect(res.status).toBe(200)
       }
 
       let res = await client.get('/stream')
       expect(res.status).toBe(403)
-    })
-  })
-
-  describe('basic CRUD without valid logged in user', () => {
-    let client
-
-    beforeEach(() => {
-      client = new TestClient({
-        server,
-        googleAuthorization: 'nonsense',
-      })
-    })
-
-    it('should not get all streams', async () => {
-      const res = await client.get('/stream')
-      expect(res.status).toBe(403)
-    })
-  })
-
-  describe('basic CRUD with apiKey', () => {
-    let client
-    beforeEach(async () => {
-      client = new TestClient({
-        server,
-        apiKey: uuid(),
-      })
-      await server.store.create(store)
-    })
-
-    it('should create a stream, no `token` registered', async () => {
-      const res = await client.post('/stream', { ...postMockStream })
-      expect(res.status).toBe(201)
-      const stream = await res.json()
-      expect(stream.id).toBeDefined()
-      expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test_stream')
-      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
-      expect(stream.userId).toBe(tokenObject.userId)
-      const document = await server.store.get(`stream/${stream.id}`)
-      expect(document).toEqual(stream)
-    })
-
-    it('should create a stream, `token` registered, no userId', async () => {
-      await server.store.create({
-        id: client.apiKey,
-        kind: 'apitoken',
-      })
-      let res = await client.post('/stream', { ...postMockStream })
-      expect(res.status).toBe(201)
-      const stream = await res.json()
-      expect(stream.id).toBeDefined()
-      expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test_stream')
-      const tokenObject = await server.store.get(`apitoken/${client.apiKey}`)
-      expect(stream.userId).toBe(tokenObject.userId)
-      const document = await server.store.get(`stream/${stream.id}`)
-      expect(document).toEqual(stream)
-
-      // if same request is made, should return a 201
-      res = await client.post('/stream', { ...postMockStream })
-      expect(res.status).toBe(201)
     })
 
     it('should not accept empty body for creating a stream', async () => {
@@ -255,6 +205,47 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(422)
       const stream = await res.json()
       expect(stream.id).toBeUndefined()
+    })
+  })
+
+  describe('object stores endpoint with api key', () => {
+    let client
+    const adminApiKey = uuid()
+    const nonAdminApiKey = uuid()
+
+    beforeEach(async () => {
+      client = new TestClient({
+        server,
+        apiKey: uuid(),
+      })
+
+      const userRes = await client.post(`/user/`, { ...mockAdminUser })
+      const adminUser = await userRes.json()
+
+      const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
+      const nonAdminUser = await nonAdminRes.json()
+
+      await server.store.create({
+        id: adminApiKey,
+        kind: 'apitoken',
+        userId: adminUser.id,
+      })
+
+      await server.store.create({
+        id: nonAdminApiKey,
+        kind: 'apitoken',
+        userId: nonAdminUser.id,
+      })
+    })
+
+    it('should not get all object stores', async () => {
+      client.apiKey = nonAdminApiKey
+      let res = await client.get(`/stream`)
+      expect(res.status).toBe(403)
+
+      client.apiKey = adminApiKey
+      res = await client.get(`/stream`)
+      expect(res.status).toBe(403)
     })
   })
 
@@ -316,4 +307,5 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(422)
     })
   })
+
 })

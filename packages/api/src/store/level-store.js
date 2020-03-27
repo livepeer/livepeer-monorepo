@@ -26,7 +26,7 @@ export default class LevelStore {
   async close() {
     return this.db.close()
   }
-
+  // TO-DO (angie): teach backend to return keys?
   async *listStream(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     // I do not know if this is the right way to do this, but...
     // if we want every key that starts with "endpoint/", what we're
@@ -55,8 +55,8 @@ export default class LevelStore {
     }
 
     await this.ready
-    for await (const { value } of this.db.createReadStream(filter)) {
-      yield JSON.parse(value)
+    for await (const { key, value } of this.db.createReadStream(filter)) {
+      yield {[key] : JSON.parse(value)}
     }
   }
 
@@ -93,7 +93,7 @@ export default class LevelStore {
     await this.db.put(key, JSON.stringify(value))
   }
 
-  async create(data) {
+  async create(data) { // create and replace to model layer. Only serialization.
     if (typeof data !== 'object' || typeof data.id !== 'string') {
       throw new Error(`invalid values: ${JSON.stringify(data)}`)
     }
