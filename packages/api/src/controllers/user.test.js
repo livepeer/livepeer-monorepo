@@ -4,13 +4,28 @@ import uuid from 'uuid/v4'
 
 let server
 let mockUser
+let mockAdminUser
+let mockNonAdminUser
+
 jest.setTimeout(70000)
 
 beforeAll(async () => {
   server = await serverPromise
   mockUser = {
-    email: 'user@gmail.com',
-    password: 'x'.repeat(63),
+    email: `mock_user@gmail.com`,
+    password: 'z'.repeat(64),
+  }
+
+  mockAdminUser = {
+    email: 'user_admin@gmail.com',
+    password: 'x'.repeat(64),
+    admin: true,
+  }
+
+  mockNonAdminUser = {
+    email: 'user_non_admin@gmail.com',
+    password: 'y'.repeat(64),
+    admin: false,
   }
 })
 
@@ -18,41 +33,35 @@ afterEach(async () => {
   await clearDatabase(server)
 })
 
-describe('controllersuser', () => {
-  describe('basic CRUD with google auth', () => {
+describe('controllers/user', () => {
+  describe('basic CRUD with JWT authorization', () => {
     let client
+    let adminUser
 
-    beforeEach(() => {
+    beforeEach(async () => {
       client = new TestClient({
-        server,
-        googleAuthorization: 'EXPECTED_TOKEN',
+        server
       })
+
+      // setting up admin user and token
+      const userRes = await client.post(`/user/`, { ...mockAdminUser })
+      adminUser = await userRes.json()
+
+      let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
+      const adminToken = await tokenRes.json()
+      client.jwtAuth = `${adminToken['token']}`
     })
 
-    let user = {
-      id: 'mock_sub_user',
-      email: 'user@livepeer.org',
-      domain: 'livepeer.org',
-      kind: 'user',
-    }
+    it('should not get all users without authorization', async () => {
+      client.jwtAuth = ''
+      let res = await client.get(`/user/${adminUser.id}`)
+      expect(res.status).toBe(403)
 
-    it('should not get all users without googleAuthorization', async () => {
-      client.googleAuthorization = ''
-      await server.store.create(user)
-      const u = {
-        email: 'user@gmail.com',
-        password: 'mypassword',
-        id: uuid(),
-        kind: 'user',
-      }
-      await server.store.create(u)
-      let res = await client.get(`/user/${u.id}`)
-      expect(res.status).toBe(401)
       res = await client.get(`/user`)
       expect(res.status).toBe(403)
     })
 
-    it('should get all users with googleAuthorization', async () => {
+    it('should get all users with admin authorization', async () => {
       for (let i = 0; i < 4; i += 1) {
         const u = {
           email: `user${i}@gmail.com`,
@@ -85,6 +94,7 @@ describe('controllersuser', () => {
         }
         await server.store.create(u)
         const res = await client.get(`/user/${u.id}`)
+        expect(res.status).toBe(200)
         const user = await res.json()
         expect(user.id).toEqual(u.id)
       }
@@ -95,129 +105,17 @@ describe('controllersuser', () => {
       expect(users.length).toEqual(11)
     })
 
-    it('should create a user', async () => {
-      const res = await client.post('/user', { ...mockUser })
+    it('should create a user without authorization and not allow repeat user creation', async () => {
+      client.jwtAuth = ''
+      let res = await client.post('/user/', { ...mockUser })
       expect(res.status).toBe(201)
       const user = await res.json()
       expect(user.id).toBeDefined()
       expect(user.kind).toBe('user')
       expect(user.email).toBe(mockUser.email)
+
       const resUser = await server.store.get(`user/${user.id}`)
       expect(resUser.email).toEqual(user.email)
-    })
-
-    it('should create a user, delete it, and error when attempting additional detele or replace', async () => {
-      const res = await client.post('/user', {
-        ...mockUser,
-      })
-      expect(res.status).toBe(201)
-      const userRes = await res.json()
-      expect(userRes.id).toBeDefined()
-
-      const resGet = await server.store.get(`user/${userRes.id}`)
-      expect(resGet.id).toEqual(userRes.id)
-
-      await server.store.delete(`user/${resGet.id}`)
-      const deleted = await server.store.get(`user/${resGet.id}`)
-      expect(deleted).toBe(null)
-
-      // TO DO: test for deletion of `user-email` object as well
-      // it should return a NotFound Error when trying to delete a record that doesn't exist
-      try {
-        await server.store.delete(`user/${user.id}`)
-      } catch (err) {
-        expect(err.status).toBe(404)
-      }
-
-      // it should return a NotFound Error when trying to replace a record that doesn't exist
-      try {
-        await server.store.replace(user)
-      } catch (err) {
-        expect(err.status).toBe(404)
-      }
-    })
-
-    it('should not get all users with non-admin user', async () => {
-      client.googleAuthorization = ''
-      user = {
-        id: 'mock_sub_user2',
-        name: 'User Name',
-        email: 'user@angie.org',
-        domain: 'angie.org',
-        kind: 'user',
-      }
-      await server.store.create(user)
-
-      for (let i = 0; i < 3; i += 1) {
-        const u = {
-          email: `user${i}@gmail.com`,
-          password: 'mypassword',
-          id: uuid(),
-          kind: 'user',
-        }
-        await server.store.create(u)
-        const res = await client.get(`/user/${u.id}`)
-        expect(res.status).toBe(401)
-      }
-
-      let res = await client.get('/user')
-      expect(res.status).toBe(403)
-    })
-  })
-
-  describe('basic CRUD without valid logged in user', () => {
-    let client
-
-    beforeEach(() => {
-      client = new TestClient({
-        server,
-        googleAuthorization: 'nonsense',
-      })
-    })
-
-    it('should not get all users', async () => {
-      const res = await client.get('/user')
-      expect(res.status).toBe(403)
-    })
-  })
-
-  describe('basic CRUD with apiKey', () => {
-    let client
-    beforeEach(async () => {
-      client = new TestClient({
-        server,
-        apiKey: uuid(),
-      })
-    })
-
-    it('should create a user, no `token` registered', async () => {
-      const res = await client.post('/user', {
-        ...mockUser,
-      })
-      expect(res.status).toBe(201)
-      const user = await res.json()
-      expect(user.id).toBeDefined()
-      expect(user.kind).toBe('user')
-      expect(user.email).toBe(mockUser.email)
-      const resUser = await server.store.get(`user/${user.id}`)
-      expect(resUser.id).toEqual(user.id)
-    })
-
-    it('should create a user, `token` registered, no userId', async () => {
-      await server.store.create({
-        id: client.apiKey,
-        kind: 'apitoken',
-      })
-      let res = await client.post('/user', {
-        ...mockUser,
-      })
-      expect(res.status).toBe(201)
-      const user = await res.json()
-      expect(user.id).toBeDefined()
-      expect(user.kind).toBe('user')
-      expect(user.email).toBe(mockUser.email)
-      const resUser = await server.store.get(`user/${user.id}`)
-      expect(resUser.id).toEqual(user.id)
 
       // if same request is made, should return a 403
       res = await client.post('/user', {
@@ -241,25 +139,71 @@ describe('controllersuser', () => {
       const user = await res.json()
       expect(user.id).toBeUndefined()
     })
-  })
 
-  describe('basic CRUD /token endpoint with apiKey', () => {
-    let client
-    beforeEach(async () => {
-      client = new TestClient({
-        server,
-        apiKey: uuid(),
+    it('should create a user, delete it, and error when attempting additional detele or replace', async () => {
+      const res = await client.post('/user', {
+        ...mockUser,
       })
+      expect(res.status).toBe(201)
+      const userRes = await res.json()
+      expect(userRes.id).toBeDefined()
+
+      const resGet = await server.store.get(`user/${userRes.id}`)
+      expect(resGet.id).toEqual(userRes.id)
+
+      await server.store.delete(`user/${resGet.id}`)
+      const deleted = await server.store.get(`user/${resGet.id}`)
+      expect(deleted).toBe(null)
+
+      // TO DO: test for deletion of `user-email` object as well
+      // it should return a NotFound Error when trying to delete a record that doesn't exist
+      try {
+        await server.store.deleteKey(`user/${userRes.id}`)
+      } catch (err) {
+        expect(err.status).toBe(404)
+      }
+
+      // it should return a 500 Error when trying to use replace method
+      try {
+        await server.store.replace(userRes)
+      } catch (err) {
+        expect(err.status).toBe(500)
+      }
     })
 
-    it('should return an token, no `authtoken` previously created', async () => {
+    it('should not get all users with non-admin user', async () => {
+      // setting up non-admin user
+      await client.post(`/user/`, { ...mockNonAdminUser })
+      const tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
+      const nonAdminToken = await tokenRes.json()
+      client.jwtAuth = nonAdminToken['token']
+
+      for (let i = 0; i < 3; i += 1) {
+        const u = {
+          email: `user${i}@gmail.com`,
+          password: 'mypassword',
+          id: uuid(),
+          kind: 'user',
+        }
+        await server.store.create(u)
+        const res = await client.get(`/user/${u.id}`)
+        expect(res.status).toBe(403)
+      }
+
+      let res = await client.get('/user')
+      expect(res.status).toBe(403)
+    })
+
+    it('should return a user token', async () => {
+      client.jwtAuth = ''
+
       // response should contain error - no user previously created
       let res = await client.post('/user/token', {
         ...mockUser,
       })
       expect(res.status).toBe(404)
       let tokenRes = await res.json()
-      expect(tokenRes.error).toBe(`user ${mockUser.email} not found`)
+      expect(tokenRes.errors[0]).toBe(`Not found: useremail/${mockUser.email}`)
 
       // create user
       res = await client.post('/user', {
@@ -302,13 +246,53 @@ describe('controllersuser', () => {
         ...mockUser,
       })
 
-
       expect(res.status).toBe(201)
       tokenRes = await res.json()
 
       expect(tokenRes.id).toBeDefined()
       expect(tokenRes.email).toBe(mockUser.email)
       expect(tokenRes.token).toBeDefined()
+    })
+  })
+
+  describe('user endpoint with api key', () => {
+    let client
+    const adminApiKey = uuid()
+    const nonAdminApiKey = uuid()
+
+    beforeEach(async () => {
+      client = new TestClient({
+        server,
+        apiKey: uuid(),
+      })
+
+      const userRes = await client.post(`/user/`, { ...mockAdminUser })
+      const adminUser = await userRes.json()
+
+      const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
+      const nonAdminUser = await nonAdminRes.json()
+
+      await server.store.create({
+        id: adminApiKey,
+        kind: 'apitoken',
+        userId: adminUser.id,
+      })
+
+      await server.store.create({
+        id: nonAdminApiKey,
+        kind: 'apitoken',
+        userId: nonAdminUser.id,
+      })
+    })
+
+    it('should not get all users', async () => {
+      client.apiKey = nonAdminApiKey
+      let res = await client.get('/user')
+      expect(res.status).toBe(403)
+
+      client.apiKey = adminApiKey
+      res = await client.get('/user')
+      expect(res.status).toBe(403)
     })
   })
 })

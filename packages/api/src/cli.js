@@ -13,7 +13,7 @@ export default function parseCli(argv) {
     Livepeer API Node
 
     Options my also be provided as LP_ prefixed environment variables, e.g. LP_PORT=5000 is the same as --port=5000.
-    
+
     --broadcaster and --orchestrator options should be of the form
     [{"address":"https://127.0.0.1:3086","cliAddress":"http://127.0.0.1:3076"}]
     `,
@@ -97,6 +97,14 @@ export default function parseCli(argv) {
         'fallback-proxy': {
           describe:
             'if a request would otherwise be a 404, send it here instead. useful for dev.',
+          type: 'string',
+        },
+        'jwt-secret': {
+          describe: 'phrase used to sign JSON web token, a way to securely transmit information between parties',
+          type: 'string',
+        },
+        'jwt-audience': {
+          describe: 'identifies the recipients that the JWT is intended for',
           type: 'string',
         },
         broadcasters: {

@@ -23,6 +23,8 @@ export default async function makeApp(params) {
     listen = true,
     clientId,
     trustedDomain,
+    jwtSecret,
+    jwtAudience,
     kubeNamespace,
     kubeBroadcasterService,
     kubeBroadcasterTemplate,
