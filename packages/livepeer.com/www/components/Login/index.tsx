@@ -1,6 +1,7 @@
 import Textfield from "../../components/Textfield";
 import { Button, Box } from "@theme-ui/components";
 import { useState } from "react";
+import { hash } from "@livepeer/api/dist/controllers/helpers";
 
 export default ({ showEmail, showPassword, buttonText, onSubmit }) => {
   const [email, setEmail] = useState("");
@@ -13,8 +14,9 @@ export default ({ showEmail, showPassword, buttonText, onSubmit }) => {
         if (!showPassword) {
           onSubmit({ email });
         }
+        const [hashedPassword] = await hash(password, "69195A9476F08546");
         // hash password, then
-        onSubmit({ email, password });
+        onSubmit({ email, password: hashedPassword });
       }}
       sx={{
         textAlign: "center",

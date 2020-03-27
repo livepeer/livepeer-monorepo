@@ -2,10 +2,19 @@ import Layout from "../components/Layout";
 import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
+import fetch from "isomorphic-fetch";
 
 export default () => {
-  const onSubmit = ({ email, password }) => {
-    console.log(`should log in with`, { email, password });
+  const onSubmit = async ({ email, password }) => {
+    const res = await fetch("/api/user/token", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+      headers: {
+        "content-type": "application/json"
+      }
+    });
+    const data = await res.json();
+    console.log(data);
   };
   return (
     <Layout>
