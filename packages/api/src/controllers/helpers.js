@@ -18,7 +18,6 @@ export async function hash(password, salt) {
     saltBuffer = crypto.getRandomValues(new Uint8Array(8))
   }
 
-  console.log(util)
   var encoder = new Encoder('utf-8')
   var passphraseKey = encoder.encode(password)
 

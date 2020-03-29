@@ -3,9 +3,14 @@ import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
 import fetch from "isomorphic-fetch";
+import { useState } from "react";
 
 export default () => {
+  const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
   const onSubmit = async ({ email, password }) => {
+    setLoading(true);
+    setErrors([]);
     const res = await fetch("/api/user/token", {
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -14,7 +19,13 @@ export default () => {
       }
     });
     const data = await res.json();
-    console.log(data);
+    setLoading(false);
+    if (data.error) {
+      setErrors([data.error]);
+    }
+    if (data.errors) {
+      setErrors(data.errors);
+    }
   };
   return (
     <Layout>
@@ -32,6 +43,8 @@ export default () => {
           showEmail={true}
           showPassword={true}
           buttonText="Continue"
+          errors={errors}
+          loading={loading}
         />
         <Box>
           <Link href="/forgot-password">

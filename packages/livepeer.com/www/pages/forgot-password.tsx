@@ -2,8 +2,11 @@ import Layout from "../components/Layout";
 import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
+import { useState } from "react";
 
 export default () => {
+  const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
   const onSubmit = ({ email }) => {
     console.log(`should reset password for`, { email });
   };
@@ -23,6 +26,8 @@ export default () => {
           showPassword={false}
           buttonText="Get reset link"
           onSubmit={onSubmit}
+          errors={errors}
+          loading={loading}
         />
         <Box>
           Nevermind!&nbsp;

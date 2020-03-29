@@ -3,7 +3,14 @@ import { Button, Box } from "@theme-ui/components";
 import { useState } from "react";
 import { hash } from "@livepeer/api/dist/controllers/helpers";
 
-export default ({ showEmail, showPassword, buttonText, onSubmit }) => {
+export default ({
+  showEmail,
+  showPassword,
+  buttonText,
+  onSubmit,
+  loading,
+  errors
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -55,8 +62,10 @@ export default ({ showEmail, showPassword, buttonText, onSubmit }) => {
         />
       )}
 
+      <Box>{errors.join(", ")}&nbsp;</Box>
+
       <Button sx={{ mt: 4, px: 5 }} variant="primary">
-        {buttonText}
+        {loading ? "Loading..." : buttonText}
       </Button>
     </form>
   );
