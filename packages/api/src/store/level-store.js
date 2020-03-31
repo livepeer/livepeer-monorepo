@@ -26,7 +26,7 @@ export default class LevelStore {
   async close() {
     return this.db.close()
   }
-  // TO-DO (angie): teach backend to return keys?
+
   async *listStream(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     // I do not know if this is the right way to do this, but...
     // if we want every key that starts with "endpoint/", what we're
@@ -85,54 +85,17 @@ export default class LevelStore {
     return JSON.parse(res)
   }
 
-  async write(key, value) {
-    if (!key) {
-      throw new Error(`invalid value: ${key}`)
-    }
+  async create(key, data) {
     await this.ready
-    await this.db.put(key, JSON.stringify(value))
+    await this.db.put(key, JSON.stringify(data))
   }
 
-  async create(data) { // create and replace to model layer. Only serialization.
-    if (typeof data !== 'object' || typeof data.id !== 'string') {
-      throw new Error(`invalid values: ${JSON.stringify(data)}`)
-    }
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error(`Missing required values: id, kind`)
-    }
+  async replace(key, data) {
     await this.ready
-    const item = await this.get(`${kind}/${id}`)
-    if (item) {
-      throw new Error(`${id} already exists`)
-    }
-    await this.db.put(`${kind}/${id}`, JSON.stringify(data))
-  }
-
-  async replace(data) {
-    if (typeof data !== 'object' || typeof data.id !== 'string') {
-      throw new Error(`invalid values: ${JSON.stringify(data)}`)
-    }
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error('missing id, kind')
-    }
-    await this.ready
-
-    // Make sure it exists first, this throws if not
-    const record = await this.db.get(`${kind}/${id}`)
-    if (!record) {
-      throw new NotFoundError()
-    }
-    await this.db.put(`${kind}/${id}`, JSON.stringify(data))
+    await this.db.put(key, JSON.stringify(data))
   }
 
   async delete(id) {
-    // Make sure it exists first, this throws if not
-    const record = await this.db.get(id)
-    if (!record) {
-      throw new NotFoundError()
-    }
     await this.db.del(id)
   }
 }

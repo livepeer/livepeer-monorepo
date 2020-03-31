@@ -14,10 +14,23 @@ export default class Model {
     return responses
   }
 
-  async replace(doc) {
-    throw new InternalServerError('replace method not yet supported')
+  async replace(data) {
     // method to be added and editted when necessary
-    // return await this.backend.replace(doc)
+    throw new InternalServerError('replace method not yet supported')
+
+    if (typeof data !== 'object' || typeof data.id !== 'string') {
+      throw new Error(`invalid values: ${JSON.stringify(data)}`)
+    }
+    const { id, kind } = data
+    if (!id || !kind) {
+      throw new Error('missing id, kind')
+    }
+
+    const record = await this.db.get(`${kind}/${id}`)
+    if (!record) {
+      throw new NotFoundError()
+    }
+    return await this.backend.replace(doc)
   }
 
   async list(prefix, cursor, limit, cleanWriteOnly = true) {
@@ -35,9 +48,11 @@ export default class Model {
     if (responses.data.length === 0) {
       throw new NotFoundError(`Not found: ${prefix}`)
     }
+
     const ids = []
     for (const res of responses.data) {
       const key = Object.keys(res)
+
       ids.push(key[0].split('/').pop())
     }
 
@@ -46,6 +61,10 @@ export default class Model {
   }
 
   async deleteKey(key) {
+    const record = await this.get(key)
+    if (!record) {
+      throw new NotFoundError()
+    }
     return await this.backend.delete(key)
   }
 
@@ -99,6 +118,11 @@ export default class Model {
       throw new Error(`Missing required values: id, kind`)
     }
 
+    const item = await this.get(`${kind}/${id}`)
+    if (item) {
+      throw new Error(`${id} already exists`)
+    }
+
     const [properties] = this.getSchema(kind)
     if (properties) {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
@@ -128,7 +152,7 @@ export default class Model {
 
     await Promise.all(
       operations.map(([key, value]) => {
-        return this.backend.write(key, value)
+        return this.backend.create(key, value)
       }),
     )
   }

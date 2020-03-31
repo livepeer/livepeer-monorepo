@@ -33,18 +33,25 @@ export default class PostgresStore {
 
   async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
     let res = null
+
     if (cursor) {
       res = await this.pool.query(
-        `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 LIMIT $3`,
+        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 LIMIT $3`,
         [`${prefix}%`, `${prefix}${cursor}`, `${limit}`],
       )
     } else {
       res = await this.pool.query(
-        `SELECT data FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $2`,
+        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $2`,
         [`${prefix}%`, `${limit}`],
       )
     }
-    let data = res.rows.map(({ data }) => data)
+
+    let data = res.rows.map(obj => {
+      let res = {}
+      res[obj.id] = obj.data
+      return res
+    })
+
     if (data.length < 1) {
       return { data: data, cursor: null }
     }
@@ -53,6 +60,7 @@ export default class PostgresStore {
   }
 
   async get(id) {
+
     const res = await this.pool.query(
       `SELECT data FROM ${TABLE_NAME} WHERE id=$1`,
       [id],
@@ -64,12 +72,7 @@ export default class PostgresStore {
     return res.rows[0].data
   }
 
-  async create(data) {
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error("object missing 'id' and/or 'kind'")
-    }
-    const key = `${kind}/${id}`
+  async create(key, data) {
     try {
       await this.pool.query(
         `INSERT INTO ${TABLE_NAME} VALUES ($1, $2)`, //p
@@ -84,12 +87,7 @@ export default class PostgresStore {
     return data
   }
 
-  async replace(data) {
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error("object missing 'id' and/or 'kind'")
-    }
-    const key = `${kind}/${id}`
+  async replace(key, data) {
     const res = await this.pool.query(
       `UPDATE ${TABLE_NAME} SET data = $1 WHERE id = $2`,
       [JSON.stringify(data), key],

@@ -25,7 +25,7 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
   if (req.user.admin !== true && req.user.id !== req.params.id) {
     res.status(403)
     res.json({
-      error: 'user can only request information on their own user object',
+      errors: ['user can only request information on their own user object'],
     })
   } else {
     res.status(200)
@@ -34,11 +34,10 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 })
 
 app.post('/', validatePost('user'), async (req, res) => {
-  // ANGIE - do we have to validate post here??
   const emailValid = validator.validate(req.body.email)
   if (!emailValid) {
     res.status(422)
-    res.json({ error: 'invalid email' })
+    res.json({ errors: ['invalid email'] })
     return
   }
 
@@ -61,7 +60,7 @@ app.post('/', validatePost('user'), async (req, res) => {
     res.json(user)
   } else {
     res.status(403)
-    res.json({ error: 'user not created' })
+    res.json({ errors: ['user not created'] })
   }
 })
 
@@ -72,7 +71,7 @@ app.post('/token', validatePost('user'), async (req, res) => {
   const [hashedPassword] = await hash(req.body.password, user.salt)
   if (hashedPassword !== user.password) {
     res.status(403)
-    res.json({ error: 'incorrect password' })
+    res.json({ errors: ['incorrect password'] })
     return
   }
   const token = jwt.sign(

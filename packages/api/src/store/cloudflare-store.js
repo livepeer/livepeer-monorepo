@@ -51,14 +51,7 @@ export default class CloudflareStore {
     return respData
   }
 
-  async create(data) {
-    const { id, kind } = data
-
-    if (!id || !kind) {
-      throw new Error("object missing 'id' and/or 'kind'")
-    }
-
-    const key = `${kind}/${id}`
+  async create(key, data) {
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
     const respData = await cloudflareFetch(reqUrl, {
       data: data,
@@ -68,13 +61,7 @@ export default class CloudflareStore {
     return respData
   }
 
-  async replace(data) {
-    const { id, kind } = data
-
-    if (!id || !kind) {
-      throw new Error("object missing 'id' and/or 'kind'")
-    }
-    const key = `${kind}/${id}`
+  async replace(key, data) {
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
     const resp = await cloudflareFetch(reqUrl, {
       data: data,
