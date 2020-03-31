@@ -2,6 +2,8 @@ import serverPromise from '../test-server'
 import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
 
+// includes auth file tests
+
 let server
 let store
 let postMockStore
@@ -56,24 +58,24 @@ describe('controllers/object-stores', () => {
     let nonAdminUser
     let adminUser
 
-     beforeEach(async () => {
-       client = new TestClient({
-         server,
-       })
-       // setting up admin user and token
-       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-       adminUser = await userRes.json()
+    beforeEach(async () => {
+      client = new TestClient({
+        server,
+      })
+      // setting up admin user and token
+      const userRes = await client.post(`/user/`, { ...mockAdminUser })
+      adminUser = await userRes.json()
 
-       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
-       const adminToken = await tokenRes.json()
-       client.jwtAuth = `${adminToken['token']}`
+      let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
+      const adminToken = await tokenRes.json()
+      client.jwtAuth = `${adminToken['token']}`
 
-       // setting up non-admin user
+      // setting up non-admin user
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
       nonAdminUser = await nonAdminRes.json()
       tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       nonAdminToken = await tokenRes.json()
-     })
+    })
 
     it('should not get all object stores without admin authorization', async () => {
       client.jwtAuth = ''
@@ -81,19 +83,31 @@ describe('controllers/object-stores', () => {
         const storeChangeId = JSON.parse(JSON.stringify(store))
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
-        const res = await client.get(`/objectstores/${store.userId}/${store.id}`)
+        const res = await client.get(
+          `/objectstores/${store.userId}/${store.id}`,
+        )
         expect(res.status).toBe(403)
       }
       const res = await client.get(`/objectstores/${store.userId}`)
       expect(res.status).toBe(403)
     })
 
+    it('should throw 403 error if JWT is not verified', async () => {
+      client.jwtAuth = 'random_value'
+      const storeChangeId = JSON.parse(JSON.stringify(store))
+      storeChangeId.id = uuid()
+      await server.store.create(storeChangeId)
+
+      let res = await client.get(`/objectstores/${store.userId}/${store.id}`)
+      const objStore = await res.json()
+      expect(res.status).toBe(403)
+      expect(objStore.errors[0]).toBe('jwt malformed')
+    })
+
     it('should get all object stores with admin authorization', async () => {
       store.userId = adminUser.id
       for (let i = 0; i < 4; i += 1) {
-        const storeChangeId = JSON.parse(
-          JSON.stringify(store),
-        )
+        const storeChangeId = JSON.parse(JSON.stringify(store))
         storeChangeId.id = uuid()
         await server.store.create(storeChangeId)
         const res = await client.get(
@@ -104,9 +118,7 @@ describe('controllers/object-stores', () => {
         expect(objStore.id).toEqual(storeChangeId.id)
       }
 
-      const res = await client.get(
-        `/objectstores/${store.userId}`,
-      )
+      const res = await client.get(`/objectstores/${store.userId}`)
       expect(res.status).toBe(200)
       const objStores = await res.json()
       expect(objStores.length).toEqual(4)
@@ -129,9 +141,7 @@ describe('controllers/object-stores', () => {
         expect(objStore.id).toEqual(storeChangeId.id)
       }
 
-      const res = await client.get(
-        `/objectstores/${store.userId}?limit=11`,
-      )
+      const res = await client.get(`/objectstores/${store.userId}?limit=11`)
       const objStores = await res.json()
       expect(res.headers._headers.link).toBeDefined()
       expect(res.headers._headers.link.length).toBe(1)
@@ -156,16 +166,14 @@ describe('controllers/object-stores', () => {
       expect(objStore.path).toEqual(objStoreGet.path)
       expect(objStore.userId).toBe(objStoreGet.userId)
 
-       // if same request is made, should return a 201
+      // if same request is made, should return a 201
       res = await client.post('/objectstores', { ...postMockStore })
       expect(res.status).toBe(201)
     })
 
     it('should not accept empty body for creating an object store', async () => {
       const id = uuid()
-      const resp = await client.get(
-        `/objectstores/${adminUser.id}/${id}`,
-      )
+      const resp = await client.get(`/objectstores/${adminUser.id}/${id}`)
       expect(resp.status).toBe(404)
     })
 
@@ -251,6 +259,8 @@ describe('controllers/object-stores', () => {
 
   describe('object stores endpoint with api key', () => {
     let client
+    let adminUser
+    let nonAdminUser
     const adminApiKey = uuid()
     const nonAdminApiKey = uuid()
 
@@ -261,10 +271,10 @@ describe('controllers/object-stores', () => {
       })
 
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      const adminUser = await userRes.json()
+      adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
-      const nonAdminUser = await nonAdminRes.json()
+      nonAdminUser = await nonAdminRes.json()
 
       await server.store.create({
         id: adminApiKey,
@@ -279,14 +289,48 @@ describe('controllers/object-stores', () => {
       })
     })
 
-    it('should not get all object stores', async () => {
+    it('should not get all object stores with nonadmin token', async () => {
       client.apiKey = nonAdminApiKey
-      let res = await client.get(`/objectstores/${mockAdminUser.id}`)
+      let res = await client.get(`/objectstores/${adminUser.id}`)
+      const objStore = await res.json()
       expect(res.status).toBe(403)
+      expect(objStore.errors[0]).toBe('user does not have admin priviledges')
+    })
 
+    it('should not get all object stores for another user with admin token and apiKey', async () => {
       client.apiKey = adminApiKey
-      res = await client.get(`/objectstores/${mockNonAdminUser.id}`)
+      const res = await client.get(`/objectstores/${nonAdminUser.id}`)
+      const objStore = await res.json()
       expect(res.status).toBe(403)
+      expect(objStore.errors[0]).toBe('user does not have admin priviledges')
+    })
+
+    it('should throw forbidden error when using random api Key', async () => {
+      client.apiKey = 'random_key'
+      const res = await client.get(`/objectstores/${nonAdminUser.id}`)
+      const objStore = await res.json()
+      expect(res.status).toBe(403)
+      expect(objStore.errors[0]).toBe(
+        `no token object Bearer ${client.apiKey} found`,
+      )
+    })
+
+    it('should throw 500 internal server error if user does not exist', async () => {
+      // create token with no user
+      const tokenId = uuid()
+      await server.store.create({
+        id: tokenId,
+        kind: 'apitoken',
+        userId: uuid(),
+      })
+      client.apiKey = tokenId
+
+      const res = await client.get(`/objectstores/${adminUser.id}`)
+      const objStore = await res.json()
+      expect(res.status).toBe(500)
+      expect(objStore.errors[0]).toBe(
+        `no user found for token Bearer ${tokenId}`,
+      )
     })
   })
 })

@@ -129,6 +129,15 @@ describe('controllers/user', () => {
       expect(res.status).toBe(422)
     })
 
+    it('should not accept a non-valid email for creating a user', async () => {
+      const postMockUser = JSON.parse(JSON.stringify(mockUser))
+      postMockUser.email = 'livepeer'
+      const res = await client.post('/user', {
+        ...postMockUser,
+      })
+      expect(res.status).toBe(422)
+    })
+
     it('should not accept additional properties for creating a user', async () => {
       const postMockUser = JSON.parse(JSON.stringify(mockUser))
       postMockUser.name = 'livepeer'
@@ -217,17 +226,26 @@ describe('controllers/user', () => {
       res = await client.post('/user/token', {
         ...postMockUserNoPassword,
       })
+      tokenRes = res.json()
       expect(res.status).toBe(422)
 
-      tokenRes = await res.json()
+      // token request password less than required length of 64, should return error
+      const postMockUserShortPassword = JSON.parse(JSON.stringify(mockUser))
+      postMockUserShortPassword.password = 'shortpassword'
+      res = await client.post('/user/token', {
+        ...postMockUserShortPassword,
+      })
+      tokenRes = res.json()
+      expect(res.status).toBe(422)
 
       // token request wrong password, should return error
       const postMockUserWrongPassword = JSON.parse(JSON.stringify(mockUser))
-      postMockUserWrongPassword.password = 'wrongpassword'
+      postMockUserWrongPassword.password = ('w').repeat(64)
       res = await client.post('/user/token', {
         ...postMockUserWrongPassword,
       })
-      expect(res.status).toBe(422)
+      tokenRes = res.json()
+      expect(res.status).toBe(403)
 
       // token request additional properties, should return error
       const postMockUserAdditionalProp = JSON.parse(JSON.stringify(mockUser))
@@ -235,10 +253,12 @@ describe('controllers/user', () => {
       res = await client.post('/user/token', {
         ...postMockUserAdditionalProp,
       })
+      tokenRes = res.json()
       expect(res.status).toBe(422)
 
       // should not accept empty body for requesting a token
       res = await client.post('/user/token')
+      tokenRes = res.json()
       expect(res.status).toBe(422)
 
       // token should be returned without error
@@ -248,7 +268,6 @@ describe('controllers/user', () => {
 
       expect(res.status).toBe(201)
       tokenRes = await res.json()
-
       expect(tokenRes.id).toBeDefined()
       expect(tokenRes.email).toBe(mockUser.email)
       expect(tokenRes.token).toBeDefined()

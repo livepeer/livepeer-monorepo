@@ -35,7 +35,8 @@
     "go-livepeer:broadcaster": "bin/livepeer -broadcaster -datadir ./bin/broadcaster -orchAddr 127.0.0.1:3086 -rtmpAddr 0.0.0.0:3035 -httpAddr :3085 -cliAddr :3075 -v 6 -authWebhookUrl http://127.0.0.1:3004/api/stream/hook -orchWebhookUrl http://127.0.0.1:3004/api/orchestrator",
     "go-livepeer:orchestrator": "bin/livepeer -orchestrator -datadir ./bin/orchestrator -transcoder -serviceAddr 127.0.0.1:3086 -cliAddr :3076 -v 6",
     "test": "node run-tests.js",
-    "test:local": "jest src"
+    "test:local": "jest src",
+    "test:postgres": "jest --forceExit --runInBand --forceExit src/controllers/object-stores.test.js -- --storage=postgres --postgres-url=postgresql://postgres@localhost/livepeerapi"
   },
   "dependencies": {
     "@cloudflare/json-schema-walker": "^0.1.1",
