@@ -2,27 +2,30 @@ import Layout from "../components/Layout";
 import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import useApi from "../hooks/use-api";
 
 export default () => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  const { register, user } = useApi();
+
+  useEffect(() => {
+    if (user) {
+      router.replace("/app/user");
+    }
+  }, [user]);
+
   const onSubmit = async ({ email, password }) => {
     setLoading(true);
-    const res = await fetch("/api/user", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: {
-        "content-type": "application/json"
-      }
-    });
-    const data = await res.json();
-    setLoading(false);
-    if (data.error) {
-      setErrors([data.error]);
-    }
-    if (data.errors) {
-      setErrors(data.errors);
+    setErrors([]);
+    const res = await register(email, password);
+    // Don't need to worry about the success case, we'll redirect
+    if (res.errors) {
+      setErrors(res.errors);
     }
   };
   return (

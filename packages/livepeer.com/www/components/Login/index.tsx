@@ -3,6 +3,9 @@ import { Button, Box } from "@theme-ui/components";
 import { useState } from "react";
 import { hash } from "@livepeer/api/dist/controllers/helpers";
 
+// The frontend salts are all the same. This could be configurable someday.
+export const FRONTEND_SALT = "69195A9476F08546";
+
 export default ({
   showEmail,
   showPassword,
@@ -19,9 +22,9 @@ export default ({
       onSubmit={async e => {
         e.preventDefault();
         if (!showPassword) {
-          onSubmit({ email });
+          return onSubmit({ email });
         }
-        const [hashedPassword] = await hash(password, "69195A9476F08546");
+        const [hashedPassword] = await hash(password, FRONTEND_SALT);
         // hash password, then
         onSubmit({ email, password: hashedPassword });
       }}

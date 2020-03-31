@@ -9,7 +9,7 @@ import "lazysizes/plugins/attrchange/ls.attrchange";
 
 interface Props {
   title?: string;
-  children: JSX.Element[] | JSX.Element;
+  children?: JSX.Element[] | JSX.Element;
   description?: string;
   image?: any;
   url?: string;

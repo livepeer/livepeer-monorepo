@@ -4,6 +4,7 @@ import { DefaultSeo } from "next-seo";
 import SEO from "../next-seo.config";
 import { Box } from "@theme-ui/components";
 import { Reset, ThemeProvider } from "../lib/theme";
+import { ApiProvider } from "../hooks/use-api";
 
 export default class MyApp extends App {
   render() {
@@ -20,11 +21,13 @@ export default class MyApp extends App {
         </Head>
         <>
           <ThemeProvider>
-            <Box sx={{ minHeight: "100vh" }}>
-              <DefaultSeo {...SEO} />
-              <Reset />
-              <Component {...pageProps} />
-            </Box>
+            <ApiProvider>
+              <Box sx={{ minHeight: "100vh" }}>
+                <DefaultSeo {...SEO} />
+                <Reset />
+                <Component {...pageProps} />
+              </Box>
+            </ApiProvider>
           </ThemeProvider>
         </>
       </>

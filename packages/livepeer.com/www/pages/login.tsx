@@ -2,29 +2,29 @@ import Layout from "../components/Layout";
 import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
-import fetch from "isomorphic-fetch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import useApi from "../hooks/use-api";
+import { useRouter } from "next/router";
 
 export default () => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { login, user, token } = useApi();
+
+  useEffect(() => {
+    if (user) {
+      router.replace("/app/user");
+    }
+  }, [user]);
+
   const onSubmit = async ({ email, password }) => {
     setLoading(true);
     setErrors([]);
-    const res = await fetch("/api/user/token", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: {
-        "content-type": "application/json"
-      }
-    });
-    const data = await res.json();
-    setLoading(false);
-    if (data.error) {
-      setErrors([data.error]);
-    }
-    if (data.errors) {
-      setErrors(data.errors);
+    const res = await login(email, password);
+    // Don't need to worry about the success case, we'll redirect
+    if (res.errors) {
+      setErrors(res.errors);
     }
   };
   return (
@@ -34,7 +34,8 @@ export default () => {
           alignItems: "center",
           justifyContent: "center",
           flexGrow: 1,
-          flexDirection: "column"
+          flexDirection: "column",
+          mx: [3, 0]
         }}
       >
         <h3 sx={{ mb: [3, 3] }}>Log in to Livepeer</h3>
