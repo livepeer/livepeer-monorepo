@@ -27,7 +27,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "lazysizes": "^5.2.0",
     "moment": "^2.24.0",
-    "next": "9.2.3-canary.22",
+    "next": "9.3.3",
     "next-seo": "^4.4.0",
     "pascal-case": "^3.1.1",
     "react": "^16.12.0",
