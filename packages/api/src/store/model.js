@@ -4,6 +4,7 @@ import { NotFoundError, ForbiddenError, InternalServerError } from './errors'
 export default class Model {
   constructor(backend) {
     this.backend = backend
+    this.ready = backend.ready
   }
 
   async get(id, cleanWriteOnly = true) {

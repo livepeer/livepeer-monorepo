@@ -15,7 +15,7 @@
     "docker:build": "docker pull livepeerci/api:master && docker build --cache-from=livepeerci/api:master -t livepeerci/api:${DOCKER_TAG:-dev} . && docker run livepeerci/api:${DOCKER_TAG:-dev} --help",
     "docker:push": "docker push livepeerci/api:${DOCKER_TAG:-dev}",
     "docker": "run-s docker:build docker:push",
-    "postgres:start": "docker run --rm --name postgres -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
+    "postgres:start": "docker run --rm --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "postgres:stop": "docker rm -f postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
@@ -36,7 +36,7 @@
     "go-livepeer:orchestrator": "bin/livepeer -orchestrator -datadir ./bin/orchestrator -transcoder -serviceAddr 127.0.0.1:3086 -cliAddr :3076 -v 6",
     "test": "node run-tests.js",
     "test:local": "jest src",
-    "test:postgres": "jest --forceExit --runInBand --forceExit src/controllers/object-stores.test.js -- --storage=postgres --postgres-url=postgresql://postgres@localhost/livepeerapi"
+    "test:postgres": "jest --forceExit --runInBand --forceExit src -- --storage=postgres --postgres-url=postgresql://postgres@localhost/livepeerapi"
   },
   "dependencies": {
     "@cloudflare/json-schema-walker": "^0.1.1",
