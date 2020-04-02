@@ -1,5 +1,11 @@
 {
   "name": "@livepeer/livepeer.com",
   "version": "1.0.0-alpha.7",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "run-p --npm-path npm build-admin build-www",
+    "build-admin": "cd admin && yarn run build",
+    "build-www": "cd www && yarn run build",
+    "dev": "cd www && yarn run dev"
+  }
 }
