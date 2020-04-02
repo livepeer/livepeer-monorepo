@@ -60,7 +60,6 @@ export default class PostgresStore {
   }
 
   async get(id) {
-
     const res = await this.pool.query(
       `SELECT data FROM ${TABLE_NAME} WHERE id=$1`,
       [id],
