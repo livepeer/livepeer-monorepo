@@ -16,7 +16,7 @@ interface Props {
 }
 
 if (process.env.NODE_ENV === "production") {
-  ReactGA.initialize(process.env.GA_TRACKING_ID_DOT_COM);
+  ReactGA.initialize(process.env.GA_TRACKING_ID);
 } else {
   ReactGA.initialize("test", { testMode: true });
 }
