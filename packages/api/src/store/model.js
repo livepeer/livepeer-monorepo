@@ -94,9 +94,9 @@ export default class Model {
     }
 
     await Promise.all(
-      operations.map((id) => {
+      operations.map(id => {
         return this.backend.delete(id)
-      })
+      }),
     )
   }
 
@@ -130,7 +130,9 @@ export default class Model {
         if (fieldArray.unique && value) {
           const existing = await this.find(kind, fieldName, value)
           if (existing) {
-            throw new ForbiddenError(`there is already a ${kind} with ${fieldName}=${value}`)
+            throw new ForbiddenError(
+              `there is already a ${kind} with ${fieldName}=${value}`,
+            )
           }
         }
       }
@@ -168,7 +170,9 @@ export default class Model {
 
   getCleanKind(kind) {
     let cleanKind = kind.charAt(0) === '/' ? kind.substring(1) : kind
-    return cleanKind.indexOf('/') > -1 ? cleanKind.substr(0, cleanKind.indexOf('/')) : cleanKind
+    return cleanKind.indexOf('/') > -1
+      ? cleanKind.substr(0, cleanKind.indexOf('/'))
+      : cleanKind
   }
 
   cleanWriteOnlyResponses(id, responses) {
@@ -177,7 +181,9 @@ export default class Model {
     const writeOnlyFields = {}
     if (properties) {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
-        if (fieldArray.writeOnly) { writeOnlyFields[fieldName] = null }
+        if (fieldArray.writeOnly) {
+          writeOnlyFields[fieldName] = null
+        }
       }
     }
 
@@ -195,5 +201,4 @@ export default class Model {
 
     return responses
   }
-
 }

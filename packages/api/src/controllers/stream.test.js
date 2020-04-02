@@ -70,17 +70,17 @@ describe('controllers/stream', () => {
   describe('basic CRUD with JWT authorization', () => {
     let client
 
-     beforeEach(async () => {
-       client = new TestClient({
-         server,
-       })
-       // setting up admin user and token
-       const userRes = await client.post(`/user/`, { ...mockAdminUser })
+    beforeEach(async () => {
+      client = new TestClient({
+        server,
+      })
+      // setting up admin user and token
+      const userRes = await client.post(`/user/`, { ...mockAdminUser })
 
-       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
-       const adminToken = await tokenRes.json()
-       client.jwtAuth = `${adminToken['token']}`
-     })
+      let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
+      const adminToken = await tokenRes.json()
+      client.jwtAuth = `${adminToken['token']}`
+    })
 
     it('should not get all streams without admin authorization', async () => {
       client.jwtAuth = ''
@@ -307,5 +307,4 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(422)
     })
   })
-
 })
