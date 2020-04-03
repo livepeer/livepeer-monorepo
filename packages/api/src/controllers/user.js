@@ -66,7 +66,8 @@ app.post('/', validatePost('user'), async (req, res) => {
 
 app.post('/token', validatePost('user'), async (req, res) => {
   const userIds = await req.store.getPropertyIds(`useremail/${req.body.email}`)
-  const user = await req.store.get(`user/${userIds.data[0]}`, false)
+  console.log(`USERUDSSSS: ${JSON.stringify(userIds)}`)
+  const user = await req.store.get(`user/${userIds[0]}`, false)
 
   const [hashedPassword] = await hash(req.body.password, user.salt)
   if (hashedPassword !== user.password) {
