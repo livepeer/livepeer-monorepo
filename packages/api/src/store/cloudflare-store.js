@@ -23,7 +23,7 @@ export default class CloudflareStore {
     auth = cloudflareAuth
   }
 
-  async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
+  async listKeys(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
     const params = querystring.stringify({
       limit: limit,
       prefix: prefix,
@@ -32,16 +32,24 @@ export default class CloudflareStore {
 
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/keys?${params}`
     const respData = await cloudflareFetch(reqUrl)
-
-    const values = []
+    const keys = []
     for (let i = 0; i < respData.result.length; i++) {
-      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${respData.result[i].name}`
+      keys.push(respData.result[i].name)
+    }
+    return [keys, respData.result_info.cursor]
+  }
+
+  async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
+    const [keys, newCursor] = await this.listKeys(prefix, cursor, limit)
+    const values = []
+    for (let i = 0; i < keys.length; i++) {
+      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${keys[i]}`
       const resp = await cloudflareFetch(reqUrl)
       await sleep(200)
-      values.push(resp)
+      values.push({[keys[i]]: resp})
     }
 
-    return { data: values, cursor: respData.result_info.cursor }
+    return { data: values, cursor: newCursor }
   }
 
   async get(value) {

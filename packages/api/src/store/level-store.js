@@ -60,6 +60,16 @@ export default class LevelStore {
     }
   }
 
+  async listKeys(prefix = '', cursor, limit = DEFAULT_LIMIT) {
+    const listRes = await this.list(prefix, cursor, limit)
+    const keys = []
+    for (let i = 0; i < listRes.data.length; i++) {
+      keys.push(Object.keys(listRes.data[i])[0])
+    }
+
+    return [keys, listRes.cursor]
+  }
+
   async list(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     const ret = []
     for await (const val of this.listStream(prefix, cursor, limit)) {

@@ -31,6 +31,15 @@ export default class PostgresStore {
     await this.pool.end()
   }
 
+  async listKeys(prefix = '', cursor, limit = DEFAULT_LIMIT) {
+    const listRes = await this.list(prefix, cursor, limit)
+    const keys = []
+    for (let i = 0; i < listRes.data.length; i++) {
+      keys.push(Object.keys(listRes.data[i])[0])
+    }
+    return [keys, listRes.cursor]
+  }
+
   async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
     let res = null
 

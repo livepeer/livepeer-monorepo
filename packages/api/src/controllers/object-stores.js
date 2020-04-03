@@ -24,8 +24,8 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   )
 
   const objStores = []
-  for (const id of objStoreIds.data) {
-    const objStore = await req.store.get(`objectstores/${id}`)
+  for (let i = 0; i < objStoreIds.length; i++) {
+    const objStore = await req.store.get(`objectstores/${objStoreIds[i]}`)
     if (objStore) {
       objStores.push(objStore)
     }
@@ -46,12 +46,14 @@ app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
     `objectstoresuserId/${userId}`,
   )
 
-  if (objStoreIds.data.includes(id)) {
+  if (objStoreIds.includes(id)) {
     const objStore = await req.store.get(`objectstores/${id}`)
 
     if (req.user.admin !== true && req.user.id !== objStore.userId) {
       res.status(403)
-      res.json({})
+      res.json({
+        errors: ['user can only request information on their own object stores'],
+      })
     } else {
       res.status(200)
       res.json(objStore)
@@ -82,7 +84,7 @@ app.post(
       res.json(store)
     } else {
       res.status(403)
-      res.json({})
+      res.json({errors: ['store not created']})
     }
   },
 )

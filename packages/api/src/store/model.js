@@ -19,19 +19,19 @@ export default class Model {
     // method to be added and editted when necessary
     throw new InternalServerError('replace method not yet supported')
 
-    if (typeof data !== 'object' || typeof data.id !== 'string') {
-      throw new Error(`invalid values: ${JSON.stringify(data)}`)
-    }
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error('missing id, kind')
-    }
+    // if (typeof data !== 'object' || typeof data.id !== 'string') {
+    //   throw new Error(`invalid values: ${JSON.stringify(data)}`)
+    // }
+    // const { id, kind } = data
+    // if (!id || !kind) {
+    //   throw new Error('missing id, kind')
+    // }
 
-    const record = await this.db.get(`${kind}/${id}`)
-    if (!record) {
-      throw new NotFoundError()
-    }
-    return await this.backend.replace(doc)
+    // const record = await this.db.get(`${kind}/${id}`)
+    // if (!record) {
+    //   throw new NotFoundError()
+    // }
+    // return await this.backend.replace(doc)
   }
 
   async list(prefix, cursor, limit, cleanWriteOnly = true) {
@@ -44,21 +44,17 @@ export default class Model {
   }
 
   async getPropertyIds(prefix, cursor, limit, cleanWriteOnly) {
-    const responses = await this.list(prefix, cursor, limit, cleanWriteOnly)
-
-    if (responses.data.length === 0) {
+    const [keys] = await this.backend.listKeys(prefix, cursor, limit, cleanWriteOnly)
+    if (keys.length === 0) {
       throw new NotFoundError(`Not found: ${prefix}`)
     }
 
     const ids = []
-    for (const res of responses.data) {
-      const key = Object.keys(res)
-
-      ids.push(key[0].split('/').pop())
+    for (let i = 0; i < keys.length; i++) {
+      ids.push(keys[i].split('/').pop())
     }
 
-    responses.data = ids
-    return responses
+    return ids
   }
 
   async deleteKey(key) {
@@ -85,11 +81,9 @@ export default class Model {
     for (const [fieldName, fieldArray] of Object.entries(properties)) {
       const value = doc[fieldName]
       if (fieldArray.unique || fieldArray.index) {
-        const existing = await this.find(kind, fieldName, value)
-        if (existing) {
-          for (const item of existing) {
-            operations.push(Object.keys(item)[0])
-          }
+        const [keys] = await this.backend.listKeys(`${kind}${fieldName}/${value}`)
+        if (keys.length > 0) {
+            operations.concat(keys)
         }
       }
     }
@@ -99,14 +93,6 @@ export default class Model {
         return this.backend.delete(id)
       }),
     )
-  }
-
-  async find(kind, fieldName, value) {
-    const records = await this.list(`${kind}${fieldName}/${value}`)
-    if (!records || records.data.length == 0) {
-      return null
-    }
-    return records.data
   }
 
   // before sending object back to user, pipe it through function. Write-only.
@@ -129,8 +115,8 @@ export default class Model {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
         const value = doc[fieldName]
         if (fieldArray.unique && value) {
-          const existing = await this.find(kind, fieldName, value)
-          if (existing) {
+          const [keys] = await this.backend.listKeys(`${kind}${fieldName}/${value}`)
+        if (keys.length > 0) {
             throw new ForbiddenError(
               `there is already a ${kind} with ${fieldName}=${value}`,
             )
