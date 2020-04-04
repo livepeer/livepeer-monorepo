@@ -227,15 +227,23 @@ type PollTally @entity {
 }
 
 type Vote @entity {
-  "delegator address + poll address"
+  "voter address + poll address"
   id: ID!
-  "delegator associated with vote"
-  delegator: Delegator
+  "The voter that casted the vote"
+  voter: Voter!
+  "Pending stake if voter is a delegator, or total stake if voter is an orchestrator"
   voteStake: BigInt
-  "If the voter is an orchestrator this will be non-zero if any of the its delegators voted on their own"
+  "This will be non-zero if voter is an orchestrator and any of the its delegators voted"
   nonVoteStake: BigInt
   choice: PollChoice
   poll: Poll
+}
+
+type Voter @entity {
+  "The voter address"
+  id: ID!
+  "The votes casted by the voter"
+  votes: [Vote!] @derivedFrom(field: "voter")
 }
 
 ###############################################################################

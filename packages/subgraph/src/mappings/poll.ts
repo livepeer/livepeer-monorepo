@@ -9,55 +9,68 @@ import {
   Yes,
   Delegator,
   Transcoder,
+  Voter,
 } from '../types/schema'
-import { makeEventId, makeVoteId } from '../../utils/helpers'
+import {
+  makeEventId,
+  makeVoteId,
+  getBondingManagerAddress,
+} from '../../utils/helpers'
+import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
+import { VoteStakesAndPollTallyTemplate } from '../types/templates'
 
 export function yes(event: YesEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   let delegator = Delegator.load(event.params.voter.toHex())
+  let voter =
+    Voter.load(event.params.voter.toHex()) ||
+    new Voter(event.params.voter.toHex())
   let poll = Poll.load(event.address.toHex()) as Poll
   let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
   let vote = Vote.load(voteId) || new Vote(voteId)
   let delegate: Transcoder
 
-  vote.poll = poll.id
   vote.choice = 'Yes'
 
-  // If voter is a delegator and first time voting in this poll, set its vote stake
-  if (!!delegator && !vote.voteStake) {
-    vote.delegator = delegator.id
-    delegate = Transcoder.load(delegator.delegate) as Transcoder
+  // If first time voting in this poll
+  let pollVotes = poll.votes ? poll.votes : new Array<string>()
+  if (pollVotes.indexOf(voteId) == -1) {
+    vote.voter = event.params.voter.toHex()
+    vote.poll = poll.id
 
-    // If voter is a registered orchestrator
-    if (event.params.voter.toHex() == delegator.delegate) {
-      vote.voteStake = delegate.totalStake
-    } else {
-      vote.voteStake = delegator.pendingStake
+    pollVotes.push(voteId)
+    poll.votes = pollVotes
+
+    // if voter is a delegator
+    if (delegator) {
+      delegate = Transcoder.load(delegator.delegate) as Transcoder
+
+      // If voter is a registered orchestrator
+      if (event.params.voter.toHex() == delegator.delegate) {
+        vote.voteStake = delegate.totalStake
+      } else {
+        vote.voteStake = delegator.pendingStake
+      }
+
+      // If delegate is a registered orchestrator and not delegated to self
+      if (
+        delegate.status == 'Registered' &&
+        event.params.voter.toHex() != delegator.delegate
+      ) {
+        let delegateVoteId = makeVoteId(delegate.id, poll.id)
+        let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
+          vote.voteStake as BigInt,
+        )
+        delegateVote.save()
+      }
     }
 
-    // If delegate is a registered orchestrator and not delegated to self
-    if (
-      delegate.status == 'Registered' &&
-      event.params.voter.toHex() != delegator.delegate
-    ) {
-      let delegateVoteId = makeVoteId(delegate.id, poll.id)
-      let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
-      delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
-        vote.voteStake as BigInt,
-      )
-      delegateVote.save()
-    }
+    poll.save()
+    voter.save()
   }
 
   vote.save()
-
-  let votes = poll.votes ? poll.votes : new Array<string>()
-  if (votes.indexOf(voteId) == -1) {
-    votes.push(voteId)
-    poll.votes = votes
-  }
-
-  poll.save()
 
   // if voter has stake, update poll tally
   if (vote.voteStake) {
@@ -76,47 +89,71 @@ export function yes(event: YesEvent): void {
   yes.round = protocol.currentRound
   yes.voter = event.params.voter.toHex()
   yes.save()
+
+  // Watch for events specified in BondingManagerTemplate, and trigger handlers
+  // with this context
+  let context = new DataSourceContext()
+  context.setString('poll', poll.id)
+  context.setString('voter', event.params.voter.toHex())
+  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
+  VoteStakesAndPollTallyTemplate.createWithContext(
+    Address.fromString(bondingManagerAddress),
+    context,
+  )
 }
 
 export function no(event: NoEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   let delegator = Delegator.load(event.params.voter.toHex())
+  let voter =
+    Voter.load(event.params.voter.toHex()) ||
+    new Voter(event.params.voter.toHex())
   let poll = Poll.load(event.address.toHex()) as Poll
   let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
   let vote = Vote.load(voteId) || new Vote(voteId)
   let delegate: Transcoder
 
-  vote.poll = poll.id
   vote.choice = 'No'
 
-  // If voter is a delegator and first time voting in this poll, set its vote stake
-  if (!!delegator && !vote.voteStake) {
-    vote.delegator = delegator.id
-    delegate = Transcoder.load(delegator.delegate) as Transcoder
+  // If first time voting in this poll
+  let pollVotes = poll.votes ? poll.votes : new Array<string>()
+  if (pollVotes.indexOf(voteId) == -1) {
+    vote.voter = event.params.voter.toHex()
+    vote.poll = poll.id
 
-    // If voter is a registered orchestrator
-    if (event.params.voter.toHex() == delegator.delegate) {
-      vote.voteStake = delegate.totalStake
-    } else {
-      vote.voteStake = delegator.pendingStake
-      let delegateVoteId = makeVoteId(delegate.id, poll.id)
-      let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
-      delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
-        vote.voteStake as BigInt,
-      )
-      delegateVote.save()
+    pollVotes.push(voteId)
+    poll.votes = pollVotes
+
+    // if voter is a delegator
+    if (delegator) {
+      delegate = Transcoder.load(delegator.delegate) as Transcoder
+
+      // If delegator is a registered orchestrator
+      if (event.params.voter.toHex() == delegator.delegate) {
+        vote.voteStake = delegate.totalStake
+      } else {
+        vote.voteStake = delegator.pendingStake
+      }
+
+      // If delegate is a registered orchestrator and not delegated to self
+      if (
+        delegate.status == 'Registered' &&
+        event.params.voter.toHex() != delegator.delegate
+      ) {
+        let delegateVoteId = makeVoteId(delegate.id, poll.id)
+        let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
+          vote.voteStake as BigInt,
+        )
+        delegateVote.save()
+      }
     }
+
+    poll.save()
+    voter.save()
   }
 
   vote.save()
-
-  let votes = poll.votes ? poll.votes : new Array<string>()
-  if (votes.indexOf(voteId) == -1) {
-    votes.push(voteId)
-    poll.votes = votes
-  }
-
-  poll.save()
 
   // if voter has stake, update poll tally
   if (vote.voteStake) {
@@ -135,6 +172,17 @@ export function no(event: NoEvent): void {
   no.round = protocol.currentRound
   no.voter = event.params.voter.toHex()
   no.save()
+
+  // Watch for events specified in VoteStakesAndPollTallyTemplate, and trigger handlers
+  // with this context
+  let context = new DataSourceContext()
+  context.setString('poll', poll.id)
+  context.setString('voter', event.params.voter.toHex())
+  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
+  VoteStakesAndPollTallyTemplate.createWithContext(
+    Address.fromString(bondingManagerAddress),
+    context,
+  )
 }
 
 export function tallyVotes(poll: Poll): void {
