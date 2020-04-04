@@ -292,7 +292,7 @@ dataSources:
 ###############################################################################
 templates:
   - kind: ethereum/contract
-    name: BondingManager
+    name: VoteStakesAndPollTallyTemplate
     network: {{networkName}}
     source:
       abi: BondingManager
@@ -314,13 +314,34 @@ templates:
         - PollTally
       eventHandlers:
         - event: Reward(indexed address,uint256)
-          handler: reward
+          handler: updateVoteStakesAndPollTallyOnReward
         - event: Bond(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: bond
+          handler: updateVoteStakesAndPollTallyOnBond
         - event: Unbond(indexed address,indexed address,uint256,uint256,uint256)
-          handler: unbond
+          handler: updateVoteStakesAndPollTallyOnUnbond
         - event: Rebond(indexed address,indexed address,uint256,uint256)
-          handler: rebond
+          handler: updateVoteStakesAndPollTallyOnRebond
+  - kind: ethereum/contract
+    name: ShareTemplate
+    network: {{networkName}}
+    source:
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/dynamic.ts
+      abis:
+        - name: BondingManager
+          file: ./abis/BondingManager_LIP12.json
+      entities:
+        - Delegator
+        - Share
+        - Protocol
+        - Transcoder
+      eventHandlers:
+        - event: Reward(indexed address,uint256)
+          handler: updateDelegatorWithShare
   - kind: ethereum/contract
     name: TicketBroker
     network: {{networkName}}

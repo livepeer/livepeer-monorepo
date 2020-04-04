@@ -1,11 +1,7 @@
-import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
 import { PollCreated as PollCreatedEvent } from '../types/PollCreator/PollCreator'
 import { Protocol, Poll, PollCreated } from '../types/schema'
-import { makeEventId, getBondingManagerAddress } from '../../utils/helpers'
-import {
-  Poll as PollTemplate,
-  BondingManager as BondingManagerTemplate,
-} from '../types/templates'
+import { makeEventId } from '../../utils/helpers'
+import { Poll as PollTemplate } from '../types/templates'
 
 export function pollCreated(event: PollCreatedEvent): void {
   let poll = new Poll(event.params.poll.toHex())
@@ -38,14 +34,4 @@ export function pollCreated(event: PollCreatedEvent): void {
   pollCreated.quorum = event.params.quorum
   pollCreated.threshold = event.params.threshold
   pollCreated.save()
-
-  // Watch for events specified in BondingManagerTemplate and trigger handlers
-  // with this context
-  let context = new DataSourceContext()
-  context.setString('poll', event.params.poll.toHex())
-  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
-  BondingManagerTemplate.createWithContext(
-    Address.fromString(bondingManagerAddress),
-    context,
-  )
 }
