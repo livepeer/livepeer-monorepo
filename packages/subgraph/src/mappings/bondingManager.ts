@@ -16,7 +16,7 @@ import {
   Reward as RewardEvent,
 } from '../types/BondingManager/BondingManager'
 
-import { BondingManager as BondingManagerTemplate } from '../types/templates'
+import { ShareTemplate } from '../types/templates'
 
 // Import entity types generated from the GraphQL schema
 import {
@@ -281,11 +281,11 @@ export function bond(call: BondCall): void {
     bond.delegator = delegatorAddress.toHex()
     bond.save()
 
-    // Watch for events specified in BondingManagerTemplate and trigger handlers
+    // Watch for events specified in ShareTemplate and trigger handlers
     // with this context
     let context = new DataSourceContext()
     context.setString('delegator', delegatorAddress.toHex())
-    BondingManagerTemplate.createWithContext(call.to, context)
+    ShareTemplate.createWithContext(call.to, context)
   }
 }
 

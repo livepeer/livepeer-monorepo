@@ -10,7 +10,7 @@ import {
   Rebond as RebondEvent,
 } from '../types/BondingManager_LIP11/BondingManager'
 
-import { BondingManager as BondingManagerTemplate } from '../types/templates'
+import { ShareTemplate } from '../types/templates'
 
 import {
   Transcoder,
@@ -129,11 +129,11 @@ export function bond(event: BondEvent): void {
   bond.additionalAmount = additionalAmount
   bond.save()
 
-  // Watch for events specified in BondingManagerTemplate and trigger handlers
+  // Watch for events specified in ShareTemplate and trigger handlers
   // with this context
   let context = new DataSourceContext()
   context.setString('delegator', delegatorAddress.toHex())
-  BondingManagerTemplate.createWithContext(event.address, context)
+  ShareTemplate.createWithContext(event.address, context)
 }
 
 // Handler for Unbond events
