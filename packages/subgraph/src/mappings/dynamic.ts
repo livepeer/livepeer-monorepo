@@ -6,60 +6,15 @@ import {
   Bond as BondEvent,
   Unbond as UnbondEvent,
   Rebond as RebondEvent,
+  EarningsClaimed as EarningsClaimedEvent,
 } from '../types/BondingManager_LIP12/BondingManager'
 
-import {
-  Delegator,
-  Share,
-  Protocol,
-  Poll,
-  Vote,
-  Transcoder,
-} from '../types/schema'
+import { Delegator, Protocol, Poll, Vote, Transcoder } from '../types/schema'
 
-import {
-  makeShareId,
-  makePoolId,
-  makeVoteId,
-  EMPTY_ADDRESS,
-} from '../../utils/helpers'
+import { makeVoteId, EMPTY_ADDRESS } from '../../utils/helpers'
 import { tallyVotes } from './poll'
 
-export function updateDelegatorWithShare(event: RewardEvent): void {
-  let delegatorAddress = dataSource.context().getString('delegator')
-  let delegator = Delegator.load(delegatorAddress)
-
-  if (delegator.delegate == event.params.transcoder.toHex()) {
-    let protocol = Protocol.load('0') || new Protocol('0')
-    let shareId = makeShareId(delegatorAddress, protocol.currentRound)
-    let share = Share.load(shareId) || new Share(shareId)
-
-    let bondingManager = BondingManager.bind(event.address)
-    let poolId = makePoolId(
-      event.params.transcoder.toHex(),
-      protocol.currentRound,
-    )
-    let pendingStake = bondingManager.pendingStake(
-      Address.fromString(delegatorAddress),
-      BigInt.fromI32(protocol.currentRound as i32),
-    )
-    let rewardTokens = pendingStake.minus(
-      (delegator.pendingStake as BigInt)
-        ? (delegator.pendingStake as BigInt)
-        : BigInt.fromI32(0),
-    )
-    share.rewardTokens = rewardTokens
-    share.delegator = delegatorAddress
-    share.round = protocol.currentRound
-    share.pool = poolId
-    share.save()
-
-    delegator.pendingStake = pendingStake
-    delegator.save()
-  }
-}
-
-export function updateVoteStakesAndPollTallyOnReward(event: RewardEvent): void {
+export function updatePollTallyOnReward(event: RewardEvent): void {
   let voterAddress = dataSource.context().getString('voter')
   let delegator = Delegator.load(voterAddress) as Delegator
 
@@ -74,108 +29,180 @@ export function updateVoteStakesAndPollTallyOnReward(event: RewardEvent): void {
     // If poll is active then update delegator's vote stakes and poll tally
     if (poll.endBlock > event.block.number) {
       let protocol = Protocol.load('0') || new Protocol('0')
-      let shareId = makeShareId(delegator.id, protocol.currentRound)
-      let share = Share.load(shareId) || new Share(shareId)
       let voteId = makeVoteId(delegator.id, poll.id)
       let vote = Vote.load(voteId)
+
+      // return if voter didn't vote in this specific poll
+      if (!vote) {
+        return
+      }
+
+      let transcoder = Transcoder.load(event.params.transcoder.toHex())
+
+      // update vote stakes
       if (delegator.id == event.params.transcoder.toHex()) {
-        let transcoder = Transcoder.load(event.params.transcoder.toHex())
         vote.voteStake = transcoder.totalStake
       } else {
-        vote.voteStake = delegator.pendingStake
+        let bondingManager = BondingManager.bind(event.address)
+        let pendingStake = bondingManager.pendingStake(
+          Address.fromString(voterAddress),
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
+        let delta = pendingStake.minus(vote.voteStake as BigInt)
+
+        vote.voteStake = pendingStake
+
         let delegateVoteId = makeVoteId(
           event.params.transcoder.toHex(),
           poll.id,
         )
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
-        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
-          share.rewardTokens as BigInt,
-        )
+
+        // if delegate voted, update its vote stake
+        if (delegateVote.voteStake != null) {
+          delegateVote.voteStake = transcoder.totalStake
+        }
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
         delegateVote.save()
       }
+
       vote.save()
       tallyVotes(poll)
     }
   }
 }
 
-export function updateVoteStakesAndPollTallyOnBond(event: BondEvent): void {
+export function updatePollTallyOnBond(event: BondEvent): void {
   let voterAddress = dataSource.context().getString('voter')
-  if (voterAddress == event.params.delegator.toHex()) {
+  let delegator = Delegator.load(voterAddress) as Delegator
+
+  // If voter is a delegator and shares the same delegate attached to the event
+  if (
+    delegator != null &&
+    delegator.delegate == event.params.newDelegate.toHex()
+  ) {
     let pollAddress = dataSource.context().getString('poll')
     let poll = Poll.load(pollAddress) as Poll
 
     // Check if poll is active
     if (poll.endBlock > event.block.number) {
+      let transcoder = Transcoder.load(event.params.newDelegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
-      if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
-        let transcoder = Transcoder.load(event.params.newDelegate.toHex())
-        vote.voteStake = transcoder.totalStake
-      } else {
-        let delegator = Delegator.load(event.params.delegator.toHex())
-        vote.voteStake = delegator.pendingStake
-
-        let delegateVoteId = makeVoteId(
-          event.params.newDelegate.toHex(),
-          poll.id,
-        )
-        let delegateVote = Vote.load(delegateVoteId)
-        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
-          event.params.additionalAmount,
-        )
-        delegateVote.save()
+      // return if voter didn't vote in this specific poll
+      if (!vote) {
+        return
       }
-
-      vote.save()
 
       // If moving stake, remove vote with old delegate
       if (
+        voterAddress == event.params.delegator.toHex() &&
         event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
         event.params.oldDelegate.toHex() != event.params.newDelegate.toHex()
       ) {
-        let delegator = Delegator.load(event.params.delegator.toHex())
+        let oldDelegate = Transcoder.load(event.params.oldDelegate.toHex())
         let oldDelegateVoteId = makeVoteId(
           event.params.oldDelegate.toHex(),
           poll.id,
         )
         let oldDelegateVote = Vote.load(oldDelegateVoteId)
+        oldDelegateVote.voteStake = oldDelegate.totalStake
         oldDelegateVote.nonVoteStake = oldDelegateVote.nonVoteStake.minus(
-          delegator.pendingStake as BigInt,
+          vote.voteStake as BigInt,
         )
         oldDelegateVote.save()
       }
 
+      // update vote stakes
+      if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
+        vote.voteStake = transcoder.totalStake
+      } else {
+        let protocol = Protocol.load('0') || new Protocol('0')
+        let bondingManager = BondingManager.bind(event.address)
+        let pendingStake = bondingManager.pendingStake(
+          Address.fromString(voterAddress),
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
+
+        let delegateVoteId = makeVoteId(
+          event.params.newDelegate.toHex(),
+          poll.id,
+        )
+        let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        // if delegate voted, update its vote stake
+        if (delegateVote.voteStake != null) {
+          delegateVote.voteStake = transcoder.totalStake
+        }
+
+        // update nonVoteStake with the +/- change in voter's pendingStake
+        let delta = BigInt.fromI32(0)
+        if (pendingStake.gt(vote.voteStake as BigInt)) {
+          delta = pendingStake.minus(vote.voteStake as BigInt)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
+        } else {
+          delta = vote.voteStake.minus(pendingStake)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
+        }
+        delegateVote.save()
+        vote.voteStake = pendingStake
+      }
+
+      vote.save()
       tallyVotes(poll)
     }
   }
 }
 
-export function updateVoteStakesAndPollTallyOnUnbond(event: UnbondEvent): void {
+export function updatePollTallyOnUnbond(event: UnbondEvent): void {
   let voterAddress = dataSource.context().getString('voter')
-  if (voterAddress == event.params.delegator.toHex()) {
+  let delegator = Delegator.load(voterAddress) as Delegator
+  // If voter is a delegator and shares the same delegate attached to the event
+  if (
+    delegator != null &&
+    delegator.delegate == event.params.delegate.toHex()
+  ) {
     let pollAddress = dataSource.context().getString('poll')
     let poll = Poll.load(pollAddress) as Poll
 
     // Check if poll is active
     if (poll.endBlock > event.block.number) {
+      let transcoder = Transcoder.load(event.params.delegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
+      // return if voter didn't vote in this specific poll
+      if (!vote) {
+        return
+      }
+
       if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
-        let transcoder = Transcoder.load(event.params.delegate.toHex())
         vote.voteStake = transcoder.totalStake
       } else {
-        let delegator = Delegator.load(event.params.delegator.toHex())
-        vote.voteStake = delegator.pendingStake
+        let protocol = Protocol.load('0') || new Protocol('0')
+        let bondingManager = BondingManager.bind(event.address)
+        let pendingStake = bondingManager.pendingStake(
+          Address.fromString(voterAddress),
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
-        delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(
-          event.params.amount,
-        )
+        // if delegate voted, update its vote stake
+        if (delegateVote.voteStake != null) {
+          delegateVote.voteStake = transcoder.totalStake
+        }
+
+        let delta = BigInt.fromI32(0)
+        if (pendingStake.gt(vote.voteStake as BigInt)) {
+          delta = pendingStake.minus(vote.voteStake as BigInt)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
+        } else {
+          delta = vote.voteStake.minus(pendingStake)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
+        }
         delegateVote.save()
+        vote.voteStake = pendingStake
       }
       vote.save()
       tallyVotes(poll)
@@ -183,32 +210,113 @@ export function updateVoteStakesAndPollTallyOnUnbond(event: UnbondEvent): void {
   }
 }
 
-export function updateVoteStakesAndPollTallyOnRebond(event: RebondEvent): void {
+export function updatePollTallyOnRebond(event: RebondEvent): void {
   let voterAddress = dataSource.context().getString('voter')
-  if (voterAddress == event.params.delegator.toHex()) {
+  let delegator = Delegator.load(voterAddress) as Delegator
+  // If voter is a delegator and shares the same delegate attached to the event
+  if (
+    delegator != null &&
+    delegator.delegate == event.params.delegate.toHex()
+  ) {
     let pollAddress = dataSource.context().getString('poll')
     let poll = Poll.load(pollAddress) as Poll
 
     // Check if poll is active
     if (poll != null && poll.endBlock > event.block.number) {
+      let transcoder = Transcoder.load(event.params.delegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
+      // return if voter didn't vote in this specific poll
+      if (!vote) {
+        return
+      }
+
       if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
-        let transcoder = Transcoder.load(
-          event.params.delegate.toHex(),
-        ) as Transcoder
         vote.voteStake = transcoder.totalStake
       } else {
-        let delegator = Delegator.load(event.params.delegator.toHex())
-        vote.voteStake = delegator.pendingStake
+        let protocol = Protocol.load('0') || new Protocol('0')
+        let bondingManager = BondingManager.bind(event.address)
+        let pendingStake = bondingManager.pendingStake(
+          Address.fromString(voterAddress),
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
-        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
-          event.params.amount,
-        )
+        // if delegate voted, update its vote stake
+        if (delegateVote.voteStake != null) {
+          delegateVote.voteStake = transcoder.totalStake
+        }
+
+        let delta = BigInt.fromI32(0)
+        if (pendingStake.gt(vote.voteStake as BigInt)) {
+          delta = pendingStake.minus(vote.voteStake as BigInt)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
+        } else {
+          delta = vote.voteStake.minus(pendingStake)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
+        }
         delegateVote.save()
+        vote.voteStake = pendingStake
+      }
+      vote.save()
+      tallyVotes(poll)
+    }
+  }
+}
+
+export function updatePollTallyOnEarningsClaimed(
+  event: EarningsClaimedEvent,
+): void {
+  let voterAddress = dataSource.context().getString('voter')
+  let delegator = Delegator.load(voterAddress) as Delegator
+  // If voter is a delegator and it shares the same delegate attached to the event
+  if (
+    delegator != null &&
+    delegator.delegate == event.params.delegate.toHex()
+  ) {
+    let pollAddress = dataSource.context().getString('poll')
+    let poll = Poll.load(pollAddress) as Poll
+
+    // Check if poll is active
+    if (poll != null && poll.endBlock > event.block.number) {
+      let transcoder = Transcoder.load(event.params.delegate.toHex())
+      let voteId = makeVoteId(voterAddress, pollAddress)
+      let vote = Vote.load(voteId)
+
+      // return if voter didn't vote in this specific poll
+      if (!vote) {
+        return
+      }
+
+      if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
+        vote.voteStake = transcoder.totalStake
+      } else {
+        let protocol = Protocol.load('0') || new Protocol('0')
+        let bondingManager = BondingManager.bind(event.address)
+        let pendingStake = bondingManager.pendingStake(
+          Address.fromString(voterAddress),
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
+
+        let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
+        let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        // if delegate voted, update its vote stake
+        if (delegateVote.voteStake != null) {
+          delegateVote.voteStake = transcoder.totalStake
+        }
+
+        let delta = BigInt.fromI32(0)
+        if (pendingStake.gt(vote.voteStake as BigInt)) {
+          delta = pendingStake.minus(vote.voteStake as BigInt)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
+        } else {
+          delta = vote.voteStake.minus(pendingStake)
+          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
+        }
+        delegateVote.save()
+        vote.voteStake = pendingStake
       }
       vote.save()
       tallyVotes(poll)

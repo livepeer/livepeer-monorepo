@@ -292,7 +292,7 @@ dataSources:
 ###############################################################################
 templates:
   - kind: ethereum/contract
-    name: VoteStakesAndPollTallyTemplate
+    name: PollTallyTemplate
     network: {{networkName}}
     source:
       abi: BondingManager
@@ -306,7 +306,6 @@ templates:
           file: ./abis/BondingManager_LIP12.json
       entities:
         - Delegator
-        - Share
         - Protocol
         - Poll,
         - Vote
@@ -314,34 +313,15 @@ templates:
         - PollTally
       eventHandlers:
         - event: Reward(indexed address,uint256)
-          handler: updateVoteStakesAndPollTallyOnReward
+          handler: updatePollTallyOnReward
         - event: Bond(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: updateVoteStakesAndPollTallyOnBond
+          handler: updatePollTallyOnBond
         - event: Unbond(indexed address,indexed address,uint256,uint256,uint256)
-          handler: updateVoteStakesAndPollTallyOnUnbond
+          handler: updatePollTallyOnUnbond
         - event: Rebond(indexed address,indexed address,uint256,uint256)
-          handler: updateVoteStakesAndPollTallyOnRebond
-  - kind: ethereum/contract
-    name: ShareTemplate
-    network: {{networkName}}
-    source:
-      abi: BondingManager
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/dynamic.ts
-      abis:
-        - name: BondingManager
-          file: ./abis/BondingManager_LIP12.json
-      entities:
-        - Delegator
-        - Share
-        - Protocol
-        - Transcoder
-      eventHandlers:
-        - event: Reward(indexed address,uint256)
-          handler: updateDelegatorWithShare
+          handler: updatePollTallyOnRebond
+        - event: EarningsClaimed(indexed address,indexed address,uint256,uint256,uint256,uint256)
+          handler: updatePollTallyOnEarningsClaimed
   - kind: ethereum/contract
     name: TicketBroker
     network: {{networkName}}
@@ -357,7 +337,6 @@ templates:
           file: ./abis/TicketBroker.json
       entities:
         - Delegator
-        - Share
       eventHandlers:
         - event: WinningTicketRedeemed(indexed address,indexed address,uint256,uint256,uint256,uint256,bytes)
           handler: winningTicketRedeemed
@@ -374,6 +353,8 @@ templates:
       abis:
         - name: Poll
           file: ./abis/Poll.json
+        - name: BondingManager
+          file: ./abis/BondingManager_LIP12.json
       entities:
         - Poll
       eventHandlers:
