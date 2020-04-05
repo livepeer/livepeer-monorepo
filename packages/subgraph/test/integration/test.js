@@ -38,7 +38,7 @@ const fetchSubgraph = createApolloFetch({
   uri: 'http://127.0.0.1:8000/subgraphs/name/livepeer/livepeer',
 })
 
-const TOKEN_UNIT = new BN(10).pow(new BN(18)),
+const TOKEN_UNIT = new BN(10).pow(new BN(18))
 
 const exec = cmd => {
   try {
@@ -199,30 +199,6 @@ contract('Subgraph Integration Tests', accounts => {
     await waitForSubgraphToBeSynced()
   })
 
-  it('correctly calculates reward shares for delegators and transcoders', async () => {
-    const callRewardAndCheckStakes = async () => {
-      const acceptableDelta = TOKEN_UNIT.div(new BN(1000)) // .001
-
-      const t1StartStake = await getStake(transcoder1)
-      const d1StartStake = await getStake(delegator1)
-      const d2StartStake = await getStake(delegator2)
-      const d3StartStake = await getStake(delegator3)
-      const totalStartStake = new BN(t1StartStake)
-        .plus(new BN(d1StartStake))
-        .plus(new BN(d2StartStake))
-        .plus(new BN(d3StartStake))
-
-      await BondingManager.methods
-        .reward()
-        .send({ gas: 1000000, from: transcoder1 })
-
-      await waitForSubgraphToBeSynced()
-      // TODO: Assertions
-    }
-
-    await callRewardAndCheckStakes()
-  })
-
   it('creates a poll', async () => {
     await waitForSubgraphToBeSynced()
     const createPollAndCheckResult = async () => {
@@ -264,11 +240,19 @@ contract('Subgraph Integration Tests', accounts => {
     // delegator 3 votes no
     await Poll.methods.no().send({ gas: 1000000, from: delegator3 })
 
+    await Token.methods.approve(bondingManagerAddress, 1000).send({
+      from: delegator1,
+    })
+
     await mineAndInitializeRound(roundLength)
 
     await BondingManager.methods
       .reward()
       .send({ gas: 1000000, from: transcoder1 })
+
+    await BondingManager.methods
+      .bond(1000, transcoder1)
+      .send({ gas: 1000000, from: delegator1 })
 
     // Fast forward to end block
     await rpc.waitUntilBlock(parseInt(subgraphPollData.data.polls[0].endBlock))
@@ -283,9 +267,11 @@ contract('Subgraph Integration Tests', accounts => {
       .getDelegator(transcoder1)
       .call()
 
-    const t1VoteStake = new BN(delegator.delegatedAmount).minus(
-      new BN(d1Stake).plus(new BN(d2Stake)).plus(new BN(d3Stake)),
-    )
+    const nonVoteStake = new BN(d1Stake)
+      .plus(new BN(d2Stake))
+      .plus(new BN(d3Stake))
+
+    const t1VoteStake = new BN(delegator.delegatedAmount).minus(nonVoteStake)
 
     const yesTally = t1VoteStake.plus(new BN(d2Stake)).toString(10)
     const noTally = new BN(d1Stake).plus(new BN(d3Stake)).toString(10)

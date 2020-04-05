@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { store, DataSourceContext } from '@graphprotocol/graph-ts'
+import { store } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -9,8 +9,6 @@ import {
   Unbond as UnbondEvent,
   Rebond as RebondEvent,
 } from '../types/BondingManager_LIP11/BondingManager'
-
-import { ShareTemplate } from '../types/templates'
 
 import {
   Transcoder,
@@ -40,21 +38,16 @@ export function bond(event: BondEvent): void {
   let delegateData = bondingManager.getDelegator(newDelegateAddress)
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   let totalActiveStake = bondingManager.getTotalBonded()
+
   let protocol = Protocol.load('0') || new Protocol('0')
-
   let round = Round.load(protocol.currentRound)
-
   let transcoder =
     Transcoder.load(newDelegateAddress.toHex()) ||
     new Transcoder(newDelegateAddress.toHex())
-
   let delegate =
     Delegator.load(newDelegateAddress.toHex()) ||
     new Delegator(newDelegateAddress.toHex())
-
-  let delegator =
-    Delegator.load(delegatorAddress.toHex()) ||
-    new Delegator(delegatorAddress.toHex())
+  let delegator = Delegator.load(delegatorAddress.toHex())
 
   protocol.totalActiveStake = totalActiveStake
 
@@ -92,7 +85,6 @@ export function bond(event: BondEvent): void {
 
     // keep track of how much new stake was introduced this round
     round.totalNewStake = round.totalNewStake.plus(additionalAmount)
-
     round.save()
   }
 
@@ -101,8 +93,7 @@ export function bond(event: BondEvent): void {
 
   delegator.delegate = newDelegateAddress.toHex()
   delegator.lastClaimRound = protocol.currentRound
-  delegator.bondedAmount = delegatorData.value0
-  delegator.pendingStake = delegatorData.value0
+  delegator.bondedAmount = bondedAmount
   delegator.fees = delegatorData.value1
   delegator.startRound = delegatorData.value4
   delegator.principal = delegator.principal.plus(additionalAmount)
@@ -128,12 +119,6 @@ export function bond(event: BondEvent): void {
   bond.bondedAmount = bondedAmount
   bond.additionalAmount = additionalAmount
   bond.save()
-
-  // Watch for events specified in ShareTemplate and trigger handlers
-  // with this context
-  let context = new DataSourceContext()
-  context.setString('delegator', delegatorAddress.toHex())
-  ShareTemplate.createWithContext(event.address, context)
 }
 
 // Handler for Unbond events
@@ -170,7 +155,6 @@ export function unbond(event: UnbondEvent): void {
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   delegator.lastClaimRound = protocol.currentRound
   delegator.bondedAmount = delegatorData.value0
-  delegator.pendingStake = delegatorData.value0
   delegator.fees = delegatorData.value1
   delegator.startRound = delegatorData.value4
   delegator.unbonded = delegator.unbonded.plus(amount)
@@ -255,7 +239,6 @@ export function rebond(event: RebondEvent): void {
   delegator.startRound = delegatorData.value4
   delegator.lastClaimRound = protocol.currentRound
   delegator.bondedAmount = delegatorData.value0
-  delegator.pendingStake = delegatorData.value0
   delegator.fees = delegatorData.value1
   delegator.unbonded = delegator.unbonded.minus(amount)
 
