@@ -17,7 +17,8 @@ import {
   getBondingManagerAddress,
 } from '../../utils/helpers'
 import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
-import { VoteStakesAndPollTallyTemplate } from '../types/templates'
+import { PollTallyTemplate } from '../types/templates'
+import { BondingManager } from '../types/BondingManager_LIP12/BondingManager'
 
 export function yes(event: YesEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
@@ -49,7 +50,17 @@ export function yes(event: YesEvent): void {
       if (event.params.voter.toHex() == delegator.delegate) {
         vote.voteStake = delegate.totalStake
       } else {
-        vote.voteStake = delegator.pendingStake
+        let bondingManagerAddress = getBondingManagerAddress(
+          dataSource.network(),
+        )
+        let bondingManager = BondingManager.bind(
+          Address.fromString(bondingManagerAddress),
+        )
+        let pendingStake = bondingManager.pendingStake(
+          event.params.voter,
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
+        vote.voteStake = pendingStake
       }
 
       // If delegate is a registered orchestrator and not delegated to self
@@ -68,6 +79,17 @@ export function yes(event: YesEvent): void {
 
     poll.save()
     voter.save()
+
+    // Watch for events specified in PollTallyTemplate, and trigger handlers
+    // with this context
+    let context = new DataSourceContext()
+    context.setString('poll', poll.id)
+    context.setString('voter', event.params.voter.toHex())
+    let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
+    PollTallyTemplate.createWithContext(
+      Address.fromString(bondingManagerAddress),
+      context,
+    )
   }
 
   vote.save()
@@ -89,17 +111,6 @@ export function yes(event: YesEvent): void {
   yes.round = protocol.currentRound
   yes.voter = event.params.voter.toHex()
   yes.save()
-
-  // Watch for events specified in BondingManagerTemplate, and trigger handlers
-  // with this context
-  let context = new DataSourceContext()
-  context.setString('poll', poll.id)
-  context.setString('voter', event.params.voter.toHex())
-  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
-  VoteStakesAndPollTallyTemplate.createWithContext(
-    Address.fromString(bondingManagerAddress),
-    context,
-  )
 }
 
 export function no(event: NoEvent): void {
@@ -118,6 +129,7 @@ export function no(event: NoEvent): void {
   // If first time voting in this poll
   let pollVotes = poll.votes ? poll.votes : new Array<string>()
   if (pollVotes.indexOf(voteId) == -1) {
+    let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
     vote.voter = event.params.voter.toHex()
     vote.poll = poll.id
 
@@ -132,7 +144,14 @@ export function no(event: NoEvent): void {
       if (event.params.voter.toHex() == delegator.delegate) {
         vote.voteStake = delegate.totalStake
       } else {
-        vote.voteStake = delegator.pendingStake
+        let bondingManager = BondingManager.bind(
+          Address.fromString(bondingManagerAddress),
+        )
+        let pendingStake = bondingManager.pendingStake(
+          event.params.voter,
+          BigInt.fromI32(protocol.currentRound as i32),
+        )
+        vote.voteStake = pendingStake
       }
 
       // If delegate is a registered orchestrator and not delegated to self
@@ -151,6 +170,16 @@ export function no(event: NoEvent): void {
 
     poll.save()
     voter.save()
+
+    // Watch for events specified in PollTallyTemplate, and trigger handlers
+    // with this context
+    let context = new DataSourceContext()
+    context.setString('poll', poll.id)
+    context.setString('voter', event.params.voter.toHex())
+    PollTallyTemplate.createWithContext(
+      Address.fromString(bondingManagerAddress),
+      context,
+    )
   }
 
   vote.save()
@@ -172,17 +201,6 @@ export function no(event: NoEvent): void {
   no.round = protocol.currentRound
   no.voter = event.params.voter.toHex()
   no.save()
-
-  // Watch for events specified in VoteStakesAndPollTallyTemplate, and trigger handlers
-  // with this context
-  let context = new DataSourceContext()
-  context.setString('poll', poll.id)
-  context.setString('voter', event.params.voter.toHex())
-  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
-  VoteStakesAndPollTallyTemplate.createWithContext(
-    Address.fromString(bondingManagerAddress),
-    context,
-  )
 }
 
 export function tallyVotes(poll: Poll): void {

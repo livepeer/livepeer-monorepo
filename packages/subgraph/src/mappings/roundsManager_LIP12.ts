@@ -6,7 +6,6 @@ import {
   RoundsManager,
   NewRound as NewRoundEvent,
 } from '../types/RoundsManager_LIP12/RoundsManager'
-import { BondingManager } from '../types/BondingManager/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import {
@@ -23,6 +22,7 @@ import {
   makeEventId,
   EMPTY_ADDRESS,
 } from '../../utils/helpers'
+import { BondingManager } from '../types/BondingManager_LIP12/BondingManager'
 
 // Handler for NewRound events
 export function newRound(event: NewRoundEvent): void {

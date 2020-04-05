@@ -21,7 +21,7 @@ type Transcoder @entity {
   rewardCut: BigInt
   "% of fees paid to delegators by transcoder"
   feeShare: BigInt
-  "Price per segment for a stream (LPTU)"
+  "Price per segment for a stream"
   pricePerSegment: BigInt
     @deprecated(reason: "Price negotiation moved offchain")
   "Pending price per segment for next round if the transcoder is active"
@@ -66,24 +66,6 @@ type Pool @entity {
 }
 
 """
-Represents a delegator's earnings per round
-"""
-type Share @entity {
-  "Unique identifer for the share (formed using the delegator's address and round number)"
-  id: ID!
-  "The round associated with the share"
-  round: Round
-  "The pool associated with the share"
-  pool: Pool
-  "The delegator associated with the share"
-  delegator: Delegator
-  "The fee share"
-  fees: BigInt
-  "The reward share"
-  rewardTokens: BigInt
-}
-
-"""
 The Livepeer protocol is round based and each round is represented by some number of Ethereum blocks.
 """
 type Round @entity {
@@ -123,8 +105,6 @@ type Delegator @entity {
   lastClaimRound: Round
   "The amount of Livepeer Token a delegator currently has bonded"
   bondedAmount: BigInt
-  "The amount of Livepeer Token a delegator currently has bonded including unclaimed"
-  pendingStake: BigInt
   "The amount of Livepeer Token a delegator has bonded over its lifetime separate from rewards"
   principal: BigInt
   "The amount of Livepeer Token a delegator has unbonded over its lifetime"
@@ -139,8 +119,6 @@ type Delegator @entity {
   allowance: BigInt
   "The unbonding locks associated with the delegator"
   unbondingLocks: [UnbondingLock!] @derivedFrom(field: "delegator")
-  "The shares associated with the delegator"
-  shares: [Share!] @derivedFrom(field: "delegator")
 }
 
 """
@@ -231,7 +209,7 @@ type Vote @entity {
   id: ID!
   "The voter that casted the vote"
   voter: Voter!
-  "Pending stake if voter is a delegator, or total stake if voter is an orchestrator"
+  "Stake weighted vote"
   voteStake: BigInt
   "This will be non-zero if voter is an orchestrator and any of the its delegators voted"
   nonVoteStake: BigInt
