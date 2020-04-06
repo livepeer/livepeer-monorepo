@@ -240,12 +240,6 @@ contract('Subgraph Integration Tests', accounts => {
     // delegator 3 votes no
     await Poll.methods.no().send({ gas: 1000000, from: delegator3 })
 
-    await mineAndInitializeRound(roundLength)
-
-    await BondingManager.methods
-      .reward()
-      .send({ gas: 1000000, from: transcoder1 })
-
     await Token.methods.approve(bondingManagerAddress, 1000).send({
       from: delegator1,
     })
@@ -253,6 +247,12 @@ contract('Subgraph Integration Tests', accounts => {
     await BondingManager.methods
       .bond(1000, transcoder1)
       .send({ gas: 1000000, from: delegator1 })
+
+    await mineAndInitializeRound(roundLength)
+
+    await BondingManager.methods
+      .reward()
+      .send({ gas: 1000000, from: transcoder1 })
 
     await Token.methods.approve(bondingManagerAddress, 1000).send({
       from: delegator1,

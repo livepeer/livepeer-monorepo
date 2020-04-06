@@ -31,12 +31,6 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
       let protocol = Protocol.load('0') || new Protocol('0')
       let voteId = makeVoteId(delegator.id, poll.id)
       let vote = Vote.load(voteId)
-
-      // return if voter didn't vote in this specific poll
-      if (!vote) {
-        return
-      }
-
       let transcoder = Transcoder.load(event.params.transcoder.toHex())
 
       // update vote stakes
@@ -77,13 +71,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
 
 export function updatePollTallyOnBond(event: BondEvent): void {
   let voterAddress = dataSource.context().getString('voter')
-  let delegator = Delegator.load(voterAddress) as Delegator
-
-  // If voter is a delegator and shares the same delegate attached to the event
-  if (
-    delegator != null &&
-    delegator.delegate == event.params.newDelegate.toHex()
-  ) {
+  if (voterAddress == event.params.delegator.toHex()) {
     let pollAddress = dataSource.context().getString('poll')
     let poll = Poll.load(pollAddress) as Poll
 
@@ -92,11 +80,6 @@ export function updatePollTallyOnBond(event: BondEvent): void {
       let transcoder = Transcoder.load(event.params.newDelegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
-
-      // return if voter didn't vote in this specific poll
-      if (!vote) {
-        return
-      }
 
       // If moving stake, remove vote with old delegate
       if (
@@ -157,12 +140,7 @@ export function updatePollTallyOnBond(event: BondEvent): void {
 
 export function updatePollTallyOnUnbond(event: UnbondEvent): void {
   let voterAddress = dataSource.context().getString('voter')
-  let delegator = Delegator.load(voterAddress) as Delegator
-  // If voter is a delegator and shares the same delegate attached to the event
-  if (
-    delegator != null &&
-    delegator.delegate == event.params.delegate.toHex()
-  ) {
+  if (voterAddress == event.params.delegator.toHex()) {
     let pollAddress = dataSource.context().getString('poll')
     let poll = Poll.load(pollAddress) as Poll
 
@@ -171,11 +149,6 @@ export function updatePollTallyOnUnbond(event: UnbondEvent): void {
       let transcoder = Transcoder.load(event.params.delegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
-
-      // return if voter didn't vote in this specific poll
-      if (!vote) {
-        return
-      }
 
       if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
         vote.voteStake = transcoder.totalStake
@@ -212,12 +185,7 @@ export function updatePollTallyOnUnbond(event: UnbondEvent): void {
 
 export function updatePollTallyOnRebond(event: RebondEvent): void {
   let voterAddress = dataSource.context().getString('voter')
-  let delegator = Delegator.load(voterAddress) as Delegator
-  // If voter is a delegator and shares the same delegate attached to the event
-  if (
-    delegator != null &&
-    delegator.delegate == event.params.delegate.toHex()
-  ) {
+  if (voterAddress == event.params.delegator.toHex()) {
     let pollAddress = dataSource.context().getString('poll')
     let poll = Poll.load(pollAddress) as Poll
 
@@ -226,11 +194,6 @@ export function updatePollTallyOnRebond(event: RebondEvent): void {
       let transcoder = Transcoder.load(event.params.delegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
-
-      // return if voter didn't vote in this specific poll
-      if (!vote) {
-        return
-      }
 
       if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
         vote.voteStake = transcoder.totalStake
