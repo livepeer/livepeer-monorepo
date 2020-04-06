@@ -48,9 +48,6 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
           Address.fromString(voterAddress),
           BigInt.fromI32(protocol.currentRound as i32),
         )
-        let delta = pendingStake.minus(vote.voteStake as BigInt)
-
-        vote.voteStake = pendingStake
 
         let delegateVoteId = makeVoteId(
           event.params.transcoder.toHex(),
@@ -62,8 +59,14 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
         if (delegateVote.voteStake != null) {
           delegateVote.voteStake = transcoder.totalStake
         }
-        delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
+
+        // update nonVoteStake
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake
+          .minus(vote.voteStake as BigInt)
+          .plus(pendingStake)
         delegateVote.save()
+
+        vote.voteStake = pendingStake
       }
 
       vote.save()
@@ -130,21 +133,19 @@ export function updatePollTallyOnBond(event: BondEvent): void {
           poll.id,
         )
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
           delegateVote.voteStake = transcoder.totalStake
         }
 
-        // update nonVoteStake with the +/- change in voter's pendingStake
-        let delta = BigInt.fromI32(0)
-        if (pendingStake.gt(vote.voteStake as BigInt)) {
-          delta = pendingStake.minus(vote.voteStake as BigInt)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
-        } else {
-          delta = vote.voteStake.minus(pendingStake)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
-        }
+        // update delegate nonVoteStake
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake
+          .minus(vote.voteStake as BigInt)
+          .plus(pendingStake)
         delegateVote.save()
+
+        // update voteStake
         vote.voteStake = pendingStake
       }
 
@@ -188,20 +189,19 @@ export function updatePollTallyOnUnbond(event: UnbondEvent): void {
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
           delegateVote.voteStake = transcoder.totalStake
         }
 
-        let delta = BigInt.fromI32(0)
-        if (pendingStake.gt(vote.voteStake as BigInt)) {
-          delta = pendingStake.minus(vote.voteStake as BigInt)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
-        } else {
-          delta = vote.voteStake.minus(pendingStake)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
-        }
+        // update delegate nonVoteStake
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake
+          .minus(vote.voteStake as BigInt)
+          .plus(pendingStake)
         delegateVote.save()
+
+        // update voteStake
         vote.voteStake = pendingStake
       }
       vote.save()
@@ -244,20 +244,19 @@ export function updatePollTallyOnRebond(event: RebondEvent): void {
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
           delegateVote.voteStake = transcoder.totalStake
         }
 
-        let delta = BigInt.fromI32(0)
-        if (pendingStake.gt(vote.voteStake as BigInt)) {
-          delta = pendingStake.minus(vote.voteStake as BigInt)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
-        } else {
-          delta = vote.voteStake.minus(pendingStake)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
-        }
+        // update delegate nonVoteStake
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake
+          .minus(vote.voteStake as BigInt)
+          .plus(pendingStake)
         delegateVote.save()
+
+        // update voteStake
         vote.voteStake = pendingStake
       }
       vote.save()
@@ -302,20 +301,19 @@ export function updatePollTallyOnEarningsClaimed(
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
           delegateVote.voteStake = transcoder.totalStake
         }
 
-        let delta = BigInt.fromI32(0)
-        if (pendingStake.gt(vote.voteStake as BigInt)) {
-          delta = pendingStake.minus(vote.voteStake as BigInt)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(delta)
-        } else {
-          delta = vote.voteStake.minus(pendingStake)
-          delegateVote.nonVoteStake = delegateVote.nonVoteStake.minus(delta)
-        }
+        // update delegate nonVoteStake
+        delegateVote.nonVoteStake = delegateVote.nonVoteStake
+          .minus(vote.voteStake as BigInt)
+          .plus(pendingStake)
         delegateVote.save()
+
+        // update voteStake
         vote.voteStake = pendingStake
       }
       vote.save()
