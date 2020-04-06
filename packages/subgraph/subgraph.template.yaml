@@ -323,24 +323,6 @@ templates:
         - event: EarningsClaimed(indexed address,indexed address,uint256,uint256,uint256,uint256)
           handler: updatePollTallyOnEarningsClaimed
   - kind: ethereum/contract
-    name: TicketBroker
-    network: {{networkName}}
-    source:
-      abi: TicketBroker
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/dynamic.ts
-      abis:
-        - name: TicketBroker
-          file: ./abis/TicketBroker.json
-      entities:
-        - Delegator
-      eventHandlers:
-        - event: WinningTicketRedeemed(indexed address,indexed address,uint256,uint256,uint256,uint256,bytes)
-          handler: winningTicketRedeemed
-  - kind: ethereum/contract
     name: Poll
     network: {{networkName}}
     source:
