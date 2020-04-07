@@ -3,16 +3,9 @@
   "version": "1.0.0-alpha.7",
   "private": true,
   "dependencies": {
-    "@livepeer/apollo": "1.0.0-alpha.7",
-    "apollo-cache-inmemory": "1.5.1",
-    "apollo-client": "2.5.1",
-    "apollo-link": "1.2.11",
     "cross-env": "^5.2.0",
-    "graphql": "^14.0.2",
-    "graphql-tag": "2.10.1",
     "query-string": "^6.4.2",
     "react": "^16.10.1",
-    "react-apollo": "^2.0.1",
     "react-dom": "^16.10.1",
     "react-feather": "^1.0.7",
     "react-responsive-modal": "^3.0.1",
@@ -20,7 +13,8 @@
     "react-scripts": "^3.1.2",
     "recompose": "^0.30.0",
     "rmwc": "1.6.2",
-    "styled-components": "4.2.0"
+    "styled-components": "4.2.0",
+    "url-search-params-polyfill": "^8.0.0"
   },
   "scripts": {
     "dev": "cross-env PORT=3002 react-scripts start",
@@ -45,5 +39,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "resolutions": {
+    "@babel/preset-env": "^7.8.7"
+  }
 }

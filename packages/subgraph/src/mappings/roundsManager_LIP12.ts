@@ -8,7 +8,13 @@ import {
 } from '../types/RoundsManager_LIP12/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
-import { Transcoder, Pool, Round, InitializeRound } from '../types/schema'
+import {
+  Transcoder,
+  Pool,
+  Round,
+  InitializeRound,
+  Protocol,
+} from '../types/schema'
 
 import { makePoolId, getBondingManagerInstance, makeEventId } from './util'
 
@@ -32,7 +38,7 @@ export function newRound(event: NewRoundEvent): void {
     // reward() for a given round, we store its reward tokens inside this Pool
     // entry in a field called "rewardTokens". If "rewardTokens" is null for a
     // given transcoder and round then we know the transcoder failed to call reward()
-    poolId = makePoolId(currentTranscoder, roundNumber)
+    poolId = makePoolId(currentTranscoder, roundNumber.toString())
     pool = new Pool(poolId)
     pool.round = roundNumber.toString()
     pool.delegate = currentTranscoder.toHex()
@@ -54,12 +60,14 @@ export function newRound(event: NewRoundEvent): void {
   round = new Round(roundNumber.toString())
   round.initialized = true
   round.timestamp = event.block.timestamp
-  round.lastInitializedRound = roundsManager.lastInitializedRound()
   round.length = roundsManager.roundLength()
   round.startBlock = roundsManager.currentRoundStartBlock()
-
-  // Apply store updates
   round.save()
+
+  let protocol = Protocol.load('0') || new Protocol('0')
+  protocol.lastInitializedRound = roundsManager.lastInitializedRound()
+  protocol.currentRound = roundNumber.toString()
+  protocol.save()
 
   // Store transaction info
   let initializeRound = new InitializeRound(

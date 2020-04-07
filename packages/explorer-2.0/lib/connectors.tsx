@@ -2,6 +2,7 @@ import { InjectedConnector } from '@web3-react/injected-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { FortmaticConnector } from '@web3-react/fortmatic-connector'
+import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 const POLLING_INTERVAL = 12000
 const RPC_URLS: { [chainId: number]: string } = {
@@ -29,4 +30,11 @@ export const Portis = new PortisConnector({
 export const Fortmatic = new FortmaticConnector({
   apiKey: process.env.FORTMATIC_API_KEY,
   chainId: 1,
+})
+
+// mainnet only
+export const walletlink = new WalletLinkConnector({
+  url: RPC_URLS[1],
+  appName: 'Livepeer Explorer',
+  appLogoUrl: 'https://explorer.livepeer.org/img/logo-icon.svg',
 })

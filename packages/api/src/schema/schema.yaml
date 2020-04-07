@@ -8,6 +8,10 @@ tags:
     description: Wowza Stream Endpoints
   - name: objectstores
     description: Object Stores Endpoints
+  - name: user
+    description: User Endpoints
+  - name: login
+    description: User login
 
 components:
   schemas:
@@ -144,12 +148,45 @@ components:
           type: string
           description: formatted as 'accesskeyid/accesskey'
           example: AKIAIOSFODNN7EXAMPLE/bPxRfiCYEXAMPLEKEY
+          writeOnly: true
         id:
           type: string
           example: 09F8B46C-61A0-4254-9875-F71F4C605BC7
         userId:
           type: string
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
+          index: true
+
+    user:
+      type: object
+      required:
+        - email
+        - password
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: user email address
+          example: useremail@gmail.com
+          unique: true
+          index: true
+        password:
+          type: string
+          example: thisisapassword
+          minLength: 64
+          maxLength: 64
+          writeOnly: true
+        salt:
+          type: string
+          example: E1F53135E559C253
+          writeOnly: true
+        admin:
+            type: boolean
+            example: true
+        kind:
+          type: string
+          readOnly: true
+          example: user
 
 paths:
   /stream:
@@ -239,6 +276,82 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/objectstores'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /user/token:
+    tags:
+      - login
+    post:
+      description: Receives user login information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/user'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /user:
+    tags:
+      - user
+    post:
+      description: Receives user information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/user'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+    get:
+      description: Lists users
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
         default:
           description: Error
           content:

@@ -7,12 +7,19 @@ import Orchestrators from '../public/img/orchestrators.svg'
 import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
 import { useWeb3React } from '@web3-react/core'
-import { ethers } from 'ethers'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import WalletModal from '../components/WalletModal'
 import { useQuery } from '@apollo/react-hooks'
+import ReactGA from 'react-ga'
+import { isMobile } from 'react-device-detect'
+
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize(process.env.GA_TRACKING_ID)
+} else {
+  ReactGA.initialize('test', { testMode: true })
+}
 
 type DrawerItem = {
   name: any
@@ -27,6 +34,17 @@ export default ({
   title = 'Livepeer Explorer',
   headerTitle = '',
 }) => {
+  useEffect(() => {
+    ReactGA.set({
+      customBrowserType: !isMobile
+        ? 'desktop'
+        : window['web3'] || window['ethereum']
+        ? 'mobileWeb3'
+        : 'mobileRegular',
+    })
+    ReactGA.pageview(window.location.pathname + window.location.search)
+  }, [])
+
   const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
   const { account } = context

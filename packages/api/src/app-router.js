@@ -21,6 +21,8 @@ export default async function makeApp(params) {
     listen = true,
     clientId,
     trustedDomain,
+    jwtSecret,
+    jwtAudience,
     kubeNamespace,
     kubeBroadcasterService,
     kubeBroadcasterTemplate,
@@ -33,11 +35,11 @@ export default async function makeApp(params) {
   // Storage init
   let store
   if (storage === 'level') {
-    store = new LevelStore({ dbPath })
+    store = LevelStore({ dbPath })
   } else if (storage === 'postgres') {
-    store = new PostgresStore({ postgresUrl })
+    store = PostgresStore({ postgresUrl })
   } else if (storage === 'cloudflare') {
-    store = new CloudflareStore({
+    store = CloudflareStore({
       cloudflareNamespace,
       cloudflareAccount,
       cloudflareAuth,

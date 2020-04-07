@@ -5,7 +5,7 @@ import querystring from 'querystring'
 import { NotFoundError } from './errors'
 
 const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/accounts'
-const DEFAULT_LIMIT = 100
+const DEFAULT_LIMIT = 10
 const retryLimit = 3
 let namespace
 let accountId
@@ -23,10 +23,7 @@ export default class CloudflareStore {
     auth = cloudflareAuth
   }
 
-  // Nothing necessary here.
-  async close() {}
-
-  async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
+  async listKeys(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
     const params = querystring.stringify({
       limit: limit,
       prefix: prefix,
@@ -35,16 +32,24 @@ export default class CloudflareStore {
 
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/keys?${params}`
     const respData = await cloudflareFetch(reqUrl)
-
-    const values = []
+    const keys = []
     for (let i = 0; i < respData.result.length; i++) {
-      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${respData.result[i].name}`
+      keys.push(respData.result[i].name)
+    }
+    return [keys, respData.result_info.cursor]
+  }
+
+  async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
+    const [keys, newCursor] = await this.listKeys(prefix, cursor, limit)
+    const values = []
+    for (let i = 0; i < keys.length; i++) {
+      const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${keys[i]}`
       const resp = await cloudflareFetch(reqUrl)
       await sleep(200)
-      values.push(resp)
+      values.push({[keys[i]]: resp})
     }
 
-    return { data: values, cursor: respData.result_info.cursor }
+    return { data: values, cursor: newCursor }
   }
 
   async get(value) {
@@ -54,14 +59,7 @@ export default class CloudflareStore {
     return respData
   }
 
-  async create(data) {
-    const { id, kind } = data
-
-    if (!id || !kind) {
-      throw new Error("object missing 'id' and/or 'kind'")
-    }
-
-    const key = `${kind}/${id}`
+  async create(key, data) {
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
     const respData = await cloudflareFetch(reqUrl, {
       data: data,
@@ -71,13 +69,7 @@ export default class CloudflareStore {
     return respData
   }
 
-  async replace(data) {
-    const { id, kind } = data
-
-    if (!id || !kind) {
-      throw new Error("object missing 'id' and/or 'kind'")
-    }
-    const key = `${kind}/${id}`
+  async replace(key, data) {
     const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${key}`
     const resp = await cloudflareFetch(reqUrl, {
       data: data,
@@ -119,38 +111,33 @@ async function cloudflareFetch(
   const res = await fetch(reqUrl, req)
   const respData = await res.json()
 
-  console.log(
-    `${method} ${reqUrl}: ${res.status} ${JSON.stringify(
-      Object.keys(respData),
-    )}`,
-  )
+  if (res.status != 200) {
+    const errorMessage = `Cloudflare ${res.status} error: ${
+      res.statusText
+    }, error_messages: ${JSON.stringify(respData.errors)}`
+    console.log(errorMessage)
 
-  if (res.status === 200) {
+    if (res.status == 404) {
+      return null
+    } else if (res.status == 429) {
+      console.log('Sleeping for 3 seconds')
+      await sleep(3000)
+      if (retries < retryLimit) {
+        retries++
+        await cloudflareFetch(reqUrl, {
+          data: data,
+          method: method,
+          retries: retries,
+        })
+      } else {
+        throw new Error(errorMessage)
+      }
+    }
+
     return respData
   }
 
-  if (res.status === 404) {
-    return null
-  }
-
-  const errorMessage = `Cloudflare ${res.status} error: ${
-    res.statusText
-  }, error_messages: ${JSON.stringify(respData.errors)}`
-  console.log(errorMessage)
-
-  if (res.status === 429) {
-    console.log('Sleeping for 3 seconds')
-    await sleep(3000)
-    if (retries < retryLimit) {
-      return await cloudflareFetch(reqUrl, {
-        data: data,
-        method: method,
-        retries: retries + 1,
-      })
-    }
-  } else {
-    throw new Error(errorMessage)
-  }
+  return respData
 }
 
 function sleep(ms) {

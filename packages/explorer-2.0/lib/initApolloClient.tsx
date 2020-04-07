@@ -9,7 +9,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import createSchema from './createSchema'
 import { execute } from 'graphql/execution/execute'
-import LivepeerSDK from '@adamsoffer/livepeer-sdk'
+import LivepeerSDK from '@livepeer/sdk'
 import { detectNetwork } from './utils'
 
 let apolloClient = null
@@ -56,6 +56,7 @@ function createApolloClient(initialState = {}) {
       stakingWidgetModalOpen: false,
       selectedStakingAction: '',
       uniswapModalOpen: false,
+      roundStatusModalOpen: false,
       tourOpen: false,
       roi: 0.0,
       principle: 0.0,

@@ -4,9 +4,10 @@ import isoFetch from 'isomorphic-fetch'
  * Clear the entire database! Not to be used outside of tests
  */
 export async function clearDatabase(server) {
-  let output = await server.store.list()
+  let output = await server.store.list(undefined, undefined, undefined, false)
   for (const doc of output.data) {
-    await server.store.delete(`${doc.kind}/${doc.id}`)
+    const key = Object.keys(doc)
+    await server.store.deleteKey(key[0])
   }
 }
 
@@ -35,10 +36,10 @@ export class TestClient {
         authorization: `Bearer ${this.apiKey}`,
       }
     }
-    if (this.googleAuthorization) {
+    if (this.jwtAuth) {
       headers = {
         ...headers,
-        authorization: this.googleAuthorization,
+        authorization: `JWT ${this.jwtAuth}`,
       }
     }
     return isoFetch(

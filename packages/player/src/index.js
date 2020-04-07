@@ -2,7 +2,6 @@ import 'url-search-params-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
 import { createGlobalStyle } from 'styled-components'
-import createApolloClient from '@livepeer/apollo'
 import Root from './containers/Root'
 import App from './containers/App'
 // import registerServiceWorker from './registerServiceWorker'
@@ -42,16 +41,11 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     p { color: var(--text); line-height: 1.5; }
     a { color: #03a678; }
   `
-  // Bootstrap the apollo client
-  const client = await createApolloClient({
-    controllerAddress: process.env.REACT_APP_CONTROLLER_ADDRESS,
-    provider: process.env.REACT_APP_HTTP_PROVIDER,
-  })
 
   // Main UI rendering function
   const update = () =>
     render(
-      <Root client={client}>
+      <Root>
         <GlobalStyle />
         <App />
       </Root>,
