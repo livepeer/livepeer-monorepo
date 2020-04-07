@@ -2,7 +2,12 @@
 import Router from 'express/lib/router'
 import bearerToken from 'express-bearer-token'
 import { LevelStore, PostgresStore, CloudflareStore } from './store'
-import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
+import {
+  healthCheck,
+  kubernetes,
+  hardcodedNodes,
+  insecureTest,
+} from './middleware'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
@@ -31,6 +36,7 @@ export default async function makeApp(params) {
     fallbackProxy,
     orchestrators = '[]',
     broadcasters = '[]',
+    insecureTestToken,
   } = params
   // Storage init
   let store
@@ -59,6 +65,12 @@ export default async function makeApp(params) {
     req.config = params
     next()
   })
+  if (insecureTestToken) {
+    if (process.NODE_ENV === 'production') {
+      throw new Error('tried to set insecureTestToken in production!')
+    }
+    app.use(`/${insecureTestToken}`, insecureTest())
+  }
   app.use(bearerToken())
 
   // Populate Kubernetes getOrchestrators and getBroadcasters is provided

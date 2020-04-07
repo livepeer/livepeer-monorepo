@@ -117,6 +117,11 @@ export default function parseCli(argv) {
           type: 'string',
           default: '[]',
         },
+        insecureTestToken: {
+          describe:
+            '[DO NOT USE EXCEPT FOR TESTING] token that test harness can use to bypass validation and access the database',
+          type: 'string',
+        },
       })
       .help()
       .parse(argv)

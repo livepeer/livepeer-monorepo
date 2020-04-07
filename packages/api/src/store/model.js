@@ -7,6 +7,10 @@ export default class Model {
     this.ready = backend.ready
   }
 
+  async close() {
+    await this.backend.close()
+  }
+
   async get(id, cleanWriteOnly = true) {
     const responses = await this.backend.get(id)
     if (responses && cleanWriteOnly) {
@@ -44,7 +48,12 @@ export default class Model {
   }
 
   async getPropertyIds(prefix, cursor, limit, cleanWriteOnly) {
-    const [keys] = await this.backend.listKeys(prefix, cursor, limit, cleanWriteOnly)
+    const [keys] = await this.backend.listKeys(
+      prefix,
+      cursor,
+      limit,
+      cleanWriteOnly,
+    )
     if (keys.length === 0) {
       throw new NotFoundError(`Not found: ${prefix}`)
     }
@@ -81,9 +90,11 @@ export default class Model {
     for (const [fieldName, fieldArray] of Object.entries(properties)) {
       const value = doc[fieldName]
       if (fieldArray.unique || fieldArray.index) {
-        const [keys] = await this.backend.listKeys(`${kind}${fieldName}/${value}`)
+        const [keys] = await this.backend.listKeys(
+          `${kind}${fieldName}/${value}`,
+        )
         if (keys.length > 0) {
-            operations.concat(keys)
+          operations.concat(keys)
         }
       }
     }
@@ -115,8 +126,10 @@ export default class Model {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
         const value = doc[fieldName]
         if (fieldArray.unique && value) {
-          const [keys] = await this.backend.listKeys(`${kind}${fieldName}/${value}`)
-        if (keys.length > 0) {
+          const [keys] = await this.backend.listKeys(
+            `${kind}${fieldName}/${value}`,
+          )
+          if (keys.length > 0) {
             throw new ForbiddenError(
               `there is already a ${kind} with ${fieldName}=${value}`,
             )
