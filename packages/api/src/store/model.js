@@ -38,6 +38,10 @@ export default class Model {
     // return await this.backend.replace(doc)
   }
 
+  async listKeys(prefix, cursor, limit) {
+    return this.backend.listKeys(prefix, cursor, limit)
+  }
+
   async list(prefix, cursor, limit, cleanWriteOnly = true) {
     const responses = await this.backend.list(prefix, cursor, limit)
 

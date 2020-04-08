@@ -6,7 +6,7 @@ workers_dev = false
 [env.test]
 workers_dev = true
 kv-namespaces = [
-  { binding = "KV_TEST", id = "1a7a2fddbe124efc9f6a59d901dfa68a" }
+  { binding = "KV_TEST", id = "1e47fce5bffe4994a2de6101512aaa40" }
 ]
 
 [env.staging]

@@ -19,7 +19,7 @@
     "postgres:stop": "docker rm -f postgres",
     "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
-    "prepare:worker": "echo ${WORKER_SECRETS:-'{}'} > src/worker-secrets.json && parcel build --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
+    "prepare:worker": "echo ${WORKER_SECRETS:-'{}'} > src/worker-secrets.json && parcel build --no-autoinstall --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "prepare": "run-s compile-schemas && run-p \"prepare:**\"",
     "compile-schemas": "node -r esm compile-schemas.js",
     "redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
@@ -38,7 +38,7 @@
     "test": "node run-tests.js",
     "test:local": "jest src",
     "test:postgres": "jest --forceExit --runInBand --forceExit src -- --storage=postgres --postgres-url=postgresql://postgres@localhost/livepeerapi",
-    "test:build": "parcel build --no-minify --bundle-node-modules -t browser --out-dir ../dist-worker ../src/worker.js"
+    "test:build": "parcel build --no-autoinstall --no-minify --bundle-node-modules -t browser --out-dir ../dist-worker ../src/worker.js"
   },
   "dependencies": {
     "@cloudflare/json-schema-walker": "^0.1.1",

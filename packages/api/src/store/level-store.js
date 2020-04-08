@@ -56,7 +56,7 @@ export default class LevelStore {
 
     await this.ready
     for await (const { key, value } of this.db.createReadStream(filter)) {
-      yield {[key] : JSON.parse(value)}
+      yield { [key]: JSON.parse(value) }
     }
   }
 

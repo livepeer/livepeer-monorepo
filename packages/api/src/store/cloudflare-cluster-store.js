@@ -11,14 +11,20 @@ export default class CloudflareStore {
     }
   }
 
-  async listKeys(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
-    return await this.KV.list({ prefix, limit, cursor })
+  async listKeys(prefix = '', oldCursor = null, limit = DEFAULT_LIMIT) {
+    let { keys, cursor } = await this.KV.list({
+      prefix,
+      limit,
+      cursor: oldCursor,
+    })
+    keys = keys.map(obj => obj.name)
+    return [keys, cursor]
   }
 
-  async list(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
-    const [keys, newCursor] = this.listKeys(prefix, cursor, limit)
+  async list(prefix = '', oldCursor = null, limit = DEFAULT_LIMIT) {
+    const [keys, cursor] = await this.listKeys(prefix, oldCursor, limit)
     const data = await Promise.all(keys.map(key => this.get(key)))
-    return { data, cursor: newCursor }
+    return { data, cursor }
   }
 
   async get(value) {

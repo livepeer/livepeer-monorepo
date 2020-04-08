@@ -238,6 +238,10 @@ class ExpressResponse {
   set(key, value) {
     this.headers[key] = value
   }
+
+  header(key, value) {
+    return this.set(key, value)
+  }
 }
 
 /**
@@ -264,13 +268,18 @@ async function expressRequest(cfReq, router) {
       status: stat => {
         status = stat
       },
-      json: jsonObj => {
+      end: text => {
         resolve(
-          new Response(JSON.stringify(jsonObj), {
+          new Response(text, {
             status: status,
             headers: res.headers,
           }),
         )
+      },
+      json: jsonObj => {
+        const text = JSON.stringify(jsonObj)
+        res.header('content-type', 'application/json')
+        return res.end(text)
       },
     })
 
@@ -293,16 +302,15 @@ async function expressRequest(cfReq, router) {
     }, 10)
   })
 }
+
+const appRouter = require('./app-router').default
+routerPromise = appRouter(params)
+
 async function handleEvent(event) {
   const req = event.request
 
   try {
-    if (!routerPromise) {
-      const appRouter = require('./app-router').default
-      routerPromise = appRouter(params)
-    }
     const { router, store } = await routerPromise
-    console.log('initialization complete')
     return await expressRequest(req, router)
   } catch (error) {
     console.error(error)

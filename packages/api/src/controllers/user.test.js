@@ -7,6 +7,8 @@ let mockUser
 let mockAdminUser
 let mockNonAdminUser
 
+const delay = ms => new Promise(r => setTimeout(r, ms))
+
 // jest.setTimeout(70000)
 
 beforeAll(async () => {
@@ -30,7 +32,7 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-  await clearDatabase(server)
+  // await clearDatabase(server)
 })
 
 describe('controllers/user', () => {
@@ -105,7 +107,7 @@ describe('controllers/user', () => {
       expect(users.length).toEqual(11)
     })
 
-    it('should create a user without authorization and not allow repeat user creation', async () => {
+    it.only('should create a user without authorization and not allow repeat user creation', async () => {
       client.jwtAuth = ''
       let res = await client.post('/user/', { ...mockUser })
       expect(res.status).toBe(201)
@@ -115,6 +117,7 @@ describe('controllers/user', () => {
       expect(user.email).toBe(mockUser.email)
 
       const resUser = await server.store.get(`user/${user.id}`)
+
       expect(resUser.email).toEqual(user.email)
 
       // if same request is made, should return a 403

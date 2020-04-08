@@ -16,7 +16,7 @@ export default () => {
       res.json(result)
     } catch (err) {
       res.status(err.status || 500)
-      res.end(err.message)
+      res.end(err.stack)
     }
   }
 }

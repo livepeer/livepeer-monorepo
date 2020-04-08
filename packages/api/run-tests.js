@@ -9,6 +9,7 @@ const fs = require('fs-extra')
 const { spawnSync, spawn } = require('child_process')
 const path = require('path')
 const klaw = require('klaw')
+const uuid = require('uuid')
 
 const BUILD_DEFINITIONS = {
   level: {
@@ -21,6 +22,9 @@ const BUILD_DEFINITIONS = {
   cloudflare: {
     LP_STORAGE: 'cloudflare-cluster',
     LP_CLOUDFLARE_NAMESPACE: 'KV_TEST',
+    LP_INSECURE_TEST_TOKEN: uuid(),
+    LP_JWT_AUDIENCE: 'test_audience',
+    LP_JWT_SECRET: 'extremelysecret',
   },
 }
 
@@ -71,25 +75,34 @@ const run = async (name, args) => {
       cwd: testBuildDir,
       stdio: 'inherit',
     })
+    // const wrangler = path.resolve(__dirname, 'node_modules', '.bin', 'wrangler')
+    // cp = spawn(
+    //   process.argv[0],
+    //   [wrangler, 'dev', '-e', 'test', '--ip', '127.0.0.1'],
+    //   {
+    //     cwd: workerDistDir,
+    //     stdio: ['ignore', 'pipe', 'pipe'],
+    //     detached: true,
+    //   },
+    // )
+    // await new Promise((resolve, reject) => {
+    //   cp.on('error', reject)
+    //   cp.stdout.on('data', buf => {
+    //     const text = buf.toString()
+    //     console.log(text.trim())
+    //     if (text.includes('Listening on')) {
+    //       resolve()
+    //     }
+    //   })
+    //   cp.stderr.on('data', buf => {
+    //     const text = buf.toString()
+    //     console.log(text.trim())
+    //   })
+    // })
     const wrangler = path.resolve(__dirname, 'node_modules', '.bin', 'wrangler')
-    cp = spawn(
-      process.argv[0],
-      [wrangler, 'dev', '-e', 'test', '--ip', '127.0.0.1'],
-      {
-        cwd: workerDistDir,
-        stdio: ['ignore', 'pipe', 'ignore'],
-        detached: true,
-      },
-    )
-    await new Promise((resolve, reject) => {
-      cp.on('error', reject)
-      cp.stdout.on('data', buf => {
-        const text = buf.toString()
-        console.log(text.trim())
-        if (text.includes('Listening on')) {
-          resolve()
-        }
-      })
+    spawnSync(process.argv[0], [wrangler, 'publish', '-e', 'test'], {
+      cwd: workerDistDir,
+      stdio: 'inherit',
     })
   }
   const proc = spawnSync(
@@ -100,7 +113,9 @@ const run = async (name, args) => {
       '--coverage',
       '--runInBand',
       `--coverage-directory=coverage-${name}`,
-      'src',
+      '--bail',
+      '--testTimeout=60000',
+      'src/controllers/user.test.js',
     ],
     {
       stdio: 'inherit',
