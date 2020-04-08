@@ -100,3 +100,38 @@ export function makeNextHREF(req, nextCursor) {
   next.searchParams.set('cursor', nextCursor)
   return next.href
 }
+
+export function sendgridMsg(email, emailValidToken, config, host) {
+  const supportInfo = config.supportAddr.split('/')
+  if (supportInfo.length !== 2) {
+    throw new Error(
+      `sendgrid supportAddr cli parameter '${config.supportAddr}' should be in this format: 'support name/support email'`,
+      )
+    }
+
+  // TODO: when frontend verification route is built, add that url here. Will take to login screen or to your dashboard.
+  const verificationUrl = `http://${host}/api/user/verify?email=${email}&emailValidToken=${emailValidToken}`
+  const msg = {
+    personalizations: [
+      {
+        to: [{ email: email }],
+        dynamic_template_data: {
+          url: verificationUrl
+        },
+      },
+    ],
+    from: {
+      email: supportInfo[1],
+      name: supportInfo[0],
+    },
+    reply_to: {
+      email: supportInfo[1],
+      name: supportInfo[0],
+    },
+    // email template id: https://mc.sendgrid.com/dynamic-templates
+    template_id: config.sendgridTemplateId,
+  }
+
+
+  return msg
+}

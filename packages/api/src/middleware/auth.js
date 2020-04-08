@@ -36,8 +36,13 @@ function authFactory(params) {
     }
 
     user = await req.store.get(`user/${userId}`)
+
     if (!user) {
       throw new InternalServerError(`no user found for token ${authToken}`)
+    }
+
+    if (!params.unresitricted && user.emailValid != true) {
+      throw new ForbiddenError(`useremail ${user.email} has not been verified. Please check your inbox for verification email.`)
     }
 
     req.user = user

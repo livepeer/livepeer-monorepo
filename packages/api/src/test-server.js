@@ -15,6 +15,10 @@ const clientId = 'EXPECTED_AUDIENCE'
 const trustedDomain = 'livepeer.org'
 const jwtAudience = 'livepeer'
 const jwtSecret = 'secret'
+// enable to test SendGrid integration
+// const supportAddr = 'Livepeer Team/angie@livepeer.org'
+// const sendgridTemplateId = ''
+// const sendgridApiKey = ''
 
 fs.ensureDirSync(dbPath)
 

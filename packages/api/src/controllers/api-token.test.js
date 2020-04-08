@@ -151,11 +151,11 @@ describe('controllers/apitoken', () => {
         expect(err.status).toBe(404)
       }
 
-      // it should return a 500 Error when trying to use replace method
+      // it should return a 404 Error replacing token not found
       try {
         await server.store.replace(tokenRes)
       } catch (err) {
-        expect(err.status).toBe(500)
+        expect(err.status).toBe(404)
       }
     })
 

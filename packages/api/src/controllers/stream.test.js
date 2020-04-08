@@ -69,6 +69,7 @@ afterEach(async () => {
 describe('controllers/stream', () => {
   describe('basic CRUD with JWT authorization', () => {
     let client
+    let adminUser
 
     beforeEach(async () => {
       client = new TestClient({
@@ -76,7 +77,7 @@ describe('controllers/stream', () => {
       })
       // setting up admin user and token
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      let adminUser = await userRes.json()
+      adminUser = await userRes.json()
 
       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
       const adminToken = await tokenRes.json()

@@ -165,11 +165,25 @@ describe('controllers/user', () => {
       const resGet = await server.store.get(`user/${userRes.id}`)
       expect(resGet.id).toEqual(userRes.id)
 
+      // to be added back once we fully support replace method
+      // should successfully replace user
+      // const newEmail = 'mock_user_replace@gmail.com'
+      // const replaceUser = { ...userRes, email: newEmail }
+      // await server.store.replace(replaceUser)
+
+      // // should successfully replace useremail
+      // const oldUserIds = await server.store.getPropertyIds(`useremail/${mockUser.email}`)
+      // expect(oldUserIds.length).toBe(0)
+
+      // const userIds = await server.store.getPropertyIds(`useremail/${newEmail}`)
+      // expect(userIds.length).toBe(1)
+      // expect(userIds[0]).toBe(userReplaced.id)
+
+      // should delete user
       await server.store.delete(`user/${resGet.id}`)
       const deleted = await server.store.get(`user/${resGet.id}`)
       expect(deleted).toBe(null)
 
-      // TO DO: test for deletion of `user-email` object as well
       // it should return a NotFound Error when trying to delete a record that doesn't exist
       let error
       try {
@@ -179,12 +193,20 @@ describe('controllers/user', () => {
       }
       expect(error.status).toBe(404)
 
+<<<<<<< HEAD
       // it should return a NotFound Error when trying to replace a record that doesn't exist
       let replaceError
       try {
         await server.store.replace(userRes)
       } catch (err) {
         replaceError = err
+=======
+      // it should return a 404 Error when trying to replace a record not found
+      try {
+        await server.store.replace(userRes)
+      } catch (err) {
+        expect(err.status).toBe(404)
+>>>>>>> 27492946... adding sendgrid email verification
       }
       expect(replaceError.status).toBe(404)
     })
