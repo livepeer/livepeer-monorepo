@@ -19,13 +19,11 @@ beforeAll(async () => {
   mockAdminUser = {
     email: 'user_admin@gmail.com',
     password: 'x'.repeat(64),
-    admin: true,
   }
 
   mockNonAdminUser = {
     email: 'user_non_admin@gmail.com',
     password: 'y'.repeat(64),
-    admin: false,
   }
 })
 
@@ -50,6 +48,10 @@ describe('controllers/user', () => {
       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
       const adminToken = await tokenRes.json()
       client.jwtAuth = `${adminToken['token']}`
+
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true }
+      await server.store.replace(adminUser)
     })
 
     it('should not get all users without authorization', async () => {
@@ -166,18 +168,23 @@ describe('controllers/user', () => {
 
       // TO DO: test for deletion of `user-email` object as well
       // it should return a NotFound Error when trying to delete a record that doesn't exist
+      let error
       try {
         await server.store.deleteKey(`user/${userRes.id}`)
       } catch (err) {
-        expect(err.status).toBe(404)
+        error = err
       }
+      expect(error.status).toBe(404)
 
-      // it should return a 500 Error when trying to use replace method
+      // it should return a NotFound Error when trying to replace a record that doesn't exist
+      let replaceError
       try {
         await server.store.replace(userRes)
       } catch (err) {
-        expect(err.status).toBe(500)
+        replaceError = err
       }
+      expect(replaceError.status).toBe(404)
+
     })
 
     it('should not get all users with non-admin user', async () => {
@@ -212,7 +219,7 @@ describe('controllers/user', () => {
       })
       expect(res.status).toBe(404)
       let tokenRes = await res.json()
-      expect(tokenRes.errors[0]).toBe(`Not found: useremail/${mockUser.email}`)
+      expect(tokenRes.errors[0]).toBe(`Not found: user+email/${mockUser.email}`)
 
       // create user
       res = await client.post('/user', {
@@ -286,7 +293,7 @@ describe('controllers/user', () => {
       })
 
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      const adminUser = await userRes.json()
+      let adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
       const nonAdminUser = await nonAdminRes.json()
@@ -302,6 +309,10 @@ describe('controllers/user', () => {
         kind: 'apitoken',
         userId: nonAdminUser.id,
       })
+
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true }
+      await server.store.replace(adminUser)
     })
 
     it('should not get all users', async () => {

@@ -16,22 +16,35 @@ export default class Model {
   }
 
   async replace(data) {
-    // method to be added and editted when necessary
-    throw new InternalServerError('replace method not yet supported')
+    // NOTE: method does not replace objects saved from fields with an index
+    if (typeof data !== 'object' || typeof data.id !== 'string') {
+      throw new Error(`invalid values: ${JSON.stringify(data)}`)
+    }
+    const { id, kind } = data
+    if (!id || !kind) {
+      throw new Error('missing id, kind')
+    }
 
-    // if (typeof data !== 'object' || typeof data.id !== 'string') {
-    //   throw new Error(`invalid values: ${JSON.stringify(data)}`)
-    // }
-    // const { id, kind } = data
-    // if (!id || !kind) {
-    //   throw new Error('missing id, kind')
+    const key = `${kind}/${id}`
+    const record = await this.backend.get(key)
+
+    if (!record) {
+      throw new NotFoundError(`key not found: ${JSON.stringify(key)}`)
+    }
+
+    return await this.backend.replace(key, data)
+
+    // NOTE: uncomment code below when replacing objects saved from indexes becomes relevant
+    // const operations = await this.getOperations(key, data)
+    // if (!operations) {
+      // return await this.backend.replace(key, data)
     // }
 
-    // const record = await this.db.get(`${kind}/${id}`)
-    // if (!record) {
-    //   throw new NotFoundError()
-    // }
-    // return await this.backend.replace(doc)
+    // await Promise.all(
+    //   operations.map(([key, value]) => {
+    //     return this.backend.replace(key, value)
+    //   }),
+    // )
   }
 
   async list(prefix, cursor, limit, cleanWriteOnly = true) {
@@ -43,8 +56,16 @@ export default class Model {
     return responses
   }
 
-  async getPropertyIds(prefix, cursor, limit, cleanWriteOnly) {
+  async query(kind, queryObj, cursor, limit, cleanWriteOnly) {
+    const [queryKey, ...others] = Object.keys(queryObj)
+    if (others.length > 0) {
+      throw new Error("you may only query() by one key")
+    }
+    const queryValue = queryObj[queryKey];
+    const prefix = `${kind}+${queryKey}/${queryValue}`
+
     const [keys] = await this.backend.listKeys(prefix, cursor, limit, cleanWriteOnly)
+
     if (keys.length === 0) {
       throw new NotFoundError(`Not found: ${prefix}`)
     }
@@ -67,21 +88,17 @@ export default class Model {
 
   async delete(id) {
     const [properties, kind] = this.getSchema(id)
-    if (!properties || properties.length) {
-      return await this.backend.delete(id)
-    }
-
-    // adding all delete operations that need to happen
     const doc = await this.get(`${id}`)
     if (!doc) {
       throw new NotFoundError()
     }
 
+    // adding all delete operations that need to happen
     const operations = [id]
     for (const [fieldName, fieldArray] of Object.entries(properties)) {
       const value = doc[fieldName]
       if (fieldArray.unique || fieldArray.index) {
-        const [keys] = await this.backend.listKeys(`${kind}${fieldName}/${value}`)
+        const [keys] = await this.backend.listKeys(`${kind}+${fieldName}/${value}`)
         if (keys.length > 0) {
             operations.concat(keys)
         }
@@ -115,7 +132,7 @@ export default class Model {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
         const value = doc[fieldName]
         if (fieldArray.unique && value) {
-          const [keys] = await this.backend.listKeys(`${kind}${fieldName}/${value}`)
+          const [keys] = await this.backend.listKeys(`${kind}+${fieldName}/${value}`)
         if (keys.length > 0) {
             throw new ForbiddenError(
               `there is already a ${kind} with ${fieldName}=${value}`,
@@ -133,7 +150,7 @@ export default class Model {
           const cleanKind = this.getCleanKind(kind)
           operations.push(
             // ex. user-emails/eli@iame.li/abc123
-            [`${cleanKind}${fieldName}/${doc[fieldName]}/${id}`, {}],
+            [`${cleanKind}+${fieldName}/${doc[fieldName]}/${id}`, {}],
           )
         }
       }

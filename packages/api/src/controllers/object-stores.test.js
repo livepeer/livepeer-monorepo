@@ -70,6 +70,10 @@ describe('controllers/object-stores', () => {
       const adminToken = await tokenRes.json()
       client.jwtAuth = `${adminToken['token']}`
 
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true }
+      await server.store.replace(adminUser)
+
       // setting up non-admin user
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
       nonAdminUser = await nonAdminRes.json()
@@ -287,6 +291,10 @@ describe('controllers/object-stores', () => {
         kind: 'apitoken',
         userId: nonAdminUser.id,
       })
+
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true }
+      await server.store.replace(adminUser)
     })
 
     it('should not get all object stores with nonadmin token', async () => {

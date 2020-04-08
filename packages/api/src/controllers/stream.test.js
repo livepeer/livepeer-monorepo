@@ -76,10 +76,15 @@ describe('controllers/stream', () => {
       })
       // setting up admin user and token
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
+      let adminUser = await userRes.json()
 
       let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
       const adminToken = await tokenRes.json()
       client.jwtAuth = `${adminToken['token']}`
+
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true }
+      await server.store.replace(adminUser)
     })
 
     it('should not get all streams without admin authorization', async () => {
@@ -168,7 +173,7 @@ describe('controllers/stream', () => {
       try {
         await server.store.replace(document)
       } catch (err) {
-        expect(err.status).toBe(500)
+        expect(err.status).toBe(404)
       }
     })
 
@@ -220,7 +225,7 @@ describe('controllers/stream', () => {
       })
 
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      const adminUser = await userRes.json()
+      let adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
       const nonAdminUser = await nonAdminRes.json()
@@ -236,6 +241,10 @@ describe('controllers/stream', () => {
         kind: 'apitoken',
         userId: nonAdminUser.id,
       })
+
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true }
+      await server.store.replace(adminUser)
     })
 
     it('should not get all object stores', async () => {

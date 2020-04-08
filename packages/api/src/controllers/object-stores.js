@@ -17,8 +17,9 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${cursor}, limit ${limit}`)
 
-  const objStoreIds = await req.store.getPropertyIds(
-    `objectstoresuserId/${req.params.userId}`,
+  const objStoreIds = await req.store.query(
+    'objectstores',
+    {userId: req.params.userId},
     cursor,
     limit,
   )
@@ -42,9 +43,14 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
-  const objStoreIds = await req.store.getPropertyIds(
-    `objectstoresuserId/${userId}`,
-  )
+  const objStoreIds = await req.store.query('objectstores', {userId: userId})
+
+  if (!objStoreIds.includes(id)) {
+    res.status(403);
+    return res.json({
+      errors: [`user id ${userId} does not have any object stores associated with it`]
+    })
+  }
 
   if (objStoreIds.includes(id)) {
     const objStore = await req.store.get(`objectstores/${id}`)
@@ -54,10 +60,10 @@ app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
       res.json({
         errors: ['user can only request information on their own object stores'],
       })
-    } else {
-      res.status(200)
-      res.json(objStore)
     }
+
+    res.status(200)
+    res.json(objStore)
   }
 })
 
