@@ -300,7 +300,7 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/dynamic.ts
+      file: ./src/mappings/pollTallyHandlers.ts
       abis:
         - name: BondingManager
           file: ./abis/BondingManager_LIP12.json
