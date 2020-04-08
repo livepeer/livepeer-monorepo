@@ -1,7 +1,12 @@
 // import 'express-async-errors' // it monkeypatches, i guess
 import Router from 'express/lib/router'
 import bearerToken from 'express-bearer-token'
-import { LevelStore, PostgresStore, CloudflareStore } from './store'
+import {
+  LevelStore,
+  PostgresStore,
+  CloudflareStore,
+  CloudflareClusterStore,
+} from './store'
 import {
   healthCheck,
   kubernetes,
@@ -11,7 +16,6 @@ import {
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
-import { json as jsonParser } from 'body-parser'
 
 export default async function makeApp(params) {
   const {
@@ -39,6 +43,7 @@ export default async function makeApp(params) {
     insecureTestToken,
   } = params
   // Storage init
+  const bodyParser = require('body-parser')
   let store
   if (storage === 'level') {
     store = LevelStore({ dbPath })
@@ -50,6 +55,10 @@ export default async function makeApp(params) {
       cloudflareAccount,
       cloudflareAuth,
     })
+  } else if (storage === 'cloudflare-cluster') {
+    store = CloudflareClusterStore({
+      cloudflareNamespace,
+    })
   } else {
     throw new Error('Missing storage information')
   }
@@ -59,7 +68,7 @@ export default async function makeApp(params) {
 
   const app = Router()
   app.use(healthCheck)
-  app.use(jsonParser())
+  app.use(bodyParser.json())
   app.use((req, res, next) => {
     req.store = store
     req.config = params

@@ -29,7 +29,7 @@ export default function parseCli(argv) {
           default: 'level',
           demandOption: true,
           type: 'string',
-          choices: ['level', 'postgres', 'cloudflare'],
+          choices: ['level', 'postgres', 'cloudflare', 'cloudflare-cluster'],
         },
         'db-path': {
           describe: 'path to LevelDB database',
@@ -126,9 +126,4 @@ export default function parseCli(argv) {
       .help()
       .parse(argv)
   )
-}
-
-if (!module.parent) {
-  require('dotenv').config()
-  makeApp(parseCli())
 }

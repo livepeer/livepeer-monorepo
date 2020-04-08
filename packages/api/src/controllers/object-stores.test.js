@@ -11,7 +11,7 @@ let mockUser
 let mockAdminUser
 let mockNonAdminUser
 
-jest.setTimeout(70000)
+// jest.setTimeout(70000)
 
 beforeAll(async () => {
   server = await serverPromise

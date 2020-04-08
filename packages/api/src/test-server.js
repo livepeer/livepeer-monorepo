@@ -18,21 +18,7 @@ const jwtSecret = 'secret'
 
 fs.ensureDirSync(dbPath)
 
-const DEFAULT_PARAMS = ['--storage=level']
-
-const dashes = process.argv.indexOf('--')
-let argv
-if (process.env.TEST_PARAMS) {
-  argv = JSON.parse(process.env.TEST_PARAMS)
-} else if (dashes !== -1) {
-  argv = process.argv.slice(dashes + 1)
-} else {
-  argv = DEFAULT_PARAMS
-}
-
-const [binary, script] = process.argv
-const params = argParser([binary, script, ...argv])
-
+const params = argParser()
 // Secret code used for back-door DB access in test env
 const insecureTestToken = uuid()
 
@@ -49,8 +35,16 @@ let server
 
 console.log(`test run parameters: ${JSON.stringify(params)}`)
 
-export default makeApp(params).then(s => {
-  server = s
+export default Promise.resolve().then(async () => {
+  if (params.storage === 'cloudflare-cluster') {
+    server = {
+      ...params,
+      port: 8787,
+      close: () => {},
+    }
+  } else {
+    server = await makeApp(params)
+  }
   // Make an RPC call to the server to have it do this store thing
   const doStore = action => async (...args) => {
     args = args.map(x => (x === undefined ? 'UNDEFINED' : x))

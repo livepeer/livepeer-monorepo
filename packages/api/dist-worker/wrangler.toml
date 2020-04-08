@@ -3,6 +3,12 @@ name = "livepeerjs"
 type = "javascript"
 workers_dev = false
 
+[env.test]
+workers_dev = true
+kv-namespaces = [
+  { binding = "KV_TEST", id = "1a7a2fddbe124efc9f6a59d901dfa68a" }
+]
+
 [env.staging]
 domain = "livepeer-staging.live"
 zone_id = "4d3b36a8ea59b1ec5c9ccd76e033e485"

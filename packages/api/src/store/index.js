@@ -3,6 +3,7 @@ import Model from './model'
 import LevelStoreBackend from './level-store'
 import PostgresStoreBackend from './postgres-store'
 import CloudflareStoreBackend from './cloudflare-store'
+import CloudflareClusterStoreBackend from './cloudflare-cluster-store'
 
 export const LevelStore = dbPath => {
   var backend = new LevelStoreBackend(dbPath)
@@ -14,5 +15,9 @@ export const PostgresStore = dbPath => {
 }
 export const CloudflareStore = dbPath => {
   var backend = new CloudflareStoreBackend(dbPath)
+  return new Model(backend)
+}
+export const CloudflareClusterStore = opts => {
+  const backend = new CloudflareClusterStoreBackend(opts)
   return new Model(backend)
 }

@@ -5,6 +5,8 @@
 // First, some shims to polyfill expectations elsewhere...
 process.hrtime = require('browser-process-hrtime')
 self.setImmediate = (fn, ...args) => setTimeout(() => fn(...args), 0)
+self.navigator = { userAgent: '' }
+self.window = self
 
 import 'express-async-errors' // it monkeypatches, i guess
 import parseCli from './parse-cli.js'

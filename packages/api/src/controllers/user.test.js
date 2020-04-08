@@ -7,7 +7,7 @@ let mockUser
 let mockAdminUser
 let mockNonAdminUser
 
-jest.setTimeout(70000)
+// jest.setTimeout(70000)
 
 beforeAll(async () => {
   server = await serverPromise
@@ -40,7 +40,7 @@ describe('controllers/user', () => {
 
     beforeEach(async () => {
       client = new TestClient({
-        server
+        server,
       })
 
       // setting up admin user and token
@@ -240,7 +240,7 @@ describe('controllers/user', () => {
 
       // token request wrong password, should return error
       const postMockUserWrongPassword = JSON.parse(JSON.stringify(mockUser))
-      postMockUserWrongPassword.password = ('w').repeat(64)
+      postMockUserWrongPassword.password = 'w'.repeat(64)
       res = await client.post('/user/token', {
         ...postMockUserWrongPassword,
       })
