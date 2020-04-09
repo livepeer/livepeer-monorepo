@@ -19,12 +19,15 @@ const BUILD_DEFINITIONS = {
     LP_STORAGE: 'postgres',
     LP_POSTGRES_URL: 'postgresql://postgres@localhost/livepeerapi',
   },
-  cloudflare: {
+  'cloudflare-kv': {
     LP_STORAGE: 'cloudflare-cluster',
     LP_CLOUDFLARE_NAMESPACE: 'KV_TEST',
     LP_INSECURE_TEST_TOKEN: uuid(),
     LP_JWT_AUDIENCE: 'test_audience',
     LP_JWT_SECRET: 'extremelysecret',
+  },
+  'local-firestore': {
+    LP_STORAGE: 'firestore',
   },
 }
 

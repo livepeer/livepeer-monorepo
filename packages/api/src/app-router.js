@@ -6,6 +6,7 @@ import {
   PostgresStore,
   CloudflareStore,
   CloudflareClusterStore,
+  FirestoreStore,
 } from './store'
 import {
   healthCheck,
@@ -59,6 +60,8 @@ export default async function makeApp(params) {
     store = CloudflareClusterStore({
       cloudflareNamespace,
     })
+  } else if (storage === 'firestore') {
+    store = FirestoreStore({})
   } else {
     throw new Error('Missing storage information')
   }
@@ -122,13 +125,10 @@ export default async function makeApp(params) {
     console.log(err)
     if (typeof err.status === 'number') {
       res.status(err.status)
-      res.json({ errors: [err.message] })
-      return
+    } else {
+      res.status(500)
     }
-
-    // console.log("got past that")
-    // throw err
-    next(err)
+    res.json({ errors: [err.stack || err.message] })
   })
 
   return {

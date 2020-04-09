@@ -74,6 +74,7 @@
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.1",
     "mustache": "^3.0.3",
+    "node-jose": "^1.1.4",
     "node-webcrypto-ossl": "^1.0.48",
     "nodemon": "^1.19.0",
     "pg": "^7.10.0",

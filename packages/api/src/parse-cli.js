@@ -29,7 +29,13 @@ export default function parseCli(argv) {
           default: 'level',
           demandOption: true,
           type: 'string',
-          choices: ['level', 'postgres', 'cloudflare', 'cloudflare-cluster'],
+          choices: [
+            'level',
+            'postgres',
+            'cloudflare',
+            'cloudflare-cluster',
+            'firestore',
+          ],
         },
         'db-path': {
           describe: 'path to LevelDB database',
