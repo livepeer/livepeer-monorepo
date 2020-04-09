@@ -120,7 +120,6 @@
   "alias": {
     "pg-native": "./src/empty.js",
     "level": "./src/empty.js",
-    "@kubernetes/client-node": "./src/empty.js",
-    "crypto": "./src/empty.js"
+    "@kubernetes/client-node": "./src/empty.js"
   }
 }

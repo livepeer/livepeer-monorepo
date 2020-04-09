@@ -11,6 +11,8 @@ export default class FirestoreStore {
     this.config = HARD_CONFIG
     this.url = this.config.url
     this.collection = 'staging'
+    this.token = null
+    this.tokenExpires = 0
   }
 
   // Firestore's paths work like: collection/document/collection/document. So we can't store at,
@@ -26,9 +28,13 @@ export default class FirestoreStore {
   }
 
   async fetch(url, opts = {}) {
-    let token = await generateJWT(this.config)
+    if (this.tokenExpires - 60000 < Date.now()) {
+      const [token, expiry] = generateJWT(this.config)
+      this.token = token
+      this.tokenExpires = expiry
+    }
     opts.headers = opts.headers || {}
-    opts.headers.authorization = `Bearer ${token}`
+    opts.headers.authorization = `Bearer ${this.token}`
     opts.method = opts.method || 'GET'
     const res = await fetch(url, opts)
     console.log(`${res.status} ${opts.method} ${url}`)
