@@ -2,8 +2,11 @@
   "version": 2,
   "public": true,
   "builds": [
-    { "src": "www/package.json", "use": "@now/next" },
-    { "src": "admin/package.json", "use": "@now/static-build" }
+    { "src": "packages/livepeer.com/www/package.json", "use": "@now/next" },
+    {
+      "src": "packages/livepeer.com/admin/package.json",
+      "use": "@now/static-build"
+    }
   ],
   "routes": [
     { "src": "^/admin/static/(.*)", "dest": "/admin/static/$1" },

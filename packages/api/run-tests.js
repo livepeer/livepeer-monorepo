@@ -29,6 +29,12 @@ const BUILD_DEFINITIONS = {
   'local-firestore': {
     LP_STORAGE: 'firestore',
   },
+  'cloudflare-firestore': {
+    LP_STORAGE: 'firestore',
+    LP_INSECURE_TEST_TOKEN: uuid(),
+    LP_JWT_AUDIENCE: 'test_audience',
+    LP_JWT_SECRET: 'extremelysecret',
+  },
 }
 
 const runs = {}
@@ -37,7 +43,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms))
 
 const run = async (name, args) => {
   let cp
-  if (name === 'cloudflare') {
+  if (name.includes('cloudflare')) {
     // Build a new package.json file that aliases all of our test mocks
     const pkgStr = fs.readFileSync(
       path.resolve(__dirname, 'package.json'),
