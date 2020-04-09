@@ -13,11 +13,6 @@ export default class FirestoreStore {
     this.collection = 'staging'
   }
 
-  async authHeaders() {
-    let token = await generateJWT(this.config)
-    return { Authorization: `Bearer ${token}` }
-  }
-
   // Firestore's paths work like: collection/document/collection/document. So we can't store at,
   // say, /staging/user/ABC123; we have to store at /staging/docs/user/ABC123
   // or useremails/eli@livepeer.org/ABC123 becomes /staging/docs/useremail/docs/eli@livepeer.org/ABC123
@@ -33,11 +28,18 @@ export default class FirestoreStore {
     return output.join('/')
   }
 
+  async fetch(url, opts = {}) {
+    let token = await generateJWT(this.config)
+    opts.headers = opts.headers || {}
+    opts.headers.authorization = `Bearer ${token}`
+    opts.method = opts.method || 'GET'
+    const res = await fetch(url, opts)
+    console.log(`${res.status} ${opts.method} ${url}`)
+    return res
+  }
+
   async get(key) {
-    let headers = await this.authHeaders()
-    const res = await fetch(`${this.url}/${this.collection}/${key}`, {
-      headers,
-    })
+    const res = await this.fetch(`${this.url}/${this.collection}/${key}`)
     if (res.status === 404) {
       return null
     } else if (res.status !== 200) {
@@ -52,7 +54,6 @@ export default class FirestoreStore {
   }
 
   async replace(key, data) {
-    let headers = await this.authHeaders()
     const fields = {
       id: {
         stringValue: key,
@@ -62,8 +63,7 @@ export default class FirestoreStore {
       },
     }
     const url = `${this.url}/${this.collection}/${key}`
-    const res = await fetch(url, {
-      headers,
+    const res = await this.fetch(url, {
       method: 'PATCH',
       body: JSON.stringify({
         fields,
@@ -75,7 +75,6 @@ export default class FirestoreStore {
   }
 
   async create(key, data) {
-    let headers = await this.authHeaders()
     const fields = {
       id: {
         stringValue: key,
@@ -90,8 +89,7 @@ export default class FirestoreStore {
     const collectionId = split.join('/')
     const query = qs.stringify({ documentId })
     const url = `${this.url}/${collectionId}?${query}`
-    const res = await fetch(url, {
-      headers,
+    const res = await this.fetch(url, {
       method: 'POST',
       body: JSON.stringify({
         fields,
@@ -104,7 +102,6 @@ export default class FirestoreStore {
 
   // Helper for list() and listKeys()
   async doList(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
-    let headers = await this.authHeaders()
     const query = {
       orderBy: 'id',
       pageSize: limit,
@@ -113,9 +110,9 @@ export default class FirestoreStore {
       query.pageToken = cursor
     }
     const path = this.getPath(prefix)
-    const url = `${this.url}/${path}/${prefix}?${qs.stringify(query)}`
-    const res = await fetch(url, {
-      headers,
+    const url = `${this.url}/${path}?${qs.stringify(query)}`
+    console.log(`list url: ${url}`)
+    const res = await this.fetch(url, {
       method: 'GET',
     })
     if (res.status === 404) {
@@ -154,10 +151,8 @@ export default class FirestoreStore {
   }
 
   async delete(key) {
-    let headers = await this.authHeaders()
     const path = this.getPath(key)
-    const res = await fetch(`${this.url}/${path}`, {
-      headers,
+    const res = await this.fetch(`${this.url}/${path}`, {
       method: 'DELETE',
     })
     if (res.status !== 200) {

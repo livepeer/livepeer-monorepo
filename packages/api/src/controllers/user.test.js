@@ -32,7 +32,7 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-  // await clearDatabase(server)
+  await clearDatabase(server)
 })
 
 describe('controllers/user', () => {
