@@ -118,7 +118,7 @@ const run = async (name, args) => {
       `--coverage-directory=coverage-${name}`,
       '--bail',
       '--testTimeout=60000',
-      'src/controllers/user.test.js',
+      'src',
     ],
     {
       stdio: 'inherit',

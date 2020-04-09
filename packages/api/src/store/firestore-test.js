@@ -1,12 +1,13 @@
 import FirestoreStore from './firestore-store'
 ;(async () => {
   const store = new FirestoreStore()
-  const doc = {
-    kind: 'user',
-    id: '226e8c1f-08b5-4808-9403-2db4dead140c',
-    now: Date.now(),
-  }
-  await store.create(`poop/user/226e8c1f-08b5-4808-9403-2db4dead140c`, { doc })
+  // const doc = {
+  //   kind: 'user',
+  //   id: '226e8c1f-08b5-4808-9403-2db4dead140c',
+  //   now: Date.now(),
+  // }
+  const [keys] = await store.listKeys('')
+  await store.delete(keys[0])
 
   // await store.replace(`thing/eli@iame.li/AB`, doc)
 

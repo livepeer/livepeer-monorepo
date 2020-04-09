@@ -17,15 +17,12 @@ export default class FirestoreStore {
   // say, /staging/user/ABC123; we have to store at /staging/docs/user/ABC123
   // or useremails/eli@livepeer.org/ABC123 becomes /staging/docs/useremail/docs/eli@livepeer.org/ABC123
   getPath(key) {
-    const parts = [this.collection, ...key.split('/')]
-    const docId = parts.pop()
-    const lastColl = parts.pop()
-    const output = []
-    for (const part of parts) {
-      output.push(part, 'docs')
+    const parts = [...key.split('/')].filter(x => !!x)
+    if (parts[0] && parts[0].includes('+')) {
+      parts[1] = `${parts[0]}_${parts[1]}`
+      parts.shift()
     }
-    output.push(lastColl, docId)
-    return output.join('/')
+    return [this.collection, 'docs', ...parts].join('/')
   }
 
   async fetch(url, opts = {}) {
@@ -39,7 +36,8 @@ export default class FirestoreStore {
   }
 
   async get(key) {
-    const res = await this.fetch(`${this.url}/${this.collection}/${key}`)
+    const path = this.getPath(key)
+    const res = await this.fetch(`${this.url}/${path}`)
     if (res.status === 404) {
       return null
     } else if (res.status !== 200) {
@@ -62,7 +60,7 @@ export default class FirestoreStore {
         stringValue: JSON.stringify(data),
       },
     }
-    const url = `${this.url}/${this.collection}/${key}`
+    const url = `${this.url}/${this.getPath(key)}`
     const res = await this.fetch(url, {
       method: 'PATCH',
       body: JSON.stringify({
@@ -100,8 +98,25 @@ export default class FirestoreStore {
     }
   }
 
+  // Only needed for the test harness so it's a little hacky
+  async listWholeDatabase() {
+    const path = this.getPath('')
+    const url = `${this.url}/${path}:listCollectionIds`
+    const res = await this.fetch(url, { method: 'POST' })
+    const data = await res.json()
+    const output = []
+    for (const record of data.collectionIds) {
+      const [docs] = await this.doList(record)
+      output.push(...docs)
+    }
+    return [output, null]
+  }
+
   // Helper for list() and listKeys()
   async doList(prefix = '', cursor = null, limit = DEFAULT_LIMIT) {
+    if (prefix === '') {
+      return this.listWholeDatabase()
+    }
     const query = {
       orderBy: 'id',
       pageSize: limit,
@@ -111,7 +126,6 @@ export default class FirestoreStore {
     }
     const path = this.getPath(prefix)
     const url = `${this.url}/${path}?${qs.stringify(query)}`
-    console.log(`list url: ${url}`)
     const res = await this.fetch(url, {
       method: 'GET',
     })
@@ -143,7 +157,7 @@ export default class FirestoreStore {
   async listKeys(prefix, cursor, limit) {
     const [results, nextPageToken] = await this.doList(prefix, cursor, limit)
     const keyPrefix =
-      'projects/livepeerjs-231617/databases/(default)/documents/staging/'
+      'projects/livepeerjs-231617/databases/(default)/documents/staging/docs/'
     const data = results.map(doc => {
       return doc.name.slice(keyPrefix.length)
     })

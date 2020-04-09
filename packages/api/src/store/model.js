@@ -218,4 +218,8 @@ export default class Model {
 
     return responses
   }
+
+  close() {
+    this.backend.close()
+  }
 }
