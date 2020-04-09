@@ -1,4 +1,4 @@
-import jose from 'node-jose'
+import jwt from 'jsonwebtoken'
 
 /**
  * Generate a Google Cloud API JWT
@@ -13,18 +13,8 @@ export async function generateJWT(config) {
     exp: iat + 3600,
   }
 
-  const signingKey = await jose.JWK.asKey(
-    config.privateKey.replace(/\\n/g, '\n'),
-    'pem',
-  )
-
-  const sign = await jose.JWS.createSign(
-    { fields: { alg: config.algorithm, kid: config.privateKeyID } },
-    signingKey,
-  )
-    .update(JSON.stringify(payload), 'utf8')
-    .final()
-
-  const signature = sign.signatures[0]
-  return [signature.protected, sign.payload, signature.signature].join('.')
+  return jwt.sign(payload, config.privateKey, {
+    algorithm: 'RS256',
+    keyid: config.privateKeyID,
+  })
 }
