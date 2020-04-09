@@ -48,10 +48,6 @@ export class TestClient {
         headers,
       },
     )
-    if (res.status === 500) {
-      const text = await res.text()
-      throw new Error(`500 ${text}`)
-    }
     return res
   }
 

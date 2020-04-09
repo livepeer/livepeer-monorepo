@@ -1844,7 +1844,7 @@ export async function createLivepeerSDK(
       unbondLockId: string,
       tx = config.defaultTx,
     ): Promise<TxReceipt> {
-      if (!unbondLockId) {
+      if (typeof unbondLockId === 'undefined') {
         throw new Error('missing argument unbondingLockId')
       }
       let id = toBN(unbondLockId)

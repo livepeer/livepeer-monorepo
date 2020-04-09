@@ -125,10 +125,10 @@ export default async function makeApp(params) {
     console.log(err)
     if (typeof err.status === 'number') {
       res.status(err.status)
-    } else {
-      res.status(500)
+      return res.json({ errors: [err.message] })
     }
-    res.json({ errors: [err.stack || err.message] })
+
+    next(err)
   })
 
   return {

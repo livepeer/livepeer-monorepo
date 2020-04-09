@@ -3767,10 +3767,10 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@livepeer/sdk@1.0.0-alpha.8":
-  version "1.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@livepeer/sdk/-/sdk-1.0.0-alpha.8.tgz#3c4c7dabe13e1f588242a73d3d89f9bd50821ab0"
-  integrity sha512-EFiKGCz1+QXipOgwrh0SvFQI5Z3mSD/513A4uuM+9skN9LTw82ZxONitLOsg4JL16KmyrdTRlDLjEuF8ynJpPA==
+"@livepeer/sdk@1.0.0-alpha.7":
+  version "1.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/@livepeer/sdk/-/sdk-1.0.0-alpha.7.tgz#4b658ba63f41b688d53774122fb3c18163c7c1bb"
+  integrity sha512-CoiQDvqDh2NOiLwRT32VJnM5UOns8Hf/4rHpKGtUsr1mY0r8u0JFRRVHXlujyLLEhF0Ybwr+jb55M9XB27VgWw==
   dependencies:
     "@babel/runtime" "^7.4.3"
     cross-env "^5.2.0"

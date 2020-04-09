@@ -43,30 +43,28 @@ app.post('/', validatePost('user'), async (req, res) => {
 
   const [hashedPassword, salt] = await hash(req.body.password)
   const id = uuid()
-  const admin = 'admin' in req.body ? req.body.admin : false
   await req.store.create({
     kind: 'user',
     id: id,
     password: hashedPassword,
     email: req.body.email,
     salt: salt,
-    admin: admin,
+    admin: false,
   })
 
   const user = await req.store.get(`user/${id}`)
 
-  if (user) {
-    res.status(201)
-    res.json(user)
-  } else {
+  if (!user) {
     res.status(403)
-    res.json({ errors: ['user not created'] })
+    return res.json({ errors: ['user not created'] })
   }
+
+  res.status(201)
+  res.json(user)
 })
 
 app.post('/token', validatePost('user'), async (req, res) => {
-  const userIds = await req.store.getPropertyIds(`useremail/${req.body.email}`)
-  console.log(`USERUDSSSS: ${JSON.stringify(userIds)}`)
+  const userIds = await req.store.query('user', { email: req.body.email })
   const user = await req.store.get(`user/${userIds[0]}`, false)
 
   const [hashedPassword] = await hash(req.body.password, user.salt)

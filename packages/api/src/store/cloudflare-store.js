@@ -46,7 +46,7 @@ export default class CloudflareStore {
       const reqUrl = `${CLOUDFLARE_URL}/${accountId}/storage/kv/namespaces/${namespace}/values/${keys[i]}`
       const resp = await cloudflareFetch(reqUrl)
       await sleep(200)
-      values.push({[keys[i]]: resp})
+      values.push({ [keys[i]]: resp })
     }
 
     return { data: values, cursor: newCursor }
