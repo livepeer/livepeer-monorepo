@@ -7,7 +7,7 @@ import {
   Unbond as UnbondEvent,
   Rebond as RebondEvent,
   EarningsClaimed as EarningsClaimedEvent,
-} from '../types/BondingManager_LIP12/BondingManager'
+} from '../types/BondingManager_streamflow/BondingManager'
 
 import { Delegator, Protocol, Poll, Vote, Transcoder } from '../types/schema'
 

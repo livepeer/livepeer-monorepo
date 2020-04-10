@@ -4,9 +4,9 @@ const path = require('path')
 const RPC = require('../../utils/rpc')
 const execSync = require('child_process').execSync
 
-const RoundsManagerABI = require('../../abis/RoundsManager_LIP12.json')
+const RoundsManagerABI = require('../../abis/RoundsManager_streamflow.json')
 const ControllerABI = require('../../abis/Controller.json')
-const BondingManagerABI = require('../../abis/BondingManager_LIP12.json')
+const BondingManagerABI = require('../../abis/BondingManager_streamflow.json')
 const LivepeerTokenABI = require('../../abis/LivepeerToken.json')
 const PollCreatorABI = require('../../abis/PollCreator.json')
 const PollABI = require('../../abis/Poll.json')
@@ -403,7 +403,7 @@ contract('Subgraph Integration Tests', accounts => {
       .send({ gas: 1000000, from: transcoder1 })
 
     const currentRound = await RoundsManager.methods.currentRound().call()
-    
+
     await BondingManager.methods
       .claimEarnings(currentRound)
       .send({ gas: 1000000, from: delegator1 })
