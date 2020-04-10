@@ -151,7 +151,7 @@ const run = async (name, args) => {
 let builds = process.argv.slice(2)
 
 if (builds.length === 0) {
-  builds = ['level', 'postgres', 'cloudflare']
+  builds = ['level', 'postgres']
 }
 
 // run('level', ['--storage=level'])
