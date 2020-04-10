@@ -5,7 +5,7 @@ import { Address, dataSource } from '@graphprotocol/graph-ts'
 import {
   RoundsManager,
   NewRound as NewRoundEvent,
-} from '../types/RoundsManager_LIP12/RoundsManager'
+} from '../types/RoundsManager_streamflow/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
 import {
@@ -22,7 +22,7 @@ import {
   makeEventId,
   EMPTY_ADDRESS,
 } from '../../utils/helpers'
-import { BondingManager } from '../types/BondingManager_LIP12/BondingManager'
+import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
 
 // Handler for NewRound events
 export function newRound(event: NewRoundEvent): void {

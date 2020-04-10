@@ -9,13 +9,13 @@ mainnet:
     bondingManager_LIP11:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
       startBlock: 5533958
-    bondingManager_LIP12:
+    bondingManager_streamflow:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
       startBlock: 5533958
     roundsManager:
       address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
       startBlock: 5533997
-    roundsManager_LIP12:
+    roundsManager_streamflow:
       address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
       startBlock: 5533997
     livepeerToken:
@@ -42,13 +42,13 @@ rinkeby:
     bondingManager_LIP11:
       address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
       startBlock: 5325862
-    bondingManager_LIP12:
+    bondingManager_streamflow:
       address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
       startBlock: 5325862
     roundsManager:
       address: '572d1591bD41f50130FD0212058eAe34F1B17290'
       startBlock: 5325866
-    roundsManager_LIP12:
+    roundsManager_streamflow:
       address: '572d1591bD41f50130FD0212058eAe34F1B17290'
       startBlock: 5325866
     livepeerToken:
@@ -75,13 +75,13 @@ development:
     bondingManager_LIP11:
       address: 'A94B7f0465E98609391C623d0560C5720a3f2D33'
       startBlock: 0
-    bondingManager_LIP12:
+    bondingManager_streamflow:
       address: 'A94B7f0465E98609391C623d0560C5720a3f2D33'
       startBlock: 0
     roundsManager:
       address: '5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
       startBlock: 0
-    roundsManager_LIP12:
+    roundsManager_streamflow:
       address: '5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
       startBlock: 0
     livepeerToken:

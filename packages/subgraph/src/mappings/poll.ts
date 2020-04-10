@@ -18,7 +18,7 @@ import {
 } from '../../utils/helpers'
 import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
 import { PollTallyTemplate } from '../types/templates'
-import { BondingManager } from '../types/BondingManager_LIP12/BondingManager'
+import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
 
 export function yes(event: YesEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')

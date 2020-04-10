@@ -95,17 +95,17 @@ dataSources:
         - event: WithdrawStake(indexed address,uint256,uint256,uint256)
           handler: withdrawStake
   - kind: ethereum/contract
-    name: BondingManager_LIP12
+    name: BondingManager_streamflow
     network: {{networkName}}
     source:
-      startBlock: {{contracts.bondingManager_LIP12.startBlock}}
-      address: {{contracts.bondingManager_LIP12.address}}
+      startBlock: {{contracts.bondingManager_streamflow.startBlock}}
+      address: {{contracts.bondingManager_streamflow.address}}
       abi: BondingManager
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/bondingManager_LIP12.ts
+      file: ./src/mappings/bondingManager_streamflow.ts
       entities:
         - Transcoder
         - Delegator
@@ -115,7 +115,7 @@ dataSources:
         - EarningsClaimed
       abis:
         - name: BondingManager
-          file: ./abis/BondingManager_LIP12.json
+          file: ./abis/BondingManager_streamflow.json
       eventHandlers:
         - event: TranscoderUpdate(indexed address,uint256,uint256)
           handler: transcoderUpdated
@@ -155,17 +155,17 @@ dataSources:
         - event: ParameterUpdate(string)
           handler: parameterUpdate
   - kind: ethereum/contract
-    name: RoundsManager_LIP12
+    name: RoundsManager_streamflow
     network: {{networkName}}
     source:
-      startBlock: {{contracts.roundsManager_LIP12.startBlock}}
-      address: {{contracts.roundsManager_LIP12.address}}
+      startBlock: {{contracts.roundsManager_streamflow.startBlock}}
+      address: {{contracts.roundsManager_streamflow.address}}
       abi: RoundsManager
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/roundsManager_LIP12.ts
+      file: ./src/mappings/roundsManager_streamflow.ts
       entities:
         - Transcoder
         - Pool
@@ -173,9 +173,9 @@ dataSources:
         - InitializeRound
       abis:
         - name: RoundsManager
-          file: ./abis/RoundsManager_LIP12.json
+          file: ./abis/RoundsManager_streamflow.json
         - name: BondingManager
-          file: ./abis/BondingManager_LIP12.json
+          file: ./abis/BondingManager_streamflow.json
       eventHandlers:
         - event: NewRound(indexed uint256,bytes32)
           handler: newRound
@@ -303,7 +303,7 @@ templates:
       file: ./src/mappings/pollTallyHandlers.ts
       abis:
         - name: BondingManager
-          file: ./abis/BondingManager_LIP12.json
+          file: ./abis/BondingManager_streamflow.json
       entities:
         - Delegator
         - Protocol
@@ -336,7 +336,7 @@ templates:
         - name: Poll
           file: ./abis/Poll.json
         - name: BondingManager
-          file: ./abis/BondingManager_LIP12.json
+          file: ./abis/BondingManager_streamflow.json
       entities:
         - Poll
       eventHandlers:
