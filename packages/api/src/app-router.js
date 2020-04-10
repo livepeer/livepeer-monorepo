@@ -1,11 +1,19 @@
+// import 'express-async-errors' // it monkeypatches, i guess
 import Router from 'express/lib/router'
-import 'express-async-errors' // it monkeypatches, i guess
-import morgan from 'morgan'
-import { json as jsonParser } from 'body-parser'
 import bearerToken from 'express-bearer-token'
-import { LevelStore, PostgresStore, CloudflareStore } from './store'
-import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
-import logger from './logger'
+import {
+  LevelStore,
+  PostgresStore,
+  CloudflareStore,
+  CloudflareClusterStore,
+  FirestoreStore,
+} from './store'
+import {
+  healthCheck,
+  kubernetes,
+  hardcodedNodes,
+  insecureTest,
+} from './middleware'
 import * as controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
@@ -33,8 +41,10 @@ export default async function makeApp(params) {
     fallbackProxy,
     orchestrators = '[]',
     broadcasters = '[]',
+    insecureTestToken,
   } = params
   // Storage init
+  const bodyParser = require('body-parser')
   let store
   if (storage === 'level') {
     store = LevelStore({ dbPath })
@@ -46,6 +56,12 @@ export default async function makeApp(params) {
       cloudflareAccount,
       cloudflareAuth,
     })
+  } else if (storage === 'cloudflare-cluster') {
+    store = CloudflareClusterStore({
+      cloudflareNamespace,
+    })
+  } else if (storage === 'firestore') {
+    store = FirestoreStore({})
   } else {
     throw new Error('Missing storage information')
   }
@@ -55,12 +71,18 @@ export default async function makeApp(params) {
 
   const app = Router()
   app.use(healthCheck)
-  app.use(jsonParser())
+  app.use(bodyParser.json())
   app.use((req, res, next) => {
     req.store = store
     req.config = params
     next()
   })
+  if (insecureTestToken) {
+    if (process.NODE_ENV === 'production') {
+      throw new Error('tried to set insecureTestToken in production!')
+    }
+    app.use(`/${insecureTestToken}`, insecureTest())
+  }
   app.use(bearerToken())
 
   // Populate Kubernetes getOrchestrators and getBroadcasters is provided
@@ -98,10 +120,12 @@ export default async function makeApp(params) {
   }
 
   // If we throw any errors with numerical statuses, use them.
-  app.use((err, req, res, next) => {
+  app.use(async (err, req, res, next) => {
+    console.log('end:')
+    console.log(err)
     if (typeof err.status === 'number') {
       res.status(err.status)
-      res.json({ errors: [err.message] })
+      return res.json({ errors: [err.message] })
     }
 
     next(err)

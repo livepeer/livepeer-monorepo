@@ -2,37 +2,22 @@
  * Entrypoint for our CloudFlare worker.
  */
 
+// First, some shims to polyfill expectations elsewhere...
 process.hrtime = require('browser-process-hrtime')
+self.setImmediate = (fn, ...args) => setTimeout(() => fn(...args), 0)
+self.navigator = { userAgent: '' }
+self.window = self
 
-self.localStorage = {
-  debug: 'express:*',
-}
-
+import 'express-async-errors' // it monkeypatches, i guess
+import parseCli from './parse-cli.js'
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
-import 'express-async-errors'
 import composeM3U8 from './controllers/compose-m3u8'
-// import appRouter from './app-router'
 import workerSecrets from './worker-secrets.json'
-import camelcase from 'camelcase'
 
-/**
- * maps the path of incoming request to the request pathKey to look up
- * in bucket and in cache
- * e.g.  for a path '/' returns '/index.html' which serves
- * the content of bucket/index.html
- * @param {Request} request incoming request
- */
-
-self.setImmediate = fn => setTimeout(fn, 0)
-
-const options = {}
-
-for (let [key, value] of Object.entries(workerSecrets)) {
-  key = camelcase(key.slice(3))
-  options[key] = value
-}
-
-// const routerPromise = appRouter(options)
+// Populate env with precompiled secrets for yargs
+process.env = workerSecrets
+const params = parseCli()
+let routerPromise
 
 // staging, prod, and dev sets of secrets
 // env variables in a JSON blob, turn into file, import file as we're building worker
@@ -189,61 +174,148 @@ async function serveStaticAsset(event) {
   }
 }
 
+class ExpressRequest {
+  constructor(args) {
+    this.handlers = {}
+    for (const [key, value] of Object.entries(args)) {
+      this[key] = value
+    }
+  }
+
+  on(name, fn) {
+    if (!this.handlers[name]) {
+      this.handlers[name] = []
+    }
+    this.handlers[name].push(fn)
+  }
+
+  emit(name, ...args) {
+    if (!this.handlers[name]) {
+      return
+    }
+    for (const fn of this.handlers[name]) {
+      fn(...args)
+    }
+  }
+
+  removeListener(name, fn) {
+    this.handlers[name] = this.handlers[name].filter(x => x !== fn)
+  }
+
+  listeners(name) {
+    return this.handlers[name]
+  }
+
+  resume() {}
+}
+
+class ExpressResponse {
+  constructor(args) {
+    this.headers = {}
+    for (const [key, value] of Object.entries(args)) {
+      this[key] = value
+    }
+  }
+
+  links(links) {
+    var link = this.get('Link') || ''
+    if (link) link += ', '
+    return this.set(
+      'Link',
+      link +
+        Object.keys(links)
+          .map(function(rel) {
+            return '<' + links[rel] + '>; rel="' + rel + '"'
+          })
+          .join(', '),
+    )
+  }
+
+  get(key) {
+    return this.headers[key]
+  }
+
+  set(key, value) {
+    this.headers[key] = value
+  }
+
+  header(key, value) {
+    return this.set(key, value)
+  }
+}
+
 /**
  * Fetch and log a request
  * @param {Request} request
  */
 
-function expressRequest(req, router) {
+async function expressRequest(cfReq, router) {
+  const buf = Buffer.from(await cfReq.arrayBuffer())
   return new Promise((resolve, reject) => {
     let status = 200
-    const res = {
+    const { pathname, searchParams } = new URL(cfReq.url)
+    const req = new ExpressRequest({
+      url: pathname,
+      query: headersAsObject(searchParams),
+      path: pathname,
+      params: pathname.split('/').filter(x => x),
+      protocol: 'http',
+      method: cfReq.method,
+      headers: headersAsObject(cfReq.headers),
+      get: header => cfReq.headers[header],
+    })
+    const res = new ExpressResponse({
       status: stat => {
         status = stat
       },
-      json: jsonObj => {
+      end: text => {
         resolve(
-          new Response(JSON.stringify(jsonObj), {
+          new Response(text, {
             status: status,
-            headers: {},
+            headers: res.headers,
           }),
         )
       },
-    }
-    router(req, res, error => {
-      if (!error) {
-        res.json('404!!!')
+      json: jsonObj => {
+        const text = JSON.stringify(jsonObj)
+        res.header('content-type', 'application/json')
+        return res.end(text)
+      },
+    })
+
+    router(req, res, err => {
+      if (!err) {
+        res.status(404)
+        res.json({ errors: ['not found'] })
       } else {
-        reject(error)
+        res.status(500)
+        res.json({ errors: [err.message || err] })
       }
     })
+
+    setTimeout(() => {
+      req.emit('data', buf)
+      req.emit('end')
+      setImmediate(() => {
+        req.emit('close')
+      })
+    }, 10)
   })
 }
-async function handleEvent(event) {
-  const req = event.request;
-  // const path = new URL(event.request.url).pathname
-  // const fullUrl = new URL(event.request.url).href
-  // const req = {
-  //   url: path,
-  //   query: {},
-  //   path: path,
-  //   params: path.split('/').filter(x => x),
-  //   protocol: 'http',
-  //   method: event.request.method,
-  //   headers: event.request.headers,
-  //   get: header => event.request.headers[header],
-  // }
-  // const func = function nextFunc(error) {
-  //   console.log(`Next function error: ${error.stack}`)
-  // }
 
-  // try {
-  //   const { router, store } = await routerPromise
-  //   return await expressRequest(req, router)
-  // } catch (error) {
-  //   console.log(`error: ${error.stack}`)
-  //   return new Response('error')
-  // }
+const appRouter = require('./app-router').default
+routerPromise = appRouter(params)
+
+async function handleEvent(event) {
+  const req = event.request
+
+  try {
+    const { router, store } = await routerPromise
+    return await expressRequest(req, router)
+  } catch (error) {
+    console.error(error)
+    return new Response(error.stack, { status: 500 })
+  }
 
   const url = new URL(req.url)
   if (url.hostname.startsWith('docs.')) {
@@ -300,3 +372,5 @@ async function handleEvent(event) {
   const newRequest = new Request(newUrl.toString(), new Request(req))
   return fetch(newRequest)
 }
+
+console.log('Worker started.')

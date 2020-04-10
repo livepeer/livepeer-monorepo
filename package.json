@@ -3,7 +3,9 @@
   "name": "livepeerjs",
   "version": "1.0.0-alpha.3",
   "workspaces": [
-    "packages/**"
+    "packages/*",
+    "packages/livepeer.com/admin",
+    "packages/livepeer.com/www"
   ],
   "repository": {
     "type": "git",

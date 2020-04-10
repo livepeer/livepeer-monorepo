@@ -37,7 +37,7 @@ export default class Model {
     // NOTE: uncomment code below when replacing objects saved from indexes becomes relevant
     // const operations = await this.getOperations(key, data)
     // if (!operations) {
-      // return await this.backend.replace(key, data)
+    // return await this.backend.replace(key, data)
     // }
 
     // await Promise.all(
@@ -56,15 +56,24 @@ export default class Model {
     return responses
   }
 
+  async listKeys(prefix, cursor, limit) {
+    return this.backend.listKeys(prefix, cursor, limit)
+  }
+
   async query(kind, queryObj, cursor, limit, cleanWriteOnly) {
     const [queryKey, ...others] = Object.keys(queryObj)
     if (others.length > 0) {
-      throw new Error("you may only query() by one key")
+      throw new Error('you may only query() by one key')
     }
-    const queryValue = queryObj[queryKey];
+    const queryValue = queryObj[queryKey]
     const prefix = `${kind}+${queryKey}/${queryValue}`
 
-    const [keys] = await this.backend.listKeys(prefix, cursor, limit, cleanWriteOnly)
+    const [keys] = await this.backend.listKeys(
+      prefix,
+      cursor,
+      limit,
+      cleanWriteOnly,
+    )
 
     if (keys.length === 0) {
       throw new NotFoundError(`Not found: ${prefix}`)
@@ -98,9 +107,11 @@ export default class Model {
     for (const [fieldName, fieldArray] of Object.entries(properties)) {
       const value = doc[fieldName]
       if (fieldArray.unique || fieldArray.index) {
-        const [keys] = await this.backend.listKeys(`${kind}+${fieldName}/${value}`)
+        const [keys] = await this.backend.listKeys(
+          `${kind}+${fieldName}/${value}`,
+        )
         if (keys.length > 0) {
-            operations.concat(keys)
+          operations.concat(keys)
         }
       }
     }
@@ -132,8 +143,10 @@ export default class Model {
       for (const [fieldName, fieldArray] of Object.entries(properties)) {
         const value = doc[fieldName]
         if (fieldArray.unique && value) {
-          const [keys] = await this.backend.listKeys(`${kind}+${fieldName}/${value}`)
-        if (keys.length > 0) {
+          const [keys] = await this.backend.listKeys(
+            `${kind}+${fieldName}/${value}`,
+          )
+          if (keys.length > 0) {
             throw new ForbiddenError(
               `there is already a ${kind} with ${fieldName}=${value}`,
             )
@@ -204,5 +217,9 @@ export default class Model {
     }
 
     return responses
+  }
+
+  close() {
+    this.backend.close()
   }
 }

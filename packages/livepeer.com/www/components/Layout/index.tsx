@@ -1,7 +1,7 @@
 import { DefaultSeo } from "next-seo";
 import Navigation from "../Navigation";
 import Footer from "../Footer";
-import { Box } from "@theme-ui/components";
+import { Flex, Box } from "@theme-ui/components";
 import { useEffect } from "react";
 import ReactGA from "react-ga";
 import "lazysizes";
@@ -9,7 +9,7 @@ import "lazysizes/plugins/attrchange/ls.attrchange";
 
 interface Props {
   title?: string;
-  children: JSX.Element[] | JSX.Element;
+  children?: JSX.Element[] | JSX.Element;
   description?: string;
   image?: any;
   url?: string;
@@ -43,9 +43,21 @@ export default ({ title, description, children, image, url }: Props) => {
     }
   };
   return (
-    <Box>
+    <Flex
+      sx={{
+        minHeight: "100vh",
+        flexDirection: "column",
+        justifyContent: "space-between"
+      }}
+    >
       <DefaultSeo {...seo} />
-      <Box>
+      <Flex
+        sx={{
+          flexGrow: 1,
+          flexDirection: "column",
+          justifyContent: "flex-start"
+        }}
+      >
         <Box
           sx={{
             bg: "background",
@@ -58,8 +70,8 @@ export default ({ title, description, children, image, url }: Props) => {
           <Navigation />
         </Box>
         {children}
-      </Box>
+      </Flex>
       <Footer />
-    </Box>
+    </Flex>
   );
 };

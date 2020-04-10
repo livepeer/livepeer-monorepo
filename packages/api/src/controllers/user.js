@@ -1,6 +1,6 @@
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
-import { Router } from 'express'
+import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import jwt from 'jsonwebtoken'
@@ -64,7 +64,7 @@ app.post('/', validatePost('user'), async (req, res) => {
 })
 
 app.post('/token', validatePost('user'), async (req, res) => {
-  const userIds = await req.store.query('user', {email: req.body.email})
+  const userIds = await req.store.query('user', { email: req.body.email })
   const user = await req.store.get(`user/${userIds[0]}`, false)
 
   const [hashedPassword] = await hash(req.body.password, user.salt)

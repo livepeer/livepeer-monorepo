@@ -3,7 +3,7 @@ import { parse as parseQS } from 'querystring'
 import { parse as parseUrl } from 'url'
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
-import { Router } from 'express'
+import Router from 'express/lib/router'
 import { makeNextHREF } from './helpers'
 import logger from '../logger'
 import uuid from 'uuid/v4'
@@ -19,7 +19,7 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 
   const objStoreIds = await req.store.query(
     'objectstores',
-    {userId: req.params.userId},
+    { userId: req.params.userId },
     cursor,
     limit,
   )
@@ -43,12 +43,14 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
-  const objStoreIds = await req.store.query('objectstores', {userId: userId})
+  const objStoreIds = await req.store.query('objectstores', { userId: userId })
 
   if (!objStoreIds.includes(id)) {
-    res.status(403);
+    res.status(403)
     return res.json({
-      errors: [`user id ${userId} does not have any object stores associated with it`]
+      errors: [
+        `user id ${userId} does not have any object stores associated with it`,
+      ],
     })
   }
 
@@ -58,7 +60,9 @@ app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
     if (req.user.admin !== true && req.user.id !== objStore.userId) {
       res.status(403)
       res.json({
-        errors: ['user can only request information on their own object stores'],
+        errors: [
+          'user can only request information on their own object stores',
+        ],
       })
     }
 
@@ -90,7 +94,7 @@ app.post(
       res.json(store)
     } else {
       res.status(403)
-      res.json({errors: ['store not created']})
+      res.json({ errors: ['store not created'] })
     }
   },
 )

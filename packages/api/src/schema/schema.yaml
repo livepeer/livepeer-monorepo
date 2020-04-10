@@ -18,8 +18,6 @@ components:
     stream:
       type: object
       required:
-        - id
-        - kind
         - name
       additionalProperties: false
       properties:

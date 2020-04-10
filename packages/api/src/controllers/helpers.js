@@ -1,7 +1,13 @@
-import Crypto from 'node-webcrypto-ossl'
+import crypto from 'isomorphic-webcrypto'
 import util from 'util'
 
-const crypto = new Crypto()
+let Encoder
+if (typeof TextEncoder === 'undefined') {
+  Encoder = util.TextEncoder
+} else {
+  Encoder = TextEncoder
+}
+
 const ITERATIONS = 10000
 
 export async function hash(password, salt) {
@@ -11,7 +17,8 @@ export async function hash(password, salt) {
   } else {
     saltBuffer = crypto.getRandomValues(new Uint8Array(8))
   }
-  var encoder = new util.TextEncoder('utf-8')
+
+  var encoder = new Encoder('utf-8')
   var passphraseKey = encoder.encode(password)
 
   // You should firstly import your passphrase Uint8array into a CryptoKey

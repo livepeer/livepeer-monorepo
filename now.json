@@ -2,12 +2,21 @@
   "version": 2,
   "public": true,
   "builds": [
-    { "src": "www/package.json", "use": "@now/next" },
-    { "src": "admin/package.json", "use": "@now/static-build" }
+    { "src": "packages/livepeer.com/www/package.json", "use": "@now/next" },
+    {
+      "src": "packages/livepeer.com/admin/package.json",
+      "use": "@now/static-build"
+    }
   ],
   "routes": [
-    { "src": "^/admin/static/(.*)", "dest": "/admin/static/$1" },
-    { "src": "^/admin/(.*)", "dest": "/admin/index.html" },
+    {
+      "src": "^/admin/static/(.*)",
+      "dest": "/packages/livepeer.com/admin/static/$1"
+    },
+    {
+      "src": "^/admin/(.*)",
+      "dest": "/packages/livepeer.com/admin/index.html"
+    },
     {
       "src": "/tv",
       "status": 301,
@@ -15,7 +24,7 @@
         "Location": "https://media.livepeer.org/play?url=https%3A%2F%2Fingest-crypto-rinkeby-distro.livepeer.org%2Fstream%2Fcurrent.m3u8"
       }
     },
-    { "src": "^/(.*)", "dest": "/www/$1" }
+    { "src": "^/(.*)", "dest": "/packages/livepeer.com/www/$1" }
   ],
   "build": {
     "env": {

@@ -11,7 +11,7 @@ import path from 'path'
 
 const app = Router()
 
-app.get('/', authMiddleware({ admin : true}), async (req, res) => {
+app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)

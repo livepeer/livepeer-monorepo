@@ -3,7 +3,7 @@
   "name": "@livepeer/www",
   "version": "1.0.0-alpha.7",
   "scripts": {
-    "dev": "next",
+    "dev": "next --port=3008",
     "build": "next build",
     "start": "next start"
   },

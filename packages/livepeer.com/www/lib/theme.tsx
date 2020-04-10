@@ -68,7 +68,8 @@ export const theme = {
     },
     text: {
       variant: "buttons.default",
-      border: 0
+      border: 0,
+      fontWeight: 300
     },
     large: {
       variant: "buttons.default",
@@ -90,7 +91,8 @@ export const theme = {
       fontFamily: "body",
       lineHeight: "body",
       fontWeight: "body",
-      letterSpacing: "body"
+      letterSpacing: "body",
+      height: "100%"
     },
     h1: {
       color: "text",
