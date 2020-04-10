@@ -3,7 +3,7 @@ import {
   TranscoderActivated as TranscoderActivatedEvent,
   TranscoderDeactivated as TranscoderDeactivatedEvent,
   EarningsClaimed as EarningsClaimedEvent,
-} from '../types/BondingManager_LIP12/BondingManager'
+} from '../types/BondingManager_streamflow/BondingManager'
 
 import {
   Transcoder,
