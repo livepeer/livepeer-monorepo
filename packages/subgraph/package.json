@@ -15,15 +15,18 @@
     "prepare:mainnet": "NETWORK_NAME=mainnet node ./templatify.js",
     "prepare:rinkeby": "NETWORK_NAME=rinkeby node ./templatify.js",
     "prepare:development": "NETWORK_NAME=development node ./templatify.js",
-    "test": "truffle test --network development"
+    "test": "truffle test --network development",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "https://github.com/graphprotocol/graph-cli#master",
-    "@graphprotocol/graph-ts": "https://github.com/graphprotocol/graph-ts#master",
+    "@graphprotocol/graph-cli": "^0.18.0",
+    "@graphprotocol/graph-ts": "^0.18.0",
     "bignumber.js": "^9.0.0",
     "fs-extra": "^8.1.0",
     "handlebars": "^4.5.2",
     "js-yaml": "^3.13.1",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "typy": "^3.3.0"
   },
   "workspaces": {
