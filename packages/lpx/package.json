@@ -9,7 +9,7 @@
   "module": "src/index.js",
   "scripts": {
     "prebuild": "rimraf bin",
-    "build": "babel src --out-dir bin",
+    "prepare": "babel src --out-dir bin",
     "cmd": "f() { npm -s run build && node ./bin/index $@; };f",
     "copy-docs": "echo 'No copy-docs script specified'",
     "prepack": "npm -s run build",
