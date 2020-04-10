@@ -12,6 +12,8 @@ import os from 'os'
 const dbPath = path.resolve(os.tmpdir(), 'livepeer', uuid())
 const clientId = 'EXPECTED_AUDIENCE'
 const trustedDomain = 'livepeer.org'
+const jwtAudience = 'livepeer'
+const jwtSecret = 'secret'
 
 fs.ensureDirSync(dbPath)
 
@@ -35,6 +37,8 @@ delete params.port
 params.dbPath = dbPath
 params.clientId = clientId
 params.trustedDomain = trustedDomain
+params.jwtAudience = jwtAudience
+params.jwtSecret = jwtSecret
 let server
 
 console.log(`test run parameters: ${JSON.stringify(params)}`)

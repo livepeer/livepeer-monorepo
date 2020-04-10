@@ -55,9 +55,19 @@ export default class LevelStore {
     }
 
     await this.ready
-    for await (const { value } of this.db.createReadStream(filter)) {
-      yield JSON.parse(value)
+    for await (const { key, value } of this.db.createReadStream(filter)) {
+      yield {[key] : JSON.parse(value)}
     }
+  }
+
+  async listKeys(prefix = '', cursor, limit = DEFAULT_LIMIT) {
+    const listRes = await this.list(prefix, cursor, limit)
+    const keys = []
+    for (let i = 0; i < listRes.data.length; i++) {
+      keys.push(Object.keys(listRes.data[i])[0])
+    }
+
+    return [keys, listRes.cursor]
   }
 
   async list(prefix = '', cursor, limit = DEFAULT_LIMIT) {
@@ -65,11 +75,9 @@ export default class LevelStore {
     for await (const val of this.listStream(prefix, cursor, limit)) {
       ret.push(val)
     }
-
     if (ret.length < 1) {
       return { data: ret, cursor: null }
     }
-    // return ret
     return { data: ret, cursor: ret[ret.length - 1].id }
   }
 
@@ -87,46 +95,17 @@ export default class LevelStore {
     return JSON.parse(res)
   }
 
-  async create(data) {
-    if (typeof data !== 'object' || typeof data.id !== 'string') {
-      throw new Error(`invalid values: ${JSON.stringify(data)}`)
-    }
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error(`Missing required values: id, kind`)
-    }
+  async create(key, data) {
     await this.ready
-    const item = await this.get(`${kind}/${id}`)
-    if (item) {
-      throw new Error(`${id} already exists`)
-    }
-    await this.db.put(`${kind}/${id}`, JSON.stringify(data))
+    await this.db.put(key, JSON.stringify(data))
   }
 
-  async replace(data) {
-    if (typeof data !== 'object' || typeof data.id !== 'string') {
-      throw new Error(`invalid values: ${JSON.stringify(data)}`)
-    }
-    const { id, kind } = data
-    if (!id || !kind) {
-      throw new Error('missing id, kind')
-    }
+  async replace(key, data) {
     await this.ready
-
-    // Make sure it exists first, this throws if not
-    const record = await this.db.get(`${kind}/${id}`)
-    if (!record) {
-      throw new NotFoundError()
-    }
-    await this.db.put(`${kind}/${id}`, JSON.stringify(data))
+    await this.db.put(key, JSON.stringify(data))
   }
 
   async delete(id) {
-    // Make sure it exists first, this throws if not
-    const record = await this.db.get(id)
-    if (!record) {
-      throw new NotFoundError()
-    }
     await this.db.del(id)
   }
 }

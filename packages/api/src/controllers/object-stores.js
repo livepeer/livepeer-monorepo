@@ -4,6 +4,7 @@ import { parse as parseUrl } from 'url'
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
 import { Router } from 'express'
+import { makeNextHREF } from './helpers'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
@@ -14,38 +15,55 @@ const app = Router()
 app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
-  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
+  logger.info(`cursor params ${cursor}, limit ${limit}`)
 
-  const resp = await req.store.list(
-    `objectstores/${req.params.userId}`,
+  const objStoreIds = await req.store.query(
+    'objectstores',
+    {userId: req.params.userId},
     cursor,
     limit,
   )
-  let output = resp.data
-  const nextCursor = resp.cursor
+
+  const objStores = []
+  for (let i = 0; i < objStoreIds.length; i++) {
+    const objStore = await req.store.get(`objectstores/${objStoreIds[i]}`)
+    if (objStore) {
+      objStores.push(objStore)
+    }
+  }
+
   res.status(200)
 
-  if (output.length > 0) {
-    res.links({ next: makeNextHREF(req, nextCursor) })
+  if (objStores.length > 0) {
+    res.links({ next: makeNextHREF(req, objStoreIds.cursor) })
   }
-  output = output.map(x => ({
-    ...x,
-    credentials: null,
-  }))
 
-  res.json(output)
+  res.json(objStores)
 })
 
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
-  const os = await req.store.get(`objectstores/${userId}/${id}`)
-  if (os && req.user.id === os.userId) {
-    const secureOS = { ...os, credentials: null }
+  const objStoreIds = await req.store.query('objectstores', {userId: userId})
+
+  if (!objStoreIds.includes(id)) {
+    res.status(403);
+    return res.json({
+      errors: [`user id ${userId} does not have any object stores associated with it`]
+    })
+  }
+
+  if (objStoreIds.includes(id)) {
+    const objStore = await req.store.get(`objectstores/${id}`)
+
+    if (req.user.admin !== true && req.user.id !== objStore.userId) {
+      res.status(403)
+      res.json({
+        errors: ['user can only request information on their own object stores'],
+      })
+    }
+
     res.status(200)
-    res.json(secureOS)
-  } else {
-    res.status(200)
-    res.json({})
+    res.json(objStore)
   }
 })
 
@@ -62,28 +80,19 @@ app.post(
       path: req.body.path,
       userId: req.user.id,
       type: req.body.type,
-      kind: `objectstores/${req.user.id}`,
+      kind: `objectstores`,
     })
-    const store = await req.store.get(`objectstores/${req.user.id}/${id}`)
+
+    const store = await req.store.get(`objectstores/${id}`)
 
     if (store) {
-      store.credentials = null
       res.status(201)
       res.json(store)
     } else {
       res.status(403)
-      res.json({})
+      res.json({errors: ['store not created']})
     }
   },
 )
-
-function makeNextHREF(req, nextCursor) {
-  let baseUrl = new URL(
-    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-  )
-  let next = baseUrl
-  next.searchParams.set('cursor', nextCursor)
-  return next.href
-}
 
 export default app
