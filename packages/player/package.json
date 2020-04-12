@@ -17,7 +17,7 @@
     "url-search-params-polyfill": "^8.0.0"
   },
   "scripts": {
-    "dev": "cross-env PORT=3002 react-scripts start",
+    "dev": "cross-env BROWSER=none PORT=3002 react-scripts start",
     "build": "react-scripts build",
     "copy-docs": "echo 'No copy-docs script specified'",
     "eject": "react-scripts eject",
