@@ -28,12 +28,15 @@ const BUILD_DEFINITIONS = {
   },
   'local-firestore': {
     LP_STORAGE: 'firestore',
+    LP_FIRESTORE_COLLECTION: `test${Date.now()}`,
   },
   'cloudflare-firestore': {
     LP_STORAGE: 'firestore',
     LP_INSECURE_TEST_TOKEN: uuid(),
     LP_JWT_AUDIENCE: 'test_audience',
     LP_JWT_SECRET: 'extremelysecret',
+    LP_FIRESTORE_CREDENTIALS: process.env.LP_FIRESTORE_CREDENTIALS,
+    LP_FIRESTORE_COLLECTION: `test${Date.now()}`,
   },
 }
 

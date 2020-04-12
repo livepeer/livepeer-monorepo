@@ -58,6 +58,16 @@ export default function parseCli(argv) {
           describe: 'auth of a cloudflare database',
           type: 'string',
         },
+        'firestore-credentials': {
+          describe:
+            'JSON string of service account credentials for a GCP account',
+          type: 'string',
+        },
+        'firestore-collection': {
+          describe:
+            'name of the top-level firestore collection for storing our data',
+          type: 'string',
+        },
         'client-id': {
           describe: 'google auth ID',
           type: 'string',

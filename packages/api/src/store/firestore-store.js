@@ -1,23 +1,29 @@
 import fetch from 'isomorphic-fetch'
-import { generateJWT } from './firestore-helpers'
+import { generateJWT, prepareConfig } from './firestore-helpers'
 import * as qs from 'query-string'
-
-const HARD_CONFIG = require('./config.secret.json')
 
 const DEFAULT_LIMIT = 100
 
 export default class FirestoreStore {
-  constructor({} = {}) {
-    this.config = HARD_CONFIG
+  constructor({ firestoreCredentials, firestoreCollection }) {
+    if (!firestoreCredentials) {
+      throw new Error('missing --firestore-credentials')
+    }
+    if (!firestoreCollection) {
+      throw new Error('missing --firestore-collection')
+    }
+    this.config = prepareConfig(firestoreCredentials)
     this.url = this.config.url
-    this.collection = 'staging'
+    this.collection = firestoreCollection
+    // Key prefix for stripping out in list operations
+    this.keyPrefix = `${this.config.docsPath}/docs/${firestoreCollection}/`
     this.token = null
     this.tokenExpires = 0
   }
 
   // Firestore's paths work like: collection/document/collection/document. So we can't store at,
   // say, /staging/user/ABC123; we have to store at /staging/docs/user/ABC123
-  // or useremails/eli@livepeer.org/ABC123 becomes /staging/docs/useremail/docs/eli@livepeer.org/ABC123
+  // For our join keys, we store e.g. `user+email/example@livepeer.org/ABC123` at `user+email_example@livepeer.org/ABC123`.
   getPath(key) {
     const parts = [...key.split('/')].filter(x => !!x)
     if (parts[0] && parts[0].includes('+')) {
@@ -28,6 +34,7 @@ export default class FirestoreStore {
   }
 
   async fetch(url, opts = {}) {
+    // Regenerate token if it's within a minute of expiring
     if (this.tokenExpires - 60000 < Date.now()) {
       const [token, expiry] = generateJWT(this.config)
       this.token = token
@@ -162,10 +169,8 @@ export default class FirestoreStore {
 
   async listKeys(prefix, cursor, limit) {
     const [results, nextPageToken] = await this.doList(prefix, cursor, limit)
-    const keyPrefix =
-      'projects/livepeerjs-231617/databases/(default)/documents/staging/docs/'
     const data = results.map(doc => {
-      return doc.name.slice(keyPrefix.length)
+      return doc.name.slice(this.keyPrefix.length)
     })
     return [data, nextPageToken]
   }

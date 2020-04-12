@@ -42,6 +42,8 @@ export default async function makeApp(params) {
     orchestrators = '[]',
     broadcasters = '[]',
     insecureTestToken,
+    firestoreCredentials,
+    firestoreCollection,
   } = params
   // Storage init
   const bodyParser = require('body-parser')
@@ -61,7 +63,7 @@ export default async function makeApp(params) {
       cloudflareNamespace,
     })
   } else if (storage === 'firestore') {
-    store = FirestoreStore({})
+    store = FirestoreStore({ firestoreCredentials, firestoreCollection })
   } else {
     throw new Error('Missing storage information')
   }
