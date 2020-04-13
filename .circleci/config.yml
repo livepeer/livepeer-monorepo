@@ -23,6 +23,7 @@ jobs:
           # Kick off parallel Zeit Now install
           sudo npm install -g now
           yarn run now:build &
+          NOW_BUILD=$1
 
           # yarn install
           for i in {0..3}; do
@@ -42,7 +43,7 @@ jobs:
           yarn run lerna-run docker:push
 
           # Wait for finished Now build
-          wait
+          wait $NOW_BUILD
 
           # Livepeer internal build alerting
           curl -X POST https://holy-bread-207a.livepeer.workers.dev
