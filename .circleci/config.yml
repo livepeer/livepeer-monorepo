@@ -20,6 +20,10 @@ jobs:
           # docker login
           docker login -u $DOCKER_USER -p $DOCKER_PASS
 
+          # Kick off parallel Zeit Now install
+          npm install -g now
+          yarn run now:build &
+
           # yarn install
           for i in {0..3}; do
             if [[ "$i" == "3" ]]; then
@@ -28,9 +32,6 @@ jobs:
             yarn install --frozen-lockfile && break || true
           done
           yarn postinstall
-
-          # Kick off parallel Now build
-          yarn run now:build &
           
           # Actual build
           yarn run build
