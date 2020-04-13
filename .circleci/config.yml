@@ -1,235 +1,56 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-aliases:
-  # Saves built apps to cache
-  - &save-apps
-    paths:
-      - packages/player/build
-    key: built-apps-{{ .Revision }}
-
-  # Restores apps from cache
-  - &restore-apps
-    keys:
-      - built-apps-{{ .Revision }}
-
-  # Commands
-
-  # Downloads and setup Code Climate reporter
-  - &reporter
-    name: Setup Code Climate test-reporter
-    command: |
-      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      chmod +x ./cc-test-reporter
-
-  # Runs LivepeerJs tests
-  - &tests
-    name: Run tests
-    command: |
-      yarn test
-      yarn run build
-
-  # Installs dependencies for packages
-  - &install-dependencies
-    name: Install dependencies
-    # The retry logic here is a very ugly hack but nothing for it except to change CI providers..
-    command: |
-      for i in {0..3}; do
-        if [[ "$i" == "3" ]]; then
-          echo "Failed `yarn install`" after $i retries
-        fi
-        yarn install --frozen-lockfile && break || true
-      done
-      yarn postinstall
-
-  # Runs reporter and shows test coverage
-  - &show-test-report
-    name: Report coverage
-    command: |
-      yarn coverage
-      ./cc-test-reporter after-build
-
-  - &build-apps
-    name: Build React applications
-    command: |
-      yarn install --frozen-lockfile
-      yarn postinstall
-      # TODO: Fix linting errors so this can be true
-      export CI=false
-      yarn run build
-
-  # Installs AWS cli
-  - &install-aws-cli
-    name: Install awscli
-    command: sudo pip install awscli
-
-  - &install-gcloud
-    name: Install Google Cloud SDK
-    command: |
-      export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-      if [ ! -d $HOME/google-cloud-sdk/bin ]; then
-        # The install script errors if this directory already exists,
-        # but Travis already creates it when we mark it as cached.
-        rm -rf $HOME/google-cloud-sdk;
-        # The install script is overly verbose, which sometimes causes
-        # problems on Travis, so ignore stdout.
-        curl https://sdk.cloud.google.com | bash > /dev/null;
-      fi
-
-  # Install libsecret
-  - &install-apt-packages
-    name: Install apt packages
-    command: sudo apt install libsecret-1-0 libudev-dev libusb-1.0-0-dev
-
-  # Extention of aws command
-  - &s3-cmd-flags-values
-
-  # Containers
-  - &node
-    - image: circleci/node:10
-    - image: circleci/postgres:9.6.2-alpine
-
-  - &python
-    - image: circleci/python:2.7-jessie
-
-directory: &directory
-  working_directory: ~/repo
-
-python-env: &python-env
-  docker: *python
-  <<: *directory
-
-node-env: &node-env
-  docker: *node
-  <<: *directory
-
 version: 2
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+
 jobs:
-  build-test:
-    <<: *node-env
+  build:
+    docker:
+      - image: circleci/node:10
+      - image: circleci/postgres:9.6.2-alpine
 
     steps:
       - checkout
       - setup_remote_docker:
           # This actually only exists for paid plans. But it's good luck!
           docker_layer_caching: true
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: *install-apt-packages
-      - run: *install-dependencies
-      - run: *reporter
-      - run: *install-gcloud
-      - run: *tests
-      - run: *show-test-report
       - run: |
-          source $HOME/google-cloud-sdk/path.bash.inc
-          gcloud version
-          echo $GCLOUD_TOKEN | base64 --decode > /tmp/token.json
-          gcloud auth activate-service-account --key-file=/tmp/token.json
-          export DOCKER
-          rm /tmp/token.json
-          export DOCKER_TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
+          # docker login
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+          # yarn install
+          for i in {0..3}; do
+            if [[ "$i" == "3" ]]; then
+              echo "Failed `yarn install`" after $i retries
+            fi
+            yarn install --frozen-lockfile && break || true
+          done
+          yarn postinstall
+
+          # Kick off parallel Now build
+          yarn run now:build &
+          
+          # Actual build
           yarn run build
+          yarn test
+
+          # Docker stuff
+          export DOCKER_TAG=$(echo $CIRCLE_BRANCH | tr -cd '[:alnum:]_')
           yarn run lerna-run docker:build
           yarn run lerna-run docker:push
+
+          # Wait for finished Now build
+          wait
+
           # Livepeer internal build alerting
           curl -X POST https://holy-bread-207a.livepeer.workers.dev
 
-  build-apps-staging:
-    <<: *node-env
+          if [[ "$CIRCLE_BRANCH" == "next" ]]; then
+            yarn run deploy:staging
+          fi
 
-    steps:
-      - checkout
-      - run: *install-apt-packages
-      - run: *install-dependencies
-      - run: *build-apps
-      - save_cache: *save-apps
-
-      - run:
-          name: Deploy to CloudFlare
-          command: yarn run wrangler:staging
-
-  deploy-apps-staging:
-    <<: *python-env
-
-    steps:
-      - checkout
-      - restore_cache: *restore-apps
-      - run: *install-aws-cli
-
-      - run:
-          name: Deploy to S3
-          command: |
-            aws s3 rm s3://$PLAYER_STAGING_BUCKET_NAME --recursive
-            aws s3 sync packages/player/build s3://$PLAYER_STAGING_BUCKET_NAME \
-            --delete \
-            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
-
-  build-apps-production:
-    <<: *node-env
-
-    steps:
-      - checkout
-      - run: *install-apt-packages
-      - run: *build-apps
-
-      - run:
-          name: Deploy to CloudFlare
-          command: yarn run wrangler:production
-
-      - save_cache:
-          paths:
-            - packages/player/build
-          key: production-apps-{{ .Revision }}
-
-  deploy-apps-production:
-    <<: *python-env
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - production-apps-{{ .Revision }}
-      - run: *install-aws-cli
-
-      - run:
-          name: Deploy to S3
-          command: |
-            aws s3 rm s3://$PLAYER_PRODUCTION_BUCKET_NAME --recursive
-            aws s3 sync packages/player/build s3://$PLAYER_PRODUCTION_BUCKET_NAME \
-            --delete \
-            --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
-
-workflows:
-  version: 2
-  staging-test-build-deploy:
-    jobs:
-      - build-test
-
-      # Staging workflow for the apps
-      - build-apps-staging:
-          requires:
-            - build-test
-          filters:
-            branches:
-              only: master
-      - deploy-apps-staging:
-          requires:
-            - build-apps-staging
-          filters:
-            branches:
-              only: master
-
-      # Production workflow for the apps
-      - build-apps-production:
-          requires:
-            - build-test
-          filters:
-            branches:
-              only: latest
-      - deploy-apps-production:
-          requires:
-            - build-apps-production
-          filters:
-            branches:
-              only: latest
+          if [[ "$CIRCLE_BRANCH" == "latest" ]]; then
+            yarn run deploy:production
+          fi
