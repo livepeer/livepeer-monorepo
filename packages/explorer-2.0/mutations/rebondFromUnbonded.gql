@@ -1,0 +1,3 @@
+mutation rebondFromUnbonded($unbondingLockId: Int!, $delegate: String!) {
+  tx: rebondFromUnbonded(unbondingLockId: $unbondingLockId, delegate: $delegate)
+}

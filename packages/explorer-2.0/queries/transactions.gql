@@ -1,0 +1,14 @@
+{
+  txs @client {
+    __typename
+    confirmed
+    txHash
+    from
+    startTime
+    inputData
+    title
+    estimate
+    gasPrice
+    inputData
+  }
+}

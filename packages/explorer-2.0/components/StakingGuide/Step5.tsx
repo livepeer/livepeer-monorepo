@@ -18,20 +18,16 @@ export default ({ goTo, nextStep }) => {
     }
   `
 
-  const {
-    result: { mutate: approve, isBroadcasted, isMined, txHash },
-  } = useWeb3Mutation(APPROVE, {
-    variables: {
-      type: 'bond',
-      amount: MAXIUMUM_VALUE_UINT256,
+  const { mutate: approve, isBroadcasted, isMined, txHash } = useWeb3Mutation(
+    APPROVE,
+    {
+      context: {
+        library: context.library,
+        account: context.account.toLowerCase(),
+        returnTxHash: true,
+      },
     },
-    notifyOnNetworkStatusChange: true,
-    context: {
-      provider: context.library._web3Provider,
-      account: context.account.toLowerCase(),
-      returnTxHash: true,
-    },
-  })
+  )
 
   useEffect(() => {
     async function goToNextStep() {
@@ -81,7 +77,12 @@ export default ({ goTo, nextStep }) => {
         disabled={isBroadcasted}
         onClick={async () => {
           try {
-            await approve()
+            await approve({
+              variables: {
+                type: 'bond',
+                amount: MAXIUMUM_VALUE_UINT256,
+              },
+            })
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),

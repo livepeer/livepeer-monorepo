@@ -1,17 +1,19 @@
-import fetch from 'isomorphic-unfetch'
 import Utils from 'web3-utils'
 
 export async function account(_obj, _args, _ctx, _info) {
-  const { allowance } = await _ctx.livepeer.rpc.getDelegator(
-    _args.id.toLowerCase(),
-  )
+  const {
+    allowance,
+    pollCreatorAllowance,
+  } = await _ctx.livepeer.rpc.getDelegator(_args.id.toLowerCase())
+
   return {
     id: _args.id,
     tokenBalance: await _ctx.livepeer.rpc.getTokenBalance(
       _args.id.toLowerCase(),
     ),
     ethBalance: await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase()),
-    allowance: allowance,
+    pollCreatorAllowance,
+    allowance,
   }
 }
 
@@ -31,15 +33,24 @@ export async function protocol(_obj, _args, _ctx, _info) {
 }
 
 export async function getTxReceiptStatus(_obj, _args, _ctx, _info) {
-  const data = await fetch(
-    `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${_args.txHash}&apikey=${process.env.ETHERSCAN_API_KEY}`,
+  const txReceipt = await _ctx.livepeer.utils.getTxReceipt(
+    _args.txHash,
+    _ctx.livepeer.config.eth,
   )
-
-  const response = await data.json()
-
   return {
-    status: response.result.status,
+    status: Utils.hexToNumber(txReceipt.status),
   }
+}
+
+export async function transaction(_obj, _args, _ctx, _info) {
+  return await _ctx.library.getTransaction(_args.txHash)
+}
+
+export async function txPrediction(_obj, _args, _ctx, _info) {
+  const response = await fetch(
+    `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${_args.gasPrice}&apikey=${process.env.ETHERSCAN_API_KEY}`,
+  )
+  return await response.json()
 }
 
 export async function threeBoxSpace(_obj, _args, _ctx, _info) {
@@ -88,4 +99,8 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
     addressLinks,
     did,
   }
+}
+
+export async function block(_obj, _args, _ctx, _info) {
+  return await _ctx.livepeer.rpc.getBlock(_args.id)
 }

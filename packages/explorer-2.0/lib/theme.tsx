@@ -37,12 +37,17 @@ const theme = {
     skyBlue: '#5bc2ee',
     teal: '#00bfb2',
     border: '#393a3d',
+    highlight: 'transparent',
     modes: {},
   },
   buttons: {
     primary: {
       color: 'background',
       bg: 'primary',
+      '&:hover': {
+        transition: '.2s background-color',
+        backgroundColor: 'rgba(0, 235, 136, .7)',
+      },
     },
     secondary: {
       color: 'text',
@@ -114,6 +119,14 @@ const theme = {
       background:
         'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)',
     },
+    red: {
+      color: 'background',
+      bg: 'red',
+      '&:hover': {
+        transition: '.2s background-color',
+        backgroundColor: 'rgba(211, 47, 47, .7)',
+      },
+    },
   },
   styles: {
     root: {
@@ -121,13 +134,16 @@ const theme = {
       lineHeight: 'body',
       fontWeight: 'body',
     },
+    spinner: {
+      size: 26,
+    },
     h1: {
       ...heading,
       fontSize: 5,
     },
     h2: {
       ...heading,
-      fontSize: 4,
+      fontSize: 2,
     },
     h3: {
       ...heading,

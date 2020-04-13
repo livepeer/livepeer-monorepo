@@ -1,6 +1,6 @@
 import { Flex, Box } from 'theme-ui'
 import { useRouter } from 'next/router'
-import Layout from '../../../layouts/main'
+import Layout, { getLayout } from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import Tabs, { TabType } from '../../../components/Tabs'
@@ -22,7 +22,7 @@ import Approve from '../../../components/Approve'
 import FeesView from '../../../components/FeesView'
 import { useEffect } from 'react'
 
-export default withApollo(() => {
+const Account = () => {
   const accountViewQuery = require('../../../queries/accountView.gql')
   const accountQuery = require('../../../queries/account.gql')
   const router = useRouter()
@@ -38,18 +38,17 @@ export default withApollo(() => {
     ssr: false,
   })
 
-  const {
-    data: dataMyAccount,
-    loading: loadingMyAccount,
-    refetch: refetchMyAccount,
-  } = useQuery(accountQuery, {
-    variables: {
-      account: context?.account?.toLowerCase(),
+  const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
+    accountQuery,
+    {
+      variables: {
+        account: context?.account?.toLowerCase(),
+      },
+      pollInterval: 10000,
+      skip: !context.active, // skip this query if wallet not connected
+      ssr: false,
     },
-    pollInterval: 10000,
-    skip: !context.active, // skip this query if wallet not connected
-    ssr: false,
-  })
+  )
 
   const SELECTED_STAKING_ACTION = gql`
     {
@@ -58,33 +57,23 @@ export default withApollo(() => {
   `
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
 
-  // Refetch data if we detect a network change
-  useEffect(() => {
-    refetch()
-    if (context.account) {
-      refetchMyAccount()
-    }
-  }, [context.chainId])
-
   if (loading || loadingMyAccount) {
     return (
-      <Layout>
-        <Flex
-          sx={{
-            height: [
-              'calc(100vh - 100px)',
-              'calc(100vh - 100px)',
-              'calc(100vh - 100px)',
-              '100vh',
-            ],
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Spinner />
-        </Flex>
-      </Layout>
+      <Flex
+        sx={{
+          height: [
+            'calc(100vh - 100px)',
+            'calc(100vh - 100px)',
+            'calc(100vh - 100px)',
+            '100vh',
+          ],
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Spinner />
+      </Flex>
     )
   }
 
@@ -123,7 +112,7 @@ export default withApollo(() => {
           .replace(query.account.toString().slice(5, 39), '…')
 
   return (
-    <Layout headerTitle={headerTitle}>
+    <>
       <Flex
         sx={{
           flexDirection: 'column',
@@ -216,9 +205,15 @@ export default withApollo(() => {
             />
           </StakingWidgetModal>
         ))}
-    </Layout>
+    </>
   )
-})
+}
+
+Account.getLayout = getLayout
+
+export default withApollo({
+  ssr: true,
+})(Account)
 
 function getTabs(
   role: string,

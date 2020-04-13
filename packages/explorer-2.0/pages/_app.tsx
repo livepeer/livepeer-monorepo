@@ -7,6 +7,9 @@ import { CookiesProvider } from 'react-cookie'
 import Web3ReactManager from '../components/Web3ReactManager'
 import 'react-circular-progressbar/dist/styles.css'
 import '@reach/dialog/styles.css'
+import { useState, useEffect } from 'react'
+import Layout from '../layouts/main'
+import { withApollo } from '../lib/apollo'
 
 function getLibrary(provider) {
   const library = new ethers.providers.Web3Provider(provider)
@@ -15,6 +18,7 @@ function getLibrary(provider) {
 }
 
 function MyApp({ Component, pageProps }) {
+  const getLayout = Component.getLayout || (page => <Layout children={page} />)
   return (
     <>
       <Head>
@@ -35,7 +39,7 @@ function MyApp({ Component, pageProps }) {
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ReactManager>
             <CookiesProvider>
-              <Component {...pageProps} />
+              {getLayout(<Component {...pageProps} />)}
             </CookiesProvider>
           </Web3ReactManager>
         </Web3ReactProvider>
@@ -44,4 +48,6 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-export default MyApp
+export default withApollo({
+  ssr: false,
+})(MyApp)

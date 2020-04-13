@@ -6,18 +6,10 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
-import { detectNetwork } from './utils'
-
-const SUBGRAPH_MAINNET =
-  'https://api.thegraph.com/subgraphs/name/livepeer/livepeer'
-
-const SUBGRAPH_RINKEBY =
-  'https://api.thegraph.com/subgraphs/name/adamsoffer/livepeer-rinkeby'
 
 export default async () => {
-  const network = await detectNetwork(window['web3']?.currentProvider)
   const subgraphServiceLink = new HttpLink({
-    uri: network?.type === 'rinkeby' ? SUBGRAPH_RINKEBY : SUBGRAPH_MAINNET,
+    uri: process.env.SUBGRAPH,
     fetch,
   })
 
@@ -38,11 +30,17 @@ export default async () => {
     extend type ThreeBoxSpace {
       transcoder: Transcoder
     }
+    extend type Protocol {
+      totalStake(block: String): String
+    }
     extend type Delegator {
       pendingStake: String
       pendingFees: String
       tokenBalance: String
       ethBalance: String
+    }
+    extend type Query {
+      txs: [JSON]
     }
   `
 
@@ -91,6 +89,26 @@ export default async () => {
         ethBalance: {
           async resolve(_delegator, _args, _context, _info) {
             return await _context.livepeer.rpc.getEthBalance(_delegator.id)
+          },
+        },
+      },
+      Protocol: {
+        totalStake: {
+          async resolve(_protocol, _args, _context, _info) {
+            const Web3 = require('web3')
+            let web3 = new Web3(
+              `https://eth-${
+                process.env.NETWORK ? 'rinkeby' : 'mainnet'
+              }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            )
+            let contract = new web3.eth.Contract(
+              _context.livepeer.config.contracts.LivepeerToken.abi,
+              _context.livepeer.config.contracts.LivepeerToken.address,
+            )
+
+            return await contract.methods
+              .balanceOf(_context.livepeer.config.contracts.Minter.address)
+              .call({}, _args.blockNumber ? _args.blockNumber : null)
           },
         },
       },

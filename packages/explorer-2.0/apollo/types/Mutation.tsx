@@ -32,6 +32,12 @@ type Mutation {
   "Submits a round initialization transaction"
   initializeRound: JSON
 
+  "Creates a poll"
+  createPoll(proposal: String!): JSON
+
+  "Votes on a poll"
+  vote(pollAddress: String!, choiceId: Int!): JSON
+
   "Update an account 3box space"
   updateProfile(name: String, website: String, description: String, image: String, proof: JSON, defaultProfile: String): ThreeBoxSpace
 

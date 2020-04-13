@@ -1,0 +1,3 @@
+mutation withdrawStake($unbondingLockId: Int!) {
+  tx: withdrawStake(unbondingLockId: $unbondingLockId)
+}

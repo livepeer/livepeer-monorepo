@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Flex } from 'theme-ui'
 import Play from '../../public/img/play.svg'
-import { useWeb3React } from '@web3-react/core'
 import gql from 'graphql-tag'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import Modal from '../Modal'
@@ -43,18 +42,15 @@ export default () => {
     })
   }
 
-  const context = useWeb3React()
   const client = useApolloClient()
-
   useEffect(() => {
     const init = async () => {
       const { rpc } = await LivepeerSDK({
         provider:
-          context.chainId === 4 ? process.env.RPC_URL_4 : process.env.RPC_URL_1,
-        controllerAddress:
-          context.chainId === 4
-            ? process.env.CONTROLLER_ADDRESS_RINKEBY
-            : process.env.CONTROLLER_ADDRESS_MAINNET,
+          process.env.NETWORK === 'mainnet'
+            ? process.env.RPC_URL_1
+            : process.env.RPC_URL_4,
+        controllerAddress: process.env.CONTROLLER_ADDRESS,
       })
       const { number } = await rpc.getBlock('latest')
       const {
@@ -64,6 +60,7 @@ export default () => {
         length,
         startBlock,
       } = await rpc.getCurrentRoundInfo()
+
       const response = await fetch(
         'https://ethgasstation.info/json/ethgasAPI.json',
       )
@@ -120,14 +117,15 @@ export default () => {
       }
     >
       <Flex
-        sx={{ alignItems: 'center', fontFamily: 'monospace', color: 'primary' }}
+        sx={{
+          textTransform: 'capitalize',
+          alignItems: 'center',
+          fontFamily: 'monospace',
+          color: 'primary',
+        }}
       >
         <Play sx={{ width: 10, height: 10, mr: 1 }} />
-        {context.chainId
-          ? context.chainId == 1
-            ? 'Mainnet'
-            : 'Rinkeby'
-          : 'Mainnet'}
+        {process.env.NETWORK}
       </Flex>
       <Box sx={{ height: 16, mx: 1, backgroundColor: 'border', width: 1 }} />
       <Box sx={{ fontFamily: 'monospace' }}>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
+import Ballot from '../public/img/ballot.svg'
 import Orchestrators from '../public/img/orchestrators.svg'
 import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
@@ -14,6 +15,13 @@ import WalletModal from '../components/WalletModal'
 import { useQuery } from '@apollo/react-hooks'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
+import ProgressBar from '../components/ProgressBar'
+import gql from 'graphql-tag'
+import { useMutations } from '../hooks'
+import { MutationsContext } from '../contexts'
+import Modal from '../components/Modal'
+import Confetti from 'react-confetti'
+import TxStartedModal from '../components/TxStartedModal'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -29,7 +37,7 @@ type DrawerItem = {
   className?: string
 }
 
-export default ({
+const Layout = ({
   children,
   title = 'Livepeer Explorer',
   headerTitle = '',
@@ -48,7 +56,6 @@ export default ({
   const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
   const { account } = context
-
   const { data } = useQuery(threeBoxSpaceQuery, {
     variables: {
       account: context?.account,
@@ -57,8 +64,11 @@ export default ({
     pollInterval: 10000,
     ssr: false,
   })
-
+  const mutations = useMutations()
+  const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
+  const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(true)
   const { width } = useWindowSize()
 
   useEffect(() => {
@@ -69,7 +79,7 @@ export default ({
     if (width < 1020 && drawerOpen) {
       document.body.style.overflow = 'hidden'
     }
-  })
+  }, [])
 
   let items: DrawerItem[] = [
     {
@@ -78,6 +88,13 @@ export default ({
       as: '/',
       icon: Orchestrators,
       className: 'orchestrators',
+    },
+    {
+      name: 'Voting',
+      href: '/voting',
+      as: '/voting',
+      icon: Ballot,
+      className: 'voting',
     },
     {
       name: 'Search',
@@ -128,38 +145,72 @@ export default ({
         <title>{title}</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </Head>
       <Reset />
-      <Styled.root>
-        <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
-        <WalletModal />
-        <Box
-          sx={{
-            maxWidth: 1500,
-            margin: '0 auto',
-            display: 'flex',
-          }}
-        >
-          <Drawer
-            onDrawerClose={onDrawerClose}
-            onDrawerOpen={onDrawerOpen}
-            open={drawerOpen}
-            items={items}
-          />
-          <Flex
+      <MutationsContext.Provider value={mutations}>
+        <Styled.root>
+          <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
+          <WalletModal />
+          <Box
             sx={{
-              bg: 'background',
-              paddingLeft: [2, 2, 2, 32],
-              paddingRight: [2, 2, 2, 32],
-              width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
+              maxWidth: 1500,
+              margin: '0 auto',
+              display: 'flex',
             }}
           >
-            <Flex sx={{ width: '100%' }} className="tour-step-6">
-              {children}
+            <Drawer
+              onDrawerClose={onDrawerClose}
+              onDrawerOpen={onDrawerOpen}
+              open={drawerOpen}
+              items={items}
+            />
+            <Flex
+              sx={{
+                bg: 'background',
+                position: 'relative',
+                paddingLeft: [2, 2, 2, 32],
+                paddingRight: [2, 2, 2, 32],
+                width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
+              }}
+            >
+              <Flex sx={{ width: '100%' }} className="tour-step-6">
+                {children}
+              </Flex>
             </Flex>
-          </Flex>
-        </Box>
-      </Styled.root>
+          </Box>
+
+          {transactionsData?.txs?.filter(t => !t.confirmed).length > 0 && (
+            <>
+              <TxStartedModal
+                isOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                tx={transactionsData.txs[transactionsData.txs.length - 1]}
+              />
+              <Box
+                sx={{
+                  position: 'fixed',
+                  bg: 'surface',
+                  bottom: 0,
+                  width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
+                  left: [0, 0, 0, 275],
+                }}
+              >
+                <ProgressBar
+                  tx={transactionsData.txs[transactionsData.txs.length - 1]}
+                />
+              </Box>
+            </>
+          )}
+        </Styled.root>
+      </MutationsContext.Provider>
     </>
   )
 }
+
+export const getLayout = page => <Layout>{page}</Layout>
+
+export default Layout

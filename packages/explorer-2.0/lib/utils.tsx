@@ -183,3 +183,33 @@ export const detectNetwork = async provider => {
 export const checkAddressEquality = (address1, address2) => {
   return Utils.toChecksumAddress(address1) === Utils.toChecksumAddress(address2)
 }
+
+export const txMessages = {
+  approve: {
+    pending: 'Unlocking LPT',
+  },
+  bond: {
+    pending: 'Staking LPT',
+  },
+  unbond: {
+    pending: 'Unstaking LPT',
+  },
+  rebond: {
+    pending: 'Restaking LPT',
+  },
+  rebondFromUnbonded: {
+    pending: 'Restaking LPT',
+  },
+  createPoll: {
+    pending: 'Creating Poll',
+  },
+  withdrawFees: {
+    pending: 'Withdrawing Fees',
+  },
+  withdrawStake: {
+    pending: 'Withdrawing Stake',
+  },
+  batchClaimEarnings: {
+    pending: 'Claiming Earnings',
+  },
+}

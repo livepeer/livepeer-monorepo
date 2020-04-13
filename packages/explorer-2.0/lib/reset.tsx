@@ -22,6 +22,7 @@ const Reset = () =>
       },
       a: {
         textDecoration: 'none',
+        color: theme.colors.primary,
       },
       ul: {
         paddingLeft: 20,

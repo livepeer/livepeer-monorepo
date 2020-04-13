@@ -1,0 +1,7 @@
+{
+  polls {
+    id
+    proposal
+    endBlock
+  }
+}

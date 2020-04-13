@@ -1,0 +1,21 @@
+import approve from './approve.gql'
+import bond from './bond.gql'
+import unbond from './unbond.gql'
+import withdrawStake from './withdrawStake.gql'
+import withdrawFees from './withdrawFees.gql'
+import rebondFromUnbonded from './rebondFromUnbonded.gql'
+import rebond from './rebond.gql'
+import batchClaimEarnings from './batchClaimEarnings.gql'
+import createPoll from './createPoll.gql'
+
+export default {
+  approve,
+  bond,
+  unbond,
+  withdrawStake,
+  withdrawFees,
+  rebondFromUnbonded,
+  rebond,
+  batchClaimEarnings,
+  createPoll,
+}

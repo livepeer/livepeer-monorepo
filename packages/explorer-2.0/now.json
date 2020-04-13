@@ -37,14 +37,21 @@
     }
   ],
   "env": {
-    "CHANGEFEED_ACCESS_TOKEN": "@changefeed_access_token"
+    "CHANGEFEED_ACCESS_TOKEN": "@changefeed_access_token",
+    "GITHUB_ACCESS_TOKEN": "@github_access_token"
   },
   "build": {
     "env": {
       "ETHERSCAN_API_KEY": "@etherscan_api_key",
       "FORTMATIC_API_KEY": "@fortmatic_api_key",
+      "ALCHEMY_API_KEY": "@alchemy_api_key",
       "PORTIS_DAPP_ID": "@portis_dapp_id",
-      "GA_TRACKING_ID": "@ga_tracking_id"
+      "GA_TRACKING_ID": "@ga_tracking_id",
+      "NETWORK": "mainnet",
+      "SUBGRAPH": "https://api.thegraph.com/subgraphs/name/livepeer/livepeer",
+      "RPC_URL_1": "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
+      "RPC_URL_4": "https://rinkeby.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
+      "CONTROLLER_ADDRESS": "0xf96d54e490317c557a967abfa5d6e33006be69b3"
     }
   }
 }

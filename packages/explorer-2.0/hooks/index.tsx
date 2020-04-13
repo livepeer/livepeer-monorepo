@@ -1,83 +1,113 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useWeb3React } from '@web3-react/core'
 import { Injected } from '../lib/connectors'
 import { isMobile } from 'react-device-detect'
+import { txMessages } from '../lib/utils'
 
 export function useWeb3Mutation(mutation, options) {
-  const initialState = {
-    mutate: null,
-    isBroadcasted: false,
-    isMining: false,
-    isMined: false,
-    txHash: null,
-    error: null,
-  }
-
-  const [result, setResult] = useState(initialState)
-
-  const reset = useCallback(() => {
-    setResult(initialState)
-  }, [initialState])
-
-  const [mutate, { data, error: mutationError }] = useMutation(
-    mutation,
-    options,
-  )
-
+  const client = useApolloClient()
+  const context = useWeb3React()
+  const [mutate, { data, loading: dataLoading }] = useMutation(mutation, {
+    ...options,
+  })
   const GET_TRANSACTION_STATUS = gql`
-    query getTxReceiptStatus($txHash: String!) {
-      getTxReceiptStatus: getTxReceiptStatus(txHash: $txHash) {
+    query getTxReceiptStatus($txHash: String) {
+      getTxReceiptStatus(txHash: $txHash) {
         status
       }
     }
   `
 
-  const { data: transaction, error: queryError } = useQuery(
-    GET_TRANSACTION_STATUS,
+  let {
+    data: transactionStatusData,
+    loading: transactionStatusLoading,
+  } = useQuery(GET_TRANSACTION_STATUS, {
+    ...options,
+    variables: {
+      txHash: data?.tx?.txHash,
+    },
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+    context: options?.context,
+  })
+
+  const GET_TRANSACTION = gql`
+    query transaction($txHash: String) {
+      transaction(txHash: $txHash)
+    }
+  `
+
+  let { data: transactionData, loading: transactionLoading } = useQuery(
+    GET_TRANSACTION,
     {
+      ...options,
       variables: {
-        txHash: `${data && data.txHash}`,
+        txHash: data?.tx?.txHash,
       },
-      pollInterval: 2000,
-      // skip query if tx hasn't yet been broadcasted or has been mined
-      skip: !result.isBroadcasted || result.isMined,
+      skip: !data?.tx?.txHash,
+      fetchPolicy: 'no-cache',
+      notifyOnNetworkStatusChange: true,
     },
   )
 
-  let isMining = !!(transaction && !transaction.getTxReceiptStatus.status)
-  let isMined = !!(transaction && transaction.getTxReceiptStatus.status)
+  const GET_TX_PREDICTION = gql`
+    query txPrediction($gasPrice: String) {
+      txPrediction(gasPrice: $gasPrice)
+    }
+  `
+
+  let { data: txPredictionData, loading: txPredictionLoading } = useQuery(
+    GET_TX_PREDICTION,
+    {
+      ...options,
+      variables: {
+        gasPrice: transactionData?.transaction?.gasPrice?.toString(),
+      },
+      skip: !transactionData?.transaction?.gasPrice?.toString(),
+      fetchPolicy: 'no-cache',
+      notifyOnNetworkStatusChange: true,
+    },
+  )
+
+  const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
+  const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
 
   useEffect(() => {
-    if (mutate) {
-      setResult({ ...result, mutate })
-    }
     if (data) {
-      setResult({ ...result, isBroadcasted: true, txHash: data.txHash })
-    }
-    if (transaction) {
-      setResult({
-        ...result,
-        isMining: isMining && !isMined,
-        isMined: isMined,
+      client.writeData({
+        data: {
+          txs: [
+            ...transactionsData.txs.filter(t => t.txHash !== data.tx.txHash),
+            {
+              __typename: mutation.definitions[0].name.value,
+              txHash: data.tx.txHash,
+              startTime: new Date().getTime(),
+              from: context.account,
+              inputData: JSON.stringify(data.tx.inputData),
+              confirmed: !!transactionStatusData?.getTxReceiptStatus?.status,
+              estimate: txPredictionData?.txPrediction?.result
+                ? txPredictionData?.txPrediction?.result
+                : null,
+              title: options?.context?.title,
+              gasPrice: transactionData?.transaction?.gasPrice?.toString()
+                ? transactionData?.transaction?.gasPrice?.toString()
+                : null,
+            },
+          ],
+        },
       })
     }
-    if (mutationError) {
-      setResult({
-        ...result,
-        error: mutationError,
-      })
-    }
-    if (queryError) {
-      setResult({
-        ...result,
-        error: queryError,
-      })
-    }
-  }, [transaction, data, mutate])
-
-  return { result, reset }
+  }, [
+    dataLoading,
+    transactionLoading,
+    txPredictionLoading,
+    transactionStatusLoading,
+  ])
+  return {
+    mutate,
+  }
 }
 
 // modified from https://usehooks.com/usePrevious/
@@ -166,4 +196,51 @@ export function useInactiveListener(suppress = false) {
 
     return () => {}
   }, [active, error, suppress, activate])
+}
+
+export function useMutations() {
+  const mutations = require('../mutations').default
+  const context = useWeb3React()
+  let mutationsObj: any = {}
+  Object.keys(mutations).map(key => {
+    const { mutate } = useWeb3Mutation(mutations[key], {
+      context: {
+        library: context?.library,
+        account: context?.account?.toLowerCase(),
+        returnTxHash: true,
+        title: txMessages[key]?.pending ? txMessages[key]?.pending : '',
+      },
+    })
+    mutationsObj[key] = mutate
+  })
+  return mutationsObj
+}
+
+export function useTimeEstimate({ startTime, estimate }) {
+  const [timeLeft, setTimeLeft] = useState(null)
+  const [timeElapsed] = useState((new Date().getTime() - startTime) / 1000)
+
+  useEffect(() => {
+    if (estimate) {
+      setTimeLeft(estimate - timeElapsed)
+    }
+  }, [estimate])
+
+  useEffect(() => {
+    // exit early when we reach 0
+    if (!timeLeft) return
+
+    // save intervalId to clear the interval when the
+    // component re-renders
+    const intervalId = setInterval(() => {
+      setTimeLeft(timeLeft - 1)
+    }, 1000)
+
+    // clear interval on re-render to avoid memory leaks
+    return () => clearInterval(intervalId)
+    // add timeLeft as a dependency to re-rerun the effect
+    // when we update it
+  }, [timeLeft])
+
+  return { timeLeft }
 }

@@ -14,6 +14,8 @@ import ControllerArtifact from '../etc/Controller'
 import RoundsManagerArtifact from '../etc/RoundsManager'
 import BondingManagerArtifact from '../etc/BondingManager'
 import MinterArtifact from '../etc/Minter'
+import PollCreatorArtifact from '../etc/PollCreator'
+import PollArtifact from '../etc/Poll'
 import { VIDEO_PROFILES } from './video_profiles.js'
 
 // Constants
@@ -37,6 +39,7 @@ export { TRANSCODER_STATUS }
 // Defaults
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
+  pollCreatorAddress: '0xbe892721530686124546622fe2c63ce3aefeb44a',
   provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
@@ -48,6 +51,7 @@ export const DEFAULTS = {
     RoundsManager: RoundsManagerArtifact,
     BondingManager: BondingManagerArtifact,
     Minter: MinterArtifact,
+    PollCreator: PollCreatorArtifact,
   },
   ensRegistries: {
     // Mainnet
@@ -361,6 +365,7 @@ export async function initContracts(
     account = DEFAULTS.account,
     artifacts = DEFAULTS.artifacts,
     controllerAddress = DEFAULTS.controllerAddress,
+    pollCreatorAddress = DEFAULTS.pollCreatorAddress,
     gas = DEFAULTS.gas,
     privateKeys = DEFAULTS.privateKeys,
     provider = DEFAULTS.provider,
@@ -392,6 +397,12 @@ export async function initContracts(
     defaultTx,
     address: controllerAddress,
   })
+  // Create a PollCreator contract instance
+  const PollCreator = await getContractAt(eth, {
+    ...artifacts.PollCreator,
+    defaultTx,
+    address: pollCreatorAddress,
+  })
   for (const name of Object.keys(contracts)) {
     // Get contract address from Controller
     const hash = Eth.keccak256(name)
@@ -408,6 +419,9 @@ export async function initContracts(
   }
   // Add the Controller contract to the contracts object
   contracts.Controller = Controller
+  // Add the PollCreator contract to the contracts object
+  contracts.PollCreator = PollCreator
+
   // Key ABIs by contract name
   const abis = Object.entries(artifacts)
     .map(([k, v]) => ({ [k]: v.abi }))
@@ -427,7 +441,6 @@ export async function initContracts(
     .reduce(
       (a, b) =>
         b.reduce((events, { name, event, abi, contract }) => {
-          // console.log(contract, name, abis[contract])
           event.abi = abi
           event.contract = contract
           return { ...events, [name]: event }
@@ -481,6 +494,7 @@ export async function createLivepeerSDK(
     LivepeerTokenFaucet,
     RoundsManager,
     Minter,
+    PollCreator,
   } = config.contracts
   const { resolveAddress } = utils
 
@@ -988,6 +1002,9 @@ export async function createLivepeerSDK(
       const allowance = headToString(
         await LivepeerToken.allowance(address, BondingManager.address),
       )
+      const pollCreatorAllowance = headToString(
+        await LivepeerToken.allowance(address, PollCreator.address),
+      )
       const currentRound = await rpc.getCurrentRound()
       const pendingStake = headToString(
         await BondingManager.pendingStake(address, currentRound),
@@ -1024,6 +1041,7 @@ export async function createLivepeerSDK(
       return {
         address,
         allowance,
+        pollCreatorAllowance,
         bondedAmount,
         delegateAddress,
         delegatedAmount,
@@ -1588,6 +1606,166 @@ export async function createLivepeerSDK(
         return await utils.getTxReceipt(txHash, config.eth)
       } catch (err) {
         err.message = 'Error: initializeRound\n' + err.message
+        throw err
+      }
+    },
+
+    async approveTokenPollCreationCost(
+      amount: string,
+      tx: TxObject,
+    ): Promise<TxReceipt> {
+      const token = toBN(amount)
+      const txHash = await LivepeerToken.approve(PollCreator.address, token, {
+        ...config.defaultTx,
+        ...tx,
+      })
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
+    /**
+     * Creates a poll
+     * @memberof livepeer~rpc
+     * @param {string} proposal - The IPFS multihash for the proposal
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.initializeRound()
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async createPoll(proposal, tx = config.defaultTx): Promise<TxReceipt> {
+      try {
+        const txHash = await PollCreator.createPoll(proposal, {
+          ...config.defaultTx,
+          ...tx,
+        })
+        if (tx.returnTxHash) {
+          return txHash
+        }
+        return await utils.getTxReceipt(txHash, config.eth)
+      } catch (err) {
+        err.message = 'Error: createPoll\n' + err.message
+        throw err
+      }
+    },
+
+    /**
+     * Get poll creator balance
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.initializeRound()
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async getPollCreatorAllowance(addr): Promise<TxReceipt> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        return headToString(
+          await LivepeerToken.allowance(address, PollCreator.address),
+        )
+      } catch (err) {
+        err.message = 'Error: getPollCreatorAllowance\n' + err.message
+        throw err
+      }
+    },
+
+    /**
+     * Creates a poll
+     * @memberof livepeer~rpc
+     * @param {string} pollAddress - poll contract address
+     * @param {int} choiceId - vote (0 = yes, 1 = no)
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.initializeRound()
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async vote(
+      pollAddress,
+      choiceId,
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      try {
+        const Poll = await getContractAt(config.eth, {
+          ...PollArtifact,
+          defaultTx: config.defaultTx,
+          address: pollAddress,
+        })
+        const txHash = await Poll.vote(choiceId, {
+          ...config.defaultTx,
+          ...tx,
+        })
+        if (tx.returnTxHash) {
+          return txHash
+        }
+        return await utils.getTxReceipt(txHash, config.eth)
+      } catch (err) {
+        err.message = 'Error: vote\n' + err.message
         throw err
       }
     },

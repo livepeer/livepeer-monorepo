@@ -8,3 +8,9 @@ declare module '*.jpeg'
 declare module '*.gif'
 
 declare module 'graphql-type-json'
+declare module 'front-matter'
+
+declare module '*.gql' {
+  const content: any
+  export default content
+}

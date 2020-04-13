@@ -1,56 +1,18 @@
-import { Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { useApolloClient } from '@apollo/react-hooks'
 import Utils from 'web3-utils'
 import Button from '../Button'
-import Modal from '../Modal'
-import Flow from '../Flow'
-import Spinner from '../Spinner'
-import Broadcast from '../../public/img/wifi.svg'
-import NewTab from '../../public/img/open-in-new.svg'
 import { useWeb3React } from '@web3-react/core'
-import useWindowSize from 'react-use/lib/useWindowSize'
-import Confetti from 'react-confetti'
-import { useWeb3Mutation } from '../../hooks'
-import gql from 'graphql-tag'
+import { MutationsContext } from '../../contexts'
 
 export default ({ transcoder, amount, disabled }) => {
   const client = useApolloClient()
   const context = useWeb3React()
-  const [isOpen, setIsModalOpen] = useState(false)
-  const { width, height } = useWindowSize()
+  const { bond }: any = useContext(MutationsContext)
 
-  // Can only stake if connected to wallet
   if (!context.active) {
     return null
   }
-
-  const BOND = gql`
-    mutation bond($to: String!, $amount: String!) {
-      txHash: bond(to: $to, amount: $amount)
-    }
-  `
-
-  const {
-    result: { mutate: bond, isBroadcasted, isMined, txHash },
-    reset,
-  } = useWeb3Mutation(BOND, {
-    variables: {
-      to: transcoder.id,
-      amount: Utils.toWei(amount ? amount.toString() : '0'),
-    },
-    context: {
-      provider: context.library._web3Provider,
-      account: context.account.toLowerCase(),
-      returnTxHash: true,
-    },
-  })
-
-  useEffect(() => {
-    if (isBroadcasted) {
-      setIsModalOpen(true)
-    }
-  }, [isBroadcasted])
 
   return (
     <>
@@ -58,7 +20,12 @@ export default ({ transcoder, amount, disabled }) => {
         disabled={disabled}
         onClick={async () => {
           try {
-            await bond()
+            await bond({
+              variables: {
+                to: transcoder.id,
+                amount: Utils.toWei(amount ? amount.toString() : '0'),
+              },
+            })
             client.writeData({
               data: {
                 tourOpen: false,
@@ -75,7 +42,7 @@ export default ({ transcoder, amount, disabled }) => {
       >
         Stake
       </Button>
-      <Modal
+      {/* <Modal
         isOpen={isOpen}
         onDismiss={() => {
           reset()
@@ -118,7 +85,9 @@ export default ({ transcoder, amount, disabled }) => {
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`https://etherscan.io/tx/${txHash}`}
+                href={`https://${
+                  process.env.NETWORK === 'rinkeby' ? 'rinkeby.' : ''
+                }etherscan.io/tx/${txHash}`}
               >
                 View on Etherscan{' '}
                 <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
@@ -131,7 +100,7 @@ export default ({ transcoder, amount, disabled }) => {
             </Button>
           )}
         </Flex>
-      </Modal>
+      </Modal> */}
     </>
   )
 }
