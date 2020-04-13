@@ -16,9 +16,9 @@ const trustedDomain = 'livepeer.org'
 const jwtAudience = 'livepeer'
 const jwtSecret = 'secret'
 // enable to test SendGrid integration
-// const supportAddr = 'Livepeer Team/angie@livepeer.org'
-// const sendgridTemplateId = ''
-// const sendgridApiKey = ''
+const supportAddr = 'Livepeer Team/angie@livepeer.org'
+const sendgridTemplateId = 'iamanid'
+const sendgridApiKey = 'SG. iamanapikey'
 
 fs.ensureDirSync(dbPath)
 
@@ -32,6 +32,10 @@ params.clientId = clientId
 params.trustedDomain = trustedDomain
 params.jwtAudience = jwtAudience
 params.jwtSecret = jwtSecret
+params.supportAddr = supportAddr
+params.sendgridTemplateId = sendgridTemplateId
+params.sendgridApiKey = sendgridApiKey
+
 if (!params.insecureTestToken) {
   params.insecureTestToken = uuid()
 }
@@ -83,6 +87,7 @@ export default Promise.resolve().then(async () => {
       create: doStore('create'),
       delete: doStore('delete'),
       get: doStore('get'),
+      query: doStore('query'),
       list: doStore('list'),
       listKeys: doStore('listKeys'),
       replace: doStore('replace'),

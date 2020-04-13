@@ -45,7 +45,6 @@ app.post('/', validatePost('user'), async (req, res) => {
   const [hashedPassword, salt] = await hash(req.body.password)
   const id = uuid()
   const emailValidToken = uuid()
-  const admin = 'admin' in req.body ? req.body.admin : false
 
   // use SendGrid to verify user only if credentials have been provided
   let validUser = true
@@ -59,7 +58,7 @@ app.post('/', validatePost('user'), async (req, res) => {
     password: hashedPassword,
     email: req.body.email,
     salt: salt,
-    admin: admin,
+    admin: false,
     emailValidToken: emailValidToken,
     emailValid: validUser,
   })
@@ -68,7 +67,12 @@ app.post('/', validatePost('user'), async (req, res) => {
   if (!validUser && user) {
     try {
       // send email verification message to user using SendGrid
-      const emailConfirmation = sendgridMsg(req.body.email, emailValidToken, req.config, req.headers.host)
+      const emailConfirmation = sendgridMsg(
+        req.body.email,
+        emailValidToken,
+        req.config,
+        req.headers.host,
+      )
       SendgridMail.setApiKey(req.config.sendgridApiKey)
       SendgridMail.send(emailConfirmation)
     } catch (err) {
@@ -117,7 +121,7 @@ app.post('/token', validatePost('user'), async (req, res) => {
 })
 
 app.post('/verify', validatePost('userverify'), async (req, res) => {
-  const userIds = await req.store.getPropertyIds(`useremail/${req.body.email}`)
+  const userIds = await req.store.query('user', { email: req.body.email })
 
   let user = await req.store.get(`user/${userIds[0]}`, false)
   if (user.emailValidToken === req.body.emailValidToken) {

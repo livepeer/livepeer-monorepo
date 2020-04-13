@@ -37,13 +37,11 @@ beforeAll(async () => {
   mockAdminUser = {
     email: 'user_admin@gmail.com',
     password: 'x'.repeat(64),
-    admin: true,
   }
 
   mockNonAdminUser = {
     email: 'user_non_admin@gmail.com',
     password: 'y'.repeat(64),
-    admin: false,
   }
 })
 
@@ -71,7 +69,7 @@ describe('controllers/object-stores', () => {
       client.jwtAuth = `${adminToken['token']}`
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true }
+      adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
 
       // setting up non-admin user
@@ -79,6 +77,10 @@ describe('controllers/object-stores', () => {
       nonAdminUser = await nonAdminRes.json()
       tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       nonAdminToken = await tokenRes.json()
+
+      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
     })
 
     it('should not get all object stores without admin authorization', async () => {
@@ -293,8 +295,12 @@ describe('controllers/object-stores', () => {
       })
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true }
+      adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
+
+      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
     })
 
     it('should not get all object stores with nonadmin token', async () => {

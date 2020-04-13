@@ -95,9 +95,9 @@ export default class Model {
     return await this.backend.delete(key)
   }
 
-  async delete(id) {
-    const [properties, kind] = this.getSchema(id)
-    const doc = await this.get(`${id}`)
+  async delete(key) {
+    const [properties, kind] = this.getSchema(key)
+    const doc = await this.get(`${key}`)
     if (!doc) {
       throw new NotFoundError(`key not found: ${JSON.stringify(key)}`)
     }
@@ -165,7 +165,7 @@ export default class Model {
         if (fieldArray.unique || fieldArray.index) {
           operations.push(
             // ex. user-emails/eli@iame.li/abc123
-            [`${cleanKind}+${fieldName}/${doc[fieldName]}/${id}`, {}],
+            [`${kind}+${fieldName}/${data[fieldName]}/${data['id']}`, {}],
           )
         }
       }

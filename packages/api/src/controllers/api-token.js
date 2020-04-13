@@ -32,11 +32,11 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 
 app.get('/:userId/tokens', authMiddleware({}), async (req, res) => {
   const { userId } = req.params
-  const tokenIds = await req.store.getPropertyIds(`apitokenuserId/${userId}`)
+  const tokenIds = await req.store.query('apitoken', { userId: userId })
   const userTokens = []
   for (let i = 0; i < tokenIds.length; i++) {
-      const token = await req.store.get(`apitoken/${tokenIds[i]}`, false)
-      userTokens.push(token)
+    const token = await req.store.get(`apitoken/${tokenIds[i]}`, false)
+    userTokens.push(token)
   }
 
   if (req.user.admin !== true && req.user.id !== userId) {

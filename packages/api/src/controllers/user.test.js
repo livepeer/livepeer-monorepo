@@ -52,7 +52,7 @@ describe('controllers/user', () => {
       client.jwtAuth = `${adminToken['token']}`
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true }
+      adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
     })
 
@@ -193,30 +193,28 @@ describe('controllers/user', () => {
       }
       expect(error.status).toBe(404)
 
-<<<<<<< HEAD
       // it should return a NotFound Error when trying to replace a record that doesn't exist
       let replaceError
       try {
         await server.store.replace(userRes)
       } catch (err) {
         replaceError = err
-=======
-      // it should return a 404 Error when trying to replace a record not found
-      try {
-        await server.store.replace(userRes)
-      } catch (err) {
-        expect(err.status).toBe(404)
->>>>>>> 27492946... adding sendgrid email verification
       }
       expect(replaceError.status).toBe(404)
     })
 
     it('should not get all users with non-admin user', async () => {
       // setting up non-admin user
-      await client.post(`/user/`, { ...mockNonAdminUser })
+      const resNonAdmin = await client.post(`/user/`, { ...mockNonAdminUser })
+      let nonAdminUser = await resNonAdmin.json()
+
       const tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       const nonAdminToken = await tokenRes.json()
       client.jwtAuth = nonAdminToken['token']
+
+      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
 
       for (let i = 0; i < 3; i += 1) {
         const u = {
@@ -320,7 +318,7 @@ describe('controllers/user', () => {
       let adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
-      const nonAdminUser = await nonAdminRes.json()
+      let nonAdminUser = await nonAdminRes.json()
 
       await server.store.create({
         id: adminApiKey,
@@ -335,8 +333,12 @@ describe('controllers/user', () => {
       })
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true }
+      adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
+
+      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
     })
 
     it('should not get all users', async () => {

@@ -19,13 +19,11 @@ beforeAll(async () => {
   mockAdminUser = {
     email: 'user_admin@gmail.com',
     password: 'x'.repeat(64),
-    admin: true,
   }
 
   mockNonAdminUser = {
     email: 'user_non_admin@gmail.com',
     password: 'y'.repeat(64),
-    admin: false,
   }
 })
 
@@ -53,11 +51,19 @@ describe('controllers/apitoken', () => {
       const adminToken = await tokenRes.json()
       client.jwtAuth = `${adminToken['token']}`
 
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true, emailValid: true }
+      await server.store.replace(adminUser)
+
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
       nonAdminUser = await nonAdminRes.json()
 
       tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       nonAdminToken = await tokenRes.json()
+
+      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
     })
 
     it('should get all tokens with admin authorization', async () => {
@@ -123,40 +129,38 @@ describe('controllers/apitoken', () => {
       const resGet = await server.store.get(`apitoken/${tokenRes.id}`)
       expect(resGet.id).toEqual(tokenRes.id)
 
-      // test for creation of index on apitokenuserId object
-      const tokenIds = await server.store.getPropertyIds(
-        `apitokenuserId/${tokenRes.userId}`,
+      // it should return an empty object, which indicates apitoken+userId record exists
+      const tokenUserId = await server.store.get(
+        `apitoken+userId/${tokenRes.userId}/${tokenRes.id}`,
       )
-      expect(tokenIds.length).toEqual(1)
-      expect(tokenIds[0]).toEqual(tokenRes.id)
+      expect(JSON.stringify(tokenUserId)).toBe('{}')
 
       // test that apiToken is deleted
       await server.store.delete(`apitoken/${tokenRes.id}`)
       const deleted = await server.store.get(`apitoken/${tokenRes.id}`)
-      expect(deleted).toBe(null)
+      expect(deleted).toBeDefined()
 
       // it should return a NotFound Error when trying to delete a record that doesn't exist
+      let deleteTokenErr
       try {
-        await server.store.deleteKey(`apitoken/${tokenRes.id}`)
+        await server.store.delete(`apitoken/${tokenRes.id}`)
       } catch (err) {
-        expect(err.status).toBe(404)
+        deleteTokenErr = err
       }
+      expect(deleteTokenErr.status).toBe(404)
 
-      // it should return a NotFound Error when trying to delete a record that doesn't exist
-      try {
-        await server.store.deleteKey(
-          `apitokenuserId/${tokenRes.userId}/${tokenIds[0]}`,
-        )
-      } catch (err) {
-        expect(err.status).toBe(404)
-      }
+      const nullTokenUserId = await server.store.get(
+        `apitoken+userId/${tokenRes.userId}/${tokenRes.id}`,
+      )
+      expect(nullTokenUserId).toBe(null)
 
-      // it should return a 404 Error replacing token not found
+      let replaceError
       try {
         await server.store.replace(tokenRes)
       } catch (err) {
-        expect(err.status).toBe(404)
+        replaceError = err
       }
+      expect(replaceError.status).toBe(404)
     })
 
     it('should not get all apiTokens with non-admin user', async () => {
@@ -246,10 +250,10 @@ describe('controllers/apitoken', () => {
       })
 
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      const adminUser = await userRes.json()
+      let adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
-      const nonAdminUser = await nonAdminRes.json()
+      let nonAdminUser = await nonAdminRes.json()
 
       await server.store.create({
         id: adminApiKey,
@@ -262,6 +266,14 @@ describe('controllers/apitoken', () => {
         kind: 'apitoken',
         userId: nonAdminUser.id,
       })
+
+      const user = await server.store.get(`user/${adminUser.id}`, false)
+      adminUser = { ...user, admin: true, emailValid: true }
+      await server.store.replace(adminUser)
+
+      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
     })
 
     it('should not get all apiTokens', async () => {
