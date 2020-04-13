@@ -32,8 +32,8 @@
     "wrangler:staging": "cd ./packages/api/dist-worker && wrangler publish --env staging",
     "wrangler:production": "cd ./packages/api/dist-worker && wrangler publish --env production",
     "now:build": "cp -Rv .now-staging .now && now deploy --token=$ZEIT_KEY",
-    "now:staging": "cp -Rv .now-staging .now && now deploy --token=$ZEIT_KEY --production",
-    "now:production": "cp -Rv .now-production .now && now deploy --token=$ZEIT_KEY --production",
+    "now:staging": "cp -Rv .now-staging .now && now deploy --token=$ZEIT_KEY --prod",
+    "now:production": "cp -Rv .now-production .now && now deploy --token=$ZEIT_KEY --prod",
     "postinstall": "lerna run --stream postinstall"
   },
   "devDependencies": {
