@@ -5,9 +5,9 @@ import logger from '../logger'
 import uuid from 'uuid/v4'
 import jwt from 'jsonwebtoken'
 import validator from 'email-validator'
+import SendgridMail from '@sendgrid/mail'
 import { hash, makeNextHREF, sendgridMsg } from './helpers'
 
-const sgMail = require('@sendgrid/mail')
 const app = Router()
 
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
@@ -69,13 +69,17 @@ app.post('/', validatePost('user'), async (req, res) => {
     try {
       // send email verification message to user using SendGrid
       const emailConfirmation = sendgridMsg(req.body.email, emailValidToken, req.config, req.headers.host)
-      sgMail.setApiKey(req.config.sendgridApiKey)
-      sgMail.send(emailConfirmation)
+      SendgridMail.setApiKey(req.config.sendgridApiKey)
+      SendgridMail.send(emailConfirmation)
     } catch (err) {
       // if sendgrid verification email fails to send, user is deleted
       await req.store.delete(`user/${id}`)
       res.status(403)
-      res.json({ errors: [`user not created - error sending confirmation email to ${req.body.email}:: error: ${err}`] })
+      res.json({
+        errors: [
+          `user not created - error sending confirmation email to ${req.body.email}:: error: ${err}`,
+        ],
+      })
     }
   }
 
