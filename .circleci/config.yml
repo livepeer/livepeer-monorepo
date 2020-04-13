@@ -21,7 +21,7 @@ jobs:
           docker login -u $DOCKER_USER -p $DOCKER_PASS
 
           # Kick off parallel Zeit Now install
-          npm install -g now
+          sudo npm install -g now
           yarn run now:build &
 
           # yarn install
