@@ -1,0 +1,133 @@
+{
+  "type": "object",
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "readOnly": true,
+      "example": "de7818e7-610a-4057-8f6f-b785dc1e6f88"
+    },
+    "kind": {
+      "type": "string",
+      "readOnly": true,
+      "example": "stream"
+    },
+    "name": {
+      "type": "string",
+      "example": "test_stream"
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "width",
+          "name",
+          "height",
+          "bitrate",
+          "fps"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "width": {
+            "type": "integer",
+            "minimum": 128
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "aac"
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 128
+          },
+          "bitrate": {
+            "type": "integer",
+            "minimum": 400
+          },
+          "fps": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "objectStoreId": {
+      "type": "string",
+      "example": "D8321C3E-B29C-45EB-A1BB-A623D8BE0F65"
+    },
+    "presets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "P720p60fps16x9",
+          "P720p30fps16x9",
+          "P720p30fps4x3",
+          "P576p30fps16x9",
+          "P360p30fps16x9",
+          "P360p30fps4x3",
+          "P240p30fps16x9",
+          "P240p30fps4x3",
+          "P144p30fps16x9"
+        ],
+        "example": "P720p60fps16x9"
+      }
+    },
+    "wowza": {
+      "type": "object",
+      "required": [
+        "transcoderAppConfig",
+        "transcoderTemplateAppConfig",
+        "streamNameGroups",
+        "sourceInfo"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "transcoderAppConfig": {
+          "type": "object"
+        },
+        "transcoderTemplateAppConfig": {
+          "type": "object"
+        },
+        "streamNameGroups": {
+          "type": "array"
+        },
+        "sourceInfo": {
+          "type": "object",
+          "required": [
+            "width",
+            "height",
+            "fps"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minValue": 1
+            },
+            "height": {
+              "type": "integer",
+              "minValue": 1
+            },
+            "fps": {
+              "type": "integer",
+              "minVallue": 1
+            }
+          }
+        }
+      }
+    },
+    "renditions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

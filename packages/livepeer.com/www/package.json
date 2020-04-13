@@ -46,6 +46,7 @@
     "@babel/core": "^7.7.7",
     "@babel/plugin-transform-react-jsx": "7.8.3",
     "@emotion/babel-plugin-jsx-pragmatic": "0.1.5",
+    "@types/isomorphic-fetch": "^0.0.35",
     "@types/theme-ui": "^0.3.0",
     "babel-plugin-import-graphql": "^2.7.0",
     "babel-plugin-inline-react-svg": "^1.1.1",
