@@ -33,8 +33,7 @@ jobs:
           done
           yarn postinstall
           
-          # Actual build
-          yarn run build
+          # Run tests
           yarn test
 
           # Docker stuff

@@ -9,7 +9,7 @@ const write = (dir, data) => {
   console.log(`wrote ${dir}`)
 }
 
-const schemaDir = path.resolve(__dirname, 'src', 'schema')
+const schemaDir = path.resolve(__dirname, 'schema')
 const validatorDir = path.resolve(schemaDir, 'validators')
 fs.ensureDirSync(validatorDir)
 
