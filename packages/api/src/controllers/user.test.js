@@ -212,7 +212,10 @@ describe('controllers/user', () => {
       const nonAdminToken = await tokenRes.json()
       client.jwtAuth = nonAdminToken['token']
 
-      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      const nonAdminUserRes = await server.store.get(
+        `user/${nonAdminUser.id}`,
+        false,
+      )
       nonAdminUser = { ...nonAdminUserRes, emailValid: true }
       await server.store.replace(nonAdminUser)
 
@@ -305,6 +308,8 @@ describe('controllers/user', () => {
 
   describe('user endpoint with api key', () => {
     let client
+    let adminUser
+    let nonAdminUser
     const adminApiKey = uuid()
     const nonAdminApiKey = uuid()
 
@@ -315,10 +320,10 @@ describe('controllers/user', () => {
       })
 
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      let adminUser = await userRes.json()
+      adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
-      let nonAdminUser = await nonAdminRes.json()
+      nonAdminUser = await nonAdminRes.json()
 
       await server.store.create({
         id: adminApiKey,
@@ -333,22 +338,88 @@ describe('controllers/user', () => {
       })
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true, emailValid: true }
+      adminUser = { ...user, admin: true }
       await server.store.replace(adminUser)
-
-      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
-      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
-      await server.store.replace(nonAdminUser)
     })
 
     it('should not get all users', async () => {
+      // should return nonverified error
       client.apiKey = nonAdminApiKey
       let res = await client.get('/user')
+      let resJson = await res.json()
       expect(res.status).toBe(403)
+      expect(resJson.errors[0]).toBe(
+        `useremail ${nonAdminUser.email} has not been verified. Please check your inbox for verification email.`,
+      )
 
       client.apiKey = adminApiKey
       res = await client.get('/user')
+      resJson = await res.json()
       expect(res.status).toBe(403)
+      expect(resJson.errors[0]).toBe(
+        `useremail ${adminUser.email} has not been verified. Please check your inbox for verification email.`,
+      )
+
+      // adding emailValid true to user
+      const nonAdminUserRes = await server.store.get(
+        `user/${nonAdminUser.id}`,
+        false,
+      )
+      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      await server.store.replace(nonAdminUser)
+
+      // should return admin priviledges error
+      client.apiKey = nonAdminApiKey
+      res = await client.get('/user')
+      resJson = await res.json()
+      expect(res.status).toBe(403)
+      expect(resJson.errors[0]).toBe('user does not have admin priviledges')
+    })
+
+    it('should return verified user', async () => {
+      // set up admin user
+      client.apiKey = adminApiKey
+      expect(adminUser.emailValid).toBe(false)
+
+      // should return verified user
+      let postData = {
+        email: adminUser.email,
+        emailValidToken: adminUser.emailValidToken,
+      }
+
+      let verifyRes = await client.post(`/user/verify`, { ...postData })
+      expect(verifyRes.status).toBe(201)
+      let verified = await verifyRes.json()
+      expect(verified.email).toBe(adminUser.email)
+      expect(verified.emailValid).toBe(true)
+
+      // should return token validation error with missing emailValidToken field
+      verifyRes = await client.post(`/user/verify`, { email: adminUser.email })
+      expect(verifyRes.status).toBe(422)
+
+      // should return token validation error with missing email field
+      verifyRes = await client.post(`/user/verify`, { emailValidToken: adminUser.emailValidToken })
+      expect(verifyRes.status).toBe(422)
+
+      // should return token validation error with incorrect token
+      postData = {
+        email: adminUser.email,
+        emailValidToken: uuid()
+      }
+
+      verifyRes = await client.post(`/user/verify`, { ...postData })
+      expect(verifyRes.status).toBe(403)
+      verified = await verifyRes.json()
+      expect(verified.errors[0]).toBe('incorrect user validation token')
+
+      // should return NotFound error with incorrect email
+      postData = {
+        email: 'rando@livepeer.org',
+        emailValidToken: adminUser.emailValidToken
+      }
+
+      verifyRes = await client.post(`/user/verify`, { ...postData })
+      expect(verifyRes.status).toBe(404)
     })
   })
 })
