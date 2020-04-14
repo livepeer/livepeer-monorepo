@@ -84,6 +84,7 @@ app.post('/', validatePost('user'), async (req, res) => {
           `user not created - error sending confirmation email to ${req.body.email}:: error: ${err}`,
         ],
       })
+      return
     }
   }
 

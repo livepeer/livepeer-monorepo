@@ -68,6 +68,16 @@ export const ApiProvider = ({ children }) => {
       return context.login(email, password);
     },
 
+    async verify(email, emailValidToken) {
+      return await context.fetch("/user/verify", {
+        method: "POST",
+        body: JSON.stringify({ email, emailValidToken }),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+    },
+
     async getUser(userId, opts = {}) {
       return await context.fetch(`/user/${userId}`, opts);
     },

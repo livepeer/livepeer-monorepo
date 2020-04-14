@@ -106,11 +106,10 @@ export function sendgridMsg(email, emailValidToken, config, host) {
   if (supportInfo.length !== 2) {
     throw new Error(
       `sendgrid supportAddr cli parameter '${config.supportAddr}' should be in this format: 'support name/support email'`,
-      )
-    }
+    )
+  }
 
-  // TODO: when frontend verification route is built, add that url here. Will take to login screen or to your dashboard.
-  const verificationUrl = `http://${host}/api/user/verify?email=${email}&emailValidToken=${emailValidToken}`
+  const verificationUrl = `http://${host}/app/user/verify?email=${encodeURIComponent(email)}&emailValidToken=${emailValidToken}`
   const msg = {
     personalizations: [
       {
@@ -129,9 +128,8 @@ export function sendgridMsg(email, emailValidToken, config, host) {
       name: supportInfo[0],
     },
     // email template id: https://mc.sendgrid.com/dynamic-templates
-    template_id: config.sendgridTemplateId,
+    template_id: config.sendgridTemplateId
   }
-
 
   return msg
 }
