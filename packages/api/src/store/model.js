@@ -90,35 +90,23 @@ export default class Model {
   async deleteKey(key) {
     const record = await this.get(key)
     if (!record) {
-      throw new NotFoundError()
+      throw new NotFoundError(`key not found: ${JSON.stringify(key)}`)
     }
     return await this.backend.delete(key)
   }
 
-  async delete(id) {
-    const [properties, kind] = this.getSchema(id)
-    const doc = await this.get(`${id}`)
+  async delete(key) {
+    const [properties, kind] = this.getSchema(key)
+    const doc = await this.get(`${key}`)
     if (!doc) {
-      throw new NotFoundError()
+      throw new NotFoundError(`key not found: ${JSON.stringify(key)}`)
     }
 
-    // adding all delete operations that need to happen
-    const operations = [id]
-    for (const [fieldName, fieldArray] of Object.entries(properties)) {
-      const value = doc[fieldName]
-      if (fieldArray.unique || fieldArray.index) {
-        const [keys] = await this.backend.listKeys(
-          `${kind}+${fieldName}/${value}`,
-        )
-        if (keys.length > 0) {
-          operations.concat(keys)
-        }
-      }
-    }
+    const operations = await this.getOperations(key, doc)
 
     await Promise.all(
-      operations.map(id => {
-        return this.backend.delete(id)
+      operations.map(([key, value]) => {
+        return this.backend.delete(key)
       }),
     )
   }
@@ -155,25 +143,35 @@ export default class Model {
       }
     }
 
-    const operations = [[`${kind}/${id}`, doc]]
-
-    if (properties) {
-      for (const [fieldName, fieldArray] of Object.entries(properties)) {
-        if (fieldArray.index === true) {
-          const cleanKind = this.getCleanKind(kind)
-          operations.push(
-            // ex. user-emails/eli@iame.li/abc123
-            [`${cleanKind}+${fieldName}/${doc[fieldName]}/${id}`, {}],
-          )
-        }
-      }
-    }
+    const operations = await this.getOperations(`${kind}/${id}`, doc)
 
     await Promise.all(
       operations.map(([key, value]) => {
         return this.backend.create(key, value)
       }),
     )
+  }
+
+  async getOperations(key, data) {
+    const [properties, kind] = this.getSchema(key)
+    if (!properties || properties.length) {
+      return null
+    }
+
+    const operations = [[key, data]]
+
+    if (properties) {
+      for (const [fieldName, fieldArray] of Object.entries(properties)) {
+        if (fieldArray.unique || fieldArray.index) {
+          operations.push(
+            // ex. user-emails/eli@iame.li/abc123
+            [`${kind}+${fieldName}/${data[fieldName]}/${data['id']}`, {}],
+          )
+        }
+      }
+    }
+
+    return operations
   }
 
   getSchema(kind) {

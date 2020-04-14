@@ -9,9 +9,13 @@ tags:
   - name: objectstores
     description: Object Stores Endpoints
   - name: user
+    description: Api Token Endpoints
+  - name: apitoken
     description: User Endpoints
   - name: login
     description: User login
+  - name: verification
+    description: User Email Verification
 
 components:
   schemas:
@@ -157,6 +161,40 @@ components:
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
           index: true
 
+    apitoken:
+      type: object
+      additionalProperties: false
+      properties:
+        kind:
+          type: string
+          readOnly: true
+          example: user
+        id:
+          type: string
+          example: 09F8B46C-61A0-4254-9875-F71F4C605BC7
+        userId:
+          type: string
+          example: 66E2161C-7670-4D05-B71D-DA2D6979556F
+          index: true
+
+    userverify:
+      type: object
+      required:
+        - email
+        - emailValidToken
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: user email address
+          example: useremail@gmail.com
+          unique: true
+          index: true
+        emailValidToken:
+          type: string
+          example: E1F53135E559C253
+          writeOnly: true
+
     user:
       type: object
       required:
@@ -176,6 +214,13 @@ components:
           minLength: 64
           maxLength: 64
           writeOnly: true
+        emailValidToken:
+          type: string
+          example: E1F53135E559C253
+          writeOnly: true
+        emailValid:
+          type: boolean
+          example: true
         salt:
           type: string
           example: E1F53135E559C253
@@ -283,6 +328,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
 
+  /userverify:
+    tags:
+      - verification
+    post:
+      description: Verifies user email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/userverify'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/userverify'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
   /user/token:
     tags:
       - login
@@ -358,3 +432,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+
+  /apitoken:
+    tags:
+      - apitoken
+    post:
+      description: Contains api token information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/apitoken'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/apitoken'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+    get:
+      description: Lists api tokens
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/apitoken'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apitoken'
