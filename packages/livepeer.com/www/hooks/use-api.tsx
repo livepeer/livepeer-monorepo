@@ -1,19 +1,20 @@
-import { useState, useContext, createContext } from "react";
+import { useState, useContext, createContext, useEffect } from "react";
 import fetch from "isomorphic-fetch";
 import jwt from "jsonwebtoken";
+import { User, Error as ApiError } from "@livepeer/api";
 
-export const ApiContext = createContext();
+type ApiState = {
+  user?: User;
+  token?: string;
+};
 
-export const ApiProvider = ({ children }) => {
-  const [state, setState] = useState({ foo: "bar" });
-
+const makeContext = (state: ApiState, setState) => {
   const context = {
     ...state,
-
-    async fetch(url, opts = {}) {
-      let headers = opts.headers || {};
-      if (state.token && !headers.authorization) {
-        headers.authorization = `JWT ${state.token}`;
+    async fetch(url, opts: RequestInit = {}) {
+      let headers = new Headers(opts.headers || {});
+      if (state.token && !headers.has("authorization")) {
+        headers.set("authorization", `JWT ${state.token}`);
       }
       const res = await fetch(`/api/${url}`, {
         ...opts,
@@ -40,18 +41,8 @@ export const ApiProvider = ({ children }) => {
         return body;
       }
       const { token } = body;
-      const data = jwt.decode(token);
-      const userId = data.sub;
-      const [userRes, user] = await context.getUser(userId, {
-        headers: {
-          authorization: `JWT ${token}`
-        }
-      });
-      if (userRes.status !== 200) {
-        return body;
-      }
-      setState({ ...state, token, user });
-      return body;
+      setState(state => ({ ...state, token }));
+      return res;
     },
 
     async register(email, password) {
@@ -78,14 +69,38 @@ export const ApiProvider = ({ children }) => {
       });
     },
 
-    async getUser(userId, opts = {}) {
-      return await context.fetch(`/user/${userId}`, opts);
+    async getUser(userId, opts = {}): Promise<[Response, User | ApiError]> {
+      const [res, user] = await context.fetch(`/user/${userId}`, opts);
+      return [res, user as User | ApiError];
     },
 
     async logout() {
-      setState({ ...state, user: null, token: null });
+      setState(state => ({ ...state, user: null, token: null }));
     }
   };
+  return context;
+};
+
+export const ApiContext = createContext(makeContext({} as ApiState, () => {}));
+
+export const ApiProvider = ({ children }) => {
+  const [state, setState] = useState<ApiState>({});
+
+  const context = makeContext(state, setState);
+
+  // If our token changes, auto-refresh our current user
+  useEffect(() => {
+    if (state.token) {
+      const data = jwt.decode(state.token);
+      context.getUser(data.sub).then(([res, user]) => {
+        if (res.status !== 200) {
+          setState(state => ({ ...state, token: null }));
+        } else {
+          setState(state => ({ ...state, user: user as User }));
+        }
+      });
+    }
+  }, [state.token]);
 
   return <ApiContext.Provider value={context}>{children}</ApiContext.Provider>;
 };

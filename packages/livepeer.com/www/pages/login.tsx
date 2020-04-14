@@ -10,7 +10,7 @@ export default () => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login, user, token } = useApi();
+  const { user, token, login } = useApi();
 
   useEffect(() => {
     if (user) {

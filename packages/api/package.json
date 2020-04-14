@@ -96,6 +96,7 @@
     "istanbul-api": "^2.1.6",
     "istanbul-lib-coverage": "^2.0.5",
     "jest": "^24.9.0",
+    "json-schema-to-typescript": "^8.2.0",
     "klaw": "^3.0.0",
     "live-server": "^1.2.1",
     "livereload": "^0.7.0",
@@ -122,5 +123,6 @@
     "pg-native": "./src/empty.js",
     "level": "./src/empty.js",
     "@kubernetes/client-node": "./src/empty.js"
-  }
+  },
+  "types": "src/schema/types.d.ts"
 }
