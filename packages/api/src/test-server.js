@@ -45,10 +45,10 @@ let server
 console.log(`test run parameters: ${JSON.stringify(params)}`)
 
 export default Promise.resolve().then(async () => {
-  if (params.storage === 'cloudflare-cluster') {
+  if (params.storage === 'firestore') {
     server = {
       ...params,
-      host: 'https://livepeerjs-test.livepeer.workers.dev',
+      host: 'https://livepeer-test.livepeer.workers.dev',
       close: () => {},
     }
   } else {

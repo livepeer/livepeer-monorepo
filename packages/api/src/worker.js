@@ -20,8 +20,8 @@ const chunked = {}
 const chunkRE = /^(.*)chunk(\d+)$/
 for (const key of Object.keys(self)) {
   if (key.startsWith('LP_')) {
-    const value = process.env[key]
-    const result = value.match(chunkRE)
+    const value = self[key]
+    const result = key.match(chunkRE)
     if (result === null) {
       process.env[key] = self[key]
       continue

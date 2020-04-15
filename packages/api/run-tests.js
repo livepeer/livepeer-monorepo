@@ -10,6 +10,7 @@ const { spawnSync, spawn } = require('child_process')
 const path = require('path')
 const klaw = require('klaw')
 const uuid = require('uuid')
+const pushSecrets = require('./dist-worker/push-worker-secrets')
 
 const BUILD_DEFINITIONS = {
   level: {
@@ -78,11 +79,7 @@ const run = async (name, args) => {
     await fs.writeFile(path.resolve(testBuildDir, 'package.json'), pkgOutStr)
 
     // Write secrets file
-    await fs.writeFile(
-      path.resolve(__dirname, 'src', 'worker-secrets.json'),
-      JSON.stringify(args, null, 2),
-      'utf8',
-    )
+    await pushSecrets('test', args)
     spawnSync('yarn', ['run', 'test:build'], {
       cwd: testBuildDir,
       stdio: 'inherit',
@@ -127,7 +124,7 @@ const run = async (name, args) => {
       `--coverage-directory=coverage-${name}`,
       '--bail',
       '--testTimeout=60000',
-      'src/controllers/object-store.test.js',
+      'src',
     ],
     {
       stdio: 'inherit',

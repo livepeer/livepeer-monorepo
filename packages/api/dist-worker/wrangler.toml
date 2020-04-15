@@ -5,14 +5,11 @@ workers_dev = false
 
 [env.test]
 workers_dev = true
-kv-namespaces = [
-  { binding = "KV_TEST", id = "1e47fce5bffe4994a2de6101512aaa40" }
-]
 
 [env.monster]
 domain = "livepeer.monster"
 zone_id = "21239600972377a5baddef5b4c27eeb4"
-route = "livepeer.monster/api*"
+route = "livepeer.monster/api/*"
 
 [env.production]
 domain = "livepeer.live"
