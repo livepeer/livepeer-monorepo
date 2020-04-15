@@ -6,23 +6,6 @@ import uuid from 'uuid/v4'
 
 const app = Router()
 
-app.get('/', authMiddleware({ admin: true }), async (req, res) => {
-  let limit = req.query.limit
-  let cursor = req.query.cursor
-  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
-
-  const resp = await req.store.list(`api-token/`, cursor, limit)
-  let output = resp.data
-  const nextCursor = resp.cursor
-  res.status(200)
-
-  if (output.length > 0) {
-    res.links({ next: makeNextHREF(req, nextCursor) })
-  }
-
-  res.json(output)
-})
-
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const apiToken = await req.store.get(`api-token/${id}`)
@@ -30,24 +13,33 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
   res.json(apiToken)
 })
 
-app.get('/:userId/tokens', authMiddleware({}), async (req, res) => {
-  const { userId } = req.params
+app.get('/', authMiddleware({}), async (req, res) => {
+  const { userId } = req.query
+
+  if (!userId) {
+    res.status(400)
+    return res.json({
+      errors: ['missing query parameter: userId'],
+    })
+  }
+
+  if (req.user.admin !== true && req.user.id !== userId) {
+    res.status(403)
+    return res.json({
+      errors: ['user can only request information on their own tokens'],
+    })
+  }
+
   const tokenIds = await req.store.query('api-token', { userId: userId })
+  console.log(tokenIds)
   const userTokens = []
   for (let i = 0; i < tokenIds.length; i++) {
     const token = await req.store.get(`api-token/${tokenIds[i]}`, false)
     userTokens.push(token)
   }
 
-  if (req.user.admin !== true && req.user.id !== userId) {
-    res.status(403)
-    res.json({
-      errors: ['user can only request information on their own tokens'],
-    })
-  } else {
-    res.status(200)
-    res.json(userTokens)
-  }
+  res.status(200)
+  res.json(userTokens)
 })
 
 app.post(

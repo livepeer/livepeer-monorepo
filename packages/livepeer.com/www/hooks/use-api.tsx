@@ -2,6 +2,12 @@ import { useState, useContext, createContext, useEffect } from "react";
 import fetch from "isomorphic-fetch";
 import jwt from "jsonwebtoken";
 import { User, Error as ApiError } from "@livepeer/api";
+import qs from "qs";
+
+/**
+ * Primary React API client. Definitely a "first pass". Should be replaced with some
+ * helpers around a nice auto-generated TypeScript client from our Swagger schema.
+ */
 
 type ApiState = {
   user?: User;
@@ -107,6 +113,10 @@ const makeContext = (state: ApiState, setState) => {
     async logout() {
       setState(state => ({ ...state, user: null, token: null }));
       clearToken();
+    },
+
+    async getApiTokens(userId) {
+      return await context.fetch(`/api-token?${qs.stringify({ userId })}`);
     }
   };
   return context;

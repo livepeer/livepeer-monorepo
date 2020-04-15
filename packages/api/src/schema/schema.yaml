@@ -232,6 +232,10 @@ components:
           type: string
           readOnly: true
           example: user
+        id:
+          type: string
+          readOnly: true
+          example: abc123
 
 paths:
   /stream:

@@ -39,7 +39,7 @@ function authFactory(params) {
       throw new InternalServerError(`no user found for token ${authToken}`)
     }
 
-    if (!params.unresitricted && user.emailValid != true) {
+    if (!params.unresitricted && user.emailValid === false) {
       throw new ForbiddenError(
         `useremail ${user.email} has not been verified. Please check your inbox for verification email.`,
       )

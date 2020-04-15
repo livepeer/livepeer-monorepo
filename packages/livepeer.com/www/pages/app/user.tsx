@@ -5,6 +5,7 @@ import Layout from "../../components/Layout";
 import { Button } from "@theme-ui/components";
 import { Flex } from "@theme-ui/components";
 import useLoggedIn from "../../hooks/use-logged-in";
+import TokenTable from "../../components/TokenTable";
 
 export default () => {
   useLoggedIn();
@@ -15,8 +16,7 @@ export default () => {
 
   return (
     <Layout>
-      <Box>Logged in as {user && user.email}</Box>
-      <Button onClick={logout}>Log out</Button>
+      <TokenTable userId={user.id} />
     </Layout>
   );
 };

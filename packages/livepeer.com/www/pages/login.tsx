@@ -18,7 +18,6 @@ export default () => {
     // Don't need to worry about the success case, we'll redirect
     if (res.errors) {
       setErrors(res.errors);
-      setLoading(false);
     }
   };
   return (

@@ -75,10 +75,6 @@ export default class Model {
       cleanWriteOnly,
     )
 
-    if (keys.length === 0) {
-      throw new NotFoundError(`Not found: ${prefix}`)
-    }
-
     const ids = []
     for (let i = 0; i < keys.length; i++) {
       ids.push(keys[i].split('/').pop())
