@@ -42,8 +42,13 @@ export default ({ userId }) => {
                 }
                 setCreating(true);
                 createApiToken({ name: tokenName })
-                  .then(newToken => setNewToken(newToken))
-                  .catch(e => {});
+                  .then(newToken => {
+                    setNewToken(newToken);
+                    setCreating(false);
+                  })
+                  .catch(e => {
+                    setCreating(false);
+                  });
               }}
             >
               <h3>Create token</h3>
@@ -127,26 +132,46 @@ export default ({ userId }) => {
           gridTemplateColumns: "auto 1fr auto"
         }}
       >
-        <Box></Box>
-        <Box>Name</Box>
-        <Box>Last Active</Box>
+        <Box sx={{ padding: [3, 3], userSelect: "none" }}></Box>
+        <Box sx={{ padding: [3, 3], userSelect: "none" }}>Name</Box>
+        <Box sx={{ padding: [3, 3], userSelect: "none" }}>Last Active</Box>
         {tokens.map(token => {
           const { id, name } = token;
           const selected = selectedToken && selectedToken.id === id;
           const RowBox = ({ children }) => (
             <Box
               sx={{
-                backgroundColor: selected ? "rgba(0,0,0,0.5)" : "transparent",
-                cursor: "pointer"
+                backgroundColor: selected ? "rgba(0,0,0,0.2)" : "transparent",
+                cursor: "pointer",
+                padding: [3, 3],
+                userSelect: "none"
               }}
-              onClick={() => setSelectedToken(token)}
+              onClick={() => {
+                if (selected) {
+                  setSelectedToken(null);
+                } else {
+                  setSelectedToken(token);
+                }
+              }}
             >
               {children}
             </Box>
           );
           return (
             <Fragment key={id}>
-              <RowBox>x</RowBox>
+              <RowBox>
+                <span
+                  sx={{
+                    visibility: selected ? "visible" : "hidden",
+                    position: "absolute"
+                  }}
+                >
+                  ☑️
+                </span>
+                <span sx={{ visibility: selected ? "hidden" : "visible" }}>
+                  ◻️
+                </span>
+              </RowBox>
               <RowBox>{name}</RowBox>
               <RowBox>2m ago</RowBox>
             </Fragment>

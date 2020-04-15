@@ -18,7 +18,8 @@ export default ({ children, onClose }) => {
     >
       <Box
         sx={{
-          backgroundColor: "white"
+          backgroundColor: "white",
+          padding: [4, 4]
         }}
         onClick={e => e.stopPropagation()}
       >

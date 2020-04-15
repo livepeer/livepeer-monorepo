@@ -16,10 +16,19 @@ export default () => {
 
   return (
     <Layout>
-      <TokenTable userId={user.id} />
-      <Box>
-        <Button onClick={logout}>Log Out</Button>
-      </Box>
+      <Flex
+        sx={{
+          flexDirection: "column",
+          flexGrow: 1,
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
+        <TokenTable userId={user.id} />
+        <Box sx={{ margin: 3 }}>
+          <Button onClick={logout}>Log Out</Button>
+        </Box>
+      </Flex>
     </Layout>
   );
 };
