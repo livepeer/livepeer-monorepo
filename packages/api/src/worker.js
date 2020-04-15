@@ -12,10 +12,30 @@ import 'express-async-errors' // it monkeypatches, i guess
 import parseCli from './parse-cli.js'
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import composeM3U8 from './controllers/compose-m3u8'
-import workerSecrets from './worker-secrets.json'
 
-// Populate env with precompiled secrets for yargs
-process.env = workerSecrets
+// Populate process.env from CF environment variables
+process.env = {}
+// Need to support chunked keys because of 1kb secret limit
+const chunked = {}
+const chunkRE = /^(.*)chunk(\d+)$/
+for (const key of Object.keys(self)) {
+  if (key.startsWith('LP_')) {
+    const value = process.env[key]
+    const result = value.match(chunkRE)
+    if (result === null) {
+      process.env[key] = self[key]
+      continue
+    }
+    const [_, outputKey, idx] = result
+    if (!chunked[outputKey]) {
+      chunked[outputKey] = []
+    }
+    chunked[outputKey][parseInt(idx)] = value
+  }
+}
+for (const [key, arr] of Object.entries(chunked)) {
+  process.env[key] = arr.join('')
+}
 const params = parseCli()
 let routerPromise
 

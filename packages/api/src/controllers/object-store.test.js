@@ -22,7 +22,7 @@ beforeAll(async () => {
   }
 
   store = {
-    id: 'mock_store',
+    id: 'mock-store',
     credentials: 'abc123/abc123',
     path: 'us-west-1/my-bucket',
     type: 's3',

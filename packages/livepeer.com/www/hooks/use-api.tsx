@@ -51,7 +51,7 @@ const makeContext = (state: ApiState, setState) => {
       if (state.token && !headers.has("authorization")) {
         headers.set("authorization", `JWT ${state.token}`);
       }
-      const res = await fetch(`/api/${url}`, {
+      const res = await fetch(`/api${url}`, {
         ...opts,
         headers
       });

@@ -25,11 +25,17 @@ export default class FirestoreStore {
   // say, /staging/user/ABC123; we have to store at /staging/docs/user/ABC123
   // For our join keys, we store e.g. `user+email/example@livepeer.org/ABC123` at `user+email_example@livepeer.org/ABC123`.
   getPath(key) {
-    const parts = [...key.split('/')].filter(x => !!x)
+    let parts = [...key.split('/')].filter(x => !!x)
     if (parts[0] && parts[0].includes('+')) {
+      if (!parts[1]) {
+        throw new Error(
+          `I'm confused, what do I convert this key into for firestore? ${key}`,
+        )
+      }
       parts[1] = `${parts[0]}_${parts[1]}`
       parts.shift()
     }
+    parts = parts.map(part => encodeURIComponent(part))
     return [this.collection, 'docs', ...parts].join('/')
   }
 
@@ -44,7 +50,6 @@ export default class FirestoreStore {
     opts.headers.authorization = `Bearer ${this.token}`
     opts.method = opts.method || 'GET'
     const res = await fetch(url, opts)
-    console.log(`${res.status} ${opts.method} ${url}`)
     return res
   }
 
@@ -118,8 +123,9 @@ export default class FirestoreStore {
     const res = await this.fetch(url, { method: 'POST' })
     const data = await res.json()
     const output = []
-    for (const record of data.collectionIds) {
-      const [docs] = await this.doList(record)
+    const collectionIds = data.collectionIds || []
+    for (const record of collectionIds) {
+      const [docs] = await this.doList(record.replace('_', '/'))
       output.push(...docs)
     }
     return [output, null]
@@ -138,6 +144,8 @@ export default class FirestoreStore {
       query.pageToken = cursor
     }
     const path = this.getPath(prefix)
+      .split('/')
+      .join('/')
     const url = `${this.url}/${path}?${qs.stringify(query)}`
     const res = await this.fetch(url, {
       method: 'GET',
@@ -170,7 +178,8 @@ export default class FirestoreStore {
   async listKeys(prefix, cursor, limit) {
     const [results, nextPageToken] = await this.doList(prefix, cursor, limit)
     const data = results.map(doc => {
-      return doc.name.slice(this.keyPrefix.length)
+      const name = doc.name.slice(this.keyPrefix.length).replace('_', '/')
+      return name
     })
     return [data, nextPageToken]
   }

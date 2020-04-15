@@ -1,5 +1,5 @@
 account_id = "2d8e3e6f3567c9760d12a19ca2b931b3"
-name = "livepeerjs"
+name = "livepeer"
 type = "javascript"
 workers_dev = false
 
@@ -9,10 +9,10 @@ kv-namespaces = [
   { binding = "KV_TEST", id = "1e47fce5bffe4994a2de6101512aaa40" }
 ]
 
-[env.staging]
-domain = "livepeer-staging.live"
-zone_id = "4d3b36a8ea59b1ec5c9ccd76e033e485"
-route = "*livepeer-staging.live/*"
+[env.monster]
+domain = "livepeer.monster"
+zone_id = "21239600972377a5baddef5b4c27eeb4"
+route = "livepeer.monster/api*"
 
 [env.production]
 domain = "livepeer.live"
