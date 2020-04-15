@@ -8,6 +8,35 @@ type ApiState = {
   token?: string;
 };
 
+const PERSISTENT_TOKEN = "PERSISTENT_TOKEN";
+const storeToken = token => {
+  try {
+    localStorage.setItem(PERSISTENT_TOKEN, token);
+  } catch (err) {
+    console.error(`
+      Error storing persistent token: ${err.message}. Usually this means that you're in a
+      Safari private window and you don't want the token to persist anyway.
+    `);
+  }
+};
+
+const getStoredToken = () => {
+  try {
+    return localStorage.getItem(PERSISTENT_TOKEN);
+  } catch (err) {
+    console.error(`Error retrieving persistent token: ${err.message}.`);
+    return null;
+  }
+};
+
+const clearToken = () => {
+  try {
+    localStorage.removeItem(PERSISTENT_TOKEN);
+  } catch (err) {
+    console.error(`Error clearing persistent token: ${err.message}.`);
+  }
+};
+
 const makeContext = (state: ApiState, setState) => {
   const context = {
     ...state,
@@ -41,6 +70,7 @@ const makeContext = (state: ApiState, setState) => {
         return body;
       }
       const { token } = body;
+      storeToken(token);
       setState(state => ({ ...state, token }));
       return res;
     },
@@ -76,6 +106,7 @@ const makeContext = (state: ApiState, setState) => {
 
     async logout() {
       setState(state => ({ ...state, user: null, token: null }));
+      clearToken();
     }
   };
   return context;
@@ -84,7 +115,9 @@ const makeContext = (state: ApiState, setState) => {
 export const ApiContext = createContext(makeContext({} as ApiState, () => {}));
 
 export const ApiProvider = ({ children }) => {
-  const [state, setState] = useState<ApiState>({});
+  const [state, setState] = useState<ApiState>({
+    token: getStoredToken()
+  });
 
   const context = makeContext(state, setState);
 
@@ -94,6 +127,7 @@ export const ApiProvider = ({ children }) => {
       const data = jwt.decode(state.token);
       context.getUser(data.sub).then(([res, user]) => {
         if (res.status !== 200) {
+          clearToken();
           setState(state => ({ ...state, token: null }));
         } else {
           setState(state => ({ ...state, user: user as User }));

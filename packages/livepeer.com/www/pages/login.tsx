@@ -2,21 +2,14 @@ import Layout from "../components/Layout";
 import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
-import { useState, useEffect } from "react";
-import useApi from "../hooks/use-api";
-import { useRouter } from "next/router";
+import { useState } from "react";
+import { useApi, useLoggedIn } from "../hooks";
 
 export default () => {
+  useLoggedIn(false);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { user, token, login } = useApi();
-
-  useEffect(() => {
-    if (user) {
-      router.replace("/app/user");
-    }
-  }, [user]);
+  const { login } = useApi();
 
   const onSubmit = async ({ email, password }) => {
     setLoading(true);
@@ -25,6 +18,7 @@ export default () => {
     // Don't need to worry about the success case, we'll redirect
     if (res.errors) {
       setErrors(res.errors);
+      setLoading(false);
     }
   };
   return (

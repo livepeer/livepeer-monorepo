@@ -1,21 +1,14 @@
 import useApi from "../../hooks/use-api";
 import { Box } from "@theme-ui/components";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import { Button } from "@theme-ui/components";
 import { Flex } from "@theme-ui/components";
+import useLoggedIn from "../../hooks/use-logged-in";
 
 export default () => {
-  const { user, token, logout } = useApi();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!token) {
-      router.replace("/login");
-    }
-  }, [token]);
-
+  useLoggedIn();
+  const { user, logout } = useApi();
   if (!user) {
     return <Layout />;
   }
