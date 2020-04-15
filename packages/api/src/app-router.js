@@ -14,7 +14,7 @@ import {
   hardcodedNodes,
   insecureTest,
 } from './middleware'
-import * as controllers from './controllers'
+import controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import proxy from 'http-proxy-middleware'
 
@@ -113,10 +113,6 @@ export default async function makeApp(params) {
   app.use(httpPrefix, prefixRouter)
   // Special case: handle /stream proxies off that endpoint
   app.use('/stream', streamProxy)
-
-  prefixRouter.get('/google-client', async (req, res, next) => {
-    res.json({ clientId: req.config.clientId })
-  })
 
   // This far down, this would otherwise be a 404... hit up the fallback proxy if we have it.
   // Mostly this is used for proxying to the Next.js server in development.

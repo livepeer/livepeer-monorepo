@@ -6,11 +6,11 @@ info:
 tags:
   - name: stream
     description: Wowza Stream Endpoints
-  - name: objectstores
+  - name: object-store
     description: Object Stores Endpoints
   - name: user
     description: Api Token Endpoints
-  - name: apitoken
+  - name: api-token
     description: User Endpoints
   - name: login
     description: User login
@@ -132,7 +132,7 @@ components:
             type: string
             example: ['id not provided', 'user not found']
 
-    objectstores:
+    object-store:
       type: object
       required:
         - type
@@ -161,7 +161,7 @@ components:
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
           index: true
 
-    apitoken:
+    api-token:
       type: object
       additionalProperties: false
       properties:
@@ -177,7 +177,7 @@ components:
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
           index: true
 
-    userverify:
+    user-verification:
       type: object
       required:
         - email
@@ -281,9 +281,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
 
-  /objectstores:
+  /object-store:
     tags:
-      - objectstores
+      - object-store
     post:
       description: Receives store credentials
       requestBody:
@@ -292,7 +292,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/objectstores'
+              $ref: '#/components/schemas/object-store'
 
       responses:
         200:
@@ -302,7 +302,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/objectstores'
+                  $ref: '#/components/schemas/object-store'
         default:
           description: Error
           content:
@@ -320,7 +320,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/objectstores'
+                  $ref: '#/components/schemas/object-store'
         default:
           description: Error
           content:
@@ -328,7 +328,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
 
-  /userverify:
+  /user-verification:
     tags:
       - verification
     post:
@@ -339,7 +339,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/userverify'
+              $ref: '#/components/schemas/user-verification'
 
       responses:
         200:
@@ -349,7 +349,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/userverify'
+                  $ref: '#/components/schemas/user-verification'
         default:
           description: Error
           content:
@@ -433,9 +433,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
 
-  /apitoken:
+  /api-token:
     tags:
-      - apitoken
+      - api-token
     post:
       description: Contains api token information
       requestBody:
@@ -444,7 +444,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/apitoken'
+              $ref: '#/components/schemas/api-token'
 
       responses:
         200:
@@ -454,7 +454,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/apitoken'
+                  $ref: '#/components/schemas/api-token'
         default:
           description: Error
           content:
@@ -472,10 +472,10 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/apitoken'
+                  $ref: '#/components/schemas/api-token'
         default:
           description: Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apitoken'
+                $ref: '#/components/schemas/api-token'

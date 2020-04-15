@@ -31,7 +31,7 @@ afterEach(async () => {
   await clearDatabase(server)
 })
 
-describe('controllers/apitoken', () => {
+describe('controllers/api-token', () => {
   describe('basic CRUD with JWT authorization', () => {
     let client
     let adminUser
@@ -61,7 +61,10 @@ describe('controllers/apitoken', () => {
       tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       nonAdminToken = await tokenRes.json()
 
-      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      const nonAdminUserRes = await server.store.get(
+        `user/${nonAdminUser.id}`,
+        false,
+      )
       nonAdminUser = { ...nonAdminUserRes, emailValid: true }
       await server.store.replace(nonAdminUser)
     })
@@ -71,17 +74,17 @@ describe('controllers/apitoken', () => {
         const u = {
           userId: adminUser.id,
           id: uuid(),
-          kind: 'apitoken',
+          kind: 'api-token',
         }
         await server.store.create(u)
-        const res = await client.get(`/apitoken/${u.id}`)
+        const res = await client.get(`/api-token/${u.id}`)
         expect(res.status).toBe(200)
         const apiTokenRes = await res.json()
         expect(apiTokenRes.userId).toEqual(adminUser.id)
         expect(apiTokenRes.id).toEqual(u.id)
       }
 
-      const res = await client.get('/apitoken')
+      const res = await client.get('/api-token')
       expect(res.status).toBe(200)
       const apiTokens = await res.json()
       expect(apiTokens.length).toEqual(4)
@@ -92,16 +95,16 @@ describe('controllers/apitoken', () => {
         const u = {
           userId: adminUser.id,
           id: uuid(),
-          kind: 'apitoken',
+          kind: 'api-token',
         }
         await server.store.create(u)
-        const res = await client.get(`/apitoken/${u.id}`)
+        const res = await client.get(`/api-token/${u.id}`)
         expect(res.status).toBe(200)
         const apiTokenRes = await res.json()
         expect(apiTokenRes.userId).toEqual(adminUser.id)
         expect(apiTokenRes.id).toEqual(u.id)
       }
-      const res = await client.get(`/apitoken?limit=11`)
+      const res = await client.get(`/api-token?limit=11`)
       const apiTokens = await res.json()
       expect(res.headers._headers.link).toBeDefined()
       expect(res.headers._headers.link.length).toBe(1)
@@ -109,48 +112,48 @@ describe('controllers/apitoken', () => {
     })
 
     it('should accept empty body for creating an apiToken', async () => {
-      const res = await client.post('/apitoken')
+      const res = await client.post('/api-token')
       expect(res.status).toBe(201)
     })
 
     it('should not accept additional properties for creating an apiToken', async () => {
-      const res = await client.post('/apitoken', { livepeer: 'livepeer' })
+      const res = await client.post('/api-token', { livepeer: 'livepeer' })
       expect(res.status).toBe(422)
       const apiToken = await res.json()
       expect(apiToken.id).toBeUndefined()
     })
 
     it('should create an apiToken, delete it, and error when attempting additional detele or replace', async () => {
-      const res = await client.post('/apitoken')
+      const res = await client.post('/api-token')
       expect(res.status).toBe(201)
       const tokenRes = await res.json()
       expect(tokenRes.id).toBeDefined()
 
-      const resGet = await server.store.get(`apitoken/${tokenRes.id}`)
+      const resGet = await server.store.get(`api-token/${tokenRes.id}`)
       expect(resGet.id).toEqual(tokenRes.id)
 
-      // it should return an empty object, which indicates apitoken+userId record exists
+      // it should return an empty object, which indicates api-token+userId record exists
       const tokenUserId = await server.store.get(
-        `apitoken+userId/${tokenRes.userId}/${tokenRes.id}`,
+        `api-token+userId/${tokenRes.userId}/${tokenRes.id}`,
       )
       expect(JSON.stringify(tokenUserId)).toBe('{}')
 
       // test that apiToken is deleted
-      await server.store.delete(`apitoken/${tokenRes.id}`)
-      const deleted = await server.store.get(`apitoken/${tokenRes.id}`)
+      await server.store.delete(`api-token/${tokenRes.id}`)
+      const deleted = await server.store.get(`api-token/${tokenRes.id}`)
       expect(deleted).toBeDefined()
 
       // it should return a NotFound Error when trying to delete a record that doesn't exist
       let deleteTokenErr
       try {
-        await server.store.delete(`apitoken/${tokenRes.id}`)
+        await server.store.delete(`api-token/${tokenRes.id}`)
       } catch (err) {
         deleteTokenErr = err
       }
       expect(deleteTokenErr.status).toBe(404)
 
       const nullTokenUserId = await server.store.get(
-        `apitoken+userId/${tokenRes.userId}/${tokenRes.id}`,
+        `api-token+userId/${tokenRes.userId}/${tokenRes.id}`,
       )
       expect(nullTokenUserId).toBe(null)
 
@@ -171,14 +174,14 @@ describe('controllers/apitoken', () => {
         const u = {
           userId: adminUser.id,
           id: uuid(),
-          kind: 'apitoken',
+          kind: 'api-token',
         }
         await server.store.create(u)
-        const res = await client.get(`/apitoken/${u.id}`)
+        const res = await client.get(`/api-token/${u.id}`)
         expect(res.status).toBe(200)
       }
 
-      let res = await client.get('/apitoken')
+      let res = await client.get('/api-token')
       expect(res.status).toBe(403)
     })
 
@@ -187,17 +190,17 @@ describe('controllers/apitoken', () => {
         const u = {
           userId: adminUser.id,
           id: uuid(),
-          kind: 'apitoken',
+          kind: 'api-token',
         }
         await server.store.create(u)
-        const res = await client.get(`/apitoken/${u.id}`)
+        const res = await client.get(`/api-token/${u.id}`)
         expect(res.status).toBe(200)
         const apiTokenRes = await res.json()
         expect(apiTokenRes.userId).toEqual(adminUser.id)
         expect(apiTokenRes.id).toEqual(u.id)
       }
 
-      let res = await client.get('/apitoken')
+      let res = await client.get('/api-token')
       expect(res.status).toBe(200)
       let apiTokens = await res.json()
       expect(apiTokens.length).toEqual(4)
@@ -206,34 +209,34 @@ describe('controllers/apitoken', () => {
       const u = {
         userId: nonAdminUser.id,
         id: uuid(),
-        kind: 'apitoken',
+        kind: 'api-token',
       }
       await server.store.create(u)
-      res = await client.get(`/apitoken/${u.id}`)
+      res = await client.get(`/api-token/${u.id}`)
       expect(res.status).toBe(200)
 
       // should return all apiTokens that belong to admin user
-      res = await client.get(`/apitoken/${adminUser.id}/tokens`)
+      res = await client.get(`/api-token/${adminUser.id}/tokens`)
       expect(res.status).toBe(200)
       let tokenRes = await res.json()
 
       expect(tokenRes.length).toEqual(4)
 
       // should return all apiTokens that belong to nonAdmin user as admin user
-      res = await client.get(`/apitoken/${nonAdminUser.id}/tokens`)
+      res = await client.get(`/api-token/${nonAdminUser.id}/tokens`)
       expect(res.status).toBe(200)
       tokenRes = await res.json()
       expect(tokenRes.length).toEqual(1)
 
       // should return all apiTokens that belong to nonAdmin user as nonAdmin user
       client.jwtAuth = `${nonAdminToken['token']}`
-      res = await client.get(`/apitoken/${nonAdminUser.id}/tokens`)
+      res = await client.get(`/api-token/${nonAdminUser.id}/tokens`)
       expect(res.status).toBe(200)
       tokenRes = await res.json()
       expect(tokenRes.length).toEqual(1)
 
       // should not return all apiTokens that belong to admin user as nonAdmin user
-      res = await client.get(`/apitoken/${adminUser.id}/tokens`)
+      res = await client.get(`/api-token/${adminUser.id}/tokens`)
       expect(res.status).toBe(403)
     })
   })
@@ -257,13 +260,13 @@ describe('controllers/apitoken', () => {
 
       await server.store.create({
         id: adminApiKey,
-        kind: 'apitoken',
+        kind: 'api-token',
         userId: adminUser.id,
       })
 
       await server.store.create({
         id: nonAdminApiKey,
-        kind: 'apitoken',
+        kind: 'api-token',
         userId: nonAdminUser.id,
       })
 
@@ -271,18 +274,21 @@ describe('controllers/apitoken', () => {
       adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
 
-      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      const nonAdminUserRes = await server.store.get(
+        `user/${nonAdminUser.id}`,
+        false,
+      )
       nonAdminUser = { ...nonAdminUserRes, emailValid: true }
       await server.store.replace(nonAdminUser)
     })
 
     it('should not get all apiTokens', async () => {
       client.apiKey = nonAdminApiKey
-      let res = await client.get('/apitoken')
+      let res = await client.get('/api-token')
       expect(res.status).toBe(403)
 
       client.apiKey = adminApiKey
-      res = await client.get('/apitoken')
+      res = await client.get('/api-token')
       expect(res.status).toBe(403)
     })
   })

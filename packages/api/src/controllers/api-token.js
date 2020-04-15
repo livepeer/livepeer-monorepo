@@ -11,7 +11,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const resp = await req.store.list(`apitoken/`, cursor, limit)
+  const resp = await req.store.list(`api-token/`, cursor, limit)
   let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
@@ -25,17 +25,17 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
-  const apiToken = await req.store.get(`apitoken/${id}`)
+  const apiToken = await req.store.get(`api-token/${id}`)
   res.status(200)
   res.json(apiToken)
 })
 
 app.get('/:userId/tokens', authMiddleware({}), async (req, res) => {
   const { userId } = req.params
-  const tokenIds = await req.store.query('apitoken', { userId: userId })
+  const tokenIds = await req.store.query('api-token', { userId: userId })
   const userTokens = []
   for (let i = 0; i < tokenIds.length; i++) {
-    const token = await req.store.get(`apitoken/${tokenIds[i]}`, false)
+    const token = await req.store.get(`api-token/${tokenIds[i]}`, false)
     userTokens.push(token)
   }
 
@@ -53,16 +53,16 @@ app.get('/:userId/tokens', authMiddleware({}), async (req, res) => {
 app.post(
   '/',
   authMiddleware({}),
-  validatePost('apitoken'),
+  validatePost('api-token'),
   async (req, res) => {
     const id = uuid()
     await req.store.create({
       id: id,
       userId: req.user.id,
-      kind: 'apitoken',
+      kind: 'api-token',
     })
 
-    const apiToken = await req.store.get(`apitoken/${id}`)
+    const apiToken = await req.store.get(`api-token/${id}`)
 
     if (apiToken) {
       res.status(201)

@@ -5,6 +5,11 @@ import fs from 'fs-extra'
 import path from 'path'
 import { compile as generateTypes } from 'json-schema-to-typescript'
 
+// This takes schema.yaml as its input and produces a few outputs.
+// 1. types.d.ts, TypeScript definitions of the JSON-schema objects
+// 2. the `validators` directory containing precompiled Ajv schemas for those objects
+// 3. schema.json
+
 const write = (dir, data) => {
   fs.writeFileSync(dir, data, 'utf8')
   console.log(`wrote ${dir}`)
@@ -34,10 +39,10 @@ const types = []
     var moduleCode = pack(ajv, validate)
     const outPath = path.resolve(validatorDir, `${name}.js`)
     write(outPath, moduleCode)
-    index.push(`export {default as ${name}} from './${name}.js'`)
+    index.push(`'${name}':  require('./${name}.js'),`)
   }
 
-  const indexStr = index.join('\n')
+  const indexStr = `export default { ${index.join('\n')} }`
   const indexPath = path.resolve(validatorDir, 'index.js')
   write(indexPath, indexStr)
 

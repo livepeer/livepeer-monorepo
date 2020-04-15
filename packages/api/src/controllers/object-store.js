@@ -1,56 +1,102 @@
-import router from 'express/lib/router'
-import { Client } from 'minio'
-import httpProxy from 'http-proxy'
-import fetch from 'isomorphic-fetch'
-import { getClientIp } from 'request-ip'
+import { parse as parsePath } from 'path'
+import { parse as parseQS } from 'querystring'
+import { parse as parseUrl } from 'url'
+import { authMiddleware } from '../middleware'
+import { validatePost } from '../middleware'
+import Router from 'express/lib/router'
+import { makeNextHREF } from './helpers'
+import logger from '../logger'
+import uuid from 'uuid/v4'
+import wowzaHydrate from './wowza-hydrate'
+import path from 'path'
 
-var proxy = httpProxy.createProxyServer({})
+const app = Router()
 
-export default ({ s3Url, s3Access, s3Secret }) => {
-  const url = new URL(s3Url)
-  const client = new Client({
-    endPoint: url.hostname,
-    port: 9000,
-    useSSL: url.protocol === 'https:',
-    accessKey: s3Access,
-    secretKey: s3Secret,
-  })
+app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
+  let limit = req.query.limit
+  let cursor = req.query.cursor
+  logger.info(`cursor params ${cursor}, limit ${limit}`)
 
-  const app = router()
-  proxy.on('proxyRes', function(proxyRes, req, res) {
-    if (req.method !== 'POST') {
-      return
+  const objStoreIds = await req.store.query(
+    'object-store',
+    { userId: req.params.userId },
+    cursor,
+    limit,
+  )
+
+  const objStores = []
+  for (let i = 0; i < objStoreIds.length; i++) {
+    const objStore = await req.store.get(`object-store/${objStoreIds[i]}`)
+    if (objStore) {
+      objStores.push(objStore)
     }
-    proxyRes.on('end', function() {
-      console.log('res from proxied server:', proxyRes.headers.location)
-      res.status(400)
-      res.end()
+  }
+
+  res.status(200)
+
+  if (objStores.length > 0) {
+    res.links({ next: makeNextHREF(req, objStoreIds.cursor) })
+  }
+
+  res.json(objStores)
+})
+
+app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
+  const { id, userId } = req.params
+  const objStoreIds = await req.store.query('object-store', { userId: userId })
+
+  if (!objStoreIds.includes(id)) {
+    res.status(403)
+    return res.json({
+      errors: [
+        `user id ${userId} does not have any object stores associated with it`,
+      ],
     })
-  })
+  }
 
-  app.post('*', async (req, res) => {
-    const ip = getClientIp(req)
-    console.log(req.url)
+  if (objStoreIds.includes(id)) {
+    const objStore = await req.store.get(`object-store/${id}`)
 
-    await new Promise((resolve, reject) => {
-      proxy.web(req, res, { target: 'localhost:3085' }, err => {
-        if (err) {
-          console.log('post err', err)
-          reject(err)
-        }
-        resolve()
+    if (req.user.admin !== true && req.user.id !== objStore.userId) {
+      res.status(403)
+      res.json({
+        errors: [
+          'user can only request information on their own object stores',
+        ],
       })
-    })
-    res.on('end', () => {
-      console.log('post done')
-    })
-  })
+    }
 
-  app.put('*', (req, res) => {
-    console.log('put', req.url)
     res.status(200)
-    res.end()
-  })
+    res.json(objStore)
+  }
+})
 
-  return app
-}
+app.post(
+  '/',
+  authMiddleware({}),
+  validatePost('object-store'),
+  async (req, res) => {
+    const id = uuid()
+
+    await req.store.create({
+      id: id,
+      credentials: req.body.credentials,
+      path: req.body.path,
+      userId: req.user.id,
+      type: req.body.type,
+      kind: `object-store`,
+    })
+
+    const store = await req.store.get(`object-store/${id}`)
+
+    if (store) {
+      res.status(201)
+      res.json(store)
+    } else {
+      res.status(403)
+      res.json({ errors: ['store not created'] })
+    }
+  },
+)
+
+export default app

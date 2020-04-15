@@ -56,7 +56,7 @@ beforeAll(async () => {
     path: 'us-west-1/my-bucket',
     userId: mockAdminUser.id,
     type: 's3',
-    kind: 'objectstores',
+    kind: 'object-store',
   }
 })
 
@@ -185,7 +185,10 @@ describe('controllers/stream', () => {
       const nonAdminToken = await tokenRes.json()
       client.jwtAuth = nonAdminToken['token']
 
-      const nonAdminUserRes = await server.store.get(`user/${nonAdminUser.id}`, false)
+      const nonAdminUserRes = await server.store.get(
+        `user/${nonAdminUser.id}`,
+        false,
+      )
       nonAdminUser = { ...nonAdminUserRes, emailValid: true }
       await server.store.replace(nonAdminUser)
 
@@ -237,13 +240,13 @@ describe('controllers/stream', () => {
 
       await server.store.create({
         id: adminApiKey,
-        kind: 'apitoken',
+        kind: 'api-token',
         userId: adminUser.id,
       })
 
       await server.store.create({
         id: nonAdminApiKey,
-        kind: 'apitoken',
+        kind: 'api-token',
         userId: nonAdminUser.id,
       })
 

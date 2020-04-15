@@ -327,13 +327,13 @@ describe('controllers/user', () => {
 
       await server.store.create({
         id: adminApiKey,
-        kind: 'apitoken',
+        kind: 'api-token',
         userId: adminUser.id,
       })
 
       await server.store.create({
         id: nonAdminApiKey,
-        kind: 'apitoken',
+        kind: 'api-token',
         userId: nonAdminUser.id,
       })
 
@@ -398,13 +398,15 @@ describe('controllers/user', () => {
       expect(verifyRes.status).toBe(422)
 
       // should return token validation error with missing email field
-      verifyRes = await client.post(`/user/verify`, { emailValidToken: adminUser.emailValidToken })
+      verifyRes = await client.post(`/user/verify`, {
+        emailValidToken: adminUser.emailValidToken,
+      })
       expect(verifyRes.status).toBe(422)
 
       // should return token validation error with incorrect token
       postData = {
         email: adminUser.email,
-        emailValidToken: uuid()
+        emailValidToken: uuid(),
       }
 
       verifyRes = await client.post(`/user/verify`, { ...postData })
@@ -415,7 +417,7 @@ describe('controllers/user', () => {
       // should return NotFound error with incorrect email
       postData = {
         email: 'rando@livepeer.org',
-        emailValidToken: adminUser.emailValidToken
+        emailValidToken: adminUser.emailValidToken,
       }
 
       verifyRes = await client.post(`/user/verify`, { ...postData })

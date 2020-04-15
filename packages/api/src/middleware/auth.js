@@ -15,22 +15,20 @@ function authFactory(params) {
 
     if (!authToken) {
       throw new ForbiddenError(`no token object ${authToken} found`)
-
     } else if (authToken.startsWith('Bearer')) {
-      tokenObject = await req.store.get(`apitoken/${req.token}`)
+      tokenObject = await req.store.get(`api-token/${req.token}`)
       if (!tokenObject) {
-        throw new ForbiddenError(
-          `no token object ${authToken} found`,
-        )
+        throw new ForbiddenError(`no token object ${authToken} found`)
       }
       userId = tokenObject.userId
-
     } else if (authToken.startsWith('JWT')) {
       const jwtToken = authToken.substr(4)
       try {
-        const verified = jwt.verify(jwtToken, req.config.jwtSecret, {audience: req.config.jwtAudience})
+        const verified = jwt.verify(jwtToken, req.config.jwtSecret, {
+          audience: req.config.jwtAudience,
+        })
         userId = verified.sub
-      }  catch (err) {
+      } catch (err) {
         throw new ForbiddenError(err.message)
       }
     }
@@ -42,14 +40,19 @@ function authFactory(params) {
     }
 
     if (!params.unresitricted && user.emailValid != true) {
-      throw new ForbiddenError(`useremail ${user.email} has not been verified. Please check your inbox for verification email.`)
+      throw new ForbiddenError(
+        `useremail ${user.email} has not been verified. Please check your inbox for verification email.`,
+      )
     }
 
     req.user = user
 
     if (params.admin) {
       // admins must have a JWT
-      if (authToken.startsWith('JWT') && user.admin !== true || authToken.startsWith('Bearer')) {
+      if (
+        (authToken.startsWith('JWT') && user.admin !== true) ||
+        authToken.startsWith('Bearer')
+      ) {
         throw new ForbiddenError(`user does not have admin priviledges`)
       }
     }

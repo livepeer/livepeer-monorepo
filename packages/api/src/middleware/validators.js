@@ -1,5 +1,5 @@
 // import { schemaWalk } from '@cloudflare/json-schema-walker'
-import * as validators from '../schema/validators'
+import validators from '../schema/validators'
 
 export const validatePost = name => {
   const validate = validators[name]

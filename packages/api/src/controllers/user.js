@@ -88,10 +88,7 @@ app.post('/', validatePost('user'), async (req, res) => {
     }
   }
 
-  if (user) {
-    res.status(201)
-    res.json(user)
-  } else {
+  if (!user) {
     res.status(403)
     return res.json({ errors: ['user not created'] })
   }
@@ -121,7 +118,7 @@ app.post('/token', validatePost('user'), async (req, res) => {
   res.json({ id: user.id, email: user.email, token: token })
 })
 
-app.post('/verify', validatePost('userverify'), async (req, res) => {
+app.post('/verify', validatePost('user-verification'), async (req, res) => {
   const userIds = await req.store.query('user', { email: req.body.email })
 
   let user = await req.store.get(`user/${userIds[0]}`, false)
