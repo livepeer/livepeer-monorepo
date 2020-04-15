@@ -39,6 +39,7 @@ export default async function makeApp(params) {
     s3Access,
     s3Secret,
     upstreamBroadcaster,
+    insecureTestToken,
   } = params
   // Storage init
 
@@ -46,7 +47,17 @@ export default async function makeApp(params) {
   const app = express()
   app.use(
     morgan('dev', {
-      skip: (req, res) => req.path.startsWith('/_next'),
+      skip: (req, res) => {
+        if (req.path.startsWith('/_next')) {
+          return true
+        }
+        if (insecureTestToken) {
+          if (req.originalUrl.includes(insecureTestToken)) {
+            return true
+          }
+        }
+        return false
+      },
     }),
   )
   app.use(router)

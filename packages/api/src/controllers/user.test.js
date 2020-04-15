@@ -244,7 +244,7 @@ describe('controllers/user', () => {
       })
       expect(res.status).toBe(404)
       let tokenRes = await res.json()
-      expect(tokenRes.errors[0]).toBe(`Not found: user+email/${mockUser.email}`)
+      expect(tokenRes.errors[0]).toBe(`user not found`)
 
       // create user
       res = await client.post('/user', {

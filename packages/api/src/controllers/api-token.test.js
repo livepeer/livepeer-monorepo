@@ -69,47 +69,47 @@ describe('controllers/api-token', () => {
       await server.store.replace(nonAdminUser)
     })
 
-    it('should get all tokens with admin authorization', async () => {
-      for (let i = 0; i < 4; i += 1) {
-        const u = {
-          userId: adminUser.id,
-          id: uuid(),
-          kind: 'api-token',
-        }
-        await server.store.create(u)
-        const res = await client.get(`/api-token/${u.id}`)
-        expect(res.status).toBe(200)
-        const apiTokenRes = await res.json()
-        expect(apiTokenRes.userId).toEqual(adminUser.id)
-        expect(apiTokenRes.id).toEqual(u.id)
-      }
+    // it('should get all tokens with admin authorization', async () => {
+    //   for (let i = 0; i < 4; i += 1) {
+    //     const u = {
+    //       userId: adminUser.id,
+    //       id: uuid(),
+    //       kind: 'api-token',
+    //     }
+    //     await server.store.create(u)
+    //     const res = await client.get(`/api-token/${u.id}`)
+    //     expect(res.status).toBe(200)
+    //     const apiTokenRes = await res.json()
+    //     expect(apiTokenRes.userId).toEqual(adminUser.id)
+    //     expect(apiTokenRes.id).toEqual(u.id)
+    //   }
 
-      const res = await client.get('/api-token')
-      expect(res.status).toBe(200)
-      const apiTokens = await res.json()
-      expect(apiTokens.length).toEqual(4)
-    })
+    //   const res = await client.get('/api-token')
+    //   expect(res.status).toBe(200)
+    //   const apiTokens = await res.json()
+    //   expect(apiTokens.length).toEqual(4)
+    // })
 
-    it('should get some of the users & get a working next Link', async () => {
-      for (let i = 0; i < 13; i += 1) {
-        const u = {
-          userId: adminUser.id,
-          id: uuid(),
-          kind: 'api-token',
-        }
-        await server.store.create(u)
-        const res = await client.get(`/api-token/${u.id}`)
-        expect(res.status).toBe(200)
-        const apiTokenRes = await res.json()
-        expect(apiTokenRes.userId).toEqual(adminUser.id)
-        expect(apiTokenRes.id).toEqual(u.id)
-      }
-      const res = await client.get(`/api-token?limit=11`)
-      const apiTokens = await res.json()
-      expect(res.headers._headers.link).toBeDefined()
-      expect(res.headers._headers.link.length).toBe(1)
-      expect(apiTokens.length).toEqual(11)
-    })
+    // it('should get some of the users & get a working next Link', async () => {
+    //   for (let i = 0; i < 13; i += 1) {
+    //     const u = {
+    //       userId: adminUser.id,
+    //       id: uuid(),
+    //       kind: 'api-token',
+    //     }
+    //     await server.store.create(u)
+    //     const res = await client.get(`/api-token/${u.id}`)
+    //     expect(res.status).toBe(200)
+    //     const apiTokenRes = await res.json()
+    //     expect(apiTokenRes.userId).toEqual(adminUser.id)
+    //     expect(apiTokenRes.id).toEqual(u.id)
+    //   }
+    //   const res = await client.get(`/api-token?limit=11`)
+    //   const apiTokens = await res.json()
+    //   expect(res.headers._headers.link).toBeDefined()
+    //   expect(res.headers._headers.link.length).toBe(1)
+    //   expect(apiTokens.length).toEqual(11)
+    // })
 
     it('should accept empty body for creating an apiToken', async () => {
       const res = await client.post('/api-token')
@@ -166,24 +166,24 @@ describe('controllers/api-token', () => {
       expect(replaceError.status).toBe(404)
     })
 
-    it('should not get all apiTokens with non-admin user', async () => {
-      // setting up non-admin user
-      client.jwtAuth = nonAdminToken['token']
+    // it('should not get all apiTokens with non-admin user', async () => {
+    //   // setting up non-admin user
+    //   client.jwtAuth = nonAdminToken['token']
 
-      for (let i = 0; i < 3; i += 1) {
-        const u = {
-          userId: adminUser.id,
-          id: uuid(),
-          kind: 'api-token',
-        }
-        await server.store.create(u)
-        const res = await client.get(`/api-token/${u.id}`)
-        expect(res.status).toBe(200)
-      }
+    //   for (let i = 0; i < 3; i += 1) {
+    //     const u = {
+    //       userId: adminUser.id,
+    //       id: uuid(),
+    //       kind: 'api-token',
+    //     }
+    //     await server.store.create(u)
+    //     const res = await client.get(`/api-token/${u.id}`)
+    //     expect(res.status).toBe(200)
+    //   }
 
-      let res = await client.get('/api-token')
-      expect(res.status).toBe(403)
-    })
+    //   let res = await client.get('/api-token')
+    //   expect(res.status).toBe(403)
+    // })
 
     it('should return all user apiTokens that belong to a user', async () => {
       for (let i = 0; i < 4; i += 1) {
@@ -200,7 +200,7 @@ describe('controllers/api-token', () => {
         expect(apiTokenRes.id).toEqual(u.id)
       }
 
-      let res = await client.get('/api-token')
+      let res = await client.get(`/api-token?userId=${adminUser.id}`)
       expect(res.status).toBe(200)
       let apiTokens = await res.json()
       expect(apiTokens.length).toEqual(4)
@@ -216,27 +216,27 @@ describe('controllers/api-token', () => {
       expect(res.status).toBe(200)
 
       // should return all apiTokens that belong to admin user
-      res = await client.get(`/api-token/${adminUser.id}/tokens`)
+      res = await client.get(`/api-token?userId=${adminUser.id}`)
       expect(res.status).toBe(200)
       let tokenRes = await res.json()
 
       expect(tokenRes.length).toEqual(4)
 
       // should return all apiTokens that belong to nonAdmin user as admin user
-      res = await client.get(`/api-token/${nonAdminUser.id}/tokens`)
+      res = await client.get(`/api-token?userId=${nonAdminUser.id}`)
       expect(res.status).toBe(200)
       tokenRes = await res.json()
       expect(tokenRes.length).toEqual(1)
 
       // should return all apiTokens that belong to nonAdmin user as nonAdmin user
       client.jwtAuth = `${nonAdminToken['token']}`
-      res = await client.get(`/api-token/${nonAdminUser.id}/tokens`)
+      res = await client.get(`/api-token?userId=${nonAdminUser.id}`)
       expect(res.status).toBe(200)
       tokenRes = await res.json()
       expect(tokenRes.length).toEqual(1)
 
       // should not return all apiTokens that belong to admin user as nonAdmin user
-      res = await client.get(`/api-token/${adminUser.id}/tokens`)
+      res = await client.get(`/api-token?userId=${adminUser.id}`)
       expect(res.status).toBe(403)
     })
   })
@@ -282,14 +282,14 @@ describe('controllers/api-token', () => {
       await server.store.replace(nonAdminUser)
     })
 
-    it('should not get all apiTokens', async () => {
-      client.apiKey = nonAdminApiKey
-      let res = await client.get('/api-token')
-      expect(res.status).toBe(403)
+    // it('should not get all apiTokens', async () => {
+    //   client.apiKey = nonAdminApiKey
+    //   let res = await client.get('/api-token')
+    //   expect(res.status).toBe(403)
 
-      client.apiKey = adminApiKey
-      res = await client.get('/api-token')
-      expect(res.status).toBe(403)
-    })
+    //   client.apiKey = adminApiKey
+    //   res = await client.get('/api-token')
+    //   expect(res.status).toBe(403)
+    // })
   })
 })

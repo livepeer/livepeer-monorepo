@@ -99,7 +99,15 @@ app.post('/', validatePost('user'), async (req, res) => {
 
 app.post('/token', validatePost('user'), async (req, res) => {
   const userIds = await req.store.query('user', { email: req.body.email })
+  if (userIds.length < 1) {
+    res.status(404)
+    return res.json({ errors: ['user not found'] })
+  }
   const user = await req.store.get(`user/${userIds[0]}`, false)
+  if (!user) {
+    res.status(404)
+    return res.json({ errors: ['user not found'] })
+  }
 
   const [hashedPassword] = await hash(req.body.password, user.salt)
   if (hashedPassword !== user.password) {
@@ -120,6 +128,10 @@ app.post('/token', validatePost('user'), async (req, res) => {
 
 app.post('/verify', validatePost('user-verification'), async (req, res) => {
   const userIds = await req.store.query('user', { email: req.body.email })
+  if (userIds.length < 1) {
+    res.status(404)
+    return res.json({ errors: ['user not found'] })
+  }
 
   let user = await req.store.get(`user/${userIds[0]}`, false)
   if (user.emailValidToken === req.body.emailValidToken) {

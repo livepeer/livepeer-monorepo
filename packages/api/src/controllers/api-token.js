@@ -9,8 +9,33 @@ const app = Router()
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const apiToken = await req.store.get(`api-token/${id}`)
+  if (!apiToken) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+  if (!req.user.admin && req.user.id !== apiToken.userId) {
+    // This would only come up if someone was brute-forcing; let's give them a 404
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
   res.status(200)
   res.json(apiToken)
+})
+
+app.delete('/:id', authMiddleware({}), async (req, res) => {
+  const { id } = req.params
+  const apiToken = await req.store.get(`api-token/${id}`)
+  if (!apiToken) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+  if (!req.user.admin && req.user.id !== apiToken.userId) {
+    res.status(403)
+    return res.json({ errors: ['users may only delete their own API tokens'] })
+  }
+  await req.store.delete(`api-token/${id}`)
+  res.status(204)
+  res.end()
 })
 
 app.get('/', authMiddleware({}), async (req, res) => {
@@ -31,7 +56,6 @@ app.get('/', authMiddleware({}), async (req, res) => {
   }
 
   const tokenIds = await req.store.query('api-token', { userId: userId })
-  console.log(tokenIds)
   const userTokens = []
   for (let i = 0; i < tokenIds.length; i++) {
     const token = await req.store.get(`api-token/${tokenIds[i]}`, false)
@@ -52,6 +76,7 @@ app.post(
       id: id,
       userId: req.user.id,
       kind: 'api-token',
+      name: req.body.name,
     })
 
     const apiToken = await req.store.get(`api-token/${id}`)

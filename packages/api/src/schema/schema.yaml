@@ -176,6 +176,9 @@ components:
           type: string
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
           index: true
+        name:
+          type: string
+          example: Example Token
 
     user-verification:
       type: object

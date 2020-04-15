@@ -17,6 +17,9 @@ export default () => {
   return (
     <Layout>
       <TokenTable userId={user.id} />
+      <Box>
+        <Button onClick={logout}>Log Out</Button>
+      </Box>
     </Layout>
   );
 };

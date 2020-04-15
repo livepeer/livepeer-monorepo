@@ -1,7 +1,7 @@
 import { useState, useContext, createContext, useEffect } from "react";
 import fetch from "isomorphic-fetch";
 import jwt from "jsonwebtoken";
-import { User, Error as ApiError } from "@livepeer/api";
+import { User, Error as ApiError, ApiToken } from "@livepeer/api";
 import qs from "qs";
 
 /**
@@ -55,6 +55,9 @@ const makeContext = (state: ApiState, setState) => {
         ...opts,
         headers
       });
+      if (res.status === 204) {
+        return [res];
+      }
       // todo: not every endpoint will return JSON
       const body = await res.json();
       // todo: this can go away once we standardize on body.errors
@@ -115,8 +118,37 @@ const makeContext = (state: ApiState, setState) => {
       clearToken();
     },
 
-    async getApiTokens(userId) {
-      return await context.fetch(`/api-token?${qs.stringify({ userId })}`);
+    async getApiTokens(userId): Promise<[ApiToken]> {
+      const [res, tokens] = await context.fetch(
+        `/api-token?${qs.stringify({ userId })}`
+      );
+      if (res.status !== 200) {
+        throw new Error(tokens);
+      }
+      return tokens;
+    },
+
+    async createApiToken(params): Promise<ApiToken> {
+      const [res, token] = await context.fetch(`/api-token`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      if (res.status !== 201) {
+        throw new Error(JSON.stringify(res.errors));
+      }
+      return token;
+    },
+
+    async deleteApiToken(id: string): Promise<void> {
+      const [res, body] = await context.fetch(`/api-token/${id}`, {
+        method: "DELETE"
+      });
+      if (res.status !== 204) {
+        throw new Error(body);
+      }
     }
   };
   return context;

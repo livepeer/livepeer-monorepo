@@ -46,7 +46,7 @@ app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const objStoreIds = await req.store.query('object-store', { userId: userId })
 
   if (!objStoreIds.includes(id)) {
-    res.status(403)
+    res.status(404)
     return res.json({
       errors: [
         `user id ${userId} does not have any object stores associated with it`,
@@ -59,7 +59,7 @@ app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
 
     if (req.user.admin !== true && req.user.id !== objStore.userId) {
       res.status(403)
-      res.json({
+      return res.json({
         errors: [
           'user can only request information on their own object stores',
         ],

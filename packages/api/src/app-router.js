@@ -122,8 +122,6 @@ export default async function makeApp(params) {
 
   // If we throw any errors with numerical statuses, use them.
   app.use(async (err, req, res, next) => {
-    console.log('end:')
-    console.log(err)
     if (typeof err.status === 'number') {
       res.status(err.status)
       return res.json({ errors: [err.message] })

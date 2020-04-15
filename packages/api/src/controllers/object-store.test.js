@@ -180,13 +180,13 @@ describe('controllers/object-stores', () => {
       expect(res.status).toBe(201)
     })
 
-    it('should not accept empty body for creating an object store', async () => {
+    it('should return a 404 if objectStore not found', async () => {
       const id = uuid()
       const resp = await client.get(`/object-store/${adminUser.id}/${id}`)
       expect(resp.status).toBe(404)
     })
 
-    it('should return a 404 if objectStore not found', async () => {
+    it('should not accept an empty body for creating an object store', async () => {
       const res = await client.post('/object-store')
       expect(res.status).toBe(422)
     })
