@@ -1,6 +1,6 @@
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
-import { Router } from 'express'
+import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 
