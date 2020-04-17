@@ -45,6 +45,7 @@
     "@cloudflare/kv-asset-handler": "^0.0.5",
     "@cloudflare/wrangler": "^1.8.4",
     "@kubernetes/client-node": "^0.10.2",
+    "@livepeer/axios": "^0.19.2",
     "@livepeer/sdk": "1.0.0-alpha.7",
     "@sendgrid/mail": "^7.0.0",
     "ajv": "^6.10.0",
@@ -122,7 +123,8 @@
   "alias": {
     "pg-native": "./src/empty.js",
     "level": "./src/empty.js",
-    "@kubernetes/client-node": "./src/empty.js"
+    "@kubernetes/client-node": "./src/empty.js",
+    "axios": "@livepeer/axios"
   },
   "types": "src/schema/types.d.ts"
 }
