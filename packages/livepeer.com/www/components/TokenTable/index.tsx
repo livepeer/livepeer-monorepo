@@ -14,7 +14,9 @@ export default ({ userId }) => {
   const [selectedToken, setSelectedToken] = useState(null);
   const { getApiTokens, createApiToken, deleteApiToken } = useApi();
   useEffect(() => {
-    getApiTokens(userId).then(tokens => setTokens(tokens));
+    getApiTokens(userId)
+      .then(tokens => setTokens(tokens))
+      .catch(err => console.error(err)); // todo: surface this
   }, [userId, newToken, deleteModal]);
   const close = () => {
     setCreateModal(false);

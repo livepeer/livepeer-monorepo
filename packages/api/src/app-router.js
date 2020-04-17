@@ -48,6 +48,15 @@ export default async function makeApp(params) {
     firestoreCredentials,
     firestoreCollection,
   } = params
+
+  if (supportAddr || sendgridTemplateId || sendgridApiKey) {
+    if (!(supportAddr && sendgridTemplateId && sendgridApiKey)) {
+      throw new Error(
+        `Sending emails requires supportAddr, sendgridTemplateId, and sendgridApiKey`,
+      )
+    }
+  }
+
   // Storage init
   const bodyParser = require('body-parser')
   let store

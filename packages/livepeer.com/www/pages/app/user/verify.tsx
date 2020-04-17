@@ -1,31 +1,42 @@
 import useApi from "../../../hooks/use-api";
-import { Box } from "@theme-ui/components";
+import { Box, Flex } from "@theme-ui/components";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../../components/Layout";
 import { Button } from "@theme-ui/components";
-import { Flex } from "@theme-ui/components";
+
+const Container = ({ children }) => (
+  <Layout>
+    <Flex sx={{ flexGrow: 1, alignItems: "center", justifyContent: "center" }}>
+      <Box>{children}</Box>
+    </Flex>
+  </Layout>
+);
 
 export default () => {
   const router = useRouter();
-  console.log(router.query);
-  const { verify } = useApi();
-  const email = router.query.email;
-  const emailValidToken = router.query.emailValidToken;
+  const { verify, user } = useApi();
+  const { email, emailValidToken } = router.query;
 
   useEffect(() => {
-    if ((!email || !emailValidToken)) {
-      router.replace("/login");
-      return
+    if (email && emailValidToken) {
+      verify(email, emailValidToken).then(() => {
+        router.replace("/app/user");
+      });
     }
-    verify(email, emailValidToken).then(() => {
-        router.replace("/app/user")
-    })
   }, [email, emailValidToken]);
 
+  // If they've already validated their email, get 'em out of here
+  useEffect(() => {
+    if (user && user.emailValid !== false) {
+      router.replace("/app/user");
+    }
+  }, [user]);
+
+  if (email && emailValidToken) {
+    return <Container>Verifying...</Container>;
+  }
   return (
-    <Layout>
-      <Box>Hello!</Box>
-    </Layout>
+    <Container>Please check your email for a verification link.</Container>
   );
 };

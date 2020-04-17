@@ -1,12 +1,12 @@
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
 import Router from 'express/lib/router'
-import logger from '../logger'
 import uuid from 'uuid/v4'
 import jwt from 'jsonwebtoken'
 import validator from 'email-validator'
-import SendgridMail from '@sendgrid/mail'
-import { hash, makeNextHREF, sendgridMsg } from './helpers'
+import { makeNextHREF, sendgridEmail } from './helpers'
+import hash from '../hash'
+import qs from 'qs'
 
 const app = Router()
 
@@ -21,7 +21,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(resp.data)
 })
 
-app.get('/:id', authMiddleware({ unresitricted: true }), async (req, res) => {
+app.get('/:id', authMiddleware({ allowUnverified: true }), async (req, res) => {
   const user = await req.store.get(`user/${req.params.id}`)
   if (req.user.admin !== true && req.user.id !== req.params.id) {
     res.status(403)
@@ -35,14 +35,15 @@ app.get('/:id', authMiddleware({ unresitricted: true }), async (req, res) => {
 })
 
 app.post('/', validatePost('user'), async (req, res) => {
-  const emailValid = validator.validate(req.body.email)
+  const { email, password } = req.body
+  const emailValid = validator.validate(email)
   if (!emailValid) {
     res.status(422)
     res.json({ errors: ['invalid email'] })
     return
   }
 
-  const [hashedPassword, salt] = await hash(req.body.password)
+  const [hashedPassword, salt] = await hash(password)
   const id = uuid()
   const emailValidToken = uuid()
 
@@ -56,7 +57,7 @@ app.post('/', validatePost('user'), async (req, res) => {
     kind: 'user',
     id: id,
     password: hashedPassword,
-    email: req.body.email,
+    email: email,
     salt: salt,
     admin: false,
     emailValidToken: emailValidToken,
@@ -64,27 +65,39 @@ app.post('/', validatePost('user'), async (req, res) => {
   })
   const user = await req.store.get(`user/${id}`)
 
+  const protocol =
+    req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http'
+
+  const verificationUrl = `${protocol}://${
+    req.headers.host
+  }/app/user/verify?${qs.stringify({ email, emailValidToken })}`
+
   if (!validUser && user) {
+    const { supportAddr, sendgridTemplateId, sendgridApiKey } = req.config
     try {
       // send email verification message to user using SendGrid
-      const emailConfirmation = sendgridMsg(
-        req.body.email,
-        emailValidToken,
-        req.config,
-        req.headers.host,
-      )
-      SendgridMail.setApiKey(req.config.sendgridApiKey)
-      SendgridMail.send(emailConfirmation)
+      await sendgridEmail({
+        email,
+        supportAddr,
+        sendgridTemplateId,
+        sendgridApiKey,
+        subject: 'Verify your Livepeer Email',
+        preheader: 'Welcome to Livepeer!',
+        buttonText: 'Verify Email',
+        buttonUrl: verificationUrl,
+        text: [
+          "Let's verify your email so you can start using the Livepeer API.",
+          'Your link is active for 48 hours. After that, you will need to resend the verification email.',
+        ].join('\n\n'),
+      })
     } catch (err) {
       // if sendgrid verification email fails to send, user is deleted
-      await req.store.delete(`user/${id}`)
-      res.status(403)
-      res.json({
+      res.status(400)
+      return res.json({
         errors: [
-          `user not created - error sending confirmation email to ${req.body.email}:: error: ${err}`,
+          `error sending confirmation email to ${req.body.email}: error: ${err}`,
         ],
       })
-      return
     }
   }
 

@@ -1,6 +1,5 @@
 import crypto from 'isomorphic-webcrypto'
 import util from 'util'
-import SendgridMail from '@sendgrid/mail'
 
 let Encoder
 if (typeof TextEncoder === 'undefined') {
@@ -11,7 +10,7 @@ if (typeof TextEncoder === 'undefined') {
 
 const ITERATIONS = 10000
 
-export async function hash(password, salt) {
+export default async function hash(password, salt) {
   let saltBuffer
   if (salt) {
     saltBuffer = fromHexString(salt)
@@ -91,54 +90,4 @@ function bytesToHexString(bytes, separate) {
   }
 
   return result
-}
-
-export function makeNextHREF(req, nextCursor) {
-  let baseUrl = new URL(
-    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-  )
-  let next = baseUrl
-  next.searchParams.set('cursor', nextCursor)
-  return next.href
-}
-
-export async function sendgridEmail({
-  email,
-  supportAddr,
-  sendgridTemplateId,
-  sendgridApiKey,
-  subject,
-  preheader,
-  text,
-  buttonText,
-  buttonUrl,
-}) {
-  const [supportName, supportEmail] = supportAddr
-  const msg = {
-    personalizations: [
-      {
-        to: [{ email: email }],
-        dynamic_template_data: {
-          subject,
-          preheader,
-          text,
-          buttonText,
-          buttonUrl,
-        },
-      },
-    ],
-    from: {
-      email: supportEmail,
-      name: supportName,
-    },
-    reply_to: {
-      email: supportEmail,
-      name: supportName,
-    },
-    // email template id: https://mc.sendgrid.com/dynamic-templates
-    template_id: sendgridTemplateId,
-  }
-
-  SendgridMail.setApiKey(sendgridApiKey)
-  await SendgridMail.send(msg)
 }

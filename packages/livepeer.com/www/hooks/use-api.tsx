@@ -12,6 +12,7 @@ import qs from "qs";
 type ApiState = {
   user?: User;
   token?: string;
+  userRefresh?: number;
 };
 
 const PERSISTENT_TOKEN = "PERSISTENT_TOKEN";
@@ -99,13 +100,14 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async verify(email, emailValidToken) {
-      return await context.fetch("/user/verify", {
+      const res = await context.fetch("/user/verify", {
         method: "POST",
         body: JSON.stringify({ email, emailValidToken }),
         headers: {
           "content-type": "application/json"
         }
       });
+      setState({ ...state, userRefresh: Date.now() });
     },
 
     async getUser(userId, opts = {}): Promise<[Response, User | ApiError]> {
@@ -176,7 +178,7 @@ export const ApiProvider = ({ children }) => {
         }
       });
     }
-  }, [state.token]);
+  }, [state.token, state.userRefresh]);
 
   return <ApiContext.Provider value={context}>{children}</ApiContext.Provider>;
 };

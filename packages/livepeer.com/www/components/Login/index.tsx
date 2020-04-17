@@ -1,7 +1,7 @@
 import Textfield from "../../components/Textfield";
 import { Button, Box } from "@theme-ui/components";
 import { useState } from "react";
-import { hash } from "@livepeer/api/dist/controllers/helpers";
+import hash from "@livepeer/api/dist/hash";
 
 // The frontend salts are all the same. This could be configurable someday.
 export const FRONTEND_SALT = "69195A9476F08546";

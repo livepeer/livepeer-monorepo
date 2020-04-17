@@ -133,6 +133,28 @@ export default function parseCli(argv) {
           type: 'string',
           default: '[]',
         },
+        supportAddr: {
+          describe:
+            'email address where outgoing emails originate. should be of the form name/email@example.com',
+          type: 'string',
+          coerce: supportAddr => {
+            const split = supportAddr.split('/')
+            if (split.length !== 2) {
+              throw new Error(
+                `supportAddr should be of the form name/email, got ${supportAddr}`,
+              )
+            }
+            return split
+          },
+        },
+        sendgridApiKey: {
+          describe: 'sendgrid api key for sending emails',
+          type: 'string',
+        },
+        sendgridTemplateId: {
+          describe: 'sendgrid template id to use',
+          type: 'string',
+        },
         insecureTestToken: {
           describe:
             '[DO NOT USE EXCEPT FOR TESTING] token that test harness can use to bypass validation and access the database',

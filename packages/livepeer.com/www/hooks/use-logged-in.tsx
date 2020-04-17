@@ -11,12 +11,20 @@ export default (shouldBeLoggedIn = true) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (shouldBeLoggedIn === true && !token) {
-      router.replace("/login");
+    if (shouldBeLoggedIn === true) {
+      if (!token) {
+        router.replace("/login");
+      } else if (user && user.emailValid === false) {
+        router.replace("/app/user/verify");
+      }
     }
     // Check for user rather than token so we don't redirect until we've checked
     if (shouldBeLoggedIn === false && user) {
-      router.replace("/app/user");
+      if (user.emailValid === false) {
+        router.replace("/app/user/verify");
+      } else {
+        router.replace("/app/user");
+      }
     }
   }, [user, token]);
 };
