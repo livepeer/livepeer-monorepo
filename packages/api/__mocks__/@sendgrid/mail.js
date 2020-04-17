@@ -11,8 +11,8 @@ export default {
       throw new Error('missing send to email')
     }
 
-    if (!personalizations.dynamic_template_data.url) {
-      throw new Error('missing confirmation email url')
+    if (!personalizations.dynamic_template_data.buttonUrl) {
+      throw new Error('missing confirmation email buttonUrl')
     }
 
     if (!emailConfirmation.template_id) {

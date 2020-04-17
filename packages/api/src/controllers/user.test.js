@@ -52,6 +52,9 @@ describe('controllers/user', () => {
       client.jwtAuth = `${adminToken['token']}`
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
+      if (!user) {
+        throw new Error('user not found')
+      }
       adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
     })
@@ -338,6 +341,9 @@ describe('controllers/user', () => {
       })
 
       const user = await server.store.get(`user/${adminUser.id}`, false)
+      if (!user) {
+        throw new Error('user not found')
+      }
       adminUser = { ...user, admin: true }
       await server.store.replace(adminUser)
     })
