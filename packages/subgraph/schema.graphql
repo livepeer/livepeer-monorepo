@@ -213,7 +213,7 @@ type Vote @entity {
   voteStake: BigInt
   "This will be non-zero if voter is an orchestrator and any of the its delegators voted"
   nonVoteStake: BigInt
-  choice: PollChoice
+  choiceID: Int
   poll: Poll
 }
 
