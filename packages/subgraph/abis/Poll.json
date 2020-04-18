@@ -34,37 +34,27 @@
         "internalType": "address",
         "name": "voter",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "choiceID",
+        "type": "uint256"
       }
     ],
-    "name": "Yes",
+    "name": "Vote",
     "type": "event"
   },
   {
-    "anonymous": false,
+    "constant": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "voter",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_choiceID",
+        "type": "uint256"
       }
     ],
-    "name": "No",
-    "type": "event"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "yes",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "no",
+    "name": "vote",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

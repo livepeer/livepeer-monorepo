@@ -339,8 +339,8 @@ templates:
           file: ./abis/BondingManager_streamflow.json
       entities:
         - Poll
+        - Vote
+        - Voter
       eventHandlers:
-        - event: Yes(indexed address)
-          handler: yes
-        - event: No(indexed address)
-          handler: no
+        - event: Vote(indexed address,uint256)
+          handler: vote

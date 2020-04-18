@@ -50,8 +50,8 @@ const exec = cmd => {
 
 let waitForSubgraphToBeSynced = async () =>
   new Promise((resolve, reject) => {
-    // Wait for up to a minute
-    let deadline = Date.now() + 60 * 1000
+    // Wait for up to two minutes
+    let deadline = Date.now() + 120 * 1000
     // Function to check if the subgraph is synced
     let checkSubgraphSynced = async () => {
       try {
@@ -89,13 +89,13 @@ let waitForSubgraphToBeSynced = async () =>
         if (Date.now() > deadline) {
           reject(new Error(`Timed out waiting for the subgraph to sync`))
         } else {
-          setTimeout(checkSubgraphSynced, 500)
+          setTimeout(checkSubgraphSynced, 1000)
         }
       }
     }
 
     // Periodically check whether the subgraph has synced
-    setTimeout(checkSubgraphSynced, 5000)
+    setTimeout(checkSubgraphSynced, 8000)
   })
 
 contract('Subgraph Integration Tests', accounts => {
@@ -305,54 +305,54 @@ contract('Subgraph Integration Tests', accounts => {
     const Poll = new web3.eth.Contract(PollABI, pollAddress)
 
     // transcoder 1 votes yes
-    await Poll.methods.yes().send({ from: transcoder1 })
+    await Poll.methods.vote(0).send({ from: transcoder1 })
 
     // delegator 1 votes no
-    await Poll.methods.no().send({ from: delegator1 })
+    await Poll.methods.vote(1).send({ from: delegator1 })
 
     // delegator 2 votes yes
-    await Poll.methods.yes().send({ from: delegator2 })
+    await Poll.methods.vote(0).send({ from: delegator2 })
 
     // delegator 3 votes no
-    await Poll.methods.no().send({ from: delegator3 })
+    await Poll.methods.vote(1).send({ from: delegator3 })
 
     await waitForSubgraphToBeSynced()
 
     subgraphPollData = await fetchSubgraph({
       query: `{
         transcoder1VoteChoice: votes(where: {voter: "${transcoder1.toLowerCase()}" }) {
-          choice
+          choiceID
         }
         delegator1VoteChoice: votes(where: {voter: "${delegator1.toLowerCase()}" }) {
-          choice
+          choiceID
         }
         delegator2VoteChoice: votes(where: {voter: "${delegator2.toLowerCase()}" }) {
-          choice
+          choiceID
         }
         delegator3VoteChoice: votes(where: {voter: "${delegator3.toLowerCase()}" }) {
-          choice
+          choiceID
         }
       }`,
     })
 
     assert.equal(
-      subgraphPollData.data.transcoder1VoteChoice[0].choice,
-      'Yes',
+      subgraphPollData.data.transcoder1VoteChoice[0].choiceID,
+      0,
       'incorrect vote choice',
     )
     assert.equal(
-      subgraphPollData.data.delegator1VoteChoice[0].choice,
-      'No',
+      subgraphPollData.data.delegator1VoteChoice[0].choiceID,
+      1,
       'incorrect vote choice',
     )
     assert.equal(
-      subgraphPollData.data.delegator2VoteChoice[0].choice,
-      'Yes',
+      subgraphPollData.data.delegator2VoteChoice[0].choiceID,
+      0,
       'incorrect vote choice',
     )
     assert.equal(
-      subgraphPollData.data.delegator3VoteChoice[0].choice,
-      'No',
+      subgraphPollData.data.delegator3VoteChoice[0].choiceID,
+      1,
       'incorrect vote choice',
     )
   })
