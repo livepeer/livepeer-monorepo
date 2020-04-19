@@ -15,7 +15,7 @@
     "prepare:mainnet": "NETWORK_NAME=mainnet node ./templatify.js",
     "prepare:rinkeby": "NETWORK_NAME=rinkeby node ./templatify.js",
     "prepare:development": "NETWORK_NAME=development node ./templatify.js",
-    "test": "truffle test --network development",
+    "test": "npx truffle test --network development",
     "postinstall": "patch-package"
   },
   "devDependencies": {
@@ -37,5 +37,8 @@
       "@graphprotocol/graph-cli",
       "@graphprotocol/graph-ts"
     ]
+  },
+  "dependencies": {
+    "truffle": "^5.1.22"
   }
 }
