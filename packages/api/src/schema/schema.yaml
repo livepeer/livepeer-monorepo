@@ -16,6 +16,8 @@ tags:
     description: User login
   - name: verification
     description: User Email Verification
+  - name: password-reset-token
+    description: User Password Reset
 
 components:
   schemas:
@@ -198,6 +200,31 @@ components:
           example: E1F53135E559C253
           writeOnly: true
 
+    password-reset-token:
+      type: object
+      required:
+        - email
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: user email address
+          example: useremail@gmail.com
+          index: true
+        resetToken:
+          type: string
+          example: E1F53135E559C253
+          writeOnly: true
+        password:
+          type: string
+          example: thisisapassword
+          minLength: 64
+          maxLength: 64
+        userId:
+          type: string
+          example: 66E2161C-7670-4D05-B71D-DA2D6979556F
+          index: true
+
     user:
       type: object
       required:
@@ -357,6 +384,35 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/user-verification'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /password-reset-token:
+    tags:
+      - password-reset-token
+    post:
+      description: Verifies password reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/password-reset-token'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/password-reset-token'
         default:
           description: Error
           content:

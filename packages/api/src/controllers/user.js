@@ -21,6 +21,8 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(resp.data)
 })
 
+// Password reset tokens that are also JWTs. After password is reset, clear out those tokens.
+
 app.get('/:id', authMiddleware({ allowUnverified: true }), async (req, res) => {
   const user = await req.store.get(`user/${req.params.id}`)
   if (req.user.admin !== true && req.user.id !== req.params.id) {
@@ -91,7 +93,6 @@ app.post('/', validatePost('user'), async (req, res) => {
         ].join('\n\n'),
       })
     } catch (err) {
-      // if sendgrid verification email fails to send, user is deleted
       res.status(400)
       return res.json({
         errors: [
@@ -158,7 +159,117 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
   }
 })
 
-// TODO: token must grant you one time access to modify the password.
-// Add password reset tokens as a new record in the database with expiration dates and data.
+app.post('/reset', validatePost('password-reset-token'), async (req, res) => {
+  const email = req.body.email
+  const userIds = await req.store.query('user', { email: email })
+  if (userIds.length < 1) {
+    res.status(404)
+    return res.json({ errors: ['user not found'] })
+  }
+  const userId = userIds[0]
+
+  let user = await req.store.get(`user/${userId}`)
+  if (!user) {
+    res.status(404)
+    return res.json({ errors: [`user email ${email} not found`] })
+  }
+
+  // if resetToken in post, check if it exists, isn't expired, and matches the resetToken of user requesting new password
+  if ('resetToken' in req.body) {
+    const tokens = await req.store.query('password-reset-token', {
+      userId: user.id,
+    })
+
+    if (tokens.length < 1) {
+      res.status(404)
+      return res.json({ errors: ['Password reset token not found'] })
+    }
+
+    let resetToken
+    for (let i = 0; i < tokens.length; i++) {
+      const token = await req.store.get(
+        `password-reset-token/${tokens[i]}`,
+        false,
+      )
+      if (token.resetToken === req.body.resetToken) {
+        resetToken = token
+      }
+    }
+
+    if (resetToken && resetToken.expiration > Date.now() / 1000) {
+      // change user password
+      await req.store.replace({
+        ...user,
+        password: req.body.password,
+      })
+
+      user = await req.store.get(`user/${userId}`)
+
+      // delete all reset tokens associated with user
+      for (const t of tokens) {
+        await req.store.delete(`password-reset-token/${t}`)
+      }
+
+      res.status(201)
+      return res.json(user)
+    } else {
+      res.status(403)
+      return res.json({
+        errors: ['incorrect or expired user validation token'],
+      })
+    }
+  }
+
+  // if resetToken not in post, create new resetToken and send password reset email
+  const id = uuid()
+  let resetToken = uuid()
+  await req.store.create({
+    kind: 'password-reset-token',
+    id: id,
+    userId: userId,
+    resetToken: resetToken,
+    expiration: Math.floor(Date.now() / 1000 + 48 * 60 * 60),
+  })
+
+  const { supportAddr, sendgridTemplateId, sendgridApiKey } = req.config
+  try {
+    const protocol =
+      req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http'
+
+    const verificationUrl = `${protocol}://${
+      req.headers.host
+    }/app/user/verify?${qs.stringify({ email, resetToken })}`
+
+    await sendgridEmail({
+      email,
+      supportAddr,
+      sendgridTemplateId,
+      sendgridApiKey,
+      subject: 'Livepeer Password Reset',
+      preheader: 'Reset your Livepeer Password!',
+      buttonText: 'Reset Password',
+      buttonUrl: verificationUrl,
+      text: [
+        "Let's change your password so you can log into the Livepeer API.",
+        'Your link is active for 48 hours. After that, you will need to resend the password reset email.',
+      ].join('\n\n'),
+    })
+  } catch (err) {
+    res.status(400)
+    return res.json({
+      errors: [`error sending confirmation email to ${email}: error: ${err}`],
+    })
+  }
+
+  const newToken = await req.store.get(`password-reset-token/${id}`, false)
+
+  if (newToken) {
+    res.status(201)
+    res.json(newToken)
+  } else {
+    res.status(403)
+    res.json({ errors: ['error creating password reset token'] })
+  }
+})
 
 export default app
