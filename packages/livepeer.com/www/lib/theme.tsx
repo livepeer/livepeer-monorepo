@@ -31,7 +31,9 @@ export const theme = {
     secondary: "#FAF5EF",
     accent: "#00EB88",
     muted: "#eaeaea",
-    gray: "#fafafa"
+    gray: "#fafafa",
+    listText: "#666666",
+    listStroke: "#ECECEC"
   },
   buttons: {
     default: {

@@ -23,6 +23,7 @@
     "@theme-ui/color": "0.3.1",
     "@theme-ui/components": "0.3.1",
     "@theme-ui/presets": "0.3.0",
+    "@types/theme-ui": "^0.3.1",
     "graphql": "^14.6.0",
     "graphql-request": "^1.8.2",
     "isomorphic-unfetch": "^3.0.0",

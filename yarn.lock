@@ -7190,7 +7190,7 @@
     "@types/react" "*"
     "@types/react-test-renderer" "*"
 
-"@types/theme-ui@*", "@types/theme-ui@^0.3.0":
+"@types/theme-ui@*", "@types/theme-ui@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@types/theme-ui/-/theme-ui-0.3.1.tgz#45e7064b53de401fc405a1b7a6405b2dea51ffde"
   integrity sha512-pi6jYwiZkXLvghmgJKiKDyjt4yCqMngpJFZ9T1heaff1ZBp1cb74EQtqFRMkANndtO3BS82HWkWR0EYWZPuWmg==

@@ -1,4 +1,5 @@
 import { Box } from "@theme-ui/components";
+import { SxStyleProp } from "theme-ui";
 
 export const Table = ({ className = null, children }) => {
   return (
@@ -13,17 +14,49 @@ export const Table = ({ className = null, children }) => {
   );
 };
 
-export const TableCell = ({ children, selected }) => {
-  return (
-    <Box
-      sx={{
-        backgroundColor: selected ? "rgba(0,0,0,0.2)" : "transparent",
-        padding: [3, 3]
-      }}
-    >
-      {children}
-    </Box>
-  );
+export const TableCell = ({ children, selected, variant }) => {
+  let sx = {
+    backgroundColor: "transparent",
+    py: 3,
+    px: 3,
+    color: "listText"
+  } as SxStyleProp;
+  if (selected) {
+    // @ts-ignore
+    sx = {
+      ...sx
+      // backgroundColor: "listStroke"
+    };
+  }
+  if (variant === "header") {
+    sx = {
+      ...sx,
+      fontVariant: "all-small-caps",
+      backgroundColor: "muted",
+      borderBottom: "1px solid listStroke",
+      borderTop: "1px solid listStroke",
+      marginBottom: 2,
+      py: 2,
+      "&:first-of-type": {
+        borderLeft: "1px solid listStroke",
+        borderTopLeftRadius: 6,
+        borderBottomLeftRadius: 6
+      },
+      "&:last-of-type": {
+        borderRight: "1px solid listStroke",
+        borderTopRightRadius: 6,
+        borderBottomRightRadius: 6
+      }
+    };
+  } else {
+    sx = {
+      ...sx,
+      borderBottomColor: "listStroke",
+      borderBottomWidth: "1px",
+      borderBottomStyle: "solid"
+    };
+  }
+  return <Box sx={sx}>{children}</Box>;
 };
 
 export const TableRow = ({
@@ -37,17 +70,25 @@ export const TableRow = ({
       onClick={onClick}
       sx={{
         display: "contents",
-        backgroundColor: selected ? "rgba(0,0,0,0.2)" : "transparent",
         cursor: "pointer",
-        padding: [3, 3],
-        userSelect: "none"
+        userSelect: "none",
+        "&:last-of-type": {
+          ">div": {
+            borderBottomStyle: "none"
+          }
+        }
       }}
     >
       {children.map((child, i) => (
-        <TableCell selected={selected} key={i}>
+        <TableCell selected={selected} key={i} variant={variant}>
           {child}
         </TableCell>
       ))}
     </Box>
   );
+};
+
+// Could move to live elsewhere someday.
+export const Checkbox = ({ value }) => {
+  return <div>{value ? "◻️" : "☑️"}</div>;
 };
