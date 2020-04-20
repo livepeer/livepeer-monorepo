@@ -21,8 +21,6 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(resp.data)
 })
 
-// Password reset tokens that are also JWTs. After password is reset, clear out those tokens.
-
 app.get('/:id', authMiddleware({ allowUnverified: true }), async (req, res) => {
   const user = await req.store.get(`user/${req.params.id}`)
   if (req.user.admin !== true && req.user.id !== req.params.id) {
@@ -159,7 +157,71 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
   }
 })
 
-app.post('/reset', validatePost('password-reset-token'), async (req, res) => {
+app.post('/password/reset', validatePost('password-reset'), async (req, res) => {
+  const { email, password, resetToken } = req.body
+  const userIds = await req.store.query('user', { email: email })
+  if (userIds.length < 1) {
+    res.status(404)
+    return res.json({ errors: ['user not found'] })
+  }
+  const userId = userIds[0]
+
+  let user = await req.store.get(`user/${userId}`)
+  if (!user) {
+    res.status(404)
+    return res.json({ errors: [`user email ${email} not found`] })
+  }
+
+  const tokens = await req.store.query('password-reset-token', {
+    userId: user.id,
+  })
+
+  if (tokens.length < 1) {
+    res.status(404)
+    return res.json({ errors: ['Password reset token not found'] })
+  }
+
+  let dbResetToken
+  for (let i = 0; i < tokens.length; i++) {
+    const token = await req.store.get(
+      `password-reset-token/${tokens[i]}`,
+      false,
+    )
+
+    if (token.resetToken === resetToken) {
+      dbResetToken = token
+    }
+  }
+
+
+  if (dbResetToken && dbResetToken.expiration > Date.now() / 1000) {
+    // change user password
+    const [hashedPassword, salt] = await hash(password)
+    await req.store.replace({
+      ...user,
+      password: hashedPassword,
+      salt: salt,
+      emailValid: true
+    })
+
+    user = await req.store.get(`user/${userId}`)
+
+    // delete all reset tokens associated with user
+    for (const t of tokens) {
+      await req.store.delete(`password-reset-token/${t}`)
+    }
+
+    res.status(201)
+    return res.json(user)
+  } else {
+    res.status(403)
+    return res.json({
+      errors: ['incorrect or expired user validation token'],
+    })
+  }
+})
+
+app.post('/password/reset-token', validatePost('password-reset-token'), async (req, res) => {
   const email = req.body.email
   const userIds = await req.store.query('user', { email: email })
   if (userIds.length < 1) {
@@ -174,53 +236,6 @@ app.post('/reset', validatePost('password-reset-token'), async (req, res) => {
     return res.json({ errors: [`user email ${email} not found`] })
   }
 
-  // if resetToken in post, check if it exists, isn't expired, and matches the resetToken of user requesting new password
-  if ('resetToken' in req.body) {
-    const tokens = await req.store.query('password-reset-token', {
-      userId: user.id,
-    })
-
-    if (tokens.length < 1) {
-      res.status(404)
-      return res.json({ errors: ['Password reset token not found'] })
-    }
-
-    let resetToken
-    for (let i = 0; i < tokens.length; i++) {
-      const token = await req.store.get(
-        `password-reset-token/${tokens[i]}`,
-        false,
-      )
-      if (token.resetToken === req.body.resetToken) {
-        resetToken = token
-      }
-    }
-
-    if (resetToken && resetToken.expiration > Date.now() / 1000) {
-      // change user password
-      await req.store.replace({
-        ...user,
-        password: req.body.password,
-      })
-
-      user = await req.store.get(`user/${userId}`)
-
-      // delete all reset tokens associated with user
-      for (const t of tokens) {
-        await req.store.delete(`password-reset-token/${t}`)
-      }
-
-      res.status(201)
-      return res.json(user)
-    } else {
-      res.status(403)
-      return res.json({
-        errors: ['incorrect or expired user validation token'],
-      })
-    }
-  }
-
-  // if resetToken not in post, create new resetToken and send password reset email
   const id = uuid()
   let resetToken = uuid()
   await req.store.create({
@@ -238,7 +253,7 @@ app.post('/reset', validatePost('password-reset-token'), async (req, res) => {
 
     const verificationUrl = `${protocol}://${
       req.headers.host
-    }/app/user/verify?${qs.stringify({ email, resetToken })}`
+    }/app/user/reset-token?${qs.stringify({ email, resetToken })}`
 
     await sendgridEmail({
       email,

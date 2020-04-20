@@ -16,7 +16,7 @@ tags:
     description: User login
   - name: verification
     description: User Email Verification
-  - name: password-reset-token
+  - name: password-reset
     description: User Password Reset
 
 components:
@@ -211,6 +211,24 @@ components:
           description: user email address
           example: useremail@gmail.com
           index: true
+        userId:
+          type: string
+          example: 66E2161C-7670-4D05-B71D-DA2D6979556F
+          index: true
+
+    password-reset:
+      type: object
+      required:
+        - email
+        - resetToken
+        - password
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: user email address
+          example: useremail@gmail.com
+          index: true
         resetToken:
           type: string
           example: E1F53135E559C253
@@ -393,9 +411,9 @@ paths:
 
   /password-reset-token:
     tags:
-      - password-reset-token
+      - password-reset
     post:
-      description: Verifies password reset token
+      description: Creates a password reset token
       requestBody:
         required: true
         content:
@@ -412,7 +430,36 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/password-reset-token'
+                  $ref: '#/components/schemas/password-reset'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /password-reset:
+    tags:
+      - password-reset
+    post:
+      description: Verifies password reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/password-reset'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
         default:
           description: Error
           content:
