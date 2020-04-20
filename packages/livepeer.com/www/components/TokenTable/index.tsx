@@ -119,13 +119,20 @@ export default ({ userId }) => {
       </p>
       <Box>
         <Button
+          variant="outlineSmall"
+          sx={{ margin: 2 }}
           onClick={() => {
             setCreateModal(true);
           }}
         >
           Create
         </Button>
-        <Button onClick={() => selectedToken && setDeleteModal(true)}>
+        <Button
+          variant="primarySmall"
+          disabled={!selectedToken}
+          sx={{ margin: 2, mb: 4 }}
+          onClick={() => selectedToken && setDeleteModal(true)}
+        >
           Delete
         </Button>
       </Box>

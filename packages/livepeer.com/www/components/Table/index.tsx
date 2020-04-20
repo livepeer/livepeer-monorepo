@@ -25,7 +25,7 @@ export const TableCell = ({ children, selected, variant }) => {
     // @ts-ignore
     sx = {
       ...sx
-      // backgroundColor: "listStroke"
+      // backgroundColor: "muted"
     };
   }
   if (variant === "header") {
@@ -33,17 +33,16 @@ export const TableCell = ({ children, selected, variant }) => {
       ...sx,
       fontVariant: "all-small-caps",
       backgroundColor: "muted",
-      borderBottom: "1px solid listStroke",
-      borderTop: "1px solid listStroke",
-      marginBottom: 2,
+      borderBottom: "1px solid muted",
+      borderTop: "1px solid muted",
       py: 2,
       "&:first-of-type": {
-        borderLeft: "1px solid listStroke",
+        borderLeft: "1px solid muted",
         borderTopLeftRadius: 6,
         borderBottomLeftRadius: 6
       },
       "&:last-of-type": {
-        borderRight: "1px solid listStroke",
+        borderRight: "1px solid muted",
         borderTopRightRadius: 6,
         borderBottomRightRadius: 6
       }
@@ -51,7 +50,7 @@ export const TableCell = ({ children, selected, variant }) => {
   } else {
     sx = {
       ...sx,
-      borderBottomColor: "listStroke",
+      borderBottomColor: "muted",
       borderBottomWidth: "1px",
       borderBottomStyle: "solid"
     };
@@ -70,7 +69,7 @@ export const TableRow = ({
       onClick={onClick}
       sx={{
         display: "contents",
-        cursor: "pointer",
+        cursor: variant === "header" ? "normal" : "pointer",
         userSelect: "none",
         "&:last-of-type": {
           ">div": {

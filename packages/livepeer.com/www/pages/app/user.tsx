@@ -26,7 +26,9 @@ export default () => {
       >
         <TokenTable userId={user.id} />
         <Box sx={{ margin: 3 }}>
-          <Button onClick={logout}>Log Out</Button>
+          <Button variant="outline" onClick={logout}>
+            Log Out
+          </Button>
         </Box>
       </Flex>
     </Layout>

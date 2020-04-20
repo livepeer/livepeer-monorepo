@@ -32,8 +32,7 @@ export const theme = {
     accent: "#00EB88",
     muted: "#eaeaea",
     gray: "#fafafa",
-    listText: "#666666",
-    listStroke: "#ECECEC"
+    listText: "#666666"
   },
   buttons: {
     default: {
@@ -46,8 +45,18 @@ export const theme = {
       letterSpacing: 0.75,
       py: "10px",
       cursor: "pointer",
+      transition: "all 200ms ease-out",
       ":focus": {
         outline: "none"
+      },
+      ":disabled": {
+        cursor: "not-allowed",
+        backgroundColor: "muted",
+        color: "listText",
+        borderWidth: "1px",
+        borderColor: "listText",
+        borderStyle: "solid",
+        opacity: 0.6
       }
     },
     primary: {
@@ -59,7 +68,10 @@ export const theme = {
     secondary: {
       variant: "buttons.default",
       color: "background",
-      bg: "primary"
+      bg: "primary",
+      borderWidth: "1px",
+      borderColor: "primaryxz",
+      borderStyle: "solid"
     },
     outline: {
       variant: "buttons.default",
@@ -80,6 +92,18 @@ export const theme = {
     primaryLarge: {
       variant: "buttons.primary",
       fontSize: 16
+    },
+    outlineSmall: {
+      variant: "buttons.outline",
+      fontSize: 14,
+      px: 3,
+      py: 2
+    },
+    primarySmall: {
+      variant: "buttons.primary",
+      fontSize: 14,
+      px: 3,
+      py: 2
     }
   },
   layout: {
