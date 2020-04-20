@@ -3,6 +3,7 @@ import { useApi } from "../../hooks";
 import { Box, Button, H3 } from "@theme-ui/components";
 import Modal from "../Modal";
 import Textfield from "../Textfield";
+import { Table, TableRow } from "../../components/Table";
 
 export default ({ userId }) => {
   const [tokens, setTokens] = useState([]);
@@ -128,26 +129,19 @@ export default ({ userId }) => {
           Delete
         </Button>
       </Box>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "auto 1fr auto"
-        }}
-      >
-        <Box sx={{ padding: [3, 3], userSelect: "none" }}></Box>
-        <Box sx={{ padding: [3, 3], userSelect: "none" }}>Name</Box>
-        <Box sx={{ padding: [3, 3], userSelect: "none" }}>Last Active</Box>
+      <Table sx={{ gridTemplateColumns: "auto 1fr auto" }}>
+        <TableRow variant="header">
+          <Box></Box>
+          <Box>Name</Box>
+          <Box>Last Active</Box>
+        </TableRow>
         {tokens.map(token => {
           const { id, name } = token;
           const selected = selectedToken && selectedToken.id === id;
-          const RowBox = ({ children }) => (
-            <Box
-              sx={{
-                backgroundColor: selected ? "rgba(0,0,0,0.2)" : "transparent",
-                cursor: "pointer",
-                padding: [3, 3],
-                userSelect: "none"
-              }}
+          return (
+            <TableRow
+              selected={selected}
+              key={id}
               onClick={() => {
                 if (selected) {
                   setSelectedToken(null);
@@ -156,12 +150,7 @@ export default ({ userId }) => {
                 }
               }}
             >
-              {children}
-            </Box>
-          );
-          return (
-            <Fragment key={id}>
-              <RowBox>
+              <Box>
                 <span
                   sx={{
                     visibility: selected ? "visible" : "hidden",
@@ -173,13 +162,13 @@ export default ({ userId }) => {
                 <span sx={{ visibility: selected ? "hidden" : "visible" }}>
                   ◻️
                 </span>
-              </RowBox>
-              <RowBox>{name}</RowBox>
-              <RowBox>2m ago</RowBox>
-            </Fragment>
+              </Box>
+              <Box>{name}</Box>
+              <Box>2m ago</Box>
+            </TableRow>
           );
         })}
-      </Box>
+      </Table>
     </Box>
   );
 };
