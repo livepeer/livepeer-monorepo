@@ -1,11 +1,12 @@
-import { Box } from "@theme-ui/components";
+import { Box, Flex } from "@theme-ui/components";
 import { SxStyleProp } from "theme-ui";
 
 export const Table = ({ className = null, children }) => {
   return (
     <Box
       sx={{
-        display: "grid"
+        display: "grid",
+        alignItems: "space-around"
       }}
       className={className}
     >
@@ -89,5 +90,21 @@ export const TableRow = ({
 
 // Could move to live elsewhere someday.
 export const Checkbox = ({ value }) => {
-  return <div>{value ? "◻️" : "☑️"}</div>;
+  return (
+    <Flex
+      sx={{ height: "100%", alignItems: "center", justifyContent: "center" }}
+    >
+      <Box
+        sx={{
+          width: "12px",
+          height: "12px",
+          backgroundColor: value ? "primary" : "transparent",
+          borderWidth: "1px",
+          borderRadius: "3px",
+          borderStyle: "solid",
+          borderColor: "primary"
+        }}
+      ></Box>
+    </Flex>
+  );
 };

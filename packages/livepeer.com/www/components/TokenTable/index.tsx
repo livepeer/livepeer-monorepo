@@ -3,7 +3,7 @@ import { useApi } from "../../hooks";
 import { Box, Button, H3 } from "@theme-ui/components";
 import Modal from "../Modal";
 import Textfield from "../Textfield";
-import { Table, TableRow } from "../../components/Table";
+import { Table, TableRow, Checkbox } from "../../components/Table";
 
 export default ({ userId }) => {
   const [tokens, setTokens] = useState([]);
@@ -128,7 +128,7 @@ export default ({ userId }) => {
           Create
         </Button>
         <Button
-          variant="primarySmall"
+          variant="secondarySmall"
           disabled={!selectedToken}
           sx={{ margin: 2, mb: 4 }}
           onClick={() => selectedToken && setDeleteModal(true)}
@@ -157,19 +157,7 @@ export default ({ userId }) => {
                 }
               }}
             >
-              <Box>
-                <span
-                  sx={{
-                    visibility: selected ? "visible" : "hidden",
-                    position: "absolute"
-                  }}
-                >
-                  ☑️
-                </span>
-                <span sx={{ visibility: selected ? "hidden" : "visible" }}>
-                  ◻️
-                </span>
-              </Box>
+              <Checkbox value={selected} />
               <Box>{name}</Box>
               <Box>2m ago</Box>
             </TableRow>

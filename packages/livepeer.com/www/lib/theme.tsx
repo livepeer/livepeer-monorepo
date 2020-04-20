@@ -37,15 +37,15 @@ export const theme = {
   buttons: {
     default: {
       color: "text",
-      border: "1px solid",
+      borderWidth: "1px",
       borderColor: "transparent",
+      borderStyle: "solid",
       bg: "initial",
       fontWeight: 500,
       px: 4,
       letterSpacing: 0.75,
       py: "10px",
       cursor: "pointer",
-      transition: "all 200ms ease-out",
       ":focus": {
         outline: "none"
       },
@@ -70,13 +70,12 @@ export const theme = {
       color: "background",
       bg: "primary",
       borderWidth: "1px",
-      borderColor: "primaryxz",
+      borderColor: "primary",
       borderStyle: "solid"
     },
     outline: {
       variant: "buttons.default",
       bg: "transparent",
-      border: "1px solid",
       borderColor: "text",
       color: "text"
     },
@@ -101,6 +100,12 @@ export const theme = {
     },
     primarySmall: {
       variant: "buttons.primary",
+      fontSize: 14,
+      px: 3,
+      py: 2
+    },
+    secondarySmall: {
+      variant: "buttons.secondary",
       fontSize: 14,
       px: 3,
       py: 2
