@@ -47,7 +47,9 @@ export function bond(event: BondEvent): void {
   let delegate =
     Delegator.load(newDelegateAddress.toHex()) ||
     new Delegator(newDelegateAddress.toHex())
-  let delegator = Delegator.load(delegatorAddress.toHex())
+  let delegator =
+    Delegator.load(delegatorAddress.toHex()) ||
+    new Delegator(delegatorAddress.toHex())
 
   protocol.totalActiveStake = totalActiveStake
 
