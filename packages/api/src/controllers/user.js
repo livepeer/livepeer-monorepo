@@ -253,7 +253,7 @@ app.post('/password/reset-token', validatePost('password-reset-token'), async (r
 
     const verificationUrl = `${protocol}://${
       req.headers.host
-    }/app/user/reset-token?${qs.stringify({ email, resetToken })}`
+    }/reset-password?${qs.stringify({ email, resetToken })}`
 
     await sendgridEmail({
       email,
