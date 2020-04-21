@@ -1,6 +1,7 @@
 import serverPromise from '../test-server'
 import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
+import hash from '../hash'
 
 let server
 let mockUser
@@ -306,6 +307,64 @@ describe('controllers/user', () => {
       expect(tokenRes.id).toBeDefined()
       expect(tokenRes.email).toBe(mockUser.email)
       expect(tokenRes.token).toBeDefined()
+    })
+
+    it('should reset user password', async () => {
+      const res = await client.post('/user', {
+        ...mockUser,
+      })
+      expect(res.status).toBe(201)
+      const userRes = await res.json()
+      expect(userRes.id).toBeDefined()
+
+      let user = await server.store.get(`user/${userRes.id}`, false)
+      expect(user.id).toEqual(userRes.id)
+
+      // should get password reset token
+      let req = await client.post(`/user/password/reset-token`, {
+        email: user.email,
+      })
+      expect(req.status).toBe(201)
+      let token = await req.json()
+      expect(token.userId).toBe(userRes.id)
+
+      // should return 404 when user email not found
+      req = await client.post(`/user/password/reset-token`, {
+        email: 'noemail@gmail.com',
+      })
+      expect(req.status).toBe(404)
+      let resp = await req.json()
+      expect(resp.errors[0]).toBe('user not found')
+
+      // should return 422 when extra property added to request
+      req = await client.post(`/user/password/reset-token`, {
+        email: 'noemail@gmail.com',
+        password: 'a'.repeat(64)
+      })
+      expect(req.status).toBe(422)
+
+      // should reset user password
+      req = await client.post(`/user/password/reset`, {
+        email: user.email,
+        password: 'a'.repeat(64),
+        resetToken: token.resetToken,
+      })
+
+      expect(req.status).toBe(201)
+      user = await server.store.get(`user/${userRes.id}`, false)
+      expect(user.id).toEqual(userRes.id)
+      expect(user.emailValid).toEqual(true)
+
+      // should return 403 when password reset token not found
+      req = await client.post(`/user/password/reset`, {
+        email: user.email,
+        password: 'a'.repeat(64),
+        resetToken: uuid(),
+      })
+      expect(req.status).toBe(404)
+
+      resp = await req.json()
+      expect(resp.errors[0]).toBe('Password reset token not found')
     })
   })
 

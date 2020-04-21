@@ -110,6 +110,31 @@ const makeContext = (state: ApiState, setState) => {
       setState({ ...state, userRefresh: Date.now() });
     },
 
+    async makePasswordResetToken(email) {
+      const [res, body] = await context.fetch("/user/password/reset-token", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      return body;
+    },
+
+    async resetPassword(email, resetToken, password) {
+      const [res, body] = await context.fetch("/user/password/reset", {
+        method: "POST",
+        body: JSON.stringify({ email, resetToken, password }),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      if (res.status !== 201) {
+        return body;
+      }
+      return context.login(email, password);
+    },
+
     async getUser(userId, opts = {}): Promise<[Response, User | ApiError]> {
       const [res, user] = await context.fetch(`/user/${userId}`, opts);
       return [res, user as User | ApiError];

@@ -112,6 +112,7 @@ export async function sendgridEmail({
   text,
   buttonText,
   buttonUrl,
+  unsubscribe,
 }) {
   const [supportName, supportEmail] = supportAddr
   const msg = {
@@ -124,6 +125,7 @@ export async function sendgridEmail({
           text,
           buttonText,
           buttonUrl,
+          unsubscribe,
         },
       },
     ],
