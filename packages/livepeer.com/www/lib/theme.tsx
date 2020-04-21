@@ -32,7 +32,8 @@ export const theme = {
     accent: "#00EB88",
     muted: "#eaeaea",
     gray: "#fafafa",
-    listText: "#666666"
+    listText: "#666666",
+    extremelyBlue: "#0000ff"
   },
   buttons: {
     default: {
@@ -111,6 +112,12 @@ export const theme = {
       py: 2
     }
   },
+  forms: {
+    input: {
+      padding: 3,
+      borderColor: "listText"
+    }
+  },
   layout: {
     container: {
       maxWidth: 1200,
@@ -180,10 +187,12 @@ export const theme = {
       lineHeight: "body"
     },
     a: {
-      color: "text"
+      color: "#0000ff"
     },
     pre: {
       fontFamily: "monospace",
+      bg: "primary",
+      color: "background",
       overflowX: "auto",
       code: {
         color: "inherit"

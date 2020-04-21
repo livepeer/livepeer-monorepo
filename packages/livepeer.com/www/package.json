@@ -52,6 +52,7 @@
     "babel-plugin-import-graphql": "^2.7.0",
     "babel-plugin-inline-react-svg": "^1.1.1",
     "husky": "^4.0.0",
+    "js-levenshtein": "^1.1.6",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "react-test-renderer": "^16.12.0",

@@ -1,9 +1,9 @@
 import { useEffect, useState, Fragment } from "react";
 import { useApi } from "../../hooks";
-import { Box, Button, H3 } from "@theme-ui/components";
+import { Box, Button, Flex, Input } from "@theme-ui/components";
 import Modal from "../Modal";
-import Textfield from "../Textfield";
-import { Table, TableRow, Checkbox } from "../../components/Table";
+import { Table, TableRow, Checkbox } from "../Table";
+import CopyBox from "../CopyBox";
 
 export default ({ userId }) => {
   const [tokens, setTokens] = useState([]);
@@ -13,6 +13,7 @@ export default ({ userId }) => {
   const [creating, setCreating] = useState(false);
   const [newToken, setNewToken] = useState(null);
   const [selectedToken, setSelectedToken] = useState(null);
+  const [copyTime, setCopyTime] = useState(null);
   const { getApiTokens, createApiToken, deleteApiToken } = useApi();
   useEffect(() => {
     getApiTokens(userId)
@@ -24,6 +25,7 @@ export default ({ userId }) => {
     setDeleteModal(false);
     setTokenName("");
     setNewToken(null);
+    setCopyTime(null);
   };
   return (
     <Box
@@ -59,17 +61,25 @@ export default ({ userId }) => {
                 Enter a name for your token to differentiate it from other
                 tokens.
               </p>
-              <Textfield
+              <Input
                 label="Name"
                 value={tokenName}
                 onChange={e => setTokenName(e.target.value)}
-              ></Textfield>
-              <Box>
-                <Button type="button" onClick={close}>
+                placeholder="New Token"
+              ></Input>
+              <Flex sx={{ justifyContent: "flex-end", py: 3 }}>
+                <Button
+                  type="button"
+                  variant="outlineSmall"
+                  onClick={close}
+                  sx={{ mr: 2 }}
+                >
                   Cancel
                 </Button>
-                <Button type="submit">Create Token</Button>
-              </Box>
+                <Button type="submit" variant="secondarySmall">
+                  Create Token
+                </Button>
+              </Flex>
             </form>
           )}
           {newToken && (
@@ -82,19 +92,23 @@ export default ({ userId }) => {
                 </strong>
               </p>
               <Box>
-                <pre>
-                  <code
-                    onClick={() => {
-                      navigator.clipboard.writeText(newToken.id);
-                    }}
-                  >
-                    {newToken.id}
-                  </code>
-                </pre>
+                <CopyBox
+                  onCopy={() => setCopyTime(Date.now())}
+                  copy={newToken.id}
+                />
               </Box>
-              <Button type="button" onClick={close}>
-                Close
-              </Button>
+              <Flex
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  py: 3
+                }}
+              >
+                <Box>{copyTime !== null && <strong>Copied!</strong>}</Box>
+                <Button type="button" variant="secondarySmall" onClick={close}>
+                  Close
+                </Button>
+              </Flex>
             </Box>
           )}
         </Modal>
