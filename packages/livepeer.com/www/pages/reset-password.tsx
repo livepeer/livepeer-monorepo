@@ -2,7 +2,7 @@ import Layout from "../components/Layout";
 import Login from "../components/Login";
 import Link from "next/link";
 import { Flex, Box } from "@theme-ui/components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApi, useLoggedIn } from "../hooks";
 import { useRouter } from "next/router";
 
@@ -24,6 +24,14 @@ export default () => {
       setErrors(res.errors);
     }
   };
+
+//   useEffect(() => {
+//     if (!email || !resetToken) {
+//         console.log(`no email: ${email} or resetToken: ${resetToken}`)
+//       router.replace("/forgot-password");
+//     }
+//   }, [email, resetToken]);
+
   return (
     <Layout>
       <Flex

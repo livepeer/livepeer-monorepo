@@ -2,6 +2,7 @@ import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
 import Router from 'express/lib/router'
 import uuid from 'uuid/v4'
+import ms from 'ms'
 import jwt from 'jsonwebtoken'
 import validator from 'email-validator'
 import { makeNextHREF, sendgridEmail } from './helpers'
@@ -164,12 +165,11 @@ app.post(
   validatePost('password-reset'),
   async (req, res) => {
     const { email, password, resetToken } = req.body
-    const userIds = await req.store.query('user', { email: email })
-    if (userIds.length < 1) {
+    const [userId] = await req.store.query('user', { email: email })
+    if (!userId) {
       res.status(404)
       return res.json({ errors: ['user not found'] })
     }
-    const userId = userIds[0]
 
     let user = await req.store.get(`user/${userId}`)
     if (!user) {
@@ -198,32 +198,32 @@ app.post(
       }
     }
 
-    if (dbResetToken && dbResetToken.expiration > Date.now() / 1000) {
-      // change user password
-      const [hashedPassword, salt] = await hash(password)
-      await req.store.replace({
-        ...user,
-        password: hashedPassword,
-        salt: salt,
-        emailValid: true,
-      })
-
-      user = await req.store.get(`user/${userId}`)
-
-      // delete all reset tokens associated with user
-      for (const t of tokens) {
-        await req.store.delete(`password-reset-token/${t}`)
-      }
-
-      res.status(201)
-      return res.json(user)
-    } else {
+    if (!dbResetToken || dbResetToken.expiration < Date.now()) {
       res.status(403)
       return res.json({
         errors: ['incorrect or expired user validation token'],
       })
     }
-  },
+
+    // change user password
+    const [hashedPassword, salt] = await hash(password)
+    await req.store.replace({
+      ...user,
+      password: hashedPassword,
+      salt: salt,
+      emailValid: true,
+    })
+
+    user = await req.store.get(`user/${userId}`)
+
+    // delete all reset tokens associated with user
+    for (const t of tokens) {
+      await req.store.delete(`password-reset-token/${t}`)
+    }
+
+    res.status(201)
+    return res.json(user)
+  }
 )
 
 app.post(
@@ -231,12 +231,11 @@ app.post(
   validatePost('password-reset-token'),
   async (req, res) => {
     const email = req.body.email
-    const userIds = await req.store.query('user', { email: email })
-    if (userIds.length < 1) {
+    const [userId] = await req.store.query('user', { email: email })
+    if (!userId) {
       res.status(404)
       return res.json({ errors: ['user not found'] })
     }
-    const userId = userIds[0]
 
     let user = await req.store.get(`user/${userId}`)
     if (!user) {
@@ -251,7 +250,7 @@ app.post(
       id: id,
       userId: userId,
       resetToken: resetToken,
-      expiration: Math.floor(Date.now() / 1000 + 48 * 60 * 60),
+      expiration: Date.now() + ms('48 hours'),
     })
 
     const { supportAddr, sendgridTemplateId, sendgridApiKey } = req.config
