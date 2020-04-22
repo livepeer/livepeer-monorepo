@@ -31,6 +31,11 @@ export default () => {
           <Button variant="text">Contact Us</Button>
         </a>
       </Link>
+      <Link href="/docs">
+        <a>
+          <Button variant="text">Documentation</Button>
+        </a>
+      </Link>
       {!token && (
         <Fragment>
           <Link href="/login">
