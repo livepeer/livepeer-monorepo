@@ -27,6 +27,7 @@ function geoLocateFactory (params) {
     let data
     if (first) {
       data = await Promise.race(promises)
+      data = [data]
     } else {
       data = await Promise.all(promises)
     }
@@ -36,6 +37,7 @@ function geoLocateFactory (params) {
     }
 
     req.region = ret
+    console.log('region populated: ', ret)
     return next()
   }
 }
