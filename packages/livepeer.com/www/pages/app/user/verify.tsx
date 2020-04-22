@@ -3,6 +3,7 @@ import { Box, Flex } from "@theme-ui/components";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../../components/Layout";
+import useLoggedIn from "../../../hooks/use-logged-in";
 import { Button } from "@theme-ui/components";
 
 const Container = ({ children }) => (
@@ -14,6 +15,7 @@ const Container = ({ children }) => (
 );
 
 export default () => {
+  useLoggedIn();
   const router = useRouter();
   const { verify, user, logout } = useApi();
   const { email, emailValidToken } = router.query;
