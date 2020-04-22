@@ -4,6 +4,7 @@ import objectStore from './object-store'
 import orchestrator from './orchestrator'
 import stream from './stream'
 import user from './user'
+import geolocate from './geolocate'
 
 // Annoying but necessary to get the routing correct
 export default {
@@ -13,4 +14,5 @@ export default {
   orchestrator: orchestrator,
   stream: stream,
   user: user,
+  geolocate: geolocate
 }

@@ -3,7 +3,7 @@ import Router from 'express/lib/router'
 
 const app = Router()
 
-app.get('/geolocate', authMiddleware({}), async (req, res, next) => {
+app.get('/', authMiddleware({}), async (req, res, next) => {
   // Sometimes comes in as a string? Normalize.
   let first = req.query.first || true
   let url = new URL(req.url)
@@ -37,3 +37,5 @@ app.get('/geolocate', authMiddleware({}), async (req, res, next) => {
   }
   return res.json(ret)
 })
+
+export default app
