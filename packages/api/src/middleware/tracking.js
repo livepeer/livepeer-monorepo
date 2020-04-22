@@ -17,6 +17,7 @@
 
 const tracking = {
   record: function record (store, tokenObject) {
+    console.log('debug: tracking record trigger')
     tokenObject.lastSeen = new Date()
     store.replace(tokenObject).then((_) => {
       // all good
