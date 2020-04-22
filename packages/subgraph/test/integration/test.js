@@ -50,8 +50,8 @@ const exec = cmd => {
 
 let waitForSubgraphToBeSynced = async () =>
   new Promise((resolve, reject) => {
-    // Wait for up to two minutes
-    let deadline = Date.now() + 120 * 1000
+    // Wait for up to three minutes
+    let deadline = Date.now() + 180 * 1000
     // Function to check if the subgraph is synced
     let checkSubgraphSynced = async () => {
       try {
@@ -89,7 +89,7 @@ let waitForSubgraphToBeSynced = async () =>
         if (Date.now() > deadline) {
           reject(new Error(`Timed out waiting for the subgraph to sync`))
         } else {
-          setTimeout(checkSubgraphSynced, 1000)
+          setTimeout(checkSubgraphSynced, 2000)
         }
       }
     }
@@ -280,7 +280,9 @@ contract('Subgraph Integration Tests', accounts => {
 
   it('creates a poll', async () => {
     const createPollAndCheckResult = async () => {
-      const hash = '0x1230000000000000000000000000000000000000'
+      const hash = web3.utils.fromAscii(
+        'QmWBPdeDCi8uxQrUyTV38xwaeYxgmjQmx1Zkiw4vgQhj7x',
+      )
       await Token.methods
         .approve(pollCreatorAddress, pollCreationCost)
         .send({ from: transcoder1, gas: 1000000 })

@@ -190,7 +190,7 @@ enum PollChoice @entity {
 
 type Poll @entity {
   id: ID!
-  proposal: Bytes!
+  proposal: String!
   endBlock: BigInt!
   quorum: BigInt!
   threshold: BigInt!
