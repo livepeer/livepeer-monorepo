@@ -115,16 +115,27 @@ export default ({ userId }) => {
       )}
       {deleteModal && selectedToken && (
         <Modal onClose={close}>
-          <h5>Are you sure you want to delete token {selectedToken.name}?</h5>
-          <Button onClick={close}>Cancel</Button>
-          <Button
-            type="button"
-            onClick={() => {
-              deleteApiToken(selectedToken.id).then(close);
-            }}
-          >
-            Delete
-          </Button>
+          <h3>Delete token</h3>
+          <p>Are you sure you want to delete token "{selectedToken.name}"?</p>
+          <Flex sx={{ justifyContent: "flex-end" }}>
+            <Button
+              type="button"
+              variant="outlineSmall"
+              onClick={close}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="secondarySmall"
+              onClick={() => {
+                deleteApiToken(selectedToken.id).then(close);
+              }}
+            >
+              Delete
+            </Button>
+          </Flex>
         </Modal>
       )}
       <p>
