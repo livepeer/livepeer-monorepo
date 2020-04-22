@@ -181,6 +181,9 @@ components:
         name:
           type: string
           example: Example Token
+        lastSeen:
+          type: string
+          example: 2020-04-22T12:35:13.297Z
 
     user-verification:
       type: object
