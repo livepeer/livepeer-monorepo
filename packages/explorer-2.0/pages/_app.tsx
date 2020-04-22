@@ -21,7 +21,11 @@ function MyApp({ Component, pageProps }) {
         <title>Livepeer Explorer</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
-          href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500&display=swap"
+          href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700"
           rel="stylesheet"
         />
       </Head>

@@ -34,7 +34,7 @@ export default ({
           <Box
             sx={{
               mb: [4, 4, 4, 0],
-              maxWidth: 525,
+              maxWidth: 700,
               mx: ["auto", "auto", "auto", centered ? "auto" : "initial"],
               textAlign: [
                 "center",
