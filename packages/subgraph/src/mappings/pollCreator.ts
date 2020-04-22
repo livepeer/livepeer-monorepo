@@ -6,7 +6,7 @@ import { Poll as PollTemplate } from '../types/templates'
 export function pollCreated(event: PollCreatedEvent): void {
   let poll = new Poll(event.params.poll.toHex())
   poll.tally = event.params.poll.toHex()
-  poll.proposal = event.params.proposal
+  poll.proposal = event.params.proposal.toString()
   poll.endBlock = event.params.endBlock
   poll.quorum = event.params.quorum
   poll.threshold = event.params.threshold
