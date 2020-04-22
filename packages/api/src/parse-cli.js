@@ -163,8 +163,8 @@ export default function parseCli(argv) {
         ingests: {
           describe:
             'list of ingest endpoints to use as options for /api/geolocate',
-          type: 'string',
-          default: '[]',
+          type: 'array',
+          default: ['esh.livepeer.live', 'chi.livepeer-ac.live'],
         },
       })
       .help()
