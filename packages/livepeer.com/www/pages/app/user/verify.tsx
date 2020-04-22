@@ -18,20 +18,20 @@ export default () => {
   const { verify, user, logout } = useApi();
   const { email, emailValidToken } = router.query;
 
-  // useEffect(() => {
-  //   if (email && emailValidToken) {
-  //     verify(email, emailValidToken).then(() => {
-  //       router.replace("/app/user");
-  //     });
-  //   }
-  // }, [email, emailValidToken]);
+  useEffect(() => {
+    if (email && emailValidToken) {
+      verify(email, emailValidToken).then(() => {
+        router.replace("/app/user");
+      });
+    }
+  }, [email, emailValidToken]);
 
-  // If they've already validated their email, get 'em out of here
-  // useEffect(() => {
-  //   if (user && user.emailValid !== false) {
-  //     router.replace("/app/user");
-  //   }
-  // }, [user]);
+//   If they've already validated their email, get 'em out of here
+  useEffect(() => {
+    if (user && user.emailValid !== false) {
+      router.replace("/app/user");
+    }
+  }, [user]);
 
   if (email && emailValidToken) {
     return <Container>Verifying...</Container>;
