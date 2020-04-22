@@ -43,7 +43,8 @@ export default {
         { type: "testimonialsSection" },
         { type: "contactSection" },
         { type: "ctaSection" },
-        { type: "textSection" }
+        { type: "textSection" },
+        { type: "markdownSection" }
       ]
     },
     {
