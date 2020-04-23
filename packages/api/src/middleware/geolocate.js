@@ -1,13 +1,25 @@
 'use strict'
 
 function geoLocateFactory (params) {
-  return async (req, res, next) => {
-    let first = params.first || req.query.first || true
-    // Sometimes comes in as a string? Normalize.
-    // console.log('req.url: ', req.url)
-    // let url = new URL(req.url)
-    let servers = req.config.ingests
+  return async (req, res, next) => {    
+    let first = params.first || true
+    if (req.query.first === "false") {
+      first = false
+    } else if (req.query.first = "true") {
+      first = true
+    }
+    
+    let serversObject = req.config.region
+    let servers  = []
+    for (let i in serversObject) {
+      servers.push(serversObject[i])
+    }
 
+    if (servers.length < 1) {
+      req.region = null
+      return next()
+    }
+    
     let smallestServer
     let smallestDuration = Infinity
     console.log('servers: ', typeof servers, servers)
@@ -37,7 +49,6 @@ function geoLocateFactory (params) {
     }
 
     req.region = ret
-    console.log('region populated: ', ret)
     return next()
   }
 }
