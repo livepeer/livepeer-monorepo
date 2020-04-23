@@ -116,6 +116,10 @@ app.post('/hook', async (req, res) => {
   }
 
   const stream = await req.store.get(`stream/${streamId}`)
+  if (!stream) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
   let objectStore = undefined
   if (stream.objectStoreId && stream.userId) {
     const store = await req.store.get(
