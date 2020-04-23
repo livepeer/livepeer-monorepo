@@ -40,6 +40,7 @@ export default () => {
       >
         <h3 sx={{ mb: [3, 3] }}>Create an Account</h3>
         <Login
+          id="register"
           onSubmit={onSubmit}
           showEmail={true}
           showPassword={true}

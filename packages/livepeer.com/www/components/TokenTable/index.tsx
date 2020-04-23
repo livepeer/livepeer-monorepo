@@ -5,7 +5,7 @@ import Modal from "../Modal";
 import { Table, TableRow, Checkbox } from "../Table";
 import CopyBox from "../CopyBox";
 
-export default ({ userId }) => {
+export default ({ userId, id }) => {
   const [tokens, setTokens] = useState([]);
   const [tokenName, setTokenName] = useState("");
   const [createModal, setCreateModal] = useState(false);
@@ -40,6 +40,7 @@ export default ({ userId }) => {
         <Modal onClose={close}>
           {!newToken && (
             <form
+              id={id}
               onSubmit={e => {
                 e.preventDefault();
                 if (creating) {

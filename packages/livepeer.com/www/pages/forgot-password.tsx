@@ -48,6 +48,7 @@ export default () => {
       >
         <h3 sx={{ mb: [3, 3] }}>Reset your password</h3>
         <Login
+          id="forgot-password"
           showEmail={true}
           showPassword={false}
           buttonText="Get reset link"

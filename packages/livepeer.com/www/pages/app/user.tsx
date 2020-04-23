@@ -24,7 +24,7 @@ export default () => {
           alignItems: "center"
         }}
       >
-        <TokenTable userId={user.id} />
+        <TokenTable id="API Token Table" userId={user.id} />
         <Box sx={{ margin: 3 }}>
           <Button variant="outline" onClick={logout}>
             Log Out
