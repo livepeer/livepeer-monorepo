@@ -13,6 +13,10 @@ export default class MyApp extends App {
     return (
       <>
         <Head>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap"
+            rel="stylesheet"
+          />
           <title>Live Video Transcoding - Livepeer</title>
           <meta
             name="viewport"

@@ -8,7 +8,7 @@ export const theme = {
     body:
       'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
     heading: "inherit",
-    monospace: "Menlo, monospace"
+    monospace: "'Fira Code', Menlo, monospace"
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 56, 64, 96],
   fontWeights: {
@@ -194,8 +194,10 @@ export const theme = {
       bg: "primary",
       color: "background",
       overflowX: "auto",
+      padding: 4,
       code: {
-        color: "inherit"
+        color: "inherit",
+        "-webkitFontSmoothing": "antialiased"
       }
     },
     code: {
