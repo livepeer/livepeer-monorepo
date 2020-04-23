@@ -95,3 +95,8 @@ fragment textSection on TextSection {
   _type
   text: textRaw
 }
+
+fragment markdownSection on MarkdownSection {
+  _type
+  markdown: markdown
+}

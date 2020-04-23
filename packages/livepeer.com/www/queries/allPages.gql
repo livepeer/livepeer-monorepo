@@ -14,6 +14,7 @@ query allPage($where: PageFilter) {
       ...contactSection
       ...ctaSection
       ...textSection
+      ...markdownSection
     }
   }
 }

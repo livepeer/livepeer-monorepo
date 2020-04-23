@@ -21,6 +21,7 @@ import logo from "./objects/logo";
 import value from "./objects/value";
 import imageExtended from "./objects/imageExtended";
 import testimonial from "./objects/testimonial";
+import markdownSection from "./objects/markdownSection";
 
 // Landing page sections
 import hero from "./objects/hero";
@@ -57,6 +58,7 @@ export default createSchema({
     route,
     simplePortableText,
     siteConfig,
-    logo
+    logo,
+    markdownSection
   ])
 });
