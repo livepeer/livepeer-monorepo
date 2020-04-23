@@ -316,6 +316,8 @@ describe('controllers/stream', () => {
       [401, `https://localhost/live`],
       [404, `https://localhost/notlive/STREAM_ID/1324.ts`],
       [404, `rtmp://localhost/notlive/STREAM_ID`],
+      [404, `rtmp://localhost/live/nonexists`],
+      [404, `https://localhost/live/notexists/1324.ts`],
     ]
 
     for (let [status, url] of sadCases) {
