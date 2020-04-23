@@ -34,6 +34,7 @@ export default () => {
       >
         <h3 sx={{ mb: [3, 3] }}>Log in to Livepeer</h3>
         <Login
+          id="login"
           onSubmit={onSubmit}
           showEmail={true}
           showPassword={true}

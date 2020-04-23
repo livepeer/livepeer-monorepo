@@ -7,6 +7,7 @@ import hash from "@livepeer/api/dist/hash";
 export const FRONTEND_SALT = "69195A9476F08546";
 
 export default ({
+  id,
   showEmail,
   showPassword,
   buttonText,
@@ -37,6 +38,7 @@ export default ({
         alignItems: "center",
         mb: [3, 3]
       }}
+      id={id}
     >
       {showEmail && (
         <Textfield
