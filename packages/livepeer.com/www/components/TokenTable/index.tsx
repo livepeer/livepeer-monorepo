@@ -169,7 +169,8 @@ export default ({ userId, id }) => {
           <Box>Last Active</Box>
         </TableRow>
         {tokens.map(token => {
-          const { id, name } = token;
+          const { id, name, lastSeen } = token;
+          const formattedLastSeen = `${new Date(lastSeen).toLocaleDateString()} ${new Date(lastSeen).toLocaleTimeString()}`
           const selected = selectedToken && selectedToken.id === id;
           return (
             <TableRow
@@ -185,7 +186,7 @@ export default ({ userId, id }) => {
             >
               <Checkbox value={selected} />
               <Box>{name}</Box>
-              <Box>2m ago</Box>
+              <Box>{formattedLastSeen}</Box>
             </TableRow>
           );
         })}
