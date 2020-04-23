@@ -182,7 +182,7 @@ components:
           type: string
           example: Example Token
         lastSeen:
-          type: string
+          type: number
           example: 1587667174725
 
     user-verification:

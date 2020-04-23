@@ -5,6 +5,8 @@ const tracking = {
     tokenObject.lastSeen = Date.now()
     store.replace(tokenObject).then((_) => {
       // all good
+    }).catch((e) => {
+      console.log('tracking record error: ', e)
     })
   }
 }
