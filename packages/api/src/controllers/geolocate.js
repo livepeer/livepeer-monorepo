@@ -3,7 +3,7 @@ import Router from 'express/lib/router'
 
 const app = Router()
 
-app.get('/', geolocateMiddleware({}), (req, res, next) => {
+app.get('/', geolocateMiddleware({first: false}), (req, res, next) => {
   res.json(req.region)
 })
 

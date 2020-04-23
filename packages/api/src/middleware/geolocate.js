@@ -2,7 +2,7 @@
 
 function geoLocateFactory (params) {
   return async (req, res, next) => {
-    let first = req.query.first || true
+    let first = params.first || req.query.first || true
     // Sometimes comes in as a string? Normalize.
     // console.log('req.url: ', req.url)
     // let url = new URL(req.url)
