@@ -1,5 +1,6 @@
 import { InternalServerError, ForbiddenError } from '../store/errors'
 import jwt from 'jsonwebtoken'
+import tracking from './tracking'
 
 /**
  * creates an authentication middleware that can be customized.
