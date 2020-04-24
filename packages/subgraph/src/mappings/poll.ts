@@ -27,7 +27,7 @@ export function vote(event: VoteEvent): void {
 
   if (event.params.choiceID.equals(BigInt.fromI32(0))) {
     vote.choiceID = 'Yes'
-  } else if (event.params.choiceID.equals(BigInt.fromI32(0))) {
+  } else if (event.params.choiceID.equals(BigInt.fromI32(1))) {
     vote.choiceID = 'No'
   } else {
     return
