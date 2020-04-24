@@ -339,22 +339,22 @@ contract('Subgraph Integration Tests', accounts => {
 
     assert.equal(
       subgraphPollData.data.transcoder1VoteChoice[0].choiceID,
-      0,
+      'Yes',
       'incorrect vote choice',
     )
     assert.equal(
       subgraphPollData.data.delegator1VoteChoice[0].choiceID,
-      1,
+      'No',
       'incorrect vote choice',
     )
     assert.equal(
       subgraphPollData.data.delegator2VoteChoice[0].choiceID,
-      0,
+      'Yes',
       'incorrect vote choice',
     )
     assert.equal(
       subgraphPollData.data.delegator3VoteChoice[0].choiceID,
-      1,
+      'No',
       'incorrect vote choice',
     )
   })

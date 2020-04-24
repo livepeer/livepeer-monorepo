@@ -25,7 +25,13 @@ export function vote(event: VoteEvent): void {
   let vote = Vote.load(voteId) || new Vote(voteId)
   let delegate: Transcoder
 
-  vote.choiceID = parseInt(event.params.choiceID.toString(), 10) as i32
+  if (event.params.choiceID.equals(BigInt.fromI32(0))) {
+    vote.choiceID = 'Yes'
+  } else if (event.params.choiceID.equals(BigInt.fromI32(0))) {
+    vote.choiceID = 'No'
+  } else {
+    return
+  }
 
   // If first time voting in this poll
   let pollVotes = poll.votes ? poll.votes : new Array<string>()
@@ -103,12 +109,12 @@ export function tallyVotes(poll: Poll): void {
   pollTally.no = BigInt.fromI32(0)
   for (let i = 0; i < votes.length; i++) {
     v = Vote.load(votes[i]) as Vote
-    if (v.choiceID == 0) {
+    if (v.choiceID == 'Yes') {
       pollTally.yes = pollTally.yes.plus(
         v.voteStake.minus(v.nonVoteStake as BigInt),
       )
     }
-    if (v.choiceID == 1) {
+    if (v.choiceID == 'No') {
       pollTally.no = pollTally.no.plus(
         v.voteStake.minus(v.nonVoteStake as BigInt),
       )
