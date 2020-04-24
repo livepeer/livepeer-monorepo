@@ -64,6 +64,7 @@ export function vote(event: VoteEvent): void {
       ) {
         let delegateVoteId = makeVoteId(delegate.id, poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.voter = delegate.id
         delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
           vote.voteStake as BigInt,
         )
