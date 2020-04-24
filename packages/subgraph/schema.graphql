@@ -205,15 +205,15 @@ type PollTally @entity {
 }
 
 type Vote @entity {
-  "voter address + poll address"
+  "Voter address + poll address"
   id: ID!
-  "The voter that casted the vote"
+  "Vote caster"
   voter: Voter!
   "Stake weighted vote"
   voteStake: BigInt
   "This will be non-zero if voter is an orchestrator and any of the its delegators voted"
   nonVoteStake: BigInt
-  choiceID: Int
+  choiceID: PollChoice
   poll: Poll
 }
 
