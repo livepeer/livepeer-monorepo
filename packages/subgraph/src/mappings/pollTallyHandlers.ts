@@ -48,6 +48,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
           poll.id,
         )
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.voter = event.params.transcoder.toHex()
 
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
@@ -116,6 +117,7 @@ export function updatePollTallyOnBond(event: BondEvent): void {
           poll.id,
         )
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.voter = event.params.newDelegate.toHex()
 
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
@@ -162,6 +164,7 @@ export function updatePollTallyOnUnbond(event: UnbondEvent): void {
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.voter = event.params.delegate.toHex()
 
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
@@ -207,6 +210,7 @@ export function updatePollTallyOnRebond(event: RebondEvent): void {
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.voter = event.params.delegate.toHex()
 
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
@@ -264,6 +268,7 @@ export function updatePollTallyOnEarningsClaimed(
 
         let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        delegateVote.voter = event.params.delegate.toHex()
 
         // if delegate voted, update its vote stake
         if (delegateVote.voteStake != null) {
