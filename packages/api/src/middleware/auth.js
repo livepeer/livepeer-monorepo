@@ -1,6 +1,5 @@
 import { InternalServerError, ForbiddenError } from '../store/errors'
 import jwt from 'jsonwebtoken'
-import tracking from './tracking'
 
 /**
  * creates an authentication middleware that can be customized.
@@ -22,8 +21,6 @@ function authFactory(params) {
         throw new ForbiddenError(`no token object ${authToken} found`)
       }
       userId = tokenObject.userId
-      // track last seen
-      tracking.record(req.store, tokenObject)
     } else if (authToken.startsWith('JWT')) {
       const jwtToken = authToken.substr(4)
       try {

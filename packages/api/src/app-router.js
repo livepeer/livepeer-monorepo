@@ -117,7 +117,6 @@ export default async function makeApp(params) {
   // Add a controller for each route at the /${httpPrefix} route
   const prefixRouter = Router() // amalgamates our endpoints together and serves them out
   for (const [name, controller] of Object.entries(controllers)) {
-    console.log('debug: hooking up route ', name)
     prefixRouter.use(`/${name}`, controller)
   }
   app.use(httpPrefix, prefixRouter)
