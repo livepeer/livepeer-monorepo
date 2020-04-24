@@ -170,7 +170,15 @@ export default ({ userId, id }) => {
         </TableRow>
         {tokens.map(token => {
           const { id, name, lastSeen } = token;
-          const formattedLastSeen = `${new Date(lastSeen).toLocaleDateString()} ${new Date(lastSeen).toLocaleTimeString()}`
+          let formattedLastSeen = <em>unused</em>;
+          if (lastSeen) {
+            formattedLastSeen = (
+              <span>
+                {new Date(lastSeen).toLocaleDateString()}&nbsp;
+                {new Date(lastSeen).toLocaleTimeString()}
+              </span>
+            );
+          }
           const selected = selectedToken && selectedToken.id === id;
           return (
             <TableRow
