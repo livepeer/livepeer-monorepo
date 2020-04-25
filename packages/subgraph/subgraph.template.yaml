@@ -340,7 +340,6 @@ templates:
       entities:
         - Poll
         - Vote
-        - Voter
       eventHandlers:
         - event: Vote(indexed address,uint256)
           handler: vote

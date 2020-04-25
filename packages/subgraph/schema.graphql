@@ -208,20 +208,13 @@ type Vote @entity {
   "Voter address + poll address"
   id: ID!
   "Vote caster"
-  voter: Voter!
+  voter: String!
   "Stake weighted vote"
   voteStake: BigInt
   "This will be non-zero if voter is an orchestrator and any of the its delegators voted"
   nonVoteStake: BigInt
   choiceID: PollChoice
   poll: Poll
-}
-
-type Voter @entity {
-  "The voter address"
-  id: ID!
-  "The votes casted by the voter"
-  votes: [Vote!] @derivedFrom(field: "voter")
 }
 
 ###############################################################################
@@ -608,30 +601,4 @@ type PollCreated implements Transaction @entity {
   endBlock: BigInt
   quorum: BigInt
   threshold: BigInt
-}
-
-type Yes implements Transaction @entity {
-  id: ID!
-  hash: String
-  blockNumber: BigInt!
-  gasUsed: BigInt!
-  gasPrice: BigInt!
-  timestamp: BigInt
-  from: String
-  to: String
-  round: Round
-  voter: String
-}
-
-type No implements Transaction @entity {
-  id: ID!
-  hash: String
-  blockNumber: BigInt!
-  gasUsed: BigInt!
-  gasPrice: BigInt!
-  timestamp: BigInt
-  from: String
-  to: String
-  round: Round
-  voter: String
 }
