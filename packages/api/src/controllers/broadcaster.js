@@ -37,8 +37,7 @@ export const amalgamate = async req => {
   return output
 }
 
-// Right now this is very deployment-specific
-app.get('/', geolocateMiddleware({}), async (req, res, next) => {
+app.get('/', authMiddleware({}), geolocateMiddleware({}), async (req, res, next) => {
   let broadcasters
   if (req.region && req.region.servers) {
     broadcasters = await amalgamate(req)
