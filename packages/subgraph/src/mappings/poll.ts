@@ -7,7 +7,6 @@ import {
   Vote,
   Delegator,
   Transcoder,
-  Voter,
 } from '../types/schema'
 import { makeVoteId, getBondingManagerAddress } from '../../utils/helpers'
 import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
@@ -17,9 +16,6 @@ import { BondingManager } from '../types/BondingManager_streamflow/BondingManage
 export function vote(event: VoteEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   let delegator = Delegator.load(event.params.voter.toHex())
-  let voter =
-    Voter.load(event.params.voter.toHex()) ||
-    new Voter(event.params.voter.toHex())
   let poll = Poll.load(event.address.toHex()) as Poll
   let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
   let vote = Vote.load(voteId) || new Vote(voteId)
@@ -79,7 +75,6 @@ export function vote(event: VoteEvent): void {
     }
 
     poll.save()
-    voter.save()
 
     // Watch for events specified in PollTallyTemplate, and trigger handlers
     // with this context
