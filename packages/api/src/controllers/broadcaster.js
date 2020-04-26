@@ -1,6 +1,6 @@
 import Router from 'express/lib/router'
 import fetch from 'isomorphic-fetch'
-import { authMiddleware } from '../middleware'
+import { authMiddleware, geolocateMiddleware } from '../middleware'
 import { shuffle } from '../util'
 
 const app = Router()
@@ -15,9 +15,35 @@ export const getBroadcasterStatuses = async req => {
   return statuses
 }
 
-// Right now this is very deployment-specific
-app.get('/', async (req, res, next) => {
-  const broadcasters = await req.getBroadcasters(req)
+export const amalgamate = async req => {
+  const { servers } = req.region
+  let responses = await Promise.all(
+    servers.map(async ({ server }) => {
+      const serverRes = await fetch(`https://${server}/api/broadcaster`)
+      const data = await serverRes.json()
+      return data
+    }),
+  )
+  let output
+  if (responses.length === 0) {
+    responses = [[]]
+  } else if (Array.isArray(responses[0])) {
+    output = responses.reduce((arr1, arr2) => arr1.concat(arr2), [])
+  } else {
+    // Object, assume all unique keys
+    output = responses.reduce((obj1, obj2) => ({ ...obj1, ...obj2 }), {})
+  }
+
+  return output
+}
+
+app.get('/', authMiddleware({}), geolocateMiddleware({}), async (req, res, next) => {
+  let broadcasters
+  if (req.region && req.region.servers) {
+    broadcasters = await amalgamate(req)
+  } else {
+    broadcasters = await req.getBroadcasters(req)
+  }
   const broadcasterData = broadcasters.map(({ address }) => ({ address }))
   return res.json(shuffle(broadcasterData))
 })
@@ -28,3 +54,4 @@ app.get('/status', authMiddleware({}), async (req, res, next) => {
 })
 
 export default app
+

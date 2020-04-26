@@ -160,6 +160,22 @@ export default function parseCli(argv) {
             '[DO NOT USE EXCEPT FOR TESTING] token that test harness can use to bypass validation and access the database',
           type: 'string',
         },
+        region: {
+          describe:
+            'list of ingest endpoints to use as options for /api/geolocate',
+          type: 'array',
+          default: [],
+          coerce: (arg) => {
+            if (!Array.isArray(arg)) {
+              const arr = [];
+              for (const [key, value] of Object.entries(arg)) {
+                arr[key] = value;
+              }
+              return arr;
+            }
+            return arg;
+          },
+        },
       })
       .help()
       .parse(argv)
