@@ -82,16 +82,16 @@ You will get back a list of `json` objects that represent a list of broadcaster 
 **Step 3:** Now it's time to POST your .ts segment. to
 `{broadcaster_address}/live/{stream_id}/{media_number}.ts`, and get your results.
 
+_We used [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart 
+API response.  To install `munpack`, use `brew install mpack` for macos, 
+and `apt install mpack` for Linux._
+
 Set `Accept: multipart/mixed` headers. A continuous livestream should start with
 the `media_number` set to `1`.ts and count upward to `2`.ts, `3`.ts and so on
 for each segment.
 
 Here is an example using the broadcaster address `https://test-broadcast-url.live`.
 You'll need to replace that URL a broadcaster address from Step 2.
-
-_We used [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart 
-return.  To install `munpack`, use `brew install mpack` for macos, 
-and `apt install mpack` for Linux._
 
 ```shell
 curl -i -X POST https://test-broadcast-url.live/live/<stream_id>/1.ts \
