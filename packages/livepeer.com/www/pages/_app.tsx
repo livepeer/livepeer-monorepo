@@ -5,12 +5,7 @@ import SEO from "../next-seo.config";
 import { Box } from "@theme-ui/components";
 import { Reset, ThemeProvider } from "../lib/theme";
 import { ApiProvider } from "../hooks/use-api";
-import { MDXProvider } from "@mdx-js/react";
-import CodeBlock from "../components/CodeBlock";
-
-const components = {
-  code: CodeBlock
-};
+import MarkdownProvider from "../lib/markdown-provider";
 
 export default class MyApp extends App {
   render() {
@@ -31,7 +26,7 @@ export default class MyApp extends App {
         </Head>
         <>
           <ThemeProvider>
-            <MDXProvider components={components}>
+            <MarkdownProvider>
               <ApiProvider>
                 <Box sx={{ minHeight: "100vh" }}>
                   <DefaultSeo {...SEO} />
@@ -39,7 +34,7 @@ export default class MyApp extends App {
                   <Component {...pageProps} />
                 </Box>
               </ApiProvider>
-            </MDXProvider>
+            </MarkdownProvider>
           </ThemeProvider>
         </>
       </>

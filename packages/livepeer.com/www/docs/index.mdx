@@ -3,8 +3,8 @@
 ## Introduction to Livepeer API
 
 Livepeer supports live streaming, video on demand, and transcoding across video
-formats and protocols. The Livepeer API is provides enterprise customers a
-secure, straightforward way to transcode video. Please note that the Livepeer
+formats and protocols. The Livepeer API provides a secure, straightforward way
+to transcode video using Livepeer infrastructure. Please note that the Livepeer
 API product is under heavy development with new features added regularly.
 
 If you are looking for the open source project, go to
@@ -20,22 +20,27 @@ If you are looking for the open source project, go to
 
 `/stream`
 
-- `POST` - create a stream (Protected by `Bearer` API token auth)
-- RESTFUL - getting streams by ID (Protected by `Bearer` API token auth)
+- `POST /stream` - create a stream (Protected by `Bearer` API token auth)
+- `GET /stream/:id` - getting streams by ID (Protected by `Bearer` API token
+  auth)
 
 `/broadcaster`
 
-- `GET` a list of broadcasters
+- `GET /api/broadcaster` a list of broadcasters
 
-`/{broadcaster_url}/live/{stream_id}/{medianumber}.ts`
+`{broadcaster_url}/live/{stream_id}/{media_number}.ts`
 
-- ts segment ingest point after getting the broadcaster URL (using `POST`)
+- `POST https://{broadcaster_url}/live/{stream_id}/{media_number}.ts` MPEG-TS
+  segment ingest point after getting the broadcaster URL (using `POST`)
 
 # Integration via HTTP Push API
 
+Using the API is simple. First you create a stream, then you use the provided
+list of broadcasters to stream segments for transcoding.
+
 ## Requirements
 
-Incoming live stream must be segmented into .ts video segments in h.264. We
+Incoming live streams must be segmented into .ts video segments in H.264. We
 recommend segmenting the video into the smallest size possible to minimize
 latency. Each segment should ideally contain a single keyframe interval.
 
@@ -149,6 +154,9 @@ This option is very similar to the Integration via HTTP Push API above, but it
 removes the requirement to have segmented your stream into .ts video segments
 before sending it to a Livepeer broadcaster.
 
-Soon, API users will be able to send an RTMP stream to the Livepeer ingest point
-and consume the transcoded HLS stream from the same broadcaster. Then the
-transcoded HLS stream can be sent to an object store to serve as the CDN origin.
+Soon, you will be able to send an RTMP stream to the Livepeer ingest point and
+consume the transcoded HLS stream from the same broadcaster. You can serve the
+transcoded outputs through a CDN or save them for future use.
+
+Livepeer is currently testing this feature with select beta users. If you would
+like to use this today, email [mailto:sales@livepeer.com](sales@livepeer.com).
