@@ -19,7 +19,11 @@ export const amalgamate = async req => {
   const { servers } = req.region
   let responses = await Promise.all(
     servers.map(async ({ server }) => {
-      const serverRes = await fetch(`https://${server}/api/broadcaster`)
+      const serverRes = await fetch(`https://${server}/api/broadcaster`, {
+        headers: {
+          authorization: req.headers.authorization,
+        },
+      })
       const data = await serverRes.json()
       return data
     }),
@@ -37,16 +41,21 @@ export const amalgamate = async req => {
   return output
 }
 
-app.get('/', authMiddleware({}), geolocateMiddleware({}), async (req, res, next) => {
-  let broadcasters
-  if (req.region && req.region.servers) {
-    broadcasters = await amalgamate(req)
-  } else {
-    broadcasters = await req.getBroadcasters(req)
-  }
-  const broadcasterData = broadcasters.map(({ address }) => ({ address }))
-  return res.json(shuffle(broadcasterData))
-})
+app.get(
+  '/',
+  authMiddleware({}),
+  geolocateMiddleware({}),
+  async (req, res, next) => {
+    let broadcasters
+    if (req.region && req.region.servers) {
+      broadcasters = await amalgamate(req)
+    } else {
+      broadcasters = await req.getBroadcasters(req)
+    }
+    const broadcasterData = broadcasters.map(({ address }) => ({ address }))
+    return res.json(shuffle(broadcasterData))
+  },
+)
 
 app.get('/status', authMiddleware({}), async (req, res, next) => {
   const statuses = await getBroadcasterStatuses(req)
@@ -54,4 +63,3 @@ app.get('/status', authMiddleware({}), async (req, res, next) => {
 })
 
 export default app
-
