@@ -125,9 +125,9 @@ Content-Length: 459284
 Content-Type: video/MP2T
 Rendition-Name: 360p
 ```
-_note: if the `multipart` file looks different, most likely there was an issue with your request.  Please visit our [support channel on Discord](https://discord.gg/98g8Dqn), or email support@livepeer.org.
+_note: if the `multipart` file looks different, most likely there was an issue with your request.  Please visit our [support channel on Discord](https://discord.gg/98g8Dqn), or email support@livepeer.org._
 
-You can use something like [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart file. For example:
+You can use [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart file. For example:
 ```
 munpack multipart
 ```
@@ -137,6 +137,7 @@ You should see:
 720p_3.ts.3 (video/mp2t)
 360p_3.ts.4 (video/mp2t)
 ```
+_note: To install `munpack`, use `brew install mpack` for macos, and `apt install mpack` for Linux._
 
 You should be able to play the separate `.ts` files using any video player.  For example, `ffplay 1080p_3.ts`
 
