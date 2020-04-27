@@ -30,8 +30,13 @@ jobs:
           yarn postinstall
 
           # Kick off parallel Zeit Now install
-          yarn run now:build &
-          NOW_BUILD=$!
+          if [[ "$CIRCLE_BRANCH" == "latest" ]]; then
+            yarn run now:build-production &
+            NOW_BUILD=$!
+          else
+            yarn run now:build &
+            NOW_BUILD=$!
+          fi
           
           # Run tests
           yarn test
