@@ -11,7 +11,7 @@ domain = "livepeer.monster"
 zone_id = "21239600972377a5baddef5b4c27eeb4"
 route = "livepeer.monster/api/*"
 
-[env.production]
-domain = "livepeer.live"
-zone_id = "d19b521e26478e5ec28f7cc905a88afa"
-route = "*livepeer.live/*"
+[env.com]
+domain = "livepeer.com"
+zone_id = "ecf6818c4f4e5472d9e453b7d6412042"
+route = "livepeer.com/api/*"
