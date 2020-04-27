@@ -5,9 +5,6 @@ formats and protocols. The Livepeer API provides a secure, straightforward way
 to transcode video using Livepeer infrastructure. Please note that the Livepeer
 API product is under heavy development with new features added regularly.
 
-If you are looking for the open source project, go to
-[https://livepeer.readthedocs.io](https://livepeer.readthedocs.io/en/latest/).
-
 # API
 
 **URL**
@@ -18,8 +15,8 @@ If you are looking for the open source project, go to
 
 `/stream`
 
-- `POST /stream` - create a stream (Protected by `Bearer` API token auth)
-- `GET /stream/:id` - getting streams by ID (Protected by `Bearer` API token
+- `POST /stream` - create a stream (Protected by `Bearer` API key auth)
+- `GET /stream/:id` - getting streams by ID (Protected by `Bearer` API key
   auth)
 
 `/broadcaster`
@@ -42,7 +39,7 @@ Incoming live streams must be segmented into .ts video segments in H.264. We
 recommend segmenting the video into the smallest size possible to minimize
 latency. Each segment should ideally contain a single keyframe interval.
 
-## Quick Tutorial
+### Quick Tutorial
 
 In this tutorial you will transcode one .ts segment into three renditions for
 playback. By the end of this tutorial, you will have an understanding of the
@@ -93,7 +90,7 @@ For example:
 
 ```shell
 curl https://livepeer.com/api/broadcaster \
-  -H "authorization: Bearer <token>"
+  -H "authorization: Bearer <API_KEY>"
 ```
 
 Pick any of the broadcaster addresses at random to send the source video.
@@ -158,3 +155,8 @@ transcoded outputs through a CDN or save them for future use.
 
 Livepeer is currently testing this feature with select beta users. If you would
 like to use this today, email [sales@livepeer.com](mailto:sales@livepeer.com?subject=[Beta%20request]%20RTMP%20API).
+
+
+**Looking for the open source project?**
+
+Go to [https://livepeer.readthedocs.io](https://livepeer.readthedocs.io/en/latest/).
