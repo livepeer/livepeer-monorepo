@@ -47,7 +47,7 @@ jobs:
           # Livepeer internal build alerting
           curl -X POST https://holy-bread-207a.livepeer.workers.dev
 
-          if [[ "$CIRCLE_BRANCH" == "next" ]]; then
+          if [[ "$CIRCLE_BRANCH" == "master" ]]; then
             yarn run deploy:staging
           fi
 
