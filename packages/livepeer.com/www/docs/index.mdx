@@ -1,0 +1,154 @@
+# Getting started
+
+## Introduction to Livepeer API
+
+Livepeer supports live streaming, video on demand, and transcoding across video
+formats and protocols. The Livepeer API is provides enterprise customers a
+secure, straightforward way to transcode video. Please note that the Livepeer
+API product is under heavy development with new features added regularly.
+
+If you are looking for the open source project, go to
+[https://livepeer.readthedocs.io](https://livepeer.readthedocs.io/en/latest/).
+
+## API
+
+**URL**
+
+`https://livepeer.com/api`
+
+**Endpoints**
+
+`/stream`
+
+- `POST` - create a stream (Protected by `Bearer` API token auth)
+- RESTFUL - getting streams by ID (Protected by `Bearer` API token auth)
+
+`/broadcaster`
+
+- `GET` a list of broadcasters
+
+`/{broadcaster_url}/live/{stream_id}/{medianumber}.ts`
+
+- ts segment ingest point after getting the broadcaster URL (using `POST`)
+
+# Integration via HTTP Push API
+
+## Requirements
+
+Incoming live stream must be segmented into .ts video segments in h.264. We
+recommend segmenting the video into the smallest size possible to minimize
+latency. Each segment should ideally contain a single keyframe interval.
+
+## Quick Tutorial
+
+In this tutorial you will transcode one .ts segment into three renditions for
+playback. By the end of this tutorial, you will have an understanding of the
+basic Livepeer API calls and expected responses. And from there, you can start
+integrating your own platform with Livepeer's live transcoding service. Let's
+begin!
+
+**Step 1:** Create a "stream" with the transcoding profiles you want by sending
+POST to `/stream` with `name` and `profiles`. For example:
+
+```shell
+curl -X POST \
+-H 'content-type: application/json' \
+-H 'authorization: Bearer <API_KEY>' \
+-d '{
+  "name": "eli",
+  "profiles": [
+    {
+      "name": "1080p",
+      "bitrate": 6000000,
+      "fps": 30,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "720p",
+      "bitrate": 2000000,
+      "fps": 30,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "name": "360p",
+      "bitrate": 500000,
+      "fps": 30,
+      "width": 640,
+      "height": 360
+    }
+  ]
+}' \
+https://livepeer.com/api/stream
+```
+
+You will get back a `stream_id`. You will need this later.
+
+**Step 2:** Request a list of Livepeer broadcasters address from `/broadcaster.`
+For example:
+
+```shell
+curl https://livepeer.com/api/broadcaster \
+  -H "authorization: Bearer <token>"
+```
+
+Pick any of the broadcaster addresses at random to send the source video.
+
+**Step 3:** Now it's time to POST your .ts segment. to
+`{broadcaster_url}/live/{stream_id}/{media_number}.ts`
+
+Set `Accept: multipart/mixed` headers. A continuous livestream should start with
+the `media_number` set to `1`.ts and count upward to `2`.ts, `3`.ts and so on
+for each segment.
+
+Here is an example using the broadcaster URL `https://test-broadcast-url.live`.
+You'll need to replace that URL a broadcaster address from Step 2.
+
+```shell
+curl -X POST https://<https://test-broadcast-url.live>/live/<stream_id>/1.ts \
+  -H "Accept: multipart/mixed" \
+  --data-binary "@my_test_segment.ts" > out.ts
+```
+
+Note: If there is ever a problem uploading a segment, make a new request for a
+list of broadcasters and push to a different one. But still expect the stream to
+be at the same URL.
+
+**Step 4:** The out.ts file contains 3 different segments. Use `ffplay` to play
+it back. You will see the same segment 3 times, each with a lower resolution.
+
+When you integrate your own video platform with Livepeer, your platform should
+split the response into 3 different video segments based on the text delimiter,
+and insert them into a HLS playlist for playback. The content of the file looks
+something like:
+
+```
+--27bee784e2f2672487f5
+Content-Disposition: attachment; filename="1080p_101.ts"
+Content-Length: 459284
+Content-Type: video/MP2T
+Rendition-Name: 1080p
+...Data
+--27bee784e2f2672487f5
+Content-Disposition: attachment; filename="720p_101.ts"
+Content-Length: 459284
+Content-Type: video/MP2T
+Rendition-Name: 720p
+...Data
+--27bee784e2f2672487f5
+Content-Disposition: attachment; filename="360p_101.ts"
+Content-Length: 459284
+Content-Type: video/MP2T
+Rendition-Name: 360p
+```
+
+# Coming soon: Integration via RTMP API
+
+This option is very similar to the Integration via HTTP Push API above, but it
+removes the requirement to have segmented your stream into .ts video segments
+before sending it to a Livepeer broadcaster.
+
+Soon, API users will be able to send an RTMP stream to the Livepeer ingest point
+and consume the transcoded HLS stream from the same broadcaster. Then the
+transcoded HLS stream can be sent to an object store to serve as the CDN origin.

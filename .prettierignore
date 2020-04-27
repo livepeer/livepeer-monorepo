@@ -2,7 +2,6 @@
 **/build
 **/coverage
 **/dist
-**/docs
 **/sdk/lib
 **/graphql-sdk/lib
 **/chroma/lib

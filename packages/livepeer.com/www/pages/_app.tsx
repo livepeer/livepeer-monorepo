@@ -5,6 +5,12 @@ import SEO from "../next-seo.config";
 import { Box } from "@theme-ui/components";
 import { Reset, ThemeProvider } from "../lib/theme";
 import { ApiProvider } from "../hooks/use-api";
+import { MDXProvider } from "@mdx-js/react";
+import CodeBlock from "../components/CodeBlock";
+
+const components = {
+  code: CodeBlock
+};
 
 export default class MyApp extends App {
   render() {
@@ -25,13 +31,15 @@ export default class MyApp extends App {
         </Head>
         <>
           <ThemeProvider>
-            <ApiProvider>
-              <Box sx={{ minHeight: "100vh" }}>
-                <DefaultSeo {...SEO} />
-                <Reset />
-                <Component {...pageProps} />
-              </Box>
-            </ApiProvider>
+            <MDXProvider components={components}>
+              <ApiProvider>
+                <Box sx={{ minHeight: "100vh" }}>
+                  <DefaultSeo {...SEO} />
+                  <Reset />
+                  <Component {...pageProps} />
+                </Box>
+              </ApiProvider>
+            </MDXProvider>
           </ThemeProvider>
         </>
       </>

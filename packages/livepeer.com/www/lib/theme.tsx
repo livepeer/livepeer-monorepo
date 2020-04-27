@@ -191,10 +191,9 @@ export const theme = {
     },
     pre: {
       fontFamily: "monospace",
-      bg: "primary",
-      color: "background",
       overflowX: "auto",
       padding: 4,
+      cursor: "text",
       code: {
         color: "inherit",
         "-webkitFontSmoothing": "antialiased"
