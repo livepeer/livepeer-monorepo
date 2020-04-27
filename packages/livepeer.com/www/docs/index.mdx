@@ -80,7 +80,7 @@ curl https://livepeer.com/api/broadcaster \
 You will get back a list of `json` objects that represent a list of broadcaster addresses. Pick any of the broadcaster addresses to send the source `.ts` segment.
 
 **Step 3:** Now it's time to POST your .ts segment. to
-`{broadcaster_address}/live/{stream_id}/{media_number}.ts`
+`{broadcaster_address}/live/{stream_id}/{media_number}.ts`, and get your results.
 
 Set `Accept: multipart/mixed` headers. A continuous livestream should start with
 the `media_number` set to `1`.ts and count upward to `2`.ts, `3`.ts and so on
@@ -92,20 +92,23 @@ You'll need to replace that URL a broadcaster address from Step 2.
 ```shell
 curl -i -X POST https://test-broadcast-url.live/live/<stream_id>/1.ts \
   -H "Accept: multipart/mixed" \
-  --data-binary "@source_segment.ts" > multipart
+  --data-binary "@source_segment.ts" | munpack
 ```
 
-Note: If there is ever a problem uploading a segment, make a new request for a
-list of broadcasters and POST to a different broadcaster address. You can still 
-expect the stream to be at the same URL.
+You should see `1080p_1.ts`, `720p_1.ts`, and `360p_1.ts` in your directory. You should be able to play the separate `.ts` files using any video player.  For example, `ffplay 1080p_1.ts`
 
-**Step 4:** The `multipart` file contains 3 different segments. 
+_Note: If there is a problem uploading a segment, you can try to make a new 
+request for a list of broadcasters and POST to a different broadcaster address. 
+You can still expect the stream to be at the same URL._
 
-When you integrate your own video platform with Livepeer, your platform should
-split the response into 3 different video segments based on the text delimiter,
-and insert them into a HLS playlist for playback. 
+_if you don't see `1080p_1.ts`, `720p_1.ts`, and `360p_1.ts` most likely there 
+was an issue with the request you sent.  Please visit our [support channel on Discord](https://discord.gg/98g8Dqn), 
+or email support@livepeer.org._
 
-The content of the file looks something like:
+_We used [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart 
+return.  To install `munpack`, use `brew install mpack` for macos, 
+and `apt install mpack` for Linux. Alternatively, you can save the response directly
+to a file. The content of the API response looks something like:_
 ```
 --27bee784e2f2672487f5
 Content-Disposition: attachment; filename="1080p_101.ts"
@@ -125,21 +128,7 @@ Content-Length: 459284
 Content-Type: video/MP2T
 Rendition-Name: 360p
 ```
-_note: if the `multipart` file looks different, most likely there was an issue with your request.  Please visit our [support channel on Discord](https://discord.gg/98g8Dqn), or email support@livepeer.org._
 
-You can use [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart file. For example:
-```
-munpack multipart
-```
-You should see:
-```
-1080p_3.ts.2 (video/mp2t)
-720p_3.ts.3 (video/mp2t)
-360p_3.ts.4 (video/mp2t)
-```
-_note: To install `munpack`, use `brew install mpack` for macos, and `apt install mpack` for Linux._
-
-You should be able to play the separate `.ts` files using any video player.  For example, `ffplay 1080p_3.ts`
 
 # Live Streaming API
 
