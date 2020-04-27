@@ -10,10 +10,9 @@ const theme = {
   space: [0, 8, 16, 24, 32, 40, 48, 56, 64],
   fonts: {
     body:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    heading:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    monospace: '"SF Mono", "Roboto Mono", monospace',
+      'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+    heading: 'inherit',
+    monospace: '"Roboto Mono", Menlo, monospace',
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 40, 48, 64, 96],
   fontWeights: {

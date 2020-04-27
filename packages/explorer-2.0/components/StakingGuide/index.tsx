@@ -221,7 +221,8 @@ export default ({ children, ...props }) => {
             <Flex
               sx={{
                 width: '100%',
-                p: 5,
+                py: 5,
+                px: 4,
                 alignItems: 'flex-start',
                 flexDirection: 'column',
                 justifyContent: 'center',

@@ -66,6 +66,7 @@ export const MAXIUMUM_VALUE_UINT256 =
   '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
 export const MAX_EARNINGS_CLAIMS_ROUNDS = 100
+export const MAX_BATCH_CLAIM_ROUNDS = 50
 
 export function removeURLParameter(url, parameter) {
   //prefer to use l.search if you have a location/link object

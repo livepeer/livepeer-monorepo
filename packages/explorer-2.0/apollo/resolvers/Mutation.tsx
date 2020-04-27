@@ -1,4 +1,4 @@
-import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
+import { MAX_BATCH_CLAIM_ROUNDS } from '../../lib/utils'
 
 /**
  * Approve an amount for an ERC20 token transfer
@@ -52,50 +52,61 @@ export async function bond(_obj, _args, _ctx) {
  * @param {string} lastClaimRound - The delegator's last claim round
  * @param {string} endRound - The round to claim earnings until
  * @return {Promise}
+ * https://github.com/ethereum/web3.js/issues/1446
  */
 export async function batchClaimEarnings(_obj, _args, _ctx) {
   const Web3 = require('web3') // use web3 lib for batching transactions
   const web3 = new Web3(_ctx.provider)
-  const { lastClaimRound, endRound } = _args
+  const { lastClaimRound, endRound: lastEndRound } = _args
   const { abi, address } = _ctx.livepeer.config.contracts.BondingManager
   const bondingManager = new web3.eth.Contract(abi, address)
-  const totalRoundsToClaim = parseInt(endRound) - parseInt(lastClaimRound)
-  const quotient = Math.floor(totalRoundsToClaim / MAX_EARNINGS_CLAIMS_ROUNDS)
-  const remainder = totalRoundsToClaim % MAX_EARNINGS_CLAIMS_ROUNDS
+  const totalRoundsToClaim = parseInt(lastEndRound) - parseInt(lastClaimRound)
+  const quotient = Math.floor(totalRoundsToClaim / MAX_BATCH_CLAIM_ROUNDS)
+  const remainder = totalRoundsToClaim % MAX_BATCH_CLAIM_ROUNDS
   const calls = []
 
-  for (let i = 1; i <= quotient; i++) {
+  let batch = new web3.BatchRequest()
+
+  let maxBatchGas = parseInt(
+    await _ctx.livepeer.rpc.estimateGas('BondingManager', 'claimEarnings', [
+      (parseInt(lastClaimRound) + MAX_BATCH_CLAIM_ROUNDS).toString(),
+    ]),
+  )
+
+  function addCall(endRound, gas) {
     calls.push(
-      bondingManager.methods.claimEarnings(
-        (parseInt(lastClaimRound) + i * MAX_EARNINGS_CLAIMS_ROUNDS).toString(),
-      ).send,
+      new Promise((res, rej) => {
+        batch.add(
+          bondingManager.methods.claimEarnings(endRound).send.request(
+            {
+              from: _ctx.account,
+              gas: parseInt(gas, 10), // truncate in case 'gas' is a float
+            },
+            (err, txHash) => {
+              if (err) rej(err)
+              else res(txHash)
+            },
+          ),
+        )
+      }),
     )
   }
 
+  for (let i = 1; i <= quotient; i++) {
+    let end = (parseInt(lastClaimRound) + i * MAX_BATCH_CLAIM_ROUNDS).toString()
+    addCall(end, maxBatchGas * 1.05)
+  }
+
   if (remainder) {
-    calls.push(bondingManager.methods.claimEarnings(endRound).send)
+    addCall(
+      lastEndRound,
+      (maxBatchGas / MAX_BATCH_CLAIM_ROUNDS) * remainder * 1.05,
+    )
   }
 
-  function makeBatchRequest(calls) {
-    let batch = new web3.BatchRequest()
-    let promises = calls.map(call => {
-      return new Promise((res, rej) => {
-        let req = call.request({ from: _ctx.account }, (err, txHash) => {
-          if (err) {
-            rej(err)
-          }
-          res(txHash)
-        })
-        batch.add(req)
-      })
-    })
-    batch.execute()
-    return Promise.all(promises)
-  }
-
-  const txns = await makeBatchRequest(calls)
-  const lastTransactionInBatch = txns[calls.length - 1]
-  return lastTransactionInBatch
+  batch.execute()
+  // return txhash of last transaction in the batch
+  return (await Promise.all(calls)).pop()
 }
 
 /**
@@ -253,7 +264,7 @@ export async function updateProfile(_obj, _args, _ctx) {
       ...filtered,
     }
   } catch (e) {
-    console.error(e)
+    // console.error(e)
   }
 }
 
@@ -268,6 +279,6 @@ export async function removeAddressLink(_obj, _args, _ctx) {
   try {
     await box.removeAddressLink(address)
   } catch (e) {
-    console.error(e)
+    // console.error(e)
   }
 }
