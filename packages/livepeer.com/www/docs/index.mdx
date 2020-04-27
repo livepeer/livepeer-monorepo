@@ -1,25 +1,19 @@
-## Introduction to the Livepeer API
+## Livepeer API Documentation
 
 Livepeer supports live streaming, video on demand, and transcoding across video
 formats and protocols. The Livepeer API provides a secure, straightforward way
 to transcode video using Livepeer infrastructure. Please note that the Livepeer
 API product is under heavy development with new features added regularly.
 
-# API
+# API Endpoints
 
-**URL**
-
-`https://livepeer.com/api`
-
-**Endpoints**
-
-`/stream`
+`https://livepeer.com/api/stream`
 
 - `POST /stream` - create a stream (Protected by `Bearer` API key auth)
 - `GET /stream/:id` - getting streams by ID (Protected by `Bearer` API key
   auth)
 
-`/broadcaster`
+`https://livepeer.com/api/broadcaster`
 
 - `GET /api/broadcaster` a list of broadcasters
 
@@ -27,22 +21,12 @@ API product is under heavy development with new features added regularly.
 
 - `POST https://{broadcaster_url}/live/{stream_id}/{media_number}.ts` MPEG-TS
   segment ingest point after getting the broadcaster URL (using `POST`)
+- This endpoint also works for `.mp4` files.  We recommend sending `.mp4` files that are **less than 120 seconds**.
 
-# Integration via HTTP Push API
+# API Tutorial
 
-Using the API is simple. First you create a stream, then you use the provided
-list of broadcasters to stream segments for transcoding.
-
-**Requirements**
-
-Incoming live streams must be segmented into .ts video segments in H.264. We
-recommend segmenting the video into the smallest size possible to minimize
-latency. Each segment should ideally contain a single keyframe interval.
-
-### Quick Tutorial
-
-In this tutorial you will transcode one .ts segment into three renditions for
-playback. By the end of this tutorial, you will have an understanding of the
+In this tutorial you will transcode one source `.ts` segment into three renditions 
+for playback. By the end of this tutorial, you will have an understanding of the
 basic Livepeer API calls and expected responses. And from there, you can start
 integrating your own platform with Livepeer's live transcoding service. Let's
 begin!
@@ -83,7 +67,7 @@ curl -X POST \
 https://livepeer.com/api/stream
 ```
 
-You will get back a `stream_id`. You will need this later.
+You will get back a `json` response that includes an `id` field. This represents the ID of the stream. You will need this later.
 
 **Step 2:** Request a list of Livepeer broadcasters address from `/broadcaster.`
 For example:
@@ -93,36 +77,35 @@ curl https://livepeer.com/api/broadcaster \
   -H "authorization: Bearer <API_KEY>"
 ```
 
-Pick any of the broadcaster addresses at random to send the source video.
+You will get back a list of `json` objects that represent a list of broadcaster addresses. Pick any of the broadcaster addresses to send the source `.ts` segment.
 
 **Step 3:** Now it's time to POST your .ts segment. to
-`{broadcaster_url}/live/{stream_id}/{media_number}.ts`
+`{broadcaster_address}/live/{stream_id}/{media_number}.ts`
 
 Set `Accept: multipart/mixed` headers. A continuous livestream should start with
 the `media_number` set to `1`.ts and count upward to `2`.ts, `3`.ts and so on
 for each segment.
 
-Here is an example using the broadcaster URL `https://test-broadcast-url.live`.
+Here is an example using the broadcaster address `https://test-broadcast-url.live`.
 You'll need to replace that URL a broadcaster address from Step 2.
 
 ```shell
-curl -X POST https://<https://test-broadcast-url.live>/live/<stream_id>/1.ts \
+curl -i -X POST https://test-broadcast-url.live/live/<stream_id>/1.ts \
   -H "Accept: multipart/mixed" \
-  --data-binary "@my_test_segment.ts" > out.ts
+  --data-binary "@source_segment.ts" > multipart
 ```
 
 Note: If there is ever a problem uploading a segment, make a new request for a
-list of broadcasters and push to a different one. But still expect the stream to
-be at the same URL.
+list of broadcasters and POST to a different broadcaster address. You can still 
+expect the stream to be at the same URL.
 
-**Step 4:** The out.ts file contains 3 different segments. Use `ffplay` to play
-it back. You will see the same segment 3 times, each with a lower resolution.
+**Step 4:** The `multipart` file contains 3 different segments. 
 
 When you integrate your own video platform with Livepeer, your platform should
 split the response into 3 different video segments based on the text delimiter,
-and insert them into a HLS playlist for playback. The content of the file looks
-something like:
+and insert them into a HLS playlist for playback. 
 
+The content of the file looks something like:
 ```
 --27bee784e2f2672487f5
 Content-Disposition: attachment; filename="1080p_101.ts"
@@ -142,16 +125,27 @@ Content-Length: 459284
 Content-Type: video/MP2T
 Rendition-Name: 360p
 ```
+_note: if the `multipart` file looks different, most likely there was an issue with your request.  Please visit our [support channel on Discord](https://discord.gg/98g8Dqn), or email support@livepeer.org._
 
-# Coming soon: Integration via RTMP API
+You can use [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart file. For example:
+```
+munpack multipart
+```
+You should see:
+```
+1080p_3.ts.2 (video/mp2t)
+720p_3.ts.3 (video/mp2t)
+360p_3.ts.4 (video/mp2t)
+```
+_note: To install `munpack`, use `brew install mpack` for macos, and `apt install mpack` for Linux._
 
-This option is very similar to the Integration via HTTP Push API above, but it
-removes the requirement to have segmented your stream into .ts video segments
-before sending it to a Livepeer broadcaster.
+You should be able to play the separate `.ts` files using any video player.  For example, `ffplay 1080p_3.ts`
 
-Soon, you will be able to send an RTMP stream to the Livepeer ingest point and
-consume the transcoded HLS stream from the same broadcaster. You can serve the
-transcoded outputs through a CDN or save them for future use.
+# Live Streaming API
+
+You can send an RTMP video stream to the Livepeer API and get the transcoded 
+HLS video stream. You can serve the transcoded outputs through a CDN or save them 
+for future use.
 
 Livepeer is currently testing this feature with select beta users. If you would
 like to use this today, email [sales@livepeer.com](mailto:sales@livepeer.com?subject=[Beta%20request]%20RTMP%20API).
