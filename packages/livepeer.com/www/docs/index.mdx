@@ -89,6 +89,10 @@ for each segment.
 Here is an example using the broadcaster address `https://test-broadcast-url.live`.
 You'll need to replace that URL a broadcaster address from Step 2.
 
+_We used [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart 
+return.  To install `munpack`, use `brew install mpack` for macos, 
+and `apt install mpack` for Linux._
+
 ```shell
 curl -i -X POST https://test-broadcast-url.live/live/<stream_id>/1.ts \
   -H "Accept: multipart/mixed" \
@@ -105,24 +109,32 @@ _if you don't see `1080p_1.ts`, `720p_1.ts`, and `360p_1.ts` most likely there
 was an issue with the request you sent.  Please visit our [support channel on Discord](https://discord.gg/98g8Dqn), 
 or email support@livepeer.org._
 
-_We used [`munpack`](https://linux.die.net/man/1/munpack) to unpack the multipart 
-return.  To install `munpack`, use `brew install mpack` for macos, 
-and `apt install mpack` for Linux. Alternatively, you can save the response directly
-to a file. The content of the API response looks something like:_
+_You can save the response directly to a file if you don't pipe in into `munpack`. 
+The content of the API response looks something like:_
 ```
---27bee784e2f2672487f5
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Server: openresty/1.15.8.2
+Date: Mon, 27 Apr 2020 22:07:17 GMT
+Content-Type: multipart/mixed; boundary=83212f107a67f532dbdc
+Transfer-Encoding: chunked
+Connection: keep-alive
+Strict-Transport-Security: max-age=15724800; includeSubDomains
+
+--83212f107a67f532dbdc
 Content-Disposition: attachment; filename="1080p_101.ts"
 Content-Length: 459284
 Content-Type: video/MP2T
 Rendition-Name: 1080p
 ...Data
---27bee784e2f2672487f5
+--83212f107a67f532dbdc
 Content-Disposition: attachment; filename="720p_101.ts"
 Content-Length: 459284
 Content-Type: video/MP2T
 Rendition-Name: 720p
 ...Data
---27bee784e2f2672487f5
+--83212f107a67f532dbdc
 Content-Disposition: attachment; filename="360p_101.ts"
 Content-Length: 459284
 Content-Type: video/MP2T
