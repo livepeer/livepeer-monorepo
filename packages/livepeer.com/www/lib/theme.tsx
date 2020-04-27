@@ -194,9 +194,10 @@ export const theme = {
       overflowX: "auto",
       padding: 4,
       cursor: "text",
+      backgroundColor: t => `${t.colors.primary} !important`,
       code: {
         color: "inherit",
-        "-webkitFontSmoothing": "antialiased"
+        WebkitFontSmoothing: "antialiased"
       }
     },
     code: {
