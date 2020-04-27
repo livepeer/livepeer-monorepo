@@ -90,7 +90,7 @@ Here is an example using the broadcaster address `https://test-broadcast-url.liv
 You'll need to replace that URL a broadcaster address from Step 2.
 
 ```shell
-curl -X POST https://test-broadcast-url.live/live/<stream_id>/1.ts \
+curl -i -X POST https://test-broadcast-url.live/live/<stream_id>/1.ts \
   -H "Accept: multipart/mixed" \
   --data-binary "@source_segment.ts" > multipart
 ```
