@@ -45,8 +45,8 @@ export default class PostgresStore {
 
     if (cursor) {
       res = await this.pool.query(
-        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 LIMIT $3`,
-        [`${prefix}%`, `${prefix}${cursor}`, `${limit}`],
+        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $3 OFFSET $2`,
+        [`${prefix}%`, `${cursor}`, `${limit}`],
       )
     } else {
       res = await this.pool.query(
@@ -62,10 +62,13 @@ export default class PostgresStore {
     })
 
     if (data.length < 1) {
-      return { data: data, cursor: null }
+      return { data, cursor: null }
+    }
+    if (limit) {
+      cursor = (cursor | 0) + limit
     }
 
-    return { data: data, cursor: data[data.length - 1].id }
+    return { data, cursor }
   }
 
   async get(id) {
