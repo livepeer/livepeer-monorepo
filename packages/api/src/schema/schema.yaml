@@ -38,6 +38,10 @@ components:
         name:
           type: string
           example: test_stream
+        userId:
+          type: string
+          example: 66E2161C-7670-4D05-B71D-DA2D6979556F
+          index: true
         lastSeen:
           type: number
           example: 1587667174725
