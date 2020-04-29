@@ -45,6 +45,12 @@ components:
         lastSeen:
           type: number
           example: 1587667174725
+        sourceSegments:
+          type: number
+          example: 1
+        transcodedSegments:
+          type: number
+          example: 2
         profiles:
           type: array
           items:
