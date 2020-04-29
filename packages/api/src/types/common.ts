@@ -5,6 +5,22 @@ import {
   ApiToken,
 } from '../schema/types'
 
+export enum AuthTokenType {
+  JWT = 'JWT',
+  Bearer = 'Bearer',
+}
+
+declare global {
+  namespace Express {
+    // add custom properties to Request object
+    export interface Request {
+      config?: any
+      store?: IStore
+      authTokenType?: AuthTokenType
+    }
+  }
+}
+
 export type StoredObject = Stream | User | ApiToken
 
 export interface IStore {
