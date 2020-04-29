@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import ReactGA from "react-ga";
 import "lazysizes";
 import "lazysizes/plugins/attrchange/ls.attrchange";
+import Router from "next/router";
 
 interface Props {
   title?: string;
@@ -19,6 +20,13 @@ if (process.env.NODE_ENV === "production") {
   ReactGA.initialize(process.env.GA_TRACKING_ID);
 } else {
   ReactGA.initialize("test", { testMode: true });
+}
+
+// Track client-side page views with Segment
+if (process.env.NODE_ENV === "production") {
+  Router.events.on("routeChangeComplete", url => {
+    window.analytics.page(url);
+  });
 }
 
 export default ({ title, description, children, image, url }: Props) => {

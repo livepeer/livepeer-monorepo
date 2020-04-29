@@ -30,7 +30,8 @@
     "env": {
       "HUBSPOT_PORTAL_ID": "@hubspot_portal_id",
       "HUBSPOT_FORM_ID": "@hubspot_form_id",
-      "GA_TRACKING_ID": "@ga_tracking_id_dot_com"
+      "GA_TRACKING_ID": "@ga_tracking_id_dot_com",
+      "SEGMENT_WRITE_KEY": "@segment_write_key_dot_com"
     }
   }
 }
