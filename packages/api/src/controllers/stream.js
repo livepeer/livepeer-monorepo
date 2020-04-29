@@ -53,6 +53,11 @@ app.get('/', authMiddleware({}), async (req, res) => {
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const output = await req.store.get(`stream/${req.params.id}`)
+  if (!output || output.userId !== req.user.id && !(req.user.admin && req.authTokenType == 'JWT')) {
+    // do not reveal that stream exists
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
   res.status(200)
   res.json(output)
 })

@@ -223,7 +223,6 @@ describe('controllers/stream', () => {
       const tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       const nonAdminToken = await tokenRes.json()
       */
-      client.jwtAuth = nonAdminToken['token']
 
       /*
       const nonAdminUserRes = await server.store.get(
@@ -244,6 +243,7 @@ describe('controllers/stream', () => {
         const res = await client.get(`/stream/${document.id}`)
         expect(res.status).toBe(200)
       }
+      client.jwtAuth = nonAdminToken['token']
 
       const res = await client.get('/stream')
       expect(res.status).toBe(200)
