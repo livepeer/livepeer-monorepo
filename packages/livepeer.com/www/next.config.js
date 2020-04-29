@@ -17,6 +17,7 @@ module.exports = withMDX({
   env: {
     HUBSPOT_PORTAL_ID: process.env.HUBSPOT_PORTAL_ID,
     HUBSPOT_FORM_ID: process.env.HUBSPOT_FORM_ID,
-    GA_TRACKING_ID: process.env.GA_TRACKING_ID
+    GA_TRACKING_ID: process.env.GA_TRACKING_ID,
+    SEGMENT_API_KEY: process.env.SEGMENT_WRITE_KEY
   }
 });
