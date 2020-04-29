@@ -1,7 +1,7 @@
 import { useState, useContext, createContext, useEffect } from "react";
 import fetch from "isomorphic-fetch";
 import jwt from "jsonwebtoken";
-import { User, Error as ApiError, ApiToken } from "@livepeer/api";
+import { User, Error as ApiError, ApiToken, Stream } from "@livepeer/api";
 import qs from "qs";
 
 /**
@@ -143,6 +143,16 @@ const makeContext = (state: ApiState, setState) => {
     async logout() {
       setState(state => ({ ...state, user: null, token: null }));
       clearToken();
+    },
+
+    async getStreams(userId): Promise<[Stream]> {
+      const [res, streams] = await context.fetch(
+        `/stream?${qs.stringify({ userId })}`
+      );
+      if (res.status !== 200) {
+        throw new Error(streams);
+      }
+      return streams.sort((a, b) => (b.lastSeen||0) - (a.lastSeen||0));
     },
 
     async getApiTokens(userId): Promise<[ApiToken]> {
