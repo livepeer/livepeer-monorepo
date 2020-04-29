@@ -11,13 +11,24 @@ import path from 'path'
 
 const app = Router()
 
-app.get('/', authMiddleware({ admin: true }), async (req, res) => {
+app.get('/', authMiddleware({}), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
+  if (req.user.admin !== true) {
+    const streamIds = await req.store.query('stream', { userId: req.user.id }, cursor, limit)
+    const streams = []
+    for (let i = 0; i < streamIds.length; i++) {
+      const token = await req.store.get(`stream/${streamIds[i]}`, false)
+      streams.push(token)
+    }
+    res.status(200)
+    res.json(streams)
+    return
+  }
 
   const resp = await req.store.list(`stream/`, cursor, limit)
-  const output = resp.data
+  let output = resp.data
   const nextCursor = resp.cursor
   res.status(200)
 
@@ -30,6 +41,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
     res.links({
       next: next.href,
     })
+    output = output.map(o => o[Object.keys(o)[0]])
   } // CF doesn't know what this means
   res.json(output)
 })
