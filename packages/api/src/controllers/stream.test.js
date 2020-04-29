@@ -64,12 +64,49 @@ afterEach(async () => {
   await clearDatabase(server)
 })
 
+async function setupUsers(server) {
+  const _client = new TestClient({
+    server,
+  })
+  // setting up admin user and token
+  const userRes = await _client.post(`/user/`, { ...mockAdminUser })
+  let _adminUser = await userRes.json()
+
+  let tokenRes = await _client.post(`/user/token`, { ...mockAdminUser })
+  const _adminToken = await tokenRes.json()
+  _client.jwtAuth = `${_adminToken['token']}`
+
+  const user = await server.store.get(`user/${_adminUser.id}`, false)
+  _adminUser = { ...user, admin: true, emailValid: true }
+  await server.store.replace(_adminUser)
+
+  const resNonAdmin = await _client.post(`/user/`, { ...mockNonAdminUser })
+  let _nonAdminUser = await resNonAdmin.json()
+
+  tokenRes = await _client.post(`/user/token`, { ...mockNonAdminUser })
+  const _nonAdminToken = await tokenRes.json()
+
+  const nonAdminUserRes = await server.store.get(
+    `user/${_nonAdminUser.id}`,
+    false,
+  )
+  _nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+  await server.store.replace(_nonAdminUser)
+  return { _client, _adminUser, _adminToken, _nonAdminUser, _nonAdminToken }
+}
+
 describe('controllers/stream', () => {
   describe('basic CRUD with JWT authorization', () => {
-    let client
-    let adminUser
+    let client, adminUser, adminToken, nonAdminUser, nonAdminToken
 
     beforeEach(async () => {
+      let { _client, _adminUser, _adminToken, _nonAdminUser, _nonAdminToken } = await setupUsers(server)
+      client = _client
+      adminUser = _adminUser
+      adminToken = _adminToken
+      nonAdminUser = _nonAdminUser
+      nonAdminToken = _nonAdminToken
+      /*
       client = new TestClient({
         server,
       })
@@ -84,6 +121,7 @@ describe('controllers/stream', () => {
       const user = await server.store.get(`user/${adminUser.id}`, false)
       adminUser = { ...user, admin: true, emailValid: true }
       await server.store.replace(adminUser)
+      */
     })
 
     it('should not get all streams without admin authorization', async () => {
@@ -176,34 +214,42 @@ describe('controllers/stream', () => {
       }
     })
 
-    it('should not get all streams with non-admin user', async () => {
+    it('should get only own streams with non-admin user', async () => {
       // setting up non-admin user
+      /*
       const resNonAdmin = await client.post(`/user/`, { ...mockNonAdminUser })
       let nonAdminUser = await resNonAdmin.json()
 
       const tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
       const nonAdminToken = await tokenRes.json()
+      */
       client.jwtAuth = nonAdminToken['token']
 
+      /*
       const nonAdminUserRes = await server.store.get(
         `user/${nonAdminUser.id}`,
         false,
       )
       nonAdminUser = { ...nonAdminUserRes, emailValid: true }
       await server.store.replace(nonAdminUser)
+      */
 
-      for (let i = 0; i < 3; i += 1) {
+      for (let i = 0; i < 5; i += 1) {
         const document = {
           id: uuid(),
           kind: 'stream',
+          userId: i < 3 ? nonAdminUser.id : undefined,
         }
         await server.store.create(document)
         const res = await client.get(`/stream/${document.id}`)
         expect(res.status).toBe(200)
       }
 
-      let res = await client.get('/stream')
-      expect(res.status).toBe(403)
+      const res = await client.get('/stream')
+      expect(res.status).toBe(200)
+      const streams = await res.json()
+      expect(streams.length).toEqual(3)
+      expect(streams[0].userId).toEqual(nonAdminUser.id)
     })
 
     it('should not accept empty body for creating a stream', async () => {
@@ -221,22 +267,30 @@ describe('controllers/stream', () => {
     })
   })
 
-  describe('object stores endpoint with api key', () => {
-    let client
+  describe('stream endpoint with api key', () => {
+    let client, adminUser, adminToken, nonAdminUser, nonAdminToken
     const adminApiKey = uuid()
     const nonAdminApiKey = uuid()
 
     beforeEach(async () => {
-      client = new TestClient({
-        server,
-        apiKey: uuid(),
-      })
+      // client = new TestClient({
+      //   server,
+      //   apiKey: uuid(),
+      // })
+      let { _client, _adminUser, _adminToken, _nonAdminUser, _nonAdminToken } = await setupUsers(server)
+      client = _client
+      adminUser = _adminUser
+      adminToken = _adminToken
+      nonAdminUser = _nonAdminUser
+      nonAdminToken = _nonAdminToken
 
+      /*
       const userRes = await client.post(`/user/`, { ...mockAdminUser })
       let adminUser = await userRes.json()
 
       const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
       let nonAdminUser = await nonAdminRes.json()
+      */
 
       await server.store.create({
         id: adminApiKey,
@@ -250,25 +304,43 @@ describe('controllers/stream', () => {
         userId: nonAdminUser.id,
       })
 
-      const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true }
-      await server.store.replace(adminUser)
+      // const user = await server.store.get(`user/${adminUser.id}`, false)
+      // adminUser = { ...user, admin: true }
+      // await server.store.replace(adminUser)
 
-      const nonAdminUserRes = await server.store.get(
-        `user/${nonAdminUser.id}`,
-        false,
-      )
-      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
-      await server.store.replace(nonAdminUser)
+      // const nonAdminUserRes = await server.store.get(
+      //   `user/${nonAdminUser.id}`,
+      //   false,
+      // )
+      // nonAdminUser = { ...nonAdminUserRes, emailValid: true }
+      // await server.store.replace(nonAdminUser)
+
+      for (let i = 0; i < 5; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+          userId: i < 3 ? nonAdminUser.id : undefined,
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        expect(res.status).toBe(200)
+      }
+      client.jwtAuth = ''
     })
 
-    it('should not get all object stores', async () => {
+    it('should get own streams', async () => {
       client.apiKey = nonAdminApiKey
       let res = await client.get(`/stream`)
-      expect(res.status).toBe(403)
+      expect(res.status).toBe(200)
+      const streams = await res.json()
+      expect(streams.length).toEqual(3)
+      expect(streams[0].userId).toEqual(nonAdminUser.id)
+    })
 
+    it('should not get all streams for admin user', async () => {
       client.apiKey = adminApiKey
-      res = await client.get(`/stream`)
+      client.jwtAuth = null
+      const res = await client.get(`/stream`)
       expect(res.status).toBe(403)
     })
   })

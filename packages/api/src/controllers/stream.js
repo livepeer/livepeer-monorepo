@@ -27,6 +27,11 @@ app.get('/', authMiddleware({}), async (req, res) => {
     return
   }
 
+  if (req.authTokenType != 'JWT') {
+    res.status(403)
+    return res.json({ errors: ['admin can only use JWT'] })
+  }
+
   const resp = await req.store.list(`stream/`, cursor, limit)
   let output = resp.data
   const nextCursor = resp.cursor
