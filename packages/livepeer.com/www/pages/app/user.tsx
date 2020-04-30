@@ -6,6 +6,7 @@ import { Button } from "@theme-ui/components";
 import { Flex } from "@theme-ui/components";
 import useLoggedIn from "../../hooks/use-logged-in";
 import TokenTable from "../../components/TokenTable";
+import StreamsTable from "../../components/StreamsTable";
 
 export default () => {
   useLoggedIn();
@@ -24,7 +25,8 @@ export default () => {
           alignItems: "center"
         }}
       >
-        <TokenTable id="API Token Table" userId={user.id} />
+        <TokenTable id="Streams Table" userId={user.id} />
+        <StreamsTable id="API Token Table" userId={user.id} />
         <Box sx={{ margin: 3 }}>
           <Button variant="outline" onClick={logout}>
             Log Out

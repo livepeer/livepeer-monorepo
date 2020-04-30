@@ -145,7 +145,7 @@ const makeContext = (state: ApiState, setState) => {
       clearToken();
     },
 
-    async getStreams(userId): Promise<[Stream]> {
+    async getStreams(userId): Promise<Array<Stream>> {
       const [res, streams] = await context.fetch(
         `/stream?${qs.stringify({ userId })}`
       );
