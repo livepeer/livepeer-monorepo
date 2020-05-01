@@ -1,4 +1,4 @@
-import { Address, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 import {
   BondingManager,
@@ -256,10 +256,6 @@ export function updatePollTallyOnEarningsClaimed(
 
       let transcoder = Transcoder.load(event.params.delegate.toHex())
       if (voterAddress == event.params.delegate.toHex()) {
-        log.info('transcoder claimed earnings: {}, {}', [
-          event.params.delegator.toHex(),
-          event.params.delegate.toHex(),
-        ])
         vote.voteStake = transcoder.totalStake
       } else {
         let protocol = Protocol.load('0') || new Protocol('0')
