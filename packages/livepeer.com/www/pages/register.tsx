@@ -47,7 +47,7 @@ export default () => {
           }}
         >
           <Box sx={{ mb: 3 }}>
-            Sign up and try Livepeer’s transcoding platform and qualify for a
+            Sign up to try Livepeer’s transcoding platform, and qualify for a
             free forever plan.
           </Box>
           <Box>
