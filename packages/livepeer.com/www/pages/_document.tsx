@@ -32,6 +32,15 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+          {
+            <script
+              type="text/javascript"
+              id="hs-script-loader"
+              async
+              defer
+              src="//js.hs-scripts.com/6160488.js"
+            />
+          }
         </body>
       </Html>
     );
