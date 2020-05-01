@@ -368,29 +368,63 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after bond', async () => {
-    await Token.methods.approve(bondingManagerAddress, 1000).send({
+  it('correctly tallies poll after transcoder bonds', async () => {
+    let bondAmount = 1000
+    await Token.methods.approve(bondingManagerAddress, bondAmount).send({
+      from: transcoder1,
+    })
+    await BondingManager.methods
+      .bond(bondAmount, transcoder1)
+      .send({ gas: 1000000, from: transcoder1 })
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
+  it('correctly tallies poll after transcoder unbonds', async () => {
+    let unbondAmount = 1000
+    await Token.methods.approve(bondingManagerAddress, unbondAmount).send({
+      from: transcoder1,
+    })
+    await BondingManager.methods
+      .unbond(unbondAmount)
+      .send({ gas: 1000000, from: transcoder1 })
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
+  it('correctly tallies poll after transcoder rebonds', async () => {
+    await BondingManager.methods
+      .rebond(0)
+      .send({ gas: 1000000, from: transcoder1 })
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
+  it('correctly tallies poll after delegator bonds', async () => {
+    let bondAmount = 1000
+    await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator1,
     })
     await BondingManager.methods
-      .bond(1000, transcoder1)
+      .bond(bondAmount, transcoder1)
       .send({ gas: 1000000, from: delegator1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after unbond', async () => {
-    await Token.methods.approve(bondingManagerAddress, 1000).send({
+  it('correctly tallies poll after delegator unbonds', async () => {
+    let unbondAmount = 1000
+    await Token.methods.approve(bondingManagerAddress, unbondAmount).send({
       from: delegator1,
     })
     await BondingManager.methods
-      .unbond(1000)
+      .unbond(unbondAmount)
       .send({ gas: 1000000, from: delegator1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after rebond', async () => {
+  it('correctly tallies poll after delegator rebonds', async () => {
     await BondingManager.methods
       .rebond(0)
       .send({ gas: 1000000, from: delegator1 })
@@ -398,7 +432,7 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after earnings claimed', async () => {
+  it('correctly tallies poll after delegator claims earnings', async () => {
     await mineAndInitializeRound(roundLength)
     await BondingManager.methods
       .reward()
@@ -414,7 +448,7 @@ contract('Subgraph Integration Tests', accounts => {
   })
 
   // TODO
-  it('correctly tallies poll after switching transcoders', async () => {})
+  it('correctly tallies poll after delegator switches transcoders', async () => {})
 
   it('correctly tallies poll after polling period is over', async () => {
     let subgraphPollData = await fetchSubgraph({
