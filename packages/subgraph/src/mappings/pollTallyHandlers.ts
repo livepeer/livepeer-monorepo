@@ -1,4 +1,4 @@
-import { Address, BigInt, dataSource } from '@graphprotocol/graph-ts'
+import { Address, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
 
 import {
   BondingManager,
@@ -34,7 +34,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
       let transcoder = Transcoder.load(event.params.transcoder.toHex())
 
       // update vote stakes
-      if (delegator.id == event.params.transcoder.toHex()) {
+      if (voterAddress == event.params.transcoder.toHex()) {
         vote.voteStake = transcoder.totalStake
       } else {
         let bondingManager = BondingManager.bind(event.address)
@@ -84,7 +84,6 @@ export function updatePollTallyOnBond(event: BondEvent): void {
 
       // If moving stake, remove vote with old delegate
       if (
-        voterAddress == event.params.delegator.toHex() &&
         event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
         event.params.oldDelegate.toHex() != event.params.newDelegate.toHex()
       ) {
@@ -102,7 +101,7 @@ export function updatePollTallyOnBond(event: BondEvent): void {
       }
 
       // update vote stakes
-      if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
+      if (voterAddress == event.params.newDelegate.toHex()) {
         vote.voteStake = transcoder.totalStake
       } else {
         let protocol = Protocol.load('0') || new Protocol('0')
@@ -152,7 +151,7 @@ export function updatePollTallyOnUnbond(event: UnbondEvent): void {
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
-      if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
+      if (voterAddress == event.params.delegate.toHex()) {
         vote.voteStake = transcoder.totalStake
       } else {
         let protocol = Protocol.load('0') || new Protocol('0')
@@ -198,7 +197,7 @@ export function updatePollTallyOnRebond(event: RebondEvent): void {
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
-      if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
+      if (voterAddress == event.params.delegate.toHex()) {
         vote.voteStake = transcoder.totalStake
       } else {
         let protocol = Protocol.load('0') || new Protocol('0')
@@ -247,7 +246,6 @@ export function updatePollTallyOnEarningsClaimed(
 
     // Check if poll is active
     if (poll != null && poll.endBlock > event.block.number) {
-      let transcoder = Transcoder.load(event.params.delegate.toHex())
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
@@ -256,7 +254,12 @@ export function updatePollTallyOnEarningsClaimed(
         return
       }
 
-      if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
+      let transcoder = Transcoder.load(event.params.delegate.toHex())
+      if (voterAddress == event.params.delegate.toHex()) {
+        log.info('transcoder claimed earnings: {}, {}', [
+          event.params.delegator.toHex(),
+          event.params.delegate.toHex(),
+        ])
         vote.voteStake = transcoder.totalStake
       } else {
         let protocol = Protocol.load('0') || new Protocol('0')
