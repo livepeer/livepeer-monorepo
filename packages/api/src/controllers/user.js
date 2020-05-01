@@ -150,6 +150,40 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
 
   let user = await req.store.get(`user/${userIds[0]}`, false)
   if (user.emailValidToken === req.body.emailValidToken) {
+    // alert sales of new verified user
+    const { supportAddr, sendgridTemplateId, sendgridApiKey } = req.config
+    const protocol =
+      req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http'
+    const buttonUrl = `${protocol}://${req.headers.host}/login`
+    const unsubscribeUrl = `${protocol}://${req.headers.host}/#contactSection`
+    const salesEmail = 'sales@livepeer.org'
+
+    try {
+      // send email verification message to user using SendGrid
+      await sendgridEmail({
+        email: salesEmail,
+        supportAddr,
+        sendgridTemplateId,
+        sendgridApiKey,
+        subject: `User ${user.email} signed up with Livepeer!`,
+        preheader: 'We have a new verified user',
+        buttonText: 'Log into livepeer',
+        buttonUrl: buttonUrl,
+        unsubscribe: unsubscribeUrl,
+        text: [
+          `User ${user.email} has signed up and verified their email with Livepeer!`,
+        ].join('\n\n'),
+      })
+    } catch (err) {
+      res.status(400)
+      return res.json({
+        errors: [
+          `error sending confirmation email to ${req.body.email}: error: ${err}`,
+        ],
+      })
+    }
+
+    // return user
     user = { ...user, emailValid: true }
     await req.store.replace(user)
     res.status(201)
@@ -223,7 +257,7 @@ app.post(
 
     res.status(201)
     return res.json(user)
-  }
+  },
 )
 
 app.post(
