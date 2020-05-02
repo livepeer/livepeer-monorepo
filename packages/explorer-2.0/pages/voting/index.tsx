@@ -1,4 +1,5 @@
 import { Flex, Styled } from 'theme-ui'
+import { Text } from '@theme-ui/components'
 import Ballot from '../../public/img/ballot.svg'
 import { getLayout } from '../../layouts/main'
 import { Box } from 'theme-ui'
@@ -44,22 +45,12 @@ const Voting = () => {
         }
         await Promise.all(
           data.polls.map(async poll => {
-            const countdownRaw = await fetch(
-              `https://api-${process.env.NETWORK}.etherscan.io/api?module=block&action=getblockcountdown&blockno=${poll.endBlock}&apikey=${process.env.ETHERSCAN_API_KEY}`,
-            )
-            const countdownResponse = await countdownRaw.json()
-            const blockInfoRaw = await fetch(
-              `https://api-${process.env.NETWORK}.etherscan.io/api?module=block&action=getblockcountdown&blockno=${poll.endBlock}&apikey=${process.env.ETHERSCAN_API_KEY}`,
-            )
-            const blockInfoResponse = await blockInfoRaw.json()
             const { proposal } = await ipfs.catJSON(poll.proposal)
             const transformedProposal = fm(proposal.text)
+
             pollArr.push({
               ...poll,
               ...transformedProposal,
-              estimatedTimeRemaining:
-                countdownResponse.result.EstimateTimeInSec,
-              endTime: blockInfoResponse.result.timeStamp,
             })
           }),
         )
@@ -135,7 +126,7 @@ const Voting = () => {
                 as={`/voting/${poll.id}`}
               >
                 <a>
-                  <Card>
+                  <Card sx={{ color: 'text', display: 'block' }}>
                     <Flex
                       sx={{
                         justifyContent: 'space-between',
@@ -147,8 +138,7 @@ const Voting = () => {
                           {poll.attributes.title} (LIP {poll.attributes.lip})
                         </Box>
                         <Box sx={{ fontSize: 0, color: 'muted' }}>
-                          {parseInt(blockData?.block?.number) >=
-                          poll.endBlock ? (
+                          {!poll.isActive ? (
                             <Box>
                               Voting ended on{' '}
                               {moment.unix(poll.endTime).format('MMM Do, YYYY')}
@@ -163,7 +153,12 @@ const Voting = () => {
                           )}
                         </Box>
                       </Box>
-                      <Box>Active</Box>
+                      <Text
+                        variant={poll.status}
+                        sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+                      >
+                        {poll.status}
+                      </Text>
                     </Flex>
                   </Card>
                 </a>

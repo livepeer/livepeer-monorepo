@@ -90,7 +90,7 @@ export function useWeb3Mutation(mutation, options) {
               estimate: txPredictionData?.txPrediction?.result
                 ? txPredictionData?.txPrediction?.result
                 : null,
-              title: options?.context?.title,
+              gas: data.tx.gas,
               gasPrice: transactionData?.transaction?.gasPrice?.toString()
                 ? transactionData?.transaction?.gasPrice?.toString()
                 : null,
@@ -208,7 +208,6 @@ export function useMutations() {
         library: context?.library,
         account: context?.account?.toLowerCase(),
         returnTxHash: true,
-        title: txMessages[key]?.pending ? txMessages[key]?.pending : '',
       },
     })
     mutationsObj[key] = mutate

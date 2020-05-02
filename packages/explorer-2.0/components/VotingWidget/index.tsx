@@ -6,6 +6,7 @@ import VoteButton from '../VoteButton'
 import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 import { useApolloClient } from '@apollo/react-hooks'
+import moment from 'moment'
 
 export default ({ data }) => {
   const context = useWeb3React()
@@ -19,24 +20,12 @@ export default ({ data }) => {
   let noVoteStake = parseFloat(Utils.fromWei(data.poll.tally.no))
   let yesVoteStake = parseFloat(Utils.fromWei(data.poll.tally.yes))
   let totalVoteStake = noVoteStake + yesVoteStake
-  let totalStake = parseFloat(Utils.fromWei(data.totalStake))
-  let votingPower = 0
+
   let delegate = null
   if (data?.myAccount?.delegator?.delegate) {
     delegate = data?.myAccount?.delegator?.delegate
   }
-  if (data.vote?.voteStake) {
-    votingPower = abbreviateNumber(
-      parseFloat(Utils.fromWei(data.vote?.voteStake)),
-      4,
-    )
-  }
-  if (data.myAccount?.delegator?.pendingStake) {
-    votingPower = abbreviateNumber(
-      parseFloat(Utils.fromWei(data.myAccount?.delegator?.pendingStake)),
-      4,
-    )
-  }
+
   return (
     <Box
       sx={{
@@ -91,7 +80,7 @@ export default ({ data }) => {
               Yes
             </Box>
             <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
-              {(yesVoteStake / totalVoteStake) * 100}%
+              {((yesVoteStake / totalVoteStake) * 100).toPrecision(4)}%
             </Box>
           </Flex>
           <Flex
@@ -129,7 +118,7 @@ export default ({ data }) => {
               No
             </Box>
             <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
-              {(noVoteStake / totalVoteStake) * 100}%
+              {((noVoteStake / totalVoteStake) * 100).toPrecision(4)}%
             </Box>
           </Flex>
         </Box>
@@ -140,13 +129,16 @@ export default ({ data }) => {
               ? 'votes'
               : 'vote'
           }`}{' '}
-          · {abbreviateNumber(totalVoteStake, 2)} LPT · 21 hours left
+          · {abbreviateNumber(totalVoteStake, 4)} LPT ·{' '}
+          {!data.isActive
+            ? 'Final Results'
+            : moment.unix(data.poll.endTime).format('MMM Do, YYYY')}
         </Box>
       </Box>
 
       {context.active ? (
         <>
-          <Box sx={{ mb: 5 }}>
+          <Box>
             <Flex
               sx={{
                 fontSize: 1,
@@ -174,25 +166,46 @@ export default ({ data }) => {
                 {data?.vote?.choiceID ? data?.vote?.choiceID : 'N/A'}
               </span>
             </Flex>
-            <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
-              <span sx={{ color: 'muted' }}>Voting Power</span>
-              <span sx={{ fontWeight: 500, color: 'white' }}>
-                <span>
-                  {votingPower} LPT (
-                  {((pendingStake / totalStake) * 100).toPrecision(2)}
-                  %)
+            {!data?.vote?.choiceID && data.isActive && (
+              <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
+                <span sx={{ color: 'muted' }}>My Voting Power</span>
+                <span sx={{ fontWeight: 500, color: 'white' }}>
+                  <span>
+                    {abbreviateNumber(pendingStake, 4)} LPT (
+                    {((pendingStake / data.totalStake) * 100).toPrecision(2)}
+                    %)
+                  </span>
                 </span>
-              </span>
-            </Flex>
+              </Flex>
+            )}
+            {data?.vote?.choiceID && data?.vote?.voteStake && (
+              <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
+                <span sx={{ color: 'muted' }}>My Voting Power</span>
+                <span sx={{ fontWeight: 500, color: 'white' }}>
+                  <span>
+                    {abbreviateNumber(+Utils.fromWei(data?.vote?.voteStake), 4)}{' '}
+                    LPT (
+                    {(
+                      (+Utils.fromWei(data?.vote?.voteStake) /
+                        data.totalStake) *
+                      100
+                    ).toPrecision(2)}
+                    %)
+                  </span>
+                </span>
+              </Flex>
+            )}
           </Box>
-          <Grid gap={2} columns={[2]}>
-            <VoteButton choiceId={0} pollAddress={data.poll.id}>
-              Yes
-            </VoteButton>
-            <VoteButton variant="red" choiceId={1} pollAddress={data.poll.id}>
-              No
-            </VoteButton>
-          </Grid>
+          {data.isActive && (
+            <Grid sx={{ mt: 5 }} gap={2} columns={[2]}>
+              <VoteButton choiceId={0} pollAddress={data.poll.id}>
+                Yes
+              </VoteButton>
+              <VoteButton variant="red" choiceId={1} pollAddress={data.poll.id}>
+                No
+              </VoteButton>
+            </Grid>
+          )}
         </>
       ) : (
         <Button

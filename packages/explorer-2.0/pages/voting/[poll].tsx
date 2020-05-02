@@ -1,5 +1,5 @@
 import { Flex, Styled } from 'theme-ui'
-import Ballot from '../../public/img/ballot.svg'
+import { Text } from '@theme-ui/components'
 import { getLayout } from '../../layouts/main'
 import fm from 'front-matter'
 import IPFS from 'ipfs-mini'
@@ -13,22 +13,18 @@ import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { withApollo } from '../../lib/apollo'
 import { useRouter } from 'next/router'
-import useWindowSize from 'react-use/lib/useWindowSize'
 import { useQuery } from '@apollo/react-hooks'
 import { useWeb3React } from '@web3-react/core'
 import Spinner from '../../components/Spinner'
 import { useEffect, useState } from 'react'
-import gql from 'graphql-tag'
+import moment from 'moment'
 
 const Poll = () => {
   const pollQuery = require('../../queries/poll.gql')
-  const totalStakeQuery = require('../../queries/totalStake.gql')
   const accountQuery = require('../../queries/account.gql')
   const voteQuery = require('../../queries/vote.gql')
   const router = useRouter()
   const context = useWeb3React()
-
-  // const { width } = useWindowSize()
   const [pollData, setPollData] = useState(null)
   const { query } = router
   const pollId = query.poll.toString().toLowerCase()
@@ -38,28 +34,6 @@ const Poll = () => {
     },
     pollInterval: 10000,
     ssr: false,
-  })
-
-  const { data: blockData } = useQuery(
-    gql`
-      {
-        block(id: "latest")
-      }
-    `,
-    {
-      ssr: false,
-    },
-  )
-
-  const { data: totalStakeData } = useQuery(totalStakeQuery, {
-    variables: {
-      // if polling period is over get total stake at end block
-      block:
-        parseInt(blockData?.block?.number) > parseInt(data?.poll?.endBlock)
-          ? parseInt(data?.poll?.endBlock)
-          : parseInt(blockData?.block?.number),
-    },
-    skip: !data || !blockData,
   })
 
   const { data: myAccountData } = useQuery(accountQuery, {
@@ -89,14 +63,16 @@ const Poll = () => {
   useEffect(() => {
     const init = async () => {
       if (data) {
-        const response = await transformData(data)
+        const response = await transformData({
+          poll: data.poll,
+        })
         setPollData(response)
       }
     }
     init()
   }, [data])
 
-  if (!pollData || !totalStakeData) {
+  if (!pollData) {
     return (
       <Flex
         sx={{
@@ -119,38 +95,60 @@ const Poll = () => {
   let noVoteStake = parseFloat(Utils.fromWei(pollData.tally.no))
   let yesVoteStake = parseFloat(Utils.fromWei(pollData.tally.yes))
   let totalVoteStake = noVoteStake + yesVoteStake
-  let totalStake = parseFloat(Utils.fromWei(totalStakeData.protocol.totalStake))
 
   return (
     <>
       <Flex sx={{ width: '100%' }}>
         <Flex
           sx={{
-            mt: [3, 3, 3, 5],
-            pr: [0, 0, 0, 0, 6],
+            mt: [0, 0, 0, 5],
+            pr: [0, 0, 0, 6],
             width: '100%',
             flexDirection: 'column',
           }}
         >
-          <Box sx={{ width: '100%' }}>
-            <Styled.h1
+          <Box sx={{ mb: 4, width: '100%' }}>
+            <Flex
               sx={{
-                fontSize: [3, 3, 4, 5],
-                display: 'flex',
-                mb: 4,
+                mb: 1,
                 alignItems: 'center',
               }}
             >
-              <Ballot
-                sx={{
-                  width: [20, 20, 20, 26],
-                  height: [20, 20, 20, 26],
-                  color: 'primary',
-                  mr: 2,
-                }}
-              />
+              <Box sx={{ mr: 1 }}>Status:</Box>
+              <Text
+                variant={pollData.status}
+                sx={{ textTransform: 'capitalize', fontWeight: 700 }}
+              >
+                {pollData.status}
+              </Text>
+              {/* <MdThumbDown sx={{ color: 'red', size: 20 }} /> */}
+            </Flex>
+            <Styled.h1
+              sx={{
+                fontSize: [3, 3, 3, 4, 5],
+                display: 'flex',
+                mb: '10px',
+                alignItems: 'center',
+              }}
+            >
               {pollData.title} (LIP-{pollData.lip})
             </Styled.h1>
+            <Box sx={{ fontSize: 0, color: 'muted' }}>
+              {!pollData.isActive ? (
+                <Box>
+                  Voting ended on{' '}
+                  {moment.unix(pollData.endTime).format('MMM Do, YYYY')} at
+                  block {pollData.endBlock}
+                </Box>
+              ) : (
+                <Box>
+                  Voting ends in ~
+                  {moment()
+                    .add(pollData.estimatedTimeRemaining, 'seconds')
+                    .fromNow(true)}
+                </Box>
+              )}
+            </Box>
           </Box>
 
           <Box>
@@ -171,7 +169,7 @@ const Poll = () => {
                 title={
                   <Flex sx={{ alignItems: 'center' }}>
                     <Box sx={{ color: 'muted' }}>
-                      Total Support (50% needed)
+                      Total Support ({pollData.threshold}% needed)
                     </Box>
                     {/* <Flex>
                       <ReactTooltip
@@ -201,10 +199,7 @@ const Poll = () => {
                       lineHeight: 'heading',
                     }}
                   >
-                    {isNaN(yesVoteStake / totalVoteStake)
-                      ? 0
-                      : (yesVoteStake / totalVoteStake) * 100}
-                    %
+                    {pollData.totalSupport.toPrecision(4)}%
                   </Box>
                 }
               >
@@ -217,7 +212,9 @@ const Poll = () => {
                         Yes (
                         {isNaN(yesVoteStake / totalVoteStake)
                           ? 0
-                          : (yesVoteStake / totalVoteStake) * 100}
+                          : ((yesVoteStake / totalVoteStake) * 100).toPrecision(
+                              4,
+                            )}
                         %)
                       </Box>
                     </Flex>
@@ -236,7 +233,9 @@ const Poll = () => {
                         No (
                         {isNaN(noVoteStake / totalVoteStake)
                           ? 0
-                          : (noVoteStake / totalVoteStake) * 100}
+                          : ((noVoteStake / totalVoteStake) * 100).toPrecision(
+                              4,
+                            )}
                         %)
                       </Box>
                     </Flex>
@@ -252,7 +251,7 @@ const Poll = () => {
                 title={
                   <Flex sx={{ alignItems: 'center' }}>
                     <Box sx={{ color: 'muted' }}>
-                      Total Participation (33% needed)
+                      Total Participation ({pollData.quorum}% needed)
                     </Box>
                     {/* <Flex>
                       <ReactTooltip
@@ -282,7 +281,7 @@ const Poll = () => {
                       lineHeight: 'heading',
                     }}
                   >
-                    {abbreviateNumber((totalVoteStake / totalStake) * 100, 4)}%
+                    {pollData.totalParticipation.toPrecision(4)}%
                   </Box>
                 }
               >
@@ -295,8 +294,7 @@ const Poll = () => {
                     }}
                   >
                     <span sx={{ color: 'muted' }}>
-                      Voters (
-                      {abbreviateNumber((totalVoteStake / totalStake) * 100, 4)}
+                      Voters ({pollData.totalParticipation.toPrecision(4)}
                       %)
                     </span>
                     <span>
@@ -307,16 +305,12 @@ const Poll = () => {
                   </Flex>
                   <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
                     <span sx={{ color: 'muted' }}>
-                      Nonvoters (
-                      {abbreviateNumber(
-                        ((totalStake - totalVoteStake) / totalStake) * 100,
-                        7,
-                      )}
+                      Nonvoters ({pollData.nonVoters.toPrecision(4)}
                       %)
                     </span>
                     <span>
                       <span sx={{ fontFamily: 'monospace' }}>
-                        {abbreviateNumber(totalStake - totalVoteStake, 4)} LPT
+                        {abbreviateNumber(pollData.nonVotersStake, 4)} LPT
                       </span>
                     </span>
                   </Flex>
@@ -339,11 +333,11 @@ const Poll = () => {
 
         <Flex
           sx={{
-            display: ['none', 'none', 'none', 'none', 'flex'],
+            display: ['none', 'none', 'none', 'flex'],
             position: 'sticky',
             alignSelf: 'flex-start',
             top: 5,
-            minWidth: '30%',
+            minWidth: '31%',
           }}
         >
           <VotingWidget
@@ -351,7 +345,6 @@ const Poll = () => {
               poll: pollData,
               delegateVote: delegateVoteData?.vote,
               vote: voteData?.vote,
-              totalStake: totalStakeData.protocol.totalStake,
               myAccount: myAccountData,
             }}
           />
@@ -361,25 +354,44 @@ const Poll = () => {
   )
 }
 
-Poll.getLayout = getLayout
+async function transformData({ poll }) {
+  let noVoteStake = parseFloat(Utils.fromWei(poll.tally.no))
+  let yesVoteStake = parseFloat(Utils.fromWei(poll.tally.yes))
+  let totalVoteStake = parseFloat(Utils.fromWei(poll.totalVoteStake))
+  let totalNonVoteStake = parseFloat(Utils.fromWei(poll.totalNonVoteStake))
+  let totalSupport = isNaN(yesVoteStake / totalVoteStake)
+    ? 0
+    : (yesVoteStake / totalVoteStake) * 100
+  let totalStake = totalNonVoteStake + totalVoteStake
+  let totalParticipation = (totalVoteStake / totalStake) * 100
+  let nonVotersStake = totalStake - totalVoteStake
+  let nonVoters = ((totalStake - totalVoteStake) / totalStake) * 100
 
-export default withApollo({
-  ssr: true,
-})(Poll)
-
-async function transformData(data) {
   const ipfs = new IPFS({
     host: 'ipfs.infura.io',
     port: 5001,
     protocol: 'https',
   })
-  const { gitCommitHash, proposal } = await ipfs.catJSON(data.poll.proposal)
+  const { gitCommitHash, proposal } = await ipfs.catJSON(poll.proposal)
   const response = fm(proposal.text)
   return {
-    ...data.poll,
     ...response.attributes,
     created: response.attributes.created.toString(),
     text: response.body,
     gitCommitHash,
+    totalStake,
+    totalSupport,
+    totalParticipation,
+    nonVoters,
+    nonVotersStake,
+    yesVoteStake,
+    noVoteStake,
+    ...poll,
   }
 }
+
+Poll.getLayout = getLayout
+
+export default withApollo({
+  ssr: true,
+})(Poll)

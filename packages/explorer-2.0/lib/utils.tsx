@@ -187,29 +187,38 @@ export const checkAddressEquality = (address1, address2) => {
 export const txMessages = {
   approve: {
     pending: 'Unlocking LPT',
+    confirmed: 'LPT Unlocked',
   },
   bond: {
     pending: 'Staking LPT',
+    confirmed: 'LPT Staked',
   },
   unbond: {
     pending: 'Unstaking LPT',
+    confirmed: 'LPT Unstaked',
   },
   rebond: {
     pending: 'Restaking LPT',
+    confirmed: 'LPT Restaked',
   },
   rebondFromUnbonded: {
     pending: 'Restaking LPT',
+    confirmed: 'LPT Restaked',
   },
   createPoll: {
     pending: 'Creating Poll',
+    confirmed: 'Poll Created',
   },
   withdrawFees: {
     pending: 'Withdrawing Fees',
+    confirmed: 'Fees Withdrawn',
   },
   withdrawStake: {
     pending: 'Withdrawing Stake',
+    confirmed: 'Stake Withdrawn',
   },
   batchClaimEarnings: {
     pending: 'Claiming Earnings',
+    confirmed: 'Earnings Claimed',
   },
 }

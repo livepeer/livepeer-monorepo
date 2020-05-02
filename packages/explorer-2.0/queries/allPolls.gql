@@ -3,5 +3,20 @@
     id
     proposal
     endBlock
+    quorum
+    threshold
+    status
+    isActive
+    totalVoteStake
+    totalNonVoteStake
+    estimatedTimeRemaining
+    endTime
+    tally {
+      yes
+      no
+    }
+    votes {
+      id
+    }
   }
 }

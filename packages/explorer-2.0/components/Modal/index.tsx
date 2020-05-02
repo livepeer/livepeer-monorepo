@@ -55,14 +55,14 @@ export default ({
                 }
           }
         >
-          <Box sx={{ position: 'relative', px: 4, pt: 3, pb: 4 }}>
+          <Box sx={{ position: 'relative', px: 4, py: 3 }}>
             {title && (
               <Box sx={{ position: 'relative' }}>
                 <Flex
                   sx={{
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    mb: 5,
+                    mb: 4,
                   }}
                 >
                   {Icon && <Flex sx={{ mr: 2 }}>{Icon}</Flex>}

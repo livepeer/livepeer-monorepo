@@ -1,6 +1,6 @@
 import { Flex, Box } from 'theme-ui'
 import { useRouter } from 'next/router'
-import Layout, { getLayout } from '../../../layouts/main'
+import { getLayout } from '../../../layouts/main'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import Tabs, { TabType } from '../../../components/Tabs'
@@ -20,7 +20,6 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
 import FeesView from '../../../components/FeesView'
-import { useEffect } from 'react'
 
 const Account = () => {
   const accountViewQuery = require('../../../queries/accountView.gql')

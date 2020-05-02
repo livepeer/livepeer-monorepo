@@ -16,12 +16,10 @@ import { useQuery } from '@apollo/react-hooks'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
-import gql from 'graphql-tag'
 import { useMutations } from '../hooks'
 import { MutationsContext } from '../contexts'
-import Modal from '../components/Modal'
-import Confetti from 'react-confetti'
-import TxStartedModal from '../components/TxStartedModal'
+import TxStartedDialog from '../components/TxStartedDialog'
+import TxConfirmedDialog from '../components/TxConfirmedDialog'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -52,7 +50,6 @@ const Layout = ({
     })
     ReactGA.pageview(window.location.pathname + window.location.search)
   }, [])
-
   const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
   const { account } = context
@@ -68,7 +65,7 @@ const Layout = ({
   const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
   const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(true)
+  const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
   useEffect(() => {
@@ -139,6 +136,8 @@ const Layout = ({
     setDrawerOpen(false)
   }
 
+  const lastTx = transactionsData?.txs[transactionsData?.txs?.length - 1]
+
   return (
     <>
       <Head>
@@ -183,27 +182,59 @@ const Layout = ({
             </Flex>
           </Box>
 
-          {transactionsData?.txs?.filter(t => !t.confirmed).length > 0 && (
-            <>
-              <TxStartedModal
-                isOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                tx={transactionsData.txs[transactionsData.txs.length - 1]}
-              />
-              <Box
-                sx={{
-                  position: 'fixed',
-                  bg: 'surface',
-                  bottom: 0,
-                  width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
-                  left: [0, 0, 0, 275],
-                }}
-              >
-                <ProgressBar
-                  tx={transactionsData.txs[transactionsData.txs.length - 1]}
-                />
-              </Box>
-            </>
+          <TxConfirmedDialog
+            isOpen={
+              lastTx?.confirmed &&
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
+                ?.confirmedDialog?.dismissed
+            }
+            onDismiss={() => {
+              setTxDialogState([
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                {
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  txHash: lastTx.txHash,
+                  confirmedDialog: {
+                    dismissed: true,
+                  },
+                },
+              ])
+            }}
+            tx={lastTx}
+          />
+
+          <TxStartedDialog
+            isOpen={
+              lastTx?.confirmed === false &&
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
+                ?.pendingDialog?.dismissed
+            }
+            onDismiss={() => {
+              setTxDialogState([
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                {
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  txHash: lastTx.txHash,
+                  pendingDialog: {
+                    dismissed: true,
+                  },
+                },
+              ])
+            }}
+            tx={lastTx}
+          />
+          {lastTx?.confirmed === false && (
+            <Box
+              sx={{
+                position: 'fixed',
+                bg: 'surface',
+                bottom: 0,
+                width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
+                left: [0, 0, 0, 275],
+              }}
+            >
+              <ProgressBar tx={lastTx} />
+            </Box>
           )}
         </Styled.root>
       </MutationsContext.Provider>

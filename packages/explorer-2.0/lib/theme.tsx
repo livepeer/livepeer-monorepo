@@ -128,6 +128,17 @@ const theme = {
       },
     },
   },
+  text: {
+    passed: {
+      color: 'primary',
+    },
+    rejected: {
+      color: 'red',
+    },
+    active: {
+      color: 'white',
+    },
+  },
   styles: {
     root: {
       fontFamily: 'body',

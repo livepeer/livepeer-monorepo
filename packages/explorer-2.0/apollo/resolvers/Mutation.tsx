@@ -24,6 +24,7 @@ export async function approve(_obj, _args, _ctx) {
         returnTxHash: true,
       })
       return {
+        gas,
         txHash,
         inputData: {
           ..._args,
@@ -40,6 +41,7 @@ export async function approve(_obj, _args, _ctx) {
         returnTxHash: true,
       })
       return {
+        gas,
         txHash,
         inputData: {
           ..._args,
@@ -69,6 +71,7 @@ export async function bond(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -96,7 +99,7 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
   const calls = []
 
   let batch = new web3.BatchRequest()
-
+  let totalGas = 0
   let maxBatchGas = parseInt(
     await _ctx.livepeer.rpc.estimateGas('BondingManager', 'claimEarnings', [
       (parseInt(lastClaimRound) + MAX_BATCH_CLAIM_ROUNDS).toString(),
@@ -124,10 +127,13 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
 
   for (let i = 1; i <= quotient; i++) {
     let end = (parseInt(lastClaimRound) + i * MAX_BATCH_CLAIM_ROUNDS).toString()
+    totalGas = totalGas + maxBatchGas * 1.05
     addCall(end, maxBatchGas * 1.05)
   }
 
   if (remainder) {
+    totalGas =
+      totalGas + (maxBatchGas / MAX_BATCH_CLAIM_ROUNDS) * remainder * 1.05
     addCall(
       lastEndRound,
       (maxBatchGas / MAX_BATCH_CLAIM_ROUNDS) * remainder * 1.05,
@@ -140,9 +146,11 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
   const txHash = (await Promise.all(calls)).pop()
 
   return {
+    gas: totalGas,
     txHash,
     inputData: {
       ..._args,
+      totalRoundsToClaim,
     },
   }
 }
@@ -165,6 +173,7 @@ export async function unbond(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -190,6 +199,7 @@ export async function rebond(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -218,6 +228,7 @@ export async function withdrawStake(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -244,6 +255,7 @@ export async function withdrawFees(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -275,6 +287,7 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
   )
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -299,6 +312,7 @@ export async function initializeRound(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -324,6 +338,7 @@ export async function createPoll(_obj, _args, _ctx) {
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -332,18 +347,23 @@ export async function createPoll(_obj, _args, _ctx) {
 }
 
 /**
- * Creates a poll
+ * Vote in a poll
  * @param obj
  * @return {Promise}
  */
 export async function vote(_obj, _args, _ctx) {
   const { pollAddress, choiceId } = _args
+  const gas = await _ctx.livepeer.rpc.estimateGas('Poll', 'vote', [
+    pollAddress,
+    choiceId,
+  ])
   const txHash = await _ctx.livepeer.rpc.vote(pollAddress, choiceId, {
     ..._ctx.livepeer.config.defaultTx,
     returnTxHash: true,
   })
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,

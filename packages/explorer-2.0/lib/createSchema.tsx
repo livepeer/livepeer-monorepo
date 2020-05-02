@@ -1,5 +1,7 @@
 import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
+import Utils from 'web3-utils'
+
 import schema from '../apollo'
 import {
   mergeSchemas,
@@ -39,10 +41,34 @@ export default async () => {
       tokenBalance: String
       ethBalance: String
     }
+    extend type Poll {
+      isActive: Boolean
+      status: String
+      totalVoteStake: String
+      totalNonVoteStake: String
+      estimatedTimeRemaining: Int
+      endTime: Int
+    }
     extend type Query {
       txs: [JSON]
     }
   `
+  async function getTotalStake(_context, _blockNumber) {
+    const Web3 = require('web3')
+    let web3 = new Web3(
+      `https://eth-${
+        process.env.NETWORK ? 'rinkeby' : 'mainnet'
+      }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+    )
+    let contract = new web3.eth.Contract(
+      _context.livepeer.config.contracts.LivepeerToken.abi,
+      _context.livepeer.config.contracts.LivepeerToken.address,
+    )
+
+    return await contract.methods
+      .balanceOf(_context.livepeer.config.contracts.Minter.address)
+      .call({}, _blockNumber ? _blockNumber : null)
+  }
 
   const merged = mergeSchemas({
     schemas: [subgraphSchema, schema, linkTypeDefs],
@@ -95,20 +121,95 @@ export default async () => {
       Protocol: {
         totalStake: {
           async resolve(_protocol, _args, _context, _info) {
-            const Web3 = require('web3')
-            let web3 = new Web3(
-              `https://eth-${
-                process.env.NETWORK ? 'rinkeby' : 'mainnet'
-              }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            return await getTotalStake(_context, _args.blockNumber)
+          },
+        },
+      },
+      Poll: {
+        totalVoteStake: {
+          async resolve(_poll, _args, _context, _info) {
+            return Utils.toBN(_poll.tally.no)
+              .add(Utils.toBN(_poll.tally.yes))
+              .toString()
+          },
+        },
+        totalNonVoteStake: {
+          async resolve(_poll, _args, _context, _info) {
+            const blockData = await _context.livepeer.rpc.getBlock('latest')
+            const isActive =
+              parseInt(blockData.number) <= parseInt(_poll.endBlock)
+            const totalStake = await getTotalStake(
+              _context,
+              isActive ? blockData.number : _poll.endBlock,
             )
-            let contract = new web3.eth.Contract(
-              _context.livepeer.config.contracts.LivepeerToken.abi,
-              _context.livepeer.config.contracts.LivepeerToken.address,
+            const totalVoteStake = Utils.toBN(_poll.tally.no).add(
+              Utils.toBN(_poll.tally.yes),
             )
-
-            return await contract.methods
-              .balanceOf(_context.livepeer.config.contracts.Minter.address)
-              .call({}, _args.blockNumber ? _args.blockNumber : null)
+            return Utils.toBN(totalStake)
+              .sub(totalVoteStake)
+              .toString()
+          },
+        },
+        status: {
+          async resolve(_poll, _args, _context, _info) {
+            const blockData = await _context.livepeer.rpc.getBlock('latest')
+            const isActive =
+              parseInt(blockData.number) <= parseInt(_poll.endBlock)
+            const totalStake = await getTotalStake(
+              _context,
+              isActive ? blockData.number : _poll.endBlock,
+            )
+            let noVoteStake = parseFloat(Utils.fromWei(_poll.tally.no))
+            let yesVoteStake = parseFloat(Utils.fromWei(_poll.tally.yes))
+            let totalVoteStake = noVoteStake + yesVoteStake
+            let totalSupport = isNaN(yesVoteStake / totalVoteStake)
+              ? 0
+              : (yesVoteStake / totalVoteStake) * 100
+            let totalParticipation =
+              (totalVoteStake / parseFloat(Utils.fromWei(totalStake))) * 100
+            if (isActive) {
+              return 'active'
+            } else if (totalParticipation > _poll.quorum) {
+              if (totalSupport > _poll.threshold) {
+                return 'passed'
+              } else {
+                return 'rejected'
+              }
+            } else {
+              return 'Quorum not met'
+            }
+          },
+        },
+        isActive: {
+          async resolve(_poll, _args, _context, _info) {
+            const blockData = await _context.livepeer.rpc.getBlock('latest')
+            return parseInt(blockData.number) <= parseInt(_poll.endBlock)
+          },
+        },
+        estimatedTimeRemaining: {
+          async resolve(_poll, _args, _context, _info) {
+            const countdownRaw = await fetch(
+              `https://api${
+                process.env.NETWORK === 'rinkeby' ? '-rinkeby' : ''
+              }.etherscan.io/api?module=block&action=getblockcountdown&blockno=${
+                _poll.endBlock
+              }&apikey=${process.env.ETHERSCAN_API_KEY}`,
+            )
+            const countdownResponse = await countdownRaw.json()
+            return countdownResponse.result.EstimateTimeInSec
+          },
+        },
+        endTime: {
+          async resolve(_poll, _args, _context, _info) {
+            const blockInfoRaw = await fetch(
+              `https://api${
+                process.env.NETWORK === 'rinkeby' ? '-rinkeby' : ''
+              }.etherscan.io/api?module=block&action=getblockreward&blockno=${
+                _poll.endBlock
+              }&apikey=${process.env.ETHERSCAN_API_KEY}`,
+            )
+            const blockInfoResponse = await blockInfoRaw.json()
+            return blockInfoResponse.result.timeStamp
           },
         },
       },

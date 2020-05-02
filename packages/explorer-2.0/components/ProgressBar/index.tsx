@@ -3,8 +3,13 @@ import { Box } from 'theme-ui'
 import moment from 'moment'
 import { useState, useEffect } from 'react'
 import { useTimeEstimate } from '../../hooks'
+import { txMessages } from '../../lib/utils'
 
-export default ({ tx: { title, startTime, estimate, txHash } }) => {
+export default ({ tx }) => {
+  if (!tx) {
+    return null
+  }
+  const { __typename, startTime, estimate, txHash } = tx
   const { timeLeft } = useTimeEstimate({ startTime, estimate })
 
   return (
@@ -54,7 +59,7 @@ export default ({ tx: { title, startTime, estimate, txHash } }) => {
               fontWeight: 'bold',
             }}
           >
-            {title}
+            {txMessages[__typename]?.pending}
           </Box>
           <Box sx={{ fontSize: 0, color: 'muted' }}>
             {timeLeft

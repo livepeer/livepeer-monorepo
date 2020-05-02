@@ -6,8 +6,8 @@
     from
     startTime
     inputData
-    title
     estimate
+    gas
     gasPrice
     inputData
   }
