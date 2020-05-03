@@ -34,7 +34,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
     let poll = Poll.load(pollAddress) as Poll
 
     // If poll is active then update delegator's vote stakes and poll tally
-    if (poll.endBlock > event.block.number) {
+    if (poll.endBlock.gt(event.block.number)) {
       let protocol = Protocol.load('0') || new Protocol('0')
       let voteId = makeVoteId(delegator.id, poll.id)
       let vote = Vote.load(voteId)
@@ -84,7 +84,7 @@ export function updatePollTallyOnBond(event: BondEvent): void {
   let updateTally = false
 
   // Check if poll is active
-  if (poll.endBlock > event.block.number) {
+  if (poll.endBlock.gt(event.block.number)) {
     let isSwitchingDelegates =
       event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
       event.params.oldDelegate.toHex() != event.params.newDelegate.toHex()
@@ -187,7 +187,7 @@ export function updatePollTallyOnEarningsClaimed(
     let poll = Poll.load(pollAddress) as Poll
 
     // Check if poll is active
-    if (poll != null && poll.endBlock > event.block.number) {
+    if (poll != null && poll.endBlock.gt(event.block.number)) {
       let voteId = makeVoteId(voterAddress, pollAddress)
       let vote = Vote.load(voteId)
 
@@ -238,7 +238,7 @@ function updatePollTally<T extends RebondEvent>(event: T): void {
   let updateTally = false
 
   // Check if poll is active
-  if (poll.endBlock > event.block.number) {
+  if (poll.endBlock.gt(event.block.number)) {
     // if delegate voted, update its vote stake
     let delegateVoteId = makeVoteId(event.params.delegate.toHex(), pollAddress)
     let delegateVote = Vote.load(delegateVoteId)
