@@ -129,7 +129,9 @@ class statusPoller {
     try {
       status = await this.getStatus(this.broadcaster)
     } catch (e) {
-      console.log(`got error fetch status: `, e)
+      if (e.code !== 'ECONNREFUSED') {
+        console.log(`got error fetch status: `, e)
+      }
       return
     }
     // console.log(`got status: `, status)
