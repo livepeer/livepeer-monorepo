@@ -38,6 +38,24 @@ export default () => {
           flexDirection: "column"
         }}
       >
+        <Box
+          sx={{
+            mb: [5, 5],
+            mt: [6, 6],
+            textAlign: "center",
+            fontWeight: "bold"
+          }}
+        >
+          <Box sx={{ mb: 3 }}>
+            Sign up to try Livepeer’s transcoding platform, and qualify for a
+            free forever plan.
+          </Box>
+          <Box>
+            Livepeer’s free forever plan will give you 1,000 free transcoding
+            input minutes per month forever.
+          </Box>
+        </Box>
+
         <h3 sx={{ mb: [3, 3] }}>Create an Account</h3>
         <Login
           id="register"
