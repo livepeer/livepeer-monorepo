@@ -10,7 +10,7 @@ import TokenTable from "../../components/TokenTable";
 export default () => {
   useLoggedIn();
   const { user, logout } = useApi();
-  if (!user || !user.emailValid) {
+  if (!user || user.emailValid === false) {
     return <Layout />;
   }
 
