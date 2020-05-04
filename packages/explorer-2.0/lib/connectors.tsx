@@ -11,7 +11,7 @@ const RPC_URLS: { [chainId: number]: string } = {
 }
 
 export const Network = new NetworkConnector({
-  defaultChainId: 1,
+  defaultChainId: process.env.NETWORK === 'rinkeby' ? 4 : 1,
   urls: RPC_URLS,
   pollingInterval: POLLING_INTERVAL * 3,
 })

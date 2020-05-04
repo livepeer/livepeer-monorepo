@@ -1,5 +1,3 @@
-import Utils from 'web3-utils'
-
 export async function account(_obj, _args, _ctx, _info) {
   const {
     allowance,
@@ -33,6 +31,7 @@ export async function protocol(_obj, _args, _ctx, _info) {
 }
 
 export async function getTxReceiptStatus(_obj, _args, _ctx, _info) {
+  const Utils = require('web3-utils')
   const txReceipt = await _ctx.livepeer.utils.getTxReceipt(
     _args.txHash,
     _ctx.livepeer.config.eth,
@@ -54,6 +53,7 @@ export async function txPrediction(_obj, _args, _ctx, _info) {
 }
 
 export async function threeBoxSpace(_obj, _args, _ctx, _info) {
+  const Utils = require('web3-utils')
   const { validateLink } = require('3id-blockchain-utils')
   const Box = require('3box')
   const id = _args.id.toLowerCase()

@@ -20,6 +20,7 @@ import { useMutations } from '../hooks'
 import { MutationsContext } from '../contexts'
 import TxStartedDialog from '../components/TxStartedDialog'
 import TxConfirmedDialog from '../components/TxConfirmedDialog'
+import Modal from '../components/Modal'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -67,6 +68,10 @@ const Layout = ({
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
+  const networksTypes = {
+    1: 'mainnet',
+    4: 'rinkeby',
+  }
 
   useEffect(() => {
     if (width > 1020) {
@@ -150,6 +155,30 @@ const Layout = ({
         />
       </Head>
       <Reset />
+      <Modal
+        title="Oops, you’re on the wrong network"
+        isOpen={
+          context.chainId &&
+          networksTypes[context.chainId] !== process.env.NETWORK
+        }
+        showCloseButton={false}
+      >
+        <Box
+          sx={{
+            border: '1px solid',
+            borderColor: 'border',
+            borderRadius: 10,
+            p: 3,
+            mb: 2,
+          }}
+        >
+          Simply open MetaMask and switch over to the{' '}
+          <span sx={{ textTransform: 'capitalize' }}>
+            {process.env.NETWORK}
+          </span>{' '}
+          network.
+        </Box>
+      </Modal>
       <MutationsContext.Provider value={mutations}>
         <Styled.root>
           <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />

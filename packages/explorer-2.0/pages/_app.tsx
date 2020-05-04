@@ -7,7 +7,6 @@ import { CookiesProvider } from 'react-cookie'
 import Web3ReactManager from '../components/Web3ReactManager'
 import 'react-circular-progressbar/dist/styles.css'
 import '@reach/dialog/styles.css'
-import { useState, useEffect } from 'react'
 import Layout from '../layouts/main'
 import { withApollo } from '../lib/apollo'
 

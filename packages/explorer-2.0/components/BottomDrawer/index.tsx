@@ -18,23 +18,23 @@ export default ({ children }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
 
-  const GET_STAKING_WIDGET_MODAL_STATUS = gql`
+  const GET_BOTTOM_DRAWER_STATUS = gql`
     {
-      stakingWidgetModalOpen @client
+      bottomDrawerOpen @client
     }
   `
 
-  const { data } = useQuery(GET_STAKING_WIDGET_MODAL_STATUS)
+  const { data } = useQuery(GET_BOTTOM_DRAWER_STATUS)
 
   return (
     <Box>
       <Box
         as={DialogOverlay}
-        isOpen={data?.stakingWidgetModalOpen && width < 1020}
+        isOpen={data?.bottomDrawerOpen && width < 1020}
         onDismiss={() =>
           client.writeData({
             data: {
-              stakingWidgetModalOpen: false,
+              bottomDrawerOpen: false,
             },
           })
         }

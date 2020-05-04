@@ -103,6 +103,110 @@ function renderSwitch({ tx, onDismiss }) {
           </Button>
         </Box>
       )
+    case 'rebond':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>Successfully restaked.</Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
+    case 'rebondFromUnbonded':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>
+              You've successfully restaked to delegate{' '}
+              {tx.inputData &&
+                inputData.delegate.replace(
+                  inputData.delegate.slice(7, 37),
+                  '…',
+                )}
+            </Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
+    case 'vote':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>
+              Successfully casted vote{' '}
+              {tx.inputData && inputData.choiceId === 0 ? '"Yes"' : '"No"'}
+            </Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
+    case 'batchClaimEarnings':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>
+              Successfully claimed {tx.inputData && inputData.totalRounds}{' '}
+              rounds
+            </Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
+    case 'createPoll':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>Successfully created poll.</Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
+    case 'withdrawStake':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>Successfully withdrawn stake.</Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
+    case 'withdrawFees':
+      return (
+        <Box>
+          <Table sx={{ mb: 3 }}>
+            <Header tx={tx} />
+            <Box sx={{ px: 2, py: 3 }}>Successfully withdrawn fees.</Box>
+          </Table>
+
+          <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
+            Close
+          </Button>
+        </Box>
+      )
     default:
       return null
   }

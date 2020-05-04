@@ -147,7 +147,7 @@ export default ({ data }) => {
               }}
             >
               <span sx={{ color: 'muted' }}>
-                Delegate Vote{' '}
+                My Delegate Vote{' '}
                 {delegate &&
                   `(${delegate.id.replace(delegate.id.slice(5, 39), '…')})`}
               </span>
@@ -172,7 +172,7 @@ export default ({ data }) => {
                 <span sx={{ fontWeight: 500, color: 'white' }}>
                   <span>
                     {abbreviateNumber(pendingStake, 4)} LPT (
-                    {((pendingStake / data.totalStake) * 100).toPrecision(2)}
+                    {((pendingStake / totalVoteStake) * 100).toPrecision(2)}
                     %)
                   </span>
                 </span>
@@ -186,8 +186,7 @@ export default ({ data }) => {
                     {abbreviateNumber(+Utils.fromWei(data?.vote?.voteStake), 4)}{' '}
                     LPT (
                     {(
-                      (+Utils.fromWei(data?.vote?.voteStake) /
-                        data.totalStake) *
+                      (+Utils.fromWei(data?.vote?.voteStake) / totalVoteStake) *
                       100
                     ).toPrecision(2)}
                     %)

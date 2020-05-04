@@ -38,6 +38,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     variables: {
       account: context.account,
     },
+    pollInterval: 5000,
     context: {
       library: context.library,
     },

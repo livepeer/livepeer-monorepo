@@ -12,7 +12,7 @@ export default () => {
         onClick={async () => {
           try {
             await approve({
-              variables: { type: 'createPoll', amount: '1' },
+              variables: { type: 'createPoll', amount: MAXIUMUM_VALUE_UINT256 },
             })
           } catch (e) {
             console.log(e)

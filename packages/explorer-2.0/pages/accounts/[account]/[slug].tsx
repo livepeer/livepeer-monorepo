@@ -15,7 +15,7 @@ import { useWeb3React } from '@web3-react/core'
 import { getDelegatorStatus, checkAddressEquality } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
-import StakingWidgetModal from '../../../components/StakingWidgetModal'
+import BottomDrawer from '../../../components/BottomDrawer'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
@@ -193,7 +193,7 @@ const Account = () => {
             />
           </Flex>
         ) : (
-          <StakingWidgetModal>
+          <BottomDrawer>
             <StakingWidget
               selectedAction={selectedStakingAction?.selectedStakingAction}
               currentRound={data.currentRound[0]}
@@ -202,7 +202,7 @@ const Account = () => {
               transcoder={data.transcoder}
               protocol={data.protocol}
             />
-          </StakingWidgetModal>
+          </BottomDrawer>
         ))}
     </>
   )

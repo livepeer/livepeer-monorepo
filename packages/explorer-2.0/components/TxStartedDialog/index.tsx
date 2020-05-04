@@ -137,8 +137,7 @@ function Inputs({ tx }) {
       return (
         <>
           <Row>
-            <Box>Total Rounds</Box>{' '}
-            {tx.inputData && inputData.totalRoundsToClaim}
+            <Box>Total Rounds</Box> {tx.inputData && inputData.totalRounds}
           </Row>
         </>
       )

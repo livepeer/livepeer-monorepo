@@ -31,7 +31,7 @@ export default function createApolloClient(initialState, ctx) {
   cache.writeData({
     data: {
       walletModalOpen: false,
-      stakingWidgetModalOpen: false,
+      bottomDrawerOpen: false,
       selectedStakingAction: '',
       uniswapModalOpen: false,
       roundStatusModalOpen: false,

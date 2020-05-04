@@ -13,11 +13,14 @@ import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { withApollo } from '../../lib/apollo'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { useWeb3React } from '@web3-react/core'
 import Spinner from '../../components/Spinner'
 import { useEffect, useState } from 'react'
 import moment from 'moment'
+import { useWindowSize } from 'react-use'
+import BottomDrawer from '../../components/BottomDrawer'
+import Button from '../../components/Button'
 
 const Poll = () => {
   const pollQuery = require('../../queries/poll.gql')
@@ -25,6 +28,8 @@ const Poll = () => {
   const voteQuery = require('../../queries/vote.gql')
   const router = useRouter()
   const context = useWeb3React()
+  const client = useApolloClient()
+  const { width } = useWindowSize()
   const [pollData, setPollData] = useState(null)
   const { query } = router
   const pollId = query.poll.toString().toLowerCase()
@@ -121,11 +126,10 @@ const Poll = () => {
               >
                 {pollData.status}
               </Text>
-              {/* <MdThumbDown sx={{ color: 'red', size: 20 }} /> */}
             </Flex>
             <Styled.h1
               sx={{
-                fontSize: [3, 3, 3, 4, 5],
+                fontSize: [3, 3, 4, 4, 5],
                 display: 'flex',
                 mb: '10px',
                 alignItems: 'center',
@@ -149,6 +153,20 @@ const Poll = () => {
                 </Box>
               )}
             </Box>
+            {pollData.isActive && (
+              <Button
+                sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2, mr: 2 }}
+                onClick={() =>
+                  client.writeData({
+                    data: {
+                      bottomDrawerOpen: true,
+                    },
+                  })
+                }
+              >
+                Vote
+              </Button>
+            )}
           </Box>
 
           <Box>
@@ -331,24 +349,37 @@ const Poll = () => {
           </Box>
         </Flex>
 
-        <Flex
-          sx={{
-            display: ['none', 'none', 'none', 'flex'],
-            position: 'sticky',
-            alignSelf: 'flex-start',
-            top: 5,
-            minWidth: '31%',
-          }}
-        >
-          <VotingWidget
-            data={{
-              poll: pollData,
-              delegateVote: delegateVoteData?.vote,
-              vote: voteData?.vote,
-              myAccount: myAccountData,
+        {width > 1020 ? (
+          <Flex
+            sx={{
+              display: ['none', 'none', 'none', 'flex'],
+              position: 'sticky',
+              alignSelf: 'flex-start',
+              top: 5,
+              minWidth: '31%',
             }}
-          />
-        </Flex>
+          >
+            <VotingWidget
+              data={{
+                poll: pollData,
+                delegateVote: delegateVoteData?.vote,
+                vote: voteData?.vote,
+                myAccount: myAccountData,
+              }}
+            />
+          </Flex>
+        ) : (
+          <BottomDrawer>
+            <VotingWidget
+              data={{
+                poll: pollData,
+                delegateVote: delegateVoteData?.vote,
+                vote: voteData?.vote,
+                myAccount: myAccountData,
+              }}
+            />
+          </BottomDrawer>
+        )}
       </Flex>
     </>
   )

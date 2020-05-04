@@ -1,5 +1,4 @@
 import { MAX_BATCH_CLAIM_ROUNDS } from '../../lib/utils'
-import Utils from 'web3-utils'
 
 /**
  * Approve an amount for an ERC20 token transfer
@@ -93,9 +92,9 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
   const { lastClaimRound, endRound: lastEndRound } = _args
   const { abi, address } = _ctx.livepeer.config.contracts.BondingManager
   const bondingManager = new web3.eth.Contract(abi, address)
-  const totalRoundsToClaim = parseInt(lastEndRound) - parseInt(lastClaimRound)
-  const quotient = Math.floor(totalRoundsToClaim / MAX_BATCH_CLAIM_ROUNDS)
-  const remainder = totalRoundsToClaim % MAX_BATCH_CLAIM_ROUNDS
+  const totalRounds = parseInt(lastEndRound) - parseInt(lastClaimRound)
+  const quotient = Math.floor(totalRounds / MAX_BATCH_CLAIM_ROUNDS)
+  const remainder = totalRounds % MAX_BATCH_CLAIM_ROUNDS
   const calls = []
 
   let batch = new web3.BatchRequest()
@@ -150,7 +149,7 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
     txHash,
     inputData: {
       ..._args,
-      totalRoundsToClaim,
+      totalRounds,
     },
   }
 }
@@ -326,6 +325,7 @@ export async function initializeRound(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function createPoll(_obj, _args, _ctx) {
+  const Utils = require('web3-utils')
   const { proposal } = _args
   const gas = await _ctx.livepeer.rpc.estimateGas('PollCreator', 'createPoll', [
     Utils.fromAscii(proposal),
