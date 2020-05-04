@@ -7,48 +7,52 @@ import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
+import { makeNextHREF } from './helpers'
 import path from 'path'
 
 const app = Router()
 
-app.get('/', authMiddleware({}), async (req, res) => {
+app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
-  if (req.user.admin !== true) {
-    const streamIds = await req.store.query('stream', { userId: req.user.id }, cursor, limit)
-    const streams = []
-    for (let i = 0; i < streamIds.length; i++) {
-      const token = await req.store.get(`stream/${streamIds[i]}`, false)
-      streams.push(token)
-    }
-    res.status(200)
-    res.json(streams)
-    return
-  }
-
-  if (req.authTokenType != 'JWT') {
-    res.status(403)
-    return res.json({ errors: ['admin can only use JWT'] })
-  }
 
   const resp = await req.store.list(`stream/`, cursor, limit)
   let output = resp.data
-  const nextCursor = resp.cursor
   res.status(200)
 
-  let baseUrl = new URL(
-    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-  )
   if (output.length > 0) {
-    let next = baseUrl
-    next.searchParams.set('cursor', nextCursor)
-    res.links({
-      next: next.href,
-    })
-    output = output.map(o => o[Object.keys(o)[0]])
+    res.links({ next: makeNextHREF(req, resp.cursor) })
   } // CF doesn't know what this means
+  output = output.map(o => o[Object.keys(o)[0]])
   res.json(output)
+})
+
+app.get('/user/:userId', authMiddleware({}), async (req, res) => {
+  let limit = req.query.limit
+  let cursor = req.query.cursor
+  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
+
+  if (req.user.admin !== true && req.user.id !== req.params.userId) {
+    res.status(403)
+    return res.json({
+      errors: [
+        'user can only request information on their own streams',
+      ],
+    })
+  }
+
+  const streamIds = await req.store.query('stream', { userId: req.params.userId }, cursor, limit)
+  const streams = []
+  for (let i = 0; i < streamIds.length; i++) {
+    const token = await req.store.get(`stream/${streamIds[i]}`, false)
+    streams.push(token)
+  }
+  res.status(200)
+  if (streamIds.length > 0) {
+    res.links({ next: makeNextHREF(req, streamIds.cursor) })
+  }
+  res.json(streams)
 })
 
 app.get('/:id', authMiddleware({}), async (req, res) => {

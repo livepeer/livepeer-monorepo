@@ -193,7 +193,7 @@ describe('controllers/stream', () => {
       }
     })
 
-    it('should get only own streams with non-admin user', async () => {
+    it('should get own streams with non-admin user', async () => {
       for (let i = 0; i < 5; i += 1) {
         const document = {
           id: uuid(),
@@ -206,11 +206,28 @@ describe('controllers/stream', () => {
       }
       client.jwtAuth = nonAdminToken['token']
 
-      const res = await client.get('/stream')
+      const res = await client.get(`/stream/user/${nonAdminUser.id}`)
       expect(res.status).toBe(200)
       const streams = await res.json()
       expect(streams.length).toEqual(3)
       expect(streams[0].userId).toEqual(nonAdminUser.id)
+    })
+
+    it('should not get streams with non-admin user', async () => {
+      for (let i = 0; i < 5; i += 1) {
+        const document = {
+          id: uuid(),
+          kind: 'stream',
+          userId: i < 3 ? nonAdminUser.id : undefined,
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        expect(res.status).toBe(200)
+      }
+      client.jwtAuth = nonAdminToken['token']
+
+      const res = await client.get(`/stream`)
+      expect(res.status).toBe(403)
     })
 
     it('should not accept empty body for creating a stream', async () => {
@@ -263,11 +280,17 @@ describe('controllers/stream', () => {
 
     it('should get own streams', async () => {
       client.apiKey = nonAdminApiKey
-      let res = await client.get(`/stream`)
+      let res = await client.get(`/stream/user/${nonAdminUser.id}`)
       expect(res.status).toBe(200)
       const streams = await res.json()
       expect(streams.length).toEqual(3)
       expect(streams[0].userId).toEqual(nonAdminUser.id)
+    })
+
+    it('should not get others streams', async () => {
+      client.apiKey = nonAdminApiKey
+      let res = await client.get(`/stream/user/otherUserId`)
+      expect(res.status).toBe(403)
     })
 
     it('should not get all streams for admin user', async () => {
