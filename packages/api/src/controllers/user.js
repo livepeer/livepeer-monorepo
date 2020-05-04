@@ -18,7 +18,6 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   if (resp.data.length > 0) {
     res.links({ next: makeNextHREF(req, resp.cursor) })
   }
-
   res.json(resp.data)
 })
 
@@ -191,7 +190,7 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
   } else {
     res.status(403)
     res.json({ errors: ['incorrect user validation token'] })
-  }
+  },
 })
 
 app.post(
@@ -327,6 +326,30 @@ app.post(
     } else {
       res.status(403)
       res.json({ errors: ['error creating password reset token'] })
+    }
+  },
+)
+
+app.post(
+  '/make-admin',
+  authMiddleware({ admin: true }),
+  validatePost('password-reset-token'),
+  async (req, res) => {
+    const userIds = await req.store.query('user', { email: req.body.email })
+    if (userIds.length < 1) {
+      res.status(404)
+      return res.json({ errors: ['user not found'] })
+    }
+
+    let user = await req.store.get(`user/${userIds[0]}`, false)
+    if (user) {
+      user = { ...user, admin: true }
+      await req.store.replace(user)
+      res.status(201)
+      res.json({ email: user.email, admin: user.admin })
+    } else {
+      res.status(403)
+      res.json({ errors: ['user not made an admin'] })
     }
   },
 )

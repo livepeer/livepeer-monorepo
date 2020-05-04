@@ -140,6 +140,9 @@ export default ({ userId, id }) => {
         </Modal>
       )}
       <p>
+        <p>
+          <strong>Api Tokens</strong>
+        </p>
         <strong>Note:</strong> These tokens allow other apps to control your
         whole account. Treat them like you would a password.
       </p>
