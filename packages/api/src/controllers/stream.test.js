@@ -106,22 +106,6 @@ describe('controllers/stream', () => {
       adminToken = _adminToken
       nonAdminUser = _nonAdminUser
       nonAdminToken = _nonAdminToken
-      /*
-      client = new TestClient({
-        server,
-      })
-      // setting up admin user and token
-      const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      adminUser = await userRes.json()
-
-      let tokenRes = await client.post(`/user/token`, { ...mockAdminUser })
-      const adminToken = await tokenRes.json()
-      client.jwtAuth = `${adminToken['token']}`
-
-      const user = await server.store.get(`user/${adminUser.id}`, false)
-      adminUser = { ...user, admin: true, emailValid: true }
-      await server.store.replace(adminUser)
-      */
     })
 
     it('should not get all streams without admin authorization', async () => {
@@ -215,24 +199,6 @@ describe('controllers/stream', () => {
     })
 
     it('should get only own streams with non-admin user', async () => {
-      // setting up non-admin user
-      /*
-      const resNonAdmin = await client.post(`/user/`, { ...mockNonAdminUser })
-      let nonAdminUser = await resNonAdmin.json()
-
-      const tokenRes = await client.post(`/user/token`, { ...mockNonAdminUser })
-      const nonAdminToken = await tokenRes.json()
-      */
-
-      /*
-      const nonAdminUserRes = await server.store.get(
-        `user/${nonAdminUser.id}`,
-        false,
-      )
-      nonAdminUser = { ...nonAdminUserRes, emailValid: true }
-      await server.store.replace(nonAdminUser)
-      */
-
       for (let i = 0; i < 5; i += 1) {
         const document = {
           id: uuid(),
@@ -273,24 +239,12 @@ describe('controllers/stream', () => {
     const nonAdminApiKey = uuid()
 
     beforeEach(async () => {
-      // client = new TestClient({
-      //   server,
-      //   apiKey: uuid(),
-      // })
       let { _client, _adminUser, _adminToken, _nonAdminUser, _nonAdminToken } = await setupUsers(server)
       client = _client
       adminUser = _adminUser
       adminToken = _adminToken
       nonAdminUser = _nonAdminUser
       nonAdminToken = _nonAdminToken
-
-      /*
-      const userRes = await client.post(`/user/`, { ...mockAdminUser })
-      let adminUser = await userRes.json()
-
-      const nonAdminRes = await client.post(`/user/`, { ...mockNonAdminUser })
-      let nonAdminUser = await nonAdminRes.json()
-      */
 
       await server.store.create({
         id: adminApiKey,
@@ -303,17 +257,6 @@ describe('controllers/stream', () => {
         kind: 'api-token',
         userId: nonAdminUser.id,
       })
-
-      // const user = await server.store.get(`user/${adminUser.id}`, false)
-      // adminUser = { ...user, admin: true }
-      // await server.store.replace(adminUser)
-
-      // const nonAdminUserRes = await server.store.get(
-      //   `user/${nonAdminUser.id}`,
-      //   false,
-      // )
-      // nonAdminUser = { ...nonAdminUserRes, emailValid: true }
-      // await server.store.replace(nonAdminUser)
 
       for (let i = 0; i < 5; i += 1) {
         const document = {
