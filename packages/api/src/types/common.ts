@@ -30,7 +30,7 @@ export interface IStore {
   close(): Promise<void>
   replace(data: StoredObject): Promise<void>
   list(prefix: string, cursor: any, limit: number, cleanWriteOnly?: boolean): Promise<{ data: Array<StoredObject>, cursor: any }>
-  listKeys(prefix: string, cursor: any, limit: number): Promise<[Array<string>, any]>
+  listKeys(prefix: string, cursor?: any, limit?: number): Promise<[Array<string>, any]>
   query(kind: string, queryObj: object, cursor: any, limit: number, cleanWriteOnly?:boolean) : Promise<Array<string>>
   deleteKey(key: string) : Promise<void>
   delete(id: string): Promise<void>

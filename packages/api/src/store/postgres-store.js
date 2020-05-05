@@ -33,10 +33,7 @@ export default class PostgresStore {
 
   async listKeys(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     const listRes = await this.list(prefix, cursor, limit)
-    const keys = []
-    for (let i = 0; i < listRes.data.length; i++) {
-      keys.push(Object.keys(listRes.data[i])[0])
-    }
+    const keys = listRes.data.map(item => Object.keys(item)[0])
     return [keys, listRes.cursor]
   }
 
@@ -45,27 +42,23 @@ export default class PostgresStore {
 
     if (cursor) {
       res = await this.pool.query(
-        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 LIMIT $3`,
-        [`${prefix}%`, `${prefix}${cursor}`, `${limit}`],
+        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 AND id > $2 ORDER BY id ASC LIMIT $3 `,
+        [`${prefix}%`, `${cursor}`, `${limit}`],
       )
     } else {
       res = await this.pool.query(
-        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 LIMIT $2`,
+        `SELECT * FROM ${TABLE_NAME} WHERE id LIKE $1 ORDER BY id ASC LIMIT $2 `,
         [`${prefix}%`, `${limit}`],
       )
     }
 
-    let data = res.rows.map(obj => {
-      let res = {}
-      res[obj.id] = obj.data
-      return res
-    })
+    const data = res.rows.map(({id, data}) => ({ [id]: data }) )
 
     if (data.length < 1) {
-      return { data: data, cursor: null }
+      return { data, cursor: null }
     }
 
-    return { data: data, cursor: data[data.length - 1].id }
+    return { data, cursor: res.rows[data.length - 1].id }
   }
 
   async get(id) {
