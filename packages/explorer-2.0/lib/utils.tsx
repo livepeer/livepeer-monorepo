@@ -210,7 +210,7 @@ export const txMessages = {
     confirmed: 'Poll Created',
   },
   vote: {
-    pending: 'Casting Voting',
+    pending: 'Casting Vote',
     confirmed: 'Vote Casted',
   },
   withdrawFees: {

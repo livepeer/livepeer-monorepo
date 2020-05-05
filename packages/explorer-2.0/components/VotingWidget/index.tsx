@@ -43,7 +43,7 @@ export default ({ data }) => {
       }}
     >
       <Box sx={{ fontWeight: 'bold', fontSize: 3, mb: 2 }}>
-        Do you support LIP-19?
+        Do you support LIP-{data.poll.lip}?
       </Box>
       <Box
         sx={{ mb: 2, pb: 2, borderBottom: '1px solid', borderColor: 'border' }}

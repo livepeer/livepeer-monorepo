@@ -258,7 +258,7 @@ const Poll = () => {
                           : ((noVoteStake / totalVoteStake) * 100).toPrecision(
                               4,
                             )}
-                        %
+                        %)
                       </Box>
                     </Flex>
                     <span sx={{ fontFamily: 'monospace' }}>

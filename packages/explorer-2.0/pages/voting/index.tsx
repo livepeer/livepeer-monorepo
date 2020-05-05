@@ -49,10 +49,16 @@ const Voting = () => {
             // only include proposals with valid format
             if (obj?.text && obj?.gitCommitHash) {
               const transformedProposal = fm(obj.text)
-              pollArr.push({
-                ...poll,
-                ...transformedProposal,
-              })
+              if (
+                !pollArr.filter(
+                  p => p.attributes.lip === transformedProposal.attributes.lip,
+                ).length
+              ) {
+                pollArr.push({
+                  ...poll,
+                  ...transformedProposal,
+                })
+              }
             }
           }),
         )
@@ -121,56 +127,74 @@ const Voting = () => {
             </Link>
           </Flex>
           <Box>
-            {polls.map(poll => (
-              <Link
-                key={poll.id}
-                href="/voting/[poll]"
-                as={`/voting/${poll.id}`}
-              >
-                <a>
-                  <Card sx={{ color: 'text', display: 'block' }}>
-                    <Flex
-                      sx={{
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Box>
-                        <Box sx={{ mb: 1 }}>
-                          {poll.attributes.title} (LIP {poll.attributes.lip})
-                        </Box>
-                        <Box sx={{ fontSize: 0, color: 'muted' }}>
-                          {!poll.isActive ? (
-                            <Box>
-                              Voting ended on{' '}
-                              {moment.unix(poll.endTime).format('MMM Do, YYYY')}
-                            </Box>
-                          ) : (
-                            <Box>
-                              Voting ends in ~
-                              {moment()
-                                .add(poll.estimatedTimeRemaining, 'seconds')
-                                .fromNow(true)}
-                            </Box>
-                          )}
-                        </Box>
-                      </Box>
-                      <Text
-                        variant={poll.status}
-                        sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+            {polls
+              .sort((a, b) => (a.endBlock > b.endBlock ? 1 : -1))
+              .map(poll => (
+                <Link
+                  key={poll.id}
+                  href="/voting/[poll]"
+                  as={`/voting/${poll.id}`}
+                >
+                  <a sx={{ cursor: 'pointer', display: 'block', mb: 2 }}>
+                    <Card sx={{ color: 'text', display: 'block' }}>
+                      <Flex
+                        sx={{
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
                       >
-                        {poll.status}
-                      </Text>
-                    </Flex>
-                  </Card>
-                </a>
-              </Link>
-            ))}
+                        <Box>
+                          <Box sx={{ mb: 1 }}>
+                            {poll.attributes.title} (LIP {poll.attributes.lip})
+                          </Box>
+                          <Box sx={{ fontSize: 0, color: 'muted' }}>
+                            {!poll.isActive ? (
+                              <Box>
+                                Voting ended on{' '}
+                                {moment
+                                  .unix(poll.endTime)
+                                  .format('MMM Do, YYYY')}
+                              </Box>
+                            ) : (
+                              <Box>
+                                Voting ends in ~
+                                {moment()
+                                  .add(poll.estimatedTimeRemaining, 'seconds')
+                                  .fromNow(true)}
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
+                        <Text
+                          variant={poll.status}
+                          sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+                        >
+                          {poll.status}
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </a>
+                </Link>
+              ))}
           </Box>
         </Flex>
       )}
     </>
   )
+}
+
+function removeDuplicates(originalArray, prop) {
+  var newArray = []
+  var lookupObject = {}
+
+  for (var i in originalArray) {
+    lookupObject[originalArray[i][prop]] = originalArray[i]
+  }
+
+  for (i in lookupObject) {
+    newArray.push(lookupObject[i])
+  }
+  return newArray
 }
 
 Voting.getLayout = getLayout
