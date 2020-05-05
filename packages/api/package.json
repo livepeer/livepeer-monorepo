@@ -23,8 +23,9 @@
     "prepare": "run-s compile-schemas && run-p \"prepare:**\"",
     "compile-schemas": "node -r esm src/compile-schemas.js",
     "redoc": "nodemon -w src/schema/schema.yaml -x npm run prepare:redoc",
+    "dev:siserver": "nodemon -w dist -x node -r esm dist/stream-info-service.js -e js,yaml",
     "dev:server": "nodemon -w src -x node -r esm src/cli.js -e js,yaml",
-    "dev:babel": "babel --out-dir=dist --copy-files --source-maps=true --watch src",
+    "dev:babel": "babel --extensions '.ts,.js' --out-dir=dist --copy-files --source-maps=true --watch src",
     "dev:build-worker": "parcel watch --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "dev:run-worker": "nodemon -w dist-worker/worker.js -x 'cloudworker -p 3011 -d dist-worker/worker.js'",
     "dev:yaml-json": "nodemon -w src/schema/schema.yaml -x 'run-s compile-schemas'",
@@ -91,6 +92,7 @@
     "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "@babel/preset-typescript": "^7.9.0",
     "@dollarshaveclub/cloudworker": "^0.1.2",
     "ajv-pack": "^0.3.1",
     "cloudflare": "^2.7.0",
@@ -115,7 +117,8 @@
   },
   "babel": {
     "presets": [
-      "@babel/preset-env"
+      "@babel/preset-env",
+      "@babel/preset-typescript"
     ]
   },
   "browserslist": [
