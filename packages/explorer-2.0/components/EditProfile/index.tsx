@@ -496,7 +496,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
               <ol sx={{ pl: 15 }}>
                 <li sx={{ mb: 4 }}>
                   <div sx={{ mb: 2 }}>
-                    Run the Livepeer CLI* and select the option to "Sign a
+                    Run the Livepeer CLI and select the option to "Sign a
                     message". When prompted for a message to sign, copy and
                     paste the following message:
                   </div>
@@ -566,25 +566,6 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                         )}
                       </Flex>
                     </CopyToClipboard>
-                  </div>
-
-                  <div sx={{ fontSize: 0 }}>
-                    *
-                    <i>
-                      The option to sign a message via the Livepeer CLI will
-                      become available in an upcoming go-livepeer release. If
-                      you'd like to link an external account before then, we
-                      recommend signing this message offline using{' '}
-                      <a
-                        href="https://www.mycrypto.com/sign-and-verify-message/sign"
-                        rel="noopener noreferrer"
-                        target="__blank"
-                        sx={{ color: 'primary' }}
-                      >
-                        mycrypto.com
-                      </a>{' '}
-                      or geth.
-                    </i>
                   </div>
                 </li>
                 <li sx={{ mb: 3 }}>
