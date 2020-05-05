@@ -33,9 +33,12 @@ const storeToken = token => {
   }
 };
 
-const trackPageView = email => {
+const trackPageView = (email, path = null) => {
   var _hsq = (window._hsq = window._hsq || []);
   _hsq.push(["identify", { email: email }]);
+  if (path) {
+    _hsq.push(["setPath", path]);
+  }
   _hsq.push(["trackPageView"]);
 };
 
@@ -167,7 +170,7 @@ const makeContext = (state: ApiState, setState) => {
       if (res.status !== 200) {
         throw new Error(streams);
       }
-      return streams.sort((a, b) => (b.lastSeen||0) - (a.lastSeen||0));
+      return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
     },
 
     async getApiTokens(userId): Promise<[ApiToken]> {
@@ -181,7 +184,7 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async createApiToken(params): Promise<ApiToken> {
-      trackPageView(params.email);
+      trackPageView(params.email, "/create-api-token");
       const [res, token] = await context.fetch(`/api-token`, {
         method: "POST",
         body: JSON.stringify(params),
