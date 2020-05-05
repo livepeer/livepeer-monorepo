@@ -90,7 +90,11 @@ export default ({ userId, id }) => {
                   }
                 }}
               >
-                <Checkbox value={selected} />
+                {user.admin ? (
+                  <Box></Box>
+                ) : (
+                  <Checkbox value={selected} />
+                )}
                 <Box>{id}</Box>
                 <Box>{email}</Box>
                 <Box>{JSON.stringify(emailValid)}</Box>
