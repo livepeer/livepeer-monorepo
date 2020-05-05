@@ -39,7 +39,7 @@ export { TRANSCODER_STATUS }
 // Defaults
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
-  pollCreatorAddress: '0xbe892721530686124546622fe2c63ce3aefeb44a',
+  pollCreatorAddress: '0x93cc555d04e93c75880a046164e370dd90dc0d29',
   provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
@@ -52,6 +52,7 @@ export const DEFAULTS = {
     BondingManager: BondingManagerArtifact,
     Minter: MinterArtifact,
     PollCreator: PollCreatorArtifact,
+    Poll: PollArtifact,
   },
   ensRegistries: {
     // Mainnet
@@ -403,6 +404,11 @@ export async function initContracts(
     defaultTx,
     address: pollCreatorAddress,
   })
+  const Poll = await getContractAt(eth, {
+    ...artifacts.Poll,
+    defaultTx,
+    address: EMPTY_ADDRESS,
+  })
   for (const name of Object.keys(contracts)) {
     // Get contract address from Controller
     const hash = Eth.keccak256(name)
@@ -421,6 +427,8 @@ export async function initContracts(
   contracts.Controller = Controller
   // Add the PollCreator contract to the contracts object
   contracts.PollCreator = PollCreator
+  // Add the PollCreator contract to the contracts object
+  contracts.Poll = Poll
 
   // Key ABIs by contract name
   const abis = Object.entries(artifacts)

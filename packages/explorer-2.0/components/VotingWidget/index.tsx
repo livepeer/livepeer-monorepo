@@ -17,15 +17,20 @@ export default ({ data }) => {
       )
     : 0
 
-  let noVoteStake = parseFloat(Utils.fromWei(data.poll.tally.no))
-  let yesVoteStake = parseFloat(Utils.fromWei(data.poll.tally.yes))
+  let noVoteStake = parseFloat(
+    Utils.fromWei(data.poll?.tally?.no ? data.poll?.tally?.no : '0'),
+  )
+  let yesVoteStake = parseFloat(
+    Utils.fromWei(data.poll?.tally?.yes ? data.poll?.tally?.yes : '0'),
+  )
   let totalVoteStake = noVoteStake + yesVoteStake
+
+  let totalNonVoteStake = parseFloat(Utils.fromWei(data.poll.totalNonVoteStake))
 
   let delegate = null
   if (data?.myAccount?.delegator?.delegate) {
     delegate = data?.myAccount?.delegator?.delegate
   }
-
   return (
     <Box
       sx={{
@@ -80,7 +85,10 @@ export default ({ data }) => {
               Yes
             </Box>
             <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
-              {((yesVoteStake / totalVoteStake) * 100).toPrecision(4)}%
+              {isNaN(yesVoteStake / totalVoteStake)
+                ? 0
+                : ((yesVoteStake / totalVoteStake) * 100).toPrecision(4)}
+              %
             </Box>
           </Flex>
           <Flex
@@ -118,7 +126,10 @@ export default ({ data }) => {
               No
             </Box>
             <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
-              {((noVoteStake / totalVoteStake) * 100).toPrecision(4)}%
+              {isNaN(noVoteStake / totalVoteStake)
+                ? 0
+                : ((noVoteStake / totalVoteStake) * 100).toPrecision(4)}
+              %
             </Box>
           </Flex>
         </Box>
@@ -130,9 +141,12 @@ export default ({ data }) => {
               : 'vote'
           }`}{' '}
           · {abbreviateNumber(totalVoteStake, 4)} LPT ·{' '}
-          {!data.isActive
+          {!data.poll.isActive
             ? 'Final Results'
-            : moment.unix(data.poll.endTime).format('MMM Do, YYYY')}
+            : moment
+                .duration(data.poll.estimatedTimeRemaining, 'seconds')
+                .humanize()}{' '}
+          left
         </Box>
       </Box>
 
@@ -166,13 +180,16 @@ export default ({ data }) => {
                 {data?.vote?.choiceID ? data?.vote?.choiceID : 'N/A'}
               </span>
             </Flex>
-            {!data?.vote?.choiceID && data.isActive && (
+            {!data?.vote?.choiceID && data.poll.isActive && (
               <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
                 <span sx={{ color: 'muted' }}>My Voting Power</span>
                 <span sx={{ fontWeight: 500, color: 'white' }}>
                   <span>
                     {abbreviateNumber(pendingStake, 4)} LPT (
-                    {((pendingStake / totalVoteStake) * 100).toPrecision(2)}
+                    {(
+                      (pendingStake / (totalVoteStake + totalNonVoteStake)) *
+                      100
+                    ).toPrecision(2)}
                     %)
                   </span>
                 </span>
@@ -186,7 +203,8 @@ export default ({ data }) => {
                     {abbreviateNumber(+Utils.fromWei(data?.vote?.voteStake), 4)}{' '}
                     LPT (
                     {(
-                      (+Utils.fromWei(data?.vote?.voteStake) / totalVoteStake) *
+                      (+Utils.fromWei(data?.vote?.voteStake) /
+                        (totalVoteStake + totalNonVoteStake)) *
                       100
                     ).toPrecision(2)}
                     %)
@@ -195,8 +213,8 @@ export default ({ data }) => {
               </Flex>
             )}
           </Box>
-          {data.isActive && (
-            <Grid sx={{ mt: 5 }} gap={2} columns={[2]}>
+          {data.poll.isActive && (
+            <Grid sx={{ mt: 3 }} gap={2} columns={[2]}>
               <VoteButton choiceId={0} pollAddress={data.poll.id}>
                 Yes
               </VoteButton>

@@ -1,0 +1,3 @@
+mutation vote($pollAddress: String!, $choiceId: Int!) {
+  tx: vote(pollAddress: $pollAddress, choiceId: $choiceId)
+}

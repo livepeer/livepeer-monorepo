@@ -9,6 +9,8 @@ import { MdReceipt } from 'react-icons/md'
 import Utils from 'web3-utils'
 import { useWindowSize } from 'react-use'
 import Confetti from 'react-confetti'
+import Link from 'next/link'
+import Router from 'next/router'
 
 export default ({ tx, isOpen, onDismiss }) => {
   if (!isOpen) {
@@ -97,7 +99,6 @@ function renderSwitch({ tx, onDismiss }) {
               )}
             </Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -110,7 +111,6 @@ function renderSwitch({ tx, onDismiss }) {
             <Header tx={tx} />
             <Box sx={{ px: 2, py: 3 }}>Successfully restaked.</Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -130,7 +130,6 @@ function renderSwitch({ tx, onDismiss }) {
                 )}
             </Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -142,11 +141,10 @@ function renderSwitch({ tx, onDismiss }) {
           <Table sx={{ mb: 3 }}>
             <Header tx={tx} />
             <Box sx={{ px: 2, py: 3 }}>
-              Successfully casted vote{' '}
+              You've successfully casted a vote{' '}
               {tx.inputData && inputData.choiceId === 0 ? '"Yes"' : '"No"'}
             </Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -162,7 +160,6 @@ function renderSwitch({ tx, onDismiss }) {
               rounds
             </Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -171,11 +168,27 @@ function renderSwitch({ tx, onDismiss }) {
     case 'createPoll':
       return (
         <Box>
+          <Confetti
+            canvasRef={React.createRef()}
+            width={width}
+            height={height}
+          />
           <Table sx={{ mb: 3 }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>Successfully created poll.</Box>
+            <Box sx={{ px: 2, py: 3 }}>
+              Nice one! You've successfully created a poll. Head on over to the{' '}
+              <a
+                sx={{ cursor: 'pointer' }}
+                onClick={() => {
+                  onDismiss()
+                  Router.push('/voting')
+                }}
+              >
+                voting dashboard
+              </a>{' '}
+              to view your newly created poll.
+            </Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -188,7 +201,6 @@ function renderSwitch({ tx, onDismiss }) {
             <Header tx={tx} />
             <Box sx={{ px: 2, py: 3 }}>Successfully withdrawn stake.</Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>
@@ -201,7 +213,6 @@ function renderSwitch({ tx, onDismiss }) {
             <Header tx={tx} />
             <Box sx={{ px: 2, py: 3 }}>Successfully withdrawn fees.</Box>
           </Table>
-
           <Button onClick={() => onDismiss()} sx={{ width: '100%' }}>
             Close
           </Button>

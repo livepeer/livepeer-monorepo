@@ -25,7 +25,7 @@ const Voting = () => {
   const [polls, setPolls] = useState([])
   const [loading, setLoading] = useState(true)
   const { data } = useQuery(allPollsQuery, {
-    pollInterval: 10000,
+    pollInterval: 8000,
   })
   const { data: blockData } = useQuery(
     gql`
@@ -45,13 +45,15 @@ const Voting = () => {
         }
         await Promise.all(
           data.polls.map(async poll => {
-            const { proposal } = await ipfs.catJSON(poll.proposal)
-            const transformedProposal = fm(proposal.text)
-
-            pollArr.push({
-              ...poll,
-              ...transformedProposal,
-            })
+            const obj = await ipfs.catJSON(poll.proposal)
+            // only include proposals with valid format
+            if (obj?.text && obj?.gitCommitHash) {
+              const transformedProposal = fm(obj.text)
+              pollArr.push({
+                ...poll,
+                ...transformedProposal,
+              })
+            }
           }),
         )
         setPolls(pollArr)

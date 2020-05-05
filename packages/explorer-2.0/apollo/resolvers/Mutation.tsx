@@ -353,12 +353,10 @@ export async function createPoll(_obj, _args, _ctx) {
  */
 export async function vote(_obj, _args, _ctx) {
   const { pollAddress, choiceId } = _args
-  const gas = await _ctx.livepeer.rpc.estimateGas('Poll', 'vote', [
-    pollAddress,
-    choiceId,
-  ])
+  const gas = await _ctx.livepeer.rpc.estimateGas('Poll', 'vote', [choiceId])
   const txHash = await _ctx.livepeer.rpc.vote(pollAddress, choiceId, {
     ..._ctx.livepeer.config.defaultTx,
+    gas,
     returnTxHash: true,
   })
 

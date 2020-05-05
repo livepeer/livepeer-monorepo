@@ -7,6 +7,7 @@ import rebondFromUnbonded from './rebondFromUnbonded.gql'
 import rebond from './rebond.gql'
 import batchClaimEarnings from './batchClaimEarnings.gql'
 import createPoll from './createPoll.gql'
+import vote from './vote.gql'
 
 export default {
   approve,
@@ -18,4 +19,5 @@ export default {
   rebond,
   batchClaimEarnings,
   createPoll,
+  vote,
 }

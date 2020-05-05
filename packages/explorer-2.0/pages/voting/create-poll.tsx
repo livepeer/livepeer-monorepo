@@ -47,7 +47,10 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
 
   useEffect(() => {
     if (data) {
-      if (parseFloat(data.account.pollCreatorAllowance) >= 100) {
+      if (
+        parseFloat(data.account.pollCreatorAllowance) >=
+        (process.env.NETWORK === 'rinkeby' ? 10 : 100)
+      ) {
         setPollCreationEnabled(true)
       }
     }
@@ -55,6 +58,12 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
 
   const [selectedProposal, setSelectedProposal] = useState(null)
   const { createPoll }: any = useContext(MutationsContext)
+
+  useEffect(() => {
+    if (lips.length) {
+      setSelectedProposal({ gitCommitHash, text: lips[0].text })
+    }
+  }, [])
 
   return (
     <Flex
@@ -108,17 +117,24 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
             e.preventDefault()
             try {
               const hash = await ipfs.addJSON({
-                gitCommitHash,
-                selectedProposal,
+                ...selectedProposal,
               })
               await createPoll({
                 variables: { proposal: hash },
               })
             } catch (e) {
-              console.log(e)
+              return {
+                error: e.message.replace('GraphQL error: ', ''),
+              }
             }
           }}
         >
+          {!lips.length && (
+            <Box>
+              There are currently no LIPs in a proposed state for which there
+              hasn't been a poll created yet.
+            </Box>
+          )}
           {lips.map((lip, i) => (
             <Label
               key={i}
@@ -128,7 +144,6 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                 mb: 2,
                 borderRadius: 10,
                 border: '1px solid',
-                // borderColor: 'primary',
               }}
             >
               <Flex sx={{ width: '100%', alignItems: 'center' }}>
@@ -154,8 +169,8 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
               </Flex>
             </Label>
           ))}
-
           {context.account &&
+            !!lips.length &&
             (!data ? (
               <Flex
                 sx={{ alignItems: 'center', mt: 4, justifyContent: 'center' }}
@@ -165,7 +180,8 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
               </Flex>
             ) : (
               <Flex sx={{ mt: 4, justifyContent: 'flex-end' }}>
-                {parseFloat(data?.account?.pollCreatorAllowance) < 100 && (
+                {parseFloat(data?.account?.pollCreatorAllowance) <
+                  (process.env.NETWORK === 'rinkeby' ? 10 : 100) && (
                   <PollTokenApproval />
                 )}
                 <Button
@@ -173,7 +189,8 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   type="submit"
                   sx={{ ml: 2, alignSelf: 'flex-end' }}
                 >
-                  Create Poll (100 LPT)
+                  Create Poll (
+                  {process.env.NETWORK === 'rinkeby' ? '10' : '100'} LPT)
                 </Button>
               </Flex>
             ))}
@@ -248,10 +265,13 @@ export async function getStaticProps() {
   if (pollsData) {
     await Promise.all(
       pollsData.polls.map(async poll => {
-        const { proposal } = await ipfs.catJSON(poll.proposal)
-        const transformedProposal = fm(proposal.text)
-        transformedProposal.attributes.lip
-        createdPolls.push(transformedProposal.attributes.lip)
+        const obj = await ipfs.catJSON(poll.proposal)
+        // check if proposal is valid format {text, gitCommitHash}
+        if (obj?.text && obj?.gitCommitHash) {
+          const transformedProposal = fm(obj.text)
+          transformedProposal.attributes.lip
+          createdPolls.push(transformedProposal.attributes.lip)
+        }
       }),
     )
   }

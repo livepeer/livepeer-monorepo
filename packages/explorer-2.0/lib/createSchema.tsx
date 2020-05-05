@@ -128,8 +128,8 @@ export default async () => {
       Poll: {
         totalVoteStake: {
           async resolve(_poll, _args, _context, _info) {
-            return Utils.toBN(_poll.tally.no)
-              .add(Utils.toBN(_poll.tally.yes))
+            return Utils.toBN(_poll?.tally?.no ? _poll?.tally?.no : '0')
+              .add(Utils.toBN(_poll?.tally?.yes ? _poll.tally.yes : '0'))
               .toString()
           },
         },
@@ -142,9 +142,10 @@ export default async () => {
               _context,
               isActive ? blockData.number : _poll.endBlock,
             )
-            const totalVoteStake = Utils.toBN(_poll.tally.no).add(
-              Utils.toBN(_poll.tally.yes),
-            )
+            const totalVoteStake = Utils.toBN(
+              _poll?.tally?.no ? _poll?.tally?.no : '0',
+            ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
+
             return Utils.toBN(totalStake)
               .sub(totalVoteStake)
               .toString()
@@ -159,8 +160,12 @@ export default async () => {
               _context,
               isActive ? blockData.number : _poll.endBlock,
             )
-            let noVoteStake = parseFloat(Utils.fromWei(_poll.tally.no))
-            let yesVoteStake = parseFloat(Utils.fromWei(_poll.tally.yes))
+            let noVoteStake = parseFloat(
+              Utils.fromWei(_poll?.tally?.no ? _poll?.tally?.no : '0'),
+            )
+            let yesVoteStake = parseFloat(
+              Utils.fromWei(_poll?.tally?.yes ? _poll?.tally?.yes : '0'),
+            )
             let totalVoteStake = noVoteStake + yesVoteStake
             let totalSupport = isNaN(yesVoteStake / totalVoteStake)
               ? 0
@@ -169,8 +174,8 @@ export default async () => {
               (totalVoteStake / parseFloat(Utils.fromWei(totalStake))) * 100
             if (isActive) {
               return 'active'
-            } else if (totalParticipation > _poll.quorum) {
-              if (totalSupport > _poll.threshold) {
+            } else if (totalParticipation > _poll.quorum / 10000) {
+              if (totalSupport > _poll.threshold / 10000) {
                 return 'passed'
               } else {
                 return 'rejected'
@@ -196,7 +201,7 @@ export default async () => {
               }&apikey=${process.env.ETHERSCAN_API_KEY}`,
             )
             const countdownResponse = await countdownRaw.json()
-            return countdownResponse.result.EstimateTimeInSec
+            return parseInt(countdownResponse.result.EstimateTimeInSec)
           },
         },
         endTime: {

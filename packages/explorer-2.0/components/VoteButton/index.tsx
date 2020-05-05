@@ -1,6 +1,4 @@
 import { useWeb3React } from '@web3-react/core'
-import gql from 'graphql-tag'
-import { useWeb3Mutation } from '../../hooks'
 import Button from '../Button'
 import { useContext } from 'react'
 import { MutationsContext } from '../../contexts'
@@ -16,7 +14,15 @@ export default ({ pollAddress, choiceId, children, ...props }) => {
 
   return (
     <Button
-      onClick={() => vote({ variables: { pollAddress, choiceId } })}
+      onClick={async () => {
+        try {
+          await vote({ variables: { pollAddress, choiceId } })
+        } catch (e) {
+          return {
+            error: e.message.replace('GraphQL error: ', ''),
+          }
+        }
+      }}
       {...props}
     >
       {children}

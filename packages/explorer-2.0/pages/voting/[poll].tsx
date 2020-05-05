@@ -97,8 +97,12 @@ const Poll = () => {
     )
   }
 
-  let noVoteStake = parseFloat(Utils.fromWei(pollData.tally.no))
-  let yesVoteStake = parseFloat(Utils.fromWei(pollData.tally.yes))
+  let noVoteStake = parseFloat(
+    Utils.fromWei(pollData?.tally?.no ? pollData?.tally?.no : '0'),
+  )
+  let yesVoteStake = parseFloat(
+    Utils.fromWei(pollData?.tally?.yes ? pollData?.tally?.yes : '0'),
+  )
   let totalVoteStake = noVoteStake + yesVoteStake
 
   return (
@@ -187,7 +191,7 @@ const Poll = () => {
                 title={
                   <Flex sx={{ alignItems: 'center' }}>
                     <Box sx={{ color: 'muted' }}>
-                      Total Support ({pollData.threshold}% needed)
+                      Total Support ({pollData.threshold / 10000}% needed)
                     </Box>
                     {/* <Flex>
                       <ReactTooltip
@@ -254,7 +258,7 @@ const Poll = () => {
                           : ((noVoteStake / totalVoteStake) * 100).toPrecision(
                               4,
                             )}
-                        %)
+                        %
                       </Box>
                     </Flex>
                     <span sx={{ fontFamily: 'monospace' }}>
@@ -269,7 +273,7 @@ const Poll = () => {
                 title={
                   <Flex sx={{ alignItems: 'center' }}>
                     <Box sx={{ color: 'muted' }}>
-                      Total Participation ({pollData.quorum}% needed)
+                      Total Participation ({pollData.quorum / 10000}% needed)
                     </Box>
                     {/* <Flex>
                       <ReactTooltip
@@ -386,8 +390,12 @@ const Poll = () => {
 }
 
 async function transformData({ poll }) {
-  let noVoteStake = parseFloat(Utils.fromWei(poll.tally.no))
-  let yesVoteStake = parseFloat(Utils.fromWei(poll.tally.yes))
+  let noVoteStake = parseFloat(
+    Utils.fromWei(poll?.tally?.no ? poll?.tally?.no : '0'),
+  )
+  let yesVoteStake = parseFloat(
+    Utils.fromWei(poll?.tally?.yes ? poll?.tally?.yes : '0'),
+  )
   let totalVoteStake = parseFloat(Utils.fromWei(poll.totalVoteStake))
   let totalNonVoteStake = parseFloat(Utils.fromWei(poll.totalNonVoteStake))
   let totalSupport = isNaN(yesVoteStake / totalVoteStake)
@@ -403,8 +411,8 @@ async function transformData({ poll }) {
     port: 5001,
     protocol: 'https',
   })
-  const { gitCommitHash, proposal } = await ipfs.catJSON(poll.proposal)
-  const response = fm(proposal.text)
+  const { gitCommitHash, text } = await ipfs.catJSON(poll.proposal)
+  const response = fm(text)
   return {
     ...response.attributes,
     created: response.attributes.created.toString(),

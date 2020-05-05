@@ -201,6 +201,7 @@ function Header({ tx, timeLeft }) {
       </Flex>
       <Box sx={{ fontWeight: 700 }}>{txMessages[tx?.__typename]?.pending}</Box>
       <a
+        sx={{ display: 'flex', alignItems: 'center' }}
         target="_blank"
         rel="noopener noreferrer"
         href={`https://${
