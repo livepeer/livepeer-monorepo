@@ -131,7 +131,7 @@ contract('Subgraph Integration Tests', accounts => {
     return await BondingManager.methods.pendingStake(addr, currentRound).call()
   }
 
-  const tallyPollAndCheckResult = async () => {
+  const tallyPollAndCheckResult = async ({ afterSwitch = false } = {}) => {
     const t1Stake = await getStake(transcoder1)
     const t2Stake = await getStake(transcoder2)
     const d1Stake = await getStake(delegator1)
@@ -141,9 +141,12 @@ contract('Subgraph Integration Tests', accounts => {
       .getDelegator(transcoder1)
       .call()
 
-    const nonVoteStake = new BN(d1Stake)
+    let nonVoteStake = new BN(d1Stake)
       .plus(new BN(d2Stake))
       .plus(new BN(d3Stake))
+    if (afterSwitch) {
+      nonVoteStake = nonVoteStake.minus(new BN(d1Stake))
+    }
 
     const t1VoteStake = new BN(delegator.delegatedAmount).minus(nonVoteStake)
 
@@ -478,8 +481,18 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  // TODO
-  it('correctly tallies poll after delegator switches transcoders', async () => {})
+  it('correctly tallies poll after delegator switches transcoders', async () => {
+    let bondAmount = 1000
+    await Token.methods.approve(bondingManagerAddress, bondAmount).send({
+      from: delegator1,
+    })
+    await BondingManager.methods
+      .bond(bondAmount, transcoder2)
+      .send({ gas: 1000000, from: delegator1 })
+
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult({ afterSwitch: true })
+  })
 
   it('correctly tallies poll after polling period is over', async () => {
     let subgraphPollData = await fetchSubgraph({
@@ -489,6 +502,6 @@ contract('Subgraph Integration Tests', accounts => {
     // Fast forward to end block
     await rpc.waitUntilBlock(parseInt(subgraphPollData.data.polls[0].endBlock))
     await waitForSubgraphToBeSynced()
-    await tallyPollAndCheckResult()
+    await tallyPollAndCheckResult({ afterSwitch: true })
   })
 })
