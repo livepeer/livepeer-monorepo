@@ -190,7 +190,7 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
   } else {
     res.status(403)
     res.json({ errors: ['incorrect user validation token'] })
-  },
+  }
 })
 
 app.post(
