@@ -56,11 +56,13 @@ dataSources:
           handler: withdrawFees
         - event: ParameterUpdate(string)
           handler: parameterUpdate
-      # callHandlers:
-      #   - function: claimEarnings(uint256)
-      #     handler: claimEarnings
-      #   - function: bond(uint256,address)
-      #     handler: bond
+      {{#ifEquals networkName "mainnet"}}
+      callHandlers:
+        - function: claimEarnings(uint256)
+          handler: claimEarnings
+        - function: bond(uint256,address)
+          handler: bond
+      {{/ifEquals}}
   - kind: ethereum/contract
     name: BondingManager_LIP11
     network: {{networkName}}

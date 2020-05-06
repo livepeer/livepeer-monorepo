@@ -33,7 +33,6 @@ export function newRound(event: NewRoundEvent): void {
     Address.fromString(bondingManagerAddress),
   )
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
-  let totalActiveStake = bondingManager.getTotalBonded()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
   let poolId: string
   let pool: Pool
@@ -74,7 +73,7 @@ export function newRound(event: NewRoundEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
-  protocol.totalActiveStake = totalActiveStake
+  protocol.totalActiveStake = bondingManager.getTotalBonded()
   protocol.save()
 
   // Store transaction info
