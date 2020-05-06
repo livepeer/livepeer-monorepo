@@ -18,6 +18,7 @@ export default ({ userId, id }) => {
   const close = () => {
     setAdminModal(false);
     setRemoveAdminModal(false);
+    setSelectedUser(null);
   };
   return (
     <Box
