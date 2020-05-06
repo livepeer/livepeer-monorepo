@@ -7,6 +7,7 @@ import { Flex } from "@theme-ui/components";
 import useLoggedIn from "../../hooks/use-logged-in";
 import TokenTable from "../../components/TokenTable";
 import StreamsTable from "../../components/StreamsTable";
+import UserTable from "../../components/UserTable";
 
 export default () => {
   useLoggedIn();
@@ -27,6 +28,7 @@ export default () => {
       >
         <TokenTable id="API Token Table" userId={user.id} />
         <StreamsTable id="Streams Table" userId={user.id} />
+        {user.admin && <UserTable id="User Table" userId={user.id} />}
         <Box sx={{ margin: 3 }}>
           <Button variant="outline" onClick={logout}>
             Log Out

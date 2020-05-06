@@ -133,6 +133,31 @@ describe('controllers/user', () => {
       expect(res.status).toBe(403)
     })
 
+    it('should make a user an admin with admin email', async () => {
+      let res = await client.post('/user/', { ...mockUser })
+      expect(res.status).toBe(201)
+      const user = await res.json()
+      expect(user.id).toBeDefined()
+
+      let resAdminChange = await client.post(`/user/make-admin/`, {
+        email: mockUser.email,
+        admin: true,
+      })
+      expect(resAdminChange.status).toBe(201)
+      let userAdmin = await resAdminChange.json()
+      expect(userAdmin.email).toBe(mockUser.email)
+      expect(userAdmin.admin).toBe(true)
+
+      resAdminChange = await client.post(`/user/make-admin/`, {
+        email: mockUser.email,
+        admin: false,
+      })
+      expect(resAdminChange.status).toBe(201)
+      userAdmin = await resAdminChange.json()
+      expect(userAdmin.email).toBe(mockUser.email)
+      expect(userAdmin.admin).toBe(false)
+    })
+
     it('should not accept empty body for creating a user', async () => {
       const res = await client.post('/user')
       expect(res.status).toBe(422)
@@ -237,6 +262,16 @@ describe('controllers/user', () => {
 
       let res = await client.get('/user')
       expect(res.status).toBe(403)
+
+      // should not be able to make users admin with non-admin user
+      const resAdminChange = await client.post(`/user/make-admin/`, {
+        email: nonAdminUser.email,
+      })
+      console.log(`asdfsdf ${JSON.stringify(resAdminChange)}`)
+      expect(resAdminChange.status).toBe(403)
+
+      let adminChange = await resAdminChange.json()
+      expect(adminChange.errors[0]).toBe(`user does not have admin priviledges`)
     })
 
     it('should return a user token', async () => {
@@ -339,7 +374,7 @@ describe('controllers/user', () => {
       // should return 422 when extra property added to request
       req = await client.post(`/user/password/reset-token`, {
         email: 'noemail@gmail.com',
-        password: 'a'.repeat(64)
+        password: 'a'.repeat(64),
       })
       expect(req.status).toBe(422)
 

@@ -160,6 +160,32 @@ const makeContext = (state: ApiState, setState) => {
       return [res, user as User | ApiError];
     },
 
+    async getUsers(opts = {}): Promise<[Response, User | ApiError]> {
+      let [res, users] = await context.fetch(`/user`, opts);
+      users = users.map(o => o[Object.keys(o)[0]]);
+
+      if (res.status !== 201) {
+        return users;
+      }
+      return res;
+    },
+
+    async makeUserAdmin(email, admin): Promise<[Response, User | ApiError]> {
+      const [res, body] = await context.fetch("/user/make-admin", {
+        method: "POST",
+        body: JSON.stringify({ email: email, admin: admin }),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+
+      if (res.status !== 201) {
+        return body;
+      }
+
+      return res;
+    },
+
     async logout() {
       setState(state => ({ ...state, user: null, token: null }));
       clearToken();

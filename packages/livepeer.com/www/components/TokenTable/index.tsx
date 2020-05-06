@@ -139,10 +139,13 @@ export default ({ userId, id }) => {
           </Flex>
         </Modal>
       )}
-      <p>
+      <Box sx={{ mb: 3, mt: 3 }}>
+        <strong>Api Tokens:</strong>
+      </Box>
+      <Box sx={{ mb: 3 }}>
         <strong>Note:</strong> These tokens allow other apps to control your
         whole account. Treat them like you would a password.
-      </p>
+      </Box>
       <Box>
         <Button
           variant="outlineSmall"
