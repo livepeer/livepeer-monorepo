@@ -244,20 +244,7 @@ export default ({ data }) => {
                   </Flex>
                 )}
               </Box>
-              {data.poll.isActive && (
-                <Grid sx={{ mt: 3 }} gap={2} columns={[2]}>
-                  <VoteButton choiceId={0} pollAddress={data.poll.id}>
-                    Yes
-                  </VoteButton>
-                  <VoteButton
-                    variant="red"
-                    choiceId={1}
-                    pollAddress={data.poll.id}
-                  >
-                    No
-                  </VoteButton>
-                </Grid>
-              )}
+              {data.poll.isActive && renderVoteButton(data)}
             </>
           ) : (
             <Button
@@ -393,4 +380,41 @@ export default ({ data }) => {
       </Modal>
     </Box>
   )
+}
+
+function renderVoteButton(data) {
+  switch (data?.vote?.choiceID) {
+    case 'Yes':
+      return (
+        <VoteButton
+          sx={{ mt: 3, width: '100%' }}
+          variant="red"
+          choiceId={1}
+          pollAddress={data.poll.id}
+        >
+          Change Vote To No
+        </VoteButton>
+      )
+    case 'No':
+      return (
+        <VoteButton
+          sx={{ mt: 3, width: '100%' }}
+          choiceId={0}
+          pollAddress={data.poll.id}
+        >
+          Change Vote To Yes
+        </VoteButton>
+      )
+    default:
+      return (
+        <Grid sx={{ mt: 3 }} gap={2} columns={[2]}>
+          <VoteButton choiceId={0} pollAddress={data.poll.id}>
+            Yes
+          </VoteButton>
+          <VoteButton variant="red" choiceId={1} pollAddress={data.poll.id}>
+            No
+          </VoteButton>
+        </Grid>
+      )
+  }
 }
