@@ -88,7 +88,7 @@ export default ({ userId, id }) => {
       </p>
       <Button
         variant="secondarySmall"
-        disabled={!selectedUser}
+        disabled={!selectedUser || selectedUser.admin}
         sx={{ margin: 2, mb: 4 }}
         onClick={() => selectedUser && setAdminModal(true)}
       >
@@ -96,7 +96,7 @@ export default ({ userId, id }) => {
       </Button>
       <Button
         variant="secondarySmall"
-        disabled={!selectedUser}
+        disabled={!selectedUser || !selectedUser.admin}
         sx={{ margin: 2, mb: 4 }}
         onClick={() => selectedUser && setRemoveAdminModal(true)}
       >
