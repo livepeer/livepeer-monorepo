@@ -22,10 +22,13 @@ if (process.env.NODE_ENV === "production") {
   ReactGA.initialize("test", { testMode: true });
 }
 
-// Track client-side page views with Segment
+// Track client-side page views with Segment & HubSpot
 if (process.env.NODE_ENV === "production") {
   Router.events.on("routeChangeComplete", url => {
     window.analytics.page(url);
+    var _hsq = (window["hsq"] = window["hsq"] || []);
+    _hsq.push(["setPath", url]);
+    _hsq.push(["trackPageView"]);
   });
 }
 
