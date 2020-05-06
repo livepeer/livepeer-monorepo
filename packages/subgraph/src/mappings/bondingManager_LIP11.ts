@@ -37,8 +37,6 @@ export function bond(event: BondEvent): void {
   let additionalAmount = event.params.additionalAmount
   let delegateData = bondingManager.getDelegator(newDelegateAddress)
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
-  let totalActiveStake = bondingManager.getTotalBonded()
-
   let protocol = Protocol.load('0') || new Protocol('0')
   let round = Round.load(protocol.currentRound)
   let transcoder =
@@ -50,8 +48,6 @@ export function bond(event: BondEvent): void {
   let delegator =
     Delegator.load(delegatorAddress.toHex()) ||
     new Delegator(delegatorAddress.toHex())
-
-  protocol.totalActiveStake = totalActiveStake
 
   // If self delegating, set status and assign reference to self
   if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
@@ -138,7 +134,6 @@ export function unbond(event: UnbondEvent): void {
   let delegator = Delegator.load(delegatorAddress.toHex())
   let delegateData = bondingManager.getDelegator(delegateAddress)
   let protocol = Protocol.load('0') || new Protocol('0')
-  let totalActiveStake = bondingManager.getTotalBonded()
   let transcoder =
     Transcoder.load(delegateAddress.toHex()) ||
     new Transcoder(delegateAddress.toHex())
@@ -148,8 +143,6 @@ export function unbond(event: UnbondEvent): void {
   let unbondingLock =
     UnbondingLock.load(uniqueUnbondingLockId) ||
     new UnbondingLock(uniqueUnbondingLockId)
-
-  protocol.totalActiveStake = totalActiveStake
 
   delegate.delegatedAmount = delegateData.value3
   transcoder.totalStake = delegateData.value3
@@ -222,9 +215,6 @@ export function rebond(event: RebondEvent): void {
   let delegator = Delegator.load(delegatorAddress.toHex())
   let delegateData = bondingManager.getDelegator(delegateAddress)
   let protocol = Protocol.load('0') || new Protocol('0')
-  let totalActiveStake = bondingManager.getTotalBonded()
-
-  protocol.totalActiveStake = totalActiveStake
 
   // If rebonding from unbonded and is self-bonding then update transcoder status
   if (
