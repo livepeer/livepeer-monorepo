@@ -14,33 +14,40 @@ import { PollTallyTemplate } from '../types/templates'
 import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
 
 export function vote(event: VoteEvent): void {
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let delegator = Delegator.load(event.params.voter.toHex())
-  let poll = Poll.load(event.address.toHex()) as Poll
-  let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
-  let vote = Vote.load(voteId) || new Vote(voteId)
-  let delegate: Transcoder
-
-  if (event.params.choiceID.equals(BigInt.fromI32(0))) {
-    vote.choiceID = 'Yes'
-  } else if (event.params.choiceID.equals(BigInt.fromI32(1))) {
-    vote.choiceID = 'No'
-  } else {
+  // Vote must be a "Yes" or "No"
+  if (
+    event.params.choiceID.notEqual(BigInt.fromI32(0)) &&
+    event.params.choiceID.notEqual(BigInt.fromI32(1))
+  ) {
     return
   }
 
-  // If first time voting in this poll
-  let pollVotes = poll.votes ? poll.votes : new Array<string>()
-  if (pollVotes.indexOf(voteId) == -1) {
+  let poll = Poll.load(event.address.toHex()) as Poll
+  let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
+
+  let vote = Vote.load(voteId) || new Vote(voteId)
+  let firstTimeVoter = vote.choiceID == null
+
+  if (event.params.choiceID.equals(BigInt.fromI32(0))) {
+    vote.choiceID = 'Yes'
+  } else {
+    vote.choiceID = 'No'
+  }
+
+  if (firstTimeVoter) {
     vote.voter = event.params.voter.toHex()
     vote.poll = poll.id
 
+    // add vote to poll
+    let pollVotes = poll.votes ? poll.votes : new Array<string>()
     pollVotes.push(voteId)
     poll.votes = pollVotes
+    poll.save()
 
     // if voter is a delegator
+    let delegator = Delegator.load(event.params.voter.toHex())
     if (delegator) {
-      delegate = Transcoder.load(delegator.delegate) as Transcoder
+      let delegate = Transcoder.load(delegator.delegate) as Transcoder
 
       // If voter is a registered orchestrator
       if (event.params.voter.toHex() == delegator.delegate) {
@@ -52,6 +59,7 @@ export function vote(event: VoteEvent): void {
         let bondingManager = BondingManager.bind(
           Address.fromString(bondingManagerAddress),
         )
+        let protocol = Protocol.load('0') || new Protocol('0')
         let pendingStake = bondingManager.pendingStake(
           event.params.voter,
           BigInt.fromI32(protocol.currentRound as i32),
@@ -62,7 +70,7 @@ export function vote(event: VoteEvent): void {
       // If delegate is a registered orchestrator and not delegated to self
       if (
         delegate.status == 'Registered' &&
-        event.params.voter.toHex() != delegator.delegate
+        event.params.voter.toHex() != delegate.id
       ) {
         let delegateVoteId = makeVoteId(delegate.id, poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
@@ -73,8 +81,6 @@ export function vote(event: VoteEvent): void {
         delegateVote.save()
       }
     }
-
-    poll.save()
 
     // Watch for events specified in PollTallyTemplate, and trigger handlers
     // with this context

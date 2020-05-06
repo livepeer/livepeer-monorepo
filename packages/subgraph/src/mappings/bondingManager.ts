@@ -179,8 +179,6 @@ export function bond(call: BondCall): void {
     let amount = call.inputs._amount
     let delegatorData = bondingManager.getDelegator(delegatorAddress)
     let delegateData = bondingManager.getDelegator(newDelegateAddress)
-    let totalActiveStake = bondingManager.getTotalBonded()
-
     let protocol = Protocol.load('0') || new Protocol('0')
     let round = Round.load(protocol.currentRound)
     let transcoder =
@@ -192,8 +190,6 @@ export function bond(call: BondCall): void {
     let delegate =
       Delegator.load(newDelegateAddress.toHex()) ||
       new Delegator(newDelegateAddress.toHex())
-
-    protocol.totalActiveStake = totalActiveStake
 
     // If self delegating, set status and assign reference to self
     if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
@@ -239,7 +235,7 @@ export function bond(call: BondCall): void {
     transcoder.totalStake = delegateData.value3
     delegate.delegatedAmount = delegateData.value3
 
-    // no existing delegate && delegator has bondedAmount then it is rebonding
+    // delegator rebonding
     if (!delegator.delegate && delegator.bondedAmount.gt(BigInt.fromI32(0))) {
       delegator.unbonded = delegator.unbonded.minus(
         delegator.bondedAmount as BigInt,
@@ -292,9 +288,6 @@ export function unbond(event: UnbondEvent): void {
     Address.fromString(transcoderAddress),
   )
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
-  let totalActiveStake = bondingManager.getTotalBonded()
-
-  protocol.totalActiveStake = totalActiveStake
 
   transcoder.totalStake = delegateData.value3
   delegate.delegatedAmount = delegateData.value3
@@ -338,11 +331,8 @@ export function reward(event: RewardEvent): void {
   let delegate = Delegator.load(transcoderAddress.toHex())
   let delegateData = bondingManager.getDelegator(transcoderAddress)
   let protocol = Protocol.load('0') || new Protocol('0')
-  let totalActiveStake = bondingManager.getTotalBonded()
   let poolId = makePoolId(transcoderAddress.toHex(), protocol.currentRound)
   let pool = Pool.load(poolId)
-
-  protocol.totalActiveStake = totalActiveStake
 
   delegate.delegatedAmount = delegateData.value3
 
