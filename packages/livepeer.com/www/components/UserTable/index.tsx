@@ -7,15 +7,17 @@ import { Table, TableRow, Checkbox } from "../Table";
 export default ({ userId, id }) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [editUserModal, setEditUserModal] = useState(false);
+  const [adminModal, setAdminModal] = useState(false);
+  const [removeAdminModal, setRemoveAdminModal] = useState(false);
   const { getUsers, makeUserAdmin } = useApi();
   useEffect(() => {
     getUsers()
       .then(users => setUsers(users))
       .catch(err => console.error(err)); // todo: surface this
-  }, [userId, editUserModal, selectedUser]);
+  }, [userId, adminModal, removeAdminModal, selectedUser]);
   const close = () => {
-    setEditUserModal(false);
+    setAdminModal(false);
+    setRemoveAdminModal(false);
   };
   return (
     <Box
@@ -26,7 +28,7 @@ export default ({ userId, id }) => {
         mx: "auto"
       }}
     >
-      {editUserModal && selectedUser && (
+      {adminModal && selectedUser && (
         <Modal onClose={close}>
           <h3>Make User Admin</h3>
           <p>
@@ -45,7 +47,7 @@ export default ({ userId, id }) => {
               type="button"
               variant="secondarySmall"
               onClick={() => {
-                makeUserAdmin(selectedUser.email).then(close);
+                makeUserAdmin(selectedUser.email, true).then(close);
               }}
             >
               Make User Admin
@@ -53,16 +55,52 @@ export default ({ userId, id }) => {
           </Flex>
         </Modal>
       )}
+      {removeAdminModal && selectedUser && (
+        <Modal onClose={close}>
+          <h3>Remove Admin Rights</h3>
+          <p>
+            Are you sure you want to remove admin rights for "
+            {selectedUser.email}"?
+          </p>
+          <Flex sx={{ justifyContent: "flex-end" }}>
+            <Button
+              type="button"
+              variant="outlineSmall"
+              onClick={close}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="secondarySmall"
+              onClick={() => {
+                makeUserAdmin(selectedUser.email, false).then(close);
+              }}
+            >
+              Remove Admin Rights
+            </Button>
+          </Flex>
+        </Modal>
+      )}
       <p>
-        <strong>Users</strong>
+        <strong>Users:</strong>
       </p>
       <Button
         variant="secondarySmall"
         disabled={!selectedUser}
         sx={{ margin: 2, mb: 4 }}
-        onClick={() => selectedUser && setEditUserModal(true)}
+        onClick={() => selectedUser && setAdminModal(true)}
       >
         Make User Admin
+      </Button>
+      <Button
+        variant="secondarySmall"
+        disabled={!selectedUser}
+        sx={{ margin: 2, mb: 4 }}
+        onClick={() => selectedUser && setRemoveAdminModal(true)}
+      >
+        Remove Admin Rights
       </Button>
       {users.length === 0 ? (
         <p>No users created yet</p>

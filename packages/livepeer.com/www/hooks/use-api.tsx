@@ -170,13 +170,10 @@ const makeContext = (state: ApiState, setState) => {
       return res;
     },
 
-    async makeUserAdmin(
-      email,
-      opts = {}
-    ): Promise<[Response, User | ApiError]> {
+    async makeUserAdmin(email, admin): Promise<[Response, User | ApiError]> {
       const [res, body] = await context.fetch("/user/make-admin", {
         method: "POST",
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email, admin: admin }),
         headers: {
           "content-type": "application/json"
         }

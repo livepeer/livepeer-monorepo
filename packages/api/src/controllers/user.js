@@ -333,7 +333,7 @@ app.post(
 app.post(
   '/make-admin',
   authMiddleware({ admin: true }),
-  validatePost('password-reset-token'),
+  validatePost('make-admin'),
   async (req, res) => {
     const userIds = await req.store.query('user', { email: req.body.email })
     if (userIds.length < 1) {
@@ -343,7 +343,7 @@ app.post(
 
     let user = await req.store.get(`user/${userIds[0]}`, false)
     if (user) {
-      user = { ...user, admin: true }
+      user = { ...user, admin: req.body.admin }
       await req.store.replace(user)
       res.status(201)
       res.json({ email: user.email, admin: user.admin })

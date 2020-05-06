@@ -18,6 +18,8 @@ tags:
     description: User Email Verification
   - name: password-reset
     description: User Password Reset
+  - name: make-admin
+    description: Changes user admin status
 
 components:
   schemas:
@@ -231,6 +233,21 @@ components:
           type: string
           example: 66E2161C-7670-4D05-B71D-DA2D6979556F
           index: true
+
+    make-admin:
+      type: object
+      required:
+        - email
+        - admin
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          description: user email address
+          example: useremail@gmail.com
+        admin:
+          type: boolean
+          example: true
 
     password-reset:
       type: object
@@ -466,6 +483,35 @@ paths:
             schema:
               type: object
               $ref: '#/components/schemas/password-reset'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
+  /make-admin:
+    tags:
+      - make-admin
+    post:
+      description: Changes user admin status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/make-admin'
 
       responses:
         200:

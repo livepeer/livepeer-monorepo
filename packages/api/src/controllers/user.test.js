@@ -139,13 +139,23 @@ describe('controllers/user', () => {
       const user = await res.json()
       expect(user.id).toBeDefined()
 
-      const resAdminChange = await client.post(`/user/make-admin/`, {
+      let resAdminChange = await client.post(`/user/make-admin/`, {
         email: mockUser.email,
+        admin: true,
       })
       expect(resAdminChange.status).toBe(201)
-      const userAdmin = await resAdminChange.json()
+      let userAdmin = await resAdminChange.json()
       expect(userAdmin.email).toBe(mockUser.email)
       expect(userAdmin.admin).toBe(true)
+
+      resAdminChange = await client.post(`/user/make-admin/`, {
+        email: mockUser.email,
+        admin: false,
+      })
+      expect(resAdminChange.status).toBe(201)
+      userAdmin = await resAdminChange.json()
+      expect(userAdmin.email).toBe(mockUser.email)
+      expect(userAdmin.admin).toBe(false)
     })
 
     it('should not accept empty body for creating a user', async () => {

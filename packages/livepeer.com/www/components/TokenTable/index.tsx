@@ -141,7 +141,7 @@ export default ({ userId, id }) => {
       )}
       <p>
         <p>
-          <strong>Api Tokens</strong>
+          <strong>Api Tokens:</strong>
         </p>
         <strong>Note:</strong> These tokens allow other apps to control your
         whole account. Treat them like you would a password.
