@@ -167,7 +167,9 @@ export default class FirestoreStore {
   async list(prefix, cursor, limit) {
     const [results, nextPageToken] = await this.doList(prefix, cursor, limit)
     const data = results.map(doc => {
-      return JSON.parse(doc.fields.data.stringValue)
+      return {
+        [doc.name.split('docs/')[1]]: JSON.parse(doc.fields.data.stringValue),
+      }
     })
     return {
       data,
