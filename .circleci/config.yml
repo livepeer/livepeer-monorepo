@@ -28,7 +28,7 @@ aliases:
     name: Run tests
     command: |
       docker pull livepeer/ganache-with-livepeer-protocol:streamflow
-      nohup docker run livepeer/ganache-with-livepeer-protocol:streamflow &
+      docker run -d livepeer/ganache-with-livepeer-protocol:streamflow &
       yarn test
       yarn run build
 
