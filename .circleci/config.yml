@@ -28,7 +28,7 @@ aliases:
     name: Run tests
     command: |
       docker pull livepeer/ganache-with-livepeer-protocol:streamflow
-      docker run -d -p 8545:8545 livepeer/ganache-with-livepeer-protocol:streamflow &
+      docker run -d -p 8545:8545 livepeer/ganache-with-livepeer-protocol:streamflow
       yarn test
       yarn run build
 
