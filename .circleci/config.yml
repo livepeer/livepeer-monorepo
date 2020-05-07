@@ -28,7 +28,7 @@ aliases:
     name: Run tests
     command: |
       docker pull livepeer/ganache-with-livepeer-protocol:streamflow
-      nohup myprog docker run livepeer/ganache-with-livepeer-protocol:streamflow &
+      nohup docker run livepeer/ganache-with-livepeer-protocol:streamflow &
       yarn test
       yarn run build
 
@@ -121,10 +121,6 @@ jobs:
       - run: *install-dependencies
       - run: *reporter
       - run: *install-gcloud
-      - run: docker pull livepeer/ganache-with-livepeer-protocol:streamflow
-      - run: 
-          command: docker run livepeer/ganache-with-livepeer-protocol:streamflow
-          background: true
       - run: *tests
       - run: *show-test-report
       - run: |
