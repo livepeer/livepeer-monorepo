@@ -119,6 +119,8 @@ jobs:
       - run: *install-dependencies
       - run: *reporter
       - run: *install-gcloud
+      - run: docker pull livepeer/ganache-with-livepeer-protocol:streamflow
+      - run: docker run livepeer/ganache-with-livepeer-protocol:streamflow
       - run: *tests
       - run: *show-test-report
       - run: |
