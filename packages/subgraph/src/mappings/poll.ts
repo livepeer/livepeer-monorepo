@@ -49,9 +49,10 @@ export function vote(event: VoteEvent): void {
     if (delegator) {
       let delegate = Transcoder.load(delegator.delegate) as Transcoder
 
-      // If voter is a registered orchestrator
+      // If voter is a registered transcoder
       if (event.params.voter.toHex() == delegator.delegate) {
         vote.voteStake = delegate.totalStake
+        vote.registeredTranscoder = true
       } else {
         let bondingManagerAddress = getBondingManagerAddress(
           dataSource.network(),
@@ -65,15 +66,16 @@ export function vote(event: VoteEvent): void {
           BigInt.fromI32(protocol.currentRound as i32),
         )
         vote.voteStake = pendingStake
-      }
+        vote.registeredTranscoder = false
 
-      // If delegate is a registered orchestrator and not delegated to self
-      if (
-        delegate.status == 'Registered' &&
-        event.params.voter.toHex() != delegate.id
-      ) {
+        // update delegate's vote
         let delegateVoteId = makeVoteId(delegate.id, poll.id)
         let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
+        if (delegate.status == 'Registered') {
+          delegateVote.registeredTranscoder = true
+        } else {
+          delegateVote.registeredTranscoder = false
+        }
         delegateVote.voter = delegate.id
         delegateVote.nonVoteStake = delegateVote.nonVoteStake.plus(
           vote.voteStake as BigInt,
@@ -106,19 +108,23 @@ export function tallyVotes(poll: Poll): void {
   let pollTally = new PollTally(poll.id)
   let votes = poll.votes as Array<string>
   let v: Vote
+  let nonVoteStake = BigInt.fromI32(0)
   pollTally.yes = BigInt.fromI32(0)
   pollTally.no = BigInt.fromI32(0)
+
   for (let i = 0; i < votes.length; i++) {
     v = Vote.load(votes[i]) as Vote
+
+    // Only subtract nonVoteStake if delegate was registered during poll period
+    nonVoteStake = v.registeredTranscoder
+      ? (v.nonVoteStake as BigInt)
+      : BigInt.fromI32(0)
+
     if (v.choiceID == 'Yes') {
-      pollTally.yes = pollTally.yes.plus(
-        v.voteStake.minus(v.nonVoteStake as BigInt),
-      )
+      pollTally.yes = pollTally.yes.plus(v.voteStake.minus(nonVoteStake))
     }
     if (v.choiceID == 'No') {
-      pollTally.no = pollTally.no.plus(
-        v.voteStake.minus(v.nonVoteStake as BigInt),
-      )
+      pollTally.no = pollTally.no.plus(v.voteStake.minus(nonVoteStake))
     }
   }
   pollTally.save()

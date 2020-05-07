@@ -215,6 +215,7 @@ type Vote @entity {
   nonVoteStake: BigInt
   choiceID: PollChoice
   poll: Poll
+  registeredTranscoder: Boolean
 }
 
 ###############################################################################
