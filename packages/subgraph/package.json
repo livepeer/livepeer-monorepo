@@ -27,6 +27,7 @@
     "js-yaml": "^3.13.1",
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
+    "truffle": "^5.1.24",
     "typy": "^3.3.0"
   },
   "workspaces": {
@@ -37,8 +38,5 @@
       "@graphprotocol/graph-cli",
       "@graphprotocol/graph-ts"
     ]
-  },
-  "dependencies": {
-    "truffle": "^5.1.22"
   }
 }
