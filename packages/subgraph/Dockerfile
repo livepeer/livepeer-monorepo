@@ -29,7 +29,7 @@ COPY package.json /subgraph/package.json
 COPY yarn.lock /subgraph/yarn.lock
 COPY schema.graphql /subgraph/schema.graphql
 COPY subgraph.template.yaml /subgraph/subgraph.template.yaml
-COPY templatify.yaml /subgraph/templatify.yaml
+COPY templatify.js /subgraph/templatify.js
 COPY truffle.js /subgraph/truffle.js
 COPY tsconfig.json /subgraph/tsconfig.json
 
