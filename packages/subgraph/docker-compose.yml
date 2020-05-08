@@ -20,7 +20,7 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: 'development:http://host.docker.internal:8545'
   ipfs:
-    image: ipfs/go-ipfs
+    image: ipfs/go-ipfs:v0.4.23
     container_name: ipfs
     ports:
       - '5001:5001'
