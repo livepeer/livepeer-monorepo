@@ -9,6 +9,9 @@ import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
 import { makeNextHREF } from './helpers'
 import path from 'path'
+import cryptoRandomString from 'crypto-random-string'
+
+const mistSafeCharacters = 'abcdefghijklmnopqrstuvwxyz0123456789_'
 
 const app = Router()
 
@@ -67,12 +70,19 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 })
 
 app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
+  if (!req.body || !req.body.name) {
+    res.status(422)
+    return res.json({
+      errors: ['missing name'],
+    })
+  }
   const id = uuid()
+  const streamId = cryptoRandomString({length: 12, characters: mistSafeCharacters})
 
-  let objectStoreID
+  let objectStoreId
   if (req.body.objectStoreId) {
     await req.store.get(`objectstores/${req.user.id}/${req.body.objectStoreId}`)
-    objectStoreID = req.body.objectStoreId
+    objectStoreId = req.body.objectStoreId
   }
 
   const doc = wowzaHydrate({
@@ -80,8 +90,9 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     kind: 'stream',
     userId: req.user.id,
     renditions: {},
-    objectStoreId: objectStoreID,
+    objectStoreId,
     id,
+    streamId,
   })
 
   await req.store.create(doc)

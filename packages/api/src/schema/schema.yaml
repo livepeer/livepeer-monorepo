@@ -53,6 +53,12 @@ components:
         transcodedSegments:
           type: number
           example: 2
+        streamId:
+          type: string
+          readOnly: true
+          example: hgebdhhigq
+          description: Used to form playback URL
+          unique: true
         profiles:
           type: array
           items:

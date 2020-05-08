@@ -35,10 +35,10 @@ export default ({ userId, id }) => {
       {streams.length === 0 ? (
         <p>No streams created yet</p>
       ) : (
-        <Table sx={{ gridTemplateColumns: "auto 1fr auto auto auto" }}>
+        <Table sx={{ gridTemplateColumns: "auto auto auto auto auto" }}>
           <TableRow variant="header">
-            <Box>ID</Box>
             <Box>Name</Box>
+            <Box>Stream ID</Box>
             <Box>Details</Box>
             <Box>Segments</Box>
             <Box>Last Active</Box>
@@ -51,7 +51,8 @@ export default ({ userId, id }) => {
               sourceSegments,
               transcodedSegments,
               presets,
-              renditions
+              profiles,
+              streamId
             } = stream;
             let formattedLastSeen = <em>unseen</em>;
             if (lastSeen) {
@@ -63,16 +64,16 @@ export default ({ userId, id }) => {
             if (presets?.length) {
               details = `${presets}`;
             }
-            if (Object.keys(renditions || {}).length) {
+            if (profiles?.length) {
               if (details) {
                 details += "/";
               }
-              details += `${renditions}`;
+              details += profiles.map(({name}) => name).join(",")
             }
             return (
               <TableRow key={id}>
-                <Box>{id}</Box>
                 <Box>{name}</Box>
+                <Box>{streamId}</Box>
                 <Box>{details}</Box>
                 <Box>
                   <span>
