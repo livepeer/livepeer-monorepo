@@ -37,10 +37,10 @@ if (process.env.DOCKER) {
 }
 
 const fetchSubgraphs = createApolloFetch({
-  uri: 'http://${graphNodeIP}:8000/subgraphs',
+  uri: `http://${graphNodeIP}:8000/subgraphs`,
 })
 const fetchSubgraph = createApolloFetch({
-  uri: 'http://${graphNodeIP}:8000/subgraphs/name/livepeer/livepeer',
+  uri: `http://${graphNodeIP}:8000/subgraphs/name/livepeer/livepeer`,
 })
 
 const defaults = { gas: 1000000 }
