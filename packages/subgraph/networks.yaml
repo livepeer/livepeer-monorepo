@@ -61,8 +61,8 @@ rinkeby:
       address: '40897Ff6e44Ca2e145A691701897844669Bf7cee'
       startBlock: 5325857
     pollCreator:
-      address: '93cc555d04e93c75880a046164e370dd90dc0d29'
-      startBlock: 6430808
+      address: '149805ef90fada12d27e8a020b6c138f3d86a9a3'
+      startBlock: 6459857
   networkName: rinkeby
 development:
   contracts:
