@@ -131,6 +131,7 @@ contract('Subgraph Integration Tests', accounts => {
   let delegator3
   let delegator4
   let delegator5
+  let delegator6
 
   let rewardCut
   let feeShare
@@ -142,7 +143,7 @@ contract('Subgraph Integration Tests', accounts => {
   let delegator4StartStake
   let roundLength
   let pollCreationCost
-  let voters
+  let voters = {}
 
   const mineAndInitializeRound = async roundLength => {
     await rpc.waitUntilNextBlockMultiple(parseInt(roundLength))
@@ -198,13 +199,17 @@ contract('Subgraph Integration Tests', accounts => {
     })
 
     assert.equal(
-      subgraphPollData.data.polls[0].tally.yes,
+      subgraphPollData.data.polls[0].tally
+        ? subgraphPollData.data.polls[0].tally.yes
+        : '0',
       yesTally,
       'incorrect yes tally',
     )
 
     assert.equal(
-      subgraphPollData.data.polls[0].tally.no,
+      subgraphPollData.data.polls[0].tally
+        ? subgraphPollData.data.polls[0].tally.no
+        : '0',
       noTally,
       'incorrect no tally',
     )
@@ -218,29 +223,7 @@ contract('Subgraph Integration Tests', accounts => {
     delegator3 = accounts[4]
     delegator4 = accounts[5]
     delegator5 = accounts[6]
-
-    voters = {
-      [transcoder1]: {
-        choiceID: 0,
-        registeredTranscoder: true,
-        overrides: [delegator1, delegator2, delegator3],
-      },
-      [delegator1]: {
-        choiceID: 1,
-        registeredTranscoder: false,
-        overrides: [],
-      },
-      [delegator2]: {
-        choiceID: 0,
-        registeredTranscoder: false,
-        overrides: [],
-      },
-      [delegator3]: {
-        choiceID: 1,
-        registeredTranscoder: false,
-        overrides: [],
-      },
-    }
+    delegator6 = accounts[7]
 
     await RoundsManager.methods.setRoundLength(20).send({ from: accounts[0] })
 
@@ -268,6 +251,9 @@ contract('Subgraph Integration Tests', accounts => {
       .send({ from: accounts[0] })
     await Token.methods
       .transfer(delegator5, transferAmount)
+      .send({ from: accounts[0] })
+    await Token.methods
+      .transfer(delegator6, transferAmount)
       .send({ from: accounts[0] })
 
     await mineAndInitializeRound(roundLength)
@@ -378,6 +364,29 @@ contract('Subgraph Integration Tests', accounts => {
     })
     const pollAddress = subgraphPollData.data.polls[0].id
     const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
+
+    voters = {
+      [transcoder1]: {
+        choiceID: 0,
+        registeredTranscoder: true,
+        overrides: [delegator1, delegator2, delegator3],
+      },
+      [delegator1]: {
+        choiceID: 1,
+        registeredTranscoder: false,
+        overrides: [],
+      },
+      [delegator2]: {
+        choiceID: 0,
+        registeredTranscoder: false,
+        overrides: [],
+      },
+      [delegator3]: {
+        choiceID: 1,
+        registeredTranscoder: false,
+        overrides: [],
+      },
+    }
 
     for (voter in voters) {
       await Poll.methods.vote(voters[voter].choiceID).send({ from: voter })
@@ -507,7 +516,7 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after delegator that has not voted rebonds to   a transcoder that has', async () => {
+  it('correctly tallies poll after delegator that has not voted rebonds to a transcoder that has', async () => {
     await BondingManager.methods.rebond(0).send({ from: delegator4 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
@@ -559,7 +568,7 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after delegator 5 votes', async () => {
+  it('correctly tallies poll after delegator 5 votes and overrides its delegate vote', async () => {
     let subgraphPollData = await fetchSubgraph({
       query: `{ polls { id } }`,
     })
@@ -584,6 +593,18 @@ contract('Subgraph Integration Tests', accounts => {
       .send({ from: transcoder1 })
 
     voters[transcoder1].registeredTranscoder = false
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
+  it('correctly tallies poll after delegator with zero voting power votes', async () => {
+    let subgraphPollData = await fetchSubgraph({
+      query: `{ polls { id } }`,
+    })
+    const pollAddress = subgraphPollData.data.polls[0].id
+    const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
+
+    Poll.methods.vote(1).send({ from: delegator6 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
