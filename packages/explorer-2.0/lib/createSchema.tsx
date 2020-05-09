@@ -193,6 +193,10 @@ export default async () => {
         },
         estimatedTimeRemaining: {
           async resolve(_poll, _args, _context, _info) {
+            const blockData = await _context.livepeer.rpc.getBlock('latest')
+            if (parseInt(blockData.number) > parseInt(_poll.endBlock)) {
+              return null
+            }
             const countdownRaw = await fetch(
               `https://api${
                 process.env.NETWORK === 'rinkeby' ? '-rinkeby' : ''
@@ -207,18 +211,9 @@ export default async () => {
         endTime: {
           async resolve(_poll, _args, _context, _info) {
             const blockData = await _context.livepeer.rpc.getBlock('latest')
-            if (parseInt(blockData.number) > parseInt(_poll.endBlock)) {
-              const blockInfoRaw = await fetch(
-                `https://api${
-                  process.env.NETWORK === 'rinkeby' ? '-rinkeby' : ''
-                }.etherscan.io/api?module=block&action=getblockreward&blockno=${
-                  _poll.endBlock
-                }&apikey=${process.env.ETHERSCAN_API_KEY}`,
-              )
-              const blockInfoResponse = await blockInfoRaw.json()
-              return blockInfoResponse.result.timeStamp
-            }
-            return null
+            return parseInt(blockData.number) > parseInt(_poll.endBlock)
+              ? blockData.timestamp
+              : null
           },
         },
       },

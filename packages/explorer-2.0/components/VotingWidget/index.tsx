@@ -49,7 +49,7 @@ export default ({ data }) => {
     delegate = data?.myAccount?.delegator?.delegate
   }
   return (
-    <Box>
+    <Box sx={{ width: '100%' }}>
       <Box>
         <Box
           sx={{
@@ -169,8 +169,7 @@ export default ({ data }) => {
                 ? 'Final Results'
                 : moment
                     .duration(data.poll.estimatedTimeRemaining, 'seconds')
-                    .humanize()}{' '}
-              left
+                    .humanize() + ' left'}
             </Box>
           </Box>
 
