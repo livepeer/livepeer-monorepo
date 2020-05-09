@@ -25,7 +25,13 @@ export function vote(event: VoteEvent): void {
   let poll = Poll.load(event.address.toHex()) as Poll
   let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
 
-  let vote = Vote.load(voteId) || new Vote(voteId)
+  let vote = Vote.load(voteId)
+  if (vote == null) {
+    vote = new Vote(voteId)
+    // bool types must be set to something before they can accessed
+    vote.registeredTranscoder = false
+  }
+
   let firstTimeVoter = vote.choiceID == null
 
   if (event.params.choiceID.equals(BigInt.fromI32(0))) {
