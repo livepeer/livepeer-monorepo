@@ -33,7 +33,7 @@ const srcDir = path.join(__dirname, '..')
 
 let graphNodeIP = '127.0.0.1'
 if (process.env.DOCKER) {
-  graphNodeIP = "graph-node"
+  graphNodeIP = 'graph-node'
 }
 
 const fetchSubgraphs = createApolloFetch({
@@ -191,8 +191,6 @@ contract('Subgraph Integration Tests', accounts => {
     delegator2 = accounts[3]
     delegator3 = accounts[4]
     delegator4 = accounts[5]
-
-    await RoundsManager.methods.setRoundLength(20).send({ from: accounts[0] })
 
     pollCreationCost = await PollCreator.methods.POLL_CREATION_COST().call()
     roundLength = await RoundsManager.methods.roundLength().call()
