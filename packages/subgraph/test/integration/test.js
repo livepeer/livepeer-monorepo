@@ -31,11 +31,16 @@ const PollCreator = new web3.eth.Contract(PollCreatorABI, pollCreatorAddress)
 
 const srcDir = path.join(__dirname, '..')
 
+let graphNodeIP = '127.0.0.1'
+if (process.env.DOCKER) {
+  graphNodeIP = 'graph-node'
+}
+
 const fetchSubgraphs = createApolloFetch({
-  uri: 'http://127.0.0.1:8000/subgraphs',
+  uri: `http://${graphNodeIP}:8000/subgraphs`,
 })
 const fetchSubgraph = createApolloFetch({
-  uri: 'http://127.0.0.1:8000/subgraphs/name/livepeer/livepeer',
+  uri: `http://${graphNodeIP}:8000/subgraphs/name/livepeer/livepeer`,
 })
 
 const defaults = { gas: 1000000 }
@@ -187,7 +192,7 @@ contract('Subgraph Integration Tests', accounts => {
     delegator3 = accounts[4]
     delegator4 = accounts[5]
 
-    await RoundsManager.methods.setRoundLength(50).send({ from: accounts[0] })
+    await RoundsManager.methods.setRoundLength(20).send({ from: accounts[0] })
 
     pollCreationCost = await PollCreator.methods.POLL_CREATION_COST().call()
     roundLength = await RoundsManager.methods.roundLength().call()
@@ -282,8 +287,14 @@ contract('Subgraph Integration Tests', accounts => {
     // Create and deploy the subgraph
     exec('yarn prepare:development')
     exec('yarn codegen')
-    exec(`yarn create:local`)
-    exec(`yarn deploy:local`)
+
+    if (process.env.DOCKER) {
+      exec(`yarn create:docker`)
+      exec(`yarn deploy:docker`)
+    } else {
+      exec(`yarn create:local`)
+      exec(`yarn deploy:local`)
+    }
   })
 
   it('subgraph does not fail', async () => {
