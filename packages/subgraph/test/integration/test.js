@@ -192,7 +192,7 @@ contract('Subgraph Integration Tests', accounts => {
     delegator3 = accounts[4]
     delegator4 = accounts[5]
 
-    await RoundsManager.methods.setRoundLength(50).send({ from: accounts[0] })
+    await RoundsManager.methods.setRoundLength(20).send({ from: accounts[0] })
 
     pollCreationCost = await PollCreator.methods.POLL_CREATION_COST().call()
     roundLength = await RoundsManager.methods.roundLength().call()
