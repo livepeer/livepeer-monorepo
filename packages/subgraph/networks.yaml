@@ -91,7 +91,7 @@ development:
       address: 'e982E462b094850F12AF94d21D470e21bE9D0E9C'
       startBlock: 0
     ticketBroker:
-      address: 'A94B7f0465E98609391C623d0560C5720a3f2D33'
+      address: 'A57B8a5584442B467b4689F1144D269d096A3daF'
       startBlock: 0
     pollCreator:
       address: '7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'

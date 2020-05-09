@@ -2,21 +2,6 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "pollCreationCost",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
     "name": "QUORUM",
     "outputs": [
       {
@@ -32,7 +17,22 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "THRESHOLD",
+    "name": "POLL_CREATION_COST",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "QUOTA",
     "outputs": [
       {
         "internalType": "uint256",
@@ -80,11 +80,6 @@
         "internalType": "address",
         "name": "_tokenAddr",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_pollCreationCost",
-        "type": "uint256"
       }
     ],
     "payable": false,
@@ -121,7 +116,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "threshold",
+        "name": "quota",
         "type": "uint256"
       }
     ],

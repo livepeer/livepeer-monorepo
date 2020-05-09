@@ -9,7 +9,7 @@ export function pollCreated(event: PollCreatedEvent): void {
   poll.proposal = event.params.proposal.toString()
   poll.endBlock = event.params.endBlock
   poll.quorum = event.params.quorum
-  poll.threshold = event.params.threshold
+  poll.quota = event.params.quota
   poll.save()
 
   // Instantiate data source template
@@ -32,6 +32,6 @@ export function pollCreated(event: PollCreatedEvent): void {
   pollCreated.proposal = event.params.proposal
   pollCreated.endBlock = event.params.endBlock
   pollCreated.quorum = event.params.quorum
-  pollCreated.threshold = event.params.threshold
+  pollCreated.quota = event.params.quota
   pollCreated.save()
 }
