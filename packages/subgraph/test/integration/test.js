@@ -135,6 +135,7 @@ contract('Subgraph Integration Tests', accounts => {
   let rewardCut
   let feeShare
   let transcoder1StartStake
+  let transcoder2StartStake
   let delegator1StartStake
   let delegator2StartStake
   let delegator3StartStake
@@ -290,6 +291,17 @@ contract('Subgraph Integration Tests', accounts => {
     await BondingManager.methods
       .transcoder(rewardCut, feeShare)
       .send({ from: transcoder1 })
+
+    // Register transcoder 2
+    await Token.methods
+      .approve(bondingManagerAddress, transcoder2StartStake)
+      .send({ from: transcoder2 })
+    await BondingManager.methods
+      .bond(transcoder2StartStake, transcoder2)
+      .send({ from: transcoder2 })
+    await BondingManager.methods
+      .transcoder(rewardCut, feeShare)
+      .send({ from: transcoder2 })
 
     // Delegator 1 delegates to transcoder 1
     await Token.methods
