@@ -193,7 +193,7 @@ type Poll @entity {
   proposal: String!
   endBlock: BigInt!
   quorum: BigInt!
-  threshold: BigInt!
+  quota: BigInt!
   tally: PollTally
   votes: [Vote!]
 }
@@ -601,5 +601,5 @@ type PollCreated implements Transaction @entity {
   proposal: Bytes
   endBlock: BigInt
   quorum: BigInt
-  threshold: BigInt
+  quota: BigInt
 }

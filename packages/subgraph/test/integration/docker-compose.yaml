@@ -1,5 +1,17 @@
 version: '3'
 services:
+  subgraph-tests:
+    image: livepeer/subgraph:latest
+    container_name: subgraph-tests
+    entrypoint: ["wait-for-it.sh", "ganache:8545", "--", "yarn", "test:docker"]
+    links:
+        - ganache
+        - graph-node
+  ganache:
+    image: livepeer/ganache-with-livepeer-protocol:streamflow
+    container_name: ganache
+    ports:
+        - '8545:8545'
   graph-node:
     image: graphprotocol/graph-node:v0.18.0
     container_name: graph-node
@@ -10,6 +22,7 @@ services:
       - '8030:8030'
       - '8040:8040'
     depends_on:
+      - ganache
       - ipfs
       - postgres
     environment:
@@ -18,7 +31,7 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'development:http://host.docker.internal:8545'
+      ethereum: 'development:http://ganache:8545'
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     container_name: ipfs
