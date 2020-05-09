@@ -17,17 +17,33 @@ const bondingManagerAddress = '0xA94B7f0465E98609391C623d0560C5720a3f2D33'
 const livepeerTokenAddress = '0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
 const pollCreatorAddress = '0x7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
 
-const Controller = new web3.eth.Contract(ControllerABI, controllerAddress)
+const options = { gas: 1000000 }
+
+const Controller = new web3.eth.Contract(
+  ControllerABI,
+  controllerAddress,
+  options,
+)
 const RoundsManager = new web3.eth.Contract(
   RoundsManagerABI,
   roundsManagerAddress,
+  options,
 )
 const BondingManager = new web3.eth.Contract(
   BondingManagerABI,
   bondingManagerAddress,
+  options,
 )
-const Token = new web3.eth.Contract(LivepeerTokenABI, livepeerTokenAddress)
-const PollCreator = new web3.eth.Contract(PollCreatorABI, pollCreatorAddress)
+const Token = new web3.eth.Contract(
+  LivepeerTokenABI,
+  livepeerTokenAddress,
+  options,
+)
+const PollCreator = new web3.eth.Contract(
+  PollCreatorABI,
+  pollCreatorAddress,
+  options,
+)
 
 const srcDir = path.join(__dirname, '..')
 
@@ -42,8 +58,6 @@ const fetchSubgraphs = createApolloFetch({
 const fetchSubgraph = createApolloFetch({
   uri: `http://${graphNodeIP}:8000/subgraphs/name/livepeer/livepeer`,
 })
-
-const defaults = { gas: 1000000 }
 
 const TOKEN_UNIT = new BN(10).pow(new BN(18))
 
@@ -131,9 +145,7 @@ contract('Subgraph Integration Tests', accounts => {
 
   const mineAndInitializeRound = async roundLength => {
     await rpc.waitUntilNextBlockMultiple(parseInt(roundLength))
-    await RoundsManager.methods
-      .initializeRound()
-      .send({ ...defaults, from: accounts[0] })
+    await RoundsManager.methods.initializeRound().send({ from: accounts[0] })
   }
 
   const getStake = async addr => {
@@ -274,10 +286,10 @@ contract('Subgraph Integration Tests', accounts => {
       .send({ from: transcoder1 })
     await BondingManager.methods
       .bond(transcoder1StartStake, transcoder1)
-      .send({ ...defaults, from: transcoder1 })
+      .send({ from: transcoder1 })
     await BondingManager.methods
       .transcoder(rewardCut, feeShare)
-      .send({ ...defaults, from: transcoder1 })
+      .send({ from: transcoder1 })
 
     // Delegator 1 delegates to transcoder 1
     await Token.methods
@@ -287,7 +299,7 @@ contract('Subgraph Integration Tests', accounts => {
       })
     await BondingManager.methods
       .bond(delegator1StartStake, transcoder1)
-      .send({ ...defaults, from: delegator1 })
+      .send({ from: delegator1 })
 
     // Delegator 2 delegates to transcoder 1
     await Token.methods
@@ -296,7 +308,6 @@ contract('Subgraph Integration Tests', accounts => {
         from: delegator2,
       })
     await BondingManager.methods.bond(delegator2StartStake, transcoder1).send({
-      ...defaults,
       from: delegator2,
     })
 
@@ -307,7 +318,6 @@ contract('Subgraph Integration Tests', accounts => {
         from: delegator3,
       })
     await BondingManager.methods.bond(delegator3StartStake, transcoder1).send({
-      ...defaults,
       from: delegator3,
     })
 
@@ -338,10 +348,8 @@ contract('Subgraph Integration Tests', accounts => {
       )
       await Token.methods
         .approve(pollCreatorAddress, pollCreationCost)
-        .send({ from: transcoder1, ...defaults })
-      await PollCreator.methods
-        .createPoll(hash)
-        .send({ ...defaults, from: transcoder1 })
+        .send({ from: transcoder1 })
+      await PollCreator.methods.createPoll(hash).send({ from: transcoder1 })
       await waitForSubgraphToBeSynced()
 
       let pollData = await fetchSubgraph({
@@ -357,7 +365,7 @@ contract('Subgraph Integration Tests', accounts => {
       query: `{ polls { id } }`,
     })
     const pollAddress = subgraphPollData.data.polls[0].id
-    const Poll = new web3.eth.Contract(PollABI, pollAddress)
+    const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
 
     for (voter in voters) {
       await Poll.methods.vote(voters[voter].choiceID).send({ from: voter })
@@ -397,9 +405,7 @@ contract('Subgraph Integration Tests', accounts => {
 
   it('correctly tallies poll after reward', async () => {
     await mineAndInitializeRound(roundLength)
-    await BondingManager.methods
-      .reward()
-      .send({ ...defaults, from: transcoder1 })
+    await BondingManager.methods.reward().send({ from: transcoder1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
@@ -411,7 +417,7 @@ contract('Subgraph Integration Tests', accounts => {
     })
     await BondingManager.methods
       .bond(bondAmount, transcoder1)
-      .send({ ...defaults, from: transcoder1 })
+      .send({ from: transcoder1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
@@ -420,15 +426,13 @@ contract('Subgraph Integration Tests', accounts => {
     let unbondAmount = 1000
     await BondingManager.methods
       .unbond(unbondAmount)
-      .send({ ...defaults, from: transcoder1 })
+      .send({ from: transcoder1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
   it('correctly tallies poll after transcoder rebonds', async () => {
-    await BondingManager.methods
-      .rebond(0)
-      .send({ ...defaults, from: transcoder1 })
+    await BondingManager.methods.rebond(0).send({ from: transcoder1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
@@ -440,39 +444,33 @@ contract('Subgraph Integration Tests', accounts => {
     })
     await BondingManager.methods
       .bond(bondAmount, transcoder1)
-      .send({ ...defaults, from: delegator1 })
+      .send({ from: delegator1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
   it('correctly tallies poll after delegator unbonds', async () => {
     let unbondAmount = 1000
-    await BondingManager.methods
-      .unbond(unbondAmount)
-      .send({ ...defaults, from: delegator1 })
+    await BondingManager.methods.unbond(unbondAmount).send({ from: delegator1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
   it('correctly tallies poll after delegator rebonds', async () => {
-    await BondingManager.methods
-      .rebond(0)
-      .send({ ...defaults, from: delegator1 })
+    await BondingManager.methods.rebond(0).send({ from: delegator1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
   it('correctly tallies poll after delegator claims earnings', async () => {
     await mineAndInitializeRound(roundLength)
-    await BondingManager.methods
-      .reward()
-      .send({ ...defaults, from: transcoder1 })
+    await BondingManager.methods.reward().send({ from: transcoder1 })
 
     const currentRound = await RoundsManager.methods.currentRound().call()
 
     await BondingManager.methods
       .claimEarnings(currentRound)
-      .send({ ...defaults, from: delegator1 })
+      .send({ from: delegator1 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
@@ -484,7 +482,7 @@ contract('Subgraph Integration Tests', accounts => {
     })
     await BondingManager.methods
       .bond(bondAmount, transcoder1)
-      .send({ ...defaults, from: delegator4 })
+      .send({ from: delegator4 })
     await mineAndInitializeRound(roundLength)
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
@@ -492,17 +490,13 @@ contract('Subgraph Integration Tests', accounts => {
 
   it('correctly tallies poll after delegator that has not voted unbonds from a transcoder that has', async () => {
     let unbondAmount = 500
-    await BondingManager.methods
-      .unbond(unbondAmount)
-      .send({ ...defaults, from: delegator4 })
+    await BondingManager.methods.unbond(unbondAmount).send({ from: delegator4 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
 
   it('correctly tallies poll after delegator that has not voted rebonds to   a transcoder that has', async () => {
-    await BondingManager.methods
-      .rebond(0)
-      .send({ ...defaults, from: delegator4 })
+    await BondingManager.methods.rebond(0).send({ from: delegator4 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
@@ -514,7 +508,7 @@ contract('Subgraph Integration Tests', accounts => {
     })
     await BondingManager.methods
       .bond(bondAmount, transcoder2)
-      .send({ ...defaults, from: delegator1 })
+      .send({ from: delegator1 })
 
     voters[transcoder1].overrides = voters[transcoder1].overrides.filter(
       t => t !== delegator1,
@@ -531,7 +525,7 @@ contract('Subgraph Integration Tests', accounts => {
     })
     await BondingManager.methods
       .bond(bondAmount, delegator2)
-      .send({ ...defaults, from: delegator5 })
+      .send({ from: delegator5 })
 
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
@@ -544,7 +538,7 @@ contract('Subgraph Integration Tests', accounts => {
     })
     await BondingManager.methods
       .bond(bondAmount, delegator2)
-      .send({ ...defaults, from: delegator2 })
+      .send({ from: delegator2 })
     voters[transcoder1].overrides = voters[transcoder1].overrides.filter(
       t => t !== delegator2,
     )
@@ -558,7 +552,7 @@ contract('Subgraph Integration Tests', accounts => {
       query: `{ polls { id } }`,
     })
     const pollAddress = subgraphPollData.data.polls[0].id
-    const Poll = new web3.eth.Contract(PollABI, pollAddress)
+    const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
 
     Poll.methods.vote(1).send({ from: delegator5 })
     voters[delegator5] = {
@@ -575,7 +569,7 @@ contract('Subgraph Integration Tests', accounts => {
     let unbondAmount = await getStake(transcoder1)
     await BondingManager.methods
       .unbond(unbondAmount)
-      .send({ ...defaults, from: transcoder1 })
+      .send({ from: transcoder1 })
 
     voters[transcoder1].registeredTranscoder = false
     await waitForSubgraphToBeSynced()
