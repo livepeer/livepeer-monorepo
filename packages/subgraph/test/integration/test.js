@@ -565,7 +565,7 @@ contract('Subgraph Integration Tests', accounts => {
     const pollAddress = subgraphPollData.data.polls[0].id
     const Poll = new web3.eth.Contract(PollABI, pollAddress, defaults)
 
-    Poll.methods.vote(1).send({ from: delegator5 })
+    await Poll.methods.vote(1).send({ from: delegator5 })
     voters[delegator5] = {
       choiceID: 1,
       registeredTranscoder: false,
