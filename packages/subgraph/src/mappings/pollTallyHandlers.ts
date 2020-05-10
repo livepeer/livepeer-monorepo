@@ -136,12 +136,6 @@ export function updatePollTallyOnBond(event: BondEvent): void {
     updateTally = true
 
     // if voter is self delegating update its transcoder status
-    let protocol = Protocol.load('0')
-    let bondingManager = BondingManager.bind(event.address)
-    let pendingStake = bondingManager.pendingStake(
-      Address.fromString(voterAddress),
-      BigInt.fromI32(protocol.currentRound as i32),
-    )
     if (newDelegateVote == null) {
       newDelegateVote = new Vote(newDelegateVoteId)
       if (newDelegate.status == 'Registered') {
@@ -157,7 +151,7 @@ export function updatePollTallyOnBond(event: BondEvent): void {
       .plus(event.params.bondedAmount)
     newDelegateVote.save()
 
-    vote.voteStake = pendingStake
+    vote.voteStake = event.params.bondedAmount
     vote.save()
   }
 

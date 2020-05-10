@@ -5,13 +5,11 @@ const RPC = require('../../utils/rpc')
 const execSync = require('child_process').execSync
 
 const RoundsManagerABI = require('../../abis/RoundsManager_streamflow.json')
-const ControllerABI = require('../../abis/Controller.json')
 const BondingManagerABI = require('../../abis/BondingManager_streamflow.json')
 const LivepeerTokenABI = require('../../abis/LivepeerToken.json')
 const PollCreatorABI = require('../../abis/PollCreator.json')
 const PollABI = require('../../abis/Poll.json')
 
-const controllerAddress = '0xC89Ce4735882C9F0f0FE26686c53074E09B0D550'
 const roundsManagerAddress = '0x5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
 const bondingManagerAddress = '0xA94B7f0465E98609391C623d0560C5720a3f2D33'
 const livepeerTokenAddress = '0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
@@ -19,11 +17,6 @@ const pollCreatorAddress = '0x7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
 
 const defaults = { gas: 1000000 }
 
-const Controller = new web3.eth.Contract(
-  ControllerABI,
-  controllerAddress,
-  defaults,
-)
 const RoundsManager = new web3.eth.Contract(
   RoundsManagerABI,
   roundsManagerAddress,
@@ -58,8 +51,6 @@ const fetchSubgraphs = createApolloFetch({
 const fetchSubgraph = createApolloFetch({
   uri: `http://${graphNodeIP}:8000/subgraphs/name/livepeer/livepeer`,
 })
-
-const TOKEN_UNIT = new BN(10).pow(new BN(18))
 
 const exec = cmd => {
   try {
@@ -121,7 +112,6 @@ let waitForSubgraphToBeSynced = async () =>
 
 contract('Subgraph Integration Tests', accounts => {
   const TOKEN_UNIT = 10 ** 18
-  const bondAmount = new BN(1).times(TOKEN_UNIT)
   const rpc = new RPC(web3)
   const voteMap = ['Yes', 'No']
 
@@ -604,7 +594,7 @@ contract('Subgraph Integration Tests', accounts => {
     const pollAddress = subgraphPollData.data.polls[0].id
     const Poll = new web3.eth.Contract(PollABI, pollAddress, defaults)
 
-    Poll.methods.vote(1).send({ from: delegator6 })
+    await Poll.methods.vote(1).send({ from: delegator6 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
