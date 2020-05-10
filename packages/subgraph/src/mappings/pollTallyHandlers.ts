@@ -135,7 +135,8 @@ export function updatePollTallyOnBond(event: BondEvent): void {
   ) {
     updateTally = true
 
-    // if voter is self delegating update its transcoder status
+    // if delegate has not voted, create a "placeholder" vote for tracking
+    // nonVoteStake in case it happens to register during the poll period
     if (newDelegateVote == null) {
       newDelegateVote = new Vote(newDelegateVoteId)
       if (newDelegate.status == 'Registered') {
@@ -155,8 +156,8 @@ export function updatePollTallyOnBond(event: BondEvent): void {
     vote.save()
   }
 
-  // if delegator, oldDelegate, or newDelegate attached to even voted in
-  // active poll then tallyVotes
+  // if delegator, oldDelegate, or newDelegate attached to event voted in poll
+  // then update the tally
   if (updateTally) {
     tallyVotes(poll)
   }
