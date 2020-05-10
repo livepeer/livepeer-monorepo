@@ -28,8 +28,8 @@ mainnet:
       address: '5b1ce829384eebfa30286f12d1e7a695ca45f5d2'
       startBlock: 9274420
     pollCreator:
-      address: '7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
-      startBlock: 9274420
+      address: 'bf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c'
+      startBlock: 10039868
   networkName: mainnet
 rinkeby:
   contracts:
