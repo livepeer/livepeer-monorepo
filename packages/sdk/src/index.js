@@ -39,7 +39,7 @@ export { TRANSCODER_STATUS }
 // Defaults
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
-  pollCreatorAddress: '0x93cc555d04e93c75880a046164e370dd90dc0d29',
+  pollCreatorAddress: '0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c',
   provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',

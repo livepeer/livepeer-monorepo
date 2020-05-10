@@ -34,7 +34,7 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "THRESHOLD",
+      "name": "QUOTA",
       "outputs": [
         {
           "internalType": "uint256",
@@ -118,7 +118,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "threshold",
+          "name": "quota",
           "type": "uint256"
         }
       ],
