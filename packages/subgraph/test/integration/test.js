@@ -17,32 +17,32 @@ const bondingManagerAddress = '0xA94B7f0465E98609391C623d0560C5720a3f2D33'
 const livepeerTokenAddress = '0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
 const pollCreatorAddress = '0x7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
 
-const options = { gas: 1000000 }
+const defaults = { gas: 1000000 }
 
 const Controller = new web3.eth.Contract(
   ControllerABI,
   controllerAddress,
-  options,
+  defaults,
 )
 const RoundsManager = new web3.eth.Contract(
   RoundsManagerABI,
   roundsManagerAddress,
-  options,
+  defaults,
 )
 const BondingManager = new web3.eth.Contract(
   BondingManagerABI,
   bondingManagerAddress,
-  options,
+  defaults,
 )
 const Token = new web3.eth.Contract(
   LivepeerTokenABI,
   livepeerTokenAddress,
-  options,
+  defaults,
 )
 const PollCreator = new web3.eth.Contract(
   PollCreatorABI,
   pollCreatorAddress,
-  options,
+  defaults,
 )
 
 const srcDir = path.join(__dirname, '..')
@@ -363,7 +363,7 @@ contract('Subgraph Integration Tests', accounts => {
       query: `{ polls { id } }`,
     })
     const pollAddress = subgraphPollData.data.polls[0].id
-    const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
+    const Poll = new web3.eth.Contract(PollABI, pollAddress, defaults)
 
     voters = {
       [transcoder1]: {
@@ -573,7 +573,7 @@ contract('Subgraph Integration Tests', accounts => {
       query: `{ polls { id } }`,
     })
     const pollAddress = subgraphPollData.data.polls[0].id
-    const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
+    const Poll = new web3.eth.Contract(PollABI, pollAddress, defaults)
 
     Poll.methods.vote(1).send({ from: delegator5 })
     voters[delegator5] = {
@@ -602,7 +602,7 @@ contract('Subgraph Integration Tests', accounts => {
       query: `{ polls { id } }`,
     })
     const pollAddress = subgraphPollData.data.polls[0].id
-    const Poll = new web3.eth.Contract(PollABI, pollAddress, options)
+    const Poll = new web3.eth.Contract(PollABI, pollAddress, defaults)
 
     Poll.methods.vote(1).send({ from: delegator6 })
     await waitForSubgraphToBeSynced()
