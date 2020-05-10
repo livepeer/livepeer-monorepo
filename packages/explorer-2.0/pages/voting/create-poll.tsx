@@ -233,7 +233,9 @@ export async function getStaticProps() {
   })
   const lipsQuery = `
   {
-    repository(owner: "adamsoffer", name: "LIPS") {
+    repository(owner: "${
+      process.env.NETWORK === 'mainnet' ? 'livepeer' : 'adamsoffer'
+    }", name: "LIPS") {
       owner {
         login
       }
