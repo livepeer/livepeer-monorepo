@@ -4,7 +4,7 @@ query($id: ID!) {
     proposal
     endBlock
     quorum
-    threshold
+    quota
     status
     isActive
     totalVoteStake

@@ -15,11 +15,13 @@ import { useQuery } from '@apollo/react-hooks'
 import { withApollo } from '../../lib/apollo'
 import { useApolloClient } from '@apollo/react-hooks'
 import { MutationsContext } from '../../contexts'
+import Utils from 'web3-utils'
 
 const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   const context = useWeb3React()
   const client = useApolloClient()
-  const [pollCreationEnabled, setPollCreationEnabled] = useState(false)
+  const [sufficientAllowance, setSufficientAllowance] = useState(false)
+  const [sufficientBalance, setSufficientBalance] = useState(false)
   const ipfs = new IPFS({
     host: 'ipfs.infura.io',
     port: 5001,
@@ -30,6 +32,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     query($account: ID!) {
       account(id: $account) {
         pollCreatorAllowance
+        tokenBalance
       }
     }
   `
@@ -38,7 +41,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     variables: {
       account: context.account,
     },
-    pollInterval: 5000,
+    pollInterval: 4000,
     context: {
       library: context.library,
     },
@@ -48,13 +51,23 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   useEffect(() => {
     if (data) {
       if (
-        parseFloat(data.account.pollCreatorAllowance) >=
+        parseFloat(Utils.fromWei(data.account.pollCreatorAllowance)) >=
         (process.env.NETWORK === 'rinkeby' ? 10 : 100)
       ) {
-        setPollCreationEnabled(true)
+        setSufficientAllowance(true)
+      } else {
+        setSufficientAllowance(false)
+      }
+      if (
+        parseFloat(Utils.fromWei(data.account.tokenBalance)) >=
+        (process.env.NETWORK === 'rinkeby' ? 10 : 100)
+      ) {
+        setSufficientBalance(true)
+      } else {
+        setSufficientBalance(false)
       }
     }
-  }, [data])
+  }, [data, context.account])
 
   const [selectedProposal, setSelectedProposal] = useState(null)
   const { createPoll }: any = useContext(MutationsContext)
@@ -179,13 +192,19 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                 <Spinner variant="styles.spinner" />
               </Flex>
             ) : (
-              <Flex sx={{ mt: 4, justifyContent: 'flex-end' }}>
-                {parseFloat(data?.account?.pollCreatorAllowance) <
-                  (process.env.NETWORK === 'rinkeby' ? 10 : 100) && (
-                  <PollTokenApproval />
+              <Flex
+                sx={{ mt: 4, alignItems: 'center', justifyContent: 'flex-end' }}
+              >
+                {!sufficientAllowance && <PollTokenApproval />}
+                {sufficientAllowance && !sufficientBalance && (
+                  <Box sx={{ color: 'muted', fontSize: 0 }}>
+                    Insufficient balance. You need at least{' '}
+                    {process.env.NETWORK === 'rinkeby' ? 10 : 100} LPT to create
+                    a poll.
+                  </Box>
                 )}
                 <Button
-                  disabled={!pollCreationEnabled}
+                  disabled={!sufficientAllowance || !sufficientBalance}
                   type="submit"
                   sx={{ ml: 2, alignSelf: 'flex-end' }}
                 >

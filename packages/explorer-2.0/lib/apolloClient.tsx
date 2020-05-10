@@ -66,6 +66,7 @@ export default function createApolloClient(initialState, ctx) {
                 ? process.env.RPC_URL_1
                 : process.env.RPC_URL_4,
             controllerAddress: process.env.CONTROLLER_ADDRESS,
+            pollCreatorAddress: process.env.POLL_CREATOR_ADDRESS,
             ...(context.library && {
               provider: context.library._web3Provider,
             }),

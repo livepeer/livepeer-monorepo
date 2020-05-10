@@ -175,7 +175,7 @@ export default async () => {
             if (isActive) {
               return 'active'
             } else if (totalParticipation > _poll.quorum / 10000) {
-              if (totalSupport > _poll.threshold / 10000) {
+              if (totalSupport > _poll.quota / 10000) {
                 return 'passed'
               } else {
                 return 'rejected'

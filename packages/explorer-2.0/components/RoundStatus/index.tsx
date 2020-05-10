@@ -51,6 +51,7 @@ export default () => {
             ? process.env.RPC_URL_1
             : process.env.RPC_URL_4,
         controllerAddress: process.env.CONTROLLER_ADDRESS,
+        pollCreatorAddress: process.env.POLL_CREATOR_ADDRESS,
       })
       const { number } = await rpc.getBlock('latest')
       const {

@@ -191,7 +191,7 @@ const Poll = () => {
                 title={
                   <Flex sx={{ alignItems: 'center' }}>
                     <Box sx={{ color: 'muted' }}>
-                      Total Support ({pollData.threshold / 10000}% needed)
+                      Total Support ({pollData.quota / 10000}% needed)
                     </Box>
                     {/* <Flex>
                       <ReactTooltip

@@ -386,6 +386,7 @@ function renderVoteButton(data) {
     case 'Yes':
       return (
         <VoteButton
+          disabled={!(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)}
           sx={{ mt: 3, width: '100%' }}
           variant="red"
           choiceId={1}
@@ -397,6 +398,7 @@ function renderVoteButton(data) {
     case 'No':
       return (
         <VoteButton
+          disabled={!(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)}
           sx={{ mt: 3, width: '100%' }}
           choiceId={0}
           pollAddress={data.poll.id}
@@ -407,10 +409,23 @@ function renderVoteButton(data) {
     default:
       return (
         <Grid sx={{ mt: 3 }} gap={2} columns={[2]}>
-          <VoteButton choiceId={0} pollAddress={data.poll.id}>
+          <VoteButton
+            disabled={
+              !(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)
+            }
+            choiceId={0}
+            pollAddress={data.poll.id}
+          >
             Yes
           </VoteButton>
-          <VoteButton variant="red" choiceId={1} pollAddress={data.poll.id}>
+          <VoteButton
+            disabled={
+              !(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)
+            }
+            variant="red"
+            choiceId={1}
+            pollAddress={data.poll.id}
+          >
             No
           </VoteButton>
         </Grid>

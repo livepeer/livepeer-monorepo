@@ -10,6 +10,7 @@ const nextConfig = {
   env: {
     THREEBOX_ENABLED: true,
     CONTROLLER_ADDRESS: process.env.CONTROLLER_ADDRESS,
+    POLL_CREATOR_ADDRESS: process.env.POLL_CREATOR_ADDRESS,
     RPC_URL_1: process.env.RPC_URL_1,
     RPC_URL_4: process.env.RPC_URL_4,
     SUBGRAPH: process.env.SUBGRAPH,
