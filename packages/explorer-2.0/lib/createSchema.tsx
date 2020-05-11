@@ -57,7 +57,7 @@ export default async () => {
     const Web3 = require('web3')
     let web3 = new Web3(
       `https://eth-${
-        process.env.NETWORK ? 'rinkeby' : 'mainnet'
+        process.env.NETWORK === 'rinkeby' ? 'rinkeby' : 'mainnet'
       }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
     )
     let contract = new web3.eth.Contract(
