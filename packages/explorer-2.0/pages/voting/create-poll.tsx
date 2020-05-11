@@ -303,6 +303,7 @@ export async function getStaticProps() {
     transformedLip.attributes.created = transformedLip.attributes.created.toString()
     if (
       transformedLip.attributes.status === 'Proposed' &&
+      !transformedLip.attributes['part-of'] &&
       !createdPolls.includes(transformedLip.attributes.lip)
     )
       lips.push({ ...transformedLip, text: lip.content.text })
