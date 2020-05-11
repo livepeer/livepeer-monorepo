@@ -110,7 +110,6 @@ const Voting = () => {
               sx={{
                 fontSize: [3, 3, 4, 5],
                 display: 'flex',
-
                 alignItems: 'center',
               }}
             >
@@ -143,8 +142,13 @@ const Voting = () => {
                     <Card sx={{ color: 'text', display: 'block' }}>
                       <Flex
                         sx={{
+                          flexDirection: [
+                            'column-reverse',
+                            'column-reverse',
+                            'row',
+                          ],
                           justifyContent: 'space-between',
-                          alignItems: 'center',
+                          alignItems: ['flex-start', 'flex-start', 'center'],
                         }}
                       >
                         <Box>
@@ -171,7 +175,11 @@ const Voting = () => {
                         </Box>
                         <Text
                           variant={poll.status}
-                          sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+                          sx={{
+                            mb: ['4px', '4px', 0],
+                            fontWeight: 700,
+                            textTransform: 'capitalize',
+                          }}
                         >
                           {poll.status}
                         </Text>
@@ -185,20 +193,6 @@ const Voting = () => {
       )}
     </>
   )
-}
-
-function removeDuplicates(originalArray, prop) {
-  var newArray = []
-  var lookupObject = {}
-
-  for (var i in originalArray) {
-    lookupObject[originalArray[i][prop]] = originalArray[i]
-  }
-
-  for (i in lookupObject) {
-    newArray.push(lookupObject[i])
-  }
-  return newArray
 }
 
 Voting.getLayout = getLayout

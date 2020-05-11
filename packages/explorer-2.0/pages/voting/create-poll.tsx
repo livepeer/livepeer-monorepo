@@ -118,6 +118,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
             </Styled.h1>
             {!context.account && (
               <Button
+                sx={{ display: ['none', 'none', 'none', 'block'] }}
                 onClick={() => {
                   client.writeData({
                     data: {
@@ -164,26 +165,37 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   border: '1px solid',
                 }}
               >
-                <Flex sx={{ width: '100%', alignItems: 'center' }}>
-                  <Radio
-                    defaultChecked={i === 0}
-                    onChange={() => {
-                      setSelectedProposal({ gitCommitHash, text: lip.text })
-                    }}
-                    name="lip"
-                  />
-                  <Flex sx={{ width: '100%', justifyContent: 'space-between' }}>
-                    <Box>
+                <Flex
+                  sx={{
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Flex sx={{ alignItems: 'center' }}>
+                    <Radio
+                      defaultChecked={i === 0}
+                      onChange={() => {
+                        setSelectedProposal({ gitCommitHash, text: lip.text })
+                      }}
+                      name="lip"
+                    />
+                    <Box sx={{ width: '100%' }}>
                       LIP-{lip.attributes.lip} - {lip.attributes.title}
                     </Box>
-                    <a
-                      sx={{ color: 'primary' }}
-                      target="_blank"
-                      href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
-                    >
-                      View Proposal
-                    </a>
                   </Flex>
+                  <a
+                    sx={{
+                      ml: 1,
+                      minWidth: 108,
+                      display: 'block',
+                      color: 'primary',
+                    }}
+                    target="_blank"
+                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
+                  >
+                    View Proposal
+                  </a>
                 </Flex>
               </Label>
             ))}
