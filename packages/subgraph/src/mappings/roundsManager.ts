@@ -7,6 +7,7 @@ import {
   NewRound as NewRoundEvent,
   ParameterUpdate as ParameterUpdateEvent,
 } from '../types/RoundsManager/RoundsManager'
+import { BondingManager } from '../types/BondingManager/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import {
@@ -21,18 +22,19 @@ import {
 import {
   PERC_DIVISOR,
   makePoolId,
-  getBondingManagerInstance,
+  getBondingManagerAddress,
   makeEventId,
-} from './util'
+  EMPTY_ADDRESS,
+} from '../../utils/helpers'
 
 // Handler for NewRound events
 export function newRound(event: NewRoundEvent): void {
   let roundsManager = RoundsManager.bind(event.address)
   let roundNumber = event.params.round
-  let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000',
+  let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
+  let bondingManager = BondingManager.bind(
+    Address.fromString(bondingManagerAddress),
   )
-  let bondingManager = getBondingManagerInstance(dataSource.network())
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
   let active: boolean
@@ -56,7 +58,7 @@ export function newRound(event: NewRoundEvent): void {
     // "rewardTokens" is null for a given transcoder and round then we know
     // the transcoder failed to call reward()
     if (active) {
-      poolId = makePoolId(currentTranscoder, roundNumber.toString())
+      poolId = makePoolId(currentTranscoder.toHex(), roundNumber.toString())
       pool = new Pool(poolId)
       pool.round = roundNumber.toString()
       pool.delegate = currentTranscoder.toHex()
@@ -87,6 +89,7 @@ export function newRound(event: NewRoundEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
+  protocol.totalActiveStake = bondingManager.getTotalBonded()
   protocol.save()
 
   // Store transaction info

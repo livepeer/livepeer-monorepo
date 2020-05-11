@@ -5,6 +5,10 @@ const yaml = require('js-yaml')
 
 const { t } = require('typy')
 
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+  return arg1 == arg2 ? options.fn(this) : options.inverse(this)
+})
+
 function getNetworkNameForSubgraph() {
   switch (process.env.SUBGRAPH) {
     case undefined:

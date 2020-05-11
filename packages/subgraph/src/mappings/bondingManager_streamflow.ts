@@ -3,7 +3,7 @@ import {
   TranscoderActivated as TranscoderActivatedEvent,
   TranscoderDeactivated as TranscoderDeactivatedEvent,
   EarningsClaimed as EarningsClaimedEvent,
-} from '../types/BondingManager_LIP12/BondingManager'
+} from '../types/BondingManager_streamflow/BondingManager'
 
 import {
   Transcoder,
@@ -15,7 +15,7 @@ import {
   Protocol,
 } from '../types/schema'
 
-import { MAXIMUM_VALUE_UINT256, makeEventId } from './util'
+import { MAXIMUM_VALUE_UINT256, makeEventId } from '../../utils/helpers'
 
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   let transcoderAddress = event.params.transcoder
@@ -115,7 +115,9 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   let startRound = event.params.startRound
   let endRound = event.params.startRound
   let protocol = Protocol.load('0') || new Protocol('0')
-  let delegator = Delegator.load(delegatorAddress.toHex())
+  let delegator =
+    Delegator.load(delegatorAddress.toHex()) ||
+    new Delegator(delegatorAddress.toHex())
 
   delegator.lastClaimRound = event.params.endRound.toString()
   delegator.bondedAmount = delegator.bondedAmount.plus(rewards)

@@ -1,11 +1,11 @@
 diff --git a/node_modules/@graphprotocol/graph-cli/src/codegen/schema.js b/node_modules/@graphprotocol/graph-cli/src/codegen/schema.js
-index 1445798..30418b9 100644
+index af2ff31..82165cb 100644
 --- a/node_modules/@graphprotocol/graph-cli/src/codegen/schema.js
 +++ b/node_modules/@graphprotocol/graph-cli/src/codegen/schema.js
-@@ -129,7 +129,7 @@ module.exports = class SchemaCodeGenerator {
-                             'value',
-                             fieldValueType
-                           )}`
+@@ -127,7 +127,7 @@ module.exports = class SchemaCodeGenerator {
+ 
+ 
+     let getNonNullable = `return ${typesCodegen.valueToAsc('value', fieldValueType)}`
 -    let getNullable = `if (value === null) {
 +    let getNullable = `if (value === null || value.kind === ValueKind.NULL) {
                            return null

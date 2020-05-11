@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, store } from '@graphprotocol/graph-ts'
+import { store } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -22,7 +22,11 @@ import {
   Protocol,
 } from '../types/schema'
 
-import { makeUnbondingLockId, makeEventId } from './util'
+import {
+  makeUnbondingLockId,
+  makeEventId,
+  EMPTY_ADDRESS,
+} from '../../utils/helpers'
 
 export function bond(event: BondEvent): void {
   let bondingManager = BondingManager.bind(event.address)
@@ -34,20 +38,13 @@ export function bond(event: BondEvent): void {
   let delegateData = bondingManager.getDelegator(newDelegateAddress)
   let delegatorData = bondingManager.getDelegator(delegatorAddress)
   let protocol = Protocol.load('0') || new Protocol('0')
-
   let round = Round.load(protocol.currentRound)
-  let EMPTY_ADDRESS = Address.fromString(
-    '0000000000000000000000000000000000000000',
-  )
-
   let transcoder =
     Transcoder.load(newDelegateAddress.toHex()) ||
     new Transcoder(newDelegateAddress.toHex())
-
   let delegate =
     Delegator.load(newDelegateAddress.toHex()) ||
     new Delegator(newDelegateAddress.toHex())
-
   let delegator =
     Delegator.load(delegatorAddress.toHex()) ||
     new Delegator(delegatorAddress.toHex())
@@ -86,7 +83,6 @@ export function bond(event: BondEvent): void {
 
     // keep track of how much new stake was introduced this round
     round.totalNewStake = round.totalNewStake.plus(additionalAmount)
-
     round.save()
   }
 
@@ -95,7 +91,7 @@ export function bond(event: BondEvent): void {
 
   delegator.delegate = newDelegateAddress.toHex()
   delegator.lastClaimRound = protocol.currentRound
-  delegator.bondedAmount = delegatorData.value0
+  delegator.bondedAmount = bondedAmount
   delegator.fees = delegatorData.value1
   delegator.startRound = delegatorData.value4
   delegator.principal = delegator.principal.plus(additionalAmount)
@@ -103,6 +99,7 @@ export function bond(event: BondEvent): void {
   delegate.save()
   delegator.save()
   transcoder.save()
+  protocol.save()
 
   // Store transaction info
   let bond = new Bond(makeEventId(event.transaction.hash, event.logIndex))
@@ -136,17 +133,13 @@ export function unbond(event: UnbondEvent): void {
   let amount = event.params.amount
   let delegator = Delegator.load(delegatorAddress.toHex())
   let delegateData = bondingManager.getDelegator(delegateAddress)
-
   let protocol = Protocol.load('0') || new Protocol('0')
-
   let transcoder =
     Transcoder.load(delegateAddress.toHex()) ||
     new Transcoder(delegateAddress.toHex())
-
   let delegate =
     Delegator.load(delegateAddress.toHex()) ||
     new Delegator(delegateAddress.toHex())
-
   let unbondingLock =
     UnbondingLock.load(uniqueUnbondingLockId) ||
     new UnbondingLock(uniqueUnbondingLockId)
@@ -186,6 +179,7 @@ export function unbond(event: UnbondEvent): void {
   transcoder.save()
   unbondingLock.save()
   delegator.save()
+  protocol.save()
 
   // Store transaction info
   let unbond = new Unbond(makeEventId(event.transaction.hash, event.logIndex))
@@ -220,7 +214,6 @@ export function rebond(event: RebondEvent): void {
   let delegate = Delegator.load(delegateAddress.toHex())
   let delegator = Delegator.load(delegatorAddress.toHex())
   let delegateData = bondingManager.getDelegator(delegateAddress)
-
   let protocol = Protocol.load('0') || new Protocol('0')
 
   // If rebonding from unbonded and is self-bonding then update transcoder status
@@ -249,6 +242,7 @@ export function rebond(event: RebondEvent): void {
   delegate.save()
   transcoder.save()
   delegator.save()
+  protocol.save()
   store.remove('UnbondingLock', uniqueUnbondingLockId)
 
   // Store transaction info

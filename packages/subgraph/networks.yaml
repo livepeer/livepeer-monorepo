@@ -6,16 +6,16 @@ mainnet:
     bondingManager:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
       startBlock: 5533958
-    bondingManagerLIP11:
+    bondingManager_LIP11:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
       startBlock: 5533958
-    bondingManagerLIP12:
+    bondingManager_streamflow:
       address: '511bc4556d823ae99630ae8de28b9b80df90ea2e'
       startBlock: 5533958
     roundsManager:
       address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
       startBlock: 5533997
-    roundsManagerLIP12:
+    roundsManager_streamflow:
       address: '3984fc4ceeef1739135476f625d36d6c35c40dc3'
       startBlock: 5533997
     livepeerToken:
@@ -27,6 +27,9 @@ mainnet:
     ticketBroker:
       address: '5b1ce829384eebfa30286f12d1e7a695ca45f5d2'
       startBlock: 9274420
+    pollCreator:
+      address: 'bf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c'
+      startBlock: 10039868
   networkName: mainnet
 rinkeby:
   contracts:
@@ -36,16 +39,16 @@ rinkeby:
     bondingManager:
       address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
       startBlock: 5325862
-    bondingManagerLIP11:
+    bondingManager_LIP11:
       address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
       startBlock: 5325862
-    bondingManagerLIP12:
+    bondingManager_streamflow:
       address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
       startBlock: 5325862
     roundsManager:
       address: '572d1591bD41f50130FD0212058eAe34F1B17290'
       startBlock: 5325866
-    roundsManagerLIP12:
+    roundsManager_streamflow:
       address: '572d1591bD41f50130FD0212058eAe34F1B17290'
       startBlock: 5325866
     livepeerToken:
@@ -57,4 +60,40 @@ rinkeby:
     ticketBroker:
       address: '40897Ff6e44Ca2e145A691701897844669Bf7cee'
       startBlock: 5325857
+    pollCreator:
+      address: '149805ef90fada12d27e8a020b6c138f3d86a9a3'
+      startBlock: 6459857
   networkName: rinkeby
+development:
+  contracts:
+    controller:
+      address: 'C89Ce4735882C9F0f0FE26686c53074E09B0D550'
+      startBlock: 0
+    bondingManager:
+      address: 'A94B7f0465E98609391C623d0560C5720a3f2D33'
+      startBlock: 0
+    bondingManager_LIP11:
+      address: 'A94B7f0465E98609391C623d0560C5720a3f2D33'
+      startBlock: 0
+    bondingManager_streamflow:
+      address: 'A94B7f0465E98609391C623d0560C5720a3f2D33'
+      startBlock: 0
+    roundsManager:
+      address: '5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
+      startBlock: 0
+    roundsManager_streamflow:
+      address: '5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
+      startBlock: 0
+    livepeerToken:
+      address: 'D833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
+      startBlock: 0
+    minter:
+      address: 'e982E462b094850F12AF94d21D470e21bE9D0E9C'
+      startBlock: 0
+    ticketBroker:
+      address: 'A57B8a5584442B467b4689F1144D269d096A3daF'
+      startBlock: 0
+    pollCreator:
+      address: '7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
+      startBlock: 0
+  networkName: development

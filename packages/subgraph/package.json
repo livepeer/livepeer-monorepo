@@ -5,25 +5,35 @@
   "license": "MIT",
   "scripts": {
     "create:local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
+    "create:docker": "graph create livepeer/livepeer --node http://graph-node:8020",
     "codegen": "graph codegen --debug --output-dir src/types/",
     "build": "graph build --debug",
     "prepare": "yarn prepare:mainnet && yarn codegen",
     "deploy": "graph deploy $SUBGRAPH --debug --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
     "deploy:local": "graph deploy livepeer/livepeer --debug --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "deploy:docker": "graph deploy livepeer/livepeer --debug --ipfs http://ipfs:5001 --node http://graph-node:8020",
     "deploy:mainnet": "yarn prepare:mainnet && SUBGRAPH=livepeer/livepeer yarn deploy",
     "deploy:rinkeby": "yarn prepare:rinkeby && SUBGRAPH=livepeer/livepeer-rinkeby yarn deploy",
     "prepare:mainnet": "NETWORK_NAME=mainnet node ./templatify.js",
     "prepare:rinkeby": "NETWORK_NAME=rinkeby node ./templatify.js",
+    "prepare:development": "NETWORK_NAME=development node ./templatify.js",
+    "docker:build": "docker build --cache-from livepeer/subgraph:latest -t livepeer/subgraph:latest .",
+    "test:docker": "DOCKER=true npx truffle test --network=docker",
+    "test:development": "npx truffle test --network=development",
+    "test": "yarn docker:build && docker-compose -f test/integration/docker-compose.yaml up --abort-on-container-exit",
     "postinstall": "patch-package"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.17.1",
-    "@graphprotocol/graph-ts": "^0.17.0",
+    "apollo-fetch": "^0.7.0",
+    "@graphprotocol/graph-cli": "^0.18.0",
+    "@graphprotocol/graph-ts": "^0.18.0",
+    "bignumber.js": "^9.0.0",
     "fs-extra": "^8.1.0",
     "handlebars": "^4.5.2",
     "js-yaml": "^3.13.1",
-    "patch-package": "^6.2.0",
-    "postinstall-postinstall": "^2.0.0",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
+    "truffle": "^5.1.24",
     "typy": "^3.3.0"
   },
   "workspaces": {
@@ -34,8 +44,5 @@
       "@graphprotocol/graph-cli",
       "@graphprotocol/graph-ts"
     ]
-  },
-  "dependencies": {
-    "git": "^0.1.5"
   }
 }
