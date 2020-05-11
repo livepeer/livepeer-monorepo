@@ -10,6 +10,7 @@ interface Props {
   title?: React.ReactNode
   className?: string
   showCloseButton?: boolean
+  clickAnywhereToClose?: boolean
   onDismiss?: Function
   Icon?: any
   ref?: any
@@ -23,7 +24,8 @@ export default ({
   className,
   children,
   ref,
-  showCloseButton = false,
+  clickAnywhereToClose = true,
+  showCloseButton = true,
   onDismiss,
   ...props
 }: Props) => {
@@ -36,7 +38,7 @@ export default ({
           background: 'rgba(0, 0, 0, 0.5)',
           ...props,
         }}
-        onDismiss={onDismiss}
+        onDismiss={clickAnywhereToClose ? onDismiss : null}
         {...props}
       >
         <Box
@@ -53,25 +55,30 @@ export default ({
                 }
           }
         >
-          <Box sx={{ position: 'relative', px: 4, pt: 3, pb: 4 }}>
-            {showCloseButton && (
-              <CloseIcon
-                onClick={onDismiss}
-                sx={{
-                  cursor: 'pointer',
-                  position: 'absolute',
-                  zIndex: 1,
-                  right: 20,
-                  top: 20,
-                  color: 'white',
-                }}
-              />
-            )}
+          <Box sx={{ position: 'relative', px: 4, py: 3 }}>
             {title && (
               <Box sx={{ position: 'relative' }}>
-                <Flex sx={{ alignItems: 'center', mb: 5 }}>
-                  {Icon && <Icon sx={{ color: 'text', mr: 2 }} />}
+                <Flex
+                  sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 4,
+                  }}
+                >
+                  {Icon && <Flex sx={{ mr: 2 }}>{Icon}</Flex>}
                   <Styled.h3 sx={{ width: '100%' }}>{title}</Styled.h3>
+                  {showCloseButton && (
+                    <CloseIcon
+                      onClick={onDismiss}
+                      sx={{
+                        cursor: 'pointer',
+                        zIndex: 1,
+                        right: 20,
+                        top: 20,
+                        color: 'white',
+                      }}
+                    />
+                  )}
                 </Flex>
               </Box>
             )}

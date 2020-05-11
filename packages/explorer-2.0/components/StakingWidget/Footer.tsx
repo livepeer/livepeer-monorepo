@@ -109,7 +109,7 @@ export default ({
   }
   return (
     <>
-      <Unstake disabled={!canUnstake} transcoder={transcoder} amount={amount} />
+      <Unstake disabled={!canUnstake} amount={amount} />
       {renderUnstakeWarnings(
         roundsSinceLastClaim,
         amount,

@@ -1,0 +1,3 @@
+mutation withdrawFees {
+  tx: withdrawFees
+}

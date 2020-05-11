@@ -1,0 +1,16 @@
+{
+  repository(owner: "livepeer", name: "LIPS") {
+    content: object(expression: "master:LIPs/") {
+      oid
+      ... on Tree {
+        entries {
+          content: object {
+            ... on Blob {
+              text
+            }
+          }
+        }
+      }
+    }
+  }
+}

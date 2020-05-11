@@ -2,7 +2,7 @@ import { Styled, Box, Flex } from 'theme-ui'
 import Spinner from '../components/Spinner'
 import Card from '../components/Card'
 import moment from 'moment'
-import Layout from '../layouts/main'
+import Layout, { getLayout } from '../layouts/main'
 import Markdown from 'markdown-to-jsx'
 import { withApollo } from '../lib/apollo'
 import { createApolloFetch } from 'apollo-fetch'
@@ -53,7 +53,7 @@ const groupBy = key => array =>
 
 const groupByType = groupBy('type')
 
-export default withApollo(() => {
+const WhatsNew = () => {
   const uri = 'https://explorer.livepeer.org/api/graphql'
   const [data, setData] = useState(null)
   const apolloFetch = createApolloFetch({ uri })
@@ -67,7 +67,7 @@ export default withApollo(() => {
   }, [])
 
   return (
-    <Layout title="Livepeer Explorer - What's New" headerTitle="What's New">
+    <>
       {!data ? (
         <Flex
           sx={{
@@ -168,6 +168,12 @@ export default withApollo(() => {
           </Flex>
         </>
       )}
-    </Layout>
+    </>
   )
-})
+}
+
+WhatsNew.getLayout = getLayout
+
+export default withApollo({
+  ssr: false,
+})(WhatsNew)

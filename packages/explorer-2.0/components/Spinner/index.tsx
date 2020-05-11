@@ -16,6 +16,8 @@ export default ({ speed = '1s', ...props }) => (
       borderTopColor: 'primary',
       width: 26,
       height: 26,
+      maxWidth: 26,
+      maxHeight: 26,
       animation: `${rotate} ${speed} linear`,
       animationIterationCount: 'infinite',
     }}

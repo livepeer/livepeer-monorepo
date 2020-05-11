@@ -1,0 +1,3 @@
+mutation rebond($unbondingLockId: Int!) {
+  tx: rebond(unbondingLockId: $unbondingLockId)
+}

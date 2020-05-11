@@ -1,0 +1,3 @@
+mutation unbond($amount: String!) {
+  tx: unbond(amount: $amount)
+}

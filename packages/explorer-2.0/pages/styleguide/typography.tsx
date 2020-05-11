@@ -23,10 +23,10 @@ export default () => {
 
   return (
     <section id="typography">
-      <Styled.h2 sx={{ fontSize: 6 }}>Typography</Styled.h2>
+      <Styled.h2 sx={{ mb: 4, fontSize: 6 }}>Typography</Styled.h2>
       {fonts && (
         <div>
-          <Styled.h3>Font Families</Styled.h3>
+          <Styled.h3 sx={{ mb: 3 }}>Font Families</Styled.h3>
           <Row>
             {Object.keys(fonts).map(name => (
               <div key={name}>
@@ -40,7 +40,7 @@ export default () => {
         </div>
       )}
       <Styled.h3>Font Sizes</Styled.h3>
-      <TypeScale />
+      <TypeScale sx={{ mb: 4 }} />
       {fontWeights && (
         <div>
           <Styled.h3>Font Weights</Styled.h3>

@@ -4,7 +4,7 @@ import Orchestrators from '../components/Orchestrators'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
 import { useWeb3React } from '@web3-react/core'
-import Layout from '../layouts/main'
+import Layout, { getLayout } from '../layouts/main'
 import { withApollo } from '../lib/apollo'
 import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
@@ -12,7 +12,7 @@ import Approve from '../components/Approve'
 import Utils from 'web3-utils'
 import { useEffect } from 'react'
 
-export default withApollo(() => {
+const Home = () => {
   const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
@@ -42,7 +42,7 @@ export default withApollo(() => {
   }, [context.chainId])
 
   return (
-    <Layout headerTitle="Orchestrators">
+    <>
       {loading || loadingMyAccount ? (
         <Flex
           sx={{
@@ -81,7 +81,7 @@ export default withApollo(() => {
                   )}
               </Box>
             )}
-            {context.active && dataMyAccount.delegator?.lastClaimRound && (
+            {context.active && dataMyAccount?.delegator?.lastClaimRound && (
               <ClaimBanner
                 delegator={dataMyAccount.delegator}
                 currentRound={data.currentRound[0]}
@@ -115,6 +115,12 @@ export default withApollo(() => {
           </Flex>
         </Flex>
       )}
-    </Layout>
+    </>
   )
-})
+}
+
+Home.getLayout = getLayout
+
+export default withApollo({
+  ssr: false,
+})(Home)

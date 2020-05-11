@@ -193,7 +193,7 @@ export default ({
             onClick={() =>
               client.writeData({
                 data: {
-                  stakingWidgetModalOpen: true,
+                  bottomDrawerOpen: true,
                   selectedStakingAction: 'stake',
                 },
               })
@@ -207,7 +207,7 @@ export default ({
             onClick={() =>
               client.writeData({
                 data: {
-                  stakingWidgetModalOpen: true,
+                  bottomDrawerOpen: true,
                   selectedStakingAction: 'unstake',
                 },
               })

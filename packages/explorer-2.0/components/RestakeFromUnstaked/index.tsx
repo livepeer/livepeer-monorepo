@@ -1,60 +1,28 @@
-import { Flex } from 'theme-ui'
-import { useState, useEffect } from 'react'
+import { useContext } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import gql from 'graphql-tag'
-import Flow from '../Flow'
-import Spinner from '../Spinner'
-import Modal from '../Modal'
-import Broadcast from '../../public/img/wifi.svg'
-import NewTab from '../../public/img/open-in-new.svg'
 import Button from '../Button'
-import { useWeb3Mutation } from '../../hooks'
-import Utils from 'web3-utils'
+import { MutationsContext } from '../../contexts'
 
 export default ({ lock }) => {
   const context = useWeb3React()
-  const [isOpen, setIsModalOpen] = useState(false)
 
   if (!context.active) {
     return null
   }
 
-  const REBOND_FROM_UNBONDED = gql`
-    mutation rebondFromUnbonded($unbondingLockId: Int!, $delegate: String!) {
-      txHash: rebondFromUnbonded(
-        unbondingLockId: $unbondingLockId
-        delegate: $delegate
-      )
-    }
-  `
-
-  const {
-    result: { mutate: rebondFromUnbonded, isBroadcasted, isMined, txHash },
-    reset,
-  } = useWeb3Mutation(REBOND_FROM_UNBONDED, {
-    variables: {
-      unbondingLockId: lock.unbondingLockId,
-      delegate: lock.delegate.id,
-    },
-    context: {
-      provider: context.library._web3Provider,
-      account: context.account.toLowerCase(),
-      returnTxHash: true,
-    },
-  })
-
-  useEffect(() => {
-    if (isBroadcasted) {
-      setIsModalOpen(true)
-    }
-  }, [isBroadcasted])
+  const { rebondFromUnbonded }: any = useContext(MutationsContext)
 
   return (
     <>
       <Button
         onClick={async () => {
           try {
-            await rebondFromUnbonded(lock.unbondingLockId)
+            await rebondFromUnbonded({
+              variables: {
+                unbondingLockId: lock.unbondingLockId,
+                delegate: lock.delegate.id,
+              },
+            })
           } catch (e) {
             return {
               error: e.message.replace('GraphQL error: ', ''),
@@ -66,7 +34,7 @@ export default ({ lock }) => {
         Rebond
       </Button>
 
-      <Modal
+      {/* <Modal
         isOpen={isOpen}
         onDismiss={() => {
           reset()
@@ -106,7 +74,9 @@ export default ({ lock }) => {
                 as="a"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`https://etherscan.io/tx/${txHash}`}
+                href={`https://${
+                  process.env.NETWORK === 'rinkeby' ? 'rinkeby.' : ''
+                }etherscan.io/tx/${txHash}`}
               >
                 View on Etherscan{' '}
                 <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
@@ -119,7 +89,7 @@ export default ({ lock }) => {
             </Button>
           )}
         </Flex>
-      </Modal>
+      </Modal> */}
     </>
   )
 }

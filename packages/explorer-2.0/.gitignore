@@ -38,4 +38,5 @@ jspm_packages
 .next
 .env
 .env.build
+.env.rinkeby
 .now

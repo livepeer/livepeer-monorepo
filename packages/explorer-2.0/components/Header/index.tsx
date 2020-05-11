@@ -5,7 +5,12 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { useWeb3React } from '@web3-react/core'
 import WalletIcon from '../../public/img/wallet.svg'
 
-export default ({ onDrawerOpen, title = '' }) => {
+interface Props {
+  onDrawerOpen: Function
+  title?: JSX.Element | string
+}
+
+export default ({ onDrawerOpen, title }: Props) => {
   const client = useApolloClient()
   const { active, account } = useWeb3React()
 

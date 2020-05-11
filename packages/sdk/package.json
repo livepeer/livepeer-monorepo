@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/sdk",
   "description": "A module for interacting with Livepeer's smart contracts. The SDK is a core dependency of most LivepeerJS packages.",
-  "version": "1.0.0-alpha.9",
+  "version": "1.0.0-alpha.13",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
@@ -45,7 +45,7 @@
     "lcov-badge": "^1.0.4",
     "npm-run-all": "^4.1.5",
     "nyc": "^14.0.0",
-    "protocol": "https://github.com/livepeer/protocol.git#65d6eaaa7875ee4f66029eee519f8c3fa9af89da",
+    "protocol": "https://github.com/livepeer/protocol.git#00c2294317efe5c932652af9133b335e80c975d3",
     "rimraf": "^2.6.3",
     "yup": "0.27.0"
   },

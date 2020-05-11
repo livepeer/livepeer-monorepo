@@ -11,13 +11,13 @@ const RPC_URLS: { [chainId: number]: string } = {
 }
 
 export const Network = new NetworkConnector({
-  defaultChainId: 1,
+  defaultChainId: process.env.NETWORK === 'rinkeby' ? 4 : 1,
   urls: RPC_URLS,
   pollingInterval: POLLING_INTERVAL * 3,
 })
 
 export const Injected = new InjectedConnector({
-  supportedChainIds: [1, 4],
+  supportedChainIds: [1, 4, 1337],
 })
 
 // mainnet only

@@ -1,47 +1,17 @@
 import { Flex, Box } from 'theme-ui'
-import { useState, useEffect } from 'react'
+import { useState, useContext } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
-import Spinner from '../Spinner'
-import Broadcast from '../../public/img/wifi.svg'
-import NewTab from '../../public/img/open-in-new.svg'
-import { useWeb3Mutation } from '../../hooks'
-import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
+import { MutationsContext } from '../../contexts'
 
 export default ({ account, banner = true }) => {
   const context = useWeb3React()
-  const [approveModalOpen, setApproveModalOpen] = useState(false)
+  const { approve }: any = useContext(MutationsContext)
   const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
   const MDXDocument = require('../../data/unlock-tokens.mdx').default
-
-  const APPROVE = gql`
-    mutation approve($type: String!, $amount: String!) {
-      txHash: approve(type: $type, amount: $amount)
-    }
-  `
-  const {
-    result: { mutate: approve, isBroadcasted, isMined, txHash },
-    reset,
-  } = useWeb3Mutation(APPROVE, {
-    variables: {
-      type: 'bond',
-      amount: MAXIUMUM_VALUE_UINT256,
-    },
-    context: {
-      provider: context.library._web3Provider,
-      account: context.account.toLowerCase(),
-      returnTxHash: true,
-    },
-  })
-
-  useEffect(() => {
-    if (isBroadcasted) {
-      setApproveModalOpen(true)
-    }
-  }, [isBroadcasted])
 
   let element = null
 
@@ -66,7 +36,12 @@ export default ({ account, banner = true }) => {
                   variant="text"
                   onClick={async () => {
                     try {
-                      await approve()
+                      await approve({
+                        variables: {
+                          type: 'bond',
+                          amount: MAXIUMUM_VALUE_UINT256,
+                        },
+                      })
                     } catch (e) {
                       return {
                         error: e.message.replace('GraphQL error: ', ''),
@@ -95,7 +70,12 @@ export default ({ account, banner = true }) => {
           sx={{ cursor: 'pointer', color: 'primary' }}
           onClick={async () => {
             try {
-              await approve()
+              await approve({
+                variables: {
+                  type: 'bond',
+                  amount: MAXIUMUM_VALUE_UINT256,
+                },
+              })
             } catch (e) {
               return {
                 error: e.message.replace('GraphQL error: ', ''),
@@ -109,78 +89,5 @@ export default ({ account, banner = true }) => {
     }
   }
 
-  return (
-    <>
-      <Modal
-        isOpen={approveModalOpen}
-        onDismiss={() => {
-          reset()
-          setApproveModalOpen(false)
-        }}
-        title={isMined ? 'Success!' : 'Broadcasted'}
-        Icon={isMined ? () => <Box sx={{ mr: 1 }}>🎊</Box> : Broadcast}
-      >
-        <Flex
-          sx={{
-            border: '1px solid',
-            borderColor: 'border',
-            borderRadius: 6,
-            p: 3,
-            alignItems: 'center',
-            justifyContent: 'center',
-            my: 5,
-          }}
-        >
-          {isMined ? (
-            <Box>All set! You're ready to begin staking.</Box>
-          ) : (
-            <Box>Unlocking Livepeer tokens for staking...</Box>
-          )}
-        </Flex>
-        <Flex
-          sx={{
-            flexDirection: ['column-reverse', 'column-reverse', 'row'],
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          {txHash && !isMined && (
-            <>
-              <Flex sx={{ alignItems: 'center', fontSize: 0 }}>
-                <Spinner sx={{ mr: 2 }} />
-                <Box sx={{ color: 'text' }}>
-                  Waiting for your transaction to be mined.
-                </Box>
-              </Flex>
-              <Button
-                sx={{
-                  mb: [2, 2, 0],
-                  justifyContent: 'center',
-                  width: ['100%', '100%', 'auto'],
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                as="a"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://etherscan.io/tx/${txHash}`}
-              >
-                View on Etherscan{' '}
-                <NewTab sx={{ ml: 1, width: 16, height: 16 }} />
-              </Button>
-            </>
-          )}
-          {isMined && (
-            <Button
-              onClick={() => setApproveModalOpen(false)}
-              sx={{ ml: 'auto' }}
-            >
-              Done
-            </Button>
-          )}
-        </Flex>
-      </Modal>
-      {element}
-    </>
-  )
+  return element
 }

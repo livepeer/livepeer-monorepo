@@ -4,6 +4,7 @@ type Account {
   tokenBalance: String
   ethBalance: String
   allowance: String
+  pollCreatorAllowance: String
 }
 
 type Protocol {
@@ -32,8 +33,11 @@ type ThreeBoxSpace {
 type Query {
   account(id: ID!): Account
   protocol: Protocol
-  getTxReceiptStatus(txHash: String!): TransactionStatus
+  getTxReceiptStatus(txHash: String): TransactionStatus
+  txPrediction(gasPrice: String!): JSON
+  transaction(txHash: String): JSON
   threeBoxSpace(id: ID!): ThreeBoxSpace
+  block(id: String): JSON
 }
 `
 

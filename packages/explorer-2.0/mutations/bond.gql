@@ -1,0 +1,3 @@
+mutation bond($to: String!, $amount: String!) {
+  tx: bond(to: $to, amount: $amount)
+}

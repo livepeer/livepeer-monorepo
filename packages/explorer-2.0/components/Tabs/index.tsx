@@ -25,7 +25,7 @@ export default ({ tabs, variant = 'primary', ...props }) => {
           <a
             sx={{
               color: tab.isActive ? 'white' : 'muted',
-              mr: 3,
+              mr: '22px',
               pb: '10px',
               fontSize: 1,
               fontWeight: 500,

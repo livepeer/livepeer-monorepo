@@ -19,9 +19,11 @@ export default ({
       }}
       {...props}
     >
-      <div sx={{ mb: '8px', fontWeight: 500, fontSize: 0, color: 'muted' }}>
-        {title}
-      </div>
+      {title && (
+        <div sx={{ mb: '8px', fontWeight: 500, fontSize: 0, color: 'muted' }}>
+          {title}
+        </div>
+      )}
       {subtitle}
       {children}
     </Flex>
