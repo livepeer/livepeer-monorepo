@@ -94,7 +94,7 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
     name: useThreeBox ? profile.name : space.name,
     website: useThreeBox ? profile.website : space.website,
     description: useThreeBox ? profile.description : space.description,
-    image: useThreeBox ? profile.image : space.image,
+    image: useThreeBox ? profile?.image[0]?.contentUrl['/'] : space.image,
     defaultProfile: space.defaultProfile,
     addressLinks,
     did,
