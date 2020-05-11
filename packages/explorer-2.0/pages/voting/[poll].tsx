@@ -21,6 +21,7 @@ import moment from 'moment'
 import { useWindowSize } from 'react-use'
 import BottomDrawer from '../../components/BottomDrawer'
 import Button from '../../components/Button'
+import Head from 'next/head'
 
 const Poll = () => {
   const pollQuery = require('../../queries/poll.gql')
@@ -107,6 +108,9 @@ const Poll = () => {
 
   return (
     <>
+      <Head>
+        <title>Livepeer Explorer - Voting</title>
+      </Head>
       <Flex sx={{ width: '100%' }}>
         <Flex
           sx={{

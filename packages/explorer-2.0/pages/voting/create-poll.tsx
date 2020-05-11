@@ -16,6 +16,7 @@ import { withApollo } from '../../lib/apollo'
 import { useApolloClient } from '@apollo/react-hooks'
 import { MutationsContext } from '../../contexts'
 import Utils from 'web3-utils'
+import Head from 'next/head'
 
 const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   const context = useWeb3React()
@@ -79,143 +80,152 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   }, [])
 
   return (
-    <Flex
-      sx={{
-        mt: [3, 3, 3, 5],
-        width: '100%',
-        flexDirection: 'column',
-      }}
-    >
-      <Box>
-        <Flex
-          sx={{
-            mb: 4,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Styled.h1
+    <>
+      <Head>
+        <title>Livepeer Explorer - Voting</title>
+      </Head>
+      <Flex
+        sx={{
+          mt: [3, 3, 3, 5],
+          width: '100%',
+          flexDirection: 'column',
+        }}
+      >
+        <Box>
+          <Flex
             sx={{
-              fontSize: [3, 3, 4, 5],
-              display: 'flex',
+              mb: 4,
               alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            <Ballot
+            <Styled.h1
               sx={{
-                width: [20, 20, 20, 26],
-                height: [20, 20, 20, 26],
-                color: 'primary',
-                mr: 2,
+                fontSize: [3, 3, 4, 5],
+                display: 'flex',
+                alignItems: 'center',
               }}
-            />
-            Create Poll
-          </Styled.h1>
-          {!context.account && (
-            <Button
-              onClick={() => {
-                client.writeData({
-                  data: {
-                    walletModalOpen: true,
-                  },
+            >
+              <Ballot
+                sx={{
+                  width: [20, 20, 20, 26],
+                  height: [20, 20, 20, 26],
+                  color: 'primary',
+                  mr: 2,
+                }}
+              />
+              Create Poll
+            </Styled.h1>
+            {!context.account && (
+              <Button
+                onClick={() => {
+                  client.writeData({
+                    data: {
+                      walletModalOpen: true,
+                    },
+                  })
+                }}
+              >
+                Connect Wallet
+              </Button>
+            )}
+          </Flex>
+          <form
+            onSubmit={async e => {
+              e.preventDefault()
+              try {
+                const hash = await ipfs.addJSON({
+                  ...selectedProposal,
                 })
-              }}
-            >
-              Connect Wallet
-            </Button>
-          )}
-        </Flex>
-        <form
-          onSubmit={async e => {
-            e.preventDefault()
-            try {
-              const hash = await ipfs.addJSON({
-                ...selectedProposal,
-              })
-              await createPoll({
-                variables: { proposal: hash },
-              })
-            } catch (e) {
-              return {
-                error: e.message.replace('GraphQL error: ', ''),
+                await createPoll({
+                  variables: { proposal: hash },
+                })
+              } catch (e) {
+                return {
+                  error: e.message.replace('GraphQL error: ', ''),
+                }
               }
-            }
-          }}
-        >
-          {!lips.length && (
-            <Box>
-              There are currently no LIPs in a proposed state for which there
-              hasn't been a poll created yet.
-            </Box>
-          )}
-          {lips.map((lip, i) => (
-            <Label
-              key={i}
-              sx={{
-                cursor: 'pointer',
-                p: 3,
-                mb: 2,
-                borderRadius: 10,
-                border: '1px solid',
-              }}
-            >
-              <Flex sx={{ width: '100%', alignItems: 'center' }}>
-                <Radio
-                  defaultChecked={i === 0}
-                  onChange={() => {
-                    setSelectedProposal({ gitCommitHash, text: lip.text })
-                  }}
-                  name="lip"
-                />
-                <Flex sx={{ width: '100%', justifyContent: 'space-between' }}>
-                  <Box>
-                    LIP-{lip.attributes.lip} - {lip.attributes.title}
-                  </Box>
-                  <a
-                    sx={{ color: 'primary' }}
-                    target="_blank"
-                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
-                  >
-                    View Proposal
-                  </a>
+            }}
+          >
+            {!lips.length && (
+              <Box>
+                There are currently no LIPs in a proposed state for which there
+                hasn't been a poll created yet.
+              </Box>
+            )}
+            {lips.map((lip, i) => (
+              <Label
+                key={i}
+                sx={{
+                  cursor: 'pointer',
+                  p: 3,
+                  mb: 2,
+                  borderRadius: 10,
+                  border: '1px solid',
+                }}
+              >
+                <Flex sx={{ width: '100%', alignItems: 'center' }}>
+                  <Radio
+                    defaultChecked={i === 0}
+                    onChange={() => {
+                      setSelectedProposal({ gitCommitHash, text: lip.text })
+                    }}
+                    name="lip"
+                  />
+                  <Flex sx={{ width: '100%', justifyContent: 'space-between' }}>
+                    <Box>
+                      LIP-{lip.attributes.lip} - {lip.attributes.title}
+                    </Box>
+                    <a
+                      sx={{ color: 'primary' }}
+                      target="_blank"
+                      href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
+                    >
+                      View Proposal
+                    </a>
+                  </Flex>
                 </Flex>
-              </Flex>
-            </Label>
-          ))}
-          {context.account &&
-            !!lips.length &&
-            (!data ? (
-              <Flex
-                sx={{ alignItems: 'center', mt: 4, justifyContent: 'center' }}
-              >
-                <Box sx={{ mr: 2 }}>Loading LPT Balance</Box>
-                <Spinner variant="styles.spinner" />
-              </Flex>
-            ) : (
-              <Flex
-                sx={{ mt: 4, alignItems: 'center', justifyContent: 'flex-end' }}
-              >
-                {!sufficientAllowance && <PollTokenApproval />}
-                {sufficientAllowance && !sufficientBalance && (
-                  <Box sx={{ color: 'muted', fontSize: 0 }}>
-                    Insufficient balance. You need at least{' '}
-                    {process.env.NETWORK === 'rinkeby' ? 10 : 100} LPT to create
-                    a poll.
-                  </Box>
-                )}
-                <Button
-                  disabled={!sufficientAllowance || !sufficientBalance}
-                  type="submit"
-                  sx={{ ml: 2, alignSelf: 'flex-end' }}
-                >
-                  Create Poll (
-                  {process.env.NETWORK === 'rinkeby' ? '10' : '100'} LPT)
-                </Button>
-              </Flex>
+              </Label>
             ))}
-        </form>
-      </Box>
-    </Flex>
+            {context.account &&
+              !!lips.length &&
+              (!data ? (
+                <Flex
+                  sx={{ alignItems: 'center', mt: 4, justifyContent: 'center' }}
+                >
+                  <Box sx={{ mr: 2 }}>Loading LPT Balance</Box>
+                  <Spinner variant="styles.spinner" />
+                </Flex>
+              ) : (
+                <Flex
+                  sx={{
+                    mt: 4,
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  {!sufficientAllowance && <PollTokenApproval />}
+                  {sufficientAllowance && !sufficientBalance && (
+                    <Box sx={{ color: 'muted', fontSize: 0 }}>
+                      Insufficient balance. You need at least{' '}
+                      {process.env.NETWORK === 'rinkeby' ? 10 : 100} LPT to
+                      create a poll.
+                    </Box>
+                  )}
+                  <Button
+                    disabled={!sufficientAllowance || !sufficientBalance}
+                    type="submit"
+                    sx={{ ml: 2, alignSelf: 'flex-end' }}
+                  >
+                    Create Poll (
+                    {process.env.NETWORK === 'rinkeby' ? '10' : '100'} LPT)
+                  </Button>
+                </Flex>
+              ))}
+          </form>
+        </Box>
+      </Flex>
+    </>
   )
 }
 

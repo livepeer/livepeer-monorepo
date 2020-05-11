@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 import Link from 'next/link'
 import gql from 'graphql-tag'
+import Head from 'next/head'
 
 const Voting = () => {
   const ipfs = new IPFS({
@@ -71,6 +72,9 @@ const Voting = () => {
 
   return (
     <>
+      <Head>
+        <title>Livepeer Explorer - Voting</title>
+      </Head>
       {loading ? (
         <Flex
           sx={{

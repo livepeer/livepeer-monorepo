@@ -1,7 +1,7 @@
 {
   "version": 2,
   "builds": [{ "src": "next.config.js", "use": "@now/next" }],
-  "alias": ["polling.livepeerorg.now.sh"],
+  "alias": ["rinkeby.explorer.livepeer.org"],
   "routes": [
     {
       "src": "/transcoders",
