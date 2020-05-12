@@ -94,7 +94,6 @@ export default ({ threeBoxSpace, refetch, children }) => {
                   )
                   if (r) {
                     const Box = require('3box')
-
                     setDisconnecting({
                       address: link.address,
                       isDisconnecting: true,
