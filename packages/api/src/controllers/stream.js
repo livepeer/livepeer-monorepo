@@ -7,7 +7,7 @@ import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
-import { makeNextHREF } from './helpers'
+import { makeNextHREF, trackAction } from './helpers'
 import path from 'path'
 
 const app = Router()
@@ -36,13 +36,16 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
   if (req.user.admin !== true && req.user.id !== req.params.userId) {
     res.status(403)
     return res.json({
-      errors: [
-        'user can only request information on their own streams',
-      ],
+      errors: ['user can only request information on their own streams'],
     })
   }
 
-  const streamIds = await req.store.query('stream', { userId: req.params.userId }, cursor, limit)
+  const streamIds = await req.store.query(
+    'stream',
+    { userId: req.params.userId },
+    cursor,
+    limit,
+  )
   const streams = []
   for (let i = 0; i < streamIds.length; i++) {
     const token = await req.store.get(`stream/${streamIds[i]}`, false)
@@ -57,7 +60,11 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const output = await req.store.get(`stream/${req.params.id}`)
-  if (!output || output.userId !== req.user.id && !(req.user.admin && req.authTokenType == 'JWT')) {
+  if (
+    !output ||
+    (output.userId !== req.user.id &&
+      !(req.user.admin && req.authTokenType == 'JWT'))
+  ) {
     // do not reveal that stream exists
     res.status(404)
     return res.json({ errors: ['not found'] })
@@ -85,6 +92,13 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   })
 
   await req.store.create(doc)
+  trackAction(
+    req.user.id,
+    req.user.email,
+    { name: 'Stream Created' },
+    req.config.segmentApiKey,
+  )
+
   res.status(201)
   res.json(doc)
 })

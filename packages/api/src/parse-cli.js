@@ -151,6 +151,10 @@ export default function parseCli(argv) {
           describe: 'sendgrid api key for sending emails',
           type: 'string',
         },
+        segmentApiKey: {
+          describe: 'segment api key for tracking events',
+          type: 'string',
+        },
         sendgridTemplateId: {
           describe: 'sendgrid template id to use',
           type: 'string',
@@ -165,15 +169,15 @@ export default function parseCli(argv) {
             'list of ingest endpoints to use as options for /api/geolocate',
           type: 'array',
           default: [],
-          coerce: (arg) => {
+          coerce: arg => {
             if (!Array.isArray(arg)) {
-              const arr = [];
+              const arr = []
               for (const [key, value] of Object.entries(arg)) {
-                arr[key] = value;
+                arr[key] = value
               }
-              return arr;
+              return arr
             }
-            return arg;
+            return arg
           },
         },
       })

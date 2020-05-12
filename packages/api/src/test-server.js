@@ -19,6 +19,7 @@ const jwtSecret = 'secret'
 const supportAddr = 'Livepeer Team/angie@livepeer.org'
 const sendgridTemplateId = 'iamanid'
 const sendgridApiKey = 'SG. iamanapikey'
+const segmentApiKey = 'segmentapikey'
 
 fs.ensureDirSync(dbPath)
 
@@ -35,6 +36,7 @@ params.jwtSecret = jwtSecret
 params.supportAddr = supportAddr
 params.sendgridTemplateId = sendgridTemplateId
 params.sendgridApiKey = sendgridApiKey
+params.segmentApiKey = segmentApiKey
 
 if (!params.insecureTestToken) {
   params.insecureTestToken = uuid()
