@@ -147,11 +147,12 @@ export async function sendgridEmail({
 }
 
 export async function trackAction(userId, email, event, segmentApiKey) {
-  var analytics = new SegmentAnalytics(segmentApiKey)
-  // note: for development, add `{ flushAt: 1 }` as a second parameter to SegmentAnalytics
+  var analytics = new SegmentAnalytics(segmentApiKey, { flushAt: 1 })
   analytics.identify({
     userId: userId,
-    traits: { email },
+    traits: {
+      email: email,
+    },
   })
 
   const properties = {}
