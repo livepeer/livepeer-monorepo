@@ -1,4 +1,4 @@
-import { Flex } from 'theme-ui'
+import { Flex, Box } from 'theme-ui'
 import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
@@ -54,7 +54,7 @@ export default ({ hasProfile, activeStep }) => {
         <Step key={label}>
           <StepLabel sx={{ fontFamily: 'primary' }}>{label}</StepLabel>
           <StepContent>
-            <div>{getStepContent(index)}</div>
+            <Box>{getStepContent(index)}</Box>
           </StepContent>
         </Step>
       ))}

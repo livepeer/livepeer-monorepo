@@ -60,7 +60,7 @@ function hasExistingProfile(profile) {
 
 export default ({ threeBoxSpace, refetch, account }: Props) => {
   const context = useWeb3React()
-  const { register, handleSubmit, watch } = useForm()
+  const { register, handleSubmit, formState, watch } = useForm()
   const [previewImage, setPreviewImage] = useState(null)
   const [saving, setSaving] = useState(false)
   const [editProfileOpen, setEditProfileOpen] = useState(false)
@@ -132,7 +132,6 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       setEditProfileOpen(true)
     } else {
       setCreateProfileModalOpen(true)
-
       let box = await Box.openBox(account, context.library._web3Provider)
       setActiveStep(1)
       await box.syncDone
@@ -140,6 +139,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       // Create a 3box account if a user doesn't already have one
       if (!hasProfile) {
         await box.linkAddress()
+        await box.syncDone
         setActiveStep(2)
       }
 
@@ -157,12 +157,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
             address: account,
           },
         })
-        box = await Box.openBox(
-          account.toLowerCase(),
-          context.library._web3Provider,
-        )
-        space = await box.openSpace('livepeer')
-        await box.syncDone
+        await space.syncDone
         setCreateProfileModalOpen(false)
         setEditProfileOpen(true)
       }
@@ -187,25 +182,21 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
       context.account,
       context.library._web3Provider,
     )
-
-    let hash = ''
+    let hash = null
 
     if (previewImage && image.length) {
-      try {
-        const formData = new window.FormData()
-        formData.append('path', image[0])
-        const resp = await fetch('https://ipfs.infura.io:5001/api/v0/add', {
-          method: 'post',
-          body: formData,
-        })
-        const infuraResponse = await resp.json()
-        hash = infuraResponse['Hash']
-      } catch (e) {
-        console.log(e)
-      }
+      const formData = new window.FormData()
+      formData.append('path', image[0])
+      const resp = await fetch('https://ipfs.infura.io:5001/api/v0/add', {
+        method: 'post',
+        body: formData,
+      })
+      const infuraResponse = await resp.json()
+      hash = infuraResponse['Hash']
     }
 
     const variables = {
+      ...threeBoxSpace,
       ...(name && { name }),
       ...(website && { website }),
       ...(description && { description }),
@@ -425,7 +416,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                       src={previewImage}
                     />
                   )}
-                  {!previewImage && threeBoxSpace && threeBoxSpace.image && (
+                  {!previewImage && threeBoxSpace?.image && (
                     <img
                       sx={{
                         objectFit: 'cover',
@@ -436,7 +427,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
                       src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
                     />
                   )}
-                  {!previewImage && threeBoxSpace && !threeBoxSpace.image && (
+                  {!previewImage && !threeBoxSpace?.image && (
                     <QRCode
                       style={{
                         borderRadius: 1000,
@@ -627,6 +618,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
               </Button>
               <Button
                 disabled={
+                  !formState.dirty ||
                   saving ||
                   (threeBoxSpace.defaultProfile === '3box' && !verified) ||
                   (threeBoxSpace.defaultProfile === 'livepeer' &&

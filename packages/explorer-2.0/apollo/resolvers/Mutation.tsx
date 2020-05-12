@@ -377,41 +377,27 @@ export async function vote(_obj, _args, _ctx) {
 export async function updateProfile(_obj, _args, _ctx) {
   const address = _ctx.address.toLowerCase()
   const box = _ctx.box
+  const space = await box.openSpace('livepeer')
 
-  try {
-    const space = await box.openSpace('livepeer')
+  if (_args.proof) {
+    await box.linkAddress({
+      proof: _args.proof,
+    })
+  }
 
-    if (_args.proof) {
-      await box.linkAddress({
-        proof: _args.proof,
-      })
-    }
+  const allowed = ['name', 'website', 'description', 'image', 'defaultProfile']
+  const filtered = Object.keys(_args)
+    .filter(key => allowed.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = _args[key]
+      return obj
+    }, {})
 
-    const allowed = [
-      'name',
-      'website',
-      'description',
-      'image',
-      'defaultProfile',
-    ]
-    const filtered = Object.keys(_args)
-      .filter(key => allowed.includes(key))
-      .reduce((obj, key) => {
-        obj[key] = _args[key]
-        return obj
-      }, {})
+  await space.public.setMultiple(Object.keys(filtered), Object.values(filtered))
 
-    await space.public.setMultiple(
-      Object.keys(filtered),
-      Object.values(filtered),
-    )
-
-    return {
-      id: address,
-      ...filtered,
-    }
-  } catch (e) {
-    // console.error(e)
+  return {
+    id: address,
+    ...filtered,
   }
 }
 
@@ -423,9 +409,5 @@ export async function updateProfile(_obj, _args, _ctx) {
 export async function removeAddressLink(_obj, _args, _ctx) {
   const address = _args.address.toLowerCase()
   const box = _ctx.box
-  try {
-    await box.removeAddressLink(address)
-  } catch (e) {
-    // console.error(e)
-  }
+  await box.removeAddressLink(address)
 }
