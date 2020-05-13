@@ -48,7 +48,7 @@
       "PORTIS_DAPP_ID": "@portis_dapp_id",
       "GA_TRACKING_ID": "@ga_tracking_id",
       "NETWORK": "mainnet",
-      "SUBGRAPH": "https://api.thegraph.com/subgraphs/name/livepeer/livepeer-canary",
+      "SUBGRAPH": "https://api.thegraph.com/subgraphs/name/livepeer/livepeer",
       "RPC_URL_1": "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
       "RPC_URL_4": "https://rinkeby.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
       "CONTROLLER_ADDRESS": "0xf96d54e490317c557a967abfa5d6e33006be69b3",
