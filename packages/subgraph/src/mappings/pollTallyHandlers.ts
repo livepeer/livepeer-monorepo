@@ -20,7 +20,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
 
   // Return if transcoder that called reward isn't voter's delegate
   if (
-    delegator == null &&
+    delegator == null ||
     delegator.delegate != event.params.transcoder.toHex()
   ) {
     return
@@ -40,7 +40,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
   let transcoder = Transcoder.load(event.params.transcoder.toHex())
 
   // update vote stakes
-  if (voterAddress == event.params.transcoder.toHex()) {
+  if (transcoder.status == 'Registered') {
     vote.voteStake = transcoder.totalStake
   } else {
     let bondingManager = BondingManager.bind(event.address)
