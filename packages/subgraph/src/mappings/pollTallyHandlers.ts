@@ -40,7 +40,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
   let transcoder = Transcoder.load(event.params.transcoder.toHex())
 
   // update vote stakes
-  if (transcoder.status == 'Registered') {
+  if (voterAddress == event.params.transcoder.toHex()) {
     vote.voteStake = transcoder.totalStake
   } else {
     let bondingManager = BondingManager.bind(event.address)
