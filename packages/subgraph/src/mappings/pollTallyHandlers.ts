@@ -179,7 +179,7 @@ export function updatePollTallyOnEarningsClaimed(
 
   // Return if the voter doesn't share the same delegate as the delegator that claimed earnings
   if (
-    delegator == null &&
+    delegator == null ||
     delegator.delegate != event.params.delegate.toHex()
   ) {
     return
