@@ -537,7 +537,7 @@ contract('Subgraph Integration Tests', accounts => {
   })
 
   it('correctly tallies poll after delegator 5 bonds with unregistered transcoder (delegate 2)', async () => {
-    let bondAmount = 1000
+    let bondAmount = new BN(1000).times(TOKEN_UNIT)
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator5,
     })
