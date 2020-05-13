@@ -225,7 +225,7 @@ const Poll = () => {
                       lineHeight: 'heading',
                     }}
                   >
-                    {pollData.totalSupport.toPrecision(4)}%
+                    {pollData.totalSupport.toPrecision(5)}%
                   </Box>
                 }
               >
@@ -239,7 +239,7 @@ const Poll = () => {
                         {isNaN(yesVoteStake / totalVoteStake)
                           ? 0
                           : ((yesVoteStake / totalVoteStake) * 100).toPrecision(
-                              4,
+                              5,
                             )}
                         %)
                       </Box>
@@ -260,7 +260,7 @@ const Poll = () => {
                         {isNaN(noVoteStake / totalVoteStake)
                           ? 0
                           : ((noVoteStake / totalVoteStake) * 100).toPrecision(
-                              4,
+                              5,
                             )}
                         %)
                       </Box>
@@ -307,7 +307,7 @@ const Poll = () => {
                       lineHeight: 'heading',
                     }}
                   >
-                    {pollData.totalParticipation.toPrecision(4)}%
+                    {pollData.totalParticipation.toPrecision(5)}%
                   </Box>
                 }
               >
@@ -320,7 +320,7 @@ const Poll = () => {
                     }}
                   >
                     <span sx={{ color: 'muted' }}>
-                      Voters ({pollData.totalParticipation.toPrecision(4)}
+                      Voters ({pollData.totalParticipation.toPrecision(5)}
                       %)
                     </span>
                     <span>
@@ -331,7 +331,7 @@ const Poll = () => {
                   </Flex>
                   <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
                     <span sx={{ color: 'muted' }}>
-                      Nonvoters ({pollData.nonVoters.toPrecision(4)}
+                      Nonvoters ({pollData.nonVoters.toPrecision(5)}
                       %)
                     </span>
                     <span>

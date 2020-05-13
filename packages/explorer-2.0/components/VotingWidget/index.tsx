@@ -111,7 +111,7 @@ export default ({ data }) => {
                 <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
                   {isNaN(yesVoteStake / totalVoteStake)
                     ? 0
-                    : ((yesVoteStake / totalVoteStake) * 100).toPrecision(4)}
+                    : ((yesVoteStake / totalVoteStake) * 100).toPrecision(5)}
                   %
                 </Box>
               </Flex>
@@ -152,7 +152,7 @@ export default ({ data }) => {
                 <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
                   {isNaN(noVoteStake / totalVoteStake)
                     ? 0
-                    : ((noVoteStake / totalVoteStake) * 100).toPrecision(4)}
+                    : ((noVoteStake / totalVoteStake) * 100).toPrecision(5)}
                   %
                 </Box>
               </Flex>
