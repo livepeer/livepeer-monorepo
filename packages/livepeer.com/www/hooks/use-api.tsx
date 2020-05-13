@@ -9,12 +9,6 @@ import qs from "qs";
  * helpers around a nice auto-generated TypeScript client from our Swagger schema.
  */
 
-declare global {
-  interface Window {
-    _hsq: any;
-  }
-}
-
 type ApiState = {
   user?: User;
   token?: string;
@@ -31,15 +25,6 @@ const storeToken = token => {
       Safari private window and you don't want the token to persist anyway.
     `);
   }
-};
-
-const trackPageView = (email, path = null) => {
-  var _hsq = (window._hsq = window._hsq || []);
-  _hsq.push(["identify", { email: email }]);
-  if (path) {
-    _hsq.push(["setPath", path]);
-  }
-  _hsq.push(["trackPageView"]);
 };
 
 const getStoredToken = () => {
@@ -84,7 +69,6 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async login(email, password) {
-      trackPageView(email);
       const [res, body] = await context.fetch("/user/token", {
         method: "POST",
         body: JSON.stringify({ email, password }),
@@ -110,7 +94,6 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async register(email, password) {
-      trackPageView(email);
       const [res, body] = await context.fetch("/user", {
         method: "POST",
         body: JSON.stringify({ email, password }),
@@ -125,7 +108,6 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async verify(email, emailValidToken) {
-      trackPageView(email);
       const res = await context.fetch("/user/verify", {
         method: "POST",
         body: JSON.stringify({ email, emailValidToken }),
@@ -137,7 +119,6 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async makePasswordResetToken(email) {
-      trackPageView(email);
       const [res, body] = await context.fetch("/user/password/reset-token", {
         method: "POST",
         body: JSON.stringify({ email }),
@@ -149,7 +130,6 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async resetPassword(email, resetToken, password) {
-      trackPageView(email);
       const [res, body] = await context.fetch("/user/password/reset", {
         method: "POST",
         body: JSON.stringify({ email, resetToken, password }),
@@ -218,7 +198,6 @@ const makeContext = (state: ApiState, setState) => {
     },
 
     async createApiToken(params): Promise<ApiToken> {
-      trackPageView(params.email, "/create-api-token");
       const [res, token] = await context.fetch(`/api-token`, {
         method: "POST",
         body: JSON.stringify(params),
