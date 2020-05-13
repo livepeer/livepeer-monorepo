@@ -20,7 +20,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
 
   // Return if transcoder that called reward isn't voter's delegate
   if (
-    delegator == null &&
+    delegator == null ||
     delegator.delegate != event.params.transcoder.toHex()
   ) {
     return
@@ -179,7 +179,7 @@ export function updatePollTallyOnEarningsClaimed(
 
   // Return if the voter doesn't share the same delegate as the delegator that claimed earnings
   if (
-    delegator == null &&
+    delegator == null ||
     delegator.delegate != event.params.delegate.toHex()
   ) {
     return

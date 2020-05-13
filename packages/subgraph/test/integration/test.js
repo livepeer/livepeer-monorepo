@@ -116,6 +116,7 @@ contract('Subgraph Integration Tests', accounts => {
   const voteMap = ['Yes', 'No']
 
   let transcoder1
+  let transcoder2
   let delegator1
   let delegator2
   let delegator3
@@ -414,9 +415,15 @@ contract('Subgraph Integration Tests', accounts => {
     }
   })
 
-  it('correctly tallies poll after reward', async () => {
+  it('correctly tallies poll after transcoder 1 calls reward', async () => {
     await mineAndInitializeRound(roundLength)
     await BondingManager.methods.reward().send({ from: transcoder1 })
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
+  it('correctly tallies poll after transcoder 2 calls reward', async () => {
+    await BondingManager.methods.reward().send({ from: transcoder2 })
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
@@ -572,6 +579,20 @@ contract('Subgraph Integration Tests', accounts => {
       overrides: [],
     }
     voters[delegator2].overrides.push(delegator5)
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
+  it('correctly tallies poll after delegator 5 claims earnings', async () => {
+    await mineAndInitializeRound(roundLength)
+    await BondingManager.methods.reward().send({ from: transcoder1 })
+    await BondingManager.methods.reward().send({ from: delegator2 })
+    const currentRound = await RoundsManager.methods.currentRound().call()
+
+    await BondingManager.methods
+      .claimEarnings(currentRound)
+      .send({ from: delegator5 })
+
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
   })
