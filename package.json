@@ -25,7 +25,7 @@
     "release:dry-run": "lerna publish --exact --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
     "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer-2.0 --ignore @livepeer/www --ignore @livepeer/admin --ignore @livepeer/player --ignore @livepeer/chroma",
-    "dev": "lerna run --stream --no-sort --concurrency=999 dev",
+    "dev": "lerna run --stream --no-sort --concurrency=999 --ignore=@livepeer/admin dev",
     "updated": "lerna updated --json",
     "deploy:staging": "run-p wrangler:staging now:staging",
     "deploy:production": "run-p wrangler:production now:production",

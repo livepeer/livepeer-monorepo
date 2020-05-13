@@ -97,6 +97,14 @@ const makeContext = (state: ApiState, setState) => {
       }
       const { token } = body;
       storeToken(token);
+
+      if (process.env.NODE_ENV === "production") {
+        const data = jwt.decode(token);
+        window.analytics.identify(data.sub, {
+          email: email
+        });
+      }
+
       setState(state => ({ ...state, token }));
       return res;
     },
