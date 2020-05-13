@@ -537,7 +537,7 @@ contract('Subgraph Integration Tests', accounts => {
   })
 
   it('correctly tallies poll after delegator 5 bonds with unregistered transcoder (delegate 2)', async () => {
-    let bondAmount = new BN(1000).times(TOKEN_UNIT)
+    let bondAmount = 1000
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator5,
     })
@@ -585,6 +585,7 @@ contract('Subgraph Integration Tests', accounts => {
 
   it('correctly tallies poll after delegator 5 claims earnings', async () => {
     await mineAndInitializeRound(roundLength)
+    await BondingManager.methods.reward().send({ from: transcoder1 })
     await BondingManager.methods.reward().send({ from: delegator2 })
     const currentRound = await RoundsManager.methods.currentRound().call()
 
