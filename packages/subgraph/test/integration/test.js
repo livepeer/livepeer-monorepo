@@ -422,12 +422,6 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after transcoder 1 claims earnings', async () => {
-    await BondingManager.methods.reward().send({ from: transcoder1 })
-    await waitForSubgraphToBeSynced()
-    await tallyPollAndCheckResult()
-  })
-
   it('correctly tallies poll after transcoder 2 calls reward', async () => {
     await BondingManager.methods.reward().send({ from: transcoder2 })
     await waitForSubgraphToBeSynced()
@@ -589,14 +583,14 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
-  it('correctly tallies poll after delegator 3 claims earnings', async () => {
+  it('correctly tallies poll after delegator 5 claims earnings', async () => {
     await mineAndInitializeRound(roundLength)
-    await BondingManager.methods.reward().send({ from: transcoder1 })
+    await BondingManager.methods.reward().send({ from: delegator2 })
     const currentRound = await RoundsManager.methods.currentRound().call()
 
     await BondingManager.methods
       .claimEarnings(currentRound)
-      .send({ from: delegator3 })
+      .send({ from: delegator5 })
 
     await waitForSubgraphToBeSynced()
     await tallyPollAndCheckResult()
