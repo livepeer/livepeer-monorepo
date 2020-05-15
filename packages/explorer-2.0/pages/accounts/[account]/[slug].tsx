@@ -155,7 +155,12 @@ const Account = () => {
           transcoder={data.transcoder}
         />
         <Tabs tabs={tabs} />
-        {slug == 'campaign' && <CampaignView transcoder={data.transcoder} />}
+        {slug == 'campaign' && (
+          <CampaignView
+            currentRound={data.currentRound[0]}
+            transcoder={data.transcoder}
+          />
+        )}
         {slug == 'fees' && (
           <FeesView
             delegator={data.delegator}
