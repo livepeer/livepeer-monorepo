@@ -119,10 +119,11 @@ describe('controllers/stream', () => {
     })
 
     it('should get all streams with admin authorization', async () => {
-      for (let i = 0; i < 4; i += 1) {
+      for (let i = 0; i < 5; i += 1) {
         const document = {
           id: uuid(),
           kind: 'stream',
+          deleted: i > 3 ? true : undefined,
         }
         await server.store.create(document)
         const res = await client.get(`/stream/${document.id}`)
@@ -134,6 +135,33 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(200)
       const streams = await res.json()
       expect(streams.length).toEqual(4)
+      const resAll = await client.get('/stream?all=1')
+      expect(resAll.status).toBe(200)
+      const streamsAll = await resAll.json()
+      expect(streamsAll.length).toEqual(5)
+    })
+
+    it('should not get empty list with next page', async () => {
+      const sources = []
+      for (let i = 0; i < 5; i += 1) {
+        const document = {
+          id: i + uuid(), // object should be sorted for this test to work as intended
+          kind: 'stream',
+          deleted: i < 3 ? true : undefined,
+        }
+        await server.store.create(document)
+        const res = await client.get(`/stream/${document.id}`)
+        const stream = await res.json()
+        expect(stream).toEqual(document)
+        sources.push(stream)
+      }
+
+      const res = await client.get('/stream?limit=3')
+      expect(res.status).toBe(200)
+      const streams = await res.json()
+      expect(streams.length).toEqual(2)
+      expect(streams[0]).toStrictEqual(sources[3])
+      expect(streams[1]).toStrictEqual(sources[4])
     })
 
     it('should get some of the streams & get a working next Link', async () => {
@@ -155,12 +183,14 @@ describe('controllers/stream', () => {
     })
 
     it('should create a stream', async () => {
+      const now = Date.now()
       const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
       expect(stream.name).toBe('test_stream')
+      expect(stream.createdAt).toBeGreaterThanOrEqual(now)
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
     })
@@ -194,23 +224,37 @@ describe('controllers/stream', () => {
     })
 
     it('should get own streams with non-admin user', async () => {
-      for (let i = 0; i < 5; i += 1) {
+      const source = []
+      for (let i = 0; i < 9; i += 1) {
         const document = {
-          id: uuid(),
+          id: i + uuid(), // sort objects
           kind: 'stream',
-          userId: i < 3 ? nonAdminUser.id : undefined,
+          userId: i < 7 ? nonAdminUser.id : undefined,
+          deleted: i < 3,
         }
         await server.store.create(document)
         const res = await client.get(`/stream/${document.id}`)
         expect(res.status).toBe(200)
+        source.push(await res.json())
       }
       client.jwtAuth = nonAdminToken['token']
 
-      const res = await client.get(`/stream/user/${nonAdminUser.id}`)
+      const res = await client.get(`/stream/user/${nonAdminUser.id}?limit=4`)
       expect(res.status).toBe(200)
       const streams = await res.json()
-      expect(streams.length).toEqual(3)
+      expect(streams.length).toEqual(1)
+      expect(streams[0]).toEqual(source[3])
       expect(streams[0].userId).toEqual(nonAdminUser.id)
+      expect(res.headers._headers.link).toBeDefined()
+      expect(res.headers._headers.link.length).toBe(1)
+      const [nextLink] = res.headers._headers.link[0].split('>')
+      const si = nextLink.indexOf(`/stream/user/`)
+      const nextRes = await client.get(nextLink.slice(si))
+      expect(nextRes.status).toBe(200)
+      const nextStreams = await nextRes.json()
+      expect(nextStreams.length).toEqual(3)
+      expect(nextStreams[0]).toEqual(source[4])
+      expect(nextStreams[0].userId).toEqual(nonAdminUser.id)
     })
 
     it('should not get streams with non-admin user', async () => {
@@ -279,6 +323,15 @@ describe('controllers/stream', () => {
     })
 
     it('should get own streams', async () => {
+      client.apiKey = nonAdminApiKey
+      let res = await client.get(`/stream/user/${nonAdminUser.id}`)
+      expect(res.status).toBe(200)
+      const streams = await res.json()
+      expect(streams.length).toEqual(3)
+      expect(streams[0].userId).toEqual(nonAdminUser.id)
+    })
+
+    it('should delete stream', async () => {
       client.apiKey = nonAdminApiKey
       let res = await client.get(`/stream/user/${nonAdminUser.id}`)
       expect(res.status).toBe(200)
