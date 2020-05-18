@@ -119,7 +119,7 @@ app.post('/', validatePost('user'), async (req, res) => {
 })
 
 app.post('/token', validatePost('user'), async (req, res) => {
-  const userIds = await req.store.query({
+  const { data: userIds } = await req.store.query({
     kind: 'user',
     query: { email: req.body.email }
   })
@@ -151,7 +151,7 @@ app.post('/token', validatePost('user'), async (req, res) => {
 })
 
 app.post('/verify', validatePost('user-verification'), async (req, res) => {
-  const userIds = await req.store.query({
+  const { data: userIds } = await req.store.query({
     kind: 'user',
     query: { email: req.body.email }
   })
@@ -211,7 +211,7 @@ app.post(
   validatePost('password-reset'),
   async (req, res) => {
     const { email, password, resetToken } = req.body
-    const [userId] = await req.store.query({
+    const { data: [userId] } = await req.store.query({
       kind: 'user',
       query: { email: email }
     })
@@ -226,7 +226,7 @@ app.post(
       return res.json({ errors: [`user email ${email} not found`] })
     }
 
-    const tokens = await req.store.query({
+    const { data: tokens } = await req.store.query({
       kind: 'password-reset-token',
       query: {
         userId: user.id
@@ -283,7 +283,7 @@ app.post(
   validatePost('password-reset-token'),
   async (req, res) => {
     const email = req.body.email
-    const [userId] = await req.store.query({
+    const { data: [userId] } = await req.store.query({
       kind: 'user',
       query: { email: email }
     })
@@ -357,7 +357,7 @@ app.post(
   authMiddleware({ admin: true }),
   validatePost('make-admin'),
   async (req, res) => {
-    const userIds = await req.store.query({
+    const { data: userIds } = await req.store.query({
       kind: 'user',
       query: { email: req.body.email }
     })

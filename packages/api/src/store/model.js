@@ -70,19 +70,18 @@ export default class Model {
     return this.backend.listKeys(prefix, cursor, limit)
   }
 
-  async query({ kind, query, cursor, limit, cleanWriteOnly }) {
+  async query({ kind, query, cursor, limit }) {
     const [queryKey, ...others] = Object.keys(query)
     if (others.length > 0) {
       throw new Error('you may only query() by one key')
     }
     const queryValue = query[queryKey]
-    const prefix = `${kind}+${queryKey}/${queryValue}`
+    const prefix = `${kind}+${queryKey}/${queryValue}/`
 
-    const [keys] = await this.backend.listKeys(
+    const [keys, cursorOut] = await this.backend.listKeys(
       prefix,
       cursor,
       limit,
-      cleanWriteOnly,
     )
 
     const ids = []
@@ -90,7 +89,7 @@ export default class Model {
       ids.push(keys[i].split('/').pop())
     }
 
-    return ids
+    return { data: ids, cursor: cursorOut }
   }
 
   async deleteKey(key) {
