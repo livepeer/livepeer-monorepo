@@ -1,6 +1,7 @@
 import crypto from 'isomorphic-webcrypto'
 import util from 'util'
 import SendgridMail from '@sendgrid/mail'
+import SegmentAnalytics from 'analytics-node'
 
 let Encoder
 if (typeof TextEncoder === 'undefined') {
@@ -143,4 +144,26 @@ export async function sendgridEmail({
 
   SendgridMail.setApiKey(sendgridApiKey)
   await SendgridMail.send(msg)
+}
+
+export async function trackAction(userId, email, event, segmentApiKey) {
+  var analytics = new SegmentAnalytics(segmentApiKey)
+  // note: for development, add `{ flushAt: 1 }` as a second parameter to SegmentAnalytics
+  analytics.identify({
+    userId: userId,
+    traits: { email },
+  })
+
+  const properties = {}
+  if ('properties' in event) {
+    for (const key of Object.keys(event.properties)) {
+      properties[key] = event.properties[key]
+    }
+  }
+
+  analytics.track({
+    userId: userId,
+    event: event.name,
+    properties: properties,
+  })
 }

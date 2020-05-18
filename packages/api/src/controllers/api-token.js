@@ -1,6 +1,7 @@
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
 import Router from 'express/lib/router'
+import { trackAction } from './helpers'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 
@@ -72,9 +73,10 @@ app.post(
   validatePost('api-token'),
   async (req, res) => {
     const id = uuid()
+    const userId = req.user.id
     await req.store.create({
       id: id,
-      userId: req.user.id,
+      userId: userId,
       kind: 'api-token',
       name: req.body.name,
     })
@@ -82,6 +84,13 @@ app.post(
     const apiToken = await req.store.get(`api-token/${id}`)
 
     if (apiToken) {
+      trackAction(
+        userId,
+        req.user.email,
+        { name: 'Api Token Created' },
+        req.config.segmentApiKey,
+      )
+
       res.status(201)
       res.json(apiToken)
     } else {

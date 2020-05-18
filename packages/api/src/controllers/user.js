@@ -5,7 +5,7 @@ import uuid from 'uuid/v4'
 import ms from 'ms'
 import jwt from 'jsonwebtoken'
 import validator from 'email-validator'
-import { makeNextHREF, sendgridEmail } from './helpers'
+import { makeNextHREF, sendgridEmail, trackAction } from './helpers'
 import hash from '../hash'
 import qs from 'qs'
 
@@ -106,6 +106,13 @@ app.post('/', validatePost('user'), async (req, res) => {
     res.status(403)
     return res.json({ errors: ['user not created'] })
   }
+
+  trackAction(
+    user.id,
+    user.email,
+    { name: 'user registered' },
+    req.config.segmentApiKey,
+  )
 
   res.status(201)
   res.json(user)
