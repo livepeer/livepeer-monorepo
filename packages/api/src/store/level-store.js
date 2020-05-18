@@ -30,7 +30,7 @@ export default class LevelStore {
   async *listStream(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     // I do not know if this is the right way to do this, but...
     // if we want every key that starts with "endpoint/", what we're
-    // really asking for is ">= 'endpoint/'" and '< 'endpoint0',
+    // really asking for is "> 'endpoint/'" and '< 'endpoint0',
     // which is the character code one after slash? ¯\_(ツ)_/¯
     let filter = {}
     limit = parseInt(limit)
@@ -39,7 +39,7 @@ export default class LevelStore {
       const endKey =
         prefix.slice(0, prefix.length - 1) + String.fromCharCode(lastCode + 1)
       filter = {
-        gte: `${prefix}${cursor}`,
+        gt: `${prefix}${cursor}`,
         lt: endKey,
         limit,
       }
@@ -78,7 +78,8 @@ export default class LevelStore {
     if (ret.length < 1) {
       return { data: ret, cursor: null }
     }
-    return { data: ret, cursor: ret[ret.length - 1].id }
+    const lastObj = ret[ret.length - 1]
+    return { data: ret, cursor: lastObj[Object.keys(lastObj)[0]].id }
   }
 
   async get(key) {
