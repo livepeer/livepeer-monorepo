@@ -151,7 +151,7 @@ class statusPoller {
       countSegments(si, manifest)
       if (needUpdate) {
         const streamKey = `stream/${mid}`
-        const storedInfo: Stream = (await this.store.get(streamKey, false)) as Stream
+        const storedInfo: Stream = await this.store.get(streamKey, false)
         // console.log(`got stream info from store: `, storedInfo)
         storedInfo.lastSeen = si.lastSeen.valueOf()
         storedInfo.sourceSegments += si.sourceSegments - si.sourceSegmentsLastUpdated

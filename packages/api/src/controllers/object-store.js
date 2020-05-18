@@ -17,20 +17,12 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${cursor}, limit ${limit}`)
 
-  const { data: objStoreIds, cursor: cursorOut } = await req.store.query({
+  const { data: objStores, cursor: cursorOut } = await req.store.queryObjects({
     kind: 'object-store',
     query: { userId: req.params.userId },
     cursor,
     limit,
   })
-
-  const objStores = []
-  for (let i = 0; i < objStoreIds.length; i++) {
-    const objStore = await req.store.get(`object-store/${objStoreIds[i]}`)
-    if (objStore) {
-      objStores.push(objStore)
-    }
-  }
 
   res.status(200)
 

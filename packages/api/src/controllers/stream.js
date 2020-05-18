@@ -42,21 +42,15 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const { data: streamIds, cursor: cursorOut } = await req.store.query({
+  const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
     kind: 'stream',
     query: { userId: req.params.userId },
     cursor,
-    limit
+    limit,
+    filter: (o => !o.deleted)
   })
-  const streams = []
-  for (let i = 0; i < streamIds.length; i++) {
-    const stream = await req.store.get(`stream/${streamIds[i]}`, false)
-    if (!stream.deleted) {
-      streams.push(stream)
-    }
-  }
   res.status(200)
-  if (streamIds.length > 0 && cursorOut) {
+  if (streams.length > 0 && cursorOut) {
     res.links({ next: makeNextHREF(req, cursorOut) })
   }
   res.json(streams)

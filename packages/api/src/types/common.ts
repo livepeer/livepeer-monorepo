@@ -28,6 +28,7 @@ export interface IStoreListArgs {
   cursor?: any,
   limit?: number,
   cleanWriteOnly?: boolean
+  filter?: (obj: { [key: string]: StoredObject }) => boolean
 }
 
 export interface IStoreQueryArgs {
@@ -38,15 +39,25 @@ export interface IStoreQueryArgs {
   cleanWriteOnly?: boolean
 }
 
+export interface IStoreQueryObjectsArgs {
+  kind: string,
+  query: object,
+  cursor?: any,
+  limit?: number,
+  cleanWriteOnly?: boolean,
+  filter?: (obj: StoredObject) => boolean
+}
+
 export interface IStore {
   ready: Promise<void>
 
-  get(id: string, cleanWriteOnly?: boolean): Promise<StoredObject>
+  get<T extends StoredObject>(id: string, cleanWriteOnly?: boolean): Promise<T>
   close(): Promise<void>
   replace(data: StoredObject): Promise<void>
-  list(args: IStoreListArgs): Promise<{ data: Array<StoredObject>, cursor: any }>
-  listKeys(prefix: string, cursor?: any, limit?: number): Promise<[Array<string>, any]>
-  query(args: IStoreQueryArgs): Promise<Array<string>>
+  list(args: IStoreListArgs): Promise<{ data: Array<StoredObject>, cursor: string }>
+  listKeys(prefix: string, cursor?: string, limit?: number): Promise<[Array<string>, string]>
+  query(args: IStoreQueryArgs): Promise<{ data: Promise<Array<string>>, cursor: string }>
+  queryObjects(args: IStoreQueryObjectsArgs): Promise<{ data: Array<StoredObject>, cursor: string }>
   deleteKey(key: string): Promise<void>
   delete(id: string): Promise<void>
   create(data: StoredObject): Promise<StoredObject>
