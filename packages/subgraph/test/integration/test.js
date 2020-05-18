@@ -597,6 +597,21 @@ contract('Subgraph Integration Tests', accounts => {
     await tallyPollAndCheckResult()
   })
 
+  it('correctly tallies poll after delegator moves stake to a transcoder that voted', async () => {
+    let bondAmount = 1000
+    await Token.methods.approve(bondingManagerAddress, bondAmount).send({
+      from: delegator1,
+    })
+    await BondingManager.methods
+      .bond(bondAmount, transcoder1)
+      .send({ from: delegator1 })
+
+    voters[transcoder1].overrides.push(delegator1)
+
+    await waitForSubgraphToBeSynced()
+    await tallyPollAndCheckResult()
+  })
+
   it('correctly tallies poll after transcoder 1 resigns', async () => {
     let unbondAmount = await getStake(transcoder1)
     await BondingManager.methods

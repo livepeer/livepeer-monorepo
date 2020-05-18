@@ -102,9 +102,12 @@ export function updatePollTallyOnBond(event: BondEvent): void {
     } else {
       oldDelegateVote.registeredTranscoder = false
     }
-    if (isSwitchingDelegates && oldDelegateVote.choiceID != null) {
-      oldDelegateVote.voteStake = oldDelegate.totalStake
-
+    if (isSwitchingDelegates) {
+      // if old delegate voted, update its vote stake
+      if(oldDelegateVote.choiceID != null) {
+        oldDelegateVote.voteStake = oldDelegate.totalStake
+      }
+      
       // if caller is voter, remove its nonVoteStake from old delegate
       if (voterAddress == event.params.delegator.toHex()) {
         oldDelegateVote.nonVoteStake = oldDelegateVote.nonVoteStake.minus(
@@ -147,9 +150,18 @@ export function updatePollTallyOnBond(event: BondEvent): void {
     }
 
     newDelegateVote.voter = event.params.newDelegate.toHex()
-    newDelegateVote.nonVoteStake = newDelegateVote.nonVoteStake
+
+    // if switching, add stake to new delegate's nonVoteStake, otherwise update
+    // new delegate's nonVoteStake
+    if(isSwitchingDelegates) {
+      newDelegateVote.nonVoteStake = newDelegateVote.nonVoteStake
+      .plus(event.params.bondedAmount)
+    } else {
+      newDelegateVote.nonVoteStake = newDelegateVote.nonVoteStake
       .minus(vote.voteStake as BigInt)
       .plus(event.params.bondedAmount)
+    }
+    
     newDelegateVote.save()
 
     vote.voteStake = event.params.bondedAmount
