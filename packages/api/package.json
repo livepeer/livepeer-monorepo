@@ -38,7 +38,7 @@
     "go-livepeer:orchestrator": "bin/livepeer -orchestrator -datadir ./bin/orchestrator -transcoder -serviceAddr 127.0.0.1:3086 -cliAddr :3076 -v 6",
     "test": "node run-tests.js",
     "test:local": "jest src",
-    "test:postgres": "jest --forceExit --runInBand --forceExit src -- --storage=postgres --postgres-url=postgresql://postgres@localhost/livepeerapi",
+    "test:postgres": "LP_STORAGE=postgres LP_POSTGRES_URL=postgresql://postgres@localhost/livepeerapi jest --forceExit --runInBand --forceExit src",
     "test:build": "parcel build --no-autoinstall --no-minify --bundle-node-modules -t browser --out-dir ../dist-worker ../src/worker.js"
   },
   "dependencies": {
