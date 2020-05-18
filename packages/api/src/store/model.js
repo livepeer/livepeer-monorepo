@@ -47,21 +47,30 @@ export default class Model {
     // )
   }
 
-  // async list(prefix, cursor, limit, cleanWriteOnly = true) 
-  async list({prefix, cursor, limit, cleanWriteOnly = true}) {
-    const responses = await this.backend.list(prefix, cursor, limit)
-
-    if (responses.data.length > 0 && cleanWriteOnly) {
-      return this.cleanWriteOnlyResponses(prefix, responses)
+  async list({ prefix, cursor, limit, filter, cleanWriteOnly = true }) {
+    while (true) {
+      const responses = await this.backend.list(prefix, cursor, limit)
+      if (typeof filter == 'function') {
+        responses.data = responses.data.filter(filter)
+        if (!responses.data.length && responses.cursor) {
+          // filtered set are empty, but there is more in database,
+          // so let's try next page
+          cursor = responses.cursor
+          continue
+        }
+      }
+      if (responses.data.length > 0 && cleanWriteOnly) {
+        return this.cleanWriteOnlyResponses(prefix, responses)
+      }
+      return responses
     }
-    return responses
   }
 
   async listKeys(prefix, cursor, limit) {
     return this.backend.listKeys(prefix, cursor, limit)
   }
 
-  async query({kind, query, cursor, limit, cleanWriteOnly}) {
+  async query({ kind, query, cursor, limit, cleanWriteOnly }) {
     const [queryKey, ...others] = Object.keys(query)
     if (others.length > 0) {
       throw new Error('you may only query() by one key')
