@@ -47,7 +47,8 @@ export default class Model {
     // )
   }
 
-  async list(prefix, cursor, limit, cleanWriteOnly = true) {
+  // async list(prefix, cursor, limit, cleanWriteOnly = true) 
+  async list({prefix, cursor, limit, cleanWriteOnly = true}) {
     const responses = await this.backend.list(prefix, cursor, limit)
 
     if (responses.data.length > 0 && cleanWriteOnly) {
@@ -60,12 +61,12 @@ export default class Model {
     return this.backend.listKeys(prefix, cursor, limit)
   }
 
-  async query(kind, queryObj, cursor, limit, cleanWriteOnly) {
-    const [queryKey, ...others] = Object.keys(queryObj)
+  async query({kind, query, cursor, limit, cleanWriteOnly}) {
+    const [queryKey, ...others] = Object.keys(query)
     if (others.length > 0) {
       throw new Error('you may only query() by one key')
     }
-    const queryValue = queryObj[queryKey]
+    const queryValue = query[queryKey]
     const prefix = `${kind}+${queryKey}/${queryValue}`
 
     const [keys] = await this.backend.listKeys(

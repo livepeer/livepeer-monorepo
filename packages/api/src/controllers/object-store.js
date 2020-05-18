@@ -17,12 +17,12 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${cursor}, limit ${limit}`)
 
-  const objStoreIds = await req.store.query(
-    'object-store',
-    { userId: req.params.userId },
+  const objStoreIds = await req.store.query({
+    kind: 'object-store',
+    query: { userId: req.params.userId },
     cursor,
     limit,
-  )
+  })
 
   const objStores = []
   for (let i = 0; i < objStoreIds.length; i++) {
@@ -43,7 +43,10 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
-  const objStoreIds = await req.store.query('object-store', { userId: userId })
+  const objStoreIds = await req.store.query({
+    kind: 'object-store',
+    query: { userId: userId }
+  })
 
   if (!objStoreIds.includes(id)) {
     res.status(404)

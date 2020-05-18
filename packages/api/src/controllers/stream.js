@@ -17,7 +17,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const resp = await req.store.list(`stream/`, cursor, limit)
+  const resp = await req.store.list({ prefix: `stream/`, cursor, limit })
   let output = resp.data
   res.status(200)
 
@@ -40,12 +40,12 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const streamIds = await req.store.query(
-    'stream',
-    { userId: req.params.userId },
+  const streamIds = await req.store.query({
+    kind: 'stream',
+    query: { userId: req.params.userId },
     cursor,
-    limit,
-  )
+    limit
+  })
   const streams = []
   for (let i = 0; i < streamIds.length; i++) {
     const token = await req.store.get(`stream/${streamIds[i]}`, false)

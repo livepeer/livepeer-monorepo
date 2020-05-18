@@ -12,7 +12,7 @@ import qs from 'qs'
 const app = Router()
 
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
-  const resp = await req.store.list(`user/`, req.query.cursor, req.query.limit)
+  const resp = await req.store.list({ prefix: `user/`, cursor: req.query.cursor, limit: req.query.limit })
   res.status(200)
 
   if (resp.data.length > 0) {
@@ -70,7 +70,7 @@ app.post('/', validatePost('user'), async (req, res) => {
 
   const verificationUrl = `${protocol}://${
     req.headers.host
-  }/app/user/verify?${qs.stringify({ email, emailValidToken })}`
+    }/app/user/verify?${qs.stringify({ email, emailValidToken })}`
   const unsubscribeUrl = `${protocol}://${req.headers.host}/#contactSection`
 
   if (!validUser && user) {
@@ -119,7 +119,10 @@ app.post('/', validatePost('user'), async (req, res) => {
 })
 
 app.post('/token', validatePost('user'), async (req, res) => {
-  const userIds = await req.store.query('user', { email: req.body.email })
+  const userIds = await req.store.query({
+    kind: 'user',
+    query: { email: req.body.email }
+  })
   if (userIds.length < 1) {
     res.status(404)
     return res.json({ errors: ['user not found'] })
@@ -148,7 +151,10 @@ app.post('/token', validatePost('user'), async (req, res) => {
 })
 
 app.post('/verify', validatePost('user-verification'), async (req, res) => {
-  const userIds = await req.store.query('user', { email: req.body.email })
+  const userIds = await req.store.query({
+    kind: 'user',
+    query: { email: req.body.email }
+  })
   if (userIds.length < 1) {
     res.status(404)
     return res.json({ errors: ['user not found'] })
@@ -205,7 +211,10 @@ app.post(
   validatePost('password-reset'),
   async (req, res) => {
     const { email, password, resetToken } = req.body
-    const [userId] = await req.store.query('user', { email: email })
+    const [userId] = await req.store.query({
+      kind: 'user',
+      query: { email: email }
+    })
     if (!userId) {
       res.status(404)
       return res.json({ errors: ['user not found'] })
@@ -217,8 +226,11 @@ app.post(
       return res.json({ errors: [`user email ${email} not found`] })
     }
 
-    const tokens = await req.store.query('password-reset-token', {
-      userId: user.id,
+    const tokens = await req.store.query({
+      kind: 'password-reset-token',
+      query: {
+        userId: user.id
+      },
     })
 
     if (tokens.length < 1) {
@@ -271,7 +283,10 @@ app.post(
   validatePost('password-reset-token'),
   async (req, res) => {
     const email = req.body.email
-    const [userId] = await req.store.query('user', { email: email })
+    const [userId] = await req.store.query({
+      kind: 'user',
+      query: { email: email }
+    })
     if (!userId) {
       res.status(404)
       return res.json({ errors: ['user not found'] })
@@ -300,7 +315,7 @@ app.post(
 
       const verificationUrl = `${protocol}://${
         req.headers.host
-      }/reset-password?${qs.stringify({ email, resetToken })}`
+        }/reset-password?${qs.stringify({ email, resetToken })}`
       const unsubscribeUrl = `${protocol}://${req.headers.host}/#contactSection`
 
       await sendgridEmail({
@@ -342,7 +357,10 @@ app.post(
   authMiddleware({ admin: true }),
   validatePost('make-admin'),
   async (req, res) => {
-    const userIds = await req.store.query('user', { email: req.body.email })
+    const userIds = await req.store.query({
+      kind: 'user',
+      query: { email: req.body.email }
+    })
     if (userIds.length < 1) {
       res.status(404)
       return res.json({ errors: ['user not found'] })

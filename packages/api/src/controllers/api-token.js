@@ -56,7 +56,7 @@ app.get('/', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const tokenIds = await req.store.query('api-token', { userId: userId })
+  const tokenIds = await req.store.query({ kind: 'api-token', query: { userId: userId } })
   const userTokens = []
   for (let i = 0; i < tokenIds.length; i++) {
     const token = await req.store.get(`api-token/${tokenIds[i]}`, false)

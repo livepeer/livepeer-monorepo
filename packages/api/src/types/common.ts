@@ -23,16 +23,31 @@ declare global {
 
 export type StoredObject = Stream | User | ApiToken
 
+export interface IStoreListArgs {
+  prefix: string,
+  cursor?: any,
+  limit?: number,
+  cleanWriteOnly?: boolean
+}
+
+export interface IStoreQueryArgs {
+  kind: string,
+  query: object,
+  cursor?: any,
+  limit?: number,
+  cleanWriteOnly?: boolean
+}
+
 export interface IStore {
   ready: Promise<void>
 
   get(id: string, cleanWriteOnly?: boolean): Promise<StoredObject>
   close(): Promise<void>
   replace(data: StoredObject): Promise<void>
-  list(prefix: string, cursor: any, limit: number, cleanWriteOnly?: boolean): Promise<{ data: Array<StoredObject>, cursor: any }>
+  list(args: IStoreListArgs): Promise<{ data: Array<StoredObject>, cursor: any }>
   listKeys(prefix: string, cursor?: any, limit?: number): Promise<[Array<string>, any]>
-  query(kind: string, queryObj: object, cursor: any, limit: number, cleanWriteOnly?:boolean) : Promise<Array<string>>
-  deleteKey(key: string) : Promise<void>
+  query(args: IStoreQueryArgs): Promise<Array<string>>
+  deleteKey(key: string): Promise<void>
   delete(id: string): Promise<void>
   create(data: StoredObject): Promise<StoredObject>
 }
