@@ -78,8 +78,8 @@ export default class LevelStore {
     if (ret.length < 1) {
       return { data: ret, cursor: null }
     }
-    const lastObj = ret[ret.length - 1]
-    return { data: ret, cursor: lastObj[Object.keys(lastObj)[0]].id }
+    const cursorOut = Object.keys(ret[ret.length - 1])[0].split('/').pop()
+    return { data: ret, cursor: cursorOut }
   }
 
   async get(key) {
