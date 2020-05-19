@@ -1,16 +1,16 @@
 'use strict'
 
-function geoLocateFactory (params) {
-  return async (req, res, next) => {    
+function geoLocateFactory(params) {
+  return async (req, res, next) => {
     let first = params.first || true
-    if (req.query.first === "false") {
+    if (req.query.first === 'false') {
       first = false
-    } else if (req.query.first = "true") {
+    } else if ((req.query.first = 'true')) {
       first = true
     }
-    
+
     let serversObject = req.config.region
-    let servers  = []
+    let servers = []
     for (let i in serversObject) {
       servers.push(serversObject[i])
     }
@@ -19,7 +19,7 @@ function geoLocateFactory (params) {
       req.region = null
       return next()
     }
-    
+
     let smallestServer
     let smallestDuration = Infinity
     console.log('servers: ', typeof servers, servers)

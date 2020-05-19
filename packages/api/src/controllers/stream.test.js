@@ -100,7 +100,13 @@ describe('controllers/stream', () => {
     let client, adminUser, adminToken, nonAdminUser, nonAdminToken
 
     beforeEach(async () => {
-      ({ client, adminUser, adminToken, nonAdminUser, nonAdminToken } = await setupUsers(server))
+      ;({
+        client,
+        adminUser,
+        adminToken,
+        nonAdminUser,
+        nonAdminToken,
+      } = await setupUsers(server))
     })
 
     it('should not get all streams without admin authorization', async () => {
@@ -251,7 +257,13 @@ describe('controllers/stream', () => {
     const nonAdminApiKey = uuid()
 
     beforeEach(async () => {
-      ({ client, adminUser, adminToken, nonAdminUser, nonAdminToken } = await setupUsers(server))
+      ;({
+        client,
+        adminUser,
+        adminToken,
+        nonAdminUser,
+        nonAdminToken,
+      } = await setupUsers(server))
 
       await server.store.create({
         id: adminApiKey,

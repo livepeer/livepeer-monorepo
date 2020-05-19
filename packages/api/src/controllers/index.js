@@ -14,5 +14,5 @@ export default {
   orchestrator: orchestrator,
   stream: stream,
   user: user,
-  geolocate: geolocate
+  geolocate: geolocate,
 }
