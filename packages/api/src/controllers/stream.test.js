@@ -338,6 +338,14 @@ describe('controllers/stream', () => {
       const streams = await res.json()
       expect(streams.length).toEqual(3)
       expect(streams[0].userId).toEqual(nonAdminUser.id)
+      let dres = await client.delete(`/stream/${streams[0].id}`)
+      expect(dres.status).toBe(204)
+      let get2 = await client.delete(`/stream/${streams[0].id}`)
+      expect(get2.status).toBe(404)
+      let res2 = await client.get(`/stream/user/${nonAdminUser.id}`)
+      expect(res2.status).toBe(200)
+      const streams2 = await res2.json()
+      expect(streams2.length).toEqual(2)
     })
 
     it('should not get others streams', async () => {
