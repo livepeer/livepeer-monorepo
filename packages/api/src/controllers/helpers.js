@@ -147,6 +147,9 @@ export async function sendgridEmail({
 }
 
 export async function trackAction(userId, email, event, segmentApiKey) {
+  if (!segmentApiKey) {
+    return
+  }
   var analytics = new SegmentAnalytics(segmentApiKey, { flushAt: 1 })
   analytics.identify({
     userId: userId,
@@ -157,9 +160,7 @@ export async function trackAction(userId, email, event, segmentApiKey) {
 
   const properties = {}
   if ('properties' in event) {
-    for (const key of Object.keys(event.properties)) {
-      properties[key] = event.properties[key]
-    }
+    properties = { ...properties, ...event.properties }
   }
 
   analytics.track({
