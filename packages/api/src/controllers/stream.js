@@ -102,7 +102,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
 app.delete('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const stream = await req.store.get(`stream/${id}`, false)
-  if (!stream || stream.userId !== req.user.id && !(req.user.admin && req.authTokenType == 'JWT')) {
+  if (!stream || stream.deleted || stream.userId !== req.user.id && !req.isUIAdmin) {
     res.status(404)
     return res.json({ errors: ['not found'] })
   }
