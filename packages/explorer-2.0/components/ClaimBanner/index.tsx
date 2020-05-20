@@ -6,9 +6,11 @@ import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
+import { useApolloClient } from '@apollo/react-hooks'
 
 export default ({ delegator, currentRound }) => {
   const context = useWeb3React()
+  const client = useApolloClient()
   const { batchClaimEarnings }: any = useContext(MutationsContext)
   const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
   const MDXDocument = require('../../data/claim-earnings.mdx').default
@@ -39,13 +41,37 @@ export default ({ delegator, currentRound }) => {
                 variant="text"
                 onClick={async () => {
                   try {
+                    client.writeData({
+                      data: {
+                        txSummaryModal: {
+                          __typename: 'TxSummaryModal',
+                          open: true,
+                        },
+                      },
+                    })
                     await batchClaimEarnings({
                       variables: {
                         lastClaimRound: delegator.lastClaimRound.id,
                         endRound: currentRound.id,
                       },
                     })
+                    client.writeData({
+                      data: {
+                        txSummaryModal: {
+                          __typename: 'TxSummaryModal',
+                          open: false,
+                        },
+                      },
+                    })
                   } catch (e) {
+                    client.writeData({
+                      data: {
+                        txSummaryModal: {
+                          __typename: 'TxSummaryModal',
+                          error: true,
+                        },
+                      },
+                    })
                     return {
                       error: e.message.replace('GraphQL error: ', ''),
                     }
