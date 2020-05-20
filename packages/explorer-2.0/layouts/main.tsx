@@ -12,7 +12,7 @@ import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import WalletModal from '../components/WalletModal'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
@@ -21,6 +21,8 @@ import { MutationsContext } from '../contexts'
 import TxStartedDialog from '../components/TxStartedDialog'
 import TxConfirmedDialog from '../components/TxConfirmedDialog'
 import Modal from '../components/Modal'
+import TxSummaryDialog from '../components/TxSummaryDialog'
+import gql from 'graphql-tag'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -51,6 +53,8 @@ const Layout = ({
     })
     ReactGA.pageview(window.location.pathname + window.location.search)
   }, [])
+
+  const client = useApolloClient()
   const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
   const { account } = context
@@ -72,6 +76,17 @@ const Layout = ({
     1: 'mainnet',
     4: 'rinkeby',
   }
+
+  const GET_TX_SUMMARY_MODAL = gql`
+    {
+      txSummaryModal @client {
+        open
+        error
+      }
+    }
+  `
+
+  const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL)
 
   useEffect(() => {
     if (width > 1020) {
@@ -214,14 +229,14 @@ const Layout = ({
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
-              !txDialogState.find(t => t.txHash === lastTx.txHash)
+              !txDialogState.find((t) => t.txHash === lastTx.txHash)
                 ?.confirmedDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   confirmedDialog: {
                     dismissed: true,
@@ -231,18 +246,31 @@ const Layout = ({
             }}
             tx={lastTx}
           />
-
+          <TxSummaryDialog
+            isOpen={txSummaryModalData?.txSummaryModal.open}
+            onDismiss={() => {
+              client.writeData({
+                data: {
+                  txSummaryModal: {
+                    __typename: 'TxSummaryModal',
+                    error: false,
+                    open: false,
+                  },
+                },
+              })
+            }}
+          />
           <TxStartedDialog
             isOpen={
               lastTx?.confirmed === false &&
-              !txDialogState.find(t => t.txHash === lastTx.txHash)
+              !txDialogState.find((t) => t.txHash === lastTx.txHash)
                 ?.pendingDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   pendingDialog: {
                     dismissed: true,
@@ -271,6 +299,6 @@ const Layout = ({
   )
 }
 
-export const getLayout = page => <Layout>{page}</Layout>
+export const getLayout = (page) => <Layout>{page}</Layout>
 
 export default Layout
