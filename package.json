@@ -48,8 +48,8 @@
     "lcov-result-merger": "^3.0.0",
     "lerna": "^3.13.3",
     "now": "^17.1.1",
-    "prettier": "^1.11.1",
-    "pretty-quick": "^1.4.1"
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1"
   },
   "config": {
     "commitizen": {
