@@ -16,30 +16,21 @@ const Home = () => {
   const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
-  const { data, loading, refetch } = useQuery(orchestratorsViewQuery, {
+  const { data, loading } = useQuery(orchestratorsViewQuery, {
     pollInterval: 10000,
     ssr: false,
   })
-  const {
-    data: dataMyAccount,
-    loading: loadingMyAccount,
-    refetch: refetchMyAccount,
-  } = useQuery(accountQuery, {
-    variables: {
-      account: context?.account?.toLowerCase(),
+  const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
+    accountQuery,
+    {
+      variables: {
+        account: context?.account?.toLowerCase(),
+      },
+      pollInterval: 10000,
+      skip: !context.active,
+      ssr: false,
     },
-    pollInterval: 10000,
-    skip: !context.active,
-    ssr: false,
-  })
-
-  // Refetch data if we detect a network change
-  useEffect(() => {
-    refetch()
-    if (context.account) {
-      refetchMyAccount()
-    }
-  }, [context.chainId])
+  )
 
   return (
     <>
