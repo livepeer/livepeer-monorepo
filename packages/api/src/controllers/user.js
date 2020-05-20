@@ -107,12 +107,7 @@ app.post('/', validatePost('user'), async (req, res) => {
     return res.json({ errors: ['user not created'] })
   }
 
-  trackAction(
-    user.id,
-    user.email,
-    { name: 'user registered' },
-    req.config.segmentApiKey,
-  )
+  trackAction(user.id, user.email, { name: 'user registered' })
 
   res.status(201)
   res.json(user)

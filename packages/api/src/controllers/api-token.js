@@ -84,12 +84,7 @@ app.post(
     const apiToken = await req.store.get(`api-token/${id}`)
 
     if (apiToken) {
-      trackAction(
-        userId,
-        req.user.email,
-        { name: 'Api Token Created' },
-        req.config.segmentApiKey,
-      )
+      trackAction(userId, req.user.email, { name: 'Api Token Created' })
 
       res.status(201)
       res.json(apiToken)

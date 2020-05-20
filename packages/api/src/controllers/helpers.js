@@ -146,11 +146,12 @@ export async function sendgridEmail({
   await SendgridMail.send(msg)
 }
 
-export async function trackAction(userId, email, event, segmentApiKey) {
-  if (!segmentApiKey) {
+export async function trackAction(userId, email, event) {
+  const apiKey = process.env.SEGMENT_WRITE_KEY
+  if (!apiKey || process.NODE_ENV !== 'production') {
     return
   }
-  var analytics = new SegmentAnalytics(segmentApiKey, { flushAt: 1 })
+  var analytics = new SegmentAnalytics(apiKey, { flushAt: 1 })
   analytics.identify({
     userId: userId,
     traits: {

@@ -92,12 +92,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   })
 
   await req.store.create(doc)
-  trackAction(
-    req.user.id,
-    req.user.email,
-    { name: 'Stream Created' },
-    req.config.segmentApiKey,
-  )
+  trackAction(req.user.id, req.user.email, { name: 'Stream Created' })
 
   res.status(201)
   res.json(doc)

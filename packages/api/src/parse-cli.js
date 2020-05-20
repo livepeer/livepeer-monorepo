@@ -151,10 +151,6 @@ export default function parseCli(argv) {
           describe: 'sendgrid api key for sending emails',
           type: 'string',
         },
-        segmentApiKey: {
-          describe: 'segment api key for tracking events',
-          type: 'string',
-        },
         sendgridTemplateId: {
           describe: 'sendgrid template id to use',
           type: 'string',

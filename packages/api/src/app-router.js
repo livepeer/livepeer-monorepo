@@ -36,7 +36,6 @@ export default async function makeApp(params) {
     supportAddr,
     sendgridTemplateId,
     sendgridApiKey,
-    segmentApiKey,
     kubeNamespace,
     kubeBroadcasterService,
     kubeBroadcasterTemplate,
