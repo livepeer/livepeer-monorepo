@@ -15,9 +15,11 @@ const app = Router()
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
+  let all = req.query.all // return all streams, including deleted ones
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
+  const filter = all ? undefined : o => !o[Object.keys(o)[0]].deleted
 
-  const resp = await req.store.list(`stream/`, cursor, limit)
+  const resp = await req.store.list({ prefix: `stream/`, cursor, limit, filter })
   let output = resp.data
   res.status(200)
 
@@ -40,41 +42,34 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const streamIds = await req.store.query(
-    'stream',
-    { userId: req.params.userId },
+  const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
+    kind: 'stream',
+    query: { userId: req.params.userId },
     cursor,
     limit,
-  )
-  const streams = []
-  for (let i = 0; i < streamIds.length; i++) {
-    const token = await req.store.get(`stream/${streamIds[i]}`, false)
-    streams.push(token)
-  }
+    filter: (o => !o.deleted)
+  })
   res.status(200)
-  if (streamIds.length > 0) {
-    res.links({ next: makeNextHREF(req, streamIds.cursor) })
+  if (streams.length > 0 && cursorOut) {
+    res.links({ next: makeNextHREF(req, cursorOut) })
   }
   res.json(streams)
 })
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
-  const output = await req.store.get(`stream/${req.params.id}`)
-  if (
-    !output ||
-    (output.userId !== req.user.id &&
-      !(req.user.admin && req.authTokenType == 'JWT'))
-  ) {
+  const stream = await req.store.get(`stream/${req.params.id}`)
+  if (!stream || (stream.userId !== req.user.id || stream.deleted) && !req.isUIAdmin) {
     // do not reveal that stream exists
     res.status(404)
     return res.json({ errors: ['not found'] })
   }
   res.status(200)
-  res.json(output)
+  res.json(stream)
 })
 
 app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   const id = uuid()
+  const createdAt = Date.now()
 
   let objectStoreID
   if (req.body.objectStoreId) {
@@ -89,6 +84,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     renditions: {},
     objectStoreId: objectStoreID,
     id,
+    createdAt,
   })
 
   await req.store.create(doc)
@@ -101,6 +97,21 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
 
   res.status(201)
   res.json(doc)
+})
+
+app.delete('/:id', authMiddleware({}), async (req, res) => {
+  const { id } = req.params
+  const stream = await req.store.get(`stream/${id}`, false)
+  if (!stream || stream.deleted || stream.userId !== req.user.id && !req.isUIAdmin) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  stream.deleted = true
+  await req.store.replace(stream)
+
+  res.status(204)
+  res.end()
 })
 
 app.post('/hook', async (req, res) => {

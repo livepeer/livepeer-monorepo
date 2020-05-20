@@ -53,6 +53,14 @@ components:
         transcodedSegments:
           type: number
           example: 2
+        deleted:
+          type: boolean
+          description: Set to true when stream deleted
+        createdAt:
+          type: number
+          readOnly: true
+          description: Timestamp (in milliseconds) at which stream object was created
+          example: 1587667174725
         profiles:
           type: array
           items:

@@ -17,25 +17,17 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
   let cursor = req.query.cursor
   logger.info(`cursor params ${cursor}, limit ${limit}`)
 
-  const objStoreIds = await req.store.query(
-    'object-store',
-    { userId: req.params.userId },
+  const { data: objStores, cursor: cursorOut } = await req.store.queryObjects({
+    kind: 'object-store',
+    query: { userId: req.params.userId },
     cursor,
     limit,
-  )
-
-  const objStores = []
-  for (let i = 0; i < objStoreIds.length; i++) {
-    const objStore = await req.store.get(`object-store/${objStoreIds[i]}`)
-    if (objStore) {
-      objStores.push(objStore)
-    }
-  }
+  })
 
   res.status(200)
 
-  if (objStores.length > 0) {
-    res.links({ next: makeNextHREF(req, objStoreIds.cursor) })
+  if (objStores.length > 0 && cursorOut) {
+    res.links({ next: makeNextHREF(req, cursorOut) })
   }
 
   res.json(objStores)
@@ -43,7 +35,10 @@ app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
 
 app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
-  const objStoreIds = await req.store.query('object-store', { userId: userId })
+  const { data: objStoreIds } = await req.store.query({
+    kind: 'object-store',
+    query: { userId: userId }
+  })
 
   if (!objStoreIds.includes(id)) {
     res.status(404)

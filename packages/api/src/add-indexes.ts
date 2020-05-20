@@ -80,14 +80,18 @@ function parseCli() {
 
 async function addIndex(kind: string, fieldName: string, store: IStore) {
   console.log('adding userId index to stream objects:')
-  let data, cur, limit = 1
+  let data, cursor = null, limit = 1
   while (true) {
-    let { data, cursor } = await store.list('stream/', cur, limit, false)
+    ({ data, cursor } = await store.list({
+      prefix: 'stream/',
+      cursor,
+      limit,
+      cleanWriteOnly: false
+    }))
     console.log(`got: cursor: ${cursor}`, data)
     if (!cursor || !data.length) {
       break
     }
-    cur = cursor
     data = data.map(o => o[Object.keys(o)[0]])
     for (let obj of data) {
       const key = `${kind}+${fieldName}/${obj[fieldName]}/${obj['id']}`

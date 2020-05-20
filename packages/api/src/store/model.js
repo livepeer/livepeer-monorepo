@@ -47,32 +47,41 @@ export default class Model {
     // )
   }
 
-  async list(prefix, cursor, limit, cleanWriteOnly = true) {
-    const responses = await this.backend.list(prefix, cursor, limit)
-
-    if (responses.data.length > 0 && cleanWriteOnly) {
-      return this.cleanWriteOnlyResponses(prefix, responses)
+  async list({ prefix, cursor, limit, filter, cleanWriteOnly = true }) {
+    while (true) {
+      const responses = await this.backend.list(prefix, cursor, limit)
+      if (typeof filter == 'function') {
+        responses.data = responses.data.filter(filter)
+        if (!responses.data.length && responses.cursor) {
+          // filtered set are empty, but there is more in database,
+          // so let's try next page
+          cursor = responses.cursor
+          continue
+        }
+      }
+      if (responses.data.length > 0 && cleanWriteOnly) {
+        return this.cleanWriteOnlyResponses(prefix, responses)
+      }
+      return responses
     }
-    return responses
   }
 
   async listKeys(prefix, cursor, limit) {
     return this.backend.listKeys(prefix, cursor, limit)
   }
 
-  async query(kind, queryObj, cursor, limit, cleanWriteOnly) {
-    const [queryKey, ...others] = Object.keys(queryObj)
+  async query({ kind, query, cursor, limit }) {
+    const [queryKey, ...others] = Object.keys(query)
     if (others.length > 0) {
       throw new Error('you may only query() by one key')
     }
-    const queryValue = queryObj[queryKey]
-    const prefix = `${kind}+${queryKey}/${queryValue}`
+    const queryValue = query[queryKey]
+    const prefix = `${kind}+${queryKey}/${queryValue}/`
 
-    const [keys] = await this.backend.listKeys(
+    const [keys, cursorOut] = await this.backend.listKeys(
       prefix,
       cursor,
       limit,
-      cleanWriteOnly,
     )
 
     const ids = []
@@ -80,7 +89,38 @@ export default class Model {
       ids.push(keys[i].split('/').pop())
     }
 
-    return ids
+    return { data: ids, cursor: cursorOut }
+  }
+
+  async queryObjects({ kind, query, cursor, limit, filter, cleanWriteOnly = true }) {
+    const [queryKey, ...others] = Object.keys(query)
+    if (others.length > 0) {
+      throw new Error('you may only query() by one key')
+    }
+    const queryValue = query[queryKey]
+    const prefix = `${kind}+${queryKey}/${queryValue}/`
+
+    while (true) {
+      const [keys, cursorOut] = await this.backend.listKeys(
+        prefix,
+        cursor,
+        limit,
+      )
+
+      const documents = []
+      for (let i = 0; i < keys.length; i++) {
+        const id = keys[i].split('/').pop()
+        const doc = await this.backend.get(`${kind}/${id}`)
+        if (doc && (typeof filter !== 'function' || filter(doc))) {
+            documents.push(cleanWriteOnly ? this.cleanWriteOnlyResponses(kind, doc) : doc)
+        }
+      }
+      if (!documents.length && keys.length && cursorOut) {
+        cursor = cursorOut
+        continue
+      }
+      return { data: documents, cursor: cursorOut }
+    }
   }
 
   async deleteKey(key) {
