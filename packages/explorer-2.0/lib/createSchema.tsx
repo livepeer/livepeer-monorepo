@@ -146,7 +146,9 @@ export default async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            return Utils.toBN(totalStake)
+              .sub(totalVoteStake)
+              .toString()
           },
         },
         status: {
@@ -212,7 +214,7 @@ export default async () => {
               'latest',
             )
             if (parseInt(currentBlockData.number) < parseInt(_poll.endBlock)) {
-              return currentBlockData.timestamp
+              return null
             }
             const endBlockData = await _context.livepeer.rpc.getBlock(
               _poll.endBlock,
