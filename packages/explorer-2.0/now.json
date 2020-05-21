@@ -49,8 +49,8 @@
       "GA_TRACKING_ID": "@ga_tracking_id",
       "NETWORK": "mainnet",
       "SUBGRAPH": "https://api.thegraph.com/subgraphs/name/livepeer/livepeer",
-      "RPC_URL_1": "https://mainnet.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
-      "RPC_URL_4": "https://rinkeby.infura.io/v3/39df858a55ee42f4b2a8121978f9f98e",
+      "RPC_URL_1": "https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1",
+      "RPC_URL_4": "https://rinkeby.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1",
       "CONTROLLER_ADDRESS": "0xf96d54e490317c557a967abfa5d6e33006be69b3",
       "POLL_CREATOR_ADDRESS": "0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c"
     }
