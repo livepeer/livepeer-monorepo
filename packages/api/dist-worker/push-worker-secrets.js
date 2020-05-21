@@ -1,10 +1,8 @@
-// Helper script to push a YAML file full of secrets to the CF workers
+// Helper script to push a .env file full of secrets to the CF workers
 // defined in this directory. Needed to split up large secrets into 1kb
 // chunks for CF.
 
-const fs = require('fs')
-const { safeLoad } = require('js-yaml')
-const path = require('path')
+const dotenv = require('dotenv')
 const { spawn } = require('child_process')
 
 async function push(env, data) {
@@ -46,6 +44,6 @@ if (!module.parent) {
   const env = process.argv[2]
   const filePath = process.argv[3]
 
-  const data = safeLoad(fs.readFileSync(filePath))
+  const data = dotenv.config({ path: filePath }).parsed
   push(env, data)
 }
