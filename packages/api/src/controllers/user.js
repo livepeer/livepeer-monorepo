@@ -12,7 +12,11 @@ import qs from 'qs'
 const app = Router()
 
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
-  const resp = await req.store.list({ prefix: `user/`, cursor: req.query.cursor, limit: req.query.limit })
+  const resp = await req.store.list({
+    prefix: `user/`,
+    cursor: req.query.cursor,
+    limit: req.query.limit,
+  })
   res.status(200)
 
   if (resp.data.length > 0) {
@@ -69,7 +73,7 @@ app.post('/', validatePost('user'), async (req, res) => {
       email,
       { name: 'user registered' },
       req.config.segmentApiKey,
-    )
+    ),
   ])
 
   const user = await req.store.get(`user/${id}`)
@@ -79,7 +83,7 @@ app.post('/', validatePost('user'), async (req, res) => {
 
   const verificationUrl = `${protocol}://${
     req.headers.host
-    }/app/user/verify?${qs.stringify({ email, emailValidToken })}`
+  }/app/user/verify?${qs.stringify({ email, emailValidToken })}`
   const unsubscribeUrl = `${protocol}://${req.headers.host}/#contactSection`
 
   if (!validUser && user) {
@@ -123,7 +127,7 @@ app.post('/', validatePost('user'), async (req, res) => {
 app.post('/token', validatePost('user'), async (req, res) => {
   const { data: userIds } = await req.store.query({
     kind: 'user',
-    query: { email: req.body.email }
+    query: { email: req.body.email },
   })
   if (userIds.length < 1) {
     res.status(404)
@@ -155,7 +159,7 @@ app.post('/token', validatePost('user'), async (req, res) => {
 app.post('/verify', validatePost('user-verification'), async (req, res) => {
   const { data: userIds } = await req.store.query({
     kind: 'user',
-    query: { email: req.body.email }
+    query: { email: req.body.email },
   })
   if (userIds.length < 1) {
     res.status(404)
@@ -213,9 +217,11 @@ app.post(
   validatePost('password-reset'),
   async (req, res) => {
     const { email, password, resetToken } = req.body
-    const { data: [userId] } = await req.store.query({
+    const {
+      data: [userId],
+    } = await req.store.query({
       kind: 'user',
-      query: { email: email }
+      query: { email: email },
     })
     if (!userId) {
       res.status(404)
@@ -231,7 +237,7 @@ app.post(
     const { data: tokens } = await req.store.query({
       kind: 'password-reset-token',
       query: {
-        userId: user.id
+        userId: user.id,
       },
     })
 
@@ -285,9 +291,11 @@ app.post(
   validatePost('password-reset-token'),
   async (req, res) => {
     const email = req.body.email
-    const { data: [userId] } = await req.store.query({
+    const {
+      data: [userId],
+    } = await req.store.query({
       kind: 'user',
-      query: { email: email }
+      query: { email: email },
     })
     if (!userId) {
       res.status(404)
@@ -317,7 +325,7 @@ app.post(
 
       const verificationUrl = `${protocol}://${
         req.headers.host
-        }/reset-password?${qs.stringify({ email, resetToken })}`
+      }/reset-password?${qs.stringify({ email, resetToken })}`
       const unsubscribeUrl = `${protocol}://${req.headers.host}/#contactSection`
 
       await sendgridEmail({
@@ -361,7 +369,7 @@ app.post(
   async (req, res) => {
     const { data: userIds } = await req.store.query({
       kind: 'user',
-      query: { email: req.body.email }
+      query: { email: req.body.email },
     })
     if (userIds.length < 1) {
       res.status(404)

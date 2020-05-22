@@ -156,7 +156,7 @@ export async function trackAction(userId, email, event, apiKey) {
     traits: {
       email: email,
     },
-    email: email
+    email: email,
   }
   await fetchSegmentApi(identifyInfo, 'identify', apiKey)
 
@@ -188,5 +188,4 @@ export async function fetchSegmentApi(body, endpoint, apiKey) {
     body: JSON.stringify(body),
     headers: headers,
   })
-
 }

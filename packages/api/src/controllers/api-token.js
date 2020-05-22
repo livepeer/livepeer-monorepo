@@ -56,7 +56,10 @@ app.get('/', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const { data: userTokens } = await req.store.queryObjects({ kind: 'api-token', query: { userId: userId } })
+  const { data: userTokens } = await req.store.queryObjects({
+    kind: 'api-token',
+    query: { userId: userId },
+  })
   res.status(200)
   res.json(userTokens)
 })
@@ -81,8 +84,8 @@ app.post(
         req.user.email,
         { name: 'Api Token Created' },
         req.config.segmentApiKey,
-        )
-      ])
+      ),
+    ])
 
     const apiToken = await req.store.get(`api-token/${id}`)
 
