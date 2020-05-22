@@ -3,6 +3,7 @@ import Button from '../Button'
 import { useContext } from 'react'
 import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
+import { initTransaction } from '../../lib/utils'
 
 export default ({ pollAddress, choiceId, children, ...props }) => {
   const context = useWeb3React()
@@ -16,38 +17,10 @@ export default ({ pollAddress, choiceId, children, ...props }) => {
 
   return (
     <Button
-      onClick={async () => {
-        try {
-          client.writeData({
-            data: {
-              txSummaryModal: {
-                __typename: 'TxSummaryModal',
-                open: true,
-              },
-            },
-          })
+      onClick={() => {
+        initTransaction(client, async () => {
           await vote({ variables: { pollAddress, choiceId } })
-          client.writeData({
-            data: {
-              txSummaryModal: {
-                __typename: 'TxSummaryModal',
-                open: false,
-              },
-            },
-          })
-        } catch (e) {
-          client.writeData({
-            data: {
-              txSummaryModal: {
-                __typename: 'TxSummaryModal',
-                error: true,
-              },
-            },
-          })
-          return {
-            error: e.message.replace('GraphQL error: ', ''),
-          }
-        }
+        })
       }}
       {...props}
     >

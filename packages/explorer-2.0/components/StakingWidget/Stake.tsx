@@ -4,6 +4,7 @@ import Utils from 'web3-utils'
 import Button from '../Button'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
+import { initTransaction } from '../../lib/utils'
 
 export default ({ transcoder, amount, disabled }) => {
   const client = useApolloClient()
@@ -18,45 +19,21 @@ export default ({ transcoder, amount, disabled }) => {
     <>
       <Button
         disabled={disabled}
-        onClick={async () => {
-          try {
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  open: true,
-                },
-              },
-            })
+        onClick={() => {
+          initTransaction(client, async () => {
             await bond({
               variables: {
                 to: transcoder.id,
                 amount: Utils.toWei(amount ? amount.toString() : '0'),
               },
             })
+            // If user staked inside tour, close tour after staking
             client.writeData({
               data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  open: false,
-                },
                 tourOpen: false,
               },
             })
-          } catch (e) {
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  error: true,
-                },
-                tourOpen: false,
-              },
-            })
-            return {
-              error: e.message.replace('GraphQL error: ', ''),
-            }
-          }
+          })
         }}
         sx={{ width: '100%' }}
       >

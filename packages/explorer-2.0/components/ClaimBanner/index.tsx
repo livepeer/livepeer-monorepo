@@ -2,7 +2,7 @@ import { Flex, Box } from 'theme-ui'
 import { useState, useContext } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
-import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
+import { MAX_EARNINGS_CLAIMS_ROUNDS, initTransaction } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
@@ -39,43 +39,15 @@ export default ({ delegator, currentRound }) => {
               </Button>
               <Button
                 variant="text"
-                onClick={async () => {
-                  try {
-                    client.writeData({
-                      data: {
-                        txSummaryModal: {
-                          __typename: 'TxSummaryModal',
-                          open: true,
-                        },
-                      },
-                    })
+                onClick={() => {
+                  initTransaction(client, async () => {
                     await batchClaimEarnings({
                       variables: {
                         lastClaimRound: delegator.lastClaimRound.id,
                         endRound: currentRound.id,
                       },
                     })
-                    client.writeData({
-                      data: {
-                        txSummaryModal: {
-                          __typename: 'TxSummaryModal',
-                          open: false,
-                        },
-                      },
-                    })
-                  } catch (e) {
-                    client.writeData({
-                      data: {
-                        txSummaryModal: {
-                          __typename: 'TxSummaryModal',
-                          error: true,
-                        },
-                      },
-                    })
-                    return {
-                      error: e.message.replace('GraphQL error: ', ''),
-                    }
-                  }
+                  })
                 }}
               >
                 Claim Earnings

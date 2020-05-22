@@ -38,7 +38,7 @@ export default ({
           background: 'rgba(0, 0, 0, 0.5)',
           ...props,
         }}
-        onDismiss={clickAnywhereToClose ? onDismiss : null}
+        onDismiss={clickAnywhereToClose ? onDismiss : () => {}}
         {...props}
       >
         <Box

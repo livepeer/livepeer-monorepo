@@ -2,7 +2,7 @@ import { Flex, Box } from 'theme-ui'
 import { useState, useContext } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
-import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
+import { MAXIUMUM_VALUE_UINT256, initTransaction } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
@@ -17,43 +17,15 @@ export default ({ account, banner = true }) => {
 
   let element = null
 
-  const onClick = async () => {
-    try {
-      client.writeData({
-        data: {
-          txSummaryModal: {
-            __typename: 'TxSummaryModal',
-            open: true,
-          },
-        },
-      })
+  const onClick = () => {
+    initTransaction(client, async () => {
       await approve({
         variables: {
           type: 'bond',
           amount: MAXIUMUM_VALUE_UINT256,
         },
       })
-      client.writeData({
-        data: {
-          txSummaryModal: {
-            __typename: 'TxSummaryModal',
-            open: false,
-          },
-        },
-      })
-    } catch (e) {
-      client.writeData({
-        data: {
-          txSummaryModal: {
-            __typename: 'TxSummaryModal',
-            error: true,
-          },
-        },
-      })
-      return {
-        error: e.message.replace('GraphQL error: ', ''),
-      }
-    }
+    })
   }
 
   if (account && account.id.toLowerCase() == context.account.toLowerCase()) {

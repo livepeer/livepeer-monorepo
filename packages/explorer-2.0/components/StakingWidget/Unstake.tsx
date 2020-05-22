@@ -4,6 +4,7 @@ import Button from '../Button'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
+import { initTransaction } from '../../lib/utils'
 
 export default ({ amount, disabled }) => {
   const context = useWeb3React()
@@ -20,42 +21,14 @@ export default ({ amount, disabled }) => {
       <Button
         disabled={disabled}
         variant="red"
-        onClick={async () => {
-          try {
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  open: true,
-                },
-              },
-            })
+        onClick={() => {
+          initTransaction(client, async () => {
             await unbond({
               variables: {
                 amount: Utils.toWei(amount ? amount.toString() : '0'),
               },
             })
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  open: false,
-                },
-              },
-            })
-          } catch (e) {
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  error: true,
-                },
-              },
-            })
-            return {
-              error: e.message.replace('GraphQL error: ', ''),
-            }
-          }
+          })
         }}
         sx={{ width: '100%' }}
       >

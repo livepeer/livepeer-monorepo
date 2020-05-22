@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
+import { initTransaction } from '../../lib/utils'
 
 export default ({ lock }) => {
   const context = useWeb3React()
@@ -17,42 +18,14 @@ export default ({ lock }) => {
   return (
     <>
       <Button
-        onClick={async () => {
-          try {
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  open: true,
-                },
-              },
-            })
+        onClick={() => {
+          initTransaction(client, async () => {
             await withdrawStake({
               variables: {
                 unbondingLockId: lock.unbondingLockId,
               },
             })
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  open: false,
-                },
-              },
-            })
-          } catch (e) {
-            client.writeData({
-              data: {
-                txSummaryModal: {
-                  __typename: 'TxSummaryModal',
-                  error: true,
-                },
-              },
-            })
-            return {
-              error: e.message.replace('GraphQL error: ', ''),
-            }
-          }
+          })
         }}
         sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
       >
