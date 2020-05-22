@@ -136,7 +136,7 @@ export default ({ currentRound, transcoder }) => {
                     effect="solid"
                   />
                   <Help
-                    data-tip="The last round that an orchestrator received rewards as an active orchestrator. A checkmark indicates it called reward for the current round."
+                    data-tip="The last round that an orchestrator received rewards while active. A checkmark indicates it called reward for the current round."
                     data-for="tooltip-last-reward-round"
                     sx={{
                       color: 'muted',
