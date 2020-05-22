@@ -1,7 +1,7 @@
 import crypto from 'isomorphic-webcrypto'
 import util from 'util'
+import fetch from 'isomorphic-fetch'
 import SendgridMail from '@sendgrid/mail'
-import SegmentAnalytics from 'analytics-node'
 
 let Encoder
 if (typeof TextEncoder === 'undefined') {
@@ -146,26 +146,46 @@ export async function sendgridEmail({
   await SendgridMail.send(msg)
 }
 
-export async function trackAction(userId, email, event, segmentApiKey) {
-  if (!segmentApiKey) {
+export async function trackAction(userId, email, event, apiKey) {
+  if (!apiKey) {
     return
   }
-  var analytics = new SegmentAnalytics(segmentApiKey, { flushAt: 1 })
-  analytics.identify({
+
+  const identifyInfo = {
     userId: userId,
     traits: {
       email: email,
     },
-  })
+    email: email,
+  }
+  await fetchSegmentApi(identifyInfo, 'identify', apiKey)
 
   const properties = {}
   if ('properties' in event) {
     properties = { ...properties, ...event.properties }
   }
 
-  analytics.track({
+  const trackInfo = {
     userId: userId,
     event: event.name,
+    email: email,
     properties: properties,
+  }
+
+  await fetchSegmentApi(trackInfo, 'track', apiKey)
+}
+
+export async function fetchSegmentApi(body, endpoint, apiKey) {
+  const segmentApiUrl = 'https://api.segment.io/v1'
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: 'Basic ' + Buffer.from(`${apiKey}:`).toString('base64'),
+  }
+
+  await fetch(`${segmentApiUrl}/${endpoint}`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: headers,
   })
 }

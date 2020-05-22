@@ -19,7 +19,12 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
   const filter = all ? undefined : o => !o[Object.keys(o)[0]].deleted
 
-  const resp = await req.store.list({ prefix: `stream/`, cursor, limit, filter })
+  const resp = await req.store.list({
+    prefix: `stream/`,
+    cursor,
+    limit,
+    filter,
+  })
   let output = resp.data
   res.status(200)
 
@@ -47,7 +52,7 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     query: { userId: req.params.userId },
     cursor,
     limit,
-    filter: (o => !o.deleted)
+    filter: o => !o.deleted,
   })
   res.status(200)
   if (streams.length > 0 && cursorOut) {
@@ -58,7 +63,10 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
 
 app.get('/:id', authMiddleware({}), async (req, res) => {
   const stream = await req.store.get(`stream/${req.params.id}`)
-  if (!stream || (stream.userId !== req.user.id || stream.deleted) && !req.isUIAdmin) {
+  if (
+    !stream ||
+    ((stream.userId !== req.user.id || stream.deleted) && !req.isUIAdmin)
+  ) {
     // do not reveal that stream exists
     res.status(404)
     return res.json({ errors: ['not found'] })
@@ -86,14 +94,15 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     id,
     createdAt,
   })
-
-  await req.store.create(doc)
-  trackAction(
-    req.user.id,
-    req.user.email,
-    { name: 'Stream Created' },
-    req.config.segmentApiKey,
-  )
+  await Promise.all([
+    req.store.create(doc),
+    trackAction(
+      req.user.id,
+      req.user.email,
+      { name: 'Stream Created' },
+      req.config.segmentApiKey,
+    ),
+  ])
 
   res.status(201)
   res.json(doc)
@@ -102,7 +111,11 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
 app.delete('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const stream = await req.store.get(`stream/${id}`, false)
-  if (!stream || stream.deleted || stream.userId !== req.user.id && !req.isUIAdmin) {
+  if (
+    !stream ||
+    stream.deleted ||
+    (stream.userId !== req.user.id && !req.isUIAdmin)
+  ) {
     res.status(404)
     return res.json({ errors: ['not found'] })
   }

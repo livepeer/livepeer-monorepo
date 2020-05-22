@@ -56,7 +56,10 @@ app.get('/', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const { data: userTokens } = await req.store.queryObjects({ kind: 'api-token', query: { userId: userId } })
+  const { data: userTokens } = await req.store.queryObjects({
+    kind: 'api-token',
+    query: { userId: userId },
+  })
   res.status(200)
   res.json(userTokens)
 })
@@ -68,23 +71,25 @@ app.post(
   async (req, res) => {
     const id = uuid()
     const userId = req.user.id
-    await req.store.create({
-      id: id,
-      userId: userId,
-      kind: 'api-token',
-      name: req.body.name,
-    })
 
-    const apiToken = await req.store.get(`api-token/${id}`)
-
-    if (apiToken) {
+    await Promise.all([
+      req.store.create({
+        id: id,
+        userId: userId,
+        kind: 'api-token',
+        name: req.body.name,
+      }),
       trackAction(
         userId,
         req.user.email,
         { name: 'Api Token Created' },
         req.config.segmentApiKey,
-      )
+      ),
+    ])
 
+    const apiToken = await req.store.get(`api-token/${id}`)
+
+    if (apiToken) {
       res.status(201)
       res.json(apiToken)
     } else {
