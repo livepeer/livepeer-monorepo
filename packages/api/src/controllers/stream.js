@@ -86,14 +86,14 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     id,
     createdAt,
   })
-
-  await req.store.create(doc)
+  await Promise.all([
+  req.store.create(doc),
   trackAction(
     req.user.id,
     req.user.email,
     { name: 'Stream Created' },
     req.config.segmentApiKey,
-  )
+  )])
 
   res.status(201)
   res.json(doc)

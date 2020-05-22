@@ -53,16 +53,25 @@ app.post('/', validatePost('user'), async (req, res) => {
     validUser = false
   }
 
-  await req.store.create({
-    kind: 'user',
-    id: id,
-    password: hashedPassword,
-    email: email,
-    salt: salt,
-    admin: false,
-    emailValidToken: emailValidToken,
-    emailValid: validUser,
-  })
+  await Promise.all([
+    req.store.create({
+      kind: 'user',
+      id: id,
+      password: hashedPassword,
+      email: email,
+      salt: salt,
+      admin: false,
+      emailValidToken: emailValidToken,
+      emailValid: validUser,
+    }),
+    trackAction(
+      id,
+      email,
+      { name: 'user registered' },
+      req.config.segmentApiKey,
+    )
+  ])
+
   const user = await req.store.get(`user/${id}`)
 
   const protocol =
@@ -106,13 +115,6 @@ app.post('/', validatePost('user'), async (req, res) => {
     res.status(403)
     return res.json({ errors: ['user not created'] })
   }
-
-  trackAction(
-    user.id,
-    user.email,
-    { name: 'user registered' },
-    req.config.segmentApiKey,
-  )
 
   res.status(201)
   res.json(user)

@@ -181,11 +181,10 @@ export async function fetchSegmentApi(body, endpoint, apiKey) {
     Authorization: 'Basic ' + Buffer.from(`${apiKey}:`).toString('base64'),
   }
 
-  const request = await fetch(`${segmentApiUrl}/${endpoint}`, {
+  await fetch(`${segmentApiUrl}/${endpoint}`, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: headers,
   })
 
-  return request
 }
