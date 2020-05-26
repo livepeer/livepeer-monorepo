@@ -51,6 +51,9 @@ function authFactory(params) {
     req.user = user
     req.authTokenType = authToken.startsWith('Bearer') ? 'Bearer' : 'JWT'
     req.isUIAdmin = req.user.admin && req.authTokenType == 'JWT'
+    if (tokenObject && tokenObject.name) {
+      req.tokenName = tokenObject.name
+    }
 
     if (params.admin) {
       // admins must have a JWT
