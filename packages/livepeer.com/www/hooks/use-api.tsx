@@ -199,12 +199,37 @@ const makeContext = (state: ApiState, setState) => {
       clearToken();
     },
 
+    async getBroadcasters(): Promise<Array<{address: string}>> {
+      const [res, broadcasters] = await context.fetch(`/broadcaster`);
+      if (res.status !== 200) {
+        throw new Error(broadcasters);
+      }
+      return broadcasters;
+    },
+
     async getStreams(userId): Promise<Array<Stream>> {
-      const [res, streams] = await context.fetch(`/stream/user/${userId}`);
+      const [res, streams] = await context.fetch(`/stream/user/${userId}?streamsonly=1`);
       if (res.status !== 200) {
         throw new Error(streams);
       }
       return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+    },
+
+    async getStreamSessions(userId): Promise<Array<Stream>> {
+      const [res, streams] = await context.fetch(`/stream/user/${userId}?sessionsonly=1`);
+      if (res.status !== 200) {
+        throw new Error(streams);
+      }
+      return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+    },
+
+    async deleteStream(id: string): Promise<void> {
+      const [res, body] = await context.fetch(`/stream/${id}`, {
+        method: "DELETE"
+      });
+      if (res.status !== 204) {
+        throw new Error(body);
+      }
     },
 
     async getApiTokens(userId): Promise<[ApiToken]> {

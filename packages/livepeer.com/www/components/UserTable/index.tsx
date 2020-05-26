@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useApi } from "../../hooks";
 import { Box, Button, Flex, Input } from "@theme-ui/components";
 import Modal from "../Modal";
-import { Table, TableRow, Checkbox } from "../Table";
+import { Table, TableRow, Checkbox, TableRowVariant } from "../Table";
 
 export default ({ userId, id }) => {
   const [users, setUsers] = useState([]);
@@ -107,7 +107,7 @@ export default ({ userId, id }) => {
         <p>No users created yet</p>
       ) : (
         <Table sx={{ gridTemplateColumns: "auto 1fr auto auto auto" }}>
-          <TableRow variant="header">
+          <TableRow variant={TableRowVariant.Header}>
             <Box></Box>
             <Box>ID</Box>
             <Box>Email</Box>

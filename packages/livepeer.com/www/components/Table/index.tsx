@@ -15,8 +15,9 @@ export const Table = ({ className = null, children }) => {
   );
 };
 
-export const TableCell = ({ children, selected, variant }) => {
+export const TableCell = ({ children, selected, variant, sx_ = null }) => {
   let sx = {
+    ...sx_,
     backgroundColor: "transparent",
     py: 3,
     px: 3,
@@ -29,7 +30,7 @@ export const TableCell = ({ children, selected, variant }) => {
       // backgroundColor: "muted"
     };
   }
-  if (variant === "header") {
+  if (variant === TableRowVariant.Header) {
     sx = {
       ...sx,
       fontVariant: "all-small-caps",
@@ -48,9 +49,28 @@ export const TableCell = ({ children, selected, variant }) => {
         borderBottomRightRadius: 6
       }
     };
-  } else {
+  } else if (variant === TableRowVariant.Normal) {
     sx = {
       ...sx,
+      borderBottomColor: "muted",
+      borderBottomWidth: "1px",
+      borderBottomStyle: "solid"
+    };
+  } else if (variant === TableRowVariant.ComplexTop) {
+    sx = {
+      ...sx,
+      paddingBottom: 0
+    };
+  } else if (variant === TableRowVariant.ComplexMiddle) {
+    sx = {
+      ...sx,
+      paddingBottom: 0,
+      paddingTop: 0
+    };
+  } else if (variant === TableRowVariant.ComplexBottom) {
+    sx = {
+      ...sx,
+      paddingTop: 0,
       borderBottomColor: "muted",
       borderBottomWidth: "1px",
       borderBottomStyle: "solid"
@@ -59,10 +79,20 @@ export const TableCell = ({ children, selected, variant }) => {
   return <Box sx={sx}>{children}</Box>;
 };
 
+export enum TableRowVariant {
+  Header = "header",
+  Normal = "normal",
+  ComplexTop = "complexTop",
+  ComplexMiddle = "complexMiddle",
+  ComplexBottom = "complexBottom"
+}
+
 export const TableRow = ({
   children,
-  variant = "normal",
+  variant = TableRowVariant.Normal,
   selected = false,
+  selectable = true,
+  sx1 = null,
   onClick = () => {}
 }) => {
   return (
@@ -70,7 +100,10 @@ export const TableRow = ({
       onClick={onClick}
       sx={{
         display: "contents",
-        cursor: variant === "header" ? "normal" : "pointer",
+        cursor:
+          variant === TableRowVariant.Header || !selectable
+            ? "normal"
+            : "pointer",
         userSelect: "none",
         "&:last-of-type": {
           ">div": {
@@ -79,11 +112,17 @@ export const TableRow = ({
         }
       }}
     >
-      {children.map((child, i) => (
-        <TableCell selected={selected} key={i} variant={variant}>
-          {child}
+      {Array.isArray(children) ? (
+        children.map((child, i) => (
+          <TableCell selected={selected} key={i} variant={variant}>
+            {child}
+          </TableCell>
+        ))
+      ) : (
+        <TableCell selected={selected} variant={variant} sx_={sx1}>
+          {children}
         </TableCell>
-      ))}
+      )}
     </Box>
   );
 };

@@ -2,7 +2,7 @@ import { useEffect, useState, Fragment } from "react";
 import { useApi } from "../../hooks";
 import { Box, Button, Flex, Input } from "@theme-ui/components";
 import Modal from "../Modal";
-import { Table, TableRow, Checkbox } from "../Table";
+import { Table, TableRow, Checkbox, TableRowVariant } from "../Table";
 import CopyBox from "../CopyBox";
 
 export default ({ userId, id }) => {
@@ -166,7 +166,7 @@ export default ({ userId, id }) => {
         </Button>
       </Box>
       <Table sx={{ gridTemplateColumns: "auto 1fr auto" }}>
-        <TableRow variant="header">
+        <TableRow variant={TableRowVariant.Header}>
           <Box></Box>
           <Box>Name</Box>
           <Box>Last Active</Box>
