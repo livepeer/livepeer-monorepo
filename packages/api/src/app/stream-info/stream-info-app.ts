@@ -69,6 +69,9 @@ function countSegments(si: streamInfo, mpl: MasterPlaylist) {
     // console.log(`segments num: `, variant?.Chunklist?.Segments?.length)
     // console.log(`segments: `, variant?.Chunklist?.Segments)
     for (const segment of variant?.Chunklist?.Segments || []) {
+      if (!segment) {
+        continue
+      }
       // console.log(`segment ${segment.SeqId} :`, segment)
       const segId = `${i}_${segment.SeqId}`
       if (!si.seenSegments.has(segId)) {
@@ -153,13 +156,23 @@ class statusPoller {
         const streamKey = `stream/${mid}`
         const storedInfo: Stream = await this.store.get(streamKey, false)
         // console.log(`got stream info from store: `, storedInfo)
-        storedInfo.lastSeen = si.lastSeen.valueOf()
-        storedInfo.sourceSegments += si.sourceSegments - si.sourceSegmentsLastUpdated
-        storedInfo.transcodedSegments += si.transcodedSegments - si.transcodedSegmentsLastUpdated
-        await this.store.replace(storedInfo)
-        si.lastUpdated = new Date()
-        si.sourceSegmentsLastUpdated = si.sourceSegments
-        si.transcodedSegmentsLastUpdated = si.transcodedSegments
+        if (storedInfo) {
+          storedInfo.lastSeen = si.lastSeen.valueOf()
+          storedInfo.sourceSegments = (storedInfo.sourceSegments || 0) + si.sourceSegments - si.sourceSegmentsLastUpdated
+          storedInfo.transcodedSegments = (storedInfo.transcodedSegments || 0) + si.transcodedSegments - si.transcodedSegmentsLastUpdated
+          await this.store.replace(storedInfo)
+          if (storedInfo.parentId) {
+            const parentStream: Stream = await this.store.get(`stream/${storedInfo.parentId}`, false)
+            // console.log(`got parent stream store: `, storedInfo)
+            parentStream.lastSeen = si.lastSeen.valueOf()
+            parentStream.sourceSegments = (parentStream.sourceSegments || 0) + si.sourceSegments - si.sourceSegmentsLastUpdated
+            parentStream.transcodedSegments = (parentStream.transcodedSegments || 0) + si.transcodedSegments - si.transcodedSegmentsLastUpdated
+            await this.store.replace(parentStream)
+          }
+          si.lastUpdated = new Date()
+          si.sourceSegmentsLastUpdated = si.sourceSegments
+          si.transcodedSegmentsLastUpdated = si.transcodedSegments
+        }
       }
     }
     for (const [mid, si] of this.seenStreams) {
