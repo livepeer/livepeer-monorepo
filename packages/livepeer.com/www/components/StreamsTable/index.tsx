@@ -69,16 +69,17 @@ const StreamName = ({ stream }: { stream: Stream }) => {
   const pid = `stream-name-${stream.id}-${name}`;
   return (
     <Box>
-      {stream.createdByTokenName ? ( <ReactTooltip
-            id={pid}
-            className="tooltip"
-            place="top"
-            type="dark"
-            effect="solid"
-          >
-            Created by token <b>{stream.createdByTokenName}</b>
-          </ReactTooltip>
-      ): null}
+      {stream.createdByTokenName ? (
+        <ReactTooltip
+          id={pid}
+          className="tooltip"
+          place="top"
+          type="dark"
+          effect="solid"
+        >
+          Created by token <b>{stream.createdByTokenName}</b>
+        </ReactTooltip>
+      ) : null}
       <span data-tip data-for={pid}>
         {stream.name}
       </span>
@@ -132,7 +133,15 @@ const RenditionsDetails = ({ stream }: { stream: Stream }) => {
   );
 };
 
-const ShowURL = ({ text, url }: { text: string; url: string }) => {
+const ShowURL = ({
+  text,
+  url,
+  anchor = false
+}: {
+  text: string;
+  url: string;
+  anchor: boolean;
+}) => {
   const [isCopied, setCopied] = useState(0);
   useEffect(() => {
     if (isCopied) {
@@ -149,9 +158,19 @@ const ShowURL = ({ text, url }: { text: string; url: string }) => {
       </Box>
       <CopyToClipboard text={url} onCopy={() => setCopied(2000)}>
         <Flex sx={{ alignItems: "center" }}>
-          <span sx={{ fontSize: 12, fontFamily: "monospace", mr: 1 }}>
-            {url}
-          </span>
+          {anchor ? (
+            <a
+              sx={{ fontSize: 12, fontFamily: "monospace", mr: 1 }}
+              href={url}
+              target="_blank"
+            >
+              {url}
+            </a>
+          ) : (
+            <span sx={{ fontSize: 12, fontFamily: "monospace", mr: 1 }}>
+              {url}
+            </span>
+          )}
           <Copy
             sx={{
               mr: 1,
@@ -328,14 +347,22 @@ export default ({ userId, id }) => {
                   variant={TableRowVariant.ComplexMiddle}
                   sx1={{ gridColumnEnd: "span 6" }}
                 >
-                  <ShowURL text="Ingest URL" url={getIngestURL(stream)} />
+                  <ShowURL
+                    text="Ingest URL"
+                    url={getIngestURL(stream)}
+                    anchor={false}
+                  />
                 </TableRow>
                 <TableRow
                   selectable={false}
                   variant={TableRowVariant.ComplexBottom}
                   sx1={{ gridColumnEnd: "span 6" }}
                 >
-                  <ShowURL text="Playback URL" url={getPlaybackURL(stream)} />
+                  <ShowURL
+                    text="Playback URL"
+                    url={getPlaybackURL(stream)}
+                    anchor={true}
+                  />
                 </TableRow>
               </>
             );
