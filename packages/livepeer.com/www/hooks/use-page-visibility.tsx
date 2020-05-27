@@ -20,18 +20,18 @@ export function getBrowserDocumentHiddenProp() {
   }
 }
 
-export function getIsDocumentHidden() {
+export function getIsDocumentVisible() {
   return !document[getBrowserDocumentHiddenProp()];
 }
 
 export default function usePageVisibility() {
-  const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
-  const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());
+  const [isVisible, setIsVisible] = useState(getIsDocumentVisible());
+  const onVisibilityChange = () => setIsVisible(getIsDocumentVisible());
   useEffect(() => {
     const visibilityChange = getBrowserVisibilityProp();
-    window.addEventListener(visibilityChange, onVisibilityChange, false);
+    document.addEventListener(visibilityChange, onVisibilityChange, false);
     return () => {
-      window.removeEventListener(visibilityChange, onVisibilityChange);
+      document.removeEventListener(visibilityChange, onVisibilityChange);
     };
   });
   return isVisible;
