@@ -12,7 +12,7 @@ class MyDocument extends Document {
       apiKey: process.env.SEGMENT_WRITE_KEY,
       // note: the page option only covers SSR tracking.
       // The Layout component is used to track other events using `window.analytics.page()`
-      page: true
+      page: false
     };
 
     return snippet.min(opts);
