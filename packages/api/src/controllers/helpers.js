@@ -152,24 +152,24 @@ export async function trackAction(userId, email, event, apiKey) {
   }
 
   const identifyInfo = {
-    userId: userId,
+    userId,
     traits: {
-      email: email,
+      email,
     },
-    email: email,
+    email,
   }
   await fetchSegmentApi(identifyInfo, 'identify', apiKey)
 
-  const properties = {}
+  let properties = {}
   if ('properties' in event) {
     properties = { ...properties, ...event.properties }
   }
 
   const trackInfo = {
-    userId: userId,
+    userId,
     event: event.name,
-    email: email,
-    properties: properties,
+    email,
+    properties,
   }
 
   await fetchSegmentApi(trackInfo, 'track', apiKey)
