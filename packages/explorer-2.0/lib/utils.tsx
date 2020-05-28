@@ -226,3 +226,40 @@ export const txMessages = {
     confirmed: 'Earnings Claimed',
   },
 }
+
+export const initTransaction = async (client, mutation) => {
+  try {
+    client.writeData({
+      data: {
+        txSummaryModal: {
+          __typename: 'TxSummaryModal',
+          open: true,
+        },
+      },
+    })
+    
+    await mutation()
+    
+    client.writeData({
+      data: {
+        txSummaryModal: {
+          __typename: 'TxSummaryModal',
+          open: false,
+        },
+      },
+    })
+  } catch (e) {
+    client.writeData({
+      data: {
+        txSummaryModal: {
+          __typename: 'TxSummaryModal',
+          error: true,
+        },
+      },
+    })
+
+    return {
+      error: e.message.replace('GraphQL error: ', ''),
+    }
+  }
+}

@@ -2,18 +2,31 @@ import { Flex, Box } from 'theme-ui'
 import { useState, useContext } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
-import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
+import { MAXIUMUM_VALUE_UINT256, initTransaction } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
+import { useApolloClient } from '@apollo/react-hooks'
 
 export default ({ account, banner = true }) => {
   const context = useWeb3React()
+  const client = useApolloClient()
   const { approve }: any = useContext(MutationsContext)
   const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false)
   const MDXDocument = require('../../data/unlock-tokens.mdx').default
 
   let element = null
+
+  const onClick = () => {
+    initTransaction(client, async () => {
+      await approve({
+        variables: {
+          type: 'bond',
+          amount: MAXIUMUM_VALUE_UINT256,
+        },
+      })
+    })
+  }
 
   if (account && account.id.toLowerCase() == context.account.toLowerCase()) {
     if (banner) {
@@ -32,23 +45,7 @@ export default ({ account, banner = true }) => {
                 >
                   Learn More
                 </Button>
-                <Button
-                  variant="text"
-                  onClick={async () => {
-                    try {
-                      await approve({
-                        variables: {
-                          type: 'bond',
-                          amount: MAXIUMUM_VALUE_UINT256,
-                        },
-                      })
-                    } catch (e) {
-                      return {
-                        error: e.message.replace('GraphQL error: ', ''),
-                      }
-                    }
-                  }}
-                >
+                <Button variant="text" onClick={onClick}>
                   Unlock LPT
                   <Modal
                     title="Unlocking Tokens"
@@ -66,23 +63,7 @@ export default ({ account, banner = true }) => {
       )
     } else {
       element = (
-        <Box
-          sx={{ cursor: 'pointer', color: 'primary' }}
-          onClick={async () => {
-            try {
-              await approve({
-                variables: {
-                  type: 'bond',
-                  amount: MAXIUMUM_VALUE_UINT256,
-                },
-              })
-            } catch (e) {
-              return {
-                error: e.message.replace('GraphQL error: ', ''),
-              }
-            }
-          }}
-        >
+        <Box sx={{ cursor: 'pointer', color: 'primary' }} onClick={onClick}>
           Unlock Livepeer tokens for staking.
         </Box>
       )
