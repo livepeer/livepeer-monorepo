@@ -53,6 +53,9 @@ query($account: ID!) {
     active
     totalStake
     totalGeneratedFees
+    lastRewardRound {
+      id
+    }
     pools(first: 30, orderBy: id, orderDirection: desc) {
       rewardTokens
     }

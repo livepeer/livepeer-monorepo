@@ -61,26 +61,30 @@ export default () => {
       sx={{ overflow: 'hidden !important' }}
       scrollThreshold={0.5}
       dataLength={data && data.transactions.length}
-      next={() => {
+      next={async () => {
         stopPolling()
         if (!loading && data.transactions.length >= 10) {
-          fetchMore({
-            variables: {
-              skip: data.transactions.length,
-            },
-            updateQuery: (previousResult: any, { fetchMoreResult }: any) => {
-              if (!fetchMoreResult) {
-                return previousResult
-              }
-              return {
-                ...previousResult,
-                transactions: [
-                  ...previousResult.transactions,
-                  ...fetchMoreResult.transactions,
-                ],
-              }
-            },
-          })
+          try {
+            await fetchMore({
+              variables: {
+                skip: data.transactions.length,
+              },
+              updateQuery: (previousResult: any, { fetchMoreResult }: any) => {
+                if (!fetchMoreResult) {
+                  return previousResult
+                }
+                return {
+                  ...previousResult,
+                  transactions: [
+                    ...previousResult.transactions,
+                    ...fetchMoreResult.transactions,
+                  ],
+                }
+              },
+            })
+          } catch (e) {
+            return e
+          }
         }
       }}
       hasMore={true}
