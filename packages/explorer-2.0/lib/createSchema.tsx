@@ -210,10 +210,16 @@ export default async () => {
         },
         endTime: {
           async resolve(_poll, _args, _context, _info) {
-            const blockData = await _context.livepeer.rpc.getBlock('latest')
-            return parseInt(blockData.number) > parseInt(_poll.endBlock)
-              ? blockData.timestamp
-              : null
+            const currentBlockData = await _context.livepeer.rpc.getBlock(
+              'latest',
+            )
+            if (parseInt(currentBlockData.number) < parseInt(_poll.endBlock)) {
+              return null
+            }
+            const endBlockData = await _context.livepeer.rpc.getBlock(
+              _poll.endBlock,
+            )
+            return endBlockData.timestamp
           },
         },
       },
