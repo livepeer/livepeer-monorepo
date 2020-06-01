@@ -56,6 +56,9 @@ components:
         deleted:
           type: boolean
           description: Set to true when stream deleted
+        isActive:
+          type: boolean
+          description: If currently active
         createdByTokenName:
           type: string
           readOnly: true

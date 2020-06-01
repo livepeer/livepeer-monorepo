@@ -290,7 +290,9 @@ export default ({ userId, id }) => {
       {streams.length === 0 ? (
         <p>No streams created yet</p>
       ) : (
-        <Table sx={{ gridTemplateColumns: "auto auto auto auto auto auto" }}>
+        <Table
+          sx={{ gridTemplateColumns: "auto auto auto auto auto auto auto" }}
+        >
           <TableRow variant={TableRowVariant.Header}>
             <Box></Box>
             <Box>Name</Box>
@@ -298,6 +300,7 @@ export default ({ userId, id }) => {
             <Box>Segments</Box>
             <Box>Created</Box>
             <Box>Last Active</Box>
+            <Box>Status</Box>
           </TableRow>
           {streams.map((stream: Stream) => {
             const {
@@ -306,7 +309,8 @@ export default ({ userId, id }) => {
               lastSeen,
               sourceSegments,
               transcodedSegments,
-              createdAt
+              createdAt,
+              isActive
             } = stream;
             return (
               <>
@@ -341,11 +345,12 @@ export default ({ userId, id }) => {
                   </Box>
                   <RelativeTime id={id} prefix="createdat" tm={createdAt} />
                   <RelativeTime id={id} prefix="lastSeen" tm={lastSeen} />
+                  <Box>{isActive ? "Active" : "Idle"}</Box>
                 </TableRow>
                 <TableRow
                   selectable={false}
                   variant={TableRowVariant.ComplexMiddle}
-                  sx1={{ gridColumnEnd: "span 6" }}
+                  sx1={{ gridColumnEnd: "span 7" }}
                 >
                   <ShowURL
                     text="Ingest URL"
@@ -356,7 +361,7 @@ export default ({ userId, id }) => {
                 <TableRow
                   selectable={false}
                   variant={TableRowVariant.ComplexBottom}
-                  sx1={{ gridColumnEnd: "span 6" }}
+                  sx1={{ gridColumnEnd: "span 7" }}
                 >
                   <ShowURL
                     text="Playback URL"

@@ -222,6 +222,22 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   res.json(doc)
 })
 
+app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
+  const { id } = req.params
+  const stream = await req.store.get(`stream/${id}`, false)
+  if (!stream || stream.deleted || !req.user.admin) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  stream.isActive = req.body.active
+  stream.lastSeen = +new Date()
+  await req.store.replace(stream)
+
+  res.status(204)
+  res.end()
+})
+
 app.delete('/:id', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const stream = await req.store.get(`stream/${id}`, false)
