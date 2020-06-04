@@ -1,5 +1,6 @@
 import apiToken from './api-token'
 import broadcaster from './broadcaster'
+import ingest from './ingest'
 import objectStore from './object-store'
 import orchestrator from './orchestrator'
 import stream from './stream'
@@ -15,4 +16,5 @@ export default {
   stream: stream,
   user: user,
   geolocate: geolocate,
+  ingest,
 }

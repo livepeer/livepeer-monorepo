@@ -1,7 +1,15 @@
 import { Box, Flex } from "@theme-ui/components";
 import { SxStyleProp } from "theme-ui";
+import { FunctionComponent } from "react";
 
-export const Table = ({ className = null, children }) => {
+type TableProps = {
+  className?: string;
+};
+
+export const Table: FunctionComponent<TableProps> = ({
+  className = null,
+  children
+}) => {
   return (
     <Box
       sx={{
@@ -15,9 +23,16 @@ export const Table = ({ className = null, children }) => {
   );
 };
 
-export const TableCell = ({ children, selected, variant, sx_ = null }) => {
+type TableCellProps = {
+  selected: boolean;
+  variant: string;
+  sx?: SxStyleProp;
+};
+
+export const TableCell: FunctionComponent<TableCellProps> = props => {
+  const { children, selected, variant } = props;
   let sx = {
-    ...sx_,
+    ...props.sx,
     backgroundColor: "transparent",
     py: 3,
     px: 3,
@@ -87,12 +102,20 @@ export enum TableRowVariant {
   ComplexBottom = "complexBottom"
 }
 
-export const TableRow = ({
+type TableRowProps = {
+  variant?: TableRowVariant;
+  selected?: boolean;
+  selectable?: boolean;
+  sx?: SxStyleProp;
+  onClick?: Function;
+};
+
+export const TableRow: FunctionComponent<TableRowProps> = ({
   children,
   variant = TableRowVariant.Normal,
   selected = false,
   selectable = true,
-  sx1 = null,
+  sx = null,
   onClick = () => {}
 }) => {
   return (
@@ -119,7 +142,7 @@ export const TableRow = ({
           </TableCell>
         ))
       ) : (
-        <TableCell selected={selected} variant={variant} sx_={sx1}>
+        <TableCell selected={selected} variant={variant} sx={sx}>
           {children}
         </TableCell>
       )}
@@ -128,7 +151,7 @@ export const TableRow = ({
 };
 
 // Could move to live elsewhere someday.
-export const Checkbox = ({ value }) => {
+export const Checkbox = ({ value }: { value: boolean }) => {
   return (
     <Flex
       sx={{ height: "100%", alignItems: "center", justifyContent: "center" }}

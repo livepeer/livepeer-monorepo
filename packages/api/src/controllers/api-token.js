@@ -1,7 +1,7 @@
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
 import Router from 'express/lib/router'
-import { trackAction } from './helpers'
+import { trackAction, makeNextHREF } from './helpers'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 
@@ -40,13 +40,30 @@ app.delete('/:id', authMiddleware({}), async (req, res) => {
 })
 
 app.get('/', authMiddleware({}), async (req, res) => {
-  const { userId } = req.query
+  const { userId, cursor, limit } = req.query
 
-  if (!userId) {
+  if (!userId && !req.user.admin) {
     res.status(400)
     return res.json({
       errors: ['missing query parameter: userId'],
     })
+  }
+
+  if (!userId) {
+    const resp = await req.store.list({
+      prefix: `api-token/`,
+      cursor,
+      limit,
+    })
+    let output = resp.data
+    res.status(200)
+
+    if (output.length > 0) {
+      res.links({ next: makeNextHREF(req, resp.cursor) })
+    } // CF doesn't know what this means
+    output = output.map(o => o[Object.keys(o)[0]])
+    res.json(output)
+    return
   }
 
   if (req.user.admin !== true && req.user.id !== userId) {
@@ -70,7 +87,7 @@ app.post(
   validatePost('api-token'),
   async (req, res) => {
     const id = uuid()
-    const userId = req.user.id
+    const userId = req.body.userId && req.user.admin ? req.body.userId : req.user.id
 
     await Promise.all([
       req.store.create({
@@ -78,6 +95,7 @@ app.post(
         userId: userId,
         kind: 'api-token',
         name: req.body.name,
+        createdAt: Date.now(),
       }),
       trackAction(
         userId,
@@ -98,14 +116,5 @@ app.post(
     }
   },
 )
-
-function makeNextHREF(req, nextCursor) {
-  let baseUrl = new URL(
-    `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-  )
-  let next = baseUrl
-  next.searchParams.set('cursor', nextCursor)
-  return next.href
-}
 
 export default app

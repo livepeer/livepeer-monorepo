@@ -229,6 +229,11 @@ components:
         lastSeen:
           type: number
           example: 1587667174725
+        createdAt:
+          type: number
+          readOnly: true
+          description: Timestamp (in milliseconds) at which token object was created
+          example: 1587667174725
 
     user-verification:
       type: object

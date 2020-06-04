@@ -4,7 +4,12 @@ import { Box, Button, Flex, Input } from "@theme-ui/components";
 import Modal from "../Modal";
 import { Table, TableRow, Checkbox, TableRowVariant } from "../Table";
 
-export default ({ userId, id }) => {
+type UserTableProps = {
+  userId: string;
+  id: string;
+};
+
+export default ({ userId, id }: UserTableProps) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [adminModal, setAdminModal] = useState(false);
@@ -22,6 +27,7 @@ export default ({ userId, id }) => {
   };
   return (
     <Box
+      id={id}
       sx={{
         width: "100%",
         maxWidth: 958,
@@ -84,9 +90,6 @@ export default ({ userId, id }) => {
           </Flex>
         </Modal>
       )}
-      <p>
-        <strong>Users:</strong>
-      </p>
       <Button
         variant="secondarySmall"
         disabled={!selectedUser || selectedUser.admin}

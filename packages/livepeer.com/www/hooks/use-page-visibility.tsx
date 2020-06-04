@@ -21,7 +21,7 @@ export function getBrowserDocumentHiddenProp() {
 }
 
 export function getIsDocumentVisible() {
-  return !document[getBrowserDocumentHiddenProp()];
+  return !process.browser || !document[getBrowserDocumentHiddenProp()];
 }
 
 export default function usePageVisibility() {

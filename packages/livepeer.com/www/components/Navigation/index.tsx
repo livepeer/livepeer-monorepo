@@ -6,7 +6,7 @@ import { useApi } from "../../hooks";
 import { Fragment } from "react";
 
 export default () => {
-  const { token } = useApi();
+  const { token, user } = useApi();
   return (
     <Flex
       sx={{
@@ -55,6 +55,15 @@ export default () => {
           <Link href="/app/user">
             <a>
               <Button variant="text">My account</Button>
+            </a>
+          </Link>
+        </Fragment>
+      )}
+      {user && user.admin && (
+        <Fragment>
+          <Link href="/app/admin">
+            <a>
+              <Button variant="text">Admin</Button>
             </a>
           </Link>
         </Fragment>

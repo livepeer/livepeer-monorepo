@@ -1,23 +1,38 @@
+import Link from "next/link";
+import ReactTooltip from "react-tooltip";
 import { useEffect, useState } from "react";
 import { useApi, usePageVisibility } from "../../hooks";
-import { Box, Button, IconButton, Flex } from "@theme-ui/components";
-import { Table, TableRow, TableRowVariant } from "../Table";
+import { Box, Button, Flex } from "@theme-ui/components";
+import DeleteStreamModal from "../DeleteStreamModal";
+import { Table, TableRow, TableRowVariant, Checkbox } from "../Table";
+import Help from "../../public/img/help.svg";
 import Modal from "../Modal";
 import moment from "moment";
 import { Stream } from "@livepeer/api";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import Copy from "../../public/img/copy.svg";
-import ReactTooltip from "react-tooltip";
-import Help from "../../public/img/help.svg";
 
-const Profile = (
-  id: string,
-  i: number,
-  { fps, name, width, height, bitrate }
-) => {
+type ProfileProps = {
+  id: string;
+  i: number;
+  rendition: Rendition;
+};
+
+type Rendition = {
+  width: number;
+  name: string;
+  height: number;
+  bitrate: number;
+  fps: number;
+};
+
+const Profile = ({
+  id,
+  i,
+  rendition: { fps, name, width, height, bitrate }
+}: ProfileProps) => {
   return (
     <Box
       id={`profile-${id}-${i}-${name}`}
+      key={`profile-${id}-${i}-${name}`}
       sx={{
         padding: "0.5em",
         display: "grid",
@@ -39,8 +54,27 @@ const Profile = (
   );
 };
 
-const RelativeTime = ({ id, prefix, tm }) => {
+type RelativeTimeProps = {
+  id: string;
+  prefix: string;
+  tm: number;
+  swap?: boolean;
+};
+
+export const RelativeTime = ({
+  id,
+  prefix,
+  tm,
+  swap = false
+}: RelativeTimeProps) => {
   const idpref = `time-${prefix}-${id}`;
+  let main = moment.unix(tm / 1000.0).fromNow();
+  let toolTip = moment.unix(tm / 1000.0).format("LLL");
+  if (swap) {
+    const s = main;
+    main = toolTip;
+    toolTip = s;
+  }
   return (
     <Box id={idpref}>
       {tm ? (
@@ -52,10 +86,10 @@ const RelativeTime = ({ id, prefix, tm }) => {
             type="dark"
             effect="solid"
           >
-            {moment.unix(tm / 1000.0).format()}
+            {toolTip}
           </ReactTooltip>
           <span data-tip data-for={`tooltip-${idpref}`}>
-            {moment.unix(tm / 1000.0).fromNow()}
+            {main}
           </span>
         </>
       ) : (
@@ -65,7 +99,7 @@ const RelativeTime = ({ id, prefix, tm }) => {
   );
 };
 
-const StreamName = ({ stream }: { stream: Stream }) => {
+export const StreamName = ({ stream }: { stream: Stream }) => {
   const pid = `stream-name-${stream.id}-${name}`;
   return (
     <Box>
@@ -80,14 +114,16 @@ const StreamName = ({ stream }: { stream: Stream }) => {
           Created by token <b>{stream.createdByTokenName}</b>
         </ReactTooltip>
       ) : null}
-      <span data-tip data-for={pid}>
-        {stream.name}
-      </span>
+      <Box data-tip data-for={pid}>
+        <Link href="/app/stream/[id]" as={`/app/stream/${stream.id}`}>
+          <a>{stream.name}</a>
+        </Link>
+      </Box>
     </Box>
   );
 };
 
-const RenditionsDetails = ({ stream }: { stream: Stream }) => {
+export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
   let details = "";
   let detailsTooltip;
   if (stream.presets?.length) {
@@ -99,7 +135,11 @@ const RenditionsDetails = ({ stream }: { stream: Stream }) => {
     }
     details += stream.profiles.map(({ name }) => name).join(",");
     detailsTooltip = (
-      <Flex>{stream.profiles.map((p, i) => Profile(stream.id, i, p))}</Flex>
+      <Flex>
+        {stream.profiles.map((p, i) => (
+          <Profile id={stream.id} i={i} rendition={p} />
+        ))}
+      </Flex>
     );
   }
   return (
@@ -133,72 +173,12 @@ const RenditionsDetails = ({ stream }: { stream: Stream }) => {
   );
 };
 
-const ShowURL = ({
-  text,
-  url,
-  anchor = false
-}: {
-  text: string;
-  url: string;
-  anchor: boolean;
-}) => {
-  const [isCopied, setCopied] = useState(0);
-  useEffect(() => {
-    if (isCopied) {
-      const interval = setTimeout(() => {
-        setCopied(0);
-      }, isCopied);
-      return () => clearTimeout(interval);
-    }
-  }, [isCopied]);
-  return (
-    <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
-      <Box sx={{ minWidth: 125, fontSize: 12, paddingRight: "1em" }}>
-        {text}:
-      </Box>
-      <CopyToClipboard text={url} onCopy={() => setCopied(2000)}>
-        <Flex sx={{ alignItems: "center" }}>
-          {anchor ? (
-            <a
-              sx={{ fontSize: 12, fontFamily: "monospace", mr: 1 }}
-              href={url}
-              target="_blank"
-            >
-              {url}
-            </a>
-          ) : (
-            <span sx={{ fontSize: 12, fontFamily: "monospace", mr: 1 }}>
-              {url}
-            </span>
-          )}
-          <Copy
-            sx={{
-              mr: 1,
-              cursor: "pointer",
-              width: 14,
-              height: 14,
-              color: "listText"
-            }}
-          />
-        </Flex>
-      </CopyToClipboard>
-      {!!isCopied && <Box sx={{ fontSize: 12, color: "listText" }}>Copied</Box>}
-    </Flex>
-  );
-};
-
-export default ({ userId, id }) => {
+export default ({ userId, id }: { userId: string; id: string }) => {
   const [broadcasters, setBroadcasters] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedStream, setSelectedStream] = useState(null);
   const [streams, setStreams] = useState([]);
-  const [streamsSessions, setStreamsSessions] = useState([]);
-  const {
-    getStreams,
-    deleteStream,
-    getBroadcasters,
-    getStreamSessions
-  } = useApi();
+  const { getStreams, deleteStream, getBroadcasters } = useApi();
   useEffect(() => {
     getBroadcasters()
       .then(broadcasters => setBroadcasters(broadcasters))
@@ -207,9 +187,6 @@ export default ({ userId, id }) => {
   useEffect(() => {
     getStreams(userId)
       .then(streams => setStreams(streams))
-      .catch(err => console.error(err)); // todo: surface this
-    getStreamSessions(userId)
-      .then(streams => setStreamsSessions(streams))
       .catch(err => console.error(err)); // todo: surface this
   }, [userId, deleteModal]);
   const close = () => {
@@ -224,31 +201,9 @@ export default ({ userId, id }) => {
       getStreams(userId)
         .then(streams => setStreams(streams))
         .catch(err => console.error(err)); // todo: surface this
-      getStreamSessions(userId)
-        .then(streams => setStreamsSessions(streams))
-        .catch(err => console.error(err)); // todo: surface this
     }, 5000);
     return () => clearInterval(interval);
   }, [userId, isVisible]);
-  const getIngestURL = (stream: Stream): string => {
-    return broadcasters?.length && stream.streamKey
-      ? `${broadcasters[0].address
-          .replace("http:", "rtmp:")
-          .replace(":8935", "")}/live/${stream.streamKey}`
-      : stream.streamKey || "";
-  };
-  const getPlaybackURL = (stream: Stream): string => {
-    return broadcasters?.length && stream.playbackId
-      ? `${broadcasters[0].address}/hls/${stream.playbackId}/index.m3u8`
-      : stream.playbackId || "";
-  };
-  const getParentName = (stream: Stream): string => {
-    let parent;
-    if (streams.length && stream.parentId) {
-      parent = streams.find(s => s.id === stream.parentId);
-    }
-    return parent ? parent.name : stream.name;
-  };
   return (
     <Box
       id={id}
@@ -260,156 +215,93 @@ export default ({ userId, id }) => {
       }}
     >
       {deleteModal && selectedStream && (
-        <Modal onClose={close}>
-          <h3>Delete stream</h3>
-          <p>Are you sure you want to delete stream "{selectedStream.name}"?</p>
-          <Flex sx={{ justifyContent: "flex-end" }}>
-            <Button
-              type="button"
-              variant="outlineSmall"
-              onClick={close}
-              sx={{ mr: 2 }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="secondarySmall"
-              onClick={() => {
-                deleteStream(selectedStream.id).then(close);
-              }}
-            >
-              Delete
-            </Button>
-          </Flex>
-        </Modal>
+        <DeleteStreamModal
+          streamName={selectedStream.name}
+          onClose={close}
+          onDelete={() => {
+            deleteStream(selectedStream.id).then(close);
+          }}
+        />
       )}
-      <p>
-        <strong>Streams:</strong>
-      </p>
-      {streams.length === 0 ? (
-        <p>No streams created yet</p>
-      ) : (
-        <Table
-          sx={{ gridTemplateColumns: "auto auto auto auto auto auto auto" }}
+      <Box sx={{ mt: "2em" }}>
+        <Button
+          variant="outlineSmall"
+          sx={{ margin: 2 }}
+          onClick={() => {
+            console.log("not implemented");
+          }}
         >
-          <TableRow variant={TableRowVariant.Header}>
-            <Box></Box>
-            <Box>Name</Box>
-            <Box>Details</Box>
-            <Box>Segments</Box>
-            <Box>Created</Box>
-            <Box>Last Active</Box>
-            <Box>Status</Box>
-          </TableRow>
-          {streams.map((stream: Stream) => {
-            const {
-              id,
-              name,
-              lastSeen,
-              sourceSegments,
-              transcodedSegments,
-              createdAt,
-              isActive
-            } = stream;
-            return (
-              <>
-                <TableRow
-                  selectable={false}
-                  key={id}
-                  variant={TableRowVariant.ComplexTop}
-                >
-                  <Box>
-                    <IconButton
-                      aria-label="Delete stream"
-                      onClick={() => {
-                        setSelectedStream(stream);
-                        setDeleteModal(true);
-                      }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        height="24"
-                        fill="currentcolor"
-                      >
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                      </svg>
-                    </IconButton>
-                  </Box>
-                  <StreamName stream={stream} />
-                  <RenditionsDetails stream={stream} />
-                  <Box>
-                    {sourceSegments || 0}/{transcodedSegments || 0}
-                  </Box>
-                  <RelativeTime id={id} prefix="createdat" tm={createdAt} />
-                  <RelativeTime id={id} prefix="lastSeen" tm={lastSeen} />
-                  <Box>{isActive ? "Active" : "Idle"}</Box>
-                </TableRow>
-                <TableRow
-                  selectable={false}
-                  variant={TableRowVariant.ComplexMiddle}
-                  sx1={{ gridColumnEnd: "span 7" }}
-                >
-                  <ShowURL
-                    text="Ingest URL"
-                    url={getIngestURL(stream)}
-                    anchor={false}
-                  />
-                </TableRow>
-                <TableRow
-                  selectable={false}
-                  variant={TableRowVariant.ComplexBottom}
-                  sx1={{ gridColumnEnd: "span 7" }}
-                >
-                  <ShowURL
-                    text="Playback URL"
-                    url={getPlaybackURL(stream)}
-                    anchor={true}
-                  />
-                </TableRow>
-              </>
-            );
-          })}
-        </Table>
-      )}
-      <p>
-        <strong>Stream Sessions:</strong>
-      </p>
-      {streamsSessions.length === 0 ? (
-        <p>No streams stream yet</p>
-      ) : (
-        <Table sx={{ gridTemplateColumns: "auto auto auto auto auto" }}>
-          <TableRow variant={TableRowVariant.Header}>
-            <Box>Name</Box>
-            <Box>Details</Box>
-            <Box>Segments</Box>
-            <Box>Created</Box>
-            <Box>Last Active</Box>
-          </TableRow>
-          {streamsSessions.map(stream => {
-            const {
-              id,
-              lastSeen,
-              createdAt,
-              sourceSegments,
-              transcodedSegments
-            } = stream;
-            return (
-              <TableRow key={id}>
-                <Box>{getParentName(stream)}</Box>
+          Create
+        </Button>
+        <Button
+          variant="secondarySmall"
+          aria-label="Delete Stream button"
+          disabled={!selectedStream}
+          sx={{ margin: 2, mb: 4 }}
+          onClick={() => selectedStream && setDeleteModal(true)}
+        >
+          Delete
+        </Button>
+      </Box>
+      <Table sx={{ gridTemplateColumns: "auto auto auto auto auto auto auto" }}>
+        <TableRow variant={TableRowVariant.Header}>
+          <Box></Box>
+          <Box>Name</Box>
+          <Box>Details</Box>
+          <Box>Segments</Box>
+          <Box>Created</Box>
+          <Box>Last Active</Box>
+          <Box>Status</Box>
+        </TableRow>
+        {streams.map((stream: Stream) => {
+          const {
+            id,
+            name,
+            lastSeen,
+            sourceSegments,
+            transcodedSegments,
+            createdAt,
+            isActive
+          } = stream;
+          const selected = selectedStream && selectedStream.id === id;
+          return (
+            <>
+              <TableRow
+                key={id}
+                variant={TableRowVariant.Normal}
+                selected={selected}
+                onClick={() => {
+                  if (selected) {
+                    setSelectedStream(null);
+                  } else {
+                    setSelectedStream(stream);
+                  }
+                }}
+              >
+                <Checkbox value={selected} />
+                <StreamName stream={stream} />
                 <RenditionsDetails stream={stream} />
                 <Box>
                   {sourceSegments || 0}/{transcodedSegments || 0}
                 </Box>
-                <RelativeTime id={id} prefix="createdat" tm={createdAt} />
-                <RelativeTime id={id} prefix="lastSeen" tm={lastSeen} />
+                <RelativeTime
+                  id={id}
+                  prefix="createdat"
+                  tm={createdAt}
+                  swap={true}
+                />
+                <RelativeTime
+                  id={id}
+                  prefix="lastSeen"
+                  tm={lastSeen}
+                  swap={true}
+                />
+                <Box>{isActive ? "Active" : "Idle"}</Box>
               </TableRow>
-            );
-          })}
-        </Table>
-      )}
+            </>
+          );
+        })}
+      </Table>
     </Box>
   );
 };

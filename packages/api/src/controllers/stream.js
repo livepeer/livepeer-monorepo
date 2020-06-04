@@ -13,17 +13,23 @@ import { getBroadcasterHandler } from './broadcaster'
 const app = Router()
 
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
-  let limit = req.query.limit
-  let cursor = req.query.cursor
-  let all = req.query.all // return all streams, including deleted ones
-  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
-  const filter = all ? undefined : o => !o[Object.keys(o)[0]].deleted
+  let { limit, cursor, streamsonly, sessionsonly, all } = req.query
+
+  logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
+  const filter1 = all ? o => o : o => !o[Object.keys(o)[0]].deleted
+  let filter2 = o => o
+  if (streamsonly) {
+    filter2 = o => !o[Object.keys(o)[0]].parentId
+  } else if (sessionsonly) {
+    filter2 = o => o[Object.keys(o)[0]].parentId
+  }
+
 
   const resp = await req.store.list({
     prefix: `stream/`,
     cursor,
     limit,
-    filter,
+    filter: o => filter1(o) && filter2(o),
   })
   let output = resp.data
   res.status(200)
@@ -35,9 +41,36 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(output)
 })
 
-app.get('/user/:userId', authMiddleware({}), async (req, res) => {
+app.get('/sessions/:id', authMiddleware({}), async (req, res) => {
   let limit = req.query.limit
   let cursor = req.query.cursor
+  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
+
+  const stream = await req.store.get(`stream/${req.params.id}`)
+  if (
+    !stream ||
+    stream.deleted ||
+    (stream.userId !== req.user.id && !req.isUIAdmin)
+  ) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
+    kind: 'stream',
+    query: { parentId: req.params.id },
+    cursor,
+    limit,
+  })
+  res.status(200)
+  if (streams.length > 0 && cursorOut) {
+    res.links({ next: makeNextHREF(req, cursorOut) })
+  }
+  res.json(streams)
+})
+
+app.get('/user/:userId', authMiddleware({}), async (req, res) => {
+  let { limit, cursor, streamsonly, sessionsonly } = req.query
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
   if (req.user.admin !== true && req.user.id !== req.params.userId) {
@@ -48,9 +81,9 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
   }
 
   let filter = o => !o.deleted
-  if (req.query.streamsonly) {
+  if (streamsonly) {
     filter = o => !o.deleted && !o.parentId
-  } else if (req.query.sessionsonly) {
+  } else if (sessionsonly) {
     filter = o => !o.deleted && o.parentId
   }
 
@@ -233,6 +266,14 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
   stream.isActive = req.body.active
   stream.lastSeen = +new Date()
   await req.store.replace(stream)
+  if (stream.parentId) {
+    const pStream = await req.store.get(`stream/${id}`, false)
+    if (pStream && !pStream.deleted) {
+      pStream.isActive = req.body.active
+      pStream.lastSeen = stream.lastSeen
+      await req.store.replace(pStream)
+    }
+  }
 
   res.status(204)
   res.end()

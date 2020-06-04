@@ -1,34 +1,59 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useMemo, useReducer } from "react";
 import { useApi } from "../../hooks";
-import { Box, Button, Flex, Input } from "@theme-ui/components";
+import { Select, Box, Button, Flex, Input } from "@theme-ui/components";
 import Modal from "../Modal";
 import { Table, TableRow, Checkbox, TableRowVariant } from "../Table";
 import CopyBox from "../CopyBox";
+import { User } from "@livepeer/api";
+
+export const UserName = ({ id, users }: { id: string; users: Array<User> }) => {
+  const user = users.find(o => o.id === id);
+  return <Box>{user ? user.email : id}</Box>;
+};
 
 type TokenTableProps = {
   userId: string;
   id: string;
 };
 
-export default ({ userId, id }: TokenTableProps) => {
+export default ({ id }: TokenTableProps) => {
   const [tokens, setTokens] = useState([]);
   const [tokenName, setTokenName] = useState("");
+  const [newTokenUserId, setNewTokenUserId] = useState("");
   const [createModal, setCreateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [creating, setCreating] = useState(false);
   const [newToken, setNewToken] = useState(null);
   const [selectedToken, setSelectedToken] = useState(null);
   const [copyTime, setCopyTime] = useState(null);
-  const { getApiTokens, createApiToken, deleteApiToken } = useApi();
+  const [users, setUsers] = useState([]);
+  const {
+    getApiTokens,
+    createApiToken,
+    deleteApiToken,
+    getUser,
+    getUsers
+  } = useApi();
   useEffect(() => {
-    getApiTokens(userId)
-      .then(tokens => setTokens(tokens))
+    getApiTokens(null)
+      .then(tokens => {
+        if (tokens) {
+          tokens.sort((a, b) => a.userId.localeCompare(b.userId));
+        }
+        setTokens(tokens);
+      })
       .catch(err => console.error(err)); // todo: surface this
-  }, [userId, newToken, deleteModal]);
+  }, [newToken, deleteModal]);
+  useEffect(() => {
+    getUsers()
+      .then(users => setUsers(users))
+      .catch(err => console.error(err)); // todo: surface this
+  }, []);
   const close = () => {
     setCreateModal(false);
     setDeleteModal(false);
     setTokenName("");
+    setNewTokenUserId("");
     setNewToken(null);
     setCopyTime(null);
   };
@@ -52,7 +77,7 @@ export default ({ userId, id }: TokenTableProps) => {
                   return;
                 }
                 setCreating(true);
-                createApiToken({ name: tokenName })
+                createApiToken({ name: tokenName, userId: newTokenUserId })
                   .then(newToken => {
                     setNewToken(newToken);
                     setCreating(false);
@@ -73,6 +98,14 @@ export default ({ userId, id }: TokenTableProps) => {
                 onChange={e => setTokenName(e.target.value)}
                 placeholder="New Token"
               ></Input>
+              <Select
+                sx={{ mt: "1em" }}
+                onChange={e => setNewTokenUserId(e.target.value)}
+              >
+                {users.map(user => (
+                  <option value={user.id}>{user.email}</option>
+                ))}
+              </Select>
               <Flex sx={{ justifyContent: "flex-end", py: 3 }}>
                 <Button
                   type="button"
@@ -144,10 +177,6 @@ export default ({ userId, id }: TokenTableProps) => {
           </Flex>
         </Modal>
       )}
-      <Box sx={{ mb: 3 }}>
-        <strong>Note:</strong> These tokens allow other apps to control your
-        whole account. Treat them like you would a password.
-      </Box>
       <Box>
         <Button
           variant="outlineSmall"
@@ -167,9 +196,11 @@ export default ({ userId, id }: TokenTableProps) => {
           Delete
         </Button>
       </Box>
-      <Table sx={{ gridTemplateColumns: "auto 1fr auto" }}>
+      <Table sx={{ gridTemplateColumns: "auto auto auto auto auto" }}>
         <TableRow variant={TableRowVariant.Header}>
           <Box></Box>
+          <Box>id</Box>
+          <Box>User</Box>
           <Box>Name</Box>
           <Box>Last Active</Box>
         </TableRow>
@@ -198,6 +229,8 @@ export default ({ userId, id }: TokenTableProps) => {
               }}
             >
               <Checkbox value={selected} />
+              <Box>{token.id}</Box>
+              <UserName id={token.userId} users={users} />
               <Box>{name}</Box>
               <Box>{formattedLastSeen}</Box>
             </TableRow>
