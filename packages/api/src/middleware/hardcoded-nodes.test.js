@@ -38,11 +38,19 @@ describe('kubernetes middleware', () => {
     },
   ]
 
+  const ingest = [
+    {
+      ingest: 'https://gke-ams-prod-cpu-efde94aa-2k9f.example.com',
+      playback: 'http://10.40.0.46:7935',
+    },
+  ]
+
   beforeEach(async () => {
     req = {}
     middleware = hardcodedNodes({
       broadcasters: JSON.stringify(broadcasters),
       orchestrators: JSON.stringify(orchestrators),
+      ingest: JSON.stringify(ingest),
     })
     await new Promise(resolve => {
       middleware(req, {}, resolve)
