@@ -17,7 +17,6 @@ const Home = () => {
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
   const { data, loading } = useQuery(orchestratorsViewQuery, {
-    pollInterval: 10000,
     ssr: false,
   })
   const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
