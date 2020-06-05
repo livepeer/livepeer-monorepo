@@ -207,6 +207,43 @@ const makeContext = (state: ApiState, setState) => {
       return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
     },
 
+    async getStream(streamId): Promise<Stream> {
+      const [res, stream] = await context.fetch(`/stream/${streamId}`);
+      if (res.status !== 200) {
+        throw new Error(stream.errors.join(", "));
+      }
+      return stream;
+    },
+
+    async createStream(params): Promise<Stream> {
+      const [res, stream] = await context.fetch(`/stream`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+
+      if (res.status !== 201) {
+        throw new Error(stream.errors.join(", "));
+      }
+      return stream;
+    },
+
+    async deleteStream(id): Promise<Stream> {
+      const [res, stream] = await context.fetch(`/stream/${id}`, {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+
+      if (res.status !== 204) {
+        throw new Error(stream);
+      }
+      return;
+    },
+
     async getApiTokens(userId): Promise<[ApiToken]> {
       const [res, tokens] = await context.fetch(
         `/api-token?${qs.stringify({ userId })}`

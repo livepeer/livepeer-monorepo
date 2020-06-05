@@ -1,12 +1,10 @@
-import useApi from "../../hooks/use-api";
+import useApi from "../../../hooks/use-api";
 import { Box } from "@theme-ui/components";
-import { useEffect } from "react";
-import Layout from "../../components/Layout";
+import Layout from "../../../components/Layout";
 import { Button } from "@theme-ui/components";
 import { Flex } from "@theme-ui/components";
-import useLoggedIn from "../../hooks/use-logged-in";
-import TokenTable from "../../components/TokenTable";
-import UserTable from "../../components/UserTable";
+import useLoggedIn from "../../../hooks/use-logged-in";
+import StreamsTable from "../../../components/StreamsTable";
 
 export default () => {
   useLoggedIn();
@@ -16,7 +14,7 @@ export default () => {
   }
 
   return (
-    <Layout subnav={true}>
+    <Layout subnav={true} >
       <Flex
         sx={{
           flexDirection: "column",
@@ -25,8 +23,7 @@ export default () => {
           alignItems: "center"
         }}
       >
-        <TokenTable id="API Token Table" userId={user.id} />
-        {user.admin && <UserTable id="User Table" userId={user.id} />}
+        <StreamsTable id="Streams Table" userId={user.id} />
         <Box sx={{ margin: 3 }}>
           <Button variant="outline" onClick={logout}>
             Log Out

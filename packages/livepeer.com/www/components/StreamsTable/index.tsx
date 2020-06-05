@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
 import { useApi } from "../../hooks";
-import { Box } from "@theme-ui/components";
-import { Table, TableRow } from "../Table";
+import { Box, Button, Flex, Input } from "@theme-ui/components";
+import { Table, TableRow, Checkbox } from "../Table";
 import moment from "moment";
+import Modal from "../Modal";
+import { Link } from "@theme-ui/components";
 
 export default ({ userId, id }) => {
   const [streams, setStreams] = useState([]);
-  const { getStreams } = useApi();
+  const [selectedStream, setSelectedStream] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const { getStreams, deleteStream } = useApi();
   useEffect(() => {
     getStreams(userId)
       .then(streams => setStreams(streams))
       .catch(err => console.error(err)); // todo: surface this
-  }, [userId]);
+  }, [userId, deleteModal]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       getStreams(userId)
@@ -20,6 +26,12 @@ export default ({ userId, id }) => {
     }, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  const close = () => {
+    setDeleteModal(false);
+    setSelectedStream(false);
+  };
+
   return (
     <Box
       sx={{
@@ -29,14 +41,52 @@ export default ({ userId, id }) => {
         mx: "auto"
       }}
     >
-      <p>
-        <strong>Streams:</strong>
-      </p>
+      {deleteModal && selectedStream && (
+        <Modal onClose={close}>
+          <h3>Are you sure?</h3>
+          <p>Deleting a stream cannot be undone.</p>
+          <Flex sx={{ justifyContent: "flex-end" }}>
+            <Button
+              type="button"
+              variant="outlineSmall"
+              onClick={close}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="secondarySmall"
+              onClick={() => {
+                deleteStream(selectedStream.id).then(close);
+              }}
+            >
+              Delete
+            </Button>
+          </Flex>
+        </Modal>
+      )}
+      <Link href="/app/stream/new-stream">
+        <a>
+          <Button variant="outlineSmall" sx={{ margin: 2 }}>
+            Create
+          </Button>
+        </a>
+      </Link>
+      <Button
+        variant="secondarySmall"
+        disabled={!selectedStream}
+        sx={{ margin: 2, mb: 4 }}
+        onClick={() => selectedStream && setDeleteModal(true)}
+      >
+        Delete
+      </Button>
       {streams.length === 0 ? (
         <p>No streams created yet</p>
       ) : (
-        <Table sx={{ gridTemplateColumns: "auto 1fr auto auto auto" }}>
+        <Table sx={{ gridTemplateColumns: "auto auto 1fr auto auto auto" }}>
           <TableRow variant="header">
+            <Box></Box>
             <Box>ID</Box>
             <Box>Name</Box>
             <Box>Details</Box>
@@ -69,8 +119,20 @@ export default ({ userId, id }) => {
               }
               details += `${renditions}`;
             }
+            const selected = selectedStream && selectedStream.id === id;
             return (
-              <TableRow key={id}>
+              <TableRow
+                selected={selected}
+                key={id}
+                onClick={() => {
+                  if (selected) {
+                    setSelectedStream(null);
+                  } else {
+                    setSelectedStream(stream);
+                  }
+                }}
+              >
+                <Checkbox value={selected} />
                 <Box>{id}</Box>
                 <Box>{name}</Box>
                 <Box>{details}</Box>

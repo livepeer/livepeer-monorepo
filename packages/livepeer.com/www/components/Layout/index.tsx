@@ -6,7 +6,9 @@ import { useEffect } from "react";
 import ReactGA from "react-ga";
 import "lazysizes";
 import "lazysizes/plugins/attrchange/ls.attrchange";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
+import { Button } from "@theme-ui/components";
+import { Link } from "@theme-ui/components";
 
 interface Props {
   title?: string;
@@ -14,6 +16,7 @@ interface Props {
   description?: string;
   image?: any;
   url?: string;
+  subnav?: boolean;
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -32,7 +35,14 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-export default ({ title, description, children, image, url }: Props) => {
+export default ({
+  title,
+  description,
+  children,
+  image,
+  url,
+  subnav = false
+}: Props) => {
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
@@ -52,6 +62,16 @@ export default ({ title, description, children, image, url }: Props) => {
         }
       ]
     }
+  };
+
+  const router = useRouter();
+
+  const subNavBorder = menuItem => {
+    console.log(`pathname: ${router.pathname}`);
+    if (router.pathname.includes(menuItem)) {
+      return "2px solid black";
+    }
+    return "0px";
   };
   return (
     <Flex
@@ -80,6 +100,57 @@ export default ({ title, description, children, image, url }: Props) => {
         >
           <Navigation />
         </Box>
+        {subnav && (
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 955,
+              mx: "auto",
+              paddingBottom: '40px'
+            }}
+          >
+            <Link href="/app/stream" sx={{ paddingRight: "3px" }}>
+              <a>
+                <Button
+                  variant="text"
+                  sx={{
+                    padding: "0px",
+                    borderRadius: "0px",
+                    borderBottom: subNavBorder("stream"),
+                    lineHeight: "30px"
+                  }}
+                >
+                  Streams
+                </Button>
+              </a>
+            </Link>
+            <Link
+              href="/app/user"
+              sx={{ paddingLeft: "20px", paddingRight: "3px" }}
+            >
+              <a>
+                <Button
+                  variant="text"
+                  sx={{
+                    padding: "0px",
+                    borderRadius: "0px",
+                    fontWeight: 'bold',
+                    borderBottom: subNavBorder("user"),
+                    lineHeight: "30px"
+                  }}
+                >
+                  API Tokens
+                </Button>
+              </a>
+            </Link>
+            <hr
+              sx={{
+                borderBottom: '0px solid black',
+                margin: "0px",
+              }}
+            />
+          </Box>
+        )}
         {children}
       </Flex>
       <Footer />
