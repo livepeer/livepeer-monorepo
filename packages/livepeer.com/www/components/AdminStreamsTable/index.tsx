@@ -4,8 +4,29 @@ import { Box, Button, Flex } from "@theme-ui/components";
 import DeleteStreamModal from "../DeleteStreamModal";
 import { Table, TableRow, TableRowVariant, Checkbox } from "../Table";
 import { RelativeTime, StreamName, RenditionsDetails } from "../StreamsTable";
+import ReactTooltip from "react-tooltip";
 import { UserName } from "../AdminTokenTable";
 import { Stream } from "@livepeer/api";
+
+const Segments = ({ stream }: { stream: Stream }) => {
+  const idpref = `segments-${stream.id}`;
+  return (
+    <Box id={idpref} key={idpref}>
+      <ReactTooltip
+        id={`tooltip-${idpref}`}
+        className="tooltip"
+        place="top"
+        type="dark"
+        effect="solid"
+      >
+        Source segments / Transcoded segments
+      </ReactTooltip>
+      <span data-tip data-for={`tooltip-${idpref}`}>
+        {stream.sourceSegments || 0}/{stream.transcodedSegments || 0}
+      </span>
+    </Box>
+  );
+};
 
 export default ({ id }: { id: string }) => {
   const [broadcasters, setBroadcasters] = useState(null);
@@ -125,9 +146,7 @@ export default ({ id }: { id: string }) => {
                 <UserName id={stream.userId} users={users} />
                 <StreamName stream={stream} />
                 <RenditionsDetails stream={stream} />
-                <Box>
-                  {sourceSegments || 0}/{transcodedSegments || 0}
-                </Box>
+                <Segments stream={stream} />
                 <RelativeTime
                   id={id}
                   prefix="createdat"

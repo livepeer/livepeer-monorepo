@@ -42,11 +42,10 @@ export default ({
         mt
       }}
     >
-      <Table sx={{ gridTemplateColumns: "auto auto auto auto auto" }}>
+      <Table sx={{ gridTemplateColumns: "auto auto auto auto" }}>
         <TableRow variant={TableRowVariant.Header}>
           <Box>Sessions</Box>
           <Box>Details</Box>
-          <Box>Segments</Box>
           <Box>Created</Box>
           <Box>Last Active</Box>
         </TableRow>
@@ -60,11 +59,8 @@ export default ({
           } = stream;
           return (
             <TableRow key={id}>
-              <Box>{`parent id: ${stream.parentId}`}</Box>
+              <Box></Box>
               <RenditionsDetails stream={stream} />
-              <Box>
-                {sourceSegments || 0}/{transcodedSegments || 0}
-              </Box>
               <RelativeTime
                 id={id}
                 prefix="createdat"

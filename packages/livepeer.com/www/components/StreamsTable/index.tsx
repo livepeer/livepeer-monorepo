@@ -76,7 +76,7 @@ export const RelativeTime = ({
     toolTip = s;
   }
   return (
-    <Box id={idpref}>
+    <Box id={idpref} key={idpref}>
       {tm ? (
         <>
           <ReactTooltip
@@ -243,12 +243,11 @@ export default ({ userId, id }: { userId: string; id: string }) => {
           Delete
         </Button>
       </Box>
-      <Table sx={{ gridTemplateColumns: "auto auto auto auto auto auto auto" }}>
+      <Table sx={{ gridTemplateColumns: "auto auto auto auto auto auto" }}>
         <TableRow variant={TableRowVariant.Header}>
           <Box></Box>
           <Box>Name</Box>
           <Box>Details</Box>
-          <Box>Segments</Box>
           <Box>Created</Box>
           <Box>Last Active</Box>
           <Box>Status</Box>
@@ -281,9 +280,6 @@ export default ({ userId, id }: { userId: string; id: string }) => {
                 <Checkbox value={selected} />
                 <StreamName stream={stream} />
                 <RenditionsDetails stream={stream} />
-                <Box>
-                  {sourceSegments || 0}/{transcodedSegments || 0}
-                </Box>
                 <RelativeTime
                   id={id}
                   prefix="createdat"
