@@ -21,7 +21,7 @@ API product is under heavy development with new features added regularly.
 
 - `POST https://{broadcaster_url}/live/{stream_id}/{media_number}.ts` MPEG-TS
   segment ingest point after getting the broadcaster URL (using `POST`)
-- This endpoint also works for `.mp4` files.  We recommend sending `.mp4` files that are **less than 120 seconds**.
+- This endpoint also works for `.mp4` files.  Use the `Content-Duration` header (ex: `Content-Duration: 2000`) to indicate the length of the `.mp4` file in ms.  The maximum timeout period is 5mins.
 
 # API Tutorial
 
