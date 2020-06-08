@@ -41,12 +41,11 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(output)
 })
 
-app.get('/sessions/:id', authMiddleware({}), async (req, res) => {
-  let limit = req.query.limit
-  let cursor = req.query.cursor
+app.get('/sessions/:parentId', authMiddleware({}), async (req, res) => {
+  const { parentId, limit, cursor } = req.params
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
-  const stream = await req.store.get(`stream/${req.params.id}`)
+  const stream = await req.store.get(`stream/${parentId}`)
   if (
     !stream ||
     stream.deleted ||
@@ -58,7 +57,7 @@ app.get('/sessions/:id', authMiddleware({}), async (req, res) => {
 
   const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
     kind: 'stream',
-    query: { parentId: req.params.id },
+    query: { parentId },
     cursor,
     limit,
   })
