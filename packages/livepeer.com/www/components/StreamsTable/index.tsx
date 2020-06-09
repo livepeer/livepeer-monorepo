@@ -141,6 +141,7 @@ export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
         ))}
       </Flex>
     );
+    detailsTooltip = null; // remove for now, will be back later
   }
   return (
     <Flex>
