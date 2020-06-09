@@ -1,19 +1,26 @@
 import useApi from "../../hooks/use-api";
 import Layout from "../../components/Layout";
 import useLoggedIn from "../../hooks/use-logged-in";
-import StreamsTable from "../../components/StreamsTable";
+import UserTable from "../../components/UserTable";
 import TabbedLayout from "../../components/TabbedLayout";
-import Tabs, { TabType } from "../../components/Tabs";
+import { TabType } from "../../components/Tabs";
 
 export function getTabs(i: number): Array<TabType> {
-  const tabs: Array<TabType> = [
+  const tabs = [
     {
-      name: "Streams",
-      href: "/app/user"
+      name: "Users",
+      href: "/app/admin",
+      isActive: false
     },
     {
       name: "API Keys",
-      href: "/app/user/keys"
+      href: "/app/admin/keys",
+      isActive: false
+    },
+    {
+      name: "Streams",
+      href: "/app/admin/streams",
+      isActive: false
     }
   ];
   return tabs.map((t, ti) => (ti === i ? { ...t, isActive: true } : t));
@@ -22,14 +29,14 @@ export function getTabs(i: number): Array<TabType> {
 export default () => {
   useLoggedIn();
   const { user, logout } = useApi();
-  if (!user || user.emailValid === false) {
+  if (!user || user.emailValid === false || !user.admin) {
     return <Layout />;
   }
   const tabs = getTabs(0);
 
   return (
     <TabbedLayout tabs={tabs} logout={logout}>
-      <StreamsTable id="Streams Table" userId={user.id} />
+      <UserTable id="User Table" userId={user.id} />
     </TabbedLayout>
   );
 };

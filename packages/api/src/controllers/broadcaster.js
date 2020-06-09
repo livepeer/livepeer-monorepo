@@ -41,7 +41,7 @@ export const amalgamate = async req => {
   return output
 }
 
-app.get('/', geolocateMiddleware({}), async (req, res, next) => {
+export async function getBroadcasterHandler(req, res) {
   let broadcasters
   if (req.region && req.region.servers) {
     broadcasters = await amalgamate(req)
@@ -50,7 +50,9 @@ app.get('/', geolocateMiddleware({}), async (req, res, next) => {
   }
   const broadcasterData = broadcasters.map(({ address }) => ({ address }))
   return res.json(shuffle(broadcasterData))
-})
+}
+
+app.get('/', geolocateMiddleware({}), getBroadcasterHandler)
 
 app.get('/status', authMiddleware({}), async (req, res, next) => {
   const statuses = await getBroadcasterStatuses(req)

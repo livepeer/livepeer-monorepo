@@ -1,16 +1,7 @@
-import express, { Router } from 'express'
+import express from 'express'
 import 'express-async-errors' // it monkeypatches, i guess
 import morgan from 'morgan'
-import { json as jsonParser } from 'body-parser'
-import bearerToken from 'express-bearer-token'
-import { LevelStore, PostgresStore, CloudflareStore } from './store'
-import { healthCheck, kubernetes, hardcodedNodes } from './middleware'
 import logger from './logger'
-import * as controllers from './controllers'
-import streamProxy from './controllers/stream-proxy'
-import streamProxyOS from './controllers/stream-proxy-os'
-import liveProxy from './controllers/live-proxy'
-import proxy from 'http-proxy-middleware'
 import appRouter from './app-router'
 
 export default async function makeApp(params) {

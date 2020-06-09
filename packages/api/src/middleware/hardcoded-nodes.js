@@ -3,10 +3,15 @@
  * --broadcaster and --orchestrator CLI parameters. This implements those.
  */
 
-export default function hardcodedNodes({ broadcasters, orchestrators }) {
+export default function hardcodedNodes({
+  broadcasters,
+  orchestrators,
+  ingest,
+}) {
   try {
     broadcasters = JSON.parse(broadcasters)
     orchestrators = JSON.parse(orchestrators)
+    ingest = JSON.parse(ingest)
   } catch (e) {
     console.error('Error parsing LP_BROADCASTERS and LP_ORCHESTRATORS')
     throw e
@@ -17,6 +22,9 @@ export default function hardcodedNodes({ broadcasters, orchestrators }) {
     }
     if (!req.getOrchestrators) {
       req.getOrchestrators = async () => orchestrators
+    }
+    if (!req.getIngest) {
+      req.getIngest = async () => ingest
     }
     next()
   }

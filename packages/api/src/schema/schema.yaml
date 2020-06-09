@@ -56,11 +56,33 @@ components:
         deleted:
           type: boolean
           description: Set to true when stream deleted
+        isActive:
+          type: boolean
+          description: If currently active
+        createdByTokenName:
+          type: string
+          readOnly: true
+          description: Name of the token used to create this object
         createdAt:
           type: number
           readOnly: true
           description: Timestamp (in milliseconds) at which stream object was created
           example: 1587667174725
+        parentId:
+          type: string
+          example: de7818e7-610a-4057-8f6f-b785dc1e6f88
+          description: Points to parent stream object
+          index: true
+        streamKey:
+          type: string
+          example: hgebdhhigq
+          description: Used to form RTMP ingest URL
+          unique: true
+        playbackId:
+          type: string
+          example: eaw4nk06ts2d0mzb
+          description: Used to form playback URL
+          unique: true
         profiles:
           type: array
           items:
@@ -206,6 +228,11 @@ components:
           example: Example Token
         lastSeen:
           type: number
+          example: 1587667174725
+        createdAt:
+          type: number
+          readOnly: true
+          description: Timestamp (in milliseconds) at which token object was created
           example: 1587667174725
 
     user-verification:

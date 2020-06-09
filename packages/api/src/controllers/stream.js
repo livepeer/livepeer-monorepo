@@ -1,5 +1,3 @@
-import { parse as parsePath } from 'path'
-import { parse as parseQS } from 'querystring'
 import { parse as parseUrl } from 'url'
 import { authMiddleware } from '../middleware'
 import { validatePost } from '../middleware'
@@ -8,22 +6,30 @@ import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
 import { makeNextHREF, trackAction } from './helpers'
-import path from 'path'
+import { generateStreamKey } from './generate-stream-key'
+import { geolocateMiddleware } from '../middleware'
+import { getBroadcasterHandler } from './broadcaster'
 
 const app = Router()
 
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
-  let limit = req.query.limit
-  let cursor = req.query.cursor
-  let all = req.query.all // return all streams, including deleted ones
-  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
-  const filter = all ? undefined : o => !o[Object.keys(o)[0]].deleted
+  let { limit, cursor, streamsonly, sessionsonly, all } = req.query
+
+  logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
+  const filter1 = all ? o => o : o => !o[Object.keys(o)[0]].deleted
+  let filter2 = o => o
+  if (streamsonly) {
+    filter2 = o => !o[Object.keys(o)[0]].parentId
+  } else if (sessionsonly) {
+    filter2 = o => o[Object.keys(o)[0]].parentId
+  }
+
 
   const resp = await req.store.list({
     prefix: `stream/`,
     cursor,
     limit,
-    filter,
+    filter: o => filter1(o) && filter2(o),
   })
   let output = resp.data
   res.status(200)
@@ -35,9 +41,35 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   res.json(output)
 })
 
+app.get('/sessions/:parentId', authMiddleware({}), async (req, res) => {
+  const { parentId, limit, cursor } = req.params
+  logger.info(`cursor params ${cursor}, limit ${limit}`)
+
+  const stream = await req.store.get(`stream/${parentId}`)
+  if (
+    !stream ||
+    stream.deleted ||
+    (stream.userId !== req.user.id && !req.isUIAdmin)
+  ) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
+    kind: 'stream',
+    query: { parentId },
+    cursor,
+    limit,
+  })
+  res.status(200)
+  if (streams.length > 0 && cursorOut) {
+    res.links({ next: makeNextHREF(req, cursorOut) })
+  }
+  res.json(streams)
+})
+
 app.get('/user/:userId', authMiddleware({}), async (req, res) => {
-  let limit = req.query.limit
-  let cursor = req.query.cursor
+  let { limit, cursor, streamsonly, sessionsonly } = req.query
   logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
 
   if (req.user.admin !== true && req.user.id !== req.params.userId) {
@@ -47,12 +79,19 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     })
   }
 
+  let filter = o => !o.deleted
+  if (streamsonly) {
+    filter = o => !o.deleted && !o.parentId
+  } else if (sessionsonly) {
+    filter = o => !o.deleted && o.parentId
+  }
+
   const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
     kind: 'stream',
     query: { userId: req.params.userId },
     cursor,
     limit,
-    filter: o => !o.deleted,
+    filter,
   })
   res.status(200)
   if (streams.length > 0 && cursorOut) {
@@ -75,14 +114,118 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
   res.json(stream)
 })
 
+// returns stream by steamKey
+app.get('/key/:streamKey', authMiddleware({}), async (req, res) => {
+  const {
+    data: [stream],
+  } = await req.store.queryObjects({
+    kind: 'stream',
+    query: { streamKey: req.params.streamKey },
+  })
+  if (
+    !stream ||
+    ((stream.userId !== req.user.id || stream.deleted) && !req.user.admin)
+  ) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+  res.status(200)
+  res.json(stream)
+})
+
+// Needed for Mist server
+app.get(
+  '/:streamId/broadcaster',
+  geolocateMiddleware({}),
+  getBroadcasterHandler,
+)
+
+async function generateUniqueStreamKey(store, otherKeys) {
+  while (true) {
+    const streamId = await generateStreamKey()
+    const qres = await store.query({
+      kind: 'stream',
+      query: { streamId },
+    })
+    if (!qres.data.length && !otherKeys.includes(streamId)) {
+      return streamId
+    }
+  }
+}
+
+app.post(
+  '/:streamId/stream',
+  authMiddleware({}),
+  validatePost('stream'),
+  async (req, res) => {
+    if (!req.body || !req.body.name) {
+      res.status(422)
+      return res.json({
+        errors: ['missing name'],
+      })
+    }
+
+    const stream = await req.store.get(`stream/${req.params.streamId}`)
+    if (
+      !stream ||
+      ((stream.userId !== req.user.id || stream.deleted) &&
+        !(req.user.admin && !stream.deleted))
+    ) {
+      // do not reveal that stream exists
+      res.status(404)
+      return res.json({ errors: ['not found'] })
+    }
+
+    const id = uuid()
+    const createdAt = Date.now()
+
+    const doc = wowzaHydrate({
+      ...req.body,
+      kind: 'stream',
+      userId: stream.userId,
+      renditions: {},
+      objectStoreId: stream.objectStoreId,
+      id,
+      createdAt,
+      parentId: stream.id,
+    })
+
+    try {
+      await req.store.create(doc)
+      trackAction(
+        req.user.id,
+        req.user.email,
+        { name: 'Stream Session Created' },
+        req.config.segmentApiKey,
+      )
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
+    res.status(201)
+    res.json(doc)
+  },
+)
+
 app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
+  if (!req.body || !req.body.name) {
+    res.status(422)
+    return res.json({
+      errors: ['missing name'],
+    })
+  }
   const id = uuid()
   const createdAt = Date.now()
+  const streamKey = await generateUniqueStreamKey(req.store, [])
+  // Mist doesn't allow dashes in the URLs
+  const playbackId = (
+    await generateUniqueStreamKey(req.store, [streamKey])
+  ).replace(/-/g, '')
 
-  let objectStoreID
+  let objectStoreId
   if (req.body.objectStoreId) {
     await req.store.get(`objectstores/${req.user.id}/${req.body.objectStoreId}`)
-    objectStoreID = req.body.objectStoreId
+    objectStoreId = req.body.objectStoreId
   }
 
   const doc = wowzaHydrate({
@@ -90,9 +233,12 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     kind: 'stream',
     userId: req.user.id,
     renditions: {},
-    objectStoreId: objectStoreID,
+    objectStoreId,
     id,
     createdAt,
+    streamKey,
+    playbackId,
+    createdByTokenName: req.tokenName,
   })
   await Promise.all([
     req.store.create(doc),
@@ -106,6 +252,30 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
 
   res.status(201)
   res.json(doc)
+})
+
+app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
+  const { id } = req.params
+  const stream = await req.store.get(`stream/${id}`, false)
+  if (!stream || stream.deleted || !req.user.admin) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  stream.isActive = req.body.active
+  stream.lastSeen = +new Date()
+  await req.store.replace(stream)
+  if (stream.parentId) {
+    const pStream = await req.store.get(`stream/${id}`, false)
+    if (pStream && !pStream.deleted) {
+      pStream.isActive = req.body.active
+      pStream.lastSeen = stream.lastSeen
+      await req.store.replace(pStream)
+    }
+  }
+
+  res.status(204)
+  res.end()
 })
 
 app.delete('/:id', authMiddleware({}), async (req, res) => {

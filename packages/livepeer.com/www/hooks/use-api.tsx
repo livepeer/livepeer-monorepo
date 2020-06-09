@@ -43,6 +43,9 @@ const trackPageView = (email, path = null) => {
 };
 
 const getStoredToken = () => {
+  if (!process.browser) {
+    return null;
+  }
   try {
     return localStorage.getItem(PERSISTENT_TOKEN);
   } catch (err) {
@@ -168,11 +171,11 @@ const makeContext = (state: ApiState, setState) => {
       return [res, user as User | ApiError];
     },
 
-    async getUsers(opts = {}): Promise<[Response, User | ApiError]> {
+    async getUsers(opts = {}): Promise<[Response, Array<User> | ApiError]> {
       let [res, users] = await context.fetch(`/user`, opts);
       users = users.map(o => o[Object.keys(o)[0]]);
 
-      if (res.status !== 201) {
+      if (res.status === 200) {
         return users;
       }
       return res;
@@ -199,15 +202,68 @@ const makeContext = (state: ApiState, setState) => {
       clearToken();
     },
 
-    async getStreams(userId): Promise<Array<Stream>> {
-      const [res, streams] = await context.fetch(`/stream/user/${userId}`);
+    async getBroadcasters(): Promise<Array<{ address: string }>> {
+      const [res, broadcasters] = await context.fetch(`/broadcaster`);
+      if (res.status !== 200) {
+        throw new Error(broadcasters);
+      }
+      return broadcasters;
+    },
+
+    async getIngest(): Promise<Array<{ ingest: string, playback: string }>> {
+      const [res, ingest] = await context.fetch(`/ingest`);
+      if (res.status !== 200) {
+        throw new Error(ingest);
+      }
+      return ingest;
+    },
+
+    async getStream(streamId): Promise<Stream> {
+      const [res, stream] = await context.fetch(`/stream/${streamId}`);
+      if (res.status !== 200) {
+        throw (stream && typeof stream === 'object') ? {...stream, status: res.status} : new Error(stream);
+      }
+      return stream;
+    },
+
+    async getAdminStreams(): Promise<Array<Stream>> {
+      const [res, streams] = await context.fetch(
+        `/stream?streamsonly=1`
+      );
       if (res.status !== 200) {
         throw new Error(streams);
       }
       return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
     },
 
-    async getApiTokens(userId): Promise<[ApiToken]> {
+    async getStreams(userId): Promise<Array<Stream>> {
+      const [res, streams] = await context.fetch(
+        `/stream/user/${userId}?streamsonly=1`
+      );
+      if (res.status !== 200) {
+        throw new Error(streams);
+      }
+      return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+    },
+
+    async getStreamSessions(id): Promise<Array<Stream>> {
+      const [res, streams] = await context.fetch(`/stream/sessions/${id}`);
+      if (res.status !== 200) {
+        throw new Error(streams);
+      }
+      return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+    },
+
+    async deleteStream(id: string): Promise<void> {
+      const [res, body] = await context.fetch(`/stream/${id}`, {
+        method: "DELETE"
+      });
+      if (res.status !== 204) {
+        throw new Error(body);
+      }
+    },
+
+    async getApiTokens(userId?: string): Promise<[ApiToken]> {
       const [res, tokens] = await context.fetch(
         `/api-token?${qs.stringify({ userId })}`
       );
