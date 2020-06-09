@@ -13,7 +13,6 @@ const tid = `tooltip-name-${id}`;
   return (
     <Box
       sx={{
-        // whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis"
       }}
