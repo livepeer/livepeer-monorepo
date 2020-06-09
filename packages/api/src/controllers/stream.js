@@ -43,7 +43,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
 
 app.get('/sessions/:parentId', authMiddleware({}), async (req, res) => {
   const { parentId, limit, cursor } = req.params
-  logger.info(`cursor params ${req.query.cursor}, limit ${limit}`)
+  logger.info(`cursor params ${cursor}, limit ${limit}`)
 
   const stream = await req.store.get(`stream/${parentId}`)
   if (

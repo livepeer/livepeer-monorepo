@@ -5,10 +5,31 @@ import Modal from "../Modal";
 import { Table, TableRow, Checkbox, TableRowVariant } from "../Table";
 import CopyBox from "../CopyBox";
 import { User } from "@livepeer/api";
+import ReactTooltip from "react-tooltip";
 
 export const UserName = ({ id, users }: { id: string; users: Array<User> }) => {
   const user = users.find(o => o.id === id);
-  return <Box>{user ? user.email : id}</Box>;
+const tid = `tooltip-name-${id}`;
+  return (
+    <Box
+      sx={{
+        // whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }}
+    >
+      <ReactTooltip
+        id={tid}
+        className="tooltip"
+        place="top"
+        type="dark"
+        effect="solid"
+      >
+        {user ? user.email : id}
+      </ReactTooltip>
+      <span data-tip data-for={tid}>{user ? user.email.includes("@") ? user.email.split("@").join("@\u{200B}") : user.email : id}</span>
+    </Box>
+  );
 };
 
 type TokenTableProps = {

@@ -133,7 +133,7 @@ export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
     if (details) {
       details += "/";
     }
-    details += stream.profiles.map(({ height, fps }) => `${height}p${fps}`).join(",");
+    details += stream.profiles.map(({ height, fps }) => `${height}p${fps}`).join(",\u{200B}");
     detailsTooltip = (
       <Flex>
         {stream.profiles.map((p, i) => (
