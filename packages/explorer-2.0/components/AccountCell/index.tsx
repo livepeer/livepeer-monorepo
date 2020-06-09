@@ -26,14 +26,14 @@ const ActiveCircle = ({ status }, props) => {
 export default ({ status, threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
-      <Flex sx={{ minWidth: 36, minHeight: 36, position: 'relative', mr: 2 }}>
+      <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
         {process.env.THREEBOX_ENABLED && threeBoxSpace.image ? (
           <img
             sx={{
               objectFit: 'cover',
               borderRadius: 1000,
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               padding: '2px',
               border: '1px solid',
               borderColor: 'muted',
@@ -44,8 +44,8 @@ export default ({ status, threeBoxSpace, active, address }) => {
           <QRCode
             style={{
               borderRadius: 1000,
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               padding: '2px',
               border: '1px solid',
               borderColor: 'muted',
@@ -73,12 +73,12 @@ export default ({ status, threeBoxSpace, active, address }) => {
         >
           <div sx={{ fontWeight: 600 }}>
             {process.env.THREEBOX_ENABLED && threeBoxSpace.name
-              ? textTruncate(threeBoxSpace.name, 17, '…')
+              ? textTruncate(threeBoxSpace.name, 15, '…')
               : address.replace(address.slice(5, 39), '…')}
           </div>
         </Flex>
 
-        {active && (
+        {/* {active && (
           <div
             sx={{
               ml: 1,
@@ -96,7 +96,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
           >
             ACTIVE
           </div>
-        )}
+        )} */}
       </Flex>
     </Flex>
   )

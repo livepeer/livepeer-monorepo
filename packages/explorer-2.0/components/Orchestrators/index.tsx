@@ -90,14 +90,18 @@ export default ({ currentRound, transcoders }) => {
         sortInverted: true,
       },
       {
+        Header: 'Price (wei)',
+        accessor: 'price',
+      },
+      {
         Header: 'Calls',
         accessor: 'pools',
         sortType: (rowA, rowB, columnID) => {
           let a = getRowValueByColumnID(rowA, columnID)
           let b = getRowValueByColumnID(rowB, columnID)
 
-          let rowACallsMade = a.filter(r => r.rewardTokens != null).length
-          let rowBCallsMade = b.filter(r => r.rewardTokens != null).length
+          let rowACallsMade = a.filter((r) => r.rewardTokens != null).length
+          let rowBCallsMade = b.filter((r) => r.rewardTokens != null).length
 
           return compareBasic(rowACallsMade, rowBCallsMade)
         },
@@ -129,7 +133,7 @@ export default ({ currentRound, transcoders }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter(row => {
+        return rows.filter((row) => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
@@ -346,7 +350,7 @@ export default ({ currentRound, transcoders }) => {
                           width: 'auto',
                           fontSize: 1,
                           pl: 2,
-                          pr: 2,
+
                           py: '24px',
                         }}
                         {...cell.getCellProps()}
@@ -424,6 +428,30 @@ function renderTooltip(title) {
           <Help
             data-tip="Total ETH earned from transcoding."
             data-for="tooltip-fees"
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              ml: 1,
+              top: '2px',
+              width: 12,
+              height: 12,
+            }}
+          />
+        </>
+      )
+    case 'Price (wei)':
+      return (
+        <>
+          <ReactTooltip
+            id="tooltip-price"
+            className="tooltip"
+            place="bottom"
+            type="dark"
+            effect="solid"
+          />
+          <Help
+            data-tip="Transcoding price per pixel."
+            data-for="tooltip-price"
             sx={{
               cursor: 'pointer',
               position: 'relative',
@@ -552,8 +580,14 @@ function renderSwitch(cell, currentRound) {
                 .replace(/[.,]00$/, '')}%`}
         </span>
       )
+    case 'Price (wei)':
+      return (
+        <span sx={{ fontFamily: 'monospace' }}>
+          {cell.value.toLocaleString()}
+        </span>
+      )
     case 'Calls':
-      let callsMade = cell.value.filter(r => r.rewardTokens != null).length
+      let callsMade = cell.value.filter((r) => r.rewardTokens != null).length
       return (
         <span sx={{ fontFamily: 'monospace' }}>
           {`${callsMade}/${cell.value.length}`}
@@ -566,12 +600,12 @@ function renderSwitch(cell, currentRound) {
 
 function fuzzyTextFilterFn(rows, id, filterValue) {
   return matchSorter(rows, filterValue, {
-    keys: [row => row.values[id]],
+    keys: [(row) => row.values[id]],
   })
 }
 
 // Let the table remove the filter if the string is empty
-fuzzyTextFilterFn.autoRemove = val => !val
+fuzzyTextFilterFn.autoRemove = (val) => !val
 
 function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
   return (
@@ -584,7 +618,7 @@ function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
       <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
       <Box
         value={filterValue || ''}
-        onChange={e => {
+        onChange={(e) => {
           setFilter(e.target.value || undefined)
         }}
         placeholder={`Filter`}

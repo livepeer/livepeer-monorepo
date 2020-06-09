@@ -30,6 +30,7 @@ export default async () => {
   const linkTypeDefs = `
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace
+      price: Float
     }
     extend type ThreeBoxSpace {
       transcoder: Transcoder
@@ -88,6 +89,15 @@ export default async () => {
               info: _info,
             })
             return threeBoxSpace
+          },
+        },
+        price: {
+          async resolve(_transcoder, _args, _context, _info) {
+            const response = await fetch(
+              `http://35.223.32.189:9000/priceHistory/${_transcoder.id}`,
+            )
+            const prices = await response.json()
+            return prices.length ? prices[0].PricePerPixel : 0
           },
         },
       },
