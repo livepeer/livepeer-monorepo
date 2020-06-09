@@ -32,7 +32,7 @@ export default ({
     return () => clearInterval(interval);
   }, [streamId, isVisible]);
 
-  return (
+  return streamsSessions.length ? (
     <Box
       sx={{
         width: "100%",
@@ -42,12 +42,12 @@ export default ({
         mt
       }}
     >
-      <Table sx={{ gridTemplateColumns: "auto auto auto auto" }}>
+      <h4 sx={{ mb: "0.5em" }}>Sessions</h4>
+      <Table sx={{ gridTemplateColumns: "auto auto auto " }}>
         <TableRow variant={TableRowVariant.Header}>
-          <Box>Sessions</Box>
-          <Box>Details</Box>
           <Box>Created</Box>
           <Box>Last Active</Box>
+          <Box>Details</Box>
         </TableRow>
         {streamsSessions.map(stream => {
           const {
@@ -59,8 +59,6 @@ export default ({
           } = stream;
           return (
             <TableRow key={id}>
-              <Box></Box>
-              <RenditionsDetails stream={stream} />
               <RelativeTime
                 id={id}
                 prefix="createdat"
@@ -73,10 +71,11 @@ export default ({
                 tm={lastSeen}
                 swap={true}
               />
+              <RenditionsDetails stream={stream} />
             </TableRow>
           );
         })}
       </Table>
     </Box>
-  );
+  ) : null;
 };
