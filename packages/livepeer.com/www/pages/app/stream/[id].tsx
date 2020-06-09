@@ -181,8 +181,6 @@ export default () => {
               <Cell>Stream name</Cell>
               <Cell>{stream.name}</Cell>
               <Cell>Stream key</Cell>
-              <Cell>key is here</Cell>
-              <Cell>Stream key</Cell>
               <Cell>
                 {keyRevealed ? (
                   stream.streamKey
