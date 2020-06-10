@@ -176,29 +176,31 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
     const unsubscribeUrl = `${protocol}://${req.headers.host}/#contactSection`
     const salesEmail = 'sales@livepeer.org'
 
-    try {
-      // send email verification message to user using SendGrid
-      await sendgridEmail({
-        email: salesEmail,
-        supportAddr,
-        sendgridTemplateId,
-        sendgridApiKey,
-        subject: `User ${user.email} signed up with Livepeer!`,
-        preheader: 'We have a new verified user',
-        buttonText: 'Log into livepeer',
-        buttonUrl: buttonUrl,
-        unsubscribe: unsubscribeUrl,
-        text: [
-          `User ${user.email} has signed up and verified their email with Livepeer!`,
-        ].join('\n\n'),
-      })
-    } catch (err) {
-      res.status(400)
-      return res.json({
-        errors: [
-          `error sending confirmation email to ${req.body.email}: error: ${err}`,
-        ],
-      })
+    if (req.headers.host.includes('livepeer.com')) {
+      try {
+        // send email verification message to user using SendGrid
+        await sendgridEmail({
+          email: salesEmail,
+          supportAddr,
+          sendgridTemplateId,
+          sendgridApiKey,
+          subject: `User ${user.email} signed up with Livepeer!`,
+          preheader: 'We have a new verified user',
+          buttonText: 'Log into livepeer',
+          buttonUrl: buttonUrl,
+          unsubscribe: unsubscribeUrl,
+          text: [
+            `User ${user.email} has signed up and verified their email with Livepeer!`,
+          ].join('\n\n'),
+        })
+      } catch (err) {
+        res.status(400)
+        return res.json({
+          errors: [
+            `error sending confirmation email to ${req.body.email}: error: ${err}`,
+          ],
+        })
+      }
     }
 
     // return user
