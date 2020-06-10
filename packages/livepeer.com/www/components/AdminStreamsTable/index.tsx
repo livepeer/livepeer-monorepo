@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useApi, usePageVisibility } from "../../hooks";
-import { Box, Button, Flex } from "@theme-ui/components";
+import { Box, Button, Flex, Link } from "@theme-ui/components";
 import DeleteStreamModal from "../DeleteStreamModal";
 import { Table, TableRow, TableRowVariant, Checkbox } from "../Table";
 import { RelativeTime, StreamName, RenditionsDetails } from "../StreamsTable";
@@ -85,15 +85,13 @@ export default ({ id }: { id: string }) => {
         />
       )}
       <Box sx={{ mt: "2em" }}>
-        <Button
-          variant="outlineSmall"
-          sx={{ margin: 2 }}
-          onClick={() => {
-            console.log("not implemented");
-          }}
-        >
-          Create
-        </Button>
+        <Link href="/app/stream/new-stream">
+          <a>
+            <Button variant="outlineSmall" sx={{ margin: 2 }}>
+              Create
+            </Button>
+          </a>
+        </Link>
         <Button
           variant="secondarySmall"
           aria-label="Delete Stream button"

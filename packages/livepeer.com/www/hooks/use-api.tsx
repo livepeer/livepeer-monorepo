@@ -246,6 +246,21 @@ const makeContext = (state: ApiState, setState) => {
       return streams.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
     },
 
+    async createStream(params): Promise<Stream> {
+      const [res, stream] = await context.fetch(`/stream`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+
+      if (res.status !== 201) {
+        throw new Error(stream.errors.join(", "));
+      }
+      return stream;
+    },
+
     async getStreamSessions(id): Promise<Array<Stream>> {
       const [res, streams] = await context.fetch(`/stream/sessions/${id}`);
       if (res.status !== 200) {

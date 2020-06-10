@@ -225,15 +225,16 @@ export default ({ userId, id }: { userId: string; id: string }) => {
         />
       )}
       <Box sx={{ mt: "2em" }}>
-        <Button
-          variant="outlineSmall"
-          sx={{ margin: 2 }}
-          onClick={() => {
-            console.log("not implemented");
-          }}
-        >
-          Create
-        </Button>
+        <Link href="/app/stream/new-stream">
+          <a>
+            <Button
+              variant="outlineSmall"
+              sx={{ margin: 2 }}
+            >
+              Create
+            </Button>
+          </a>
+        </Link>
         <Button
           variant="secondarySmall"
           aria-label="Delete Stream button"

@@ -13,7 +13,7 @@ module.exports = withMDX({
     });
     return config;
   },
-  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx", "svg"],
   env: {
     HUBSPOT_PORTAL_ID: process.env.HUBSPOT_PORTAL_ID,
     HUBSPOT_FORM_ID: process.env.HUBSPOT_FORM_ID,
