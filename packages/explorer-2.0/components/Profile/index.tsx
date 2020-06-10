@@ -95,19 +95,21 @@ export default ({
           />
         )}
 
-        <Box
-          sx={{
-            position: 'absolute',
-            right: 0,
-            bottom: '-2px',
-            bg: getDelegationStatusColor(status),
-            border: '5px solid #131418',
-            boxSizing: 'border-box',
-            width: 24,
-            height: 24,
-            borderRadius: 1000,
-          }}
-        />
+        {role === 'Orchestrator' && (
+          <Box
+            sx={{
+              position: 'absolute',
+              right: 0,
+              bottom: '-2px',
+              bg: transcoder.active ? 'primary' : 'muted',
+              border: '5px solid #131418',
+              boxSizing: 'border-box',
+              width: 24,
+              height: 24,
+              borderRadius: 1000,
+            }}
+          />
+        )}
       </Box>
       <Flex sx={{ alignItems: 'center', mb: '10px' }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>

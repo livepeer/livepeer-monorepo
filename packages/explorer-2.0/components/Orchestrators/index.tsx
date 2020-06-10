@@ -550,7 +550,6 @@ function renderSwitch(cell, currentRound) {
         cell.row.values.deactivationRound > currentRound.id
       return (
         <AccountCell
-          status={status}
           active={active}
           threeBoxSpace={cell.row.values.threeBoxSpace}
           address={cell.value}

@@ -2,7 +2,7 @@ import { Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
 import { textTruncate, getDelegationStatusColor } from '../../lib/utils'
 
-const ActiveCircle = ({ status }, props) => {
+const ActiveCircle = ({ active }, props) => {
   return (
     <div
       className="status"
@@ -10,7 +10,7 @@ const ActiveCircle = ({ status }, props) => {
         position: 'absolute',
         right: '-2px',
         bottom: '-2px',
-        bg: getDelegationStatusColor(status),
+        bg: active ? 'primary' : 'muted',
         border: '3px solid',
         borderColor: 'background',
         boxSizing: 'border-box',
@@ -23,7 +23,7 @@ const ActiveCircle = ({ status }, props) => {
   )
 }
 
-export default ({ status, threeBoxSpace, active, address }) => {
+export default ({ threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
       <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
@@ -54,7 +54,7 @@ export default ({ status, threeBoxSpace, active, address }) => {
             value={address}
           />
         )}
-        <ActiveCircle status={status} />
+        <ActiveCircle active={active} />
       </Flex>
 
       <Flex
