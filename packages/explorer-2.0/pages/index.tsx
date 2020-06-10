@@ -25,7 +25,7 @@ const Home = () => {
       variables: {
         account: context?.account?.toLowerCase(),
       },
-      pollInterval: 10000,
+      pollInterval: 20000,
       skip: !context.active,
       ssr: false,
     },

@@ -19,7 +19,7 @@ export default ({ goTo, nextStep }) => {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval: 10000,
+    pollInterval: 20000,
     skip: !context.active, // skip this query if wallet not connected
     ssr: false,
   })
