@@ -8,7 +8,8 @@ import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 
 export default ({ currentRound, transcoder }) => {
-  const callsMade = transcoder.pools.filter(r => r.rewardTokens != null).length
+  const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
+    .length
   return (
     <Box sx={{ pt: 4 }}>
       <>
@@ -119,6 +120,45 @@ export default ({ currentRound, transcoder }) => {
                   ? 0
                   : 100 - parseInt(transcoder.feeShare, 10) / 10000}
                 %
+              </Box>
+            }
+          />
+          <Card
+            sx={{ flex: 1 }}
+            title={
+              <Flex sx={{ alignItems: 'center' }}>
+                <Box>Price (WEI)</Box>
+                <Flex>
+                  <ReactTooltip
+                    id="tooltip-price"
+                    className="tooltip-price"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  />
+                  <Help
+                    data-tip="Transcoding price per pixel."
+                    data-for="tooltip-price"
+                    sx={{
+                      color: 'muted',
+                      cursor: 'pointer',
+                      ml: 1,
+                    }}
+                  />
+                </Flex>
+              </Flex>
+            }
+            subtitle={
+              <Box
+                sx={{
+                  fontSize: [3, 3, 4, 4, 5],
+                  color: 'text',
+                  fontWeight: 500,
+                  lineHeight: 'heading',
+                  fontFamily: 'monospace',
+                }}
+              >
+                {!transcoder.price ? 0 : transcoder.price.toLocaleString()}
               </Box>
             }
           />
