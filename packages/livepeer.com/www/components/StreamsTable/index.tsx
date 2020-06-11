@@ -93,8 +93,8 @@ export const RelativeTime = ({
           </span>
         </>
       ) : (
-        <em>unseen</em>
-      )}
+          <em>unseen</em>
+        )}
     </Box>
   );
 };
@@ -133,7 +133,12 @@ export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
     if (details) {
       details += "/";
     }
-    details += stream.profiles.map(({ height, fps }) => `${height}p${fps}`).join(",\u{200B}");
+    details += stream.profiles.map(({ height, fps }) => {
+      if (fps === 0) {
+        return `${height}pSourceFPS`
+      }
+      return `${height}p${fps}`
+    }).join(",\u{200B}");
     detailsTooltip = (
       <Flex>
         {stream.profiles.map((p, i) => (

@@ -29,11 +29,11 @@ export default () => {
           mx: "auto"
         }}
       >
-       <Box sx={{ my: "2em", maxWidth: 958, width: "100%", fontWeight: "bold" }}>
-        <Link href="/app/user">
-          <a>{"← stream list"}</a>
-        </Link>
-      </Box>
+        <Box sx={{ my: "2em", maxWidth: 958, width: "100%", fontWeight: "bold" }}>
+          <Link href="/app/user">
+            <a>{"← stream list"}</a>
+          </Link>
+        </Box>
         <p>
           <strong>Create a new stream</strong>
         </p>
@@ -47,7 +47,31 @@ export default () => {
             setCreating(true);
             createStream({
               name: streamName,
-              presets: [] // to fill in later
+              profiles: [{
+                "name": "240p0",
+                "fps": 0,
+                "bitrate": 250000,
+                "width": 426,
+                "height": 240
+              }, {
+                "name": "360p0",
+                "fps": 0,
+                "bitrate": 800000,
+                "width": 640,
+                "height": 360
+              }, {
+                "name": "480p0",
+                "fps": 0,
+                "bitrate": 1600000,
+                "width": 854,
+                "height": 480
+              }, {
+                "name": "720p0",
+                "fps": 0,
+                "bitrate": 3000000,
+                "width": 1280,
+                "height": 720
+              }]
             })
               .then(newStream => {
                 setCreating(false);
