@@ -178,7 +178,7 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
 
     if (req.headers.host.includes('livepeer.com')) {
       try {
-        // send email verification message to user using SendGrid
+        // send sales@livepeer.org user verification message using SendGrid
         await sendgridEmail({
           email: salesEmail,
           supportAddr,
@@ -194,12 +194,7 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
           ].join('\n\n'),
         })
       } catch (err) {
-        res.status(400)
-        return res.json({
-          errors: [
-            `error sending confirmation email to ${req.body.email}: error: ${err}`,
-          ],
-        })
+        console.error(`error sending email to ${salesEmail}: error: ${err}`,)
       }
     }
 
