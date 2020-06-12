@@ -127,7 +127,7 @@ export default ({ currentRound, transcoder }) => {
             sx={{ flex: 1 }}
             title={
               <Flex sx={{ alignItems: 'center' }}>
-                <Box>Price (WEI)</Box>
+                <Box>Price Per Pixel (WEI)</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-price"
@@ -150,6 +150,8 @@ export default ({ currentRound, transcoder }) => {
             }
             subtitle={
               <Box
+                data-tip="Per 1M pixels: 0.00001 Ξ (¢0.002)"
+                data-for="tooltip-price-conversion"
                 sx={{
                   fontSize: [3, 3, 4, 4, 5],
                   color: 'text',
@@ -159,6 +161,13 @@ export default ({ currentRound, transcoder }) => {
                 }}
               >
                 {!transcoder.price ? 0 : transcoder.price.toLocaleString()}
+                <ReactTooltip
+                  id="tooltip-price-conversion"
+                  className="tooltip"
+                  place="bottom"
+                  type="dark"
+                  effect="solid"
+                />
               </Box>
             }
           />

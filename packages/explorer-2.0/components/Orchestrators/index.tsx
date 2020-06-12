@@ -582,7 +582,20 @@ function renderSwitch(cell, currentRound) {
     case 'Price (wei)':
       return (
         <span sx={{ fontFamily: 'monospace' }}>
-          {cell.value.toLocaleString()}
+          <ReactTooltip
+            id="tooltip-price-conversion"
+            className="tooltip"
+            place="bottom"
+            type="dark"
+            effect="solid"
+          />
+          <span
+            data-html={true}
+            data-tip="Per 1M pixels: 0.00001 Ξ (¢0.002)"
+            data-for="tooltip-price-conversion"
+          >
+            {cell.value.toLocaleString()}
+          </span>
         </span>
       )
     case 'Calls':
