@@ -52,7 +52,7 @@
     "@emotion/babel-plugin-jsx-pragmatic": "0.1.5",
     "@types/isomorphic-fetch": "^0.0.35",
     "@types/segment-analytics": "^0.0.32",
-    "@types/theme-ui": "^0.3.0",
+    "@types/theme-ui": "^0.3.1",
     "babel-plugin-import-graphql": "^2.7.0",
     "babel-plugin-inline-react-svg": "^1.1.1",
     "husky": "^4.0.0",
