@@ -142,7 +142,7 @@ export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
     detailsTooltip = (
       <Flex>
         {stream.profiles.map((p, i) => (
-          <Profile id={stream.id} i={i} rendition={p} />
+          <Profile key={i} id={stream.id} i={i} rendition={p} />
         ))}
       </Flex>
     );
