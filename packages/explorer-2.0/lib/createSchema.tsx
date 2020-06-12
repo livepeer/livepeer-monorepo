@@ -94,7 +94,7 @@ export default async () => {
         price: {
           async resolve(_transcoder, _args, _context, _info) {
             const response = await fetch(
-              `http://35.223.32.189:9000/priceHistory/${_transcoder.id}`,
+              `https://livepeer-pricing-tool.com/priceHistory/${_transcoder.id}`,
             )
             const prices = await response.json()
             return prices.length ? prices[0].PricePerPixel : 0
