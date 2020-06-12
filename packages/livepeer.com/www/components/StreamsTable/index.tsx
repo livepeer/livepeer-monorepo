@@ -93,8 +93,8 @@ export const RelativeTime = ({
           </span>
         </>
       ) : (
-        <em>unseen</em>
-      )}
+          <em>unseen</em>
+        )}
     </Box>
   );
 };
@@ -133,7 +133,12 @@ export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
     if (details) {
       details += "/";
     }
-    details += stream.profiles.map(({ height, fps }) => `${height}p${fps}`).join(",\u{200B}");
+    details += stream.profiles.map(({ height, fps }) => {
+      if (fps === 0) {
+        return `${height}pSourceFPS`
+      }
+      return `${height}p${fps}`
+    }).join(",\u{200B}");
     detailsTooltip = (
       <Flex>
         {stream.profiles.map((p, i) => (
@@ -225,15 +230,16 @@ export default ({ userId, id }: { userId: string; id: string }) => {
         />
       )}
       <Box sx={{ mt: "2em" }}>
-        <Button
-          variant="outlineSmall"
-          sx={{ margin: 2 }}
-          onClick={() => {
-            console.log("not implemented");
-          }}
-        >
-          Create
-        </Button>
+        <Link href="/app/stream/new-stream">
+          <a>
+            <Button
+              variant="outlineSmall"
+              sx={{ margin: 2 }}
+            >
+              Create
+            </Button>
+          </a>
+        </Link>
         <Button
           variant="secondarySmall"
           aria-label="Delete Stream button"
