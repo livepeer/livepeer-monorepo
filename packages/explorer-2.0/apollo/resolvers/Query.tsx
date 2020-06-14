@@ -15,21 +15,6 @@ export async function account(_obj, _args, _ctx, _info) {
   }
 }
 
-export async function protocol(_obj, _args, _ctx, _info) {
-  const {
-    totalTokenSupply,
-    totalBondedToken,
-    paused,
-  } = await _ctx.livepeer.rpc.getProtocol()
-  return {
-    paused,
-    inflation: await _ctx.livepeer.rpc.getInflation(),
-    inflationChange: await _ctx.livepeer.rpc.getInflationChange(),
-    totalTokenSupply,
-    totalBondedToken,
-  }
-}
-
 export async function getTxReceiptStatus(_obj, _args, _ctx, _info) {
   const Utils = require('web3-utils')
   const txReceipt = await _ctx.livepeer.utils.getTxReceipt(
@@ -74,7 +59,7 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
     const conf = await Box.getConfig(id)
     try {
       const links = await Promise.all(
-        conf.links.map(link => validateLink(link)),
+        conf.links.map((link) => validateLink(link)),
       )
       addressLinks = links.filter((link: any) => {
         return (
@@ -105,5 +90,15 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
 }
 
 export async function block(_obj, _args, _ctx, _info) {
-  return await _ctx.livepeer.rpc.getBlock(_args.id)
+  const blockDataResponse = await fetch(
+    `https://${
+      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
+    }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Math.round(
+      new Date().getTime() / 1000,
+    )}&closest=before&apikey=${process.env.ETHERSCAN_API_KEY}`,
+  )
+  const { result: number } = await blockDataResponse.json()
+  const response = await fetch('https://ethgasstation.info/json/ethgasAPI.json')
+  const ethGasStationResult = await response.json()
+  return { number: parseInt(number), time: ethGasStationResult.block_time }
 }

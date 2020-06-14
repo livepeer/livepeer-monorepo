@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { Flex } from 'theme-ui'
 import Play from '../../public/img/play.svg'
 import gql from 'graphql-tag'
@@ -9,7 +8,6 @@ import CircularProgressbar from '../CircularProgressBar'
 import { useThemeUI } from 'theme-ui'
 import { buildStyles } from 'react-circular-progressbar'
 import { MdCheck, MdClose } from 'react-icons/md'
-import LivepeerSDK from '@livepeer/sdk'
 import moment from 'moment'
 
 const GET_ROUND_MODAL_STATUS = gql`
@@ -20,20 +18,36 @@ const GET_ROUND_MODAL_STATUS = gql`
 
 export default () => {
   const { data: modalData } = useQuery(GET_ROUND_MODAL_STATUS)
-  const { theme } = useThemeUI()
-  const [currentRoundInfo, setCurrentRoundInfo] = useState({
-    id: null,
-    blockNumber: null,
-    initialized: null,
-    lastInitializedRound: null,
-    length: null,
-    startBlock: null,
-    blocksRemaining: null,
-    percentage: null,
-    blocksSinceCurrentRoundStart: null,
-    timeRemaining: null,
-  })
+  const { data: protocolData, loading: protocolDataloading } = useQuery(
+    gql`
+      {
+        protocol(id: "0") {
+          roundLength
+          lastInitializedRound
+          currentRound {
+            id
+            startBlock
+          }
+        }
+      }
+    `,
+    {
+      pollInterval: 60000,
+    },
+  )
+  const { data: blockData, loading: blockDataLoading } = useQuery(
+    gql`
+      {
+        block
+      }
+    `,
+    {
+      pollInterval: 60000,
+    },
+  )
 
+  const { theme } = useThemeUI()
+  const client = useApolloClient()
   const close = () => {
     client.writeData({
       data: {
@@ -42,59 +56,32 @@ export default () => {
     })
   }
 
-  const client = useApolloClient()
-  useEffect(() => {
-    const init = async () => {
-      const { rpc } = await LivepeerSDK({
-        provider:
-          process.env.NETWORK === 'mainnet'
-            ? process.env.RPC_URL_1
-            : process.env.RPC_URL_4,
-        controllerAddress: process.env.CONTROLLER_ADDRESS,
-        pollCreatorAddress: process.env.POLL_CREATOR_ADDRESS,
-      })
-      const { number } = await rpc.getBlock('latest')
-      const {
-        id,
-        initialized,
-        lastInitializedRound,
-        length,
-        startBlock,
-      } = await rpc.getCurrentRoundInfo()
+  if (protocolDataloading || blockDataLoading) {
+    return null
+  }
 
-      const response = await fetch(
-        'https://ethgasstation.info/json/ethgasAPI.json',
-      )
-      const ethGasStationResult = await response.json()
-      const blocksSinceCurrentRoundStart = number - startBlock
-      const blocksRemaining = length - (number - startBlock)
-      const percentage = (blocksSinceCurrentRoundStart / length) * 100
-
-      setCurrentRoundInfo({
-        id,
-        initialized,
-        lastInitializedRound,
-        length,
-        startBlock,
-        blockNumber: number,
-        blocksRemaining,
-        percentage,
-        blocksSinceCurrentRoundStart,
-        timeRemaining: ethGasStationResult.block_time * blocksRemaining,
-      })
-    }
-
-    init()
-
-    // refetch every few blocks
-    const interval = setInterval(async () => {
-      init()
-    }, 40000)
-
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
+  const currentRoundNumber =
+    +protocolData.protocol.currentRound.startBlock + 5760 <=
+    blockData.block.number
+      ? +protocolData.protocol.lastInitializedRound + 1
+      : +protocolData.protocol.currentRound.id
+  const initialized =
+    +protocolData.protocol.currentRound.id === currentRoundNumber
+  const timeRemaining = initialized
+    ? blockData.block.time *
+      (+protocolData.protocol.roundLength -
+        (blockData.block.number -
+          +protocolData.protocol.currentRound.startBlock))
+    : 0
+  const blocksRemaining = initialized
+    ? +protocolData.protocol.roundLength -
+      (blockData.block.number - +protocolData.protocol.currentRound.startBlock)
+    : 0
+  const blocksSinceCurrentRoundStart = initialized
+    ? blockData.block.number - +protocolData.protocol.currentRound.startBlock
+    : blockData.block.number - +protocolData.protocol.currentRound.startBlock
+  const percentage =
+    (blocksSinceCurrentRoundStart / +protocolData.protocol.roundLength) * 100
 
   return (
     <Flex
@@ -132,7 +119,7 @@ export default () => {
       <Box sx={{ fontFamily: 'monospace' }}>
         Round{' '}
         <Box sx={{ display: 'inline-flex', fontFamily: 'monospace' }}>
-          #{currentRoundInfo.id}
+          #{currentRoundNumber}
         </Box>
       </Box>
       <Modal
@@ -147,10 +134,10 @@ export default () => {
               width: '100%',
             }}
           >
-            <Box>Round #{currentRoundInfo.id}</Box>
+            <Box>Round #{currentRoundNumber}</Box>
             <Flex sx={{ alignItems: 'center', fontSize: 1, fontWeight: 600 }}>
               Initialized{' '}
-              {currentRoundInfo.initialized ? (
+              {initialized ? (
                 <MdCheck
                   sx={{ ml: 1, width: 20, height: 20, color: 'primary' }}
                 />
@@ -182,14 +169,14 @@ export default () => {
                 textColor: theme.colors.text,
                 trailColor: theme.colors.border,
               })}
-              value={Math.round(currentRoundInfo.percentage)}
+              value={Math.round(percentage)}
             >
               <Box sx={{ textAlign: 'center' }}>
                 <Box sx={{ fontWeight: 'bold', fontSize: 4 }}>
-                  {currentRoundInfo.blocksSinceCurrentRoundStart}
+                  {blocksSinceCurrentRoundStart}
                 </Box>
                 <Box sx={{ fontSize: 0 }}>
-                  of {currentRoundInfo.length} blocks
+                  of {protocolData.protocol.roundLength} blocks
                 </Box>
               </Box>
             </CircularProgressbar>
@@ -197,17 +184,15 @@ export default () => {
           <Box>
             There are{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
-              {currentRoundInfo.blocksRemaining} blocks
+              {blocksRemaining} blocks
             </strong>{' '}
             and approximately{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
-              {moment()
-                .add(currentRoundInfo.timeRemaining, 'seconds')
-                .fromNow(true)}
+              {moment().add(timeRemaining, 'seconds').fromNow(true)}
             </strong>{' '}
             remaining until the current round ends and round{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
-              #{parseInt(currentRoundInfo.id) + 1}
+              #{currentRoundNumber + 1}
             </strong>{' '}
             begins.
           </Box>

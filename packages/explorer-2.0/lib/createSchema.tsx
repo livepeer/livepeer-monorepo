@@ -34,6 +34,7 @@ export default async () => {
     }
     extend type Protocol {
       totalStake(block: String): String
+      totalTokenSupply: String
     }
     extend type Delegator {
       pendingStake: String
@@ -124,6 +125,11 @@ export default async () => {
             return await getTotalStake(_context, _args.blockNumber)
           },
         },
+        totalTokenSupply: {
+          async resolve(_protocol, _args, _context, _info) {
+            return await _context.livepeer.rpc.getTokenTotalSupply()
+          },
+        },
       },
       Poll: {
         totalVoteStake: {
@@ -146,9 +152,7 @@ export default async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake)
-              .sub(totalVoteStake)
-              .toString()
+            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
           },
         },
         status: {
@@ -210,10 +214,15 @@ export default async () => {
         },
         endTime: {
           async resolve(_poll, _args, _context, _info) {
-            const currentBlockData = await _context.livepeer.rpc.getBlock(
-              'latest',
+            const blockDataResponse = await fetch(
+              `https://${
+                process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
+              }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Math.round(
+                new Date().getTime() / 1000,
+              )}&closest=before&apikey=${process.env.ETHERSCAN_API_KEY}`,
             )
-            if (parseInt(currentBlockData.number) < parseInt(_poll.endBlock)) {
+            const { result: blockNumber } = await blockDataResponse.json()
+            if (parseInt(blockNumber) < parseInt(_poll.endBlock)) {
               return null
             }
             const endBlockData = await _context.livepeer.rpc.getBlock(
