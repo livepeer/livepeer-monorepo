@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/sdk",
   "description": "A module for interacting with Livepeer's smart contracts. The SDK is a core dependency of most LivepeerJS packages.",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0-alpha.16",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",
