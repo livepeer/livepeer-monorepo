@@ -10,7 +10,7 @@ export async function account(_obj, _args, _ctx, _info) {
       return await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase())
     },
     allowance: async () => {
-      return await _ctx.livepeer.rpc.getLivepeerTokenAllowance(
+      return await _ctx.livepeer.rpc.getBondingManagerAllowance(
         _args.id.toLowerCase(),
       )
     },
