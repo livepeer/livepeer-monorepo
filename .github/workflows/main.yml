@@ -6,6 +6,8 @@ jobs:
     - name: build
       env: 
         BRANCH: ${{ github.head_ref }}
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |-
         # docker login
         docker login -u $DOCKER_USER -p $DOCKER_PASS
