@@ -1,0 +1,47 @@
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: build
+      env: 
+        BRANCH: ${{ github.head_ref }}
+      run: |-
+        # docker login
+        docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+        # yarn install
+        yarn install --frozen-lockfile
+        yarn postinstall
+
+        # Kick off parallel Zeit Now install
+        if [[ "$BRANCH" == "latest" ]]; then
+          yarn run now:build-production &
+          NOW_BUILD=$!
+        else
+          yarn run now:build &
+          NOW_BUILD=$!
+        fi
+        
+        # Run tests
+        yarn test
+
+        # Docker stuff
+        export DOCKER_TAG=$(echo $BRANCH | tr -cd '[:alnum:]_')
+        yarn run lerna-run docker:build
+        yarn run lerna-run docker:push
+
+        # Wait for finished Now build
+        wait $NOW_BUILD
+
+        # Livepeer internal build alerting
+        curl -X POST https://holy-bread-207a.livepeer.workers.dev
+
+        if [[ "$BRANCH" == "master" ]]; then
+          yarn run deploy:staging
+        fi
+
+        if [[ "$BRANCH" == "latest" ]]; then
+          yarn run deploy:production
+        fi
+
