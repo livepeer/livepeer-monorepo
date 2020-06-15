@@ -7,6 +7,9 @@
     "packages/livepeer.com/admin",
     "packages/livepeer.com/www"
   ],
+  "engines": {
+    "node": "10.x"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/livepeer/livepeerjs.git"
