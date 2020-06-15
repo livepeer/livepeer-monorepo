@@ -76,8 +76,5 @@
       "prettier --write --parser mdx",
       "git add"
     ]
-  },
-  "engines": {
-    "node": "10.x"
   }
 }
