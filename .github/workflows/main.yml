@@ -27,6 +27,8 @@ jobs:
         BRANCH: ${{ github.head_ref }}
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        # This is a new record for times I've typed "postgres" on one line!
+        LP_POSTGRES_URL: postgresql://postgres:postgres@postgres/livepeerapi
       run: |-
         # docker login
         docker login -u $DOCKER_USER -p $DOCKER_PASS
