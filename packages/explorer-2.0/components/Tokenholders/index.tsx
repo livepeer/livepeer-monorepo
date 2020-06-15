@@ -141,7 +141,7 @@ function renderSwitch(cell, protocol) {
       return (
         <span sx={{ fontFamily: 'monospace' }}>{`${(
           (parseFloat(Utils.fromWei(cell.value)) /
-            parseFloat(Utils.fromWei(protocol.totalBondedToken))) *
+            parseFloat(Utils.fromWei(protocol.totalActiveStake))) *
           100
         ).toFixed(3)}%`}</span>
       )

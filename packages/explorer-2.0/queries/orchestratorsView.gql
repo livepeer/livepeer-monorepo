@@ -35,7 +35,7 @@
   }
   protocol(id: "0") {
     totalTokenSupply
-    totalBondedToken: totalActiveStake
+    totalActiveStake
     inflation
     inflationChange
   }
