@@ -19,7 +19,7 @@ const BUILD_DEFINITIONS = {
   postgres: {
     LP_STORAGE: 'postgres',
     LP_POSTGRES_URL:
-      process.env.LP_POSTGRES_URL ??
+      process.env.LP_POSTGRES_URL ||
       'postgresql://postgres@localhost/livepeerapi',
   },
   'cloudflare-kv': {
