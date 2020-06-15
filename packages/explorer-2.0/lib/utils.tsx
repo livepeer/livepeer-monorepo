@@ -16,11 +16,11 @@ export const abbreviateNumber = (value, precision = 3) => {
   return newValue
 }
 
-export const numberWithCommas = x => {
+export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-export const getDelegationStatusColor = status => {
+export const getDelegationStatusColor = (status) => {
   if (status == 'Bonded') {
     return 'primary'
   } else if (status == 'Unbonding') {
@@ -133,7 +133,7 @@ const networksIds = {
   rinkeby: 4,
 }
 
-export const detectNetwork = async provider => {
+export const detectNetwork = async (provider) => {
   let netId = null
 
   if (provider instanceof Object) {
@@ -237,9 +237,9 @@ export const initTransaction = async (client, mutation) => {
         },
       },
     })
-    
+
     await mutation()
-    
+
     client.writeData({
       data: {
         txSummaryModal: {
@@ -262,4 +262,30 @@ export const initTransaction = async (client, mutation) => {
       error: e.message.replace('GraphQL error: ', ''),
     }
   }
+}
+
+export const getBlock = async (number = 'latest') => {
+  let blockNumber = number
+
+  if ((number = 'latest')) {
+    const latestBlockDataResponse = await fetch(
+      `https://${
+        process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
+      }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Math.round(
+        new Date().getTime() / 1000,
+      )}&closest=before&apikey=${process.env.ETHERSCAN_API_KEY}`,
+    )
+    const { result: latestBlockNumber } = await latestBlockDataResponse.json()
+    const blockDataResponse = await fetch(
+      `https://api.etherscan.io/api?module=block&action=getblockreward&blockno=${latestBlockNumber}&apikey=${process.env.ETHERSCAN_API_KEY}`,
+    )
+    const { result } = await blockDataResponse.json()
+    blockNumber = result.blockNumber
+  }
+
+  const blockDataResponse = await fetch(
+    `https://api.etherscan.io/api?module=block&action=getblockreward&blockno=${blockNumber}&apikey=${process.env.ETHERSCAN_API_KEY}`,
+  )
+  const { result } = await blockDataResponse.json()
+  return result
 }

@@ -1,17 +1,24 @@
-export async function account(_obj, _args, _ctx, _info) {
-  const {
-    allowance,
-    pollCreatorAllowance,
-  } = await _ctx.livepeer.rpc.getDelegator(_args.id.toLowerCase())
+import { getBlock } from '../../lib/utils'
 
+export async function account(_obj, _args, _ctx, _info) {
   return {
     id: _args.id,
-    tokenBalance: await _ctx.livepeer.rpc.getTokenBalance(
-      _args.id.toLowerCase(),
-    ),
-    ethBalance: await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase()),
-    pollCreatorAllowance,
-    allowance,
+    tokenBalance: async () => {
+      return await _ctx.livepeer.rpc.getTokenBalance(_args.id.toLowerCase())
+    },
+    ethBalance: async () => {
+      return await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase())
+    },
+    allowance: async () => {
+      return await _ctx.livepeer.rpc.getLivepeerTokenAllowance(
+        _args.id.toLowerCase(),
+      )
+    },
+    pollCreatorAllowance: async () => {
+      return await _ctx.livepeer.rpc.getPollCreatorAllowance(
+        _args.id.toLowerCase(),
+      )
+    },
   }
 }
 
@@ -90,15 +97,11 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
 }
 
 export async function block(_obj, _args, _ctx, _info) {
-  const blockDataResponse = await fetch(
-    `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
-    }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Math.round(
-      new Date().getTime() / 1000,
-    )}&closest=before&apikey=${process.env.ETHERSCAN_API_KEY}`,
-  )
-  const { result: number } = await blockDataResponse.json()
+  const block = await getBlock()
   const response = await fetch('https://ethgasstation.info/json/ethgasAPI.json')
   const ethGasStationResult = await response.json()
-  return { number: parseInt(number), time: ethGasStationResult.block_time }
+  return {
+    number: parseInt(block.blockNumber),
+    time: ethGasStationResult.block_time,
+  }
 }

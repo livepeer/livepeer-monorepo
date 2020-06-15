@@ -10,7 +10,6 @@ import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Utils from 'web3-utils'
-import { useEffect } from 'react'
 
 const Home = () => {
   const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')

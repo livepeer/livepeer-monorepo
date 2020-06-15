@@ -1,6 +1,7 @@
 import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import Utils from 'web3-utils'
+import { createApolloFetch } from 'apollo-fetch'
 
 import schema from '../apollo'
 import {
@@ -8,6 +9,7 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
+import { getBlock } from './utils'
 
 export default async () => {
   const subgraphServiceLink = new HttpLink({
@@ -39,8 +41,6 @@ export default async () => {
     extend type Delegator {
       pendingStake: String
       pendingFees: String
-      tokenBalance: String
-      ethBalance: String
     }
     extend type Poll {
       isActive: Boolean
@@ -54,7 +54,7 @@ export default async () => {
       txs: [JSON]
     }
   `
-  async function getTotalStake(_context, _blockNumber) {
+  async function getTotalStake(_ctx, _blockNumber) {
     const Web3 = require('web3')
     let web3 = new Web3(
       `https://eth-${
@@ -62,12 +62,12 @@ export default async () => {
       }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
     )
     let contract = new web3.eth.Contract(
-      _context.livepeer.config.contracts.LivepeerToken.abi,
-      _context.livepeer.config.contracts.LivepeerToken.address,
+      _ctx.livepeer.config.contracts.LivepeerToken.abi,
+      _ctx.livepeer.config.contracts.LivepeerToken.address,
     )
 
     return await contract.methods
-      .balanceOf(_context.livepeer.config.contracts.Minter.address)
+      .balanceOf(_ctx.livepeer.config.contracts.Minter.address)
       .call({}, _blockNumber ? _blockNumber : null)
   }
 
@@ -76,7 +76,7 @@ export default async () => {
     resolvers: {
       Transcoder: {
         threeBoxSpace: {
-          async resolve(_obj, _args, _context, _info) {
+          async resolve(_obj, _args, _ctx, _info) {
             const threeBoxSpace = await _info.mergeInfo.delegateToSchema({
               schema: schema,
               operation: 'query',
@@ -84,7 +84,7 @@ export default async () => {
               args: {
                 id: _obj.id,
               },
-              context: _context,
+              context: _ctx,
               info: _info,
             })
             return threeBoxSpace
@@ -93,60 +93,58 @@ export default async () => {
       },
       Delegator: {
         pendingStake: {
-          async resolve(_delegator, _args, _context, _info) {
-            const delegator = await _context.livepeer.rpc.getDelegator(
-              _delegator.id,
+          async resolve(_delegator, _args, _ctx, _info) {
+            const apolloFetch = createApolloFetch({ uri: process.env.SUBGRAPH })
+            const { data } = await apolloFetch({
+              query: `{ protocol(id: "0") { currentRound { id } } }`,
+            })
+            return await _ctx.livepeer.rpc.getPendingStake(
+              _delegator.id.toString(),
+              data.protocol.currentRound.id.toString(),
             )
-            return delegator.pendingStake
           },
         },
         pendingFees: {
-          async resolve(_delegator, _args, _context, _info) {
-            const delegator = await _context.livepeer.rpc.getDelegator(
+          async resolve(_delegator, _args, _ctx, _info) {
+            const apolloFetch = createApolloFetch({ uri: process.env.SUBGRAPH })
+            const { data } = await apolloFetch({
+              query: `{ protocol(id: "0") { currentRound { id } } }`,
+            })
+            return await _ctx.livepeer.rpc.getPendingFees(
               _delegator.id,
+              data.protocol.currentRound.id,
             )
-            return delegator.pendingFees
-          },
-        },
-        tokenBalance: {
-          async resolve(_delegator, _args, _context, _info) {
-            return await _context.livepeer.rpc.getTokenBalance(_delegator.id)
-          },
-        },
-        ethBalance: {
-          async resolve(_delegator, _args, _context, _info) {
-            return await _context.livepeer.rpc.getEthBalance(_delegator.id)
           },
         },
       },
       Protocol: {
         totalStake: {
-          async resolve(_protocol, _args, _context, _info) {
-            return await getTotalStake(_context, _args.blockNumber)
+          async resolve(_protocol, _args, _ctx, _info) {
+            return await getTotalStake(_ctx, _args.blockNumber)
           },
         },
         totalTokenSupply: {
-          async resolve(_protocol, _args, _context, _info) {
-            return await _context.livepeer.rpc.getTokenTotalSupply()
+          async resolve(_protocol, _args, _ctx, _info) {
+            return await _ctx.livepeer.rpc.getTokenTotalSupply()
           },
         },
       },
       Poll: {
         totalVoteStake: {
-          async resolve(_poll, _args, _context, _info) {
+          async resolve(_poll, _args, _ctx, _info) {
             return Utils.toBN(_poll?.tally?.no ? _poll?.tally?.no : '0')
               .add(Utils.toBN(_poll?.tally?.yes ? _poll.tally.yes : '0'))
               .toString()
           },
         },
         totalNonVoteStake: {
-          async resolve(_poll, _args, _context, _info) {
-            const blockData = await _context.livepeer.rpc.getBlock('latest')
+          async resolve(_poll, _args, _ctx, _info) {
+            const block = await getBlock()
             const isActive =
-              parseInt(blockData.number) <= parseInt(_poll.endBlock)
+              parseInt(block.blockNumber) <= parseInt(_poll.endBlock)
             const totalStake = await getTotalStake(
-              _context,
-              isActive ? blockData.number : _poll.endBlock,
+              _ctx,
+              isActive ? block.blockNumber : _poll.endBlock,
             )
             const totalVoteStake = Utils.toBN(
               _poll?.tally?.no ? _poll?.tally?.no : '0',
@@ -156,13 +154,13 @@ export default async () => {
           },
         },
         status: {
-          async resolve(_poll, _args, _context, _info) {
-            const blockData = await _context.livepeer.rpc.getBlock('latest')
+          async resolve(_poll, _args, _ctx, _info) {
+            const block = await getBlock()
             const isActive =
-              parseInt(blockData.number) <= parseInt(_poll.endBlock)
+              parseInt(block.blockNumber) <= parseInt(_poll.endBlock)
             const totalStake = await getTotalStake(
-              _context,
-              isActive ? blockData.number : _poll.endBlock,
+              _ctx,
+              isActive ? block.blockNumber : _poll.endBlock,
             )
             let noVoteStake = parseFloat(
               Utils.fromWei(_poll?.tally?.no ? _poll?.tally?.no : '0'),
@@ -190,15 +188,15 @@ export default async () => {
           },
         },
         isActive: {
-          async resolve(_poll, _args, _context, _info) {
-            const blockData = await _context.livepeer.rpc.getBlock('latest')
-            return parseInt(blockData.number) <= parseInt(_poll.endBlock)
+          async resolve(_poll, _args, _ctx, _info) {
+            const block = await getBlock()
+            return parseInt(block.blockNumber) <= parseInt(_poll.endBlock)
           },
         },
         estimatedTimeRemaining: {
-          async resolve(_poll, _args, _context, _info) {
-            const blockData = await _context.livepeer.rpc.getBlock('latest')
-            if (parseInt(blockData.number) > parseInt(_poll.endBlock)) {
+          async resolve(_poll, _args, _ctx, _info) {
+            const block = await getBlock()
+            if (parseInt(block.blockNumber) > parseInt(_poll.endBlock)) {
               return null
             }
             const countdownRaw = await fetch(
@@ -213,22 +211,13 @@ export default async () => {
           },
         },
         endTime: {
-          async resolve(_poll, _args, _context, _info) {
-            const blockDataResponse = await fetch(
-              `https://${
-                process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
-              }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${Math.round(
-                new Date().getTime() / 1000,
-              )}&closest=before&apikey=${process.env.ETHERSCAN_API_KEY}`,
-            )
-            const { result: blockNumber } = await blockDataResponse.json()
-            if (parseInt(blockNumber) < parseInt(_poll.endBlock)) {
+          async resolve(_poll, _args, _ctx, _info) {
+            const block = await getBlock()
+            if (parseInt(block.blockNumber) < parseInt(_poll.endBlock)) {
               return null
             }
-            const endBlockData = await _context.livepeer.rpc.getBlock(
-              _poll.endBlock,
-            )
-            return endBlockData.timestamp
+            const endBlockData = await getBlock(_poll.endBlock)
+            return endBlockData.timeStamp
           },
         },
       },
