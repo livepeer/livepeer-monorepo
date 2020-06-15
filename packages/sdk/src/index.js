@@ -1727,7 +1727,7 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * Get poll creator transfer allowance
+     * Get PollCreator transfer allowance
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1769,7 +1769,7 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * Get Livepeer token transfer allowance
+     * Get BondingManager transfer allowance
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1777,7 +1777,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.getLivepeerTokenAllowance('0x...')
+     * await rpc.getBondingManagerAllowance('0x...')
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1798,11 +1798,11 @@ export async function createLivepeerSDK(
      * //   }>
      * // }
      */
-    async getLivepeerTokenAllowance(addr): Promise<TxReceipt> {
+    async getBondingManagerAllowance(addr): Promise<TxReceipt> {
       try {
         const address = await resolveAddress(rpc.getENSAddress, addr)
         return headToString(
-          await LivepeerToken.allowance(address, LivepeerToken.address),
+          await LivepeerToken.allowance(address, BondingManager.address),
         )
       } catch (err) {
         err.message = 'Error: getLivepeerTokenAllowance\n' + err.message
