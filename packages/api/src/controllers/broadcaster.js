@@ -19,7 +19,7 @@ export const amalgamate = async (req, endpoint) => {
   const { servers } = req.region
   let responses = await Promise.all(
     servers.map(async ({ server }) => {
-      const serverRes = await fetch(`http://${server}/api/${endpoint}`, {
+      const serverRes = await fetch(`${server}/api/${endpoint}`, {
         headers: {
           authorization: req.headers.authorization,
         },
