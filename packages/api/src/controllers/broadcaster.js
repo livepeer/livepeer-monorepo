@@ -15,11 +15,11 @@ export const getBroadcasterStatuses = async req => {
   return statuses
 }
 
-export const amalgamate = async req => {
+export const amalgamate = async (req, endpoint) => {
   const { servers } = req.region
   let responses = await Promise.all(
     servers.map(async ({ server }) => {
-      const serverRes = await fetch(`https://${server}/api/broadcaster`, {
+      const serverRes = await fetch(`${server}/api/${endpoint}`, {
         headers: {
           authorization: req.headers.authorization,
         },
@@ -44,7 +44,7 @@ export const amalgamate = async req => {
 export async function getBroadcasterHandler(req, res) {
   let broadcasters
   if (req.region && req.region.servers) {
-    broadcasters = await amalgamate(req)
+    broadcasters = await amalgamate(req, 'broadcaster')
   } else {
     broadcasters = await req.getBroadcasters(req)
   }
