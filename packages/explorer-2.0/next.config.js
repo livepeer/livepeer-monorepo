@@ -1,4 +1,5 @@
 require('dotenv').config()
+const withTM = require('next-transpile-modules')(['@livepeer/ui'])
 
 const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
@@ -34,4 +35,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withMDX(nextConfig)
+module.exports = withTM(withMDX(nextConfig))

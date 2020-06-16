@@ -8,8 +8,7 @@ import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 
 export default ({ currentRound, transcoder }) => {
-  const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
-    .length
+  const callsMade = transcoder.pools.filter(r => r.rewardTokens != null).length
   return (
     <Box sx={{ pt: 4 }}>
       <>
@@ -127,7 +126,7 @@ export default ({ currentRound, transcoder }) => {
             sx={{ flex: 1 }}
             title={
               <Flex sx={{ alignItems: 'center' }}>
-                <Box>Price Per Pixel (WEI)</Box>
+                <Box>Price Per Pixel</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-price"
@@ -160,7 +159,7 @@ export default ({ currentRound, transcoder }) => {
                   fontFamily: 'monospace',
                 }}
               >
-                {!transcoder.price ? 0 : transcoder.price.toLocaleString()}
+                {!transcoder.price ? 0 : transcoder.price.toLocaleString()} WEI
                 <ReactTooltip
                   id="tooltip-price-conversion"
                   className="tooltip"
