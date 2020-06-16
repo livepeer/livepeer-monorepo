@@ -2,6 +2,17 @@ import yargs from 'yargs'
 import path from 'path'
 import os from 'os'
 
+function coerceArr(arg) {
+  if (!Array.isArray(arg)) {
+    const arr = []
+    for (const [key, value] of Object.entries(arg)) {
+      arr[key] = value
+    }
+    return arr
+  }
+  return arg
+}
+
 export default function parseCli(argv) {
   return (
     yargs
@@ -133,11 +144,17 @@ export default function parseCli(argv) {
           type: 'string',
           default: '[]',
         },
+        ingest: {
+          describe:
+            'hardcoded list of ingest points to return from /api/ingest.',
+          type: 'string',
+          default: '[]',
+        },
         supportAddr: {
           describe:
             'email address where outgoing emails originate. should be of the form name/email@example.com',
           type: 'string',
-          coerce: supportAddr => {
+          coerce: (supportAddr) => {
             const split = supportAddr.split('/')
             if (split.length !== 2) {
               throw new Error(
@@ -169,16 +186,14 @@ export default function parseCli(argv) {
             'list of ingest endpoints to use as options for /api/geolocate',
           type: 'array',
           default: [],
-          coerce: arg => {
-            if (!Array.isArray(arg)) {
-              const arr = []
-              for (const [key, value] of Object.entries(arg)) {
-                arr[key] = value
-              }
-              return arr
-            }
-            return arg
-          },
+          coerce: coerceArr,
+        },
+        'ingest-region': {
+          describe:
+            'list of ingest endpoints to use as servers to consult for /api/ingest',
+          type: 'array',
+          default: [],
+          coerce: coerceArr,
         },
       })
       .help()

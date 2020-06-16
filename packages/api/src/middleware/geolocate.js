@@ -1,15 +1,14 @@
 'use strict'
 
-function geoLocateFactory(params) {
+function geoLocateFactory({ first = true, region = 'region' }) {
   return async (req, res, next) => {
-    let first = params.first || true
     if (req.query.first === 'false') {
       first = false
-    } else if ((req.query.first = 'true')) {
+    } else if ((req.query.first == 'true')) {
       first = true
     }
 
-    let serversObject = req.config.region
+    let serversObject = req.config[region]
     let servers = []
     for (let i in serversObject) {
       servers.push(serversObject[i])
