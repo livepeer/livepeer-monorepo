@@ -1817,7 +1817,7 @@ export async function createLivepeerSDK(
           await LivepeerToken.allowance(address, BondingManager.address),
         )
       } catch (err) {
-        err.message = 'Error: getLivepeerTokenAllowance\n' + err.message
+        err.message = 'Error: getBondingManagerAllowance\n' + err.message
         throw err
       }
     },
