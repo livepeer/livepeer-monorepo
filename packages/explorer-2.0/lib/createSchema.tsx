@@ -9,7 +9,7 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
-import { getBlock } from './utils'
+import { getBlock, getBlockByNumber, getEstimatedBlockCountdown } from './utils'
 
 export default async () => {
   const subgraphServiceLink = new HttpLink({
@@ -199,15 +199,10 @@ export default async () => {
             if (blockNumber > parseInt(_poll.endBlock)) {
               return null
             }
-            const countdownRaw = await fetch(
-              `https://api${
-                process.env.NETWORK === 'rinkeby' ? '-rinkeby' : ''
-              }.etherscan.io/api?module=block&action=getblockcountdown&blockno=${
-                _poll.endBlock
-              }&apikey=${process.env.ETHERSCAN_API_KEY}`,
+            const countdownData = await getEstimatedBlockCountdown(
+              _poll.endBlock,
             )
-            const countdownResponse = await countdownRaw.json()
-            return parseInt(countdownResponse.result.EstimateTimeInSec)
+            return parseInt(countdownData.EstimateTimeInSec)
           },
         },
         endTime: {
@@ -216,7 +211,7 @@ export default async () => {
             if (blockNumber < parseInt(_poll.endBlock)) {
               return null
             }
-            const endBlockData = await getBlock(_poll.endBlock)
+            const endBlockData = await getBlockByNumber(_poll.endBlock)
             return endBlockData.timeStamp
           },
         },
