@@ -60,26 +60,19 @@ export default () => {
     return null
   }
 
-  const currentRoundNumber =
-    +protocolData.protocol.currentRound.startBlock + 5760 <=
-    blockData.block.number
-      ? +protocolData.protocol.lastInitializedRound + 1
-      : +protocolData.protocol.currentRound.id
+  const currentRoundNumber = Math.floor(
+    blockData.block.number / protocolData.protocol.roundLength,
+  )
   const initialized =
-    +protocolData.protocol.currentRound.id === currentRoundNumber
-  const timeRemaining = initialized
-    ? blockData.block.time *
-      (+protocolData.protocol.roundLength -
-        (blockData.block.number -
-          +protocolData.protocol.currentRound.startBlock))
-    : 0
+    +protocolData.protocol.lastInitializedRound === currentRoundNumber
   const blocksRemaining = initialized
     ? +protocolData.protocol.roundLength -
       (blockData.block.number - +protocolData.protocol.currentRound.startBlock)
     : 0
+  const timeRemaining = blockData.block.time * blocksRemaining
   const blocksSinceCurrentRoundStart = initialized
     ? blockData.block.number - +protocolData.protocol.currentRound.startBlock
-    : blockData.block.number - +protocolData.protocol.currentRound.startBlock
+    : 0
   const percentage =
     (blocksSinceCurrentRoundStart / +protocolData.protocol.roundLength) * 100
 
@@ -188,7 +181,9 @@ export default () => {
             </strong>{' '}
             and approximately{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
-              {moment().add(timeRemaining, 'seconds').fromNow(true)}
+              {moment()
+                .add(timeRemaining, 'seconds')
+                .fromNow(true)}
             </strong>{' '}
             remaining until the current round ends and round{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
