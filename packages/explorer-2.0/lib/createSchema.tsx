@@ -139,28 +139,28 @@ export default async () => {
         },
         totalNonVoteStake: {
           async resolve(_poll, _args, _ctx, _info) {
-            const block = await getBlock()
-            const isActive =
-              parseInt(block.blockNumber) <= parseInt(_poll.endBlock)
+            const blockNumber = await getBlock()
+            const isActive = blockNumber <= parseInt(_poll.endBlock)
             const totalStake = await getTotalStake(
               _ctx,
-              isActive ? block.blockNumber : _poll.endBlock,
+              isActive ? blockNumber : _poll.endBlock,
             )
             const totalVoteStake = Utils.toBN(
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            return Utils.toBN(totalStake)
+              .sub(totalVoteStake)
+              .toString()
           },
         },
         status: {
           async resolve(_poll, _args, _ctx, _info) {
-            const block = await getBlock()
-            const isActive =
-              parseInt(block.blockNumber) <= parseInt(_poll.endBlock)
+            const blockNumber = await getBlock()
+            const isActive = blockNumber <= parseInt(_poll.endBlock)
             const totalStake = await getTotalStake(
               _ctx,
-              isActive ? block.blockNumber : _poll.endBlock,
+              isActive ? blockNumber : _poll.endBlock,
             )
             let noVoteStake = parseFloat(
               Utils.fromWei(_poll?.tally?.no ? _poll?.tally?.no : '0'),
@@ -189,14 +189,14 @@ export default async () => {
         },
         isActive: {
           async resolve(_poll, _args, _ctx, _info) {
-            const block = await getBlock()
-            return parseInt(block.blockNumber) <= parseInt(_poll.endBlock)
+            const blockNumber = await getBlock()
+            return blockNumber <= parseInt(_poll.endBlock)
           },
         },
         estimatedTimeRemaining: {
           async resolve(_poll, _args, _ctx, _info) {
-            const block = await getBlock()
-            if (parseInt(block.blockNumber) > parseInt(_poll.endBlock)) {
+            const blockNumber = await getBlock()
+            if (blockNumber > parseInt(_poll.endBlock)) {
               return null
             }
             const countdownRaw = await fetch(
@@ -212,8 +212,8 @@ export default async () => {
         },
         endTime: {
           async resolve(_poll, _args, _ctx, _info) {
-            const block = await getBlock()
-            if (parseInt(block.blockNumber) < parseInt(_poll.endBlock)) {
+            const blockNumber = await getBlock()
+            if (blockNumber < parseInt(_poll.endBlock)) {
               return null
             }
             const endBlockData = await getBlock(_poll.endBlock)

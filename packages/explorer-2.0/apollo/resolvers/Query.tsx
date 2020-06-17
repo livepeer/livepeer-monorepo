@@ -66,7 +66,7 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
     const conf = await Box.getConfig(id)
     try {
       const links = await Promise.all(
-        conf.links.map((link) => validateLink(link)),
+        conf.links.map(link => validateLink(link)),
       )
       addressLinks = links.filter((link: any) => {
         return (
@@ -97,11 +97,11 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
 }
 
 export async function block(_obj, _args, _ctx, _info) {
-  const block = await getBlock()
+  const blockNumber = await getBlock()
   const response = await fetch('https://ethgasstation.info/json/ethgasAPI.json')
   const ethGasStationResult = await response.json()
   return {
-    number: parseInt(block.blockNumber),
+    number: blockNumber,
     time: ethGasStationResult.block_time,
   }
 }
