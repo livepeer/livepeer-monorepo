@@ -4,7 +4,6 @@
       delegator_not: null
       id_not: "0x0000000000000000000000000000000000000000"
     }
-    first: 10
     orderBy: totalStake
     orderDirection: desc
   ) {

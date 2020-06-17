@@ -299,3 +299,10 @@ export const getEstimatedBlockCountdown = async number => {
   const { result } = await countdownRaw.json()
   return result
 }
+
+export const expandedPriceLabels = {
+  ['pixel']: 'pixel',
+  ['1m pixels']: '1 million pixels',
+  ['1b pixels']: '1 billion pixels',
+  ['1t pixels']: '1 trillion pixels',
+}
