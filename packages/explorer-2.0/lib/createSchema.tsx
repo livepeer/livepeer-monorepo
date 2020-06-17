@@ -77,13 +77,13 @@ export default async () => {
     resolvers: {
       Transcoder: {
         threeBoxSpace: {
-          async resolve(_obj, _args, _ctx, _info) {
+          async resolve(_transcoder, _args, _ctx, _info) {
             const threeBoxSpace = await _info.mergeInfo.delegateToSchema({
               schema: schema,
               operation: 'query',
               fieldName: 'threeBoxSpace',
               args: {
-                id: _obj.id,
+                id: _transcoder.id,
               },
               context: _ctx,
               info: _info,

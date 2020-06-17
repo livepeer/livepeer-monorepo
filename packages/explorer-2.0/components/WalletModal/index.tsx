@@ -28,9 +28,9 @@ export default () => {
   const [pendingWallet, setPendingWallet] = useState()
   const client = useApolloClient()
 
-  const tryActivation = connector => {
+  const tryActivation = (connector) => {
     let name = ''
-    Object.keys(SUPPORTED_WALLETS).map(key => {
+    Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
         return (name = SUPPORTED_WALLETS[key].name)
       }
@@ -53,11 +53,10 @@ export default () => {
       walletModalOpen @client
     }
   `
-
   const { data, loading } = useQuery(GET_WALLET_MODAL_STATUS)
-
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
+
   useEffect(() => {
     if (
       data.walletModalOpen &&
@@ -76,6 +75,12 @@ export default () => {
     connectorPrevious,
   ])
 
+  useEffect(() => {
+    if (active) {
+      setWalletView(WALLET_VIEWS.ACCOUNT)
+    }
+  }, [setWalletView, active])
+
   if (loading) {
     return null
   }
@@ -88,15 +93,9 @@ export default () => {
     })
   }
 
-  useEffect(() => {
-    if (active) {
-      setWalletView(WALLET_VIEWS.ACCOUNT)
-    }
-  }, [setWalletView, active])
-
   function getOptions() {
     const isMetamask = window['ethereum'] && window['ethereum'].isMetaMask
-    return Object.keys(SUPPORTED_WALLETS).map(key => {
+    return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
 
       // check for mobile options

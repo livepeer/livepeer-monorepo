@@ -4,7 +4,6 @@ import gql from 'graphql-tag'
 import { useWeb3React } from '@web3-react/core'
 import { Injected } from '../lib/connectors'
 import { isMobile } from 'react-device-detect'
-import { txMessages } from '../lib/utils'
 
 export function useWeb3Mutation(mutation, options) {
   const client = useApolloClient()

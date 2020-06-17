@@ -1,22 +1,21 @@
 import { Flex, Box } from 'theme-ui'
 import { lighten } from '@theme-ui/color'
 import { useMemo, useState, useRef } from 'react'
-import { useTable, useFilters, useSortBy } from 'react-table'
+import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
 import * as Utils from 'web3-utils'
 import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
-import Orchestrators from '../../public/img/orchestrators.svg'
 import Search from '../../public/img/search.svg'
 import Help from '../../public/img/help.svg'
 import { useApolloClient } from '@apollo/react-hooks'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import matchSorter from 'match-sorter'
-import { Styled } from 'theme-ui'
 import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Router from 'next/router'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
+import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@livepeer/ui'
 import Price from '../Price'
 
@@ -51,7 +50,6 @@ export default ({ currentRound, transcoders }) => {
           let b = getRowValueByColumnID(rowB, columnID)
           let aThreeBoxSpace = getRowValueByColumnID(rowA, 'threeBoxSpace')
           let bThreeBoxSpace = getRowValueByColumnID(rowB, 'threeBoxSpace')
-
           let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a
           let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b
 
@@ -173,9 +171,18 @@ export default ({ currentRound, transcoders }) => {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
-  } = useTable(tableOptions, useFilters, useSortBy)
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  }: any = useTable(tableOptions, useFilters, useSortBy, usePagination)
 
   const accountColumn: any = headerGroups[0].headers[0]
 
@@ -241,18 +248,6 @@ export default ({ currentRound, transcoders }) => {
           justifyContent: 'space-between',
         }}
       >
-        <Styled.h1
-          sx={{
-            mb: [4, 4, 4, 5],
-            display: ['none', 'none', 'none', 'flex'],
-            alignItems: 'center',
-          }}
-        >
-          <Orchestrators
-            sx={{ width: 32, height: 32, mr: 2, color: 'primary' }}
-          />{' '}
-          Orchestrators
-        </Styled.h1>
         <Box>{accountColumn.render('Filter')}</Box>
       </Flex>
       <Box>
@@ -322,7 +317,7 @@ export default ({ currentRound, transcoders }) => {
           </thead>
 
           <tbody {...getTableBodyProps()}>
-            {rows.map((row: any, rowIndex) => {
+            {page.map((row: any, rowIndex) => {
               prepareRow(row)
               return (
                 <tr
@@ -438,6 +433,42 @@ export default ({ currentRound, transcoders }) => {
           </tbody>
         </table>
       </Box>
+      <Flex
+        sx={{
+          my: 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <RiArrowLeftLine
+          sx={{
+            cursor: 'pointer',
+            color: canPreviousPage ? 'primary' : 'text',
+            opacity: canPreviousPage ? 1 : 0.5,
+          }}
+          onClick={() => {
+            if (canPreviousPage) {
+              previousPage()
+            }
+          }}
+        />
+        <Box sx={{ fontSize: 1, mx: 2 }}>
+          Page <span sx={{ fontFamily: 'monospace' }}>{pageIndex + 1}</span> of{' '}
+          <span sx={{ fontFamily: 'monospace' }}>{pageCount}</span>
+        </Box>
+        <RiArrowRightLine
+          sx={{
+            cursor: 'pointer',
+            color: canNextPage ? 'primary' : 'text',
+            opacity: canNextPage ? 1 : 0.5,
+          }}
+          onClick={() => {
+            if (canNextPage) {
+              nextPage()
+            }
+          }}
+        />
+      </Flex>
     </Box>
   )
 

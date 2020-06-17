@@ -1,10 +1,11 @@
 import { Flex } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import Orchestrators from '../components/Orchestrators'
+import OrchestratorsIcon from '../public/img/orchestrators.svg'
 import StakingWidget from '../components/StakingWidget'
 import Spinner from '../components/Spinner'
 import { useWeb3React } from '@web3-react/core'
-import Layout, { getLayout } from '../layouts/main'
+import { getLayout } from '../layouts/main'
 import { withApollo } from '../lib/apollo'
 import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
@@ -15,7 +16,16 @@ const Home = () => {
   const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
   const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
+  const variables = {
+    orderBy: 'totalStake',
+    orderDirection: 'desc',
+    where: {
+      status: 'Registered',
+      id_not: '0x0000000000000000000000000000000000000000', // subgraph indexes this as a transcoder for some reason so need to filter it out
+    },
+  }
   const { data, loading } = useQuery(orchestratorsViewQuery, {
+    variables,
     ssr: false,
   })
   const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
@@ -32,7 +42,7 @@ const Home = () => {
 
   return (
     <>
-      {loading || loadingMyAccount ? (
+      {!data && (loading || loadingMyAccount) ? (
         <Flex
           sx={{
             height: [
@@ -73,11 +83,24 @@ const Home = () => {
             {context.active && dataMyAccount?.delegator?.lastClaimRound && (
               <ClaimBanner
                 delegator={dataMyAccount.delegator}
-                currentRound={data.currentRound[0]}
+                currentRound={data.protocol.currentRound}
               />
             )}
+            <h1
+              sx={{
+                fontWeight: 600,
+                mb: [4, 4, 4, 5],
+                display: ['none', 'none', 'none', 'flex'],
+                alignItems: 'center',
+              }}
+            >
+              <OrchestratorsIcon
+                sx={{ width: 32, height: 32, mr: 2, color: 'primary' }}
+              />{' '}
+              Orchestrators
+            </h1>
             <Orchestrators
-              currentRound={data.currentRound[0]}
+              currentRound={data.protocol.currentRound}
               transcoders={data.transcoders}
             />
           </Flex>
@@ -92,7 +115,7 @@ const Home = () => {
           >
             <StakingWidget
               delegator={dataMyAccount?.delegator}
-              currentRound={data.currentRound[0]}
+              currentRound={data.protocol.currentRound}
               account={dataMyAccount?.account}
               transcoder={
                 data.selectedTranscoder.id
