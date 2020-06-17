@@ -1232,6 +1232,64 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Get a delegator's pending stake
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param  {string} endRound The last round to compute pending stake from
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getPendingStake('0xf00...')
+     * // => string
+     */
+    async getPendingStake(addr: string, endRound: string): Promise<string> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        if (!endRound) {
+          const currentRound = await rpc.getCurrentRound()
+          return headToString(
+            await BondingManager.pendingStake(address, currentRound),
+          )
+        }
+        return headToString(
+          await BondingManager.pendingStake(address, endRound),
+        )
+      } catch (err) {
+        err.message = 'Error: getPendingStake\n' + err.message
+        throw err
+      }
+    },
+
+    /**
+     * Get a delegator's pending fees
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param  {string} endRound The last round to compute pending fees from
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getPendingFees('0xf00...')
+     * // => string
+     */
+    async getPendingFees(addr: string, endRound: string): Promise<string> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        if (!endRound) {
+          const currentRound = await rpc.getCurrentRound()
+          return headToString(
+            await BondingManager.pendingFees(address, currentRound),
+          )
+        }
+        return headToString(await BondingManager.pendingFees(address, endRound))
+      } catch (err) {
+        err.message = 'Error: getPendingFees\n' + err.message
+        throw err
+      }
+    },
+
+    /**
      * Whether or not the transcoder is active
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
@@ -1643,7 +1701,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.initializeRound()
+     * await rpc.createPoll('Qm...')
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1681,7 +1739,7 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * Get poll creator balance
+     * Get PollCreator transfer allowance
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1689,7 +1747,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.initializeRound()
+     * await rpc.getPollCreatorAllowance('0x...')
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1718,6 +1776,48 @@ export async function createLivepeerSDK(
         )
       } catch (err) {
         err.message = 'Error: getPollCreatorAllowance\n' + err.message
+        throw err
+      }
+    },
+
+    /**
+     * Get BondingManager transfer allowance
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.getBondingManagerAllowance('0x...')
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async getBondingManagerAllowance(addr): Promise<TxReceipt> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        return headToString(
+          await LivepeerToken.allowance(address, BondingManager.address),
+        )
+      } catch (err) {
+        err.message = 'Error: getBondingManagerAllowance\n' + err.message
         throw err
       }
     },

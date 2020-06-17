@@ -237,9 +237,9 @@ export const initTransaction = async (client, mutation) => {
         },
       },
     })
-    
+
     await mutation()
-    
+
     client.writeData({
       data: {
         txSummaryModal: {
@@ -262,4 +262,40 @@ export const initTransaction = async (client, mutation) => {
       error: e.message.replace('GraphQL error: ', ''),
     }
   }
+}
+
+export const getBlock = async () => {
+  const blockDataResponse = await fetch(
+    `https://${
+      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
+    }.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${
+      process.env.ETHERSCAN_API_KEY
+    }`,
+  )
+  const { result } = await blockDataResponse.json()
+  return Utils.hexToNumber(result)
+}
+
+export const getBlockByNumber = async number => {
+  const blockDataResponse = await fetch(
+    `https://${
+      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby.' : 'api'
+    }.etherscan.io/api?module=block&action=getblockreward&blockno=${number}&apikey=${
+      process.env.ETHERSCAN_API_KEY
+    }`,
+  )
+  const { result } = await blockDataResponse.json()
+  return result
+}
+
+export const getEstimatedBlockCountdown = async number => {
+  const countdownRaw = await fetch(
+    `https://api${
+      process.env.NETWORK === 'rinkeby' ? '-rinkeby' : ''
+    }.etherscan.io/api?module=block&action=getblockcountdown&blockno=${number}&apikey=${
+      process.env.ETHERSCAN_API_KEY
+    }`,
+  )
+  const { result } = await countdownRaw.json()
+  return result
 }

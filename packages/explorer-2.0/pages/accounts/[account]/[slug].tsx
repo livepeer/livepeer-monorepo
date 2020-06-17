@@ -29,6 +29,7 @@ const Account = () => {
   const { width } = useWindowSize()
   const { query, asPath } = router
   const slug = query.slug
+
   const { data, loading, refetch } = useQuery(accountViewQuery, {
     variables: {
       account: query.account.toString().toLowerCase(),

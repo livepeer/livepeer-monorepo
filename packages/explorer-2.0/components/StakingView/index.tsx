@@ -48,7 +48,7 @@ export default ({ delegator, protocol, currentRound }) => {
     : 0
   const principal = parseFloat(Utils.fromWei(delegator.principal))
   const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
-  const totalBondedToken = parseFloat(Utils.fromWei(protocol.totalBondedToken))
+  const totalActiveStake = parseFloat(Utils.fromWei(protocol.totalActiveStake))
 
   return (
     <Box sx={{ pt: 4 }}>
@@ -269,9 +269,9 @@ export default ({ delegator, protocol, currentRound }) => {
                   fontFamily: 'monospace',
                 }}
               >
-                {totalBondedToken === 0
+                {totalActiveStake === 0
                   ? 0
-                  : ((pendingStake / totalBondedToken) * 100).toPrecision(4)}
+                  : ((pendingStake / totalActiveStake) * 100).toPrecision(4)}
                 %
               </Box>
             }
@@ -288,9 +288,9 @@ export default ({ delegator, protocol, currentRound }) => {
                   Account{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {totalBondedToken === 0
+                    {totalActiveStake === 0
                       ? 0
-                      : ((pendingStake / totalBondedToken) * 100).toPrecision(
+                      : ((pendingStake / totalActiveStake) * 100).toPrecision(
                           4,
                         )}
                     %)
@@ -309,13 +309,13 @@ export default ({ delegator, protocol, currentRound }) => {
                   Orchestrator{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {totalBondedToken === 0
+                    {totalActiveStake === 0
                       ? 0
                       : (
                           (parseFloat(
                             Utils.fromWei(delegator.delegate.totalStake),
                           ) /
-                            totalBondedToken) *
+                            totalActiveStake) *
                           100
                         ).toPrecision(4)}
                     %)
@@ -341,14 +341,14 @@ export default ({ delegator, protocol, currentRound }) => {
                   Rest of Network{' '}
                   <span sx={{ color: 'text' }}>
                     (
-                    {(totalBondedToken === 0
+                    {(totalActiveStake === 0
                       ? 0
-                      : ((totalBondedToken -
+                      : ((totalActiveStake -
                           parseFloat(
                             Utils.fromWei(delegator.delegate.totalStake),
                           ) -
                           pendingStake) /
-                          totalBondedToken) *
+                          totalActiveStake) *
                         100
                     ).toPrecision(4)}
                     %)
@@ -357,9 +357,9 @@ export default ({ delegator, protocol, currentRound }) => {
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
                     {abbreviateNumber(
-                      totalBondedToken === 0
+                      totalActiveStake === 0
                         ? 0
-                        : totalBondedToken -
+                        : totalActiveStake -
                             parseFloat(
                               Utils.fromWei(delegator.delegate.totalStake),
                             ) -

@@ -84,9 +84,9 @@ query($account: ID!) {
     addressLinks
     defaultProfile
   }
-  protocol {
+  protocol(id: "0") {
     totalTokenSupply
-    totalBondedToken
+    totalActiveStake
     inflation
     inflationChange
   }
