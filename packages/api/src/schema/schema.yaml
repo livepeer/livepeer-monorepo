@@ -112,6 +112,9 @@ components:
               fps:
                 type: integer
                 minimum: 0
+              fpsDen:
+                type: integer
+                minimum: 1
         objectStoreId:
           type: string
           example: D8321C3E-B29C-45EB-A1BB-A623D8BE0F65
@@ -342,8 +345,8 @@ components:
           example: E1F53135E559C253
           writeOnly: true
         admin:
-            type: boolean
-            example: true
+          type: boolean
+          example: true
         kind:
           type: string
           readOnly: true

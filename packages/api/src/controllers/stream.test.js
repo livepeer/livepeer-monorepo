@@ -434,4 +434,77 @@ describe('controllers/stream', () => {
       expect(res.status).toBe(422)
     })
   })
+
+  describe('profiles', () => {
+    let stream
+    let fractionalStream
+    let client, adminUser, adminToken, nonAdminUser, nonAdminToken
+    beforeEach(async () => {
+      ;({
+        client,
+        adminUser,
+        adminToken,
+        nonAdminUser,
+        nonAdminToken,
+      } = await setupUsers(server))
+      client.jwtAuth = nonAdminToken['token']
+
+      await server.store.create(store)
+      stream = {
+        kind: 'stream',
+        name: 'test stream',
+        profiles: [
+          {
+            name: '1080p',
+            bitrate: 6000000,
+            fps: 30,
+            width: 1920,
+            height: 1080,
+          },
+          {
+            name: '720p',
+            bitrate: 2000000,
+            fps: 30,
+            width: 1280,
+            height: 720,
+          },
+          {
+            name: '360p',
+            bitrate: 500000,
+            fps: 30,
+            width: 640,
+            height: 360,
+          },
+        ],
+      }
+      fractionalStream = {
+        ...stream,
+        profiles: [
+          {
+            name: '1080p29.97',
+            bitrate: 6000000,
+            fps: 30000,
+            fpsDen: 1001,
+            width: 1920,
+            height: 1080,
+          },
+        ],
+      }
+    })
+
+    it('should handle profiles, including fractional fps', async () => {
+      for (const testStream of [stream, fractionalStream]) {
+        const res = await client.post('/stream', testStream)
+        expect(res.status).toBe(201)
+        const data = await res.json()
+        expect(data.profiles).toEqual(testStream.profiles)
+        const hookRes = await client.post('/stream/hook', {
+          url: `https://example.com/live/${data.id}/0.ts`,
+        })
+        expect(hookRes.status).toBe(200)
+        const hookData = await hookRes.json()
+        expect(hookData.profiles).toEqual(testStream.profiles)
+      }
+    })
+  })
 })
