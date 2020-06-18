@@ -492,33 +492,19 @@ describe('controllers/stream', () => {
       }
     })
 
-    it('should handle profiles', async () => {
-      const res = await client.post('/stream', stream)
-      expect(res.status).toBe(201)
-      const data = await res.json()
-      expect(data.profiles).toEqual(stream.profiles)
-      const hookRes = await client.post('/stream/hook', {
-        url: `https://example.com/live/${data.id}/0.ts`,
-      })
-      expect(hookRes.status).toBe(200)
-      const hookData = await hookRes.json()
-      expect(hookData.profiles).toEqual(stream.profiles)
-    })
-
-    it('should handle fractional FPS profiles', async () => {
-      const res = await client.post('/stream', fractionalStream)
-      expect(res.status).toBe(201)
-      const data = await res.json()
-      expect(data.profiles).toEqual(fractionalStream.profiles)
-      const hookRes = await client.post('/stream/hook', {
-        url: `https://example.com/live/${data.id}/0.ts`,
-      })
-      expect(hookRes.status).toBe(200)
-      const hookData = await hookRes.json()
-      const expectedProfile = { ...fractionalStream.profiles[0] }
-      expectedProfile.fps_den = expectedProfile.fpsDen
-      delete expectedProfile.fpsDen
-      expect(hookData.profiles).toEqual([expectedProfile])
+    it('should handle profiles, including fractional fps', async () => {
+      for (const testStream of [stream, fractionalStream]) {
+        const res = await client.post('/stream', testStream)
+        expect(res.status).toBe(201)
+        const data = await res.json()
+        expect(data.profiles).toEqual(testStream.profiles)
+        const hookRes = await client.post('/stream/hook', {
+          url: `https://example.com/live/${data.id}/0.ts`,
+        })
+        expect(hookRes.status).toBe(200)
+        const hookData = await hookRes.json()
+        expect(hookData.profiles).toEqual(testStream.profiles)
+      }
     })
   })
 })
