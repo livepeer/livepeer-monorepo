@@ -17,7 +17,7 @@
     "docker": "run-s docker:build docker:push",
     "postgres:start": "docker run --rm --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 -v \"$(pwd)/data/postgres:/var/lib/postgresql/data\" postgres",
     "postgres:stop": "docker rm -f postgres",
-    "prepare:babel": "babel --out-dir=dist --copy-files --source-maps=true src",
+    "prepare:babel": "babel --extensions '.ts,.js' --out-dir=dist --copy-files --source-maps=true src",
     "prepare:redoc": "redoc-cli bundle --cdn -o docs/index.html src/schema/schema.yaml",
     "prepare:worker": "echo ${WORKER_SECRETS:-'{}'} > src/worker-secrets.json && parcel build --no-autoinstall --no-minify --bundle-node-modules -t browser --out-dir dist-worker src/worker.js",
     "prepare": "run-s compile-schemas && run-p \"prepare:**\"",
