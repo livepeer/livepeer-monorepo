@@ -111,7 +111,7 @@ components:
                 minimum: 400
               fps:
                 type: integer
-                minimum: 1
+                minimum: 0
               fpsDen:
                 type: integer
                 minimum: 1
