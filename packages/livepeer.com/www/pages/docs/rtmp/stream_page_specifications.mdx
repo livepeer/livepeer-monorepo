@@ -1,0 +1,23 @@
+import DocsLayout from "../../../components/DocsLayout";
+
+<DocsLayout>
+
+### Understanding the stream page specifications
+
+Navigate to a stream page by clicking on a stream name on the **stream list page**, https://livepeer.com/app/user.
+
+The stream name is at the top of the stream page.
+
+These are the other fields on the stream page.
+
+| Field   | &nbsp;&nbsp;&nbsp; | Notes      |
+|----------| - | ------------- |
+| **Stream key** |  |  Your stream key is a secret. Protect this key. The stream key is used to authenticate while ingesting RTMP streams.  |
+| **RTMP ingest URL** |  |    Your RTMP ingest URL is based on the region your stream originates in. The regional ingest URLs are the following: <ul><li>North America: rtmp://na-ingest-url/<strong>stream-key</strong></li><li>EU: rtmp://eu-ingest-url/<strong>stream-key</strong></li></ul> |
+| **Playback URL** |  | The playback URL is https://playback-url.com/<strong>stream-name</strong>|
+| **Renditions** |  | The width (pixels), height (pixels) and frame rate (frames per second) for each rendition are listed. |
+| **Created at** |  | This is the local date (MM/DD/YYYY) and time the stream was created. |
+| **Last seen at** |  | This is the most recent date and time a video segment for this stream was transcoded. |
+| **Status** |  | Either active or idle. <ul><li>active: there is an active stream session</li><li>idle: there is not an active stream session</li></ul> |
+
+</DocsLayout>

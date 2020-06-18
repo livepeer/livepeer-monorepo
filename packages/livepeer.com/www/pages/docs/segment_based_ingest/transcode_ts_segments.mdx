@@ -1,0 +1,49 @@
+import DocsLayout from "../../../components/DocsLayout";
+
+<DocsLayout>
+
+### How to transcode .ts segments
+
+Before transcoding your stream of .ts segments, be sure to [create a stream with defined rendition profiles](/docs/segment_based_ingest/create_a_stream_and_define_renditions) and [gather a list of broadcasters](/docs/segment_based_ingest/get_a_list_of_broadcasters). It may also be helpful to review how to [authenticate](/docs/segment_based_ingest/authentication).
+
+`POST` your .ts segment. to `{broadcaster_address}/live/{stream_id}/{media_number}.ts`
+
+In the header be sure to `Accept: multipart/mixed`.
+
+A continuous livestream should start with the media_number set to 1.ts and count upward to 2.ts, 3.ts and so on for each segment.
+
+If you encounter a problem uploading a segment, try making a new request for a list of broadcasters and `POST` to a different broadcaster address. You can still expect the stream to be at the same URL.
+
+Mixed within the data about your transcoded video, the content of the API response will include something like:
+
+```
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Server: openresty/1.15.8.2
+date: Thu, 18 Jun 2020 20:01:54 GMT
+Content-Type: multipart/mixed; boundary=83212f107a67f532dbdc
+Transfer-Encoding: chunked
+Connection: keep-alive
+Strict-Transport-Security: max-age=15724800; includeSubDomains
+
+--83212f107a67f532dbdc
+Content-Disposition: attachment; filename="1080p_1.ts"
+Content-Length: 459284
+Content-Type: video/MP2T; name="1080p_1.ts"
+Rendition-Name: 1080p
+...Data
+--83212f107a67f532dbdc
+Content-Disposition: attachment; filename="720p_1.ts"
+Content-Length: 459284
+Content-Type: video/MP2T; name="720p_1.ts"
+Rendition-Name: 720p
+...Data
+--83212f107a67f532dbdc
+Content-Disposition: attachment; filename="360p_1.ts"
+Content-Length: 459284
+Content-Type: video/MP2T; name="360p_1.ts"
+Rendition-Name: 360p
+```
+
+</DocsLayout>

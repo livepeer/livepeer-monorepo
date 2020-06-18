@@ -1,0 +1,21 @@
+import DocsLayout from "../../../components/DocsLayout";
+
+<DocsLayout>
+
+### How to playback a stream
+
+The playback URL is https://playback-url.com/<strong>stream-name</strong> and is an HLS stream. 
+
+The playback URL is listed on the **stream page**.
+
+All sessions for a stream have the same playback URL.
+
+The playback URL for RTMP streams is delivered via a CDN (content delivery network). The transcoded video stream automatically switches between the transcoded renditions based on the viewers’ available bandwidth, device performance, and network conditions.
+
+##### What if the playback URL isn’t working?
+
+Look at the **last seen at** and **status** fields on the **stream page**. If ingest was properly configured for playback, the last seen at field will show the current date and time and the status will be active. 
+
+If this isn't the case, confirm the **stream key** and **RTMP ingest URL** are configured correctly in your broadcast software.
+
+</DocsLayout>
