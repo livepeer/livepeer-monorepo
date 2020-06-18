@@ -22,7 +22,7 @@ export function generateJWT(config) {
 }
 
 // Prepare a google service account JSON string for use
-export const prepareConfig = serviceAccountConfigStr => {
+export const prepareConfig = (serviceAccountConfigStr) => {
   const serviceAccountConfig = JSON.parse(serviceAccountConfigStr)
   const FIRESTORE_SERVICE_DEFINITION = {
     type: 'google.api.Service',

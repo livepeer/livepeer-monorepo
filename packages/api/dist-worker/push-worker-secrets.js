@@ -30,7 +30,7 @@ async function push(env, data) {
     child.stdin.write(`${value}\n`)
     child.stdin.end()
     await new Promise((resolve, reject) => {
-      child.on('close', code => {
+      child.on('close', (code) => {
         console.log(code)
         resolve()
       })

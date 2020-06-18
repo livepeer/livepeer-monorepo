@@ -29,7 +29,7 @@ function geoLocateFactory({ first = true, region = 'region' }) {
     let smallestServer
     let smallestDuration = Infinity
     console.log('servers: ', typeof servers, servers)
-    const promises = servers.map(async server => {
+    const promises = servers.map(async (server) => {
       const start = Date.now()
       const res = await fetch(`${server}/api`)
       const duration = Date.now() - start

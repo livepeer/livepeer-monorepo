@@ -59,8 +59,8 @@ export default async function hash(password, salt) {
   return [outKey, outSalt]
 }
 
-const fromHexString = hexString =>
-  new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)))
+const fromHexString = (hexString) =>
+  new Uint8Array(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)))
 
 function bytesToHexString(bytes, separate) {
   /// <signature>

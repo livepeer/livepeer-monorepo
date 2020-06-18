@@ -1,7 +1,7 @@
 // import { schemaWalk } from '@cloudflare/json-schema-walker'
 import validators from '../schema/validators'
 
-export const validatePost = name => {
+export const validatePost = (name) => {
   const validate = validators[name]
   if (!validate) {
     throw new Error(`no validator found for ${name}`)
@@ -12,7 +12,7 @@ export const validatePost = name => {
     if (!validate(body)) {
       res.status(422)
       return res.json({
-        errors: validate.errors.map(err => JSON.stringify(err)),
+        errors: validate.errors.map((err) => JSON.stringify(err)),
       })
     }
     next()

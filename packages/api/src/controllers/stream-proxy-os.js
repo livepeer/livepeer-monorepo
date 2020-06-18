@@ -28,7 +28,7 @@ export default ({ s3Url, s3UrlExternal, s3Access, s3Secret }) => {
       res.status(404)
       return res.json({ errors: ['not found'] })
     }
-    const urls = parts.map(p => `${s3Url}${p.name}`)
+    const urls = parts.map((p) => `${s3Url}${p.name}`)
     const composed = await composeM3U8(urls, { limit: 10, rewrite })
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Methods', 'GET')

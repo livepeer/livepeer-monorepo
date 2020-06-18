@@ -47,7 +47,7 @@ export default ({
 
     await Promise.all([
       client.put(`${id}.m3u8/part/${hostname}`, manifestText),
-      ...parser.manifest.playlists.map(async playlist => {
+      ...parser.manifest.playlists.map(async (playlist) => {
         const manifestRes = await fetch(
           `${upstreamBroadcaster}/stream/${playlist.uri}`,
         )

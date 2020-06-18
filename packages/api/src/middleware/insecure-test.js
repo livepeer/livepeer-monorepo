@@ -6,7 +6,7 @@ export default () => {
   return async (req, res, next) => {
     try {
       let { action, args } = req.body
-      args = args.map(x => (x === 'UNDEFINED' ? undefined : x))
+      args = args.map((x) => (x === 'UNDEFINED' ? undefined : x))
       // console.log(`DB BACKDOOR: req.store.${action}(${args.join(', ')})`)
       const result = await req.store[action](...args)
       if (result === undefined) {

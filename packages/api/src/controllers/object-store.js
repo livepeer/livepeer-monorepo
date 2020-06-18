@@ -37,7 +37,7 @@ app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
   const { id, userId } = req.params
   const { data: objStoreIds } = await req.store.query({
     kind: 'object-store',
-    query: { userId: userId }
+    query: { userId: userId },
   })
 
   if (!objStoreIds.includes(id)) {

@@ -16,20 +16,19 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let { limit, cursor, streamsonly, sessionsonly, all } = req.query
 
   logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
-  const filter1 = all ? o => o : o => !o[Object.keys(o)[0]].deleted
-  let filter2 = o => o
+  const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
+  let filter2 = (o) => o
   if (streamsonly) {
-    filter2 = o => !o[Object.keys(o)[0]].parentId
+    filter2 = (o) => !o[Object.keys(o)[0]].parentId
   } else if (sessionsonly) {
-    filter2 = o => o[Object.keys(o)[0]].parentId
+    filter2 = (o) => o[Object.keys(o)[0]].parentId
   }
-
 
   const resp = await req.store.list({
     prefix: `stream/`,
     cursor,
     limit,
-    filter: o => filter1(o) && filter2(o),
+    filter: (o) => filter1(o) && filter2(o),
   })
   let output = resp.data
   res.status(200)
@@ -37,7 +36,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   if (output.length > 0) {
     res.links({ next: makeNextHREF(req, resp.cursor) })
   } // CF doesn't know what this means
-  output = output.map(o => o[Object.keys(o)[0]])
+  output = output.map((o) => o[Object.keys(o)[0]])
   res.json(output)
 })
 
@@ -79,11 +78,11 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     })
   }
 
-  let filter = o => !o.deleted
+  let filter = (o) => !o.deleted
   if (streamsonly) {
-    filter = o => !o.deleted && !o.parentId
+    filter = (o) => !o.deleted && !o.parentId
   } else if (sessionsonly) {
-    filter = o => !o.deleted && o.parentId
+    filter = (o) => !o.deleted && o.parentId
   }
 
   const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
@@ -322,7 +321,7 @@ app.post('/hook', async (req, res) => {
   // Allowed patterns, for now:
   // http(s)://broadcaster.example.com/live/:streamId/:segNum.ts
   // rtmp://broadcaster.example.com/live/:streamId
-  const [live, streamId, ...rest] = pathname.split('/').filter(x => !!x)
+  const [live, streamId, ...rest] = pathname.split('/').filter((x) => !!x)
   if (!streamId) {
     res.status(401)
     return res.json({ errors: ['stream key is required'] })

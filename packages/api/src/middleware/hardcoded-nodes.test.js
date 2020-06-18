@@ -52,7 +52,7 @@ describe('kubernetes middleware', () => {
       orchestrators: JSON.stringify(orchestrators),
       ingest: JSON.stringify(ingest),
     })
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       middleware(req, {}, resolve)
     })
   })

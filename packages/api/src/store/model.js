@@ -78,11 +78,7 @@ export default class Model {
     const queryValue = query[queryKey]
     const prefix = `${kind}+${queryKey}/${queryValue}/`
 
-    const [keys, cursorOut] = await this.backend.listKeys(
-      prefix,
-      cursor,
-      limit,
-    )
+    const [keys, cursorOut] = await this.backend.listKeys(prefix, cursor, limit)
 
     const ids = []
     for (let i = 0; i < keys.length; i++) {
@@ -92,7 +88,14 @@ export default class Model {
     return { data: ids, cursor: cursorOut }
   }
 
-  async queryObjects({ kind, query, cursor, limit, filter, cleanWriteOnly = true }) {
+  async queryObjects({
+    kind,
+    query,
+    cursor,
+    limit,
+    filter,
+    cleanWriteOnly = true,
+  }) {
     const [queryKey, ...others] = Object.keys(query)
     if (others.length > 0) {
       throw new Error('you may only query() by one key')
@@ -112,7 +115,9 @@ export default class Model {
         const id = keys[i].split('/').pop()
         const doc = await this.backend.get(`${kind}/${id}`)
         if (doc && (typeof filter !== 'function' || filter(doc))) {
-            documents.push(cleanWriteOnly ? this.cleanWriteOnlyResponses(kind, doc) : doc)
+          documents.push(
+            cleanWriteOnly ? this.cleanWriteOnlyResponses(kind, doc) : doc,
+          )
         }
       }
       if (!documents.length && keys.length && cursorOut) {
@@ -239,7 +244,7 @@ export default class Model {
     }
 
     if ('data' in responses) {
-      responses.data = responses.data.map(x => ({
+      responses.data = responses.data.map((x) => ({
         ...x,
         ...writeOnlyFields,
       }))

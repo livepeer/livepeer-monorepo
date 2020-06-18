@@ -13,7 +13,9 @@ export default function hardcodedNodes({
     orchestrators = JSON.parse(orchestrators)
     ingest = JSON.parse(ingest)
   } catch (e) {
-    console.error('Error parsing LP_BROADCASTERS and LP_ORCHESTRATORS and LP_INGEST')
+    console.error(
+      'Error parsing LP_BROADCASTERS and LP_ORCHESTRATORS and LP_INGEST',
+    )
     throw e
   }
   return (req, res, next) => {

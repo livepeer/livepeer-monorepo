@@ -43,7 +43,7 @@ const BUILD_DEFINITIONS = {
 
 const runs = {}
 
-const delay = ms => new Promise(r => setTimeout(r, ms))
+const delay = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const run = async (name, args) => {
   let cp
@@ -162,7 +162,7 @@ if (builds.length === 0) {
 // run('cloudflare', ['--storage=cloudflare'])
 
 // https://github.com/facebook/jest/issues/2418#issuecomment-423806659
-const normalizeJestCoverage = obj => {
+const normalizeJestCoverage = (obj) => {
   const result = obj
   Object.entries(result).forEach(([k, v]) => {
     if (v.data) result[k] = v.data

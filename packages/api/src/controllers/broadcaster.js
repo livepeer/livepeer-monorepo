@@ -5,7 +5,7 @@ import { shuffle } from '../util'
 
 const app = Router()
 
-export const getBroadcasterStatuses = async req => {
+export const getBroadcasterStatuses = async (req) => {
   const broadcasters = await req.getBroadcasters()
   const statuses = {}
   for (const broadcaster of broadcasters) {

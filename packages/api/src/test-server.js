@@ -56,8 +56,8 @@ export default Promise.resolve().then(async () => {
     server.host = `http://127.0.0.1:${server.port}`
   }
   // Make an RPC call to the server to have it do this store thing
-  const doStore = action => async (...args) => {
-    args = args.map(x => (x === undefined ? 'UNDEFINED' : x))
+  const doStore = (action) => async (...args) => {
+    args = args.map((x) => (x === undefined ? 'UNDEFINED' : x))
     // console.log(`client: ${action} ${JSON.stringify(args)}`)
     const result = await fetch(`${server.host}/${params.insecureTestToken}`, {
       method: 'POST',
@@ -71,7 +71,7 @@ export default Promise.resolve().then(async () => {
     }
     if (result.status !== 200) {
       const text = await result.text()
-      const errorArgs = args.map(x => JSON.stringify(x)).join(', ')
+      const errorArgs = args.map((x) => JSON.stringify(x)).join(', ')
       const err = new Error(
         `error while attempting req.store.${action}(${errorArgs}): ${result.status} ${text}`,
       )

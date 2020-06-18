@@ -26,7 +26,7 @@ export default ({ s3Url, s3Access, s3Secret }) => {
   return {
     put(path, data) {
       return new Promise((resolve, reject) => {
-        client.putObject(bucket, path, data, function(err, etag) {
+        client.putObject(bucket, path, data, function (err, etag) {
           if (err) {
             return reject(err)
           }
@@ -39,10 +39,10 @@ export default ({ s3Url, s3Access, s3Secret }) => {
       return new Promise((resolve, reject) => {
         const data = []
         const stream = client.listObjects(bucket, prefix, true)
-        stream.on('data', function(obj) {
+        stream.on('data', function (obj) {
           data.push(obj)
         })
-        stream.on('error', function(err) {
+        stream.on('error', function (err) {
           reject(err)
         })
         stream.on('end', () => {

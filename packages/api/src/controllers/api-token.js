@@ -61,7 +61,7 @@ app.get('/', authMiddleware({}), async (req, res) => {
     if (output.length > 0) {
       res.links({ next: makeNextHREF(req, resp.cursor) })
     } // CF doesn't know what this means
-    output = output.map(o => o[Object.keys(o)[0]])
+    output = output.map((o) => o[Object.keys(o)[0]])
     res.json(output)
     return
   }
@@ -87,7 +87,8 @@ app.post(
   validatePost('api-token'),
   async (req, res) => {
     const id = uuid()
-    const userId = req.body.userId && req.user.admin ? req.body.userId : req.user.id
+    const userId =
+      req.body.userId && req.user.admin ? req.body.userId : req.user.id
 
     await Promise.all([
       req.store.create({
