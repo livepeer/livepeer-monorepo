@@ -367,10 +367,19 @@ app.post('/hook', async (req, res) => {
     }
   }
 
+  // Rewrite fpsDen to snake_case for go-livepeer
+  const profiles = (stream.profiles || []).map((profile) => {
+    return {
+      ...profile,
+      fpsDen: undefined,
+      fps_den: profile.fpsDen,
+    }
+  })
+
   res.json({
     manifestId: streamId,
     presets: stream.presets,
-    profiles: stream.profiles,
+    profiles: profiles,
     objectStore: objectStore,
   })
 })
