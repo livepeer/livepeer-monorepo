@@ -214,9 +214,9 @@ export default ({ currentRound, transcoders }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Menu
-        sx={{
-          bg: '#1E2026',
-          p: 0,
+        style={{
+          background: '#1E2026',
+          padding: 0,
           boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
         }}
         isOpen={isPriceSettingOpen}
