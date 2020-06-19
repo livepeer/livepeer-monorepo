@@ -153,6 +153,7 @@ export default ({ currentRound, transcoders }) => {
     columns,
     data: transcoders,
     disableSortRemove: true,
+    autoResetPage: false,
     initialState: {
       sortBy: [{ id: 'totalStake', desc: true }],
       hiddenColumns: [
@@ -320,11 +321,12 @@ export default ({ currentRound, transcoders }) => {
 
           <tbody {...getTableBodyProps()}>
             {page.map((row: any, rowIndex) => {
+              const orchestratorIndex = rowIndex + pageIndex * 10
               prepareRow(row)
               return (
                 <tr
                   {...row.getRowProps()}
-                  key={rowIndex}
+                  key={orchestratorIndex}
                   onClick={() => {
                     if (width < 1020) {
                       Router.push(
@@ -361,18 +363,12 @@ export default ({ currentRound, transcoders }) => {
                     },
                     '.status': {
                       borderColor:
-                        rowIndex ==
-                        (data &&
-                          data.selectedTranscoder &&
-                          data.selectedTranscoder.index)
+                        orchestratorIndex == data?.selectedTranscoder?.index
                           ? 'surface'
                           : 'background',
                     },
                     bg:
-                      rowIndex ==
-                      (data &&
-                        data.selectedTranscoder &&
-                        data.selectedTranscoder.index)
+                      orchestratorIndex == data?.selectedTranscoder?.index
                         ? [
                             'transparent',
                             'transparent',
@@ -415,7 +411,7 @@ export default ({ currentRound, transcoders }) => {
                               data: {
                                 selectedTranscoder: {
                                   __typename: 'Transcoder',
-                                  index: rowIndex,
+                                  index: orchestratorIndex,
                                   id: row.values.id,
                                   threeBoxSpace: row.values.threeBoxSpace,
                                 },
