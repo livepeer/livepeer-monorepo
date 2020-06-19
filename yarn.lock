@@ -29898,7 +29898,7 @@ next@9.2.3-canary.22:
     webpack-hot-middleware "2.25.0"
     webpack-sources "1.4.3"
 
-next@^9.4.0:
+next@^9.4.4:
   version "9.4.4"
   resolved "https://registry.yarnpkg.com/next/-/next-9.4.4.tgz#02ad9fea7f7016b6b42fc83b67835e4a0dd0c99a"
   integrity sha512-ZT8bU2SAv5jkFQ+y8py+Rl5RJRJ6DnZDS+VUnB1cIscmtmUhDi7LYED7pYm4MCKkYhPbEEM1Lbpo7fnoZJGWNQ==
@@ -34624,7 +34624,7 @@ pull-window@^2.1.4:
   dependencies:
     looper "^2.0.0"
 
-"pull-ws@github:hugomrdias/pull-ws#fix/bundle-size":
+pull-ws@hugomrdias/pull-ws#fix/bundle-size:
   version "3.3.1"
   resolved "https://codeload.github.com/hugomrdias/pull-ws/tar.gz/8e2ce0bb3b1cd6804828316e937fff8e0bef6225"
   dependencies:
