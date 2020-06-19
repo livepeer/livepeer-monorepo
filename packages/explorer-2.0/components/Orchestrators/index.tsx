@@ -16,7 +16,11 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import Router from 'next/router'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
-import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@modulz/radix'
+import {
+  Menu,
+  MenuItemRadioGroup,
+  MenuItemRadio,
+} from '@modulz/radix/dist/index.es'
 import Price from '../Price'
 
 export default ({ currentRound, transcoders }) => {

@@ -8,7 +8,11 @@ import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 import { useRef, useState } from 'react'
 import Price from '../Price'
-import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@modulz/radix'
+import {
+  Menu,
+  MenuItemRadioGroup,
+  MenuItemRadio,
+} from '@modulz/radix/dist/index.es'
 
 export default ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
