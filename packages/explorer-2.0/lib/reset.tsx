@@ -113,7 +113,7 @@ const Reset = () =>
       },
       '[role="menuitemradio"]': {
         ':hover': {
-          backgroundColor: `${theme.colors.background} !important`,
+          backgroundColor: `${theme.colors.gray} !important`,
         },
       },
     },

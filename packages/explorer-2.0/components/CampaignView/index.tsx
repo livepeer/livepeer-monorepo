@@ -8,7 +8,7 @@ import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 import { useRef, useState } from 'react'
 import Price from '../Price'
-import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@livepeer/ui'
+import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@modulz/radix'
 
 export default ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
@@ -48,6 +48,11 @@ export default ({ currentRound, transcoder }) => {
   return (
     <Box sx={{ pt: 4 }}>
       <Menu
+        style={{
+          background: '#1E2026',
+          padding: 0,
+          boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
+        }}
         isOpen={isPriceSettingOpen}
         onClose={() => setIsPriceSettingOpen(false)}
         buttonRef={targetRef}

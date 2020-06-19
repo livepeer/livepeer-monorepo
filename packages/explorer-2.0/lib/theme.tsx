@@ -37,6 +37,7 @@ const theme = {
     skyBlue: '#5bc2ee',
     teal: '#00bfb2',
     border: '#393a3d',
+    gray: '#5a5a5a',
     highlight: 'transparent',
     modes: {},
   },
