@@ -15,7 +15,7 @@ import StreamSessionsTable from "../../../components/StreamSessionsTable";
 import DeleteStreamModal from "../../../components/DeleteStreamModal";
 import {
   RelativeTime,
-  RenditionsDetails
+  RenditionsDetails,
 } from "../../../components/StreamsTable";
 import { getTabs } from "../user";
 
@@ -63,7 +63,7 @@ const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
               cursor: "pointer",
               width: 14,
               height: 14,
-              color: "listText"
+              color: "listText",
             }}
           />
         </Flex>
@@ -90,16 +90,16 @@ export default () => {
 
   useEffect(() => {
     getIngest()
-      .then(ingest => setIngest(ingest))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((ingest) => setIngest(ingest))
+      .catch((err) => console.error(err)); // todo: surface this
   }, [id]);
   useEffect(() => {
     if (!id) {
       return;
     }
     getStream(id)
-      .then(stream => setStream(stream))
-      .catch(err => {
+      .then((stream) => setStream(stream))
+      .catch((err) => {
         if (err && err.status === 404) {
           setNotFound(true);
         }
@@ -113,8 +113,8 @@ export default () => {
     }
     const interval = setInterval(() => {
       getStream(id)
-        .then(stream => setStream(stream))
-        .catch(err => console.error(err)); // todo: surface this
+        .then((stream) => setStream(stream))
+        .catch((err) => console.error(err)); // todo: surface this
     }, 5000);
     return () => clearInterval(interval);
   }, [id, isVisible]);
@@ -130,11 +130,13 @@ export default () => {
   const getIngestURL = (stream: Stream, showKey: boolean): string => {
     const key = showKey ? stream.streamKey : "stream-key";
     return ingest.length
-      ? path.join(ingest[0].ingest, key) : stream.streamKey || "";
+      ? `${ingest[0].ingest}/${key}`
+      : stream.streamKey || "";
   };
   const getPlaybackURL = (stream: Stream): string => {
     return ingest.length
-      ? path.join(ingest[0].playback, stream.playbackId, 'index.m3u8') : stream.playbackId || "";
+      ? `${ingest[0].playback}/${stream.playbackId}/index.m3u8`
+      : stream.playbackId || "";
   };
   const tabs = getTabs(0);
 
@@ -163,7 +165,7 @@ export default () => {
               alignItems: "baseline",
               maxWidth: 958,
               width: "100%",
-              flexDirection: "column"
+              flexDirection: "column",
             }}
           >
             <Heading as="h3" sx={{ mb: "0.5em" }}>
@@ -175,7 +177,7 @@ export default () => {
                 alignItems: "center",
                 gridTemplateColumns: "10em auto",
                 width: "100%",
-                fontSize: 0
+                fontSize: 0,
               }}
             >
               <Cell>Stream name</Cell>
@@ -244,7 +246,7 @@ export default () => {
               mb: "2em",
               justifyContent: "flex-end",
               maxWidth: 958,
-              width: "100%"
+              width: "100%",
             }}
           >
             <Button
