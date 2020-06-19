@@ -175,13 +175,10 @@ export default ({ currentRound, transcoders }) => {
     page,
     canPreviousPage,
     canNextPage,
-    pageOptions,
     pageCount,
-    gotoPage,
     nextPage,
     previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
   }: any = useTable(tableOptions, useFilters, useSortBy, usePagination)
 
   const accountColumn: any = headerGroups[0].headers[0]
