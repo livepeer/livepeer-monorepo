@@ -17,7 +17,8 @@ function getLibrary(provider) {
 }
 
 function MyApp({ Component, pageProps }) {
-  const getLayout = Component.getLayout || (page => <Layout children={page} />)
+  const getLayout =
+    Component.getLayout || ((page) => <Layout children={page} />)
   return (
     <>
       <Head>
