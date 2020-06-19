@@ -111,6 +111,11 @@ const Reset = () =>
       '.MuiStepIcon-text': {
         fontFamily: `${theme.fonts.body} !important`,
       },
+      '[role="menuitemradio"]': {
+        ':hover': {
+          backgroundColor: `${theme.colors.background} !important`,
+        },
+      },
     },
   })
 

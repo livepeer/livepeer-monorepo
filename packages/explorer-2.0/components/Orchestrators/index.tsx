@@ -16,7 +16,7 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import Router from 'next/router'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
-import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@livepeer/ui'
+import { Menu, MenuItemRadioGroup, MenuItemRadio } from '@modulz/radix'
 import Price from '../Price'
 
 export default ({ currentRound, transcoders }) => {
@@ -213,6 +213,11 @@ export default ({ currentRound, transcoders }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Menu
+        sx={{
+          bg: '#1E2026',
+          p: 0,
+          boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
+        }}
         isOpen={isPriceSettingOpen}
         onClose={() => setIsPriceSettingOpen(false)}
         buttonRef={targetRef}
@@ -432,7 +437,8 @@ export default ({ currentRound, transcoders }) => {
       </Box>
       <Flex
         sx={{
-          my: 2,
+          mt: 2,
+          mb: 4,
           alignItems: 'center',
           justifyContent: 'center',
         }}
