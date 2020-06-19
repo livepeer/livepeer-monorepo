@@ -29,6 +29,20 @@ const Segments = ({ stream }: { stream: Stream }) => {
   );
 };
 
+const sortNameF = (a: Stream, b: Stream) =>
+  ((a && a.name) || "").localeCompare((b && b.name) || "");
+
+const sortUserIdF = (a: Stream, b: Stream) =>
+  ((a && a.userId) || "").localeCompare((b && b.userId) || "");
+
+const sortCreatedF = (a: Stream, b: Stream) =>
+  (b.createdAt || 0) - (a.createdAt || 0);
+
+const sortLastSeenF = (a: Stream, b: Stream) =>
+  (b.lastSeen || 0) - (a.lastSeen || 0);
+
+const sortActiveF = (a: Stream, b: Stream) => (+(b.isActive || false)) - +(a.isActive || false);
+
 export default ({ id }: { id: string }) => {
   const [broadcasters, setBroadcasters] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -36,6 +50,7 @@ export default ({ id }: { id: string }) => {
   const [streams, setStreams] = useState([]);
   const [users, setUsers] = useState([]);
   const { getAdminStreams, deleteStream, getBroadcasters, getUsers } = useApi();
+  const [sortFunc, setSortFunc] = useState(null);
   useEffect(() => {
     getUsers()
       .then(users => setUsers(users))
@@ -48,7 +63,12 @@ export default ({ id }: { id: string }) => {
   }, []);
   useEffect(() => {
     getAdminStreams()
-      .then(streams => setStreams(streams))
+      .then(streams => {
+        if (sortFunc) {
+          streams.sort(sortFunc);
+        }
+        setStreams(streams);
+      })
       .catch(err => console.error(err)); // todo: surface this
   }, [deleteModal]);
   const close = () => {
@@ -62,11 +82,53 @@ export default ({ id }: { id: string }) => {
     }
     const interval = setInterval(() => {
       getAdminStreams()
-        .then(streams => setStreams(streams))
+        .then(streams => {
+          console.log(`sort func:`, sortFunc);
+          if (sortFunc) {
+            streams.sort(sortFunc);
+          }
+          setStreams(streams);
+        })
         .catch(err => console.error(err)); // todo: surface this
     }, 5000);
     return () => clearInterval(interval);
-  }, [isVisible]);
+  }, [isVisible, sortFunc]);
+
+  const sortUserId = () => {
+    if (streams) {
+      streams.sort(sortUserIdF);
+      setSortFunc(() => sortUserIdF);
+      setStreams([...streams]);
+    }
+  };
+  const sortName = () => {
+    if (streams) {
+      streams.sort(sortNameF);
+      setSortFunc(() => sortNameF);
+      setStreams([...streams]);
+    }
+  };
+  const sortCreated = () => {
+    if (streams) {
+      streams.sort(sortCreatedF);
+      setSortFunc(() => sortCreatedF);
+      setStreams([...streams]);
+    }
+  };
+  const sortLastSeen = () => {
+    if (streams) {
+      streams.sort(sortLastSeenF);
+      setSortFunc(() => sortLastSeenF);
+      setStreams([...streams]);
+    }
+  };
+  const sortActive = () => {
+    if (streams) {
+      streams.sort(sortActiveF);
+      setSortFunc(() => sortActiveF);
+      setStreams([...streams]);
+    }
+  };
   return (
     <Box
       id={id}
@@ -112,13 +174,47 @@ export default ({ id }: { id: string }) => {
       >
         <TableRow variant={TableRowVariant.Header}>
           <Box></Box>
-          <Box>User name</Box>
-          <Box>Name</Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortUserId}
+          
+          >User name</Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortName}
+          >
+            Name
+          </Box>
           <Box>Details</Box>
           <Box>Segments</Box>
-          <Box>Created</Box>
-          <Box>Last Active</Box>
-          <Box>Status</Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortCreated}
+          >
+            Created
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortLastSeen}
+          >
+            Last Active
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortActive}
+          >
+            Status
+          </Box>
         </TableRow>
         {streams.map((stream: Stream) => {
           const {

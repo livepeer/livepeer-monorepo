@@ -9,7 +9,7 @@ import ReactTooltip from "react-tooltip";
 
 export const UserName = ({ id, users }: { id: string; users: Array<User> }) => {
   const user = users.find(o => o.id === id);
-const tid = `tooltip-name-${id}`;
+  const tid = `tooltip-name-${id}`;
   return (
     <Box
       sx={{
@@ -26,7 +26,13 @@ const tid = `tooltip-name-${id}`;
       >
         {user ? user.email : id}
       </ReactTooltip>
-      <span data-tip data-for={tid}>{user ? user.email.includes("@") ? user.email.split("@").join("@\u{200B}") : user.email : id}</span>
+      <span data-tip data-for={tid}>
+        {user
+          ? user.email.includes("@")
+            ? user.email.split("@").join("@\u{200B}")
+            : user.email
+          : id}
+      </span>
     </Box>
   );
 };
@@ -76,6 +82,24 @@ export default ({ id }: TokenTableProps) => {
     setNewTokenUserId("");
     setNewToken(null);
     setCopyTime(null);
+  };
+  const sortUser = () => {
+    if (tokens) {
+      tokens.sort((a, b) => a.userId.localeCompare(b.userId));
+      setTokens([...tokens]);
+    }
+  };
+  const sortLastAact = () => {
+    if (tokens) {
+      tokens.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+      setTokens([...tokens]);
+    }
+  };
+  const sortName = () => {
+    if (tokens) {
+      tokens.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      setTokens([...tokens]);
+    }
   };
   return (
     <Box
@@ -220,9 +244,30 @@ export default ({ id }: TokenTableProps) => {
         <TableRow variant={TableRowVariant.Header}>
           <Box></Box>
           <Box>id</Box>
-          <Box>User</Box>
-          <Box>Name</Box>
-          <Box>Last Active</Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortUser}
+          >
+            User
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortName}
+          >
+            Name
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer"
+            }}
+            onClick={sortLastAact}
+          >
+            Last Active
+          </Box>
         </TableRow>
         {tokens.map(token => {
           const { id, name, lastSeen } = token;
