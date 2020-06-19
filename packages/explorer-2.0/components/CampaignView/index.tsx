@@ -1,5 +1,5 @@
 import { Flex } from 'theme-ui'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import Card from '../Card'
 import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import { Box } from 'theme-ui'
@@ -14,12 +14,13 @@ export default ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
   const targetRef = useRef()
   const [priceSetting, setPriceSetting] = useState('1t pixels')
-  const callsMade = transcoder.pools.filter(r => r.rewardTokens != null).length
+  const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
+    .length
 
   const PriceSettingToggle = () => (
     <span
       ref={targetRef}
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation()
         setIsPriceSettingOpen(true)
       }}
@@ -53,7 +54,7 @@ export default ({ currentRound, transcoder }) => {
       >
         <MenuItemRadioGroup
           value={priceSetting}
-          onChange={value => {
+          onChange={(value) => {
             setPriceSetting(value)
           }}
         >

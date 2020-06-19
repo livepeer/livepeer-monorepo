@@ -1,5 +1,5 @@
 import { Flex, Styled } from 'theme-ui'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import Unlink from '../../public/img/unlink.svg'
 import { abbreviateNumber } from '../../lib/utils'
 import { UnbondingLock } from '../../@types'
@@ -27,7 +27,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
           sx={{ mb: 6 }}
           header={<Styled.h4>Pending Transactions</Styled.h4>}
         >
-          {pendingStakeTransactions.map(lock => (
+          {pendingStakeTransactions.map((lock) => (
             <ListItem
               key={lock.id}
               avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}
@@ -75,7 +75,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
       )}
       {!!completedStakeTransactions.length && (
         <List header={<Styled.h4>Available for Withdrawal</Styled.h4>}>
-          {completedStakeTransactions.map(lock => (
+          {completedStakeTransactions.map((lock) => (
             <ListItem
               key={lock.id}
               avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}

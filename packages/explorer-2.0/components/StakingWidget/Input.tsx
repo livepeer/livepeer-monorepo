@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/react-hooks'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import useWindowSize from 'react-use/lib/useWindowSize'
 
 let hoursPerYear = 8760
