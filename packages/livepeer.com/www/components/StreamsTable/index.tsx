@@ -93,14 +93,21 @@ export const RelativeTime = ({
           </span>
         </>
       ) : (
-          <em>unseen</em>
-        )}
+        <em>unseen</em>
+      )}
     </Box>
   );
 };
 
-export const StreamName = ({ stream }: { stream: Stream }) => {
+export const StreamName = ({
+  stream,
+  admin = false
+}: {
+  stream: Stream;
+  admin?: boolean;
+}) => {
   const pid = `stream-name-${stream.id}-${name}`;
+  const query = admin ? { admin: true } : {};
   return (
     <Box>
       {stream.createdByTokenName ? (
@@ -115,7 +122,10 @@ export const StreamName = ({ stream }: { stream: Stream }) => {
         </ReactTooltip>
       ) : null}
       <Box data-tip data-for={pid}>
-        <Link href="/app/stream/[id]" as={`/app/stream/${stream.id}`}>
+        <Link
+          href={{ pathname: "/app/stream/[id]", query }}
+          as={`/app/stream/${stream.id}`}
+        >
           <a>{stream.name}</a>
         </Link>
       </Box>
@@ -133,12 +143,14 @@ export const RenditionsDetails = ({ stream }: { stream: Stream }) => {
     if (details) {
       details += "/";
     }
-    details += stream.profiles.map(({ height, fps }) => {
-      if (fps === 0) {
-        return `${height}pSourceFPS`
-      }
-      return `${height}p${fps}`
-    }).join(",\u{200B}");
+    details += stream.profiles
+      .map(({ height, fps }) => {
+        if (fps === 0) {
+          return `${height}pSourceFPS`;
+        }
+        return `${height}p${fps}`;
+      })
+      .join(",\u{200B}");
     detailsTooltip = (
       <Flex>
         {stream.profiles.map((p, i) => (
@@ -197,6 +209,7 @@ export default ({ userId, id }: { userId: string; id: string }) => {
   }, [userId, deleteModal]);
   const close = () => {
     setDeleteModal(false);
+    setSelectedStream(null);
   };
   const isVisible = usePageVisibility();
   useEffect(() => {
@@ -232,10 +245,7 @@ export default ({ userId, id }: { userId: string; id: string }) => {
       <Box sx={{ mt: "2em" }}>
         <Link href="/app/stream/new-stream">
           <a>
-            <Button
-              variant="outlineSmall"
-              sx={{ margin: 2 }}
-            >
+            <Button variant="outlineSmall" sx={{ margin: 2 }}>
               Create
             </Button>
           </a>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useApi, usePageVisibility } from "../../hooks";
-import { Box, Button, Flex, Link } from "@theme-ui/components";
+import { Box, Button, Flex } from "@theme-ui/components";
 import DeleteStreamModal from "../DeleteStreamModal";
 import { Table, TableRow, TableRowVariant, Checkbox } from "../Table";
 import { RelativeTime, StreamName, RenditionsDetails } from "../StreamsTable";
@@ -52,6 +53,7 @@ export default ({ id }: { id: string }) => {
   }, [deleteModal]);
   const close = () => {
     setDeleteModal(false);
+    setSelectedStream(null);
   };
   const isVisible = usePageVisibility();
   useEffect(() => {
@@ -85,7 +87,10 @@ export default ({ id }: { id: string }) => {
         />
       )}
       <Box sx={{ mt: "2em" }}>
-        <Link href="/app/stream/new-stream">
+        <Link
+          href={{ pathname: "/app/stream/new-stream", query: { admin: true } }}
+          as="/app/stream/new-stream"
+        >
           <a>
             <Button variant="outlineSmall" sx={{ margin: 2 }}>
               Create
@@ -142,7 +147,7 @@ export default ({ id }: { id: string }) => {
               >
                 <Checkbox value={selected} />
                 <UserName id={stream.userId} users={users} />
-                <StreamName stream={stream} />
+                <StreamName stream={stream} admin={true} />
                 <RenditionsDetails stream={stream} />
                 <Segments stream={stream} />
                 <RelativeTime

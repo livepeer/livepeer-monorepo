@@ -1,13 +1,10 @@
+import { useState } from "react";
 import Link from "next/link";
 import useApi from "../../../hooks/use-api";
-import { Box, Grid } from "@theme-ui/components";
-import { useState } from "react";
+import { Flex, Button, Box, Grid, Input } from "@theme-ui/components";
 import Layout from "../../../components/Layout";
-import { Button } from "@theme-ui/components";
-import { Flex } from "@theme-ui/components";
 import useLoggedIn from "../../../hooks/use-logged-in";
 import { useRouter } from "next/router";
-import { Input } from "@theme-ui/components";
 
 export default () => {
   useLoggedIn();
@@ -15,6 +12,7 @@ export default () => {
   const router = useRouter();
   const [streamName, setStreamName] = useState("");
   const { user, createStream } = useApi();
+  const backLink = router.query.admin ? "/app/admin/streams" : "/app/user";
 
   if (!user || user.emailValid === false) {
     return <Layout />;
@@ -33,7 +31,7 @@ export default () => {
         <Box
           sx={{ my: "2em", maxWidth: 958, width: "100%", fontWeight: "bold" }}
         >
-          <Link href="/app/user">
+          <Link href={backLink}>
             <a>{"← stream list"}</a>
           </Link>
         </Box>
@@ -83,7 +81,10 @@ export default () => {
             })
               .then(newStream => {
                 setCreating(false);
-                router.replace(`/app/stream/${newStream.id}`);
+                router.replace({
+                  pathname: `/app/stream/${newStream.id}`,
+                  query: { admin: router.query.admin }
+                });
               })
               .catch(e => {
                 setCreating(false);
@@ -100,6 +101,7 @@ export default () => {
             <Box>Stream name</Box>
             <Box>
               <Input
+                autoFocus={true}
                 label="Stream name"
                 value={streamName}
                 sx={{
