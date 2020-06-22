@@ -131,9 +131,7 @@ export default () => {
 
   const getIngestURL = (stream: Stream, showKey: boolean): string => {
     const key = showKey ? stream.streamKey : "";
-    return ingest.length
-      ? pathJoin(ingest[0].ingest, key)
-      : stream.streamKey || "";
+    return ingest.length ? pathJoin(ingest[0].ingest, key) : key || "";
   };
   const getPlaybackURL = (stream: Stream): string => {
     return ingest.length
