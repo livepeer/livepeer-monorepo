@@ -1,5 +1,4 @@
 import Link from "next/link";
-import path from "path";
 import { Spinner, Box, Button, Flex, Heading } from "@theme-ui/components";
 import Layout from "../../../components/Layout";
 import useLoggedIn from "../../../hooks/use-logged-in";
@@ -13,9 +12,10 @@ import { useEffect, useState } from "react";
 import TabbedLayout from "../../../components/TabbedLayout";
 import StreamSessionsTable from "../../../components/StreamSessionsTable";
 import DeleteStreamModal from "../../../components/DeleteStreamModal";
+import { pathJoin } from "../../../lib/utils";
 import {
   RelativeTime,
-  RenditionsDetails,
+  RenditionsDetails
 } from "../../../components/StreamsTable";
 import { getTabs } from "../user";
 
@@ -23,9 +23,10 @@ type ShowURLProps = {
   text: string;
   url: string;
   anchor?: boolean;
+  urlToCopy?: string;
 };
 
-const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
+const ShowURL = ({ text, url, urlToCopy, anchor = false }: ShowURLProps) => {
   const [isCopied, setCopied] = useState(0);
   useEffect(() => {
     if (isCopied) {
@@ -35,6 +36,7 @@ const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
       return () => clearTimeout(interval);
     }
   }, [isCopied]);
+  const ccurl = urlToCopy ? urlToCopy : url;
   return (
     <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
       {text ? (
@@ -42,7 +44,7 @@ const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
           {text}:
         </Box>
       ) : null}
-      <CopyToClipboard text={url} onCopy={() => setCopied(2000)}>
+      <CopyToClipboard text={ccurl} onCopy={() => setCopied(2000)}>
         <Flex sx={{ alignItems: "center" }}>
           {anchor ? (
             <a
@@ -63,7 +65,7 @@ const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
               cursor: "pointer",
               width: 14,
               height: 14,
-              color: "listText",
+              color: "listText"
             }}
           />
         </Flex>
@@ -90,16 +92,16 @@ export default () => {
 
   useEffect(() => {
     getIngest()
-      .then((ingest) => setIngest(ingest))
-      .catch((err) => console.error(err)); // todo: surface this
+      .then(ingest => setIngest(ingest))
+      .catch(err => console.error(err)); // todo: surface this
   }, [id]);
   useEffect(() => {
     if (!id) {
       return;
     }
     getStream(id)
-      .then((stream) => setStream(stream))
-      .catch((err) => {
+      .then(stream => setStream(stream))
+      .catch(err => {
         if (err && err.status === 404) {
           setNotFound(true);
         }
@@ -113,8 +115,8 @@ export default () => {
     }
     const interval = setInterval(() => {
       getStream(id)
-        .then((stream) => setStream(stream))
-        .catch((err) => console.error(err)); // todo: surface this
+        .then(stream => setStream(stream))
+        .catch(err => console.error(err)); // todo: surface this
     }, 5000);
     return () => clearInterval(interval);
   }, [id, isVisible]);
@@ -128,17 +130,16 @@ export default () => {
   }
 
   const getIngestURL = (stream: Stream, showKey: boolean): string => {
-    const key = showKey ? stream.streamKey : "stream-key";
-    return ingest.length
-      ? `${ingest[0].ingest}/${key}`
-      : stream.streamKey || "";
+    const key = showKey ? stream.streamKey : "";
+    return ingest.length ? pathJoin(ingest[0].ingest, key) : key || "";
   };
   const getPlaybackURL = (stream: Stream): string => {
     return ingest.length
-      ? `${ingest[0].playback}/${stream.playbackId}/index.m3u8`
+      ? pathJoin(ingest[0].playback, `${stream.playbackId}/index.m3u8`)
       : stream.playbackId || "";
   };
   const tabs = getTabs(0);
+  const backLink = query.admin ? "/app/admin/streams" : "/app/user";
 
   return (
     <TabbedLayout tabs={tabs} logout={logout}>
@@ -152,7 +153,7 @@ export default () => {
         />
       )}
       <Box sx={{ my: "2em", maxWidth: 958, width: "100%", fontWeight: "bold" }}>
-        <Link href="/app/user">
+        <Link href={backLink}>
           <a>{"← stream list"}</a>
         </Link>
       </Box>
@@ -160,12 +161,11 @@ export default () => {
         <>
           <Flex
             sx={{
-              // mb: "2em",
               justifyContent: "flex-start",
               alignItems: "baseline",
               maxWidth: 958,
               width: "100%",
-              flexDirection: "column",
+              flexDirection: "column"
             }}
           >
             <Heading as="h3" sx={{ mb: "0.5em" }}>
@@ -177,7 +177,7 @@ export default () => {
                 alignItems: "center",
                 gridTemplateColumns: "10em auto",
                 width: "100%",
-                fontSize: 0,
+                fontSize: 0
               }}
             >
               <Cell>Stream name</Cell>
@@ -199,11 +199,29 @@ export default () => {
               </Cell>
               <Cell>RTMP ingest URL</Cell>
               <Cell>
-                <ShowURL
-                  text=""
-                  url={getIngestURL(stream, keyRevealed)}
-                  anchor={false}
-                />
+                {keyRevealed ? (
+                  <ShowURL
+                    text=""
+                    url={getIngestURL(stream, keyRevealed)}
+                    urlToCopy={getIngestURL(stream, true)}
+                    anchor={false}
+                  />
+                ) : (
+                  <Flex
+                    sx={{ justifyContent: "flex-start", alignItems: "center" }}
+                  >
+                    <Box
+                      sx={{ minWidth: 125, fontSize: 12, paddingRight: "1em" }}
+                    >
+                      {getIngestURL(stream, false)}
+                      <b>stream-key</b>
+                      <i sx={{ ml: "2em" }}>
+                        Reveal your stream key and the full URL via the button
+                        above.
+                      </i>
+                    </Box>
+                  </Flex>
+                )}
               </Cell>
               <Cell>Playback URL</Cell>
               <Cell>
@@ -246,7 +264,7 @@ export default () => {
               mb: "2em",
               justifyContent: "flex-end",
               maxWidth: 958,
-              width: "100%",
+              width: "100%"
             }}
           >
             <Button
