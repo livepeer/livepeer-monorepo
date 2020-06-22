@@ -62,7 +62,7 @@
     "@web3-react/core": "^6.0.2",
     "@web3-react/fortmatic-connector": "^6.0.7",
     "@web3-react/injected-connector": "^6.0.3",
-    "@web3-react/network-connector": "^6.0.4",
+    "@web3-react/network-connector": "6.0.4",
     "@web3-react/portis-connector": "^6.0.2",
     "@web3-react/walletlink-connector": "^6.0.7",
     "apollo-cache-inmemory": "^1.6.2",
