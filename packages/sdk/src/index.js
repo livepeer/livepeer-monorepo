@@ -695,48 +695,6 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * Gets the unbonding period for transcoders
-     * @memberof livepeer~rpc
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getUnbondingPeriod()
-     * // => string
-     */
-    async getUnbondingPeriod(): Promise<string> {
-      return headToString(await BondingManager.unbondingPeriod())
-    },
-
-    /**
-     * Gets the number of active transcoders
-     * @memberof livepeer~rpc
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getNumActiveTranscoders()
-     * // => string
-     */
-    async getNumActiveTranscoders(): Promise<string> {
-      return headToString(await BondingManager.numActiveTranscoders())
-    },
-
-    /**
-     * Gets the maximum earnings for claims rounds
-     * @memberof livepeer~rpc
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getMaxEarningsClaimsRounds()
-     * // => string
-     */
-    async getMaxEarningsClaimsRounds(): Promise<string> {
-      return headToString(await BondingManager.maxEarningsClaimsRounds())
-    },
-
-    /**
      * Gets the total amount of bonded tokens
      * @memberof livepeer~rpc
      * @return {Promise<string}
