@@ -104,4 +104,4 @@ Although not required, you may want to download/install some or all of the follo
 * [Flow Language Support](https://marketplace.visualstudio.com/items?itemName=flowtype.flow-for-vscode) - If you use VS Code, you can get it to play nice with Flow types by installing this language support extension.
 * [Code Climate Browser Extension](https://codeclimate.com/browser-extension/) - We recommend installing the Code Climate browser extension to allow for better insights into code quality and coverage while browsing the packages in this repository:
 * [MetaMask](https://metamask.io/) - This extension manages Ethereum accounts and transactions in your browser. It's useful if you want to submit ETH transactions or switch between RPC providers.
-* [Cipher](https://www.cipherbrowser.com/) - A mobile browser that manages Ethereum accounts and transactions. It's good for testing out dApps on your phone or tablet.
+* [Coinbase Wallet](https://wallet.coinbase.com/) - A mobile browser that manages Ethereum accounts and transactions. It's good for testing out dApps on your phone or tablet.
