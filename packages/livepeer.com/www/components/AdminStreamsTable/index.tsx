@@ -7,7 +7,7 @@ import { Table, TableRow, TableRowVariant, Checkbox } from "../Table";
 import { RelativeTime, StreamName, RenditionsDetails } from "../StreamsTable";
 import ReactTooltip from "react-tooltip";
 import { UserName } from "../AdminTokenTable";
-import { Stream } from "@livepeer/api";
+import { Stream, User } from "@livepeer/api";
 
 const Segments = ({ stream }: { stream: Stream }) => {
   const idpref = `segments-${stream.id}`;
@@ -31,6 +31,16 @@ const Segments = ({ stream }: { stream: Stream }) => {
 
 const sortNameF = (a: Stream, b: Stream) =>
   ((a && a.name) || "").localeCompare((b && b.name) || "");
+
+const sortUserName = (users: Array<User>, a: Stream, b: Stream) => {
+  const userA = users.find((u) => u.id === a.userId);
+  const userB = users.find((u) => u.id === b.userId);
+  console.log(`user a ${userA.email} user b ${userB.email}`);
+  if (userA && userB) {
+    return userA.email.localeCompare(userB.email);
+  }
+  return ((a && a.name) || "").localeCompare((b && b.name) || "");
+};
 
 const sortUserIdF = (a: Stream, b: Stream) =>
   ((a && a.userId) || "").localeCompare((b && b.userId) || "");
@@ -97,8 +107,13 @@ export default ({ id }: { id: string }) => {
 
   const sortUserId = () => {
     if (streams) {
-      streams.sort(sortUserIdF);
-      setSortFunc(() => sortUserIdF);
+      if (users) {
+        streams.sort(sortUserName.bind(null, users));
+        setSortFunc(() => sortUserName.bind(null, users));
+      } else {
+        streams.sort(sortUserIdF);
+        setSortFunc(() => sortUserIdF);
+      }
       setStreams([...streams]);
     }
   };

@@ -84,6 +84,22 @@ export default ({ id }: TokenTableProps) => {
     setCopyTime(null);
   };
   const sortUser = () => {
+    if (tokens && users) {
+      if (users) {
+        tokens.sort((a, b) => {
+          const userA = users.find((u) => u.id === a.userId);
+          const userB = users.find((u) => u.id === b.userId);
+          if (userA && userB) {
+            return userA.email.localeCompare(userB.email);
+          }
+          return a.userId.localeCompare(b.userId);
+        });
+      } else {
+        tokens.sort((a, b) => a.userId.localeCompare(b.userId));
+      }
+      setTokens([...tokens]);
+      return;
+    }
     if (tokens) {
       tokens.sort((a, b) => a.userId.localeCompare(b.userId));
       setTokens([...tokens]);
