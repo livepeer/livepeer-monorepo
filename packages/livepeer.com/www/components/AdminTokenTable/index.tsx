@@ -8,13 +8,13 @@ import { User } from "@livepeer/api";
 import ReactTooltip from "react-tooltip";
 
 export const UserName = ({ id, users }: { id: string; users: Array<User> }) => {
-  const user = users.find(o => o.id === id);
+  const user = users.find((o) => o.id === id);
   const tid = `tooltip-name-${id}`;
   return (
     <Box
       sx={{
         overflow: "hidden",
-        textOverflow: "ellipsis"
+        textOverflow: "ellipsis",
       }}
     >
       <ReactTooltip
@@ -58,22 +58,22 @@ export default ({ id }: TokenTableProps) => {
     createApiToken,
     deleteApiToken,
     getUser,
-    getUsers
+    getUsers,
   } = useApi();
   useEffect(() => {
     getApiTokens(null)
-      .then(tokens => {
+      .then((tokens) => {
         if (tokens) {
           tokens.sort((a, b) => a.userId.localeCompare(b.userId));
         }
         setTokens(tokens);
       })
-      .catch(err => console.error(err)); // todo: surface this
+      .catch((err) => console.error(err)); // todo: surface this
   }, [newToken, deleteModal]);
   useEffect(() => {
     getUsers()
-      .then(users => setUsers(users))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((users) => setUsers(users))
+      .catch((err) => console.error(err)); // todo: surface this
   }, []);
   const close = () => {
     setCreateModal(false);
@@ -107,7 +107,7 @@ export default ({ id }: TokenTableProps) => {
         width: "100%",
         maxWidth: 958,
         mb: [3, 3],
-        mx: "auto"
+        mx: "auto",
       }}
     >
       {createModal && (
@@ -115,18 +115,18 @@ export default ({ id }: TokenTableProps) => {
           {!newToken && (
             <form
               id={id}
-              onSubmit={e => {
+              onSubmit={(e) => {
                 e.preventDefault();
                 if (creating) {
                   return;
                 }
                 setCreating(true);
                 createApiToken({ name: tokenName, userId: newTokenUserId })
-                  .then(newToken => {
+                  .then((newToken) => {
                     setNewToken(newToken);
                     setCreating(false);
                   })
-                  .catch(e => {
+                  .catch((e) => {
                     setCreating(false);
                   });
               }}
@@ -139,14 +139,14 @@ export default ({ id }: TokenTableProps) => {
               <Input
                 label="Name"
                 value={tokenName}
-                onChange={e => setTokenName(e.target.value)}
+                onChange={(e) => setTokenName(e.target.value)}
                 placeholder="New Token"
               ></Input>
               <Select
                 sx={{ mt: "1em" }}
-                onChange={e => setNewTokenUserId(e.target.value)}
+                onChange={(e) => setNewTokenUserId(e.target.value)}
               >
-                {users.map(user => (
+                {users.map((user) => (
                   <option value={user.id}>{user.email}</option>
                 ))}
               </Select>
@@ -184,7 +184,7 @@ export default ({ id }: TokenTableProps) => {
                 sx={{
                   justifyContent: "space-between",
                   alignItems: "center",
-                  py: 3
+                  py: 3,
                 }}
               >
                 <Box>{copyTime !== null && <strong>Copied!</strong>}</Box>
@@ -246,30 +246,30 @@ export default ({ id }: TokenTableProps) => {
           <Box>id</Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortUser}
           >
-            User
+            User ⭥
           </Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortName}
           >
-            Name
+            Name ⭥
           </Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortLastAact}
           >
-            Last Active
+            Last Active ⭥
           </Box>
         </TableRow>
-        {tokens.map(token => {
+        {tokens.map((token) => {
           const { id, name, lastSeen } = token;
           let formattedLastSeen = <em>unused</em>;
           if (lastSeen) {

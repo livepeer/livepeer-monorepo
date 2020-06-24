@@ -41,7 +41,8 @@ const sortCreatedF = (a: Stream, b: Stream) =>
 const sortLastSeenF = (a: Stream, b: Stream) =>
   (b.lastSeen || 0) - (a.lastSeen || 0);
 
-const sortActiveF = (a: Stream, b: Stream) => (+(b.isActive || false)) - +(a.isActive || false);
+const sortActiveF = (a: Stream, b: Stream) =>
+  +(b.isActive || false) - +(a.isActive || false);
 
 export default ({ id }: { id: string }) => {
   const [broadcasters, setBroadcasters] = useState(null);
@@ -53,23 +54,23 @@ export default ({ id }: { id: string }) => {
   const [sortFunc, setSortFunc] = useState(null);
   useEffect(() => {
     getUsers()
-      .then(users => setUsers(users))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((users) => setUsers(users))
+      .catch((err) => console.error(err)); // todo: surface this
   }, []);
   useEffect(() => {
     getBroadcasters()
-      .then(broadcasters => setBroadcasters(broadcasters))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((broadcasters) => setBroadcasters(broadcasters))
+      .catch((err) => console.error(err)); // todo: surface this
   }, []);
   useEffect(() => {
     getAdminStreams()
-      .then(streams => {
+      .then((streams) => {
         if (sortFunc) {
           streams.sort(sortFunc);
         }
         setStreams(streams);
       })
-      .catch(err => console.error(err)); // todo: surface this
+      .catch((err) => console.error(err)); // todo: surface this
   }, [deleteModal]);
   const close = () => {
     setDeleteModal(false);
@@ -82,14 +83,14 @@ export default ({ id }: { id: string }) => {
     }
     const interval = setInterval(() => {
       getAdminStreams()
-        .then(streams => {
+        .then((streams) => {
           console.log(`sort func:`, sortFunc);
           if (sortFunc) {
             streams.sort(sortFunc);
           }
           setStreams(streams);
         })
-        .catch(err => console.error(err)); // todo: surface this
+        .catch((err) => console.error(err)); // todo: surface this
     }, 5000);
     return () => clearInterval(interval);
   }, [isVisible, sortFunc]);
@@ -136,7 +137,7 @@ export default ({ id }: { id: string }) => {
         width: "100%",
         maxWidth: 958,
         mb: [3, 3],
-        mx: "auto"
+        mx: "auto",
       }}
     >
       {deleteModal && selectedStream && (
@@ -176,44 +177,45 @@ export default ({ id }: { id: string }) => {
           <Box></Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortUserId}
-          
-          >User name</Box>
+          >
+            User name ⭥
+          </Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortName}
           >
-            Name
+            Name ⭥
           </Box>
           <Box>Details</Box>
           <Box>Segments</Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortCreated}
           >
-            Created
+            Created ⭥
           </Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortLastSeen}
           >
-            Last Active
+            Last Active ⭥
           </Box>
           <Box
             sx={{
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={sortActive}
           >
-            Status
+            Status ⭥
           </Box>
         </TableRow>
         {streams.map((stream: Stream) => {
@@ -224,7 +226,7 @@ export default ({ id }: { id: string }) => {
             sourceSegments,
             transcodedSegments,
             createdAt,
-            isActive
+            isActive,
           } = stream;
           const selected = selectedStream && selectedStream.id === id;
           return (
