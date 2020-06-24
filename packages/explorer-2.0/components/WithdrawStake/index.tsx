@@ -5,7 +5,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ lock }) => {
+export default ({ unbondingLockId }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -22,7 +22,7 @@ export default ({ lock }) => {
           initTransaction(client, async () => {
             await withdrawStake({
               variables: {
-                unbondingLockId: lock.unbondingLockId,
+                unbondingLockId,
               },
             })
           })

@@ -5,7 +5,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ lock }) => {
+export default ({ unbondingLockId, delegate, newPosPrev, newPosNext }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -22,8 +22,10 @@ export default ({ lock }) => {
           initTransaction(client, async () => {
             await rebondFromUnbonded({
               variables: {
-                unbondingLockId: lock.unbondingLockId,
-                delegate: lock.delegate.id,
+                unbondingLockId,
+                delegate,
+                newPosPrev,
+                newPosNext,
               },
             })
           })

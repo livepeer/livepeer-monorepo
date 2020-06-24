@@ -1,3 +1,17 @@
-mutation bond($to: String!, $amount: String!) {
-  tx: bond(to: $to, amount: $amount)
+mutation bond(
+  $amount: String!
+  $to: String!
+  $oldDelegateNewPosPrev: String!
+  $oldDelegateNewPosNext: String!
+  $currDelegateNewPosPrev: String!
+  $currDelegateNewPosNext: String!
+) {
+  tx: bond(
+    amount: $amount
+    to: $to
+    oldDelegateNewPosPrev: $oldDelegateNewPosPrev
+    oldDelegateNewPosNext: $oldDelegateNewPosNext
+    currDelegateNewPosPrev: $currDelegateNewPosPrev
+    currDelegateNewPosNext: $currDelegateNewPosNext
+  )
 }

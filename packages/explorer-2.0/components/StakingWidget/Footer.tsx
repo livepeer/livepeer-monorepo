@@ -3,7 +3,12 @@ import Stake from './Stake'
 import Unstake from './Unstake'
 import { Account, Delegator, Transcoder, Round } from '../../@types'
 import Utils from 'web3-utils'
-import { getDelegatorStatus, MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
+import {
+  getDelegatorStatus,
+  MAX_EARNINGS_CLAIMS_ROUNDS,
+  EMPTY_ADDRESS,
+  getHint,
+} from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import Warning from './Warning'
 import Approve from '../Approve'
@@ -12,6 +17,7 @@ import Help from '../../public/img/help.svg'
 import { useApolloClient } from '@apollo/react-hooks'
 
 interface Props {
+  transcoders: [Transcoder]
   action: string
   amount: string
   transcoder: Transcoder
@@ -21,6 +27,7 @@ interface Props {
 }
 
 export default ({
+  transcoders,
   delegator,
   transcoder,
   action,
@@ -90,10 +97,28 @@ export default ({
     roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     parseFloat(amount) > 0
 
+  const { newPosPrev, newPosNext } = getHint(
+    delegator?.delegate?.id,
+    transcoders,
+  )
+
+  const {
+    newPosPrev: currDelegateNewPosPrev,
+    newPosNext: currDelegateNewPosNext,
+  } = getHint(transcoder.id, transcoders)
+
   if (action == 'stake') {
     return (
       <>
-        <Stake disabled={!canStake} transcoder={transcoder} amount={amount} />
+        <Stake
+          disabled={!canStake}
+          to={transcoder.id}
+          amount={amount}
+          oldDelegateNewPosPrev={newPosPrev}
+          oldDelegateNewPosNext={newPosNext}
+          currDelegateNewPosPrev={currDelegateNewPosPrev}
+          currDelegateNewPosNext={currDelegateNewPosNext}
+        />
         {renderStakeWarnings(
           roundsSinceLastClaim,
           amount,
@@ -109,7 +134,12 @@ export default ({
   }
   return (
     <>
-      <Unstake disabled={!canUnstake} amount={amount} />
+      <Unstake
+        amount={amount}
+        newPosPrev={newPosPrev}
+        newPosNext={newPosNext}
+        disabled={!canUnstake}
+      />
       {renderUnstakeWarnings(
         roundsSinceLastClaim,
         amount,

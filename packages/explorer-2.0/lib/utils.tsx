@@ -1,6 +1,8 @@
 import { Delegator, Round, UnbondingLock } from '../@types'
 import Utils from 'web3-utils'
 
+export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 export const abbreviateNumber = (value, precision = 3) => {
   let newValue = value
   const suffixes = ['', 'K', 'M', 'B', 'T']
@@ -318,4 +320,28 @@ export const mergeObjectsInUnique = (array, property) => {
   })
 
   return Array.from(newArray.values())
+}
+
+export const getHint = (id, transcoders) => {
+  let hint = {
+    newPosPrev: EMPTY_ADDRESS,
+    newPosNext: EMPTY_ADDRESS,
+  }
+
+  const index = transcoders.indexOf(id.toLowerCase())
+
+  // if transcoder is not in active set return
+  if (index < 0) {
+    return hint
+  } else if (index === 0) {
+    // if transcoder is the first in the active set, only set posNex
+    hint.newPosNext = transcoders[index + 1]
+  } else if (index === transcoders.length) {
+    // if transcoder is the last in the active set, only set posPrev
+    hint.newPosPrev = transcoders[index - 1]
+  } else {
+    hint.newPosNext = transcoders[index + 1]
+    hint.newPosPrev = transcoders[index - 1]
+  }
+  return hint
 }

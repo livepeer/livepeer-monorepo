@@ -9,13 +9,13 @@ type Mutation {
   approve(type: String!, amount: String!): JSON
   
   "Submits a bond transaction for a previously approved amount"
-  bond(to: String!, amount: String!): JSON
+  bond(amount: String!, to: String!, oldDelegateNewPosPrev: String!, oldDelegateNewPosNext: String!, currDelegateNewPosPrev: String!, currDelegateNewPosNext: String!): JSON
   
   "Claims earnings from your last claim round through specified round"
   batchClaimEarnings(lastClaimRound: String!, endRound: String!): JSON
   
   "Submits a bond transaction for a previously approved amount"
-  unbond(amount: String!): JSON
+  unbond(amount: String!, newPosPrev: String!, newPosNext: String!): JSON
   
   "Withdraws unbonded stake into account wallet"
   withdrawStake(unbondingLockId: Int!): JSON
@@ -24,10 +24,10 @@ type Mutation {
   withdrawFees: JSON
   
   "Rebond tokens for an unbonding lock to a delegator's current delegate while a delegator is in the Bonded or Pending states"
-  rebond(unbondingLockId: Int!): JSON
+  rebond(unbondingLockId: Int!, newPosPrev: String!, newPosNext: String!): JSON
   
   "Rebond tokens for an unbonding lock to a delegate while a delegator is in the Unbonded state "
-  rebondFromUnbonded(delegate: String!, unbondingLockId: Int!): JSON
+  rebondFromUnbonded(delegate: String!, unbondingLockId: Int!, newPosPrev: String!, newPosNext: String!): JSON
   
   "Submits a round initialization transaction"
   initializeRound: JSON

@@ -1,3 +1,3 @@
-mutation unbond($amount: String!) {
-  tx: unbond(amount: $amount)
+mutation unbond($amount: String!, $newPosPrev: String!, $newPosNext: String!) {
+  tx: unbond(amount: $amount, newPosPrev: $newPosPrev, newPosNext: $newPosNext)
 }

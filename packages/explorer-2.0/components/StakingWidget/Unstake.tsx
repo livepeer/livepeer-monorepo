@@ -6,7 +6,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ amount, disabled }) => {
+export default ({ amount, newPosPrev, newPosNext, disabled }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -26,6 +26,8 @@ export default ({ amount, disabled }) => {
             await unbond({
               variables: {
                 amount: Utils.toWei(amount ? amount.toString() : '0'),
+                newPosPrev,
+                newPosNext,
               },
             })
           })
