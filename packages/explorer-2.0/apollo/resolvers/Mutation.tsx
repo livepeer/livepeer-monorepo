@@ -59,49 +59,45 @@ export async function approve(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function bond(_obj, _args, _ctx) {
-  try {
-    const {
+  const {
+    amount,
+    to,
+    oldDelegateNewPosPrev,
+    oldDelegateNewPosNext,
+    currDelegateNewPosPrev,
+    currDelegateNewPosNext,
+  } = _args
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    'BondingManager',
+    'bondWithHint',
+    [
       amount,
       to,
       oldDelegateNewPosPrev,
       oldDelegateNewPosNext,
       currDelegateNewPosPrev,
       currDelegateNewPosNext,
-    } = _args
-    const gas = await _ctx.livepeer.rpc.estimateGas(
-      'BondingManager',
-      'bondWithHint',
-      [
-        amount,
-        to,
-        oldDelegateNewPosPrev,
-        oldDelegateNewPosNext,
-        currDelegateNewPosPrev,
-        currDelegateNewPosNext,
-      ],
-    )
-    const txHash = await _ctx.livepeer.rpc.bondWithHint(
-      amount,
-      to,
-      oldDelegateNewPosPrev,
-      oldDelegateNewPosNext,
-      currDelegateNewPosPrev,
-      currDelegateNewPosNext,
-      {
-        gas: gas,
-        returnTxHash: true,
-      },
-    )
+    ],
+  )
+  const txHash = await _ctx.livepeer.rpc.bondWithHint(
+    amount,
+    to,
+    oldDelegateNewPosPrev,
+    oldDelegateNewPosNext,
+    currDelegateNewPosPrev,
+    currDelegateNewPosNext,
+    {
+      gas: gas,
+      returnTxHash: true,
+    },
+  )
 
-    return {
-      gas,
-      txHash,
-      inputData: {
-        ..._args,
-      },
-    }
-  } catch (e) {
-    console.log(e)
+  return {
+    gas,
+    txHash,
+    inputData: {
+      ..._args,
+    },
   }
 }
 
@@ -187,34 +183,30 @@ export async function batchClaimEarnings(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function unbond(_obj, _args, _ctx) {
-  try {
-    const { amount, newPosPrev, newPosNext } = _args
-    const gas = await _ctx.livepeer.rpc.estimateGas(
-      'BondingManager',
-      'unbondWithHint',
-      [amount, newPosPrev, newPosNext],
-    )
+  const { amount, newPosPrev, newPosNext } = _args
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    'BondingManager',
+    'unbondWithHint',
+    [amount, newPosPrev, newPosNext],
+  )
 
-    const txHash = await _ctx.livepeer.rpc.unbondWithHint(
-      amount,
-      newPosPrev,
-      newPosNext,
-      {
-        ..._ctx.livepeer.config.defaultTx,
-        gas,
-        returnTxHash: true,
-      },
-    )
-
-    return {
+  const txHash = await _ctx.livepeer.rpc.unbondWithHint(
+    amount,
+    newPosPrev,
+    newPosNext,
+    {
+      ..._ctx.livepeer.config.defaultTx,
       gas,
-      txHash,
-      inputData: {
-        ..._args,
-      },
-    }
-  } catch (e) {
-    console.log(e)
+      returnTxHash: true,
+    },
+  )
+
+  return {
+    gas,
+    txHash,
+    inputData: {
+      ..._args,
+    },
   }
 }
 
