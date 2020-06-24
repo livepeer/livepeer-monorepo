@@ -114,7 +114,7 @@ const Home = () => {
             }}
           >
             <StakingWidget
-              transcoders={data.transcoders}
+              transcoders={data.transcoders.filter((t) => t.active)}
               delegator={dataMyAccount?.delegator}
               currentRound={data.protocol.currentRound}
               account={dataMyAccount?.account}
