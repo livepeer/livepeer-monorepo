@@ -2,6 +2,8 @@ import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import Utils from 'web3-utils'
 import { createApolloFetch } from 'apollo-fetch'
+import { applyMiddleware } from 'graphql-middleware'
+import graphqlFields from 'graphql-fields'
 
 import schema from '../apollo'
 import {
@@ -9,7 +11,12 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
-import { getBlock, getBlockByNumber, getEstimatedBlockCountdown } from './utils'
+import {
+  getBlock,
+  getBlockByNumber,
+  getEstimatedBlockCountdown,
+  mergeObjectsInUnique,
+} from './utils'
 
 export default async () => {
   const subgraphServiceLink = new HttpLink({
@@ -89,15 +96,6 @@ export default async () => {
               info: _info,
             })
             return threeBoxSpace
-          },
-        },
-        price: {
-          async resolve(_transcoder, _args, _context, _info) {
-            const response = await fetch(
-              `https://livepeer-pricing-tool.com/priceHistory/${_transcoder.id}`,
-            )
-            const prices = await response.json()
-            return prices.length ? prices[0].PricePerPixel : 0
           },
         },
       },
@@ -229,5 +227,50 @@ export default async () => {
     },
   })
 
-  return merged
+  // intercept and transform transcoder query responses with price data
+  const queryMiddleware = {
+    Query: {
+      transcoder: async (resolve, parent, args, ctx, info) => {
+        const selectionSet = Object.keys(graphqlFields(info))
+        let transcoder = await resolve(parent, args, ctx, info)
+
+        // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
+        if (!selectionSet.includes('price')) {
+          return transcoder
+        }
+
+        const response = await fetch(
+          `https://livepeer-pricing-tool.com/priceHistory/${args.id}`,
+        )
+        const prices = await response.json()
+
+        transcoder['price'] = prices.length ? prices[0].PricePerPixel : 0
+        return transcoder
+      },
+      transcoders: async (resolve, parent, args, ctx, info) => {
+        const selectionSet = Object.keys(graphqlFields(info))
+        const transcoders = await resolve(parent, args, ctx, info)
+
+        // if selection set does not include 'price', return transcoders as is, otherwise fetch and merge prices
+        if (!selectionSet.includes('price')) {
+          return transcoders
+        }
+
+        const response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`,
+        )
+        let transcodersWithPrice = await response.json()
+        transcodersWithPrice = transcodersWithPrice.map(t => ({
+          id: t.Address,
+          price: t.PricePerPixel,
+        }))
+        const merged = mergeObjectsInUnique(
+          [...transcoders, ...transcodersWithPrice],
+          'id',
+        )
+        return merged
+      },
+    },
+  }
+  return applyMiddleware(merged, queryMiddleware)
 }
