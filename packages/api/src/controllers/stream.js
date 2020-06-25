@@ -239,6 +239,20 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     playbackId,
     createdByTokenName: req.tokenName,
   })
+
+  // FIXME: tempoarily, Mist can only make passthrough FPS streams
+  if (
+    req.headers['user-agent'] &&
+    req.headers['user-agent'].toLowerCase().includes('mistserver')
+  ) {
+    doc.profiles = (doc.profiles || []).map((profile) => {
+      return {
+        ...profile,
+        fps: 0,
+      }
+    })
+  }
+
   await Promise.all([
     req.store.create(doc),
     trackAction(
