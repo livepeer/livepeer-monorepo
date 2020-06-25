@@ -40,7 +40,7 @@ export { TRANSCODER_STATUS }
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
   pollCreatorAddress: '0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c',
-  provider: 'https://mainnet.infura.io/v3/b4aafb129382481399d689a5c9d35287',
+  provider: process.env.INFURA_ENDPOINT,
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
   gas: null,
