@@ -157,9 +157,7 @@ export default async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake)
-              .sub(totalVoteStake)
-              .toString()
+            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
           },
         },
         status: {
@@ -239,12 +237,16 @@ export default async () => {
           return transcoder
         }
 
-        const response = await fetch(
-          `https://livepeer-pricing-tool.com/priceHistory/${args.id}`,
+        let response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`,
         )
-        const prices = await response.json()
-
-        transcoder['price'] = prices.length ? prices[0].PricePerPixel : 0
+        let transcodersWithPrice = await response.json()
+        let transcoderWithPrice = transcodersWithPrice.filter(
+          (t) => t.Address.toLowerCase() === args.id.toLowerCase(),
+        )[0]
+        transcoder['price'] = transcoderWithPrice?.PricePerPixel
+          ? transcoderWithPrice?.PricePerPixel
+          : 0
         return transcoder
       },
       transcoders: async (resolve, parent, args, ctx, info) => {
@@ -260,7 +262,7 @@ export default async () => {
           `https://livepeer-pricing-tool.com/orchestratorStats`,
         )
         let transcodersWithPrice = await response.json()
-        transcodersWithPrice = transcodersWithPrice.map(t => ({
+        transcodersWithPrice = transcodersWithPrice.map((t) => ({
           id: t.Address,
           price: t.PricePerPixel,
         }))
