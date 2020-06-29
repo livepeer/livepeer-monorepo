@@ -233,7 +233,7 @@ export default async () => {
         let transcoder = await resolve(parent, args, ctx, info)
 
         // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
-        if (!selectionSet.includes('price')) {
+        if (!transcoder || !selectionSet.includes('price')) {
           return transcoder
         }
 
