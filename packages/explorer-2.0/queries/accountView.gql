@@ -49,6 +49,7 @@ query($account: ID!) {
     active
     feeShare
     rewardCut
+    price
     status
     active
     totalStake

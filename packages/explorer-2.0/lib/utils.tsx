@@ -16,11 +16,11 @@ export const abbreviateNumber = (value, precision = 3) => {
   return newValue
 }
 
-export const numberWithCommas = x => {
+export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-export const getDelegationStatusColor = status => {
+export const getDelegationStatusColor = (status) => {
   if (status == 'Bonded') {
     return 'primary'
   } else if (status == 'Unbonding') {
@@ -133,7 +133,7 @@ const networksIds = {
   rinkeby: 4,
 }
 
-export const detectNetwork = async provider => {
+export const detectNetwork = async (provider) => {
   let netId = null
 
   if (provider instanceof Object) {
@@ -276,7 +276,7 @@ export const getBlock = async () => {
   return Utils.hexToNumber(result)
 }
 
-export const getBlockByNumber = async number => {
+export const getBlockByNumber = async (number) => {
   const blockDataResponse = await fetch(
     `https://${
       process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
@@ -288,7 +288,7 @@ export const getBlockByNumber = async number => {
   return result
 }
 
-export const getEstimatedBlockCountdown = async number => {
+export const getEstimatedBlockCountdown = async (number) => {
   const countdownRaw = await fetch(
     `https://${
       process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
@@ -298,4 +298,24 @@ export const getEstimatedBlockCountdown = async number => {
   )
   const { result } = await countdownRaw.json()
   return result
+}
+
+export const expandedPriceLabels = {
+  ['pixel']: 'pixel',
+  ['1m pixels']: '1 million pixels',
+  ['1b pixels']: '1 billion pixels',
+  ['1t pixels']: '1 trillion pixels',
+}
+
+export const mergeObjectsInUnique = (array, property) => {
+  const newArray = new Map()
+
+  array.forEach((item) => {
+    const propertyValue = item[property]
+    newArray.has(propertyValue)
+      ? newArray.set(propertyValue, { ...item, ...newArray.get(propertyValue) })
+      : newArray.set(propertyValue, item)
+  })
+
+  return Array.from(newArray.values())
 }

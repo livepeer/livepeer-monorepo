@@ -1,26 +1,34 @@
 import { Flex, Box } from 'theme-ui'
 import { lighten } from '@theme-ui/color'
-import { useMemo } from 'react'
-import { useTable, useFilters, useSortBy } from 'react-table'
-import * as Utils from 'web3-utils'
-import { getDelegatorStatus, abbreviateNumber } from '../../lib/utils'
-import Orchestrators from '../../public/img/orchestrators.svg'
+import { useMemo, useState, useRef } from 'react'
+import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
+import Utils from 'web3-utils'
+import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import Search from '../../public/img/search.svg'
 import Help from '../../public/img/help.svg'
 import { useApolloClient } from '@apollo/react-hooks'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import matchSorter from 'match-sorter'
-import { Styled } from 'theme-ui'
 import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Router from 'next/router'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
+import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
+import {
+  Menu,
+  MenuItemRadioGroup,
+  MenuItemRadio,
+} from '@modulz/radix/dist/index.es'
+import Price from '../Price'
 
 export default ({ currentRound, transcoders }) => {
   const { width } = useWindowSize()
   const client = useApolloClient()
+  const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
+  const targetRef = useRef()
+  const [priceSetting, setPriceSetting] = useState('1t pixels')
 
   const GET_ROI = gql`
     {
@@ -46,7 +54,6 @@ export default ({ currentRound, transcoders }) => {
           let b = getRowValueByColumnID(rowB, columnID)
           let aThreeBoxSpace = getRowValueByColumnID(rowA, 'threeBoxSpace')
           let bThreeBoxSpace = getRowValueByColumnID(rowB, 'threeBoxSpace')
-
           let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a
           let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b
 
@@ -90,14 +97,18 @@ export default ({ currentRound, transcoders }) => {
         sortInverted: true,
       },
       {
+        Header: 'Price',
+        accessor: 'price',
+      },
+      {
         Header: 'Calls',
         accessor: 'pools',
         sortType: (rowA, rowB, columnID) => {
           let a = getRowValueByColumnID(rowA, columnID)
           let b = getRowValueByColumnID(rowB, columnID)
 
-          let rowACallsMade = a.filter(r => r.rewardTokens != null).length
-          let rowBCallsMade = b.filter(r => r.rewardTokens != null).length
+          let rowACallsMade = a.filter((r) => r.rewardTokens != null).length
+          let rowBCallsMade = b.filter((r) => r.rewardTokens != null).length
 
           return compareBasic(rowACallsMade, rowBCallsMade)
         },
@@ -129,7 +140,7 @@ export default ({ currentRound, transcoders }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter(row => {
+        return rows.filter((row) => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
@@ -146,6 +157,7 @@ export default ({ currentRound, transcoders }) => {
     columns,
     data: transcoders,
     disableSortRemove: true,
+    autoResetPage: false,
     initialState: {
       sortBy: [{ id: 'totalStake', desc: true }],
       hiddenColumns: [
@@ -164,14 +176,69 @@ export default ({ currentRound, transcoders }) => {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
-  } = useTable(tableOptions, useFilters, useSortBy)
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageCount,
+    nextPage,
+    previousPage,
+    state: { pageIndex },
+  }: any = useTable(tableOptions, useFilters, useSortBy, usePagination)
 
   const accountColumn: any = headerGroups[0].headers[0]
 
+  const PriceSettingToggle = () => (
+    <span
+      ref={targetRef}
+      onClick={(e) => {
+        e.stopPropagation()
+        setIsPriceSettingOpen(true)
+      }}
+      sx={{
+        fontSize: 10,
+      }}
+    >
+      <span sx={{ mx: '4px' }}>/</span>
+      <span
+        title={`Price of transcoding per ${expandedPriceLabels[priceSetting]}`}
+        sx={{
+          color: 'text',
+          borderBottom: '1px dashed',
+          borderColor: 'text',
+          transition: '.3s',
+          ':hover': { color: 'primary' },
+          ':active': { color: 'primary' },
+        }}
+      >
+        {priceSetting}
+      </span>
+    </span>
+  )
   return (
     <Box sx={{ width: '100%' }}>
+      <Menu
+        style={{
+          background: '#1E2026',
+          padding: 0,
+          boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
+        }}
+        isOpen={isPriceSettingOpen}
+        onClose={() => setIsPriceSettingOpen(false)}
+        buttonRef={targetRef}
+      >
+        <MenuItemRadioGroup
+          value={priceSetting}
+          onChange={(value) => {
+            setPriceSetting(value)
+          }}
+        >
+          <MenuItemRadio value="pixel" label="1 pixel" />
+          <MenuItemRadio value="1m pixels" label="1 million pixels" />
+          <MenuItemRadio value="1b pixels" label="1 billion pixels" />
+          <MenuItemRadio value="1t pixels" label="1 trillion pixels" />
+        </MenuItemRadioGroup>
+      </Menu>
       <Flex
         sx={{
           bg: 'background',
@@ -188,18 +255,6 @@ export default ({ currentRound, transcoders }) => {
           justifyContent: 'space-between',
         }}
       >
-        <Styled.h1
-          sx={{
-            mb: [4, 4, 4, 5],
-            display: ['none', 'none', 'none', 'flex'],
-            alignItems: 'center',
-          }}
-        >
-          <Orchestrators
-            sx={{ width: 32, height: 32, mr: 2, color: 'primary' }}
-          />{' '}
-          Orchestrators
-        </Styled.h1>
         <Box>{accountColumn.render('Filter')}</Box>
       </Flex>
       <Box>
@@ -233,13 +288,15 @@ export default ({ currentRound, transcoders }) => {
                       textTransform: 'uppercase',
                     }}
                     align="left"
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    {...column.getHeaderProps(
+                      column.getSortByToggleProps({ title: '' }),
+                    )}
                     key={i}
                   >
                     <Flex>
                       <span
                         sx={{
-                          fontSize: 0,
+                          fontSize: 10,
                         }}
                       >
                         <span>
@@ -255,7 +312,9 @@ export default ({ currentRound, transcoders }) => {
                         </span>
                         {column.render('Header')}
                       </span>
-
+                      {column.render('Header') === 'Price' && (
+                        <PriceSettingToggle />
+                      )}
                       {renderTooltip(column.render('Header'))}
                     </Flex>
                   </th>
@@ -265,12 +324,13 @@ export default ({ currentRound, transcoders }) => {
           </thead>
 
           <tbody {...getTableBodyProps()}>
-            {rows.map((row: any, rowIndex) => {
+            {page.map((row: any, rowIndex) => {
+              const orchestratorIndex = rowIndex + pageIndex * 10
               prepareRow(row)
               return (
                 <tr
                   {...row.getRowProps()}
-                  key={rowIndex}
+                  key={orchestratorIndex}
                   onClick={() => {
                     if (width < 1020) {
                       Router.push(
@@ -307,18 +367,12 @@ export default ({ currentRound, transcoders }) => {
                     },
                     '.status': {
                       borderColor:
-                        rowIndex ==
-                        (data &&
-                          data.selectedTranscoder &&
-                          data.selectedTranscoder.index)
+                        orchestratorIndex == data?.selectedTranscoder?.index
                           ? 'surface'
                           : 'background',
                     },
                     bg:
-                      rowIndex ==
-                      (data &&
-                        data.selectedTranscoder &&
-                        data.selectedTranscoder.index)
+                      orchestratorIndex == data?.selectedTranscoder?.index
                         ? [
                             'transparent',
                             'transparent',
@@ -346,7 +400,7 @@ export default ({ currentRound, transcoders }) => {
                           width: 'auto',
                           fontSize: 1,
                           pl: 2,
-                          pr: 2,
+
                           py: '24px',
                         }}
                         {...cell.getCellProps()}
@@ -361,7 +415,7 @@ export default ({ currentRound, transcoders }) => {
                               data: {
                                 selectedTranscoder: {
                                   __typename: 'Transcoder',
-                                  index: rowIndex,
+                                  index: orchestratorIndex,
                                   id: row.values.id,
                                   threeBoxSpace: row.values.threeBoxSpace,
                                 },
@@ -381,228 +435,301 @@ export default ({ currentRound, transcoders }) => {
           </tbody>
         </table>
       </Box>
+      <Flex
+        sx={{
+          mt: 2,
+          mb: 4,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <RiArrowLeftLine
+          sx={{
+            cursor: 'pointer',
+            color: canPreviousPage ? 'primary' : 'text',
+            opacity: canPreviousPage ? 1 : 0.5,
+          }}
+          onClick={() => {
+            if (canPreviousPage) {
+              previousPage()
+            }
+          }}
+        />
+        <Box sx={{ fontSize: 1, mx: 2 }}>
+          Page <span sx={{ fontFamily: 'monospace' }}>{pageIndex + 1}</span> of{' '}
+          <span sx={{ fontFamily: 'monospace' }}>{pageCount}</span>
+        </Box>
+        <RiArrowRightLine
+          sx={{
+            cursor: 'pointer',
+            color: canNextPage ? 'primary' : 'text',
+            opacity: canNextPage ? 1 : 0.5,
+          }}
+          onClick={() => {
+            if (canNextPage) {
+              nextPage()
+            }
+          }}
+        />
+      </Flex>
     </Box>
   )
-}
 
-function renderTooltip(title) {
-  switch (title) {
-    case 'Stake':
-      return (
-        <>
-          <ReactTooltip
-            id="tooltip-stake"
-            className="tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-          <Help
-            data-tip="Total LPT staked with an orchestrator, including its own stake."
-            data-for="tooltip-stake"
-            sx={{
-              cursor: 'pointer',
-              position: 'relative',
-              ml: 1,
-              top: '2px',
-              width: 12,
-              height: 12,
-            }}
-          />
-        </>
-      )
-    case 'Fees':
-      return (
-        <>
-          <ReactTooltip
-            id="tooltip-fees"
-            className="tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-          <Help
-            data-tip="Total ETH earned from transcoding."
-            data-for="tooltip-fees"
-            sx={{
-              cursor: 'pointer',
-              position: 'relative',
-              ml: 1,
-              top: '2px',
-              width: 12,
-              height: 12,
-            }}
-          />
-        </>
-      )
-    case 'Reward Cut':
-      return (
-        <>
-          <ReactTooltip
-            id="tooltip-reward-cut"
-            className="tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-          <Help
-            data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
-            data-for="tooltip-reward-cut"
-            sx={{
-              cursor: 'pointer',
-              position: 'relative',
-              ml: 1,
-              top: '2px',
-              width: 12,
-              height: 12,
-            }}
-          />
-        </>
-      )
-    case 'Fee Cut':
-      return (
-        <>
-          <ReactTooltip
-            id="tooltip-fee-cut"
-            className="tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-          <Help
-            data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all delegators by how much they have staked relative to others."
-            data-for="tooltip-fee-cut"
-            sx={{
-              cursor: 'pointer',
-              position: 'relative',
-              ml: 1,
-              top: '2px',
-              width: 12,
-              height: 12,
-            }}
-          />
-        </>
-      )
-    case 'Calls':
-      return (
-        <>
-          <ReactTooltip
-            id="tooltip-calls"
-            className="tooltip"
-            place="bottom"
-            type="dark"
-            effect="solid"
-          />
-          <Help
-            data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
-            data-for="tooltip-calls"
-            sx={{
-              cursor: 'pointer',
-              position: 'relative',
-              ml: 1,
-              top: '2px',
-              width: 12,
-              height: 12,
-            }}
-          />
-        </>
-      )
-
-    default:
-      return null
+  function fuzzyTextFilterFn(rows, id, filterValue) {
+    return matchSorter(rows, filterValue, {
+      keys: [(row) => row.values[id]],
+    })
   }
-}
 
-function renderSwitch(cell, currentRound) {
-  switch (cell.column.Header) {
-    case 'Account':
-      const status = getDelegatorStatus(cell.row.values.delegator, currentRound)
-      const active =
-        cell.row.values.activationRound <= currentRound.id &&
-        cell.row.values.deactivationRound > currentRound.id
-      return (
-        <AccountCell
-          status={status}
-          active={active}
-          threeBoxSpace={cell.row.values.threeBoxSpace}
-          address={cell.value}
-        />
-      )
-    case 'Stake':
-      return (
-        <span sx={{ fontFamily: 'monospace' }}>
-          {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
-        </span>
-      )
-    case 'Fees':
-      return (
-        <span sx={{ fontFamily: 'monospace' }}>
-          {cell.value ? +parseFloat(Utils.fromWei(cell.value)).toFixed(2) : 0} Ξ
-        </span>
-      )
-    case 'Reward Cut':
-      return <span sx={{ fontFamily: 'monospace' }}>{cell.value / 10000}%</span>
-    case 'Fee Cut':
-      return (
-        <span sx={{ fontFamily: 'monospace' }}>
-          {cell.value === '0' || !cell.value
-            ? '100%'
-            : `${(100 - cell.value / 10000)
-                .toFixed(2)
-                .replace(/[.,]00$/, '')}%`}
-        </span>
-      )
-    case 'Calls':
-      let callsMade = cell.value.filter(r => r.rewardTokens != null).length
-      return (
-        <span sx={{ fontFamily: 'monospace' }}>
-          {`${callsMade}/${cell.value.length}`}
-        </span>
-      )
-    default:
-      return null
-  }
-}
+  // Let the table remove the filter if the string is empty
+  fuzzyTextFilterFn.autoRemove = (val) => !val
 
-function fuzzyTextFilterFn(rows, id, filterValue) {
-  return matchSorter(rows, filterValue, {
-    keys: [row => row.values[id]],
-  })
-}
-
-// Let the table remove the filter if the string is empty
-fuzzyTextFilterFn.autoRemove = val => !val
-
-function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
-  return (
-    <Flex
-      sx={{
-        alignItems: 'center',
-        pl: 1,
-      }}
-    >
-      <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
-      <Box
-        value={filterValue || ''}
-        onChange={e => {
-          setFilter(e.target.value || undefined)
-        }}
-        placeholder={`Filter`}
-        as="input"
-        type="text"
-        variant="input"
+  function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
+    return (
+      <Flex
         sx={{
-          display: 'block',
-          outline: 'none',
-          width: '100%',
-          appearance: 'none',
-          fontSize: 2,
-          lineHeight: 'inherit',
-          border: 0,
-          color: 'inherit',
-          bg: 'background',
+          alignItems: 'center',
+          pl: 1,
         }}
-      />
-    </Flex>
-  )
+      >
+        <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
+        <Box
+          value={filterValue || ''}
+          onChange={(e) => {
+            setFilter(e.target.value || undefined)
+          }}
+          placeholder={`Filter`}
+          as="input"
+          type="text"
+          variant="input"
+          sx={{
+            display: 'block',
+            outline: 'none',
+            width: '100%',
+            appearance: 'none',
+            fontSize: 2,
+            lineHeight: 'inherit',
+            border: 0,
+            color: 'inherit',
+            bg: 'background',
+          }}
+        />
+      </Flex>
+    )
+  }
+  function renderTooltip(title) {
+    switch (title) {
+      case 'Stake':
+        return (
+          <>
+            <ReactTooltip
+              id="tooltip-stake"
+              className="tooltip"
+              place="bottom"
+              type="dark"
+              effect="solid"
+            />
+            <Help
+              data-tip="Total LPT staked with an orchestrator, including its own stake."
+              data-for="tooltip-stake"
+              sx={{
+                cursor: 'pointer',
+                position: 'relative',
+                ml: 1,
+                top: '1px',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </>
+        )
+      case 'Fees':
+        return (
+          <>
+            <ReactTooltip
+              id="tooltip-fees"
+              className="tooltip"
+              place="bottom"
+              type="dark"
+              effect="solid"
+            />
+            <Help
+              data-tip="Total ETH earned from transcoding."
+              data-for="tooltip-fees"
+              sx={{
+                cursor: 'pointer',
+                position: 'relative',
+                ml: 1,
+                top: '2px',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </>
+        )
+      case 'Price':
+        return (
+          <>
+            <ReactTooltip
+              id="tooltip-price"
+              className="tooltip"
+              place="bottom"
+              type="dark"
+              effect="solid"
+            />
+            <Help
+              data-tip={`Price of transcoding per ${expandedPriceLabels[priceSetting]}.`}
+              data-for="tooltip-price"
+              sx={{
+                cursor: 'pointer',
+                position: 'relative',
+                ml: 1,
+                top: '2px',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </>
+        )
+      case 'Reward Cut':
+        return (
+          <>
+            <ReactTooltip
+              id="tooltip-reward-cut"
+              className="tooltip"
+              place="bottom"
+              type="dark"
+              effect="solid"
+            />
+            <Help
+              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+              data-for="tooltip-reward-cut"
+              sx={{
+                cursor: 'pointer',
+                position: 'relative',
+                ml: 1,
+                top: '2px',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </>
+        )
+      case 'Fee Cut':
+        return (
+          <>
+            <ReactTooltip
+              id="tooltip-fee-cut"
+              className="tooltip"
+              place="bottom"
+              type="dark"
+              effect="solid"
+            />
+            <Help
+              data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all delegators by how much they have staked relative to others."
+              data-for="tooltip-fee-cut"
+              sx={{
+                cursor: 'pointer',
+                position: 'relative',
+                ml: 1,
+                top: '2px',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </>
+        )
+      case 'Calls':
+        return (
+          <>
+            <ReactTooltip
+              id="tooltip-calls"
+              className="tooltip"
+              place="bottom"
+              type="dark"
+              effect="solid"
+            />
+            <Help
+              data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
+              data-for="tooltip-calls"
+              sx={{
+                cursor: 'pointer',
+                position: 'relative',
+                ml: 1,
+                top: '2px',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </>
+        )
+
+      default:
+        return null
+    }
+  }
+
+  function renderSwitch(cell, currentRound) {
+    switch (cell.column.Header) {
+      case 'Account':
+        const active =
+          cell.row.values.activationRound <= currentRound.id &&
+          cell.row.values.deactivationRound > currentRound.id
+        return (
+          <AccountCell
+            active={active}
+            threeBoxSpace={cell.row.values.threeBoxSpace}
+            address={cell.value}
+          />
+        )
+      case 'Stake':
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>
+            {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
+          </span>
+        )
+      case 'Fees':
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>
+            {cell.value ? +parseFloat(Utils.fromWei(cell.value)).toFixed(2) : 0}{' '}
+            <span sx={{ fontSize: 12 }}>Ξ</span>
+          </span>
+        )
+      case 'Reward Cut':
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>{cell.value / 10000}%</span>
+        )
+      case 'Fee Cut':
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>
+            {cell.value === '0' || !cell.value
+              ? '100%'
+              : `${(100 - cell.value / 10000)
+                  .toFixed(2)
+                  .replace(/[.,]00$/, '')}%`}
+          </span>
+        )
+      case 'Price':
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>
+            <span data-html={true}>
+              {cell.value <= 0 ? (
+                'N/A'
+              ) : (
+                <Price value={cell.value} per={priceSetting} />
+              )}
+            </span>
+          </span>
+        )
+      case 'Calls':
+        let callsMade = cell.value.filter((r) => r.rewardTokens != null).length
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>
+            {`${callsMade}/${cell.value.length}`}
+          </span>
+        )
+      default:
+        return null
+    }
+  }
 }

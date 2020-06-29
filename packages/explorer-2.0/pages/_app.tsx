@@ -16,8 +16,9 @@ function getLibrary(provider) {
   return library
 }
 
-function MyApp({ Component, pageProps }) {
-  const getLayout = Component.getLayout || (page => <Layout children={page} />)
+function App({ Component, pageProps }) {
+  const getLayout =
+    Component.getLayout || ((page) => <Layout children={page} />)
   return (
     <>
       <Head>
@@ -49,4 +50,4 @@ function MyApp({ Component, pageProps }) {
 
 export default withApollo({
   ssr: false,
-})(MyApp)
+})(App)

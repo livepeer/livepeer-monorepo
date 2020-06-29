@@ -1,5 +1,5 @@
 import { Box, Flex } from 'theme-ui'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import { abbreviateNumber, checkAddressEquality } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/router'

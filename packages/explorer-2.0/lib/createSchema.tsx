@@ -2,6 +2,8 @@ import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import Utils from 'web3-utils'
 import { createApolloFetch } from 'apollo-fetch'
+import { applyMiddleware } from 'graphql-middleware'
+import graphqlFields from 'graphql-fields'
 
 import schema from '../apollo'
 import {
@@ -9,7 +11,12 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
-import { getBlock, getBlockByNumber, getEstimatedBlockCountdown } from './utils'
+import {
+  getBlock,
+  getBlockByNumber,
+  getEstimatedBlockCountdown,
+  mergeObjectsInUnique,
+} from './utils'
 
 export default async () => {
   const subgraphServiceLink = new HttpLink({
@@ -30,6 +37,7 @@ export default async () => {
   const linkTypeDefs = `
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace
+      price: Float
     }
     extend type ThreeBoxSpace {
       transcoder: Transcoder
@@ -76,13 +84,13 @@ export default async () => {
     resolvers: {
       Transcoder: {
         threeBoxSpace: {
-          async resolve(_obj, _args, _ctx, _info) {
+          async resolve(_transcoder, _args, _ctx, _info) {
             const threeBoxSpace = await _info.mergeInfo.delegateToSchema({
               schema: schema,
               operation: 'query',
               fieldName: 'threeBoxSpace',
               args: {
-                id: _obj.id,
+                id: _transcoder.id,
               },
               context: _ctx,
               info: _info,
@@ -149,9 +157,7 @@ export default async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake)
-              .sub(totalVoteStake)
-              .toString()
+            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
           },
         },
         status: {
@@ -219,5 +225,54 @@ export default async () => {
     },
   })
 
-  return merged
+  // intercept and transform transcoder query responses with price data
+  const queryMiddleware = {
+    Query: {
+      transcoder: async (resolve, parent, args, ctx, info) => {
+        const selectionSet = Object.keys(graphqlFields(info))
+        let transcoder = await resolve(parent, args, ctx, info)
+
+        // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
+        if (!selectionSet.includes('price')) {
+          return transcoder
+        }
+
+        let response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`,
+        )
+        let transcodersWithPrice = await response.json()
+        let transcoderWithPrice = transcodersWithPrice.filter(
+          (t) => t.Address.toLowerCase() === args.id.toLowerCase(),
+        )[0]
+        transcoder['price'] = transcoderWithPrice?.PricePerPixel
+          ? transcoderWithPrice?.PricePerPixel
+          : 0
+        return transcoder
+      },
+      transcoders: async (resolve, parent, args, ctx, info) => {
+        const selectionSet = Object.keys(graphqlFields(info))
+        const transcoders = await resolve(parent, args, ctx, info)
+
+        // if selection set does not include 'price', return transcoders as is, otherwise fetch and merge prices
+        if (!selectionSet.includes('price')) {
+          return transcoders
+        }
+
+        const response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`,
+        )
+        let transcodersWithPrice = await response.json()
+        transcodersWithPrice = transcodersWithPrice.map((t) => ({
+          id: t.Address,
+          price: t.PricePerPixel,
+        }))
+        const merged = mergeObjectsInUnique(
+          [...transcoders, ...transcodersWithPrice],
+          'id',
+        )
+        return merged
+      },
+    },
+  }
+  return applyMiddleware(merged, queryMiddleware)
 }

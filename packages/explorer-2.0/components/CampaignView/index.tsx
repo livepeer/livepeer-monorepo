@@ -1,127 +1,243 @@
 import { Flex } from 'theme-ui'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import Card from '../Card'
-import { abbreviateNumber } from '../../lib/utils'
+import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import { Box } from 'theme-ui'
 import { MdCheck, MdClose } from 'react-icons/md'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
+import { useRef, useState } from 'react'
+import Price from '../Price'
+import {
+  Menu,
+  MenuItemRadioGroup,
+  MenuItemRadio,
+} from '@modulz/radix/dist/index.es'
 
 export default ({ currentRound, transcoder }) => {
-  const callsMade = transcoder.pools.filter(r => r.rewardTokens != null).length
+  const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
+  const targetRef = useRef()
+  const [priceSetting, setPriceSetting] = useState('1t pixels')
+  const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
+    .length
+
+  const PriceSettingToggle = () => (
+    <span
+      ref={targetRef}
+      onClick={(e) => {
+        e.stopPropagation()
+        setIsPriceSettingOpen(true)
+      }}
+      sx={{
+        cursor: 'pointer',
+        fontSize: 12,
+      }}
+    >
+      <span sx={{ mx: '4px' }}>/</span>
+      <span
+        title={`Price of transcoding per ${expandedPriceLabels[priceSetting]}`}
+        sx={{
+          color: 'text',
+          borderBottom: '1px dashed',
+          borderColor: 'text',
+          transition: '.3s',
+          ':hover': { color: 'primary' },
+          ':active': { color: 'primary' },
+        }}
+      >
+        {priceSetting}
+      </span>
+    </span>
+  )
   return (
     <Box sx={{ pt: 4 }}>
-      <>
-        <Box
-          sx={{
-            display: 'grid',
-            gridGap: [2, 2, 2],
-            gridTemplateColumns: [
-              'repeat(auto-fit, minmax(33%, 1fr))',
-              'repeat(auto-fit, minmax(33%, 1fr))',
-              'repeat(auto-fit, minmax(33%, 1fr))',
-              `repeat(auto-fit, minmax(30%, 1fr))`,
-            ],
+      <Menu
+        style={{
+          background: '#1E2026',
+          padding: 0,
+          boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
+        }}
+        isOpen={isPriceSettingOpen}
+        onClose={() => setIsPriceSettingOpen(false)}
+        buttonRef={targetRef}
+      >
+        <MenuItemRadioGroup
+          value={priceSetting}
+          onChange={(value) => {
+            setPriceSetting(value)
           }}
         >
-          <Card
-            sx={{ flex: 1 }}
-            title="Total Stake"
-            subtitle={
-              <Box
-                sx={{
-                  fontSize: [3, 3, 4, 4, 5],
-                  color: 'text',
-                  fontWeight: 500,
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {abbreviateNumber(Utils.fromWei(transcoder.totalStake), 4)}
-                <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
+          <MenuItemRadio value="pixel" label="1 pixel" />
+          <MenuItemRadio value="1m pixels" label="1 million pixels" />
+          <MenuItemRadio value="1b pixels" label="1 billion pixels" />
+          <MenuItemRadio value="1t pixels" label="1 trillion pixels" />
+        </MenuItemRadioGroup>
+      </Menu>
+      <Box
+        sx={{
+          display: 'grid',
+          gridGap: [2, 2, 2],
+          gridTemplateColumns: [
+            'repeat(auto-fit, minmax(33%, 1fr))',
+            'repeat(auto-fit, minmax(33%, 1fr))',
+            'repeat(auto-fit, minmax(33%, 1fr))',
+            `repeat(auto-fit, minmax(30%, 1fr))`,
+          ],
+        }}
+      >
+        <Card
+          sx={{ flex: 1 }}
+          title="Total Stake"
+          subtitle={
+            <Box
+              sx={{
+                fontSize: [3, 3, 4, 4],
+                color: 'text',
+                fontWeight: 500,
+                lineHeight: 'heading',
+                fontFamily: 'monospace',
+              }}
+            >
+              {abbreviateNumber(Utils.fromWei(transcoder.totalStake), 4)}
+              <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
+            </Box>
+          }
+        />
+        <Card
+          sx={{ flex: 1 }}
+          title="Earned Fees"
+          subtitle={
+            <Box
+              sx={{
+                fontSize: [3, 3, 4, 4],
+                color: 'text',
+                fontWeight: 500,
+                lineHeight: 'heading',
+                fontFamily: 'monospace',
+              }}
+            >
+              {transcoder.totalGeneratedFees
+                ? abbreviateNumber(
+                    Utils.fromWei(transcoder.totalGeneratedFees),
+                    3,
+                  )
+                : 0}
+              <span sx={{ ml: 1, fontSize: 12 }}>ETH</span>
+            </Box>
+          }
+        />
+        <Card
+          title="Reward Calls"
+          subtitle={
+            <Flex
+              sx={{
+                alignItems: 'center',
+                fontSize: [3, 3, 4, 4],
+                color: 'text',
+                fontWeight: 500,
+                lineHeight: 'heading',
+                fontFamily: 'monospace',
+              }}
+            >
+              {callsMade}/{transcoder.pools.length}
+            </Flex>
+          }
+        />
+        <Card
+          sx={{ flex: 1 }}
+          title="Reward Cut"
+          subtitle={
+            <Box
+              sx={{
+                fontSize: [3, 3, 4, 4],
+                color: 'text',
+                fontWeight: 500,
+                lineHeight: 'heading',
+                fontFamily: 'monospace',
+              }}
+            >
+              {!transcoder.rewardCut
+                ? 0
+                : parseInt(transcoder.rewardCut, 10) / 10000}
+              %
+            </Box>
+          }
+        />
+        <Card
+          sx={{ flex: 1 }}
+          title="Fee Cut"
+          subtitle={
+            <Box
+              sx={{
+                fontSize: [3, 3, 4, 4],
+                color: 'text',
+                fontWeight: 500,
+                lineHeight: 'heading',
+                fontFamily: 'monospace',
+              }}
+            >
+              {!transcoder.feeShare
+                ? 0
+                : 100 - parseInt(transcoder.feeShare, 10) / 10000}
+              %
+            </Box>
+          }
+        />
+        <Card
+          sx={{ flex: 1 }}
+          title={
+            <Flex sx={{ alignItems: 'center' }}>
+              <Box>
+                Price
+                <PriceSettingToggle />
               </Box>
-            }
-          />
-          <Card
-            sx={{ flex: 1 }}
-            title="Earned Fees"
-            subtitle={
-              <Box
-                sx={{
-                  fontSize: [3, 3, 4, 4, 5],
-                  color: 'text',
-                  fontWeight: 500,
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {transcoder.totalGeneratedFees
-                  ? abbreviateNumber(
-                      Utils.fromWei(transcoder.totalGeneratedFees),
-                      3,
-                    )
-                  : 0}
-                <span sx={{ ml: 1, fontSize: 1 }}>ETH</span>
-              </Box>
-            }
-          />
-          <Card
-            title="Reward Calls"
-            subtitle={
-              <Flex
-                sx={{
-                  alignItems: 'center',
-                  fontSize: [3, 3, 4, 4, 5],
-                  color: 'text',
-                  fontWeight: 500,
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {callsMade}/{transcoder.pools.length}
+              <Flex>
+                <ReactTooltip
+                  id="tooltip-price"
+                  className="tooltip-price"
+                  place="top"
+                  type="dark"
+                  effect="solid"
+                  getContent={() => {
+                    return `Price of transcoding per ${expandedPriceLabels[priceSetting]}`
+                  }}
+                />
+                <Help
+                  key="tooltip-price"
+                  data-tip=""
+                  data-for="tooltip-price"
+                  sx={{
+                    color: 'muted',
+                    cursor: 'pointer',
+                    ml: 1,
+                  }}
+                />
               </Flex>
-            }
-          />
-          <Card
-            sx={{ flex: 1 }}
-            title="Reward Cut"
-            subtitle={
-              <Box
-                sx={{
-                  fontSize: [3, 3, 4, 4, 5],
-                  color: 'text',
-                  fontWeight: 500,
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {!transcoder.rewardCut
-                  ? 0
-                  : parseInt(transcoder.rewardCut, 10) / 10000}
-                %
-              </Box>
-            }
-          />
-          <Card
-            sx={{ flex: 1 }}
-            title="Fee Cut"
-            subtitle={
-              <Box
-                sx={{
-                  fontSize: [3, 3, 4, 4, 5],
-                  color: 'text',
-                  fontWeight: 500,
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                {!transcoder.feeShare
-                  ? 0
-                  : 100 - parseInt(transcoder.feeShare, 10) / 10000}
-                %
-              </Box>
-            }
-          />
+            </Flex>
+          }
+          subtitle={
+            <Box
+              sx={{
+                fontSize: [3, 3, 4, 4],
+                color: 'text',
+                fontWeight: 500,
+                lineHeight: 'heading',
+                fontFamily: 'monospace',
+              }}
+            >
+              {transcoder.price <= 0 ? (
+                'N/A'
+              ) : (
+                <Price
+                  value={transcoder.price}
+                  per={priceSetting}
+                  useEthSymbol={false}
+                />
+              )}
+            </Box>
+          }
+        />
+        {transcoder?.lastRewardRound?.id && (
           <Card
             sx={{ flex: 1 }}
             title={
@@ -175,8 +291,8 @@ export default ({ currentRound, transcoder }) => {
               </Box>
             }
           />
-        </Box>
-      </>
+        )}
+      </Box>
     </Box>
   )
 }
