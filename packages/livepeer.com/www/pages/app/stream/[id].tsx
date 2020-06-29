@@ -18,6 +18,7 @@ import {
   RenditionsDetails
 } from "../../../components/StreamsTable";
 import { getTabs } from "../user";
+import { getTabs as getTabsAdmin } from "../admin";
 
 type ShowURLProps = {
   text: string;
@@ -138,7 +139,8 @@ export default () => {
       ? pathJoin(ingest[0].playback, `${stream.playbackId}/index.m3u8`)
       : stream.playbackId || "";
   };
-  const tabs = getTabs(0);
+
+  const tabs = query.admin ? getTabsAdmin(2) : getTabs(0);
   const backLink = query.admin ? "/app/admin/streams" : "/app/user";
 
   return (

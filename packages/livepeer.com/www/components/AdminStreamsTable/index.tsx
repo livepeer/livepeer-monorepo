@@ -7,7 +7,7 @@ import { Table, TableRow, TableRowVariant, Checkbox } from "../Table";
 import { RelativeTime, StreamName, RenditionsDetails } from "../StreamsTable";
 import ReactTooltip from "react-tooltip";
 import { UserName } from "../AdminTokenTable";
-import { Stream } from "@livepeer/api";
+import { Stream, User } from "@livepeer/api";
 
 const Segments = ({ stream }: { stream: Stream }) => {
   const idpref = `segments-${stream.id}`;
@@ -29,6 +29,31 @@ const Segments = ({ stream }: { stream: Stream }) => {
   );
 };
 
+const sortNameF = (a: Stream, b: Stream) =>
+  ((a && a.name) || "").localeCompare((b && b.name) || "");
+
+const sortUserName = (users: Array<User>, a: Stream, b: Stream) => {
+  const userA = users.find((u) => u.id === a.userId);
+  const userB = users.find((u) => u.id === b.userId);
+  console.log(`user a ${userA.email} user b ${userB.email}`);
+  if (userA && userB) {
+    return userA.email.localeCompare(userB.email);
+  }
+  return ((a && a.name) || "").localeCompare((b && b.name) || "");
+};
+
+const sortUserIdF = (a: Stream, b: Stream) =>
+  ((a && a.userId) || "").localeCompare((b && b.userId) || "");
+
+const sortCreatedF = (a: Stream, b: Stream) =>
+  (b.createdAt || 0) - (a.createdAt || 0);
+
+const sortLastSeenF = (a: Stream, b: Stream) =>
+  (b.lastSeen || 0) - (a.lastSeen || 0);
+
+const sortActiveF = (a: Stream, b: Stream) =>
+  +(b.isActive || false) - +(a.isActive || false);
+
 export default ({ id }: { id: string }) => {
   const [broadcasters, setBroadcasters] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -36,20 +61,26 @@ export default ({ id }: { id: string }) => {
   const [streams, setStreams] = useState([]);
   const [users, setUsers] = useState([]);
   const { getAdminStreams, deleteStream, getBroadcasters, getUsers } = useApi();
+  const [sortFunc, setSortFunc] = useState(null);
   useEffect(() => {
     getUsers()
-      .then(users => setUsers(users))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((users) => setUsers(users))
+      .catch((err) => console.error(err)); // todo: surface this
   }, []);
   useEffect(() => {
     getBroadcasters()
-      .then(broadcasters => setBroadcasters(broadcasters))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((broadcasters) => setBroadcasters(broadcasters))
+      .catch((err) => console.error(err)); // todo: surface this
   }, []);
   useEffect(() => {
     getAdminStreams()
-      .then(streams => setStreams(streams))
-      .catch(err => console.error(err)); // todo: surface this
+      .then((streams) => {
+        if (sortFunc) {
+          streams.sort(sortFunc);
+        }
+        setStreams(streams);
+      })
+      .catch((err) => console.error(err)); // todo: surface this
   }, [deleteModal]);
   const close = () => {
     setDeleteModal(false);
@@ -62,11 +93,58 @@ export default ({ id }: { id: string }) => {
     }
     const interval = setInterval(() => {
       getAdminStreams()
-        .then(streams => setStreams(streams))
-        .catch(err => console.error(err)); // todo: surface this
+        .then((streams) => {
+          console.log(`sort func:`, sortFunc);
+          if (sortFunc) {
+            streams.sort(sortFunc);
+          }
+          setStreams(streams);
+        })
+        .catch((err) => console.error(err)); // todo: surface this
     }, 5000);
     return () => clearInterval(interval);
-  }, [isVisible]);
+  }, [isVisible, sortFunc]);
+
+  const sortUserId = () => {
+    if (streams) {
+      if (users) {
+        streams.sort(sortUserName.bind(null, users));
+        setSortFunc(() => sortUserName.bind(null, users));
+      } else {
+        streams.sort(sortUserIdF);
+        setSortFunc(() => sortUserIdF);
+      }
+      setStreams([...streams]);
+    }
+  };
+  const sortName = () => {
+    if (streams) {
+      streams.sort(sortNameF);
+      setSortFunc(() => sortNameF);
+      setStreams([...streams]);
+    }
+  };
+  const sortCreated = () => {
+    if (streams) {
+      streams.sort(sortCreatedF);
+      setSortFunc(() => sortCreatedF);
+      setStreams([...streams]);
+    }
+  };
+  const sortLastSeen = () => {
+    if (streams) {
+      streams.sort(sortLastSeenF);
+      setSortFunc(() => sortLastSeenF);
+      setStreams([...streams]);
+    }
+  };
+  const sortActive = () => {
+    if (streams) {
+      streams.sort(sortActiveF);
+      setSortFunc(() => sortActiveF);
+      setStreams([...streams]);
+    }
+  };
   return (
     <Box
       id={id}
@@ -74,7 +152,7 @@ export default ({ id }: { id: string }) => {
         width: "100%",
         maxWidth: 958,
         mb: [3, 3],
-        mx: "auto"
+        mx: "auto",
       }}
     >
       {deleteModal && selectedStream && (
@@ -112,13 +190,48 @@ export default ({ id }: { id: string }) => {
       >
         <TableRow variant={TableRowVariant.Header}>
           <Box></Box>
-          <Box>User name</Box>
-          <Box>Name</Box>
+          <Box
+            sx={{
+              cursor: "pointer",
+            }}
+            onClick={sortUserId}
+          >
+            User name ⭥
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer",
+            }}
+            onClick={sortName}
+          >
+            Name ⭥
+          </Box>
           <Box>Details</Box>
           <Box>Segments</Box>
-          <Box>Created</Box>
-          <Box>Last Active</Box>
-          <Box>Status</Box>
+          <Box
+            sx={{
+              cursor: "pointer",
+            }}
+            onClick={sortCreated}
+          >
+            Created ⭥
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer",
+            }}
+            onClick={sortLastSeen}
+          >
+            Last Active ⭥
+          </Box>
+          <Box
+            sx={{
+              cursor: "pointer",
+            }}
+            onClick={sortActive}
+          >
+            Status ⭥
+          </Box>
         </TableRow>
         {streams.map((stream: Stream) => {
           const {
@@ -128,7 +241,7 @@ export default ({ id }: { id: string }) => {
             sourceSegments,
             transcodedSegments,
             createdAt,
-            isActive
+            isActive,
           } = stream;
           const selected = selectedStream && selectedStream.id === id;
           return (
