@@ -27,6 +27,7 @@ const Home = () => {
   const { data, loading } = useQuery(orchestratorsViewQuery, {
     variables,
     ssr: false,
+    pollInterval: 20000,
   })
   const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
     accountQuery,

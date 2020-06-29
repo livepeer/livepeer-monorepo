@@ -50,6 +50,10 @@ const Account = () => {
         }
       }
     `,
+    {
+      pollInterval: 20000,
+      ssr: false,
+    },
   )
 
   const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
