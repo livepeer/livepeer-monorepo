@@ -439,6 +439,7 @@ describe('controllers/stream', () => {
     let stream
     let fractionalStream
     let gopStream
+    let profileStream
     let client, adminUser, adminToken, nonAdminUser, nonAdminToken
     beforeEach(async () => {
       ;({
@@ -499,18 +500,36 @@ describe('controllers/stream', () => {
             gop: '2.0',
           },
           {
-            ...stream.profiles[0],
+            ...stream.profiles[1],
             gop: '0',
           },
           {
-            ...stream.profiles[0],
+            ...stream.profiles[2],
             gop: 'intra',
+          },
+        ],
+      }
+
+      profileStream = {
+        ...stream,
+        profiles: [
+          {
+            ...stream.profiles[0],
+            profile: 'H264Baseline',
+          },
+          {
+            ...stream.profiles[1],
+            profile: 'H264High',
+          },
+          {
+            ...stream.profiles[2],
+            profile: 'H264ConstrainedHigh',
           },
         ],
       }
     })
 
-    it('should handle profiles, including fractional fps & gops', async () => {
+    it('should handle profiles, including fractional fps, gops, and h264 profiles', async () => {
       for (const testStream of [stream, fractionalStream, gopStream]) {
         const res = await client.post('/stream', testStream)
         expect(res.status).toBe(201)
@@ -523,6 +542,19 @@ describe('controllers/stream', () => {
         const hookData = await hookRes.json()
         expect(hookData.profiles).toEqual(testStream.profiles)
       }
+    })
+
+    it('should reject profiles we do not have', async () => {
+      const badStream = {
+        ...profileStream,
+        profiles: [...profileStream.profiles],
+      }
+      badStream.profiles[0] = {
+        ...profileStream.profiles[0],
+        profile: 'VP8OrSomethingIDK',
+      }
+      const res = await client.post('/stream', badStream)
+      expect(res.status).toBe(422)
     })
   })
 })

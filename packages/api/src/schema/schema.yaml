@@ -117,6 +117,13 @@ components:
                 minimum: 1
               gop:
                 type: string
+              profile:
+                type: string
+                enum:
+                  - H264Baseline
+                  - H264Main
+                  - H264High
+                  - H264ConstrainedHigh
         objectStoreId:
           type: string
           example: D8321C3E-B29C-45EB-A1BB-A623D8BE0F65
