@@ -438,6 +438,7 @@ describe('controllers/stream', () => {
   describe('profiles', () => {
     let stream
     let fractionalStream
+    let gopStream
     let client, adminUser, adminToken, nonAdminUser, nonAdminToken
     beforeEach(async () => {
       ;({
@@ -490,10 +491,27 @@ describe('controllers/stream', () => {
           },
         ],
       }
+      gopStream = {
+        ...stream,
+        profiles: [
+          {
+            ...stream.profiles[0],
+            gop: '2.0',
+          },
+          {
+            ...stream.profiles[0],
+            gop: '0',
+          },
+          {
+            ...stream.profiles[0],
+            gop: 'intra',
+          },
+        ],
+      }
     })
 
-    it('should handle profiles, including fractional fps', async () => {
-      for (const testStream of [stream, fractionalStream]) {
+    it('should handle profiles, including fractional fps & gops', async () => {
+      for (const testStream of [stream, fractionalStream, gopStream]) {
         const res = await client.post('/stream', testStream)
         expect(res.status).toBe(201)
         const data = await res.json()
