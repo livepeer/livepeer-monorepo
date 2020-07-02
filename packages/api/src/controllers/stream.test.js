@@ -530,7 +530,12 @@ describe('controllers/stream', () => {
     })
 
     it('should handle profiles, including fractional fps, gops, and h264 profiles', async () => {
-      for (const testStream of [stream, fractionalStream, gopStream]) {
+      for (const testStream of [
+        stream,
+        fractionalStream,
+        gopStream,
+        profileStream,
+      ]) {
         const res = await client.post('/stream', testStream)
         expect(res.status).toBe(201)
         const data = await res.json()
