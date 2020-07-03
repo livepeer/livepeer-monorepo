@@ -259,7 +259,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     createdByTokenName: req.tokenName,
   })
 
-  // FIXME: tempoarily, Mist can only make passthrough FPS streams
+  // FIXME: tempoarily, Mist can only make passthrough FPS streams with 2-second gop sizes
   if (
     req.headers['user-agent'] &&
     req.headers['user-agent'].toLowerCase().includes('mistserver')
@@ -268,6 +268,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
       return {
         ...profile,
         fps: 0,
+        gop: '2.0',
       }
     })
   }
