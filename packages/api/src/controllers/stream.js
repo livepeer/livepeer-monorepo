@@ -12,6 +12,24 @@ import { getBroadcasterHandler } from './broadcaster'
 
 const app = Router()
 
+const hackMistSettings = (req, profiles) => {
+  // FIXME: tempoarily, Mist can only make passthrough FPS streams with 2-second gop sizes
+  if (
+    !req.headers['user-agent'] ||
+    !req.headers['user-agent'].toLowerCase().includes('mistserver')
+  ) {
+    return profiles
+  }
+  profiles = profiles || []
+  return profiles.map((profile) => {
+    return {
+      ...profile,
+      fps: 0,
+      gop: '2.0',
+    }
+  })
+}
+
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let { limit, cursor, streamsonly, sessionsonly, all } = req.query
 
@@ -208,6 +226,8 @@ app.post(
       parentId: stream.id,
     })
 
+    doc.profiles = hackMistSettings(req, doc.profiles)
+
     try {
       await req.store.create(doc)
       trackAction(
@@ -259,19 +279,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     createdByTokenName: req.tokenName,
   })
 
-  // FIXME: tempoarily, Mist can only make passthrough FPS streams with 2-second gop sizes
-  if (
-    req.headers['user-agent'] &&
-    req.headers['user-agent'].toLowerCase().includes('mistserver')
-  ) {
-    doc.profiles = (doc.profiles || []).map((profile) => {
-      return {
-        ...profile,
-        fps: 0,
-        gop: '2.0',
-      }
-    })
-  }
+  doc.profiles = hackMistSettings(req, doc.profiles)
 
   await Promise.all([
     req.store.create(doc),
