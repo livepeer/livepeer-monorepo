@@ -42,7 +42,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     variables: {
       account: context.account,
     },
-    pollInterval: 4000,
+    pollInterval: 10000,
     context: {
       library: context.library,
     },
@@ -132,7 +132,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
             )}
           </Flex>
           <form
-            onSubmit={async e => {
+            onSubmit={async (e) => {
               e.preventDefault()
               try {
                 const hash = await ipfs.addJSON({
@@ -307,7 +307,7 @@ export async function getStaticProps() {
   let createdPolls = []
   if (pollsData) {
     await Promise.all(
-      pollsData.polls.map(async poll => {
+      pollsData.polls.map(async (poll) => {
         const obj = await ipfs.catJSON(poll.proposal)
         // check if proposal is valid format {text, gitCommitHash}
         if (obj?.text && obj?.gitCommitHash) {

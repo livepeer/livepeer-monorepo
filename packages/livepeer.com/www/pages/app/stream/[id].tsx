@@ -1,5 +1,4 @@
 import Link from "next/link";
-import path from "path";
 import { Spinner, Box, Button, Flex, Heading } from "@theme-ui/components";
 import Layout from "../../../components/Layout";
 import useLoggedIn from "../../../hooks/use-logged-in";
@@ -13,19 +12,22 @@ import { useEffect, useState } from "react";
 import TabbedLayout from "../../../components/TabbedLayout";
 import StreamSessionsTable from "../../../components/StreamSessionsTable";
 import DeleteStreamModal from "../../../components/DeleteStreamModal";
+import { pathJoin } from "../../../lib/utils";
 import {
   RelativeTime,
   RenditionsDetails
 } from "../../../components/StreamsTable";
 import { getTabs } from "../user";
+import { getTabs as getTabsAdmin } from "../admin";
 
 type ShowURLProps = {
   text: string;
   url: string;
   anchor?: boolean;
+  urlToCopy?: string;
 };
 
-const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
+const ShowURL = ({ text, url, urlToCopy, anchor = false }: ShowURLProps) => {
   const [isCopied, setCopied] = useState(0);
   useEffect(() => {
     if (isCopied) {
@@ -35,6 +37,7 @@ const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
       return () => clearTimeout(interval);
     }
   }, [isCopied]);
+  const ccurl = urlToCopy ? urlToCopy : url;
   return (
     <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
       {text ? (
@@ -42,7 +45,7 @@ const ShowURL = ({ text, url, anchor = false }: ShowURLProps) => {
           {text}:
         </Box>
       ) : null}
-      <CopyToClipboard text={url} onCopy={() => setCopied(2000)}>
+      <CopyToClipboard text={ccurl} onCopy={() => setCopied(2000)}>
         <Flex sx={{ alignItems: "center" }}>
           {anchor ? (
             <a
@@ -128,15 +131,17 @@ export default () => {
   }
 
   const getIngestURL = (stream: Stream, showKey: boolean): string => {
-    const key = showKey ? stream.streamKey : "stream-key";
-    return ingest.length
-      ? path.join(ingest[0].ingest, key) : stream.streamKey || "";
+    const key = showKey ? stream.streamKey : "";
+    return ingest.length ? pathJoin(ingest[0].ingest, key) : key || "";
   };
   const getPlaybackURL = (stream: Stream): string => {
     return ingest.length
-      ? path.join(ingest[0].playback, stream.playbackId, 'index.m3u8') : stream.playbackId || "";
+      ? pathJoin(ingest[0].playback, `${stream.playbackId}/index.m3u8`)
+      : stream.playbackId || "";
   };
-  const tabs = getTabs(0);
+
+  const tabs = query.admin ? getTabsAdmin(2) : getTabs(0);
+  const backLink = query.admin ? "/app/admin/streams" : "/app/user";
 
   return (
     <TabbedLayout tabs={tabs} logout={logout}>
@@ -150,7 +155,7 @@ export default () => {
         />
       )}
       <Box sx={{ my: "2em", maxWidth: 958, width: "100%", fontWeight: "bold" }}>
-        <Link href="/app/user">
+        <Link href={backLink}>
           <a>{"← stream list"}</a>
         </Link>
       </Box>
@@ -158,7 +163,6 @@ export default () => {
         <>
           <Flex
             sx={{
-              // mb: "2em",
               justifyContent: "flex-start",
               alignItems: "baseline",
               maxWidth: 958,
@@ -197,11 +201,29 @@ export default () => {
               </Cell>
               <Cell>RTMP ingest URL</Cell>
               <Cell>
-                <ShowURL
-                  text=""
-                  url={getIngestURL(stream, keyRevealed)}
-                  anchor={false}
-                />
+                {keyRevealed ? (
+                  <ShowURL
+                    text=""
+                    url={getIngestURL(stream, keyRevealed)}
+                    urlToCopy={getIngestURL(stream, true)}
+                    anchor={false}
+                  />
+                ) : (
+                  <Flex
+                    sx={{ justifyContent: "flex-start", alignItems: "center" }}
+                  >
+                    <Box
+                      sx={{ minWidth: 125, fontSize: 12, paddingRight: "1em" }}
+                    >
+                      {getIngestURL(stream, false)}
+                      <b>stream-key</b>
+                      <i sx={{ ml: "2em" }}>
+                        Reveal your stream key and the full URL via the button
+                        above.
+                      </i>
+                    </Box>
+                  </Flex>
+                )}
               </Cell>
               <Cell>Playback URL</Cell>
               <Cell>

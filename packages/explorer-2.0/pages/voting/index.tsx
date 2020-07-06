@@ -26,18 +26,11 @@ const Voting = () => {
   const [polls, setPolls] = useState([])
   const [loading, setLoading] = useState(true)
   const { data } = useQuery(allPollsQuery, {
-    pollInterval: 8000,
+    pollInterval: 20000,
   })
-  const { data: blockData } = useQuery(
-    gql`
-      {
-        block(id: "latest")
-      }
-    `,
-  )
 
   useEffect(() => {
-    if (data && blockData) {
+    if (data) {
       let pollArr = []
       const init = async () => {
         if (!data.polls.length) {
@@ -45,14 +38,15 @@ const Voting = () => {
           return
         }
         await Promise.all(
-          data.polls.map(async poll => {
+          data.polls.map(async (poll) => {
             const obj = await ipfs.catJSON(poll.proposal)
             // only include proposals with valid format
             if (obj?.text && obj?.gitCommitHash) {
               const transformedProposal = fm(obj.text)
               if (
                 !pollArr.filter(
-                  p => p.attributes.lip === transformedProposal.attributes.lip,
+                  (p) =>
+                    p.attributes.lip === transformedProposal.attributes.lip,
                 ).length
               ) {
                 pollArr.push({
@@ -68,7 +62,7 @@ const Voting = () => {
       }
       init()
     }
-  }, [data, blockData])
+  }, [data])
 
   return (
     <>
@@ -132,7 +126,7 @@ const Voting = () => {
           <Box>
             {polls
               .sort((a, b) => (a.endBlock > b.endBlock ? 1 : -1))
-              .map(poll => (
+              .map((poll) => (
                 <Link
                   key={poll.id}
                   href="/voting/[poll]"

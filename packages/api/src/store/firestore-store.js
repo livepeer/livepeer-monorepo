@@ -25,7 +25,7 @@ export default class FirestoreStore {
   // say, /staging/user/ABC123; we have to store at /staging/docs/user/ABC123
   // For our join keys, we store e.g. `user+email/example@livepeer.org/ABC123` at `user+email_example@livepeer.org/ABC123`.
   getPath(key) {
-    let parts = [...key.split('/')].filter(x => !!x)
+    let parts = [...key.split('/')].filter((x) => !!x)
     if (parts[0] && parts[0].includes('+')) {
       if (!parts[1]) {
         throw new Error(
@@ -35,7 +35,7 @@ export default class FirestoreStore {
       parts[1] = `${parts[0]}_${parts[1]}`
       parts.shift()
     }
-    parts = parts.map(part => encodeURIComponent(part))
+    parts = parts.map((part) => encodeURIComponent(part))
     return [this.collection, 'docs', ...parts].join('/')
   }
 
@@ -143,9 +143,7 @@ export default class FirestoreStore {
     if (cursor) {
       query.pageToken = cursor
     }
-    const path = this.getPath(prefix)
-      .split('/')
-      .join('/')
+    const path = this.getPath(prefix).split('/').join('/')
     const url = `${this.url}/${path}?${qs.stringify(query)}`
     const res = await this.fetch(url, {
       method: 'GET',
@@ -166,7 +164,7 @@ export default class FirestoreStore {
 
   async list(prefix, cursor, limit) {
     const [results, nextPageToken] = await this.doList(prefix, cursor, limit)
-    const data = results.map(doc => {
+    const data = results.map((doc) => {
       return {
         [doc.name.split('docs/')[1]]: JSON.parse(doc.fields.data.stringValue),
       }
@@ -179,7 +177,7 @@ export default class FirestoreStore {
 
   async listKeys(prefix, cursor, limit) {
     const [results, nextPageToken] = await this.doList(prefix, cursor, limit)
-    const data = results.map(doc => {
+    const data = results.map((doc) => {
       const name = doc.name.slice(this.keyPrefix.length).replace('_', '/')
       return name
     })

@@ -18,7 +18,7 @@ describe('kubernetes middleware', () => {
         kubeOrchestratorService: 'orchestrator',
         kubeOrchestratorTemplate: 'https://{{ip}}:8935',
       })
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         middleware(req, {}, resolve)
       })
     })
@@ -70,7 +70,7 @@ describe('kubernetes middleware', () => {
         kubeOrchestratorService: 'orchestrator-noaddress',
         kubeOrchestratorTemplate: 'https://{{ip}}:8935',
       })
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         middleware(req, {}, resolve)
       })
     })

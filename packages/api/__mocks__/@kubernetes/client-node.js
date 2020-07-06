@@ -1,7 +1,7 @@
 import { broadcasterResponse, orchestratorResponse } from './test-data.json'
 
 // For testing the no-endpoints case
-const scrub = response => {
+const scrub = (response) => {
   // Cheap "deep copy"
   response = JSON.parse(JSON.stringify(response))
   delete response.body.subsets[0].addresses

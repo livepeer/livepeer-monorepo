@@ -8,7 +8,7 @@ let mockUser
 let mockAdminUser
 let mockNonAdminUser
 
-const delay = ms => new Promise(r => setTimeout(r, ms))
+const delay = (ms) => new Promise((r) => setTimeout(r, ms))
 
 // jest.setTimeout(70000)
 

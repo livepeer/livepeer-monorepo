@@ -41,7 +41,7 @@ let routerPromise
 
 // staging, prod, and dev sets of secrets
 // env variables in a JSON blob, turn into file, import file as we're building worker
-const mapRequestToAsset = request => {
+const mapRequestToAsset = (request) => {
   const parsedUrl = new URL(request.url)
   let pathname = parsedUrl.pathname
   if (pathname === '/') {
@@ -49,7 +49,7 @@ const mapRequestToAsset = request => {
   } else {
     const lastSegment = pathname
       .split('/')
-      .filter(x => !!x)
+      .filter((x) => !!x)
       .pop()
 
     // To handle next.js-style routes, we need to send e.g. /login to /login.html
@@ -62,13 +62,13 @@ const mapRequestToAsset = request => {
   return new Request(parsedUrl, request)
 }
 
-addEventListener('fetch', event => {
+addEventListener('fetch', (event) => {
   event.respondWith(handleEvent(event))
 })
 
 const API_PREFIXES = ['/stream', '/api', '/live']
 
-const startsWithApiPrefix = pathname => {
+const startsWithApiPrefix = (pathname) => {
   for (const prefix of API_PREFIXES) {
     if (pathname.startsWith(prefix)) {
       return true
@@ -91,7 +91,7 @@ const geolocate = async (url, first = false) => {
   let smallestServer
   let smallestDuration = Infinity
 
-  const promises = servers.map(async server => {
+  const promises = servers.map(async (server) => {
     const start = Date.now()
     const res = await fetch(`https://${server}/api`)
     const duration = Date.now() - start
@@ -118,7 +118,7 @@ const geolocate = async (url, first = false) => {
 }
 
 // Combine a response from all the regions into one.
-const amalgamate = async req => {
+const amalgamate = async (req) => {
   const url = req.url
   const { servers } = await geolocate(url)
   let responses = await Promise.all(
@@ -157,7 +157,7 @@ function headersAsObject(inputHeaders) {
 }
 
 // Similar to amalgamate, but for m3u8 files instead of JSON.
-const amalgamateM3U8 = async req => {
+const amalgamateM3U8 = async (req) => {
   const url = req.url
   const { servers } = await geolocate(url)
   const composed = await composeM3U8(
@@ -219,7 +219,7 @@ class ExpressRequest {
   }
 
   removeListener(name, fn) {
-    this.handlers[name] = this.handlers[name].filter(x => x !== fn)
+    this.handlers[name] = this.handlers[name].filter((x) => x !== fn)
   }
 
   listeners(name) {
@@ -244,7 +244,7 @@ class ExpressResponse {
       'Link',
       link +
         Object.keys(links)
-          .map(function(rel) {
+          .map(function (rel) {
             return '<' + links[rel] + '>; rel="' + rel + '"'
           })
           .join(', '),
@@ -278,17 +278,17 @@ async function expressRequest(cfReq, router) {
       url: pathname,
       query: headersAsObject(searchParams),
       path: pathname,
-      params: pathname.split('/').filter(x => x),
+      params: pathname.split('/').filter((x) => x),
       protocol: 'http',
       method: cfReq.method,
       headers: headersAsObject(cfReq.headers),
-      get: header => cfReq.headers[header],
+      get: (header) => cfReq.headers[header],
     })
     const res = new ExpressResponse({
-      status: stat => {
+      status: (stat) => {
         status = stat
       },
-      end: text => {
+      end: (text) => {
         resolve(
           new Response(text, {
             status: status,
@@ -296,14 +296,14 @@ async function expressRequest(cfReq, router) {
           }),
         )
       },
-      json: jsonObj => {
+      json: (jsonObj) => {
         const text = JSON.stringify(jsonObj)
         res.header('content-type', 'application/json')
         return res.end(text)
       },
     })
 
-    router(req, res, err => {
+    router(req, res, (err) => {
       if (!err) {
         res.status(404)
         res.json({ errors: ['not found'] })

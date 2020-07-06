@@ -80,7 +80,7 @@ const Reset = () =>
         backgroundColor: `${theme.colors.surface} !important`,
         fontWeight: 400,
         color: `${theme.colors.text} !important`,
-        maxWidth: 220,
+        maxWidth: 250,
         textTransform: 'initial',
         opacity: '1 !important',
         borderRadius: '6px !important',
@@ -110,6 +110,11 @@ const Reset = () =>
       },
       '.MuiStepIcon-text': {
         fontFamily: `${theme.fonts.body} !important`,
+      },
+      '[role="menuitemradio"]': {
+        ':hover': {
+          backgroundColor: `${theme.colors.gray} !important`,
+        },
       },
     },
   })

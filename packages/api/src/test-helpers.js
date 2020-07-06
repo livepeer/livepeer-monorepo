@@ -54,7 +54,7 @@ export class TestClient {
   async get(path) {
     return await this.fetch(path, { method: 'GET' })
   }
-  
+
   async delete(path) {
     const params = {
       method: 'DELETE',

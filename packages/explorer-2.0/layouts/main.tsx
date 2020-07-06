@@ -195,7 +195,7 @@ const Layout = ({
         </Box>
       </Modal>
       <MutationsContext.Provider value={mutations}>
-        <Styled.root>
+        <Styled.root sx={{ height: '100vh' }}>
           <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
           <WalletModal />
           <Box

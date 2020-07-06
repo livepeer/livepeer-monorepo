@@ -13,7 +13,8 @@ package-lock.json
 coverage
 .nyc_output
 yarn-error.log
-.env*.local
+.env
+.env.build
 .poosh.cache
 
 .idea
@@ -22,3 +23,4 @@ yarn-error.log
 
 /dist
 .now
+.vercel

@@ -7,14 +7,6 @@ type Account {
   pollCreatorAllowance: String
 }
 
-type Protocol {
-  inflation: String
-  inflationChange: String
-  totalTokenSupply: String
-  totalBondedToken: String
-  paused: Boolean
-}
-
 type TransactionStatus {
   status: String
 }
@@ -32,12 +24,11 @@ type ThreeBoxSpace {
 
 type Query {
   account(id: ID!): Account
-  protocol: Protocol
   getTxReceiptStatus(txHash: String): TransactionStatus
   txPrediction(gasPrice: String!): JSON
   transaction(txHash: String): JSON
   threeBoxSpace(id: ID!): ThreeBoxSpace
-  block(id: String): JSON
+  block: JSON
 }
 `
 

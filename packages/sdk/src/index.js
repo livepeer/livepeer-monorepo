@@ -40,7 +40,7 @@ export { TRANSCODER_STATUS }
 export const DEFAULTS = {
   controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
   pollCreatorAddress: '0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c',
-  provider: 'https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1',
+  provider: process.env.INFURA_ENDPOINT,
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: '',
   gas: null,
@@ -66,24 +66,24 @@ export const DEFAULTS = {
 
 // Utils
 export const utils = {
-  isValidAddress: x => /^0x[a-fA-F0-9]{40}$/.test(x),
+  isValidAddress: (x) => /^0x[a-fA-F0-9]{40}$/.test(x),
   resolveAddress: async (resolve, x) =>
     utils.isValidAddress(x) ? x : await resolve(x),
-  getMethodHash: item => {
+  getMethodHash: (item) => {
     // const sig = `${item.name}(${item.inputs.map(x => x.type).join(',')})`
     // const hash = Eth.keccak256(sig)
     // return hash
     return encodeSignature(item)
   },
   findAbiByName: (abis, name) => {
-    const [abi] = abis.filter(item => {
+    const [abi] = abis.filter((item) => {
       if (item.type !== 'function') return false
       if (item.name === name) return true
     })
     return abi
   },
   findAbiByHash: (abis, hash) => {
-    const [abi] = abis.filter(item => {
+    const [abi] = abis.filter((item) => {
       if (item.type !== 'function') return false
       return encodeSignature(item) === hash
     })
@@ -94,8 +94,8 @@ export const utils = {
   },
   decodeMethodParams: (abi, bytecode) => {
     return decodeParams(
-      abi.inputs.map(x => x.name),
-      abi.inputs.map(x => x.type),
+      abi.inputs.map((x) => x.name),
+      abi.inputs.map((x) => x.type),
       `0x${bytecode.substr(10)}`,
       false,
     )
@@ -114,7 +114,7 @@ export const utils = {
             return {
               ...obj,
               [k]: Array.isArray(v)
-                ? v.map(_v => (BN.isBN(_v) ? toString(_v) : _v))
+                ? v.map((_v) => (BN.isBN(_v) ? toString(_v) : _v))
                 : BN.isBN(v)
                 ? toString(v)
                 : v,
@@ -171,16 +171,16 @@ export const utils = {
    * @param  {string} opts - transcoding options
    * @return {Object[]}
    */
-  parseTranscodingOptions: opts => {
+  parseTranscodingOptions: (opts) => {
     const profiles = Object.values(VIDEO_PROFILES)
-    const validHashes = new Set(profiles.map(x => x.hash))
+    const validHashes = new Set(profiles.map((x) => x.hash))
     let hashes = []
     for (let i = 0; i < opts.length; i += VIDEO_PROFILE_ID_SIZE) {
       const hash = opts.slice(i, i + VIDEO_PROFILE_ID_SIZE)
       if (!validHashes.has(hash)) continue
       hashes.push(hash)
     }
-    return hashes.map(x => profiles.find(({ hash }) => x === hash))
+    return hashes.map((x) => profiles.find(({ hash }) => x === hash))
   },
   /**
    * Serializes a list of transcoding profiles name into a hash
@@ -188,10 +188,10 @@ export const utils = {
    * @param  {string[]} name - transcoding profile name
    * @return {string}
    */
-  serializeTranscodingProfiles: names => {
+  serializeTranscodingProfiles: (names) => {
     return [
       ...new Set( // dedupe profiles
-        names.map(x =>
+        names.map((x) =>
           VIDEO_PROFILES[x]
             ? VIDEO_PROFILES[x].hash
             : VIDEO_PROFILES.P240p30fps4x3.hash,
@@ -205,7 +205,7 @@ export const utils = {
    * @param  {string} addr - an ETH address
    * @return {string}
    */
-  padAddress: addr => ADDRESS_PAD + addr.substr(2),
+  padAddress: (addr) => ADDRESS_PAD + addr.substr(2),
   /**
    * Encodes an event filter object into a topic list
    * @ignore
@@ -233,7 +233,7 @@ export const utils = {
    * @param  {string[]} topics - list of topics for log query
    * @return {Object}
    */
-  decodeEvent: event => ({ data, topics }) => {
+  decodeEvent: (event) => ({ data, topics }) => {
     return decodeEvent(event.abi, data, topics, false)
   },
 }
@@ -242,7 +242,7 @@ export const utils = {
 // ethjs returns a Result type from rpc requests
 // these functions help with formatting those values
 const { BN } = Eth
-const toBN = n => (BN.isBN(n) ? n : new BN(n.toString(10), 10))
+const toBN = (n) => (BN.isBN(n) ? n : new BN(n.toString(10), 10))
 const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
 const prop = (k: string | number) => (x): any => x[k]
 const toBool = (x: any): boolean => !!x
@@ -254,7 +254,7 @@ const headToNumber = compose(toNumber, prop(0))
 const invariant = (name, pos, type) => {
   throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`)
 }
-const formatDuration = ms => {
+const formatDuration = (ms) => {
   const seconds = (ms / 1000).toFixed(1)
   const minutes = (ms / (1000 * 60)).toFixed(1)
   const hours = (ms / (1000 * 60 * 60)).toFixed(1)
@@ -321,7 +321,7 @@ export async function initRPC({
             tx.sign(privateKeys[from])
             cb(null, '0x' + tx.serialize().toString('hex'))
           },
-          accounts: cb => cb(null, accounts),
+          accounts: (cb) => cb(null, accounts),
           timeout: 10 * 1000,
         })
       : // Use default signer
@@ -438,8 +438,8 @@ export async function initContracts(
   const events = Object.entries(abis)
     .map(([contract, abi]) => {
       return abi
-        .filter(x => x.type === 'event')
-        .map(abi => ({
+        .filter((x) => x.type === 'event')
+        .map((abi) => ({
           abi,
           contract,
           event: contracts[contract][abi.name],
@@ -1232,6 +1232,64 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Get a delegator's pending stake
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param  {string} endRound The last round to compute pending stake from
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getPendingStake('0xf00...')
+     * // => string
+     */
+    async getPendingStake(addr: string, endRound: string): Promise<string> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        if (!endRound) {
+          const currentRound = await rpc.getCurrentRound()
+          return headToString(
+            await BondingManager.pendingStake(address, currentRound),
+          )
+        }
+        return headToString(
+          await BondingManager.pendingStake(address, endRound),
+        )
+      } catch (err) {
+        err.message = 'Error: getPendingStake\n' + err.message
+        throw err
+      }
+    },
+
+    /**
+     * Get a delegator's pending fees
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param  {string} endRound The last round to compute pending fees from
+     * @return {Promise<string>}
+     *
+     * @example
+     *
+     * await rpc.getPendingFees('0xf00...')
+     * // => string
+     */
+    async getPendingFees(addr: string, endRound: string): Promise<string> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        if (!endRound) {
+          const currentRound = await rpc.getCurrentRound()
+          return headToString(
+            await BondingManager.pendingFees(address, currentRound),
+          )
+        }
+        return headToString(await BondingManager.pendingFees(address, endRound))
+      } catch (err) {
+        err.message = 'Error: getPendingFees\n' + err.message
+        throw err
+      }
+    },
+
+    /**
      * Whether or not the transcoder is active
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
@@ -1643,7 +1701,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.initializeRound()
+     * await rpc.createPoll('Qm...')
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1681,7 +1739,7 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * Get poll creator balance
+     * Get PollCreator transfer allowance
      * @memberof livepeer~rpc
      * @param  {string} addr - user's ETH address
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
@@ -1689,7 +1747,7 @@ export async function createLivepeerSDK(
      *
      * @example
      *
-     * await rpc.initializeRound()
+     * await rpc.getPollCreatorAllowance('0x...')
      * // => TxReceipt {
      * //   transactionHash: string,
      * //   transactionIndex": BN,
@@ -1718,6 +1776,48 @@ export async function createLivepeerSDK(
         )
       } catch (err) {
         err.message = 'Error: getPollCreatorAllowance\n' + err.message
+        throw err
+      }
+    },
+
+    /**
+     * Get BondingManager transfer allowance
+     * @memberof livepeer~rpc
+     * @param  {string} addr - user's ETH address
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.getBondingManagerAllowance('0x...')
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async getBondingManagerAllowance(addr): Promise<TxReceipt> {
+      try {
+        const address = await resolveAddress(rpc.getENSAddress, addr)
+        return headToString(
+          await LivepeerToken.allowance(address, BondingManager.address),
+        )
+      } catch (err) {
+        err.message = 'Error: getBondingManagerAllowance\n' + err.message
         throw err
       }
     },

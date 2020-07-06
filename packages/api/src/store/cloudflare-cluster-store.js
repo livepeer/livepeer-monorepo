@@ -17,13 +17,13 @@ export default class CloudflareStore {
       limit,
       cursor: oldCursor,
     })
-    keys = keys.map(obj => obj.name)
+    keys = keys.map((obj) => obj.name)
     return [keys, cursor]
   }
 
   async list(prefix = '', oldCursor = null, limit = DEFAULT_LIMIT) {
     const [keys, cursor] = await this.listKeys(prefix, oldCursor, limit)
-    const data = await Promise.all(keys.map(key => this.get(key)))
+    const data = await Promise.all(keys.map((key) => this.get(key)))
     return { data, cursor }
   }
 

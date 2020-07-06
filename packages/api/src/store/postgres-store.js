@@ -33,7 +33,7 @@ export default class PostgresStore {
 
   async listKeys(prefix = '', cursor, limit = DEFAULT_LIMIT) {
     const listRes = await this.list(prefix, cursor, limit)
-    const keys = listRes.data.map(item => Object.keys(item)[0])
+    const keys = listRes.data.map((item) => Object.keys(item)[0])
     return [keys, listRes.cursor]
   }
 

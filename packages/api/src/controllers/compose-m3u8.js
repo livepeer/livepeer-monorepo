@@ -13,7 +13,7 @@ const PROTOCOL_RE = /^[a-zA-Z]+:\/\//
 export default async (urls, { limit, rewrite } = {}) => {
   const broadcasters = []
   await Promise.all(
-    urls.map(async url => {
+    urls.map(async (url) => {
       try {
         const res = await fetch(url)
         if (res.status !== 200) {
@@ -155,13 +155,13 @@ export const handleMediaPlaylist = (broadcasters, { limit, rewrite }) => {
     '#EXT-X-VERSION:3',
     `#EXT-X-MEDIA-SEQUENCE:${bestRun[0].seq}`,
     `#EXT-X-TARGETDURATION:${Math.ceil(targetDuration)}`,
-    ...pairs.map(pair => pair.join('\n')),
+    ...pairs.map((pair) => pair.join('\n')),
   ]
 
   return output.join('\n')
 }
 
-export const handleMasterPlaylist = broadcasters => {
+export const handleMasterPlaylist = (broadcasters) => {
   let playlists = {}
 
   for (const [response, address, text] of broadcasters) {

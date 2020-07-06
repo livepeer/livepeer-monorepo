@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useTable } from 'react-table'
 import QRCode from 'qrcode.react'
 import Link from 'next/link'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 
 export default ({ protocol, delegators, ...props }) => {
@@ -141,7 +141,7 @@ function renderSwitch(cell, protocol) {
       return (
         <span sx={{ fontFamily: 'monospace' }}>{`${(
           (parseFloat(Utils.fromWei(cell.value)) /
-            parseFloat(Utils.fromWei(protocol.totalBondedToken))) *
+            parseFloat(Utils.fromWei(protocol.totalActiveStake))) *
           100
         ).toFixed(3)}%`}</span>
       )

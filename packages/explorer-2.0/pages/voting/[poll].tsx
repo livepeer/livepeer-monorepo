@@ -38,7 +38,7 @@ const Poll = () => {
     variables: {
       id: pollId,
     },
-    pollInterval: 4000,
+    pollInterval: 10000,
     ssr: false,
   })
 
@@ -46,7 +46,7 @@ const Poll = () => {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval: 4000,
+    pollInterval: 10000,
     skip: !context.active,
   })
 
@@ -54,7 +54,7 @@ const Poll = () => {
     variables: {
       id: `${context?.account?.toLowerCase()}-${pollId}`,
     },
-    pollInterval: 4000,
+    pollInterval: 10000,
     skip: !context.active,
   })
 
@@ -62,7 +62,7 @@ const Poll = () => {
     variables: {
       id: `${myAccountData?.delegator?.delegate?.id.toLowerCase()}-${pollId}`,
     },
-    pollInterval: 4000,
+    pollInterval: 10000,
     skip: !myAccountData?.delegator?.delegate,
   })
 

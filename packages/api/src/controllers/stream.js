@@ -12,24 +12,41 @@ import { getBroadcasterHandler } from './broadcaster'
 
 const app = Router()
 
+const hackMistSettings = (req, profiles) => {
+  // FIXME: tempoarily, Mist can only make passthrough FPS streams with 2-second gop sizes
+  if (
+    !req.headers['user-agent'] ||
+    !req.headers['user-agent'].toLowerCase().includes('mistserver')
+  ) {
+    return profiles
+  }
+  profiles = profiles || []
+  return profiles.map((profile) => {
+    return {
+      ...profile,
+      fps: 0,
+      gop: '2.0',
+    }
+  })
+}
+
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let { limit, cursor, streamsonly, sessionsonly, all } = req.query
 
   logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
-  const filter1 = all ? o => o : o => !o[Object.keys(o)[0]].deleted
-  let filter2 = o => o
+  const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
+  let filter2 = (o) => o
   if (streamsonly) {
-    filter2 = o => !o[Object.keys(o)[0]].parentId
+    filter2 = (o) => !o[Object.keys(o)[0]].parentId
   } else if (sessionsonly) {
-    filter2 = o => o[Object.keys(o)[0]].parentId
+    filter2 = (o) => o[Object.keys(o)[0]].parentId
   }
-
 
   const resp = await req.store.list({
     prefix: `stream/`,
     cursor,
     limit,
-    filter: o => filter1(o) && filter2(o),
+    filter: (o) => filter1(o) && filter2(o),
   })
   let output = resp.data
   res.status(200)
@@ -37,7 +54,7 @@ app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   if (output.length > 0) {
     res.links({ next: makeNextHREF(req, resp.cursor) })
   } // CF doesn't know what this means
-  output = output.map(o => o[Object.keys(o)[0]])
+  output = output.map((o) => o[Object.keys(o)[0]])
   res.json(output)
 })
 
@@ -79,11 +96,11 @@ app.get('/user/:userId', authMiddleware({}), async (req, res) => {
     })
   }
 
-  let filter = o => !o.deleted
+  let filter = (o) => !o.deleted
   if (streamsonly) {
-    filter = o => !o.deleted && !o.parentId
+    filter = (o) => !o.deleted && !o.parentId
   } else if (sessionsonly) {
-    filter = o => !o.deleted && o.parentId
+    filter = (o) => !o.deleted && o.parentId
   }
 
   const { data: streams, cursor: cursorOut } = await req.store.queryObjects({
@@ -107,6 +124,25 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
     ((stream.userId !== req.user.id || stream.deleted) && !req.isUIAdmin)
   ) {
     // do not reveal that stream exists
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+  res.status(200)
+  res.json(stream)
+})
+
+// returns stream by steamKey
+app.get('/playback/:playbackId', authMiddleware({}), async (req, res) => {
+  const {
+    data: [stream],
+  } = await req.store.queryObjects({
+    kind: 'stream',
+    query: { playbackId: req.params.playbackId },
+  })
+  if (
+    !stream ||
+    ((stream.userId !== req.user.id || stream.deleted) && !req.user.admin)
+  ) {
     res.status(404)
     return res.json({ errors: ['not found'] })
   }
@@ -190,6 +226,8 @@ app.post(
       parentId: stream.id,
     })
 
+    doc.profiles = hackMistSettings(req, doc.profiles)
+
     try {
       await req.store.create(doc)
       trackAction(
@@ -240,6 +278,9 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
     playbackId,
     createdByTokenName: req.tokenName,
   })
+
+  doc.profiles = hackMistSettings(req, doc.profiles)
+
   await Promise.all([
     req.store.create(doc),
     trackAction(
@@ -322,7 +363,7 @@ app.post('/hook', async (req, res) => {
   // Allowed patterns, for now:
   // http(s)://broadcaster.example.com/live/:streamId/:segNum.ts
   // rtmp://broadcaster.example.com/live/:streamId
-  const [live, streamId, ...rest] = pathname.split('/').filter(x => !!x)
+  const [live, streamId, ...rest] = pathname.split('/').filter((x) => !!x)
   if (!streamId) {
     res.status(401)
     return res.json({ errors: ['stream key is required'] })

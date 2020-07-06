@@ -1,32 +1,24 @@
-export async function account(_obj, _args, _ctx, _info) {
-  const {
-    allowance,
-    pollCreatorAllowance,
-  } = await _ctx.livepeer.rpc.getDelegator(_args.id.toLowerCase())
+import { getBlock } from '../../lib/utils'
 
+export async function account(_obj, _args, _ctx, _info) {
   return {
     id: _args.id,
-    tokenBalance: await _ctx.livepeer.rpc.getTokenBalance(
-      _args.id.toLowerCase(),
-    ),
-    ethBalance: await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase()),
-    pollCreatorAllowance,
-    allowance,
-  }
-}
-
-export async function protocol(_obj, _args, _ctx, _info) {
-  const {
-    totalTokenSupply,
-    totalBondedToken,
-    paused,
-  } = await _ctx.livepeer.rpc.getProtocol()
-  return {
-    paused,
-    inflation: await _ctx.livepeer.rpc.getInflation(),
-    inflationChange: await _ctx.livepeer.rpc.getInflationChange(),
-    totalTokenSupply,
-    totalBondedToken,
+    tokenBalance: async () => {
+      return await _ctx.livepeer.rpc.getTokenBalance(_args.id.toLowerCase())
+    },
+    ethBalance: async () => {
+      return await _ctx.livepeer.rpc.getEthBalance(_args.id.toLowerCase())
+    },
+    allowance: async () => {
+      return await _ctx.livepeer.rpc.getBondingManagerAllowance(
+        _args.id.toLowerCase(),
+      )
+    },
+    pollCreatorAllowance: async () => {
+      return await _ctx.livepeer.rpc.getPollCreatorAllowance(
+        _args.id.toLowerCase(),
+      )
+    },
   }
 }
 
@@ -105,5 +97,11 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
 }
 
 export async function block(_obj, _args, _ctx, _info) {
-  return await _ctx.livepeer.rpc.getBlock(_args.id)
+  const blockNumber = await getBlock()
+  const response = await fetch('https://ethgasstation.info/json/ethgasAPI.json')
+  const ethGasStationResult = await response.json()
+  return {
+    number: blockNumber,
+    time: ethGasStationResult.block_time,
+  }
 }

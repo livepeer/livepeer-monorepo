@@ -35,5 +35,5 @@ export async function generateStreamKey() {
 }
 
 if (!module.parent) {
-  generateStreamKey().then(x => console.log(x))
+  generateStreamKey().then((x) => console.log(x))
 }

@@ -13,7 +13,7 @@ export default class LevelStore {
     this.ready = (async () => {
       await fs.ensureDir(dbPath)
       await new Promise((resolve, reject) => {
-        this.db = level(dbPath, err => {
+        this.db = level(dbPath, (err) => {
           if (err) {
             return reject(err)
           }
@@ -78,7 +78,9 @@ export default class LevelStore {
     if (ret.length < 1) {
       return { data: ret, cursor: null }
     }
-    const cursorOut = Object.keys(ret[ret.length - 1])[0].split('/').pop()
+    const cursorOut = Object.keys(ret[ret.length - 1])[0]
+      .split('/')
+      .pop()
     return { data: ret, cursor: cursorOut }
   }
 

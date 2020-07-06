@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+const withTM = require('next-transpile-modules')(['@modulz/radix'])
 const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
 })
@@ -34,4 +34,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withMDX(nextConfig)
+module.exports = withTM(withMDX(nextConfig))

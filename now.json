@@ -8,23 +8,25 @@
       "use": "@now/static-build"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "^/admin/static/(.*)",
-      "dest": "/packages/livepeer.com/admin/static/$1"
+      "source": "/admin/static/(.*)",
+      "destination": "/packages/livepeer.com/admin/static/$1"
     },
     {
-      "src": "^/admin/(.*)",
-      "dest": "/packages/livepeer.com/admin/index.html"
+      "source": "/admin/(.*)",
+      "destination": "/packages/livepeer.com/admin/index.html"
     },
     {
-      "src": "/tv",
-      "status": 301,
-      "headers": {
-        "Location": "https://media.livepeer.org/play?url=https%3A%2F%2Fd21gyr0uv5jqnv.cloudfront.net%2F4br7%252Badam_obs%2Findex.m3u8"
-      }
-    },
-    { "src": "^/(.*)", "dest": "/packages/livepeer.com/www/$1" }
+      "source": "/(.*)",
+      "destination": "/packages/livepeer.com/www/$1"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/tv",
+      "destination": "https://media.livepeer.org/play?url=https%3A%2F%2Fd21gyr0uv5jqnv.cloudfront.net%2F4br7%252Badam_obs%2Findex.m3u8"
+    }
   ],
   "build": {
     "env": {

@@ -194,7 +194,7 @@ app.post('/verify', validatePost('user-verification'), async (req, res) => {
           ].join('\n\n'),
         })
       } catch (err) {
-        console.error(`error sending email to ${salesEmail}: error: ${err}`,)
+        console.error(`error sending email to ${salesEmail}: error: ${err}`)
       }
     }
 

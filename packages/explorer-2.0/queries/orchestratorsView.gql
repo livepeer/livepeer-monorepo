@@ -1,11 +1,16 @@
-{
+query(
+  $where: Transcoder_filter
+  $first: Int
+  $skip: Int
+  $orderBy: Transcoder_orderBy
+  $orderDirection: OrderDirection
+) {
   transcoders(
-    where: {
-      delegator_not: null
-      id_not: "0x0000000000000000000000000000000000000000"
-    }
-    orderBy: totalStake
-    orderDirection: desc
+    where: $where
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     id
     totalGeneratedFees
@@ -14,6 +19,7 @@
     deactivationRound
     rewardCut
     totalStake
+    price
     threeBoxSpace {
       __typename
       did
@@ -33,11 +39,14 @@
       rewardTokens
     }
   }
-  protocol {
+  protocol(id: "0") {
     totalTokenSupply
-    totalBondedToken
+    totalActiveStake
     inflation
     inflationChange
+    currentRound {
+      id
+    }
   }
   selectedTranscoder @client {
     __typename
@@ -51,8 +60,5 @@
       description
       image
     }
-  }
-  currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-    id
   }
 }

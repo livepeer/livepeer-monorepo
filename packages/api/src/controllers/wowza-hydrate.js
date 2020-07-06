@@ -7,7 +7,7 @@ const replaceStreamName = (str, name) =>
 /**
  * Take a data blob and return the appropriate profiles and names
  */
-export default stream => {
+export default (stream) => {
   if (!stream.wowza) {
     return stream
   }
@@ -34,7 +34,7 @@ export default stream => {
     throw new Error('no template found from templatesInUse')
   }
   const transcoderConfig = transcoderTemplateAppConfig[template]
-  const enabledEncodes = transcoderConfig.encodes.filter(e => e.enable)
+  const enabledEncodes = transcoderConfig.encodes.filter((e) => e.enable)
   const renditions = {}
   let profiles = []
   const encodeNameToRenditionName = {}
@@ -88,13 +88,15 @@ export default stream => {
 
   // Dedupe profiles
   profiles = [...new Set(profiles)]
-  const enabledEncodeNames = new Set(enabledEncodes.map(encode => encode.name))
+  const enabledEncodeNames = new Set(
+    enabledEncodes.map((encode) => encode.name),
+  )
   const streamNameGroups = transcoderConfig.streamNameGroups.map(
-    streamNameGroup => {
+    (streamNameGroup) => {
       const name = replaceStreamName(streamNameGroup.streamName, stream.name)
-      const renditions = streamNameGroup.Members.map(m => m.encodeName)
-        .filter(name => enabledEncodeNames.has(name))
-        .map(encodeName => encodeNameToRenditionName[encodeName])
+      const renditions = streamNameGroup.Members.map((m) => m.encodeName)
+        .filter((name) => enabledEncodeNames.has(name))
+        .map((encodeName) => encodeNameToRenditionName[encodeName])
       return { name, renditions }
     },
   )

@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/react-hooks'
-import * as Utils from 'web3-utils'
+import Utils from 'web3-utils'
 import useWindowSize from 'react-use/lib/useWindowSize'
 
 let hoursPerYear = 8760
@@ -10,7 +10,7 @@ export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
-  const totalStaked = Number(Utils.fromWei(protocol.totalBondedToken))
+  const totalStaked = Number(Utils.fromWei(protocol.totalActiveStake))
   const rewardCut =
     transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0
   const inflation = protocol.inflation > 0 ? protocol.inflation / 1000000 : 0
