@@ -4,6 +4,29 @@ import { MDXProvider } from "@mdx-js/react";
 import CodeBlock from "../components/CodeBlock";
 import { Styled } from "theme-ui";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+const StyledA = ({ href, children }) => {
+  const router = useRouter();
+  let opacity = 0.65;
+  if (router.pathname === href) {
+    opacity = 1;
+  }
+  return (
+    <Link href={href}>
+      <a
+        sx={{
+          textDecoration: "none",
+          cursor: "pointer",
+          opacity: opacity,
+          "&:hover": { opacity: 1 },
+        }}
+      >
+        {children}
+      </a>
+    </Link>
+  );
+};
 
 const components = {
   code: CodeBlock,
@@ -13,7 +36,10 @@ const components = {
   h3: Styled.h3,
   h4: Styled.h4,
   h5: Styled.h5,
-  a: Link,
+  a: StyledA,
+  ul: Styled.ul,
+  ol: Styled.ol,
+  li: Styled.li,
 };
 
 export default ({ children }) => (
