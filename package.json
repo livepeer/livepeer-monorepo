@@ -34,7 +34,7 @@
     "now:build": "cp -Rv .now-staging .now && now deploy --token=$ZEIT_KEY",
     "now:build-production": "cp -Rv .now-production .now && now deploy --token=$ZEIT_KEY",
     "now:staging": "cp -Rv .now-staging .now && now deploy --token=$ZEIT_KEY --prod",
-    "now:production": "echo 'this is disabled right now'",
+    "now:production": "cp -Rv .now-production .now && now deploy --token=$ZEIT_KEY --prod",
     "postinstall": "lerna run --stream postinstall"
   },
   "devDependencies": {
