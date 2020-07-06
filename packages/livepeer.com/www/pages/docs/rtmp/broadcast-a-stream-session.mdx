@@ -1,0 +1,14 @@
+import DocsLayout from "../../../components/DocsLayout";
+
+<DocsLayout>
+
+### How to broadcast a stream session
+
+Your users or your application will need to be able to push an RTMP stream. When configuring the software to push streams, use the secret **stream key** and **RTMP ingest URL** from the **stream page**.
+
+Depending on the software used to push your RTMP stream, you’ll be prompted for the following:
+- Stream Key: In some cases, this is called a *Stream Name*. Input your Livepeer **stream key**, not your Livepeer stream name.
+- Server URL: Input the regionally optimized Livepeer **RTMP ingest URL**. For streams originating in North America, use rtmp://mdw-rtmp.livepeer.com/live/. For streams originating in the EU, use rtmp://fra-rtmp.livepeer.com/live/. 
+- Location or URL: Input the ingest url with the **stream key** appended. For streams originating in North America, use rtmp://mdw-rtmp.livepeer.com/live/<strong>stream-key</strong>. For streams originating in the EU, use rtmp://fra-rtmp.livepeer.com/live/<strong>stream-key</strong>.
+
+</DocsLayout>
