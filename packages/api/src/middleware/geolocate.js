@@ -1,5 +1,8 @@
 'use strict'
 
+// This is a spec but it doesn't look like it's very well supported, so
+import promiseAny from 'promise.any'
+
 export function addProtocol(url, protocol = 'https') {
   if (url.indexOf('://') > 0) {
     return url
@@ -29,9 +32,15 @@ function geoLocateFactory({ first = true, region = 'region' }) {
     let smallestServer
     let smallestDuration = Infinity
     console.log('servers: ', typeof servers, servers)
+    const errors = []
     const promises = servers.map(async (server) => {
       const start = Date.now()
-      const res = await fetch(`${server}/api`)
+      const res = await fetch(`${server}/geolocate`)
+      if (res.status !== 200) {
+        const err = new Error(`HTTP ${res.status}: ${await res.text()}`)
+        errors.push(err)
+        throw err
+      }
       const duration = Date.now() - start
       if (duration < smallestDuration) {
         smallestDuration = duration
@@ -43,11 +52,16 @@ function geoLocateFactory({ first = true, region = 'region' }) {
       }
     })
     let data
-    if (first) {
-      data = await Promise.race(promises)
-      data = [data]
-    } else {
-      data = await Promise.all(promises)
+    try {
+      if (first) {
+        data = await promiseAny(promises)
+        data = [data]
+      } else {
+        data = await Promise.all(promises)
+      }
+    } catch (e) {
+      const allErrors = errors.map((err) => err.message).join(', ')
+      throw new Error(`${e.message}: ${allErrors}`)
     }
     const ret = {
       chosenServer: smallestServer,

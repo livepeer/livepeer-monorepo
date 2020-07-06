@@ -195,6 +195,13 @@ export default function parseCli(argv) {
           default: [],
           coerce: coerceArr,
         },
+        'api-region': {
+          describe:
+            'list of api endpoints to forward on incoming API requests. defining this delegates all non-geolocation tasks to the upstream servers',
+          type: 'array',
+          default: [],
+          coerce: coerceArr,
+        },
       })
       .help()
       .parse(argv)

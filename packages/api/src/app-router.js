@@ -16,7 +16,16 @@ import {
 } from './middleware'
 import controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
+import apiProxy from './controllers/api-proxy'
 import proxy from 'http-proxy-middleware'
+
+// Routes that should be whitelisted even when `apiRegion` is set
+const GEOLOCATION_ENDPOINTS = [
+  'broadcaster',
+  'orchestrator',
+  'ingest',
+  'geolocate',
+]
 
 export default async function makeApp(params) {
   const {
@@ -119,7 +128,16 @@ export default async function makeApp(params) {
   // Add a controller for each route at the /${httpPrefix} route
   const prefixRouter = Router() // amalgamates our endpoints together and serves them out
   for (const [name, controller] of Object.entries(controllers)) {
-    prefixRouter.use(`/${name}`, controller)
+    // if we're operating in api-region mode, only handle geolocation traffic, forward the rest on
+    if (
+      params.apiRegion &&
+      params.apiRegion.length > 0 &&
+      !GEOLOCATION_ENDPOINTS.includes(name)
+    ) {
+      prefixRouter.use(`/${name}`, apiProxy)
+    } else {
+      prefixRouter.use(`/${name}`, controller)
+    }
   }
   app.use(httpPrefix, prefixRouter)
   // Special case: handle /stream proxies off that endpoint
