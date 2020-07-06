@@ -1,7 +1,11 @@
 import { Flex, Styled } from 'theme-ui'
 import Utils from 'web3-utils'
 import Unlink from '../../public/img/unlink.svg'
-import { abbreviateNumber, getHint } from '../../lib/utils'
+import {
+  abbreviateNumber,
+  getHint,
+  simulateNewActiveSetOrder,
+} from '../../lib/utils'
 import { UnbondingLock } from '../../@types'
 import List from '../List'
 import ListItem from '../ListItem'
@@ -28,9 +32,15 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
           header={<Styled.h4>Pending Transactions</Styled.h4>}
         >
           {pendingStakeTransactions.map((lock) => {
+            const newActiveSetOrder = simulateNewActiveSetOrder({
+              action: 'stake',
+              transcoders: JSON.parse(JSON.stringify(transcoders)),
+              amount: Utils.toWei(lock.amount),
+              newDelegate: isBonded ? delegator.delegate.id : lock.delegate.id,
+            })
             const { newPosPrev, newPosNext } = getHint(
               isBonded ? delegator.delegate.id : lock.delegate.id,
-              transcoders,
+              newActiveSetOrder,
             )
             return (
               <ListItem
@@ -91,9 +101,15 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
       {!!completedStakeTransactions.length && (
         <List header={<Styled.h4>Available for Withdrawal</Styled.h4>}>
           {completedStakeTransactions.map((lock) => {
+            const newActiveSetOrder = simulateNewActiveSetOrder({
+              action: 'stake',
+              transcoders: JSON.parse(JSON.stringify(transcoders)),
+              amount: Utils.toWei(lock.amount),
+              newDelegate: isBonded ? delegator.delegate.id : lock.delegate.id,
+            })
             const { newPosPrev, newPosNext } = getHint(
               isBonded ? delegator.delegate.id : lock.delegate.id,
-              transcoders,
+              newActiveSetOrder,
             )
             return (
               <ListItem

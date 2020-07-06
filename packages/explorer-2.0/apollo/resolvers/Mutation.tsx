@@ -1,4 +1,4 @@
-import { MAX_BATCH_CLAIM_ROUNDS, EMPTY_ADDRESS, getHint } from '../../lib/utils'
+import { MAX_BATCH_CLAIM_ROUNDS } from '../../lib/utils'
 
 /**
  * Approve an amount for an ERC20 token transfer

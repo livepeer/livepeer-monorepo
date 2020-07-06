@@ -6,8 +6,8 @@ import Utils from 'web3-utils'
 import {
   getDelegatorStatus,
   MAX_EARNINGS_CLAIMS_ROUNDS,
-  EMPTY_ADDRESS,
   getHint,
+  simulateNewActiveSetOrder,
 } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import Warning from './Warning'
@@ -97,15 +97,23 @@ export default ({
     roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     parseFloat(amount) > 0
 
+  const newActiveSetOrder = simulateNewActiveSetOrder({
+    action,
+    transcoders: JSON.parse(JSON.stringify(transcoders)),
+    amount: Utils.toWei(amount ? amount.toString() : '0'),
+    newDelegate: transcoder.id,
+    oldDelegate: delegator?.delegate?.id,
+  })
+
   const { newPosPrev, newPosNext } = getHint(
     delegator?.delegate?.id,
-    transcoders,
+    newActiveSetOrder,
   )
 
   const {
     newPosPrev: currDelegateNewPosPrev,
     newPosNext: currDelegateNewPosNext,
-  } = getHint(transcoder.id, transcoders)
+  } = getHint(transcoder.id, newActiveSetOrder)
 
   if (action == 'stake') {
     return (

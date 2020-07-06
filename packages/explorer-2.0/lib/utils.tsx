@@ -327,9 +327,9 @@ export const getHint = (id, transcoders) => {
     newPosPrev: EMPTY_ADDRESS,
     newPosNext: EMPTY_ADDRESS,
   }
-
-  const index = transcoders.indexOf(id.toLowerCase())
-
+  const index = transcoders.findIndex(
+    (t) => t.id.toLowerCase() === id.toLowerCase(),
+  )
   // if transcoder is not in active set return
   if (index < 0) {
     return hint
@@ -344,4 +344,50 @@ export const getHint = (id, transcoders) => {
     hint.newPosPrev = transcoders[index - 1]
   }
   return hint
+}
+
+export const simulateNewActiveSetOrder = ({
+  action,
+  transcoders,
+  amount,
+  newDelegate,
+  oldDelegate = EMPTY_ADDRESS,
+}) => {
+  const index = transcoders.findIndex(
+    (t) => t.id.toLowerCase() === newDelegate.toLowerCase(),
+  )
+
+  if (index < 0) {
+    return transcoders
+  }
+
+  if (action === 'stake') {
+    transcoders[index].totalStake = Utils.toBN(transcoders[index].totalStake)
+      .add(Utils.toBN(amount))
+      .toString()
+
+    // if delegator is moving stake, subtract amount from old delegate
+    if (
+      oldDelegate.toLowerCase() != newDelegate.toLowerCase() &&
+      oldDelegate.toLowerCase() != EMPTY_ADDRESS
+    ) {
+      const oldDelegateIndex = transcoders.findIndex(
+        (t) => t.id.toLowerCase() === oldDelegate.toLowerCase(),
+      )
+      transcoders[oldDelegateIndex].totalStake = Utils.toBN(
+        transcoders[oldDelegateIndex].totalStake,
+      )
+        .sub(Utils.toBN(amount))
+        .toString()
+    }
+  } else {
+    transcoders[index].totalStake = Utils.toBN(transcoders[index].totalStake)
+      .sub(Utils.toBN(amount))
+      .toString()
+  }
+
+  // reorder transcoders array
+  return transcoders.sort((a, b) =>
+    +Utils.fromWei(a.totalStake) > +Utils.fromWei(b.totalStake) ? 1 : -1,
+  )
 }
