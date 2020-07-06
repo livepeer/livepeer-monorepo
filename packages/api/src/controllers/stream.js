@@ -22,11 +22,14 @@ const hackMistSettings = (req, profiles) => {
   }
   profiles = profiles || []
   return profiles.map((profile) => {
-    return {
+    profile = {
       ...profile,
       fps: 0,
-      gop: '2.0',
     }
+    if (typeof profile.gop === 'undefined') {
+      profile.gop = '2.0'
+    }
+    return profile
   })
 }
 
