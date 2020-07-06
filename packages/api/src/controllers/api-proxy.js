@@ -13,39 +13,26 @@ app.use(geolocateMiddleware({ region: 'api-region' }), async (req, res) => {
   const upstreamUrl = new URL(req.region.chosenServer)
   upstreamUrl.pathname = req.originalUrl
   const upstreamUrlString = upstreamUrl.toString()
-  console.log(upstreamUrlString)
   const upstreamHeaders = {
     ...req.headers,
     host: upstreamUrl.hostname,
   }
+  // This can change slightly...
   delete upstreamHeaders['content-length']
-  let body = undefined
-  if (req.body) {
-    body = JSON.stringify(req.body)
-  }
-  console.log('doing fetch', {
+  const params = {
     method: req.method,
-    body,
     headers: upstreamHeaders,
-  })
-  let upstreamRes
-  try {
-    upstreamRes = await fetch(upstreamUrl.toString(), {
-      method: req.method,
-      body: body,
-      headers: upstreamHeaders,
-    })
-  } catch (e) {
-    console.log(e)
   }
-  console.log('back from fetch')
+  // Oddly, req.body seems present even during GET and HEAD, so double-check
+  if (req.body && (req.method === 'POST' || req.method === 'PUT')) {
+    params.body = JSON.stringify(req.body)
+  }
+  const upstreamRes = await fetch(upstreamUrl.toString(), params)
   res.status(upstreamRes.status)
   if (res.status === 204) {
     return res.end()
   }
-  console.log('doing body')
   const resBody = await upstreamRes.json()
-  console.log('back from body')
   res.json(resBody)
 })
 

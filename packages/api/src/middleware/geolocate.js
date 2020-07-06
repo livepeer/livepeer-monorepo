@@ -35,9 +35,12 @@ function geoLocateFactory({ first = true, region = 'region' }) {
     const errors = []
     const promises = servers.map(async (server) => {
       const start = Date.now()
-      const res = await fetch(`${server}/geolocate`)
+      const upstreamUrl = `${server}/api/geolocate`
+      const res = await fetch(upstreamUrl)
       if (res.status !== 200) {
-        const err = new Error(`HTTP ${res.status}: ${await res.text()}`)
+        const err = new Error(
+          `${upstreamUrl} HTTP ${res.status}: ${await res.text()}`,
+        )
         errors.push(err)
         throw err
       }
