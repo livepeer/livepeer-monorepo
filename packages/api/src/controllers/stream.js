@@ -26,9 +26,9 @@ const hackMistSettings = (req, profiles) => {
       ...profile,
       fps: 0,
     }
-    if (typeof profile.gop === 'undefined') {
-      profile.gop = '2.0'
-    }
+    // if (typeof profile.gop === 'undefined') {
+    //   profile.gop = '2.0'
+    // }
     return profile
   })
 }
