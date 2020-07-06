@@ -12,20 +12,27 @@ const StyledA = ({ href, children }) => {
   if (router.pathname === href) {
     opacity = 1;
   }
-  return (
-    <Link href={href}>
-      <a
-        sx={{
-          textDecoration: "none",
-          cursor: "pointer",
-          opacity: opacity,
-          "&:hover": { opacity: 1 },
-        }}
-      >
-        {children}
-      </a>
-    </Link>
+  const isInternal = href.startsWith("/");
+  const internalA = (
+    <a
+      href={href}
+      target={isInternal ? undefined : "_blank"}
+      sx={{
+        textDecoration: "none",
+        cursor: "pointer",
+        opacity: opacity,
+        "&:hover": { opacity: 1 },
+      }}
+    >
+      {children}
+    </a>
   );
+
+  if (!isInternal) {
+    return internalA;
+  }
+
+  return <Link href={href}>{internalA}</Link>;
 };
 
 const components = {
