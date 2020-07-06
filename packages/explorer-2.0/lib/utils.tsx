@@ -388,6 +388,6 @@ export const simulateNewActiveSetOrder = ({
 
   // reorder transcoders array
   return transcoders.sort((a, b) =>
-    +Utils.fromWei(a.totalStake) > +Utils.fromWei(b.totalStake) ? 1 : -1,
+    +Utils.fromWei(a.totalStake) < +Utils.fromWei(b.totalStake) ? 1 : -1,
   )
 }
