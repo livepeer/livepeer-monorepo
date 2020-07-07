@@ -362,6 +362,7 @@ export const simulateNewActiveSetOrder = ({
   }
 
   if (action === 'stake') {
+    console.log(transcoders[index])
     transcoders[index].totalStake = Utils.toBN(transcoders[index].totalStake)
       .add(Utils.toBN(amount))
       .toString()

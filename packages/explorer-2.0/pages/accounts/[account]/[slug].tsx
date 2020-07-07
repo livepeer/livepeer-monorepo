@@ -47,6 +47,7 @@ const Account = () => {
           where: { active: true }
         ) {
           id
+          totalStake
         }
       }
     `,
