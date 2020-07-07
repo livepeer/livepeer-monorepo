@@ -5,14 +5,16 @@
 import Router from 'express/lib/router'
 import geolocateMiddleware from '../middleware/geolocate'
 import fetch from 'isomorphic-fetch'
-import path from 'path'
+import qs from 'qs'
 
 const app = Router()
 
 app.use(geolocateMiddleware({ region: 'api-region' }), async (req, res) => {
   const upstreamUrl = new URL(req.region.chosenServer)
   upstreamUrl.pathname = req.originalUrl
-  const upstreamUrlString = upstreamUrl.toString()
+  if (req.query) {
+    upstreamUrl.search = `?${qs.stringify(req.query)}`
+  }
   const upstreamHeaders = {
     ...req.headers,
     host: upstreamUrl.hostname,
