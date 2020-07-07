@@ -27,6 +27,7 @@ const Home = () => {
   const { data, loading } = useQuery(orchestratorsViewQuery, {
     variables,
     ssr: false,
+    pollInterval: 20000,
   })
   const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
     accountQuery,
@@ -114,6 +115,7 @@ const Home = () => {
             }}
           >
             <StakingWidget
+              transcoders={data.transcoders.filter((t) => t.active)}
               delegator={dataMyAccount?.delegator}
               currentRound={data.protocol.currentRound}
               account={dataMyAccount?.account}

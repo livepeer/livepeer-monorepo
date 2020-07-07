@@ -1,3 +1,11 @@
-mutation rebond($unbondingLockId: Int!) {
-  tx: rebond(unbondingLockId: $unbondingLockId)
+mutation rebond(
+  $unbondingLockId: Int!
+  $newPosPrev: String!
+  $newPosNext: String!
+) {
+  tx: rebond(
+    unbondingLockId: $unbondingLockId
+    newPosPrev: $newPosPrev
+    newPosNext: $newPosNext
+  )
 }

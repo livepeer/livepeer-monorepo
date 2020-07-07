@@ -695,48 +695,6 @@ export async function createLivepeerSDK(
     },
 
     /**
-     * Gets the unbonding period for transcoders
-     * @memberof livepeer~rpc
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getUnbondingPeriod()
-     * // => string
-     */
-    async getUnbondingPeriod(): Promise<string> {
-      return headToString(await BondingManager.unbondingPeriod())
-    },
-
-    /**
-     * Gets the number of active transcoders
-     * @memberof livepeer~rpc
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getNumActiveTranscoders()
-     * // => string
-     */
-    async getNumActiveTranscoders(): Promise<string> {
-      return headToString(await BondingManager.numActiveTranscoders())
-    },
-
-    /**
-     * Gets the maximum earnings for claims rounds
-     * @memberof livepeer~rpc
-     * @return {Promise<string>}
-     *
-     * @example
-     *
-     * await rpc.getMaxEarningsClaimsRounds()
-     * // => string
-     */
-    async getMaxEarningsClaimsRounds(): Promise<string> {
-      return headToString(await BondingManager.maxEarningsClaimsRounds())
-    },
-
-    /**
      * Gets the total amount of bonded tokens
      * @memberof livepeer~rpc
      * @return {Promise<string}
@@ -1140,6 +1098,7 @@ export async function createLivepeerSDK(
     /**
      * Rebonds LPT from an address
      * @memberof livepeer~rpc
+     * @param {number} unbondingLockId
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      *
@@ -1167,7 +1126,7 @@ export async function createLivepeerSDK(
      * // }
      */
     async rebond(
-      unbondingLockId: string,
+      unbondingLockId: number,
       tx = config.defaultTx,
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.rebond(unbondingLockId, {
@@ -1182,8 +1141,64 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Rebonds LPT from an address with hint
+     * @memberof livepeer~rpc
+     * @param {number} unbondingLockId
+     * @param {string} newPosPrev
+     * @param {string} newPosNext
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.rebondWithHint(0, "0x", "0x")
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async rebondWithHint(
+      unbondingLockId: number,
+      newPosPrev: string,
+      newPosNext: string,
+      tx: TxObject,
+    ): Promise<TxReceipt> {
+      const txHash = await BondingManager.rebondWithHint(
+        unbondingLockId,
+        newPosPrev,
+        newPosNext,
+        {
+          ...config.defaultTx,
+          ...tx,
+        },
+      )
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
+    /**
      * Rebonds LPT from an address
      * @memberof livepeer~rpc
+     * @param {string} to
+     * @param {number} unbondingLockId
      * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
      * @return {Promise<TxReceipt>}
      *
@@ -1211,13 +1226,71 @@ export async function createLivepeerSDK(
      * // }
      */
     async rebondFromUnbonded(
-      addr: string,
+      to: string,
       unbondingLockId: number,
       tx = config.defaultTx,
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.rebondFromUnbonded(
-        addr,
+        to,
         unbondingLockId,
+        {
+          ...config.defaultTx,
+          ...tx,
+        },
+      )
+
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
+    /**
+     * Rebonds LPT from an address with hint
+     * @memberof livepeer~rpc
+     * @param {string} to
+     * @param {number} unbondingLockId
+     * @param {string} newPosPrev
+     * @param {string} newPosNext
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.rebondFromUnbondedWithHint("0x", 1, "0x", "0x")
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async rebondFromUnbondedWithHint(
+      to: string,
+      unbondingLockId: number,
+      newPosPrev: string,
+      newPosNext: string,
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      const txHash = await BondingManager.rebondFromUnbondedWithHint(
+        to,
+        unbondingLockId,
+        newPosPrev,
+        newPosNext,
         {
           ...config.defaultTx,
           ...tx,
@@ -1234,8 +1307,8 @@ export async function createLivepeerSDK(
     /**
      * Get a delegator's pending stake
      * @memberof livepeer~rpc
-     * @param  {string} addr - user's ETH address
-     * @param  {string} endRound The last round to compute pending stake from
+     * @param {string} addr - user's ETH address
+     * @param {string} endRound The last round to compute pending stake from
      * @return {Promise<string>}
      *
      * @example
@@ -1943,6 +2016,71 @@ export async function createLivepeerSDK(
     },
 
     /**
+     * Bonds to a transcoder with hint
+     * @memberof livepeer~rpc
+     * @param {string} amount
+     * @param {string} to
+     * @param {string} oldDelegateNewPosPrev
+     * @param {string} oldDelegateNewPosNext
+     * @param {string} currDelegateNewPosPrev
+     * @param {string} currDelegateNewPosNext
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.bondWithHint("100", "0x", "0x", "0x", "0x", "0x")
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async bondWithHint(
+      amount: string,
+      to: string,
+      oldDelegateNewPosPrev: string,
+      oldDelegateNewPosNext: string,
+      currDelegateNewPosPrev: string,
+      currDelegateNewPosNext: string,
+      tx: TxObject,
+    ): Promise<TxReceipt> {
+      const token = toBN(amount)
+      const txHash = await BondingManager.bondWithHint(
+        token,
+        await resolveAddress(rpc.getENSAddress, to),
+        oldDelegateNewPosPrev,
+        oldDelegateNewPosNext,
+        currDelegateNewPosPrev,
+        currDelegateNewPosNext,
+        {
+          ...config.defaultTx,
+          ...tx,
+        },
+      )
+
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
+    /**
      * Gets the estimated amount of gas to be used by a smart contract
      * method.
      * @memberof livepeer~rpc
@@ -2024,6 +2162,61 @@ export async function createLivepeerSDK(
         ...config.defaultTx,
         ...tx,
       })
+
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
+    /**
+     * Unbonds LPT from an address with hint
+     * @memberof livepeer~rpc
+     * @param {string} amount
+     * @param {string} newPosPrev
+     * @param {string} newPosNext
+     * @param {TxConfig} [tx = config.defaultTx] - an object specifying the `from` and `gas` values of the transaction
+     * @return {Promise<TxReceipt>}
+     *
+     * @example
+     *
+     * await rpc.unbondWithHint("100", "0x", "0x")
+     * // => TxReceipt {
+     * //   transactionHash: string,
+     * //   transactionIndex": BN,
+     * //   blockHash: string,
+     * //   blockNumber: BN,
+     * //   cumulativeGasUsed: BN,
+     * //   gasUsed: BN,
+     * //   contractAddress: string,
+     * //   logs: Array<Log {
+     * //     logIndex: BN,
+     * //     blockNumber: BN,
+     * //     blockHash: string,
+     * //     transactionHash: string,
+     * //     transactionIndex: string,
+     * //     address: string,
+     * //     data: string,
+     * //     topics: Array<string>
+     * //   }>
+     * // }
+     */
+    async unbondWithHint(
+      amount: string,
+      newPosPrev: string,
+      newPosNext: string,
+      tx = config.defaultTx,
+    ): Promise<TxReceipt> {
+      const txHash = await BondingManager.unbondWithHint(
+        amount,
+        newPosPrev,
+        newPosNext,
+        {
+          ...config.defaultTx,
+          ...tx,
+        },
+      )
 
       if (tx.returnTxHash) {
         return txHash

@@ -10,6 +10,7 @@ import InputBox from './InputBox'
 import { Flex } from 'theme-ui'
 
 interface Props {
+  transcoders: [Transcoder]
   transcoder: Transcoder
   delegator?: Delegator
   protocol: Protocol
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default ({
+  transcoders,
   delegator,
   account,
   transcoder,
@@ -74,6 +76,7 @@ export default ({
           </Flex>
           <ProjectionBox action={action} />
           <Footer
+            transcoders={transcoders}
             currentRound={currentRound}
             account={account}
             delegator={delegator}

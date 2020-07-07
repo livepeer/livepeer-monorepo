@@ -38,6 +38,25 @@ const Account = () => {
     ssr: false,
   })
 
+  const { data: dataTranscoders, loading: loadingTranscoders } = useQuery(
+    gql`
+      {
+        transcoders(
+          orderDirection: desc
+          orderBy: totalStake
+          where: { active: true }
+        ) {
+          id
+          totalStake
+        }
+      }
+    `,
+    {
+      pollInterval: 20000,
+      ssr: false,
+    },
+  )
+
   const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
     accountQuery,
     {
@@ -57,7 +76,7 @@ const Account = () => {
   `
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
 
-  if (loading || loadingMyAccount) {
+  if (loading || loadingMyAccount || loadingTranscoders) {
     return (
       <Flex
         sx={{
@@ -81,7 +100,7 @@ const Account = () => {
     context?.account,
     query.account.toString(),
   )
-  const isStaked = !!data.delegator?.delegate
+  const isStaked = !!data?.delegator?.delegate
   const hasLivepeerToken =
     data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0
   let role: string
@@ -103,13 +122,6 @@ const Account = () => {
     asPath,
     isMyDelegate,
   )
-
-  const headerTitle =
-    process.env.THREEBOX_ENABLED && data?.threeBoxSpace?.name
-      ? data.threeBoxSpace.name
-      : query.account
-          .toString()
-          .replace(query.account.toString().slice(5, 39), '…')
 
   return (
     <>
@@ -172,6 +184,7 @@ const Account = () => {
         {slug == 'tokenholders' && <TokenholdersView />}
         {slug == 'staking' && (
           <StakingView
+            transcoders={dataTranscoders.transcoders}
             delegator={data.delegator}
             protocol={data.protocol}
             currentRound={data.currentRound[0]}
@@ -192,6 +205,7 @@ const Account = () => {
           >
             <StakingWidget
               currentRound={data.currentRound[0]}
+              transcoders={dataTranscoders.transcoders}
               delegator={dataMyAccount?.delegator}
               account={dataMyAccount?.account}
               transcoder={data.transcoder}
@@ -201,6 +215,7 @@ const Account = () => {
         ) : (
           <BottomDrawer>
             <StakingWidget
+              transcoders={dataTranscoders.transcoders}
               selectedAction={selectedStakingAction?.selectedStakingAction}
               currentRound={data.currentRound[0]}
               delegator={dataMyAccount?.delegator}

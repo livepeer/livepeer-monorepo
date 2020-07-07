@@ -88,124 +88,148 @@ The following section details the rpc API's function signatures and typedefs.
         -   [Examples](#examples-5)
     -   [getUnbondingPeriod](#getunbondingperiod)
         -   [Examples](#examples-6)
-    -   [getUnbondingPeriod](#getunbondingperiod-1)
-        -   [Examples](#examples-7)
     -   [getNumActiveTranscoders](#getnumactivetranscoders)
-        -   [Examples](#examples-8)
-    -   [getNumActiveTranscoders](#getnumactivetranscoders-1)
-        -   [Examples](#examples-9)
+        -   [Examples](#examples-7)
     -   [getMaxEarningsClaimsRounds](#getmaxearningsclaimsrounds)
-        -   [Examples](#examples-10)
-    -   [getMaxEarningsClaimsRounds](#getmaxearningsclaimsrounds-1)
-        -   [Examples](#examples-11)
+        -   [Examples](#examples-8)
     -   [getTotalBonded](#gettotalbonded)
-        -   [Examples](#examples-12)
+        -   [Examples](#examples-9)
     -   [getTokenTotalSupply](#gettokentotalsupply)
-        -   [Examples](#examples-13)
+        -   [Examples](#examples-10)
     -   [getTokenBalance](#gettokenbalance)
         -   [Parameters](#parameters-5)
-        -   [Examples](#examples-14)
+        -   [Examples](#examples-11)
     -   [getTokenInfo](#gettokeninfo)
         -   [Parameters](#parameters-6)
-        -   [Examples](#examples-15)
+        -   [Examples](#examples-12)
     -   [transferToken](#transfertoken)
         -   [Parameters](#parameters-7)
-        -   [Examples](#examples-16)
+        -   [Examples](#examples-13)
     -   [getFaucetAmount](#getfaucetamount)
-        -   [Examples](#examples-17)
+        -   [Examples](#examples-14)
     -   [getFaucetWait](#getfaucetwait)
-        -   [Examples](#examples-18)
+        -   [Examples](#examples-15)
     -   [getFaucetNext](#getfaucetnext)
         -   [Parameters](#parameters-8)
-        -   [Examples](#examples-19)
+        -   [Examples](#examples-16)
     -   [getFaucetInfo](#getfaucetinfo)
         -   [Parameters](#parameters-9)
-        -   [Examples](#examples-20)
+        -   [Examples](#examples-17)
     -   [getInflation](#getinflation)
-        -   [Examples](#examples-21)
+        -   [Examples](#examples-18)
     -   [getInflationChange](#getinflationchange)
-        -   [Examples](#examples-22)
+        -   [Examples](#examples-19)
     -   [getDelegatorStatus](#getdelegatorstatus)
         -   [Parameters](#parameters-10)
-        -   [Examples](#examples-23)
+        -   [Examples](#examples-20)
     -   [getDelegator](#getdelegator)
         -   [Parameters](#parameters-11)
-        -   [Examples](#examples-24)
+        -   [Examples](#examples-21)
     -   [rebond](#rebond)
         -   [Parameters](#parameters-12)
-        -   [Examples](#examples-25)
-    -   [rebondFromUnbonded](#rebondfromunbonded)
+        -   [Examples](#examples-22)
+    -   [rebondWithHint](#rebondwithhint)
         -   [Parameters](#parameters-13)
-        -   [Examples](#examples-26)
-    -   [getTranscoderIsActive](#gettranscoderisactive)
+        -   [Examples](#examples-23)
+    -   [rebondFromUnbonded](#rebondfromunbonded)
         -   [Parameters](#parameters-14)
-        -   [Examples](#examples-27)
-    -   [getTranscoderStatus](#gettranscoderstatus)
+        -   [Examples](#examples-24)
+    -   [rebondFromUnbondedWithHint](#rebondfromunbondedwithhint)
         -   [Parameters](#parameters-15)
-        -   [Examples](#examples-28)
-    -   [getTranscoderTotalStake](#gettranscodertotalstake)
+        -   [Examples](#examples-25)
+    -   [getPendingStake](#getpendingstake)
         -   [Parameters](#parameters-16)
-        -   [Examples](#examples-29)
-    -   [getTranscoderPoolMaxSize](#gettranscoderpoolmaxsize)
-        -   [Examples](#examples-30)
-    -   [getTranscoder](#gettranscoder)
+        -   [Examples](#examples-26)
+    -   [getPendingFees](#getpendingfees)
         -   [Parameters](#parameters-17)
-        -   [Examples](#examples-31)
-    -   [getTranscoders](#gettranscoders)
-        -   [Examples](#examples-32)
-    -   [getProtocolPaused](#getprotocolpaused)
-        -   [Examples](#examples-33)
-    -   [getProtocol](#getprotocol)
-        -   [Examples](#examples-34)
-    -   [getRoundLength](#getroundlength)
-        -   [Examples](#examples-35)
-    -   [getRoundsPerYear](#getroundsperyear)
-        -   [Examples](#examples-36)
-    -   [getCurrentRound](#getcurrentround)
-        -   [Examples](#examples-37)
-    -   [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
-        -   [Examples](#examples-38)
-    -   [getCurrentRoundStartBlock](#getcurrentroundstartblock)
-        -   [Examples](#examples-39)
-    -   [getLastInitializedRound](#getlastinitializedround)
-        -   [Examples](#examples-40)
-    -   [getCurrentRoundInfo](#getcurrentroundinfo)
-        -   [Examples](#examples-41)
-    -   [tapFaucet](#tapfaucet)
+        -   [Examples](#examples-27)
+    -   [getTranscoderIsActive](#gettranscoderisactive)
         -   [Parameters](#parameters-18)
-        -   [Examples](#examples-42)
-    -   [initializeRound](#initializeround)
+        -   [Examples](#examples-28)
+    -   [getTranscoderStatus](#gettranscoderstatus)
         -   [Parameters](#parameters-19)
-        -   [Examples](#examples-43)
-    -   [claimEarnings](#claimearnings)
+        -   [Examples](#examples-29)
+    -   [getTranscoderTotalStake](#gettranscodertotalstake)
         -   [Parameters](#parameters-20)
-        -   [Examples](#examples-44)
-    -   [estimateGas](#estimategas)
+        -   [Examples](#examples-30)
+    -   [getTranscoderPoolMaxSize](#gettranscoderpoolmaxsize)
+        -   [Examples](#examples-31)
+    -   [getTranscoder](#gettranscoder)
         -   [Parameters](#parameters-21)
-        -   [Examples](#examples-45)
-    -   [unbond](#unbond)
+        -   [Examples](#examples-32)
+    -   [getTranscoders](#gettranscoders)
+        -   [Examples](#examples-33)
+    -   [getProtocolPaused](#getprotocolpaused)
+        -   [Examples](#examples-34)
+    -   [getProtocol](#getprotocol)
+        -   [Examples](#examples-35)
+    -   [getRoundLength](#getroundlength)
+        -   [Examples](#examples-36)
+    -   [getRoundsPerYear](#getroundsperyear)
+        -   [Examples](#examples-37)
+    -   [getCurrentRound](#getcurrentround)
+        -   [Examples](#examples-38)
+    -   [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
+        -   [Examples](#examples-39)
+    -   [getCurrentRoundStartBlock](#getcurrentroundstartblock)
+        -   [Examples](#examples-40)
+    -   [getLastInitializedRound](#getlastinitializedround)
+        -   [Examples](#examples-41)
+    -   [getCurrentRoundInfo](#getcurrentroundinfo)
+        -   [Examples](#examples-42)
+    -   [tapFaucet](#tapfaucet)
         -   [Parameters](#parameters-22)
-        -   [Examples](#examples-46)
-    -   [setupTranscoder](#setuptranscoder)
+        -   [Examples](#examples-43)
+    -   [initializeRound](#initializeround)
         -   [Parameters](#parameters-23)
-        -   [Examples](#examples-47)
-    -   [getTargetBondingRate](#gettargetbondingrate)
-        -   [Examples](#examples-48)
-    -   [withdrawStake](#withdrawstake)
+        -   [Examples](#examples-44)
+    -   [createPoll](#createpoll)
         -   [Parameters](#parameters-24)
-        -   [Examples](#examples-49)
-    -   [withdrawStakeWithUnbondLock](#withdrawstakewithunbondlock)
+        -   [Examples](#examples-45)
+    -   [getPollCreatorAllowance](#getpollcreatorallowance)
         -   [Parameters](#parameters-25)
-        -   [Examples](#examples-50)
-    -   [withdrawFees](#withdrawfees)
+        -   [Examples](#examples-46)
+    -   [getBondingManagerAllowance](#getbondingmanagerallowance)
         -   [Parameters](#parameters-26)
+        -   [Examples](#examples-47)
+    -   [vote](#vote)
+        -   [Parameters](#parameters-27)
+        -   [Examples](#examples-48)
+    -   [claimEarnings](#claimearnings)
+        -   [Parameters](#parameters-28)
+        -   [Examples](#examples-49)
+    -   [bondWithHint](#bondwithhint)
+        -   [Parameters](#parameters-29)
+        -   [Examples](#examples-50)
+    -   [estimateGas](#estimategas)
+        -   [Parameters](#parameters-30)
         -   [Examples](#examples-51)
+    -   [unbond](#unbond)
+        -   [Parameters](#parameters-31)
+        -   [Examples](#examples-52)
+    -   [unbondWithHint](#unbondwithhint)
+        -   [Parameters](#parameters-32)
+        -   [Examples](#examples-53)
+    -   [setupTranscoder](#setuptranscoder)
+        -   [Parameters](#parameters-33)
+        -   [Examples](#examples-54)
+    -   [getTargetBondingRate](#gettargetbondingrate)
+        -   [Examples](#examples-55)
+    -   [withdrawStake](#withdrawstake)
+        -   [Parameters](#parameters-34)
+        -   [Examples](#examples-56)
+    -   [withdrawStakeWithUnbondLock](#withdrawstakewithunbondlock)
+        -   [Parameters](#parameters-35)
+        -   [Examples](#examples-57)
+    -   [withdrawFees](#withdrawfees)
+        -   [Parameters](#parameters-36)
+        -   [Examples](#examples-58)
 -   [getDelegatorUnbondingLocks](#getdelegatorunbondinglocks)
-    -   [Parameters](#parameters-27)
-    -   [Examples](#examples-52)
+    -   [Parameters](#parameters-37)
+    -   [Examples](#examples-59)
 -   [getDelegatorUnbondingLock](#getdelegatorunbondinglock)
-    -   [Parameters](#parameters-28)
-    -   [Examples](#examples-53)
+    -   [Parameters](#parameters-38)
+    -   [Examples](#examples-60)
 -   [ABIPropDescriptor](#abipropdescriptor)
     -   [Properties](#properties)
 -   [ContractArtifact](#contractartifact)
@@ -216,9 +240,9 @@ The following section details the rpc API's function signatures and typedefs.
     -   [Properties](#properties-3)
 -   [TokenInfo](#tokeninfo)
     -   [Properties](#properties-4)
--   [TxConfig](#txconfig)
-    -   [Properties](#properties-5)
 -   [Protocol](#protocol)
+    -   [Properties](#properties-5)
+-   [TxReceipt](#txreceipt)
     -   [Properties](#properties-6)
 -   [Log](#log)
     -   [Properties](#properties-7)
@@ -236,7 +260,7 @@ The following section details the rpc API's function signatures and typedefs.
     -   [Properties](#properties-13)
 -   [Block](#block)
     -   [Properties](#properties-14)
--   [TxReceipt](#txreceipt)
+-   [TxConfig](#txconfig)
     -   [Properties](#properties-15)
 
 ### module~exports
@@ -389,19 +413,6 @@ await rpc.getUnbondingPeriod()
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
-#### getUnbondingPeriod
-
-Gets the unbonding period for transcoders
-
-##### Examples
-
-```javascript
-await rpc.getUnbondingPeriod()
-// => string
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
-
 #### getNumActiveTranscoders
 
 Gets the number of active transcoders
@@ -410,32 +421,6 @@ Gets the number of active transcoders
 
 ```javascript
 await rpc.getNumActiveTranscoders()
-// => string
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
-
-#### getNumActiveTranscoders
-
-Gets the number of active transcoders
-
-##### Examples
-
-```javascript
-await rpc.getNumActiveTranscoders()
-// => string
-```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
-
-#### getMaxEarningsClaimsRounds
-
-Gets the maximum earnings for claims rounds
-
-##### Examples
-
-```javascript
-await rpc.getMaxEarningsClaimsRounds()
 // => string
 ```
 
@@ -695,7 +680,7 @@ Rebonds LPT from an address
 
 ##### Parameters
 
--   `unbondingLockId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
@@ -725,13 +710,51 @@ await rpc.rebond(0)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
+#### rebondWithHint
+
+Rebonds LPT from an address with hint
+
+##### Parameters
+
+-   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+-   `newPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `newPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.rebondWithHint(0, "0x", "0x")
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
 #### rebondFromUnbonded
 
 Rebonds LPT from an address
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 -   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 -   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
 
@@ -761,6 +784,81 @@ await rpc.rebondFromUnbonded("0x", 1)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
+#### rebondFromUnbondedWithHint
+
+Rebonds LPT from an address with hint
+
+##### Parameters
+
+-   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+-   `newPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `newPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.rebondFromUnbondedWithHint("0x", 1, "0x", "0x")
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
+#### getPendingStake
+
+Get a delegator's pending stake
+
+##### Parameters
+
+-   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+-   `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The last round to compute pending stake from
+
+##### Examples
+
+```javascript
+await rpc.getPendingStake('0xf00...')
+// => string
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+
+#### getPendingFees
+
+Get a delegator's pending fees
+
+##### Parameters
+
+-   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+-   `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The last round to compute pending fees from
+
+##### Examples
+
+```javascript
+await rpc.getPendingFees('0xf00...')
+// => string
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### getTranscoderIsActive
 
@@ -1068,6 +1166,151 @@ await rpc.initializeRound()
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
+#### createPoll
+
+Creates a poll
+
+##### Parameters
+
+-   `proposal` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The IPFS multihash for the proposal
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.createPoll('Qm...')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
+#### getPollCreatorAllowance
+
+Get PollCreator transfer allowance
+
+##### Parameters
+
+-   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.getPollCreatorAllowance('0x...')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
+#### getBondingManagerAllowance
+
+Get BondingManager transfer allowance
+
+##### Parameters
+
+-   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.getBondingManagerAllowance('0x...')
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
+#### vote
+
+Creates a poll
+
+##### Parameters
+
+-   `pollAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** poll contract address
+-   `choiceId` **int** vote (0 = yes, 1 = no)
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.initializeRound()
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
 #### claimEarnings
 
 Claims token and eth earnings from the sender's `lastClaimRound + 1` through a given `endRound`
@@ -1085,6 +1328,47 @@ await rpc.claimEarnings()
 ```
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+#### bondWithHint
+
+Bonds to a transcoder with hint
+
+##### Parameters
+
+-   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `oldDelegateNewPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `oldDelegateNewPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `currDelegateNewPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `currDelegateNewPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.bondWithHint("100", "0x", "0x", "0x", "0x", "0x")
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
 
 #### estimateGas
 
@@ -1131,6 +1415,44 @@ Unbonds LPT from an address
 
 ```javascript
 await rpc.unbond(amount)
+// => TxReceipt {
+//   transactionHash: string,
+//   transactionIndex": BN,
+//   blockHash: string,
+//   blockNumber: BN,
+//   cumulativeGasUsed: BN,
+//   gasUsed: BN,
+//   contractAddress: string,
+//   logs: Array<Log {
+//     logIndex: BN,
+//     blockNumber: BN,
+//     blockHash: string,
+//     transactionHash: string,
+//     transactionIndex: string,
+//     address: string,
+//     data: string,
+//     topics: Array<string>
+//   }>
+// }
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+
+#### unbondWithHint
+
+Unbonds LPT from an address with hint
+
+##### Parameters
+
+-   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `newPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `newPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+
+##### Examples
+
+```javascript
+await rpc.unbondWithHint("100", "0x", "0x")
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1424,17 +1746,6 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `totalSupply` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total supply of token available in the protocol (LPTU)
 -   `balance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's token balance (LPTU)
 
-### TxConfig
-
-Transaction config object
-
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
-
-#### Properties
-
--   `from` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH account address to sign the transaction from
--   `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** the amount of gas to include in the transaction
-
 ### Protocol
 
 A Protocol struct
@@ -1448,6 +1759,23 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `totalBondedToken` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total bonded token for protocol
 -   `targetBondingRate` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** target bonding rate for protocol
 -   `transcoderPoolMaxSize` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** transcoder pool max size
+
+### TxReceipt
+
+Transaction receipt
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+#### Properties
+
+-   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
+-   `transactionIndex` **BN** the transaction index
+-   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
+-   `blockNumber` **BN** the transaction block number
+-   `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
+-   `gasUsed` **BN** the gas used in the transaction
+-   `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
+-   `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
 
 ### Log
 
@@ -1592,19 +1920,13 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `transactionsRoot` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** root transaction hash
 -   `uncles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;Uncle>** block uncles
 
-### TxReceipt
+### TxConfig
 
-Transaction receipt
+Transaction config object
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
--   `transactionIndex` **BN** the transaction index
--   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
--   `blockNumber` **BN** the transaction block number
--   `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
--   `gasUsed` **BN** the gas used in the transaction
--   `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
--   `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
+-   `from` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH account address to sign the transaction from
+-   `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** the amount of gas to include in the transaction

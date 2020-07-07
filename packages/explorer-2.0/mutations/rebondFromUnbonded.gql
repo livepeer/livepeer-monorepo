@@ -1,3 +1,13 @@
-mutation rebondFromUnbonded($unbondingLockId: Int!, $delegate: String!) {
-  tx: rebondFromUnbonded(unbondingLockId: $unbondingLockId, delegate: $delegate)
+mutation rebondFromUnbonded(
+  $unbondingLockId: Int!
+  $delegate: String!
+  $newPosPrev: String!
+  $newPosNext: String!
+) {
+  tx: rebondFromUnbonded(
+    unbondingLockId: $unbondingLockId
+    delegate: $delegate
+    newPosPrev: $newPosPrev
+    newPosNext: $newPosNext
+  )
 }
