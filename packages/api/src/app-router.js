@@ -13,11 +13,13 @@ import {
   kubernetes,
   hardcodedNodes,
   insecureTest,
+  geolocateMiddleware,
 } from './middleware'
 import controllers from './controllers'
 import streamProxy from './controllers/stream-proxy'
 import apiProxy from './controllers/api-proxy'
 import proxy from 'http-proxy-middleware'
+import { getBroadcasterHandler } from './controllers/broadcaster'
 
 // Routes that should be whitelisted even when `apiRegion` is set
 const GEOLOCATION_ENDPOINTS = [
@@ -127,6 +129,12 @@ export default async function makeApp(params) {
 
   // Add a controller for each route at the /${httpPrefix} route
   const prefixRouter = Router() // amalgamates our endpoints together and serves them out
+  // hack because I forgot this one needs to get geolocated too :(
+  prefixRouter.get(
+    '/stream/:streamId/broadcaster',
+    geolocateMiddleware({}),
+    getBroadcasterHandler,
+  )
   for (const [name, controller] of Object.entries(controllers)) {
     // if we're operating in api-region mode, only handle geolocation traffic, forward the rest on
     if (
