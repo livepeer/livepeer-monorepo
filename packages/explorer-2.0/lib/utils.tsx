@@ -327,9 +327,15 @@ export const getHint = (id, transcoders) => {
     newPosPrev: EMPTY_ADDRESS,
     newPosNext: EMPTY_ADDRESS,
   }
+
+  if (!transcoders.length || !id) {
+    return hint
+  }
+
   const index = transcoders.findIndex(
     (t) => t.id.toLowerCase() === id.toLowerCase(),
   )
+
   // if transcoder is not in active set return
   if (index < 0) {
     return hint
@@ -368,6 +374,7 @@ export const simulateNewActiveSetOrder = ({
 
     // if delegator is moving stake, subtract amount from old delegate
     if (
+      oldDelegate &&
       oldDelegate.toLowerCase() != newDelegate.toLowerCase() &&
       oldDelegate.toLowerCase() != EMPTY_ADDRESS
     ) {
