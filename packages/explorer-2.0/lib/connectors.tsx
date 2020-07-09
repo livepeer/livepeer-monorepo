@@ -5,8 +5,8 @@ import { FortmaticConnector } from '@web3-react/fortmatic-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 const RPC_URLS: { [chainId: number]: string } = {
-  1: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}` as string,
-  4: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}` as string,
+  1: process.env.RPC_URL_1 as string,
+  4: process.env.RPC_URL_4 as string,
 }
 
 export const Network = new NetworkConnector({

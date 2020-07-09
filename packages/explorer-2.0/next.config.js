@@ -19,7 +19,6 @@ const nextConfig = {
     PORTIS_DAPP_ID: process.env.PORTIS_DAPP_ID,
     GA_TRACKING_ID: process.env.GA_TRACKING_ID,
     GITHUB_ACCESS_TOKEN: process.env.GITHUB_ACCESS_TOKEN,
-    ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
     NETWORK: process.env.NETWORK,
   },
   webpack(config, { webpack }) {
