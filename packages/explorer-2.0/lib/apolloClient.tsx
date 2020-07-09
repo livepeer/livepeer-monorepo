@@ -66,9 +66,10 @@ export default function createApolloClient(initialState, ctx) {
         .then(async (data) => {
           const context = operation.getContext()
           const sdk = await LivepeerSDK({
-            provider: `https://eth-${
-              process.env.NETWORK === 'rinkeby' ? 'rinkeby' : 'mainnet'
-            }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            provider:
+              process.env.NETWORK === 'rinkeby'
+                ? process.env.RPC_URL_4
+                : process.env.RPC_URL_1,
             controllerAddress: process.env.CONTROLLER_ADDRESS,
             pollCreatorAddress: process.env.POLL_CREATOR_ADDRESS,
             ...(context.library && {

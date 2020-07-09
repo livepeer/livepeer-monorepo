@@ -44,13 +44,12 @@
     "env": {
       "ETHERSCAN_API_KEY": "@etherscan_api_key",
       "FORTMATIC_API_KEY": "@fortmatic_api_key",
-      "ALCHEMY_API_KEY": "@alchemy_api_key",
       "PORTIS_DAPP_ID": "@portis_dapp_id",
       "GA_TRACKING_ID": "@ga_tracking_id",
       "NETWORK": "mainnet",
       "SUBGRAPH": "https://api.thegraph.com/subgraphs/name/livepeer/livepeer",
-      "RPC_URL_1": "https://mainnet.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1",
-      "RPC_URL_4": "https://rinkeby.infura.io/v3/e9dc54dbd8de4664890e641a8efa45b1",
+      "RPC_URL_1": "https://mainnet.infura.io/v3/6459dec09c9b4730a4cd6a9dc6d364d4",
+      "RPC_URL_4": "https://rinkeby.infura.io/v3/6459dec09c9b4730a4cd6a9dc6d364d4",
       "CONTROLLER_ADDRESS": "0xf96d54e490317c557a967abfa5d6e33006be69b3",
       "POLL_CREATOR_ADDRESS": "0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c"
     }

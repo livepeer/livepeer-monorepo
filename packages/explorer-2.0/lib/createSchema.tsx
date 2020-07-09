@@ -65,9 +65,9 @@ export default async () => {
   async function getTotalStake(_ctx, _blockNumber) {
     const Web3 = require('web3')
     let web3 = new Web3(
-      `https://eth-${
-        process.env.NETWORK === 'rinkeby' ? 'rinkeby' : 'mainnet'
-      }.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      process.env.NETWORK === 'rinkeby'
+        ? process.env.RPC_URL_4
+        : process.env.RPC_URL_1,
     )
     let contract = new web3.eth.Contract(
       _ctx.livepeer.config.contracts.LivepeerToken.abi,
