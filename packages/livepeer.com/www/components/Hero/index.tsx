@@ -10,6 +10,7 @@ export default ({
   heading,
   tagline,
   centered = false,
+  skinny = false,
   image,
   ctas,
   ...props
@@ -20,7 +21,7 @@ export default ({
       sx={{
         mt: [5, 5, 5, 0],
         overflow: "hidden",
-        borderBottom: "1px solid",
+        borderBottom: skinny ? "0" : "1px solid",
         borderColor: "muted",
         pb: 5
       }}
@@ -29,7 +30,10 @@ export default ({
       <Container>
         <Grid
           columns={[1, 1, 1, centered ? 1 : 2]}
-          sx={{ alignItems: "center", minHeight: ["auto", "auto", 400] }}
+          sx={{
+            alignItems: "center",
+            minHeight: ["auto", "auto", skinny ? 200 : 400]
+          }}
         >
           <Box
             sx={{

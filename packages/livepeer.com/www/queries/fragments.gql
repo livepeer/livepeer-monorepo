@@ -32,6 +32,7 @@ fragment hero on Hero {
   heading
   tagline
   centered
+  skinny
   ctas {
     ...cta
   }
@@ -99,4 +100,19 @@ fragment textSection on TextSection {
 fragment markdownSection on MarkdownSection {
   _type
   markdown: markdown
+}
+
+fragment teamSection on TeamSection {
+  _type
+  teamMembers {
+    fullname
+    role
+    image {
+      ...imageInfo
+    }
+    twitter
+    github
+    linkedin
+    medium
+  }
 }
