@@ -14,7 +14,13 @@ const Page = ({ title, body }) => {
       url={`https://livepeer.com`}
     >
       <Container
-        sx={{ ul: { mb: 4 }, p: { mb: 4 }, maxWidth: 960, margin: "0 auto" }}
+        sx={{
+          pb: 5,
+          ul: { mb: 4 },
+          p: { mb: 4 },
+          maxWidth: 960,
+          margin: "0 auto"
+        }}
       >
         <h1 sx={{ lineHeight: "72px", my: 5 }}>{title}</h1>
         <ReactMarkdown>{body}</ReactMarkdown>
