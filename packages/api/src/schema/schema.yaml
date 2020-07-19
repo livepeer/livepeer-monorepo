@@ -36,9 +36,13 @@ components:
         - url
       properties:
         id:
-          pattern: ^webhook/
           type: string
           readOnly: true
+          example: de7818e7-610a-4057-8f6f-b785dc1e6f88
+        kind:
+          type: string
+          readOnly: true
+          example: webhook
         name:
           type: string
         userId:
@@ -53,6 +57,8 @@ components:
             - streamStarted
         url:
           type: string
+        deleted:
+          type: boolean
 
     stream:
       type: object
