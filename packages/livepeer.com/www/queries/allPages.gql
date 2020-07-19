@@ -16,6 +16,7 @@ query allPage($where: PageFilter) {
       ...textSection
       ...markdownSection
       ...teamSection
+      ...jobsSection
     }
   }
 }

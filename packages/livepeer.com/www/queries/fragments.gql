@@ -116,3 +116,13 @@ fragment teamSection on TeamSection {
     medium
   }
 }
+
+fragment jobsSection on JobsSection {
+  _type
+  jobs {
+    title
+    slug {
+      current
+    }
+  }
+}

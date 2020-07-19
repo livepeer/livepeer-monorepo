@@ -25,11 +25,8 @@ export default {
       options: {
         source: 'title',
         maxLength: 200, // will be ignored if slugify is set
-        slugify: input =>
-          input
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .slice(0, 200),
+        slugify: (input) =>
+          input.toLowerCase().replace(/\s+/g, '-').slice(0, 200),
       },
     },
     {
@@ -46,6 +43,7 @@ export default {
         { type: 'textSection' },
         { type: 'markdownSection' },
         { type: 'teamSection' },
+        { type: 'jobsSection' },
       ],
     },
     {

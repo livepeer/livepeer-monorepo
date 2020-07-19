@@ -6,6 +6,7 @@ import schemaTypes from 'all:part:@sanity/base/schema-type'
 
 // Document types
 import page from './documents/page'
+import job from './documents/job'
 import route from './documents/route'
 import siteConfig from './documents/siteConfig'
 
@@ -33,6 +34,7 @@ import contactSection from './objects/contactSection'
 import ctaSection from './objects/ctaSection'
 import textSection from './objects/textSection'
 import teamSection from './objects/teamSection'
+import jobsSection from './objects/jobsSection'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -56,6 +58,7 @@ export default createSchema({
     testimonial,
     link,
     page,
+    job,
     portableText,
     route,
     simplePortableText,
@@ -64,5 +67,6 @@ export default createSchema({
     markdownSection,
     teamSection,
     teamMember,
+    jobsSection,
   ]),
 })

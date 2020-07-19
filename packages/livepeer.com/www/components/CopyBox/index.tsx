@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { Input, Box } from "@theme-ui/components";
-import CopyBoxIcon from "./CopyBoxIcon.svg";
+import CopyBoxIcon from "./CopyBoxIcon";
 import { useRef, MutableRefObject } from "react";
 
 export default ({ copy, onCopy = () => {} }) => {

@@ -6,6 +6,15 @@ import Button from "../Button";
 import { Link as ScrollLink } from "react-scroll";
 import ArrowRight from "../../public/img/arrow-right.svg";
 
+type Props = {
+  heading?: string;
+  tagline?: string;
+  centered?: boolean;
+  skinny?: boolean;
+  image?: any;
+  ctas?: [];
+};
+
 export default ({
   heading,
   tagline,
@@ -14,7 +23,7 @@ export default ({
   image,
   ctas,
   ...props
-}) => {
+}: Props) => {
   const builder = imageUrlBuilder(client as any);
   return (
     <Box
