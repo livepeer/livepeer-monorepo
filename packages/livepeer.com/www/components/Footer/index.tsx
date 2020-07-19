@@ -42,9 +42,18 @@ export default () => {
               <Box itemProp="postalCode">10013</Box>
             </Flex>
           </Box>
-          <Link href="/[slug]" as="/privacy-policy" passHref>
-            <a sx={{ color: "accent" }}>Privacy Policy</a>
-          </Link>
+          <Flex sx={{ justifyContent: "center", alignItems: "center" }}>
+            <Link href="/team" passHref>
+              <a sx={{ textDecoration: "none", mr: 4, color: "accent" }}>
+                Team
+              </a>
+            </Link>
+            <Link href="/[slug]" as="/privacy-policy" passHref>
+              <a sx={{ textDecoration: "none", color: "accent" }}>
+                Privacy Policy
+              </a>
+            </Link>
+          </Flex>
         </Flex>
       </Container>
     </Box>
