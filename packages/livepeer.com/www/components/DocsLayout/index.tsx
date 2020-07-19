@@ -1,19 +1,27 @@
 import Layout from "../Layout";
-import Container from "../Container";
-import Sidebar from "./sidebar.mdx";
-import { Flex, Box } from "@theme-ui/components";
+import Sidebar from "./sidebar";
+import { Flex, Box, Container } from "@theme-ui/components";
 
 export default ({ children }) => {
   return (
     <Layout>
-      <Flex sx={{ justifyContent: "center", flexWrap: "wrap" }}>
-        <Box sx={{ padding: 2, maxWidth: "250px" }}>
-          <Sidebar />
-        </Box>
-        <Box sx={{ padding: 3, flexBasis: "958px", flexShrink: 1 }}>
-          {children}
-        </Box>
-      </Flex>
+      <Container sx={{ pb: 4, mt: 40 }}>
+        <Flex>
+          <Box
+            sx={{
+              position: "sticky",
+              top: 118,
+              height: "calc(100vh - 258px)",
+              overflow: "scroll",
+              minWidth: [350],
+              maxWidth: 350
+            }}
+          >
+            <Sidebar />
+          </Box>
+          <Box sx={{ a: { color: "extremelyBlue" }, pl: 4 }}>{children}</Box>
+        </Flex>
+      </Container>
     </Layout>
   );
 };

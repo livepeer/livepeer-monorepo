@@ -17,7 +17,7 @@ export const theme = {
     bold: 700
   },
   letterSpacings: {
-    body: ".46px",
+    body: 0,
     heading: 0
   },
   lineHeights: {
