@@ -20,7 +20,12 @@ export default ({ jobs }) => {
           }}
         >
           <Link href="/jobs/[slug]" as={`/jobs/${j.slug.current}`} passHref>
-            <a sx={{ textDecoration: "none" }}>
+            <a
+              sx={{
+                textDecoration: "none",
+                ":hover": { textDecoration: "underline" }
+              }}
+            >
               <Heading
                 as="h2"
                 sx={{ fontWeight: 600, fontSize: 3, color: "black" }}
@@ -30,7 +35,15 @@ export default ({ jobs }) => {
             </a>
           </Link>
           <Link href="/jobs/[slug]" as={`/jobs/${j.slug.current}`} passHref>
-            <a sx={{ textDecoration: "none", color: "extremelyBlue" }}>Apply</a>
+            <a
+              sx={{
+                textDecoration: "none",
+                ":hover": { textDecoration: "underline" },
+                color: "extremelyBlue"
+              }}
+            >
+              Apply
+            </a>
           </Link>
         </Flex>
       ))}
