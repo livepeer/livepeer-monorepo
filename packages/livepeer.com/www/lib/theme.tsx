@@ -190,6 +190,7 @@ export const theme = {
       color: "#0000ff"
     },
     pre: {
+      borderRadius: 12,
       fontFamily: "monospace",
       overflowX: "auto",
       padding: 4,
