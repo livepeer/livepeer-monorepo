@@ -118,6 +118,13 @@ export const theme = {
       borderColor: "listText"
     }
   },
+  links: {
+    nav: {
+      color: "body",
+      textDecoration: "none",
+      mx: 3
+    }
+  },
   layout: {
     container: {
       maxWidth: 1200,
@@ -136,7 +143,7 @@ export const theme = {
       color: "text",
       fontFamily: "heading",
       lineHeight: "heading",
-      fontWeight: "heading",
+      fontWeight: "bold",
       letterSpacing: "heading",
       fontSize: 7
     },
@@ -144,7 +151,7 @@ export const theme = {
       color: "text",
       fontFamily: "heading",
       lineHeight: "heading",
-      fontWeight: "heading",
+      fontWeight: "bold",
       letterSpacing: "heading",
       fontSize: 6
     },

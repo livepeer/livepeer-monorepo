@@ -1,4 +1,4 @@
-import { Flex, Container } from "@theme-ui/components";
+import { Flex, Container, Link as A } from "@theme-ui/components";
 import Button from "../Button";
 import Link from "next/link";
 import Logo from "../../public/img/logo.svg";
@@ -16,61 +16,45 @@ export default () => {
           alignItems: "center"
         }}
       >
-        <Link href="/">
-          <a
+        <Link href="/" passHref>
+          <A
             sx={{
               marginRight: "auto",
               cursor: "pointer"
             }}
           >
             <Logo sx={{ width: 120, color: "primary" }} />
-          </a>
+          </A>
         </Link>
-        <Link href="/#contactSection">
-          <a>
-            <Button ink={false} variant="text">
-              Contact Us
-            </Button>
-          </a>
+        <Link href="/#contactSection" passHref>
+          <A variant="nav">Contact Us</A>
         </Link>
-        <Link href="/docs">
-          <a>
-            <Button ink={false} variant="text">
-              Documentation
-            </Button>
-          </a>
+        <Link href="/docs" passHref>
+          <A variant="nav">Documentation</A>
         </Link>
         {!token && (
           <Fragment>
-            <Link href="/login">
-              <a>
-                <Button ink={false} variant="text">
-                  Log in
-                </Button>
-              </a>
+            <Link href="/login" passHref>
+              <A variant="nav">Log in</A>
             </Link>
-            <Link href="/register">
-              <a>
-                <Button variant="outline">Sign up</Button>
-              </a>
+            <Link href="/register" passHref>
+              <Button as="a" variant="outline" sx={{ ml: 3 }}>
+                Sign up
+              </Button>
             </Link>
           </Fragment>
         )}
         {token && (
           <Fragment>
-            <Link href="/app/user">
-              <a>
-                <Button variant="text">My account</Button>
-              </a>
+            <Link href="/app/user" passHref>
+              <A variant="nav">My Account</A>
             </Link>
           </Fragment>
         )}
         {user && user.admin && (
           <Fragment>
-            <Link href="/app/admin">
-              <a>
-                <Button variant="text">Admin</Button>
-              </a>
+            <Link href="/app/admin" passHref>
+              <A variant="nav">Admin</A>
             </Link>
           </Fragment>
         )}
