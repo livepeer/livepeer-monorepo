@@ -204,19 +204,6 @@ export const theme = {
       fontFamily: "monospace",
       fontSize: "inherit"
     },
-    table: {
-      width: "100%",
-      borderCollapse: "separate",
-      borderSpacing: 0
-    },
-    th: {
-      textAlign: "left",
-      borderBottomStyle: "solid"
-    },
-    td: {
-      textAlign: "left",
-      borderBottomStyle: "solid"
-    },
     img: {
       maxWidth: "100%"
     }
@@ -270,6 +257,43 @@ const Reset = () => (
       },
       li: {
         marginBottom: "6px"
+      },
+      table: {
+        padding: "0"
+      },
+      "table tr": {
+        borderTop: "1px solid #cccccc",
+        backgroundColor: "white",
+        margin: "0",
+        padding: "0"
+      },
+      "table tr:nth-child(2n)": {
+        backgroundColor: "#f8f8f8"
+      },
+      "table tr th": {
+        fontWeight: "bold",
+        border: "1px solid #cccccc",
+        textAlign: "left",
+        margin: "0",
+        padding: "6px 13px"
+      },
+      "table tr td": {
+        border: "1px solid #cccccc",
+        textAlign: "left",
+        margin: "0",
+        padding: "6px 13px"
+      },
+      "table tr th :first-child": {
+        marginTop: 0
+      },
+      "table tr td :first-child": {
+        marginTop: "0"
+      },
+      "table tr th :last-child": {
+        marginBottom: "0"
+      },
+      "table tr td :last-child": {
+        marginBottom: "0"
       }
     }}
   />
