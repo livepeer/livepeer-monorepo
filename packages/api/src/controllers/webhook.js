@@ -5,6 +5,7 @@ import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import { makeNextHREF, trackAction } from './helpers'
+import fetch from 'isomorphic-fetch'
 
 const app = Router()
 
@@ -111,6 +112,40 @@ app.delete('/:id', authMiddleware({}), async (req, res) => {
 
 
 app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
+  // TODO move this logic to /setactive endpoint
   // triggers a webhook
+  const { id } = req.body
+  const webhook = await req.store.get(`webhook/${id}`)
+  if (
+    !webhook ||
+    webook.deleted ||
+    (webhook.userId !== req.user.id && !req.isUIAdmin)
+  ) {
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  let payload = {} //TODO get stream object, sanatize it and send it over.
+
+  let params = {
+    method: 'POST',
+
+  }
+  params.headers = {
+    'content-type': 'application/json',
+  }
+
+  params.body = JSON.stringify(payload)
+
+  let resp = await fetch(webhook.url, params)
   
+  if (!resp || resp.statsCode !== 200) {
+    // no 200, no stream
+    res.status(400)
+    return res.end()
+  }
+
+  res.status(200)
+  res.end()
 })
+
