@@ -28,7 +28,7 @@ app.get('/', authMiddleware({}), async (req, res) => {
 
   if (output.length > 0) {
     res.links({ next: makeNextHREF(req, resp.cursor) })
-  } // CF doesn't know what this means
+  }
   output = output.map((o) => o[Object.keys(o)[0]])
   res.json(output)
 })
@@ -40,17 +40,6 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
     return res.json({
       errors: ['missing name'],
     })
-  }
-
-  const webhook = await req.store.get(`webhook/${req.body.id}`)
-  if (
-    !webhook ||
-    ((webhook.userId !== req.user.id || webhook.deleted) &&
-      !(req.user.admin && !stream.deleted))
-  ) {
-    // do not reveal that stream exists
-    res.status(404)
-    return res.json({ errors: ['not found'] })
   }
 
   const id = uuid()
@@ -102,6 +91,24 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 
 app.put('/:id', authMiddleware({}), validatePost('webhook'), async (req, res) => {
   // modify a specific webhook
+  const webhook = await req.store.get(`webhook/${req.body.id}`)
+  if (
+    !webhook ||
+    ((webhook.userId !== req.user.id || webhook.deleted) &&
+      !(req.user.admin && !stream.deleted))
+  ) {
+    // do not reveal that webhooks exists
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  try {
+    await req.store.replace(req.body.id, req.body)
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+  res.status(200)
   res.json({})
 })
 
@@ -131,6 +138,7 @@ app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
     method: 'POST',
 
   }
+
   params.headers = {
     'content-type': 'application/json',
   }
@@ -139,7 +147,7 @@ app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
 
   let resp = await fetch(webhook.url, params)
   
-  if (!resp || resp.statsCode !== 200) {
+  if (!resp || resp.status !== 200) {
     // no 200, no stream
     res.status(400)
     return res.end()
