@@ -141,6 +141,7 @@ app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
 
   params.headers = {
     'content-type': 'application/json',
+    'user-agent': 'livepeer.com'
   }
 
   params.body = JSON.stringify(payload)
@@ -150,10 +151,10 @@ app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
   if (!resp || resp.status !== 200) {
     // no 200, no stream
     res.status(400)
-    return res.end()
+    return res.json()
   }
 
   res.status(200)
-  res.end()
+  res.json({})
 })
 
