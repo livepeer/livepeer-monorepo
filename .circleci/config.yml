@@ -14,8 +14,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          # This actually only exists for paid plans. But it's good luck!
-          docker_layer_caching: true
       - run: |
           # docker login
           docker login -u $DOCKER_USER -p $DOCKER_PASS
