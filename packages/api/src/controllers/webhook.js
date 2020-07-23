@@ -6,6 +6,8 @@ import logger from '../logger'
 import uuid from 'uuid/v4'
 import { makeNextHREF, trackAction } from './helpers'
 import fetch from 'isomorphic-fetch'
+import dns from 'dns'
+import isLocalIP from 'is-local-ip'
 
 const app = Router()
 
@@ -157,7 +159,14 @@ app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
   res.status(200)
 
   output.forEach(async (webhook) => {
-
+    let ip = await dns.resolve4(webhook.url)
+    let isLocal = isLocalIP(ip)
+    if (isLocal) {
+      // don't fire this webhook.
+    } else {
+      // go ahead
+            
+    }
   })
 
   let payload = {} //TODO get stream object, sanatize it and send it over.

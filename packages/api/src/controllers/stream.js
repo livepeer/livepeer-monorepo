@@ -309,6 +309,56 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
   stream.isActive = req.body.active
   stream.lastSeen = +new Date()
   await req.store.replace(stream)
+  
+  if (req.body.active) {
+    // trigger the webhooks, reference https://github.com/livepeer/livepeerjs/issues/791#issuecomment-658424388
+    // this could be used instead of /webhook/:id/trigger (althoughs /trigger requires admin access )
+    
+    // basic sanitization.
+    let sanitized = stream
+    delete sanitized.streamKey
+
+    const all = false // TODO remove hardcoding here 
+    const limit = 10 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
+    // get a list of user defined webhooks
+    const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
+    let filter2 = (o) => o[Object.keys(o)[0]].userId
+
+    const resp = await req.store.list({
+      prefix: `webhook/`,
+      limit,
+      filter: (o) => filter1(o) && filter2(o),
+    })
+    let output = resp.data
+    res.status(200)
+
+    output.forEach(async (webhook) => {
+      let ip = await dns.resolve4(webhook.url)
+      let isLocal = isLocalIP(ip)
+      if (isLocal) {
+        // don't fire this webhook.
+      } else {
+        // go ahead
+        let params = {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'user-agent': 'livepeer.com'
+          },
+          timeout: 10 * 1000, // 10 second timeout
+          body: JSON.stringify(sanitized),
+        }
+        // TODO , move this to a non blocking function once it's tested
+        try {
+          let resp = await fetchWithTimeout(webhook.url, params)
+          console.log(`webhook ${webhook.id} fired, resp: ${resp}`)
+        } catch (e) {
+          console.log('webhook Trigger error ', e) // TODO better logs. 
+        }
+      }
+    })
+  }
+  
   if (stream.parentId) {
     const pStream = await req.store.get(`stream/${id}`, false)
     if (pStream && !pStream.deleted) {
@@ -318,10 +368,6 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     }
   }
 
-  if (req.body.active) {
-    // trigger the webhooks, reference https://github.com/livepeer/livepeerjs/issues/791#issuecomment-658424388
-    // this could be used instead of /webhook/:id/trigger (althoughs /trigger requires admin access )
-  }
 
   res.status(204)
   res.end()

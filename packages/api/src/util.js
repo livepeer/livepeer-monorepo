@@ -22,3 +22,23 @@ export const shuffle = (arr) => {
     })
     .map((idx) => arr[idx])
 }
+
+
+export const fetchWithTimeout = (url, options) => new Promise((resolve, reject) => {
+  const timeout = setTimeout(() => reject('timeout'), options.timeout || 10 * 1000);
+
+  return fetch(url)
+    .then(response => {
+      clearTimeout(timeout);
+
+      if (response.status === 200) {
+        return resolve(response);
+      }
+
+      return reject(response);
+    }, rejectReason => {
+      clearTimeout(timeout);
+
+      return reject(rejectReason);
+    });
+});
