@@ -202,6 +202,11 @@ export default function parseCli(argv) {
           default: [],
           coerce: coerceArr,
         },
+        'record-object-store': {
+          describe:
+            "id of the object store that should be used for `record: true` requests that don't otherwise have an os",
+          type: 'string',
+        },
       })
       .help()
       .parse(argv)

@@ -142,6 +142,10 @@ components:
               - P240p30fps4x3
               - P144p30fps16x9
             example: P720p60fps16x9
+        record:
+          description: Should this stream be recorded? Uses default settings. For more customization, create and configure an object store.
+          type: boolean
+          example: false
         wowza:
           type: object
           required:
@@ -194,23 +198,13 @@ components:
     object-store:
       type: object
       required:
-        - type
-        - path
-        - credentials
+        - url
       additionalProperties: false
       properties:
-        type:
+        url:
           type: string
-          description: type of object store used, such as 'aws'
-          example: aws
-        path:
-          type: string
-          description: formatted as 'region/bucket'
-          example: eu-central-1/testbucket
-        credentials:
-          type: string
-          description: formatted as 'accesskeyid/accesskey'
-          example: AKIAIOSFODNN7EXAMPLE/bPxRfiCYEXAMPLEKEY
+          description: Livepeer-compatible object store URL
+          example: s3://access-key:secret-key@us-west-2/bucket-name
           writeOnly: true
         id:
           type: string

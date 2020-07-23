@@ -12,58 +12,32 @@ import path from 'path'
 
 const app = Router()
 
-app.get('/:userId', authMiddleware({ admin: true }), async (req, res) => {
-  let limit = req.query.limit
-  let cursor = req.query.cursor
-  logger.info(`cursor params ${cursor}, limit ${limit}`)
-
-  const { data: objStores, cursor: cursorOut } = await req.store.queryObjects({
-    kind: 'object-store',
-    query: { userId: req.params.userId },
-    cursor,
-    limit,
-  })
-
-  res.status(200)
-
-  if (objStores.length > 0 && cursorOut) {
-    res.links({ next: makeNextHREF(req, cursorOut) })
+app.get('/', authMiddleware({}), async (req, res) => {
+  const { userId } = req.query
+  if (!userId) {
+    res.status(400)
+    return res.json({
+      errors: [`required query parameter: userId`],
+    })
   }
 
-  res.json(objStores)
-})
+  if (req.user.admin !== true && req.user.id !== userId) {
+    res.status(403)
+    return res.json({
+      errors: ['user can only request information on their own object stores'],
+    })
+  }
 
-app.get('/:userId/:id', authMiddleware({}), async (req, res) => {
-  const { id, userId } = req.params
-  const { data: objStoreIds } = await req.store.query({
+  const { data, cursor } = await req.store.queryObjects({
     kind: 'object-store',
     query: { userId: userId },
   })
 
-  if (!objStoreIds.includes(id)) {
-    res.status(404)
-    return res.json({
-      errors: [
-        `user id ${userId} does not have any object stores associated with it`,
-      ],
-    })
+  res.status(200)
+  if (data.length > 0 && cursor) {
+    res.links({ next: makeNextHREF(req, cursor) })
   }
-
-  if (objStoreIds.includes(id)) {
-    const objStore = await req.store.get(`object-store/${id}`)
-
-    if (req.user.admin !== true && req.user.id !== objStore.userId) {
-      res.status(403)
-      return res.json({
-        errors: [
-          'user can only request information on their own object stores',
-        ],
-      })
-    }
-
-    res.status(200)
-    res.json(objStore)
-  }
+  res.json(data)
 })
 
 app.post(
@@ -75,10 +49,8 @@ app.post(
 
     await req.store.create({
       id: id,
-      credentials: req.body.credentials,
-      path: req.body.path,
+      url: req.body.url,
       userId: req.user.id,
-      type: req.body.type,
       kind: `object-store`,
     })
 
