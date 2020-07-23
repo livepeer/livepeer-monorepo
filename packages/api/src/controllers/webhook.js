@@ -51,7 +51,7 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
     kind: 'webhook',
     name: req.body.name,
     timestamp: createdAt,
-    eventType: 'streamStarted', // TODO, remove hardcoding once we have mutliple webhook events
+    eventType: req.body.eventType,
     url: req.body.url, // TODO validate this. 
   }
 
@@ -142,15 +142,23 @@ app.post('/trigger', authMiddleware({admin: true}), async (req, res) => {
   // TODO move this logic to /setactive endpoint
   // triggers a webhook
   const { id } = req.body
-  const webhook = await req.store.get(`webhook/${id}`)
-  if (
-    !webhook ||
-    webook.deleted ||
-    (webhook.userId !== req.user.id && !req.isUIAdmin)
-  ) {
-    res.status(404)
-    return res.json({ errors: ['not found'] })
-  }
+  const all = false // TODO remove hardcoding here 
+  const limit = 10 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
+  // get a list of user defined webhooks
+  const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
+  let filter2 = (o) => o[Object.keys(o)[0]].userId
+
+  const resp = await req.store.list({
+    prefix: `webhook/`,
+    limit,
+    filter: (o) => filter1(o) && filter2(o),
+  })
+  let output = resp.data
+  res.status(200)
+
+  output.forEach(async (webhook) => {
+
+  })
 
   let payload = {} //TODO get stream object, sanatize it and send it over.
 
