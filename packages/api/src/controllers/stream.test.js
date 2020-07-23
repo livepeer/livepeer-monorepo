@@ -3,7 +3,7 @@ import { TestClient, clearDatabase } from '../test-helpers'
 import uuid from 'uuid/v4'
 
 let server
-let store
+let mockStore
 let mockUser
 let mockAdminUser
 let mockNonAdminUser
@@ -50,12 +50,10 @@ beforeAll(async () => {
     password: 'y'.repeat(64),
   }
 
-  store = {
+  mockStore = {
     id: 'mock_store',
-    credentials: 'abc123/abc123',
-    path: 'us-west-1/my-bucket',
+    url: 'https+s3://example.com/bucket-name',
     userId: mockAdminUser.id,
-    type: 's3',
     kind: 'object-store',
   }
 })
@@ -384,12 +382,12 @@ describe('controllers/stream', () => {
       client = new TestClient({
         server,
       })
-      await server.store.create(store)
+      await server.store.create(mockStore)
       stream = {
         id: uuid(),
         kind: 'stream',
         presets: ['P720p30fps16x9', 'P360p30fps4x3', 'P144p30fps16x9'],
-        objectStoreId: store.id,
+        objectStoreId: mockStore.id,
       }
       await server.store.create(stream)
     })
@@ -407,6 +405,7 @@ describe('controllers/stream', () => {
         res = await client.post('/stream/hook', { url })
         data = await res.json()
         expect(data.presets).toEqual(stream.presets)
+        expect(data.objectStore).toEqual(mockStore.url)
       })
     }
 
@@ -451,7 +450,7 @@ describe('controllers/stream', () => {
       } = await setupUsers(server))
       client.jwtAuth = nonAdminToken['token']
 
-      await server.store.create(store)
+      await server.store.create(mockStore)
       stream = {
         kind: 'stream',
         name: 'test stream',

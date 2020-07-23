@@ -399,17 +399,20 @@ app.post('/hook', async (req, res) => {
     return res.json({ errors: ['not found'] })
   }
   let objectStore = undefined
-  if (stream.objectStoreId && stream.userId) {
-    const store = await req.store.get(
-      `objectstores/${stream.userId}/${stream.objectStoreId}`,
+  if (stream.objectStoreId) {
+    const os = await req.store.get(
+      `object-store/${stream.objectStoreId}`,
+      false,
     )
-    if (store && 'type' in store && 'path' in store) {
-      objectStore = {
-        type: store.type,
-        path: store.path,
-        credentials: store.credentials,
-      }
+    if (!os) {
+      res.status(500)
+      return res.json({
+        errors: [
+          `data integity error: object store ${stream.objectStoreId} not found`,
+        ],
+      })
     }
+    objectStore = os.url
   }
 
   res.json({

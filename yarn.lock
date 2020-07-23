@@ -4374,20 +4374,6 @@
     abortcontroller-polyfill "^1.4.0"
     follow-redirects "^1.10.0"
 
-"@livepeer/sdk@1.0.0-alpha.17":
-  version "1.0.0-alpha.17"
-  resolved "https://registry.yarnpkg.com/@livepeer/sdk/-/sdk-1.0.0-alpha.17.tgz#2173b6d49f4bf4ce5cb5c0bc0ccbb9c46bcb0dc7"
-  integrity sha512-KXBa9a7wKPTZknc95yuZCERYKj57vldb+LnkBvU2sLDO7Gi6csLkbBuwkCuqVVQZVqh5Dz4T8BZWH7Uw4ExdWw==
-  dependencies:
-    "@babel/runtime" "^7.4.3"
-    cross-env "^5.2.0"
-    ethereumjs-tx "^1.3.4"
-    ethjs "^0.4.0"
-    ethjs-abi "^0.2.1"
-    ethjs-ens "^2.0.1"
-    ethjs-provider-signer "^0.1.4"
-    ethjs-query "^0.3.1"
-
 "@livepeer/sdk@1.0.0-alpha.7":
   version "1.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/@livepeer/sdk/-/sdk-1.0.0-alpha.7.tgz#4b658ba63f41b688d53774122fb3c18163c7c1bb"
