@@ -13,7 +13,7 @@ import path from 'path'
 const app = Router()
 
 app.get('/', authMiddleware({}), async (req, res) => {
-  const { userId } = req.query
+  const { limit, cursor, userId } = req.query
   if (!userId) {
     res.status(400)
     return res.json({
@@ -28,16 +28,37 @@ app.get('/', authMiddleware({}), async (req, res) => {
     })
   }
 
-  const { data, cursor } = await req.store.queryObjects({
+  const { data, cursor: newCursor } = await req.store.queryObjects({
     kind: 'object-store',
     query: { userId: userId },
+    limit,
+    cursor,
   })
 
   res.status(200)
-  if (data.length > 0 && cursor) {
-    res.links({ next: makeNextHREF(req, cursor) })
+  if (data.length > 0 && newCursor) {
+    res.links({ next: makeNextHREF(req, newCursor) })
   }
   res.json(data)
+})
+
+app.get('/:id', authMiddleware({}), async (req, res) => {
+  const os = await req.store.get(`object-store/${req.params.id}`)
+  if (!os) {
+    res.status(404)
+    return res.json({
+      errors: ['not found'],
+    })
+  }
+
+  if (req.user.admin !== true && req.user.id !== os.userId) {
+    res.status(403)
+    return res.json({
+      errors: ['user can only request information on their own object stores'],
+    })
+  }
+
+  res.json(os)
 })
 
 app.post(
