@@ -36,7 +36,6 @@ const hackMistSettings = (req, profiles) => {
 app.get('/', authMiddleware({ admin: true }), async (req, res) => {
   let { limit, cursor, streamsonly, sessionsonly, all } = req.query
 
-  logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
   const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
   let filter2 = (o) => o
   if (streamsonly) {
