@@ -348,10 +348,10 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
           timeout: 10 * 1000, // 10 second timeout
           body: JSON.stringify(sanitized),
         }
-        // TODO , move this to a non blocking function once it's tested
+
         try {
-          let resp = await fetchWithTimeout(webhook.url, params)
-          console.log(`webhook ${webhook.id} fired, resp: ${resp}`)
+          fetchWithTimeout(webhook.url, params)
+          console.log(`webhook ${webhook.id} fired`)
         } catch (e) {
           console.log('webhook Trigger error ', e) // TODO better logs. 
         }
