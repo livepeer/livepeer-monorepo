@@ -8,21 +8,21 @@ export const theme = {
     body:
       'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
     heading: "inherit",
-    monospace: "'Fira Code', Menlo, monospace",
+    monospace: "'Fira Code', Menlo, monospace"
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 56, 64, 96],
   fontWeights: {
     body: 400,
-    heading: 700,
-    bold: 700,
+    heading: 600,
+    bold: 700
   },
   letterSpacings: {
-    body: ".46px",
-    heading: 0,
+    body: 0,
+    heading: 0
   },
   lineHeights: {
     body: 1.5,
-    heading: 1.125,
+    heading: 1.125
   },
   colors: {
     text: "#000",
@@ -33,7 +33,7 @@ export const theme = {
     muted: "#eaeaea",
     gray: "#fafafa",
     listText: "#666666",
-    extremelyBlue: "#0000ff",
+    extremelyBlue: "#0000ff"
   },
   buttons: {
     default: {
@@ -48,7 +48,7 @@ export const theme = {
       py: "10px",
       cursor: "pointer",
       ":focus": {
-        outline: "none",
+        outline: "none"
       },
       ":disabled": {
         cursor: "not-allowed",
@@ -57,14 +57,14 @@ export const theme = {
         borderWidth: "1px",
         borderColor: "listText",
         borderStyle: "solid",
-        opacity: 0.6,
-      },
+        opacity: 0.6
+      }
     },
     primary: {
       variant: "buttons.default",
       color: "primary",
       bg: "accent",
-      py: "10px",
+      py: "10px"
     },
     secondary: {
       variant: "buttons.default",
@@ -72,57 +72,64 @@ export const theme = {
       bg: "primary",
       borderWidth: "1px",
       borderColor: "primary",
-      borderStyle: "solid",
+      borderStyle: "solid"
     },
     outline: {
       variant: "buttons.default",
       bg: "transparent",
       borderColor: "text",
-      color: "text",
+      color: "text"
     },
     text: {
       variant: "buttons.default",
       border: 0,
-      fontWeight: 300,
+      fontWeight: 300
     },
     large: {
       variant: "buttons.default",
-      fontSize: 16,
+      fontSize: 16
     },
     primaryLarge: {
       variant: "buttons.primary",
-      fontSize: 16,
+      fontSize: 16
     },
     outlineSmall: {
       variant: "buttons.outline",
       fontSize: 14,
       px: 3,
-      py: 2,
+      py: 2
     },
     primarySmall: {
       variant: "buttons.primary",
       fontSize: 14,
       px: 3,
-      py: 2,
+      py: 2
     },
     secondarySmall: {
       variant: "buttons.secondary",
       fontSize: 14,
       px: 3,
-      py: 2,
-    },
+      py: 2
+    }
   },
   forms: {
     input: {
       padding: 3,
-      borderColor: "listText",
-    },
+      borderColor: "listText"
+    }
+  },
+  links: {
+    nav: {
+      color: "body",
+      textDecoration: "none",
+      mx: 3
+    }
   },
   layout: {
     container: {
       maxWidth: 1200,
-      px: [3, 3, 3, 3, 0],
-    },
+      px: [3, 3, 3, 3, 0]
+    }
   },
   styles: {
     root: {
@@ -130,23 +137,23 @@ export const theme = {
       lineHeight: "body",
       fontWeight: "body",
       letterSpacing: "body",
-      height: "100%",
+      height: "100%"
     },
     h1: {
       color: "text",
       fontFamily: "heading",
       lineHeight: "heading",
-      fontWeight: "heading",
+      fontWeight: "bold",
       letterSpacing: "heading",
-      fontSize: 7,
+      fontSize: 7
     },
     h2: {
       color: "text",
       fontFamily: "heading",
       lineHeight: "heading",
-      fontWeight: "heading",
+      fontWeight: "bold",
       letterSpacing: "heading",
-      fontSize: 6,
+      fontSize: 6
     },
     h3: {
       color: "text",
@@ -154,7 +161,7 @@ export const theme = {
       lineHeight: "heading",
       fontWeight: "heading",
       letterSpacing: "heading",
-      fontSize: 5,
+      fontSize: 5
     },
     h4: {
       color: "text",
@@ -162,7 +169,7 @@ export const theme = {
       lineHeight: "heading",
       fontWeight: "heading",
       letterSpacing: "heading",
-      fontSize: 4,
+      fontSize: 4
     },
     h5: {
       color: "text",
@@ -170,7 +177,7 @@ export const theme = {
       lineHeight: "heading",
       fontWeight: "heading",
       letterSpacing: "heading",
-      fontSize: 3,
+      fontSize: 3
     },
     h6: {
       color: "text",
@@ -178,49 +185,37 @@ export const theme = {
       lineHeight: "heading",
       fontWeight: "heading",
       letterSpacing: "heading",
-      fontSize: 2,
+      fontSize: 2
     },
     p: {
       color: "text",
       fontFamily: "body",
       fontWeight: "body",
-      lineHeight: "body",
+      lineHeight: "body"
     },
     a: {
-      color: "#0000ff",
+      color: "#0000ff"
     },
     pre: {
+      borderRadius: 12,
       fontFamily: "monospace",
       overflowX: "auto",
       padding: 4,
       cursor: "text",
-      backgroundColor: (t) => `${t.colors.primary} !important`,
+      backgroundColor: t => `${t.colors.primary} !important`,
       code: {
         color: "inherit",
-        WebkitFontSmoothing: "antialiased",
-      },
+        WebkitFontSmoothing: "antialiased"
+      }
     },
     code: {
       fontFamily: "monospace",
-      fontSize: "inherit",
-    },
-    table: {
-      width: "100%",
-      borderCollapse: "separate",
-      borderSpacing: 0,
-    },
-    th: {
-      textAlign: "left",
-      borderBottomStyle: "solid",
-    },
-    td: {
-      textAlign: "left",
-      borderBottomStyle: "solid",
+      fontSize: "inherit"
     },
     img: {
-      maxWidth: "100%",
-    },
-  },
+      maxWidth: "100%"
+    }
+  }
 };
 
 const ThemeProvider = memo(({ children, ...props }) => (
@@ -233,50 +228,81 @@ const Reset = () => (
   <Global
     styles={{
       body: {
-        margin: "0",
+        margin: "0"
       },
       "h1, h2, h3, h4, h5, h6": {
-        margin: 0,
+        margin: 0
       },
       h1: {
-        fontSize: 56,
+        fontSize: 56
       },
       h2: {
-        fontSize: 48,
+        fontSize: 48
       },
       h3: {
-        fontSize: 32,
+        fontSize: 32
       },
       h4: {
-        fontSize: 24,
+        fontSize: 24
       },
       h5: {
-        fontSize: 16,
+        fontSize: 16
       },
       small: {
-        fontSize: "100%",
+        fontSize: "100%"
       },
       a: {
-        color: "#131418",
+        color: "#131418"
       },
       button: {
         border: 0,
         padding: 0,
         fontSize: "100%",
-        backgroundColor: "transparent",
+        backgroundColor: "transparent"
       },
       ".react-reveal": {
-        opacity: 0,
-      },
-      ul: {
-        listStyle: "none",
-        paddingLeft: "10px",
-        borderLeft: "1px solid black",
-        marginLeft: "5px",
+        opacity: 0
       },
       li: {
-        marginBottom: "6px",
+        marginBottom: "6px"
       },
+      table: {
+        padding: "0"
+      },
+      "table tr": {
+        borderTop: "1px solid #cccccc",
+        backgroundColor: "white",
+        margin: "0",
+        padding: "0"
+      },
+      "table tr:nth-child(2n)": {
+        backgroundColor: "#f8f8f8"
+      },
+      "table tr th": {
+        fontWeight: "bold",
+        border: "1px solid #cccccc",
+        textAlign: "left",
+        margin: "0",
+        padding: "6px 13px"
+      },
+      "table tr td": {
+        border: "1px solid #cccccc",
+        textAlign: "left",
+        margin: "0",
+        padding: "6px 13px"
+      },
+      "table tr th :first-child": {
+        marginTop: 0
+      },
+      "table tr td :first-child": {
+        marginTop: "0"
+      },
+      "table tr th :last-child": {
+        marginBottom: "0"
+      },
+      "table tr td :last-child": {
+        marginBottom: "0"
+      }
     }}
   />
 );
