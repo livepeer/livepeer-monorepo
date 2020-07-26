@@ -7,6 +7,9 @@ import schemaTypes from 'all:part:@sanity/base/schema-type'
 // Document types
 import page from './documents/page'
 import job from './documents/job'
+import post from './documents/post'
+import author from './documents/author'
+import category from './documents/category'
 import route from './documents/route'
 import siteConfig from './documents/siteConfig'
 
@@ -68,5 +71,8 @@ export default createSchema({
     teamSection,
     teamMember,
     jobsSection,
+    post,
+    author,
+    category,
   ]),
 })

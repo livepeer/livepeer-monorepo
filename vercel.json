@@ -30,10 +30,12 @@
   ],
   "build": {
     "env": {
-      "HUBSPOT_PORTAL_ID": "@hubspot_portal_id",
-      "HUBSPOT_FORM_ID": "@hubspot_form_id",
-      "GA_TRACKING_ID": "@ga_tracking_id_dot_com",
-      "SEGMENT_WRITE_KEY": "@segment_write_key_dot_com"
+      "NEXT_PUBLIC_HUBSPOT_PORTAL_ID": "@hubspot_portal_id",
+      "NEXT_PUBLIC_HUBSPOT_FORM_ID": "@hubspot_form_id",
+      "NEXT_PUBLIC_GA_TRACKING_ID": "@ga_tracking_id_dot_com",
+      "NEXT_PUBLIC_SEGMENT_WRITE_KEY": "@segment_write_key_dot_com",
+      "SANITY_API_TOKEN": "@sanity_api_token",
+      "SANITY_PREVIEW_SECRET": "@sanity_preview_secret"
     }
   }
 }

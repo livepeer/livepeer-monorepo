@@ -6,6 +6,7 @@ import { Box } from "@theme-ui/components";
 import { Reset, ThemeProvider } from "../lib/theme";
 import { ApiProvider } from "../hooks/use-api";
 import MarkdownProvider from "../lib/markdown-provider";
+import "../css/markdown.css";
 
 export default class MyApp extends App {
   render() {

@@ -1,17 +1,17 @@
 import Layout from "../../components/Layout";
-import { request } from "graphql-request";
+import { GraphQLClient, request } from "graphql-request";
 import { print } from "graphql/language/printer";
 import allJobs from "../../queries/allJobs.gql";
 import { Container } from "@theme-ui/components";
-import Hero from "../../components/Hero";
 import ReactMarkdown from "react-markdown";
 
-const Page = ({ title, body }) => {
+const Page = ({ title, body, preview }) => {
   return (
     <Layout
       title={`${title} - Liveper`}
       description={`Scalable, secure live transcoding at a fraction of the cost`}
       url={`https://livepeer.com`}
+      preview={preview}
     >
       <Container
         sx={{
@@ -19,7 +19,7 @@ const Page = ({ title, body }) => {
           ul: { mb: 4 },
           p: { mb: 4 },
           maxWidth: 960,
-          margin: "0 auto"
+          margin: "0 auto",
         }}
       >
         <h1 sx={{ lineHeight: "72px", my: 5 }}>{title}</h1>
@@ -34,34 +34,50 @@ export async function getStaticPaths() {
     "https://dp4k3mpw.api.sanity.io/v1/graphql/production/default",
     print(allJobs),
     {
-      where: {}
+      where: {},
     }
   );
   let paths = [];
-  allJob.map(page => paths.push({ params: { slug: page.slug.current } }));
+  allJob.map((page) => paths.push({ params: { slug: page.slug.current } }));
   return {
     fallback: false,
-    paths
+    paths,
   };
 }
 
-export async function getStaticProps({ params }) {
-  const variables = {
-    where: {
-      slug: { current: { eq: params.slug } }
-    }
-  };
-  const { allJob } = await request(
+export async function getStaticProps({ params, preview = false }) {
+  const graphQLClient = new GraphQLClient(
     "https://dp4k3mpw.api.sanity.io/v1/graphql/production/default",
-    print(allJobs),
-    variables
+    {
+      headers: {
+        authorization: `Bearer ${process.env.SANITY_API_TOKEN}`,
+      },
+    }
   );
+
+  let data: any = await graphQLClient.request(print(allJobs), {
+    where: {
+      _: { is_draft: preview },
+      slug: { current: { eq: params.slug } },
+    },
+  });
+
+  // if in preview mode but no draft exists, then return published post
+  if (preview && !data.allJob.length) {
+    data = await graphQLClient.request(print(allJobs), {
+      where: {
+        _: { is_draft: false },
+        slug: { current: { eq: params.slug } },
+      },
+    });
+  }
 
   return {
     props: {
-      ...allJob[0]
+      ...data.allJob[0],
+      preview,
     },
-    revalidate: true
+    revalidate: true,
   };
 }
 

@@ -19,7 +19,12 @@ export default ({ children }) => {
           >
             <Sidebar />
           </Box>
-          <Box sx={{ a: { color: "extremelyBlue" }, pl: 4 }}>{children}</Box>
+          <Box
+            className="markdown-body"
+            sx={{ a: { color: "extremelyBlue" }, pl: 4 }}
+          >
+            {children}
+          </Box>
         </Flex>
       </Container>
     </Layout>

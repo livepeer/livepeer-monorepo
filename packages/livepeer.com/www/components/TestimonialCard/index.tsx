@@ -32,11 +32,7 @@ export default ({ quote, image, name, role, company, ...props }) => {
       {...props}
     >
       <Box sx={{ position: "relative", pt: 3, pb: 3, px: 3 }}>
-        <Box
-          sx={{ letterSpacing: "heading", fontWeight: 500, mb: 4, fontSize: 4 }}
-        >
-          {quote}
-        </Box>
+        <Box sx={{ fontWeight: 500, mb: 4, fontSize: 4 }}>{quote}</Box>
         <Flex
           sx={{
             fontWeight: 500,

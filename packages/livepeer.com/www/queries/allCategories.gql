@@ -1,0 +1,8 @@
+{
+  allCategory {
+    title
+    slug {
+      current
+    }
+  }
+}

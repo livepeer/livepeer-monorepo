@@ -10,8 +10,8 @@ import Fade from "react-reveal/Fade";
 export default ({ heading, body }) => {
   const formEl = useRef(null);
   const { data, handleSubmit } = useForm({
-    portalId: process.env.HUBSPOT_PORTAL_ID,
-    formId: process.env.HUBSPOT_FORM_ID
+    portalId: process.env.NEXT_PUBLIC_HUBSPOT_PORTAL_ID,
+    formId: process.env.NEXT_PUBLIC_HUBSPOT_FORM_ID,
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -31,7 +31,7 @@ export default ({ heading, body }) => {
   return (
     <Container
       sx={{
-        py: 88
+        py: 88,
       }}
     >
       <Box sx={{ mb: 48, textAlign: "center" }}>

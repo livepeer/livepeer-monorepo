@@ -15,6 +15,7 @@
     "@sanity/default-login",
     "@sanity/dashboard",
     "@sanity/desk-tool",
+    "@sanity/production-preview",
     "dashboard-widget-structure-menu",
     "dashboard-widget-document-list",
     "dashboard-widget-netlify",
@@ -41,6 +42,10 @@
     {
       "implements": "part:@sanity/base/theme/variables/override-style",
       "path": "./overrides.css"
+    },
+    {
+      "implements": "part:@sanity/production-preview/resolve-production-url",
+      "path": "./resolveProductionUrl.js"
     }
   ]
 }

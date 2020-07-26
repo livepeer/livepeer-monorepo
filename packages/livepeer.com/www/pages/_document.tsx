@@ -9,10 +9,10 @@ class MyDocument extends Document {
 
   renderSnippet() {
     const opts = {
-      apiKey: process.env.SEGMENT_WRITE_KEY,
+      apiKey: process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY,
       // note: the page option only covers SSR tracking.
       // The Layout component is used to track other events using `window.analytics.page()`
-      page: false
+      page: false,
     };
 
     return snippet.min(opts);

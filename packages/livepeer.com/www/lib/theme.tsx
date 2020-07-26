@@ -25,7 +25,7 @@ export const theme = {
     heading: 1.125
   },
   colors: {
-    text: "#000",
+    text: "#292929",
     background: "#fff",
     primary: "#131418",
     secondary: "#FAF5EF",
@@ -33,7 +33,7 @@ export const theme = {
     muted: "#eaeaea",
     gray: "#fafafa",
     listText: "#666666",
-    extremelyBlue: "#0000ff"
+    extremelyBlue: "#3F3FE2"
   },
   buttons: {
     default: {
@@ -234,19 +234,24 @@ const Reset = () => (
         margin: 0
       },
       h1: {
-        fontSize: 56
+        fontSize: 56,
+        lineHeight: 1.1
       },
       h2: {
-        fontSize: 48
+        fontSize: 48,
+        lineHeight: 1.1
       },
       h3: {
-        fontSize: 32
+        fontSize: 32,
+        lineHeight: 1.1
       },
       h4: {
-        fontSize: 24
+        fontSize: 24,
+        lineHeight: 1.1
       },
       h5: {
-        fontSize: 16
+        fontSize: 16,
+        lineHeight: 1.1
       },
       small: {
         fontSize: "100%"
@@ -275,7 +280,7 @@ const Reset = () => (
         margin: "0",
         padding: "0"
       },
-      "table tr:nth-child(2n)": {
+      "table tr:nth-of-type(2n)": {
         backgroundColor: "#f8f8f8"
       },
       "table tr th": {
@@ -291,16 +296,16 @@ const Reset = () => (
         margin: "0",
         padding: "6px 13px"
       },
-      "table tr th :first-child": {
+      "table tr th :first-of-type": {
         marginTop: 0
       },
-      "table tr td :first-child": {
+      "table tr td :first-of-type": {
         marginTop: "0"
       },
-      "table tr th :last-child": {
+      "table tr th :last-of-type": {
         marginBottom: "0"
       },
-      "table tr td :last-child": {
+      "table tr td :last-of-type": {
         marginBottom: "0"
       }
     }}

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import ReactGA from "react-ga";
 import "lazysizes";
 import "lazysizes/plugins/attrchange/ls.attrchange";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 
 interface Props {
   title?: string;
@@ -14,10 +14,11 @@ interface Props {
   description?: string;
   image?: any;
   url?: string;
+  preview?: boolean;
 }
 
 if (process.env.NODE_ENV === "production") {
-  ReactGA.initialize(process.env.GA_TRACKING_ID);
+  ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID);
 } else {
   ReactGA.initialize("test", { testMode: true });
 }
@@ -32,7 +33,15 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-export default ({ title, description, children, image, url }: Props) => {
+export default ({
+  title,
+  description,
+  children,
+  image,
+  url,
+  preview
+}: Props) => {
+  const { asPath } = useRouter();
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
@@ -62,6 +71,7 @@ export default ({ title, description, children, image, url }: Props) => {
       }}
     >
       <DefaultSeo {...seo} />
+
       <Flex
         sx={{
           flexGrow: 1,
@@ -78,6 +88,25 @@ export default ({ title, description, children, image, url }: Props) => {
             width: "100%"
           }}
         >
+          {preview && (
+            <a
+              href={`/api/exit-preview?path=${asPath}`}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
+                justifyContent: "center",
+                height: 24,
+                fontSize: 12,
+                fontWeight: "500",
+                bg: "extremelyBlue",
+                color: "white",
+                lineHeight: "32px"
+              }}
+            >
+              Preview Mode — Click to Exit
+            </a>
+          )}
           <Navigation />
         </Box>
         {children}

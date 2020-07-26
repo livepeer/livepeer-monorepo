@@ -1,8 +1,14 @@
 import sanityClient from "@sanity/client";
+import sanityImage from "@sanity/image-url";
 
-export default sanityClient({
-  projectId: "dp4k3mpw",
+const options = {
   dataset: "production",
-  token: "", // or leave blank to be anonymous user
-  useCdn: false // `false` if you want to ensure fresh data
-});
+  projectId: "dp4k3mpw",
+  useCdn: process.env.NODE_ENV === "production",
+};
+
+const client = sanityClient(options);
+
+export const imageBuilder = sanityImage(client);
+
+export default client;

@@ -1,0 +1,44 @@
+fragment imageInfo on ImageExtended {
+  alt
+  asset {
+    _id
+    path
+    metadata {
+      dimensions {
+        width
+        height
+      }
+    }
+    source {
+      url
+    }
+  }
+}
+
+query allPost($where: PostFilter) {
+  allPost(where: $where) {
+    _id
+    _createdAt
+    title
+    slug {
+      current
+    }
+    category {
+      title
+      slug {
+        current
+      }
+    }
+    mainImage {
+      ...imageInfo
+    }
+    author {
+      name
+      image {
+        ...imageInfo
+      }
+    }
+    excerpt
+    body
+  }
+}

@@ -25,13 +25,6 @@ export default () => {
     }
   };
 
-//   useEffect(() => {
-//     if (!email || !resetToken) {
-//         console.log(`no email: ${email} or resetToken: ${resetToken}`)
-//       router.replace("/forgot-password");
-//     }
-//   }, [email, resetToken]);
-
   return (
     <Layout>
       <Flex

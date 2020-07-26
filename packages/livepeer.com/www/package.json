@@ -30,7 +30,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "lazysizes": "^5.2.0",
     "moment": "^2.24.0",
-    "next": "9.2.3-canary.22",
+    "next": "^9.5.0",
     "next-seo": "^4.4.0",
     "pascal-case": "^3.1.1",
     "prism-react-renderer": "^1.1.0",
@@ -43,6 +43,7 @@
     "react-markdown": "^4.3.1",
     "react-reveal": "^1.2.2",
     "react-scroll": "^1.7.15",
+    "reading-time": "^1.2.0",
     "theme-ui": "0.3.1",
     "url": "^0.11.0"
   },
