@@ -318,17 +318,26 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     let sanitized = stream
     delete sanitized.streamKey
 
-    const all = false // TODO remove hardcoding here 
-    const limit = 10 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
+    // const all = false // TODO remove hardcoding here 
+    // const limit = 10 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
     // get a list of user defined webhooks
-    const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
-    let filter2 = (o) => o[Object.keys(o)[0]].userId
+    // const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
+    // let filter2 = (o) => o[Object.keys(o)[0]].userId
+    // const resp = await req.store.list({
+    //   prefix: `webhook/`,
+    //   limit,
+    //   filter: (o) => filter1(o) && filter2(o),
+    // })
 
-    const resp = await req.store.list({
-      prefix: `webhook/`,
-      limit,
-      filter: (o) => filter1(o) && filter2(o),
+    const resp = await req.store.query({
+      kind: "webhook",
+      query: {
+        userId: stream.userId,
+        eventType: "streamStarted",
+        deleted: false
+      }
     })
+    
     let output = resp.data
     res.status(200)
 
