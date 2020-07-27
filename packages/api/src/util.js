@@ -31,11 +31,13 @@ export const fetchWithTimeout = (url, options) => new Promise((resolve, reject) 
     .then(response => {
       clearTimeout(timeout);
 
-      if (response.status === 200) {
-        return resolve(response);
-      }
+      return resolve(response)
+      // return a response regardless of the status code.
+      // if (response.status === 200) {
+      //   return resolve(response);
+      // }
 
-      return reject(response);
+      // return reject(response);
     }, rejectReason => {
       clearTimeout(timeout);
 

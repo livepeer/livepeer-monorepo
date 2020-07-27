@@ -332,31 +332,41 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     let output = resp.data
     res.status(200)
 
-    output.forEach(async (webhook) => {
-      let ip = await dns.resolve4(webhook.url)
-      let isLocal = isLocalIP(ip)
-      if (isLocal) {
-        // don't fire this webhook.
-      } else {
-        // go ahead
-        let params = {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-            'user-agent': 'livepeer.com'
-          },
-          timeout: 10 * 1000, // 10 second timeout
-          body: JSON.stringify(sanitized),
+    await Promise.all(
+      output.map(async (webhook) => {
+        let ip = await dns.resolve4(webhook.url)
+        let isLocal = isLocalIP(ip)
+        if (isLocal) {
+          // don't fire this webhook.
+          console.log(`webhook ${webhook.id} resolved to a localIP, url: ${webhook.url}, resolved IP: ${ip}`)
+        } else {
+          // go ahead
+          let params = {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              'user-agent': 'livepeer.com'
+            },
+            timeout: 10 * 1000, // 10 second timeout
+            body: JSON.stringify(sanitized),
+          }
+    
+          try {
+            console.log(`webhook ${webhook.id} firing`)
+            let resp = await fetchWithTimeout(webhook.url, params)
+            if (resp.status === 200) {
+              // all is good
+              console.log(`webhook ${webhook.id} fired successfully`)
+            } else {
+              // block this
+              console.log(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+            }
+          } catch (e) {
+            console.log('webhook Trigger error ', e) // TODO better logs. 
+          }
         }
-
-        try {
-          fetchWithTimeout(webhook.url, params)
-          console.log(`webhook ${webhook.id} fired`)
-        } catch (e) {
-          console.log('webhook Trigger error ', e) // TODO better logs. 
-        }
-      }
-    })
+      })
+    )
   }
   
   if (stream.parentId) {
