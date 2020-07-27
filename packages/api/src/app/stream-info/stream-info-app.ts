@@ -63,7 +63,6 @@ function countSegments(si: streamInfo, mpl: MasterPlaylist) {
   if (!mpl.Variants) {
     return
   }
-  let source, transcoded
   mpl.Variants.forEach((variant, i) => {
     // console.log(`${i}th variant: `, variant)
     // console.log(`segments num: `, variant?.Chunklist?.Segments?.length)
@@ -78,8 +77,14 @@ function countSegments(si: streamInfo, mpl: MasterPlaylist) {
         si.seenSegments.set(segId, new Date())
         if (i === 0) {
           si.sourceSegments++
+          if (segment.Duration > 0) {
+            si.sourceSegmentsDuration += segment.Duration
+          }
         } else {
           si.transcodedSegments++
+          if (segment.Duration > 0) {
+            si.transcodedSegmentsDuration += segment.Duration
+          }
         }
       }
     }
@@ -97,8 +102,12 @@ interface streamInfo {
   lastUpdated: Date
   sourceSegments: number
   transcodedSegments: number
+  sourceSegmentsDuration: number
+  transcodedSegmentsDuration: number
   sourceSegmentsLastUpdated: number
   transcodedSegmentsLastUpdated: number
+  sourceSegmentsDurationLastUpdated: number
+  transcodedSegmentsDurationLastUpdated: number
   seenSegments: Map<string, Date>
 }
 
@@ -108,8 +117,12 @@ function newStreamInfo(): streamInfo {
     lastUpdated: new Date(),
     sourceSegments: 0,
     transcodedSegments: 0,
+    sourceSegmentsDuration: 0.0,
+    transcodedSegmentsDuration: 0.0,
     sourceSegmentsLastUpdated: 0,
     transcodedSegmentsLastUpdated: 0,
+    sourceSegmentsDurationLastUpdated: 0.0,
+    transcodedSegmentsDurationLastUpdated: 0.0,
     seenSegments: new Map(),
   }
 }
@@ -160,6 +173,8 @@ class statusPoller {
           storedInfo.lastSeen = si.lastSeen.valueOf()
           storedInfo.sourceSegments = (storedInfo.sourceSegments || 0) + si.sourceSegments - si.sourceSegmentsLastUpdated
           storedInfo.transcodedSegments = (storedInfo.transcodedSegments || 0) + si.transcodedSegments - si.transcodedSegmentsLastUpdated
+          storedInfo.sourceSegmentsDuration = (storedInfo.sourceSegmentsDuration || 0) + si.sourceSegmentsDuration - si.sourceSegmentsDurationLastUpdated
+          storedInfo.transcodedSegmentsDuration = (storedInfo.transcodedSegmentsDuration || 0) + si.transcodedSegmentsDuration - si.transcodedSegmentsDurationLastUpdated
           await this.store.replace(storedInfo)
           if (storedInfo.parentId) {
             const parentStream: Stream = await this.store.get(`stream/${storedInfo.parentId}`, false)
@@ -167,11 +182,15 @@ class statusPoller {
             parentStream.lastSeen = si.lastSeen.valueOf()
             parentStream.sourceSegments = (parentStream.sourceSegments || 0) + si.sourceSegments - si.sourceSegmentsLastUpdated
             parentStream.transcodedSegments = (parentStream.transcodedSegments || 0) + si.transcodedSegments - si.transcodedSegmentsLastUpdated
+            parentStream.sourceSegmentsDuration = (parentStream.sourceSegmentsDuration || 0) + si.sourceSegmentsDuration - si.sourceSegmentsDurationLastUpdated
+            parentStream.transcodedSegmentsDuration = (parentStream.transcodedSegmentsDuration || 0) + si.transcodedSegmentsDuration - si.transcodedSegmentsDurationLastUpdated
             await this.store.replace(parentStream)
           }
           si.lastUpdated = new Date()
           si.sourceSegmentsLastUpdated = si.sourceSegments
           si.transcodedSegmentsLastUpdated = si.transcodedSegments
+          si.sourceSegmentsDurationLastUpdated = si.sourceSegmentsDuration
+          si.transcodedSegmentsDurationLastUpdated = si.transcodedSegmentsDuration
         }
       }
     }

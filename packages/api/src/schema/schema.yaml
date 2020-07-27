@@ -53,6 +53,14 @@ components:
         transcodedSegments:
           type: number
           example: 2
+        sourceSegmentsDuration:
+          type: number
+          example: 1
+          description: Duration of all the source segments, sec
+        transcodedSegmentsDuration:
+          type: number
+          example: 2
+          description: Duration of all the transcoded segments, sec
         deleted:
           type: boolean
           description: Set to true when stream deleted

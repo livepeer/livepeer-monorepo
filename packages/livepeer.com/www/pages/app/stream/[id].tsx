@@ -255,8 +255,18 @@ export default () => {
               <Cell>{stream.isActive ? "Active" : "Idle"}</Cell>
               {user.admin ? (
                 <>
+                  <Cell> </Cell>
+                  <Cell><strong>Admin only fields:</strong></Cell>
                   <Cell>Deleted</Cell>
                   <Cell>{stream.deleted ? <strong>Yes</strong> : "No"}</Cell>
+                  <Cell>Source segments</Cell>
+                  <Cell>{stream.sourceSegments || 0}</Cell>
+                  <Cell>Transcoded segments</Cell>
+                  <Cell>{stream.transcodedSegments || 0}</Cell>
+                  <Cell>Source duration</Cell>
+                  <Cell>{stream.sourceSegmentsDuration || 0} sec</Cell>
+                  <Cell>Transcoded duration</Cell>
+                  <Cell>{stream.transcodedSegmentsDuration || 0} sec</Cell>
                 </>
               ) : null}
             </Box>
