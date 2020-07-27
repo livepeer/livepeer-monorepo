@@ -348,7 +348,10 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               'user-agent': 'livepeer.com'
             },
             timeout: 10 * 1000, // 10 second timeout
-            body: JSON.stringify(sanitized),
+            body: {
+              event: 'streamStarted',
+              stream: JSON.stringify(sanitized),
+            }
           }
     
           try {
