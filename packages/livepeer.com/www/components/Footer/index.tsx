@@ -8,7 +8,7 @@ export default () => {
       sx={{
         py: 4,
         bg: "primary",
-        boxShadow: "0px 0px 60px rgba(0, 0, 0, 0.08)"
+        boxShadow: "0px 0px 60px rgba(0, 0, 0, 0.08)",
       }}
     >
       <Container>
@@ -17,7 +17,7 @@ export default () => {
             flexDirection: ["column", "column", "row"],
             alignItems: "center",
             textAlign: ["center", "center", "left"],
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <Box>
@@ -43,6 +43,11 @@ export default () => {
             </Flex>
           </Box>
           <Flex sx={{ justifyContent: "center", alignItems: "center" }}>
+            <Link href="/blog" passHref>
+              <a sx={{ textDecoration: "none", mr: 4, color: "accent" }}>
+                Blog
+              </a>
+            </Link>
             <Link href="/[slug]" as="/team" passHref>
               <a sx={{ textDecoration: "none", mr: 4, color: "accent" }}>
                 Team
