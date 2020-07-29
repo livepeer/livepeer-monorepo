@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ReactTooltip from "react-tooltip";
 import { Spinner, Box, Button, Flex, Heading } from "@theme-ui/components";
 import Layout from "../../../components/Layout";
 import useLoggedIn from "../../../hooks/use-logged-in";
@@ -10,8 +11,11 @@ import Router from "next/router";
 import { useApi, usePageVisibility } from "../../../hooks";
 import { useEffect, useState } from "react";
 import TabbedLayout from "../../../components/TabbedLayout";
+import { Checkbox } from "../../../components/Table";
 import StreamSessionsTable from "../../../components/StreamSessionsTable";
 import DeleteStreamModal from "../../../components/DeleteStreamModal";
+import Modal from "../../../components/Modal";
+import Help from "../../../public/img/help.svg";
 import { pathJoin } from "../../../lib/utils";
 import {
   RelativeTime,
@@ -82,7 +86,14 @@ const Cell = ({ children }) => {
 
 export default () => {
   useLoggedIn();
-  const { user, logout, getStream, deleteStream, getIngest } = useApi();
+  const {
+    user,
+    logout,
+    getStream,
+    deleteStream,
+    getIngest,
+    setRecord
+  } = useApi();
   const router = useRouter();
   const { query, asPath } = router;
   const id = query.id;
@@ -90,6 +101,7 @@ export default () => {
   const [ingest, setIngest] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [recordOffModal, setRecordOffModal] = useState(false);
 
   useEffect(() => {
     getIngest()
@@ -124,6 +136,7 @@ export default () => {
   const [keyRevealed, setKeyRevealed] = useState(false);
   const close = () => {
     setDeleteModal(false);
+    setRecordOffModal(false);
   };
 
   if (!user || user.emailValid === false) {
@@ -139,6 +152,12 @@ export default () => {
       ? pathJoin(ingest[0].playback, `${stream.playbackId}/index.m3u8`)
       : stream.playbackId || "";
   };
+  const doSetRecord = async (stream: Stream, record: boolean) => {
+    console.log(`do set record ${stream.id} record ${record}`);
+    setStream(null); // shows 'loading wheel' immediately
+    await setRecord(stream.id, record);
+    setStream(null); // make sure that we will load updated stream
+  };
 
   const tabs = query.admin ? getTabsAdmin(2) : getTabs(0);
   const backLink = query.admin ? "/app/admin/streams" : "/app/user";
@@ -153,6 +172,36 @@ export default () => {
             deleteStream(stream.id).then(() => Router.replace("/app/user"));
           }}
         />
+      )}
+      {recordOffModal && stream && (
+        <Modal onClose={close}>
+          <h3>Are you sure you want to turn off recoding?</h3>
+          <p>
+            Future stream sessions will not be recorded. In progress stream
+            sessions will be recorded. Past sessions recordings will still be
+            available.
+          </p>
+          <Flex sx={{ justifyContent: "flex-end" }}>
+            <Button
+              type="button"
+              variant="outlineSmall"
+              onClick={close}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="secondarySmall"
+              onClick={() => {
+                close();
+                doSetRecord(stream, false);
+              }}
+            >
+              Turn off recording
+            </Button>
+          </Flex>
+        </Modal>
       )}
       <Box sx={{ my: "2em", maxWidth: 958, width: "100%", fontWeight: "bold" }}>
         <Link href={backLink}>
@@ -229,6 +278,46 @@ export default () => {
               <Cell>
                 <ShowURL text="" url={getPlaybackURL(stream)} anchor={true} />
               </Cell>
+              <Cell>Record stream</Cell>
+              <Box
+                sx={{
+                  m: "0.4em",
+                  justifySelf: "flex-start",
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  if (stream.record) {
+                    setRecordOffModal(true);
+                  } else {
+                    doSetRecord(stream, true);
+                  }
+                }}
+              >
+                <Flex>
+                  <Checkbox value={stream.record} />
+                  <ReactTooltip
+                    id={`tooltip-record-${stream.id}`}
+                    className="tooltip"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  >
+                    <p>When checked, transcoded streaming sessions will be recorded
+                    and stored by Livepeer.<br/> Each recorded session will have a
+                    recording .m3u8 URL for playback. <br/>This feature is currently
+                    in beta and free.</p>
+                  </ReactTooltip>
+                  <Help
+                    data-tip
+                    data-for={`tooltip-record-${stream.id}`}
+                    sx={{
+                      color: "muted",
+                      cursor: "pointer",
+                      ml: 1
+                    }}
+                  />
+                </Flex>
+              </Box>
               <Cell>Renditions</Cell>
               <Cell>
                 <RenditionsDetails stream={stream} />
