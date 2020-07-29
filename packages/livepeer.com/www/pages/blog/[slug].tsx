@@ -119,12 +119,7 @@ export default Post;
 
 export async function getStaticPaths() {
   const graphQLClient = new GraphQLClient(
-    "https://dp4k3mpw.api.sanity.io/v1/graphql/production/default",
-    {
-      headers: {
-        authorization: `Bearer ${process.env.SANITY_API_TOKEN}`,
-      },
-    }
+    "https://dp4k3mpw.api.sanity.io/v1/graphql/production/default"
   );
   const { allPost } = await graphQLClient.request(print(allPosts), {
     where: {},
@@ -142,9 +137,11 @@ export async function getStaticProps({ params, preview = false }) {
   const graphQLClient = new GraphQLClient(
     "https://dp4k3mpw.api.sanity.io/v1/graphql/production/default",
     {
-      headers: {
-        authorization: `Bearer ${process.env.SANITY_API_TOKEN}`,
-      },
+      ...(preview && {
+        headers: {
+          authorization: `Bearer ${process.env.SANITY_API_TOKEN}`,
+        },
+      }),
     }
   );
 
