@@ -366,7 +366,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
           try {
             console.log(`webhook ${webhook.id} firing`)
             let resp = await fetchWithTimeout(webhook.url, params)
-            if (resp.status === 200) {
+            if (resp.status >= 200 && resp.status < 300) { // 2xx requests are cool.
               // all is good
               console.log(`webhook ${webhook.id} fired successfully`)
             } else {
