@@ -315,7 +315,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     // this could be used instead of /webhook/:id/trigger (althoughs /trigger requires admin access )
     
     // basic sanitization.
-    let sanitized = stream
+    let sanitized = {...stream}
     delete sanitized.streamKey
 
     // const all = false // TODO remove hardcoding here 
