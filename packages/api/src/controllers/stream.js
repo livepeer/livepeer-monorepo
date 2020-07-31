@@ -371,10 +371,10 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               console.log(`webhook ${webhook.id} fired successfully`)
             } else {
               // block this
-              console.log(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+              throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
             }
           } catch (e) {
-            console.log('webhook Trigger error ', e) // TODO better logs. 
+            throw e 
           }
         }
       })
