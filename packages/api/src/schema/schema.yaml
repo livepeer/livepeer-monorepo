@@ -51,7 +51,7 @@ components:
         timestamp:
           type: string
           readOnly: true
-        eventType:
+        event:
           type: string
           enum:
             - streamStarted

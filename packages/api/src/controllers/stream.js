@@ -328,14 +328,6 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
       limit,
       filter: (o) => filter1(o) && filter2(o),
     })
-    // const resp = await req.store.query({
-    //   kind: "webhook",
-    //   query: {
-    //     userId: stream.userId,
-    //     eventType: "streamStarted",
-    //     deleted: false
-    //   }
-    // })
     
     let output = resp.data
     res.status(200)

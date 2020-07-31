@@ -53,7 +53,7 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
     kind: 'webhook',
     name: req.body.name,
     timestamp: createdAt,
-    eventType: req.body.eventType,
+    event: req.body.event,
     url: req.body.url, // TODO validate this. 
   }
 
