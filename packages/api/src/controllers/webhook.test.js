@@ -67,6 +67,7 @@ beforeAll(async () => {
     timestamp: new Date(),
     event: 'streamStarted',
     url: 'https://winter-darkness-88ea.livepeer.workers.dev/'
+    // url: 'https://livepeer.com/'
   }
 })
 
@@ -164,6 +165,62 @@ describe('controllers/webhook', () => {
       expect(res2.status).toBe(404)
     })
  
+  })
+
+  describe('webhook trigger', () => {
+    let client, adminUser, adminToken, nonAdminUser, nonAdminToken,
+    generatedWebhook
+
+    beforeAll(async () => {
+      ;({
+        client,
+        adminUser,
+        adminToken,
+        nonAdminUser,
+        nonAdminToken,
+      } = await setupUsers(server))
+    })
+
+    afterAll(async () => {
+      await clearDatabase(server)
+    })
+
+    it('trigger webhook', async () => {
+      // create webhook
+      const webhookRes = await client.post('/webhook', { ...mockWebhook })
+      let webhookResJson = await webhookRes.json()
+      // console.log('webhook body: ', webhookResJson)
+      expect(webhookRes.status).toBe(201)
+      generatedWebhook = webhookResJson
+
+      const webhookRes2 = await client.post('/webhook', { ...mockWebhook })
+      let webhookResJson2 = await webhookRes2.json()
+      // console.log('webhook body: ', webhookResJson2)
+      expect(webhookRes2.status).toBe(201)
+      // generatedWebhook = webhookResJson
+
+      // create a stream object
+      const now = Date.now()
+      const res = await client.post('/stream', { ...postMockStream })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('test_stream')
+      expect(stream.createdAt).toBeGreaterThanOrEqual(now)
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+
+      
+      // trigger
+      const setActiveRes = await client.put(`/stream/${stream.id}/setactive`, {active: true})
+      expect(setActiveRes).toBeDefined()
+      // console.log('setActiveRes: ', setActiveRes)
+      expect(setActiveRes.status).toBe(200)
+      // const setActiveResJson = await setActiveRes.json()
+      // expect(setActiveResJson).toBeDefined()
+      
+    }, 20000)
   })
 })
 

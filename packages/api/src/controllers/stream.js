@@ -10,8 +10,11 @@ import { generateStreamKey } from './generate-stream-key'
 import { geolocateMiddleware } from '../middleware'
 import { getBroadcasterHandler } from './broadcaster'
 
-const app = Router()
+const { Resolver } = require('dns').promises;
+const resolver = new Resolver();
+resolver.setServers(['8.8.8.8', '8.8.4.4']);
 
+const app = Router()
 const hackMistSettings = (req, profiles) => {
   // FIXME: tempoarily, Mist can only make passthrough FPS streams with 2-second gop sizes
   if (
@@ -311,6 +314,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
   await req.store.replace(stream)
   
   if (req.body.active) {
+    console.log('triggering webhook')
     // trigger the webhooks, reference https://github.com/livepeer/livepeerjs/issues/791#issuecomment-658424388
     // this could be used instead of /webhook/:id/trigger (althoughs /trigger requires admin access )
     
@@ -330,11 +334,24 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     })
     
     let output = resp.data
+    console.log('output: ', output)
     res.status(200)
 
     await Promise.all(
-      output.map(async (webhook) => {
-        let ip = await dns.resolve4(webhook.url)
+      output.map(async (webhookObj, key) => {
+        // console.log('key: ', key)
+        // console.log('webhookObj: ', webhookObj)
+        let webhook = webhookObj[Object.keys(webhookObj)[0]] // webhookObj has 1 key.
+        // console.log('webhook: ', webhook)
+        let ip, urlObj
+        try {
+          urlObj = parseUrl(webhook.url)
+          ip = await resolver.resolve4(webhook.url)
+        } catch (e) {
+          console.error('error: ', e)
+        }
+        // let ip = await dns.resolve4(webhook.url)
+        console.log('resolvedIP: ', ip)
         let isLocal = isLocalIP(ip)
         if (isLocal) {
           // don't fire this webhook.
@@ -360,6 +377,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
             if (resp.status >= 200 && resp.status < 300) { // 2xx requests are cool.
               // all is good
               console.log(`webhook ${webhook.id} fired successfully`)
+              return true
             } else {
               // block this
               throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
