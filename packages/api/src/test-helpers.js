@@ -74,4 +74,17 @@ export class TestClient {
     }
     return await this.fetch(path, params)
   }
+
+  async put(path, data) {
+    const params = {
+      method: 'PUT',
+    }
+    if (data) {
+      params.headers = {
+        'content-type': 'application/json',
+      }
+      params.body = JSON.stringify(data)
+    }
+    return await this.fetch(path, params)
+  }
 }

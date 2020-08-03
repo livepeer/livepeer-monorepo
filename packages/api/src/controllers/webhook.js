@@ -37,12 +37,12 @@ app.get('/', authMiddleware({}), async (req, res) => {
 
 app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
   // create a webhook
-  if (!req.body || !req.body.name) {
-    res.status(422)
-    return res.json({
-      errors: ['missing name'],
-    })
-  }
+  // if (!req.body || !req.body.name) {
+  //   res.status(422)
+  //   return res.json({
+  //     errors: ['missing name'],
+  //   })
+  // }
 
   const id = uuid()
   const createdAt = Date.now()
@@ -55,6 +55,7 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
     timestamp: createdAt,
     event: req.body.event,
     url: req.body.url, // TODO validate this. 
+    deleted: false
   }
 
   try {
@@ -78,9 +79,8 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
   logger.info(`webhook params ${req.params.id}`)
 
   const webhook = await req.store.get(`webhook/${req.params.id}`)
-  if (
-    !webhook ||
-    webook.deleted ||
+  // return res.json(webhook)
+  if ( !webhook || webhook.deleted ||
     (webhook.userId !== req.user.id && !req.isUIAdmin)
   ) {
     res.status(404)
@@ -105,7 +105,30 @@ app.put('/:id', authMiddleware({}), validatePost('webhook'), async (req, res) =>
   }
 
   try {
-    await req.store.replace(req.body.id, req.body)
+    await req.store.replace(req.body)
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+  res.status(200)
+  res.json({id: req.body.id})
+})
+
+app.delete('/:id', authMiddleware({}), async (req, res) => {
+  // delete a specific webhook
+  const webhook = await req.store.get(`webhook/${req.params.id}`)
+  
+  if ( !webhook || webhook.deleted ||
+    (webhook.userId !== req.user.id && !req.isUIAdmin)
+  ) {
+    // do not reveal that webhooks exists
+    res.status(404)
+    return res.json({ errors: ['not found'] })
+  }
+
+  webhook.deleted = true
+  try {
+    await req.store.replace(webhook)
   } catch (e) {
     console.error(e)
     throw e
@@ -114,27 +137,4 @@ app.put('/:id', authMiddleware({}), validatePost('webhook'), async (req, res) =>
   res.json({})
 })
 
-app.delete('/:id', authMiddleware({}), async (req, res) => {
-  // delete a specific webhook
-  const webhook = await req.store.get(`webhook/${req.body.id}`)
-  if (
-    !webhook ||
-    (
-      webhook.userId !== req.user.id  &&
-      !(req.user.admin && !stream.deleted)
-    )
-  ) {
-    // do not reveal that webhooks exists
-    res.status(404)
-    return res.json({ errors: ['not found'] })
-  }
-  webhook.deleted = true
-  try {
-    await req.store.replace(req.body.id, webhook)
-  } catch (e) {
-    console.error(e)
-    throw e
-  }
-  res.status(200)
-  res.json({})
-})
+export default app

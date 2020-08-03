@@ -30,9 +30,8 @@ components:
       required:
         - id
         - name
-        - userId
         - timestamp
-        - eventType
+        - event
         - url
       properties:
         id:
@@ -59,6 +58,7 @@ components:
           type: string
         deleted:
           type: boolean
+          default: false
 
     stream:
       type: object
