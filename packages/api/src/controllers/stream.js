@@ -5,11 +5,12 @@ import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
+import { fetchWithTimeout } from '../util'
 import { makeNextHREF, trackAction } from './helpers'
 import { generateStreamKey } from './generate-stream-key'
 import { geolocateMiddleware } from '../middleware'
 import { getBroadcasterHandler } from './broadcaster'
-
+import { util } from 'prettier'
 const { Resolver } = require('dns').promises;
 const resolver = new Resolver();
 resolver.setServers(['8.8.8.8', '8.8.4.4']);
@@ -350,8 +351,8 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
         } catch (e) {
           console.error('error: ', e)
         }
-        // let ip = await dns.resolve4(webhook.url)
         console.log('resolvedIP: ', ip)
+        // let isLocal = false
         let isLocal = isLocalIP(ip)
         if (isLocal) {
           // don't fire this webhook.
@@ -383,6 +384,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
             }
           } catch (e) {
+            console.log('firing error', e)
             throw e 
           }
         }
