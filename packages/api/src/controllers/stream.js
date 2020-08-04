@@ -316,7 +316,6 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
   await req.store.replace(stream)
   
   if (req.body.active) {
-    console.log('triggering webhook')
     // trigger the webhooks, reference https://github.com/livepeer/livepeerjs/issues/791#issuecomment-658424388
     // this could be used instead of /webhook/:id/trigger (althoughs /trigger requires admin access )
     
@@ -336,15 +335,11 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     })
     
     let output = resp.data
-    console.log('output: ', output)
     res.status(200)
 
     await Promise.all(
       output.map(async (webhookObj, key) => {
-        // console.log('key: ', key)
-        // console.log('webhookObj: ', webhookObj)
         let webhook = webhookObj[Object.keys(webhookObj)[0]] // webhookObj has 1 key.
-        // console.log('webhook: ', webhook)
         let ips, urlObj, isLocal
         try {
           urlObj = parseUrl(webhook.url)
@@ -352,14 +347,11 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
         } catch (e) {
           console.error('error: ', e)
         }
-        console.log('resolvedIPs: ', ips)
-        // let isLocal = false
         try {
           isLocal = isLocalIP(ips[0])
         } catch (e) {
           console.error('isLocal Error', isLocal, e)
         }
-        console.log('isLocal: ', isLocal)
         if (isLocal) {
           // don't fire this webhook.
           console.log(`webhook ${webhook.id} resolved to a localIP, url: ${webhook.url}, resolved IP: ${ips}`)
