@@ -157,7 +157,9 @@ describe('controllers/webhook', () => {
     it('delete a webhook', async () => {
       const res = await client.delete(`/webhook/${generatedWebhook.id}`)
       expect(res.status).toBe(204)
-
+      
+      client.jwtAuth = nonAdminToken.token
+      console.log('nonAdminToken', nonAdminToken)
       const res2 = await client.get(`/webhook/${generatedWebhook.id}`)
       const resJson2 = await res2.json()
       console.log('resJson2: ', resJson2)
@@ -201,12 +203,13 @@ describe('controllers/webhook', () => {
 
       // create a stream object
       const now = Date.now()
+      postMockStream.name = 'eli_is_cool' // :D 
       const res = await client.post('/stream', { ...postMockStream })
       expect(res.status).toBe(201)
       const stream = await res.json()
       expect(stream.id).toBeDefined()
       expect(stream.kind).toBe('stream')
-      expect(stream.name).toBe('test_stream')
+      expect(stream.name).toBe('eli_is_cool')
       expect(stream.createdAt).toBeGreaterThanOrEqual(now)
       const document = await server.store.get(`stream/${stream.id}`)
       expect(document).toEqual(stream)
@@ -216,7 +219,7 @@ describe('controllers/webhook', () => {
       const setActiveRes = await client.put(`/stream/${stream.id}/setactive`, {active: true})
       expect(setActiveRes).toBeDefined()
       // console.log('setActiveRes: ', setActiveRes)
-      expect(setActiveRes.status).toBe(200)
+      expect(setActiveRes.status).toBe(204)
       // const setActiveResJson = await setActiveRes.json()
       // expect(setActiveResJson).toBeDefined()
       
