@@ -366,6 +366,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
             },
             timeout: 10 * 1000, // 10 second timeout
             body: JSON.stringify({
+              id: webhook.id,
               event: 'streamStarted',
               stream: sanitized,
             })
