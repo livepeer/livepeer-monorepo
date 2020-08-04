@@ -339,6 +339,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     await Promise.all(
       output.map(async (webhookObj, key) => {
         let webhook = webhookObj[Object.keys(webhookObj)[0]] // webhookObj has 1 key.
+        console.log('webhook: ', webhook)
         let ips, urlObj, isLocal
         try {
           urlObj = parseUrl(webhook.url)

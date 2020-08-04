@@ -216,5 +216,49 @@ describe('controllers/webhook', () => {
       // expect(setActiveResJson).toBeDefined()
       
     }, 20000)
+
+    it('trigger webhook with localIP', async () => {
+      await clearDatabase(server)
+      ;({
+        client,
+        adminUser,
+        adminToken,
+        nonAdminUser,
+        nonAdminToken,
+      } = await setupUsers(server))
+      
+      let localWebhook = { ...mockWebhook }
+      localWebhook.url = '192.168.1.1'
+      console.log('localwebhook: ', localWebhook)
+      // create webhook
+      const webhookRes = await client.post('/webhook', { ...localWebhook })
+      let webhookResJson = await webhookRes.json()
+      console.log('webhook created: ', webhookResJson)
+      expect(webhookRes.status).toBe(201)
+      generatedWebhook = webhookResJson
+
+      // create a stream object
+      const now = Date.now()
+      postMockStream.name = 'eli_is_cool' // :D 
+      const res = await client.post('/stream', { ...postMockStream })
+      expect(res.status).toBe(201)
+      const stream = await res.json()
+      expect(stream.id).toBeDefined()
+      expect(stream.kind).toBe('stream')
+      expect(stream.name).toBe('eli_is_cool')
+      expect(stream.createdAt).toBeGreaterThanOrEqual(now)
+      const document = await server.store.get(`stream/${stream.id}`)
+      expect(document).toEqual(stream)
+
+      
+      // trigger
+      const setActiveRes = await client.put(`/stream/${stream.id}/setactive`, {active: true})
+      expect(setActiveRes).toBeDefined()
+      expect(setActiveRes.status).toBe(204)
+      // const setActiveResJson = await setActiveRes.json()
+      // expect(setActiveResJson).toBeDefined()
+      
+    }, 20000)
+    
   })
 })
