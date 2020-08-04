@@ -11,6 +11,7 @@ import { generateStreamKey } from './generate-stream-key'
 import { geolocateMiddleware } from '../middleware'
 import { getBroadcasterHandler } from './broadcaster'
 
+const isLocalIP = require('is-local-ip')
 const { Resolver } = require('dns').promises;
 const resolver = new Resolver();
 resolver.setServers(['8.8.8.8', '8.8.4.4']);
@@ -344,20 +345,26 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
         // console.log('webhookObj: ', webhookObj)
         let webhook = webhookObj[Object.keys(webhookObj)[0]] // webhookObj has 1 key.
         // console.log('webhook: ', webhook)
-        let ip, urlObj
+        let ips, urlObj, isLocal
         try {
           urlObj = parseUrl(webhook.url)
-          ip = await resolver.resolve4(webhook.url)
+          ips = await resolver.resolve4(urlObj.host)
         } catch (e) {
           console.error('error: ', e)
         }
-        console.log('resolvedIP: ', ip)
+        console.log('resolvedIPs: ', ips)
         // let isLocal = false
-        let isLocal = isLocalIP(ip)
+        try {
+          isLocal = isLocalIP(ips[0])
+        } catch (e) {
+          console.error('isLocal Error', isLocal, e)
+        }
+        console.log('isLocal: ', isLocal)
         if (isLocal) {
           // don't fire this webhook.
-          console.log(`webhook ${webhook.id} resolved to a localIP, url: ${webhook.url}, resolved IP: ${ip}`)
+          console.log(`webhook ${webhook.id} resolved to a localIP, url: ${webhook.url}, resolved IP: ${ips}`)
         } else {
+          console.log('preparing to fire webhook ', webhook.url)
           // go ahead
           let params = {
             method: 'POST',
@@ -381,11 +388,12 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               return true
             } else {
               // block this
-              throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+              console.error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+              // throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
             }
           } catch (e) {
             console.log('firing error', e)
-            throw e 
+            // throw e 
           }
         }
       })
