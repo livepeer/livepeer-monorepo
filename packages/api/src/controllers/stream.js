@@ -14,7 +14,6 @@ import { getBroadcasterHandler } from './broadcaster'
 const isLocalIP = require('is-local-ip')
 const { Resolver } = require('dns').promises;
 const resolver = new Resolver();
-resolver.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = Router()
 const hackMistSettings = (req, profiles) => {
