@@ -9,23 +9,24 @@ import fetch from 'isomorphic-fetch'
 import dns from 'dns'
 import isLocalIP from 'is-local-ip'
 
+async function getWebhooks(store, userId, event) {
+  let filter = (o) => !o.deleted && o.event === event
+  const { data } = await store.queryObjects({
+    kind: 'webhook',
+    query: { userId },
+    limit: 100,
+    filter
+  })
+  return data
+}
+
 const app = Router()
 
 app.get('/', authMiddleware({}), async (req, res) => {
-  let { limit, cursor, all } = req.query
+  let { limit, cursor, all, event } = req.query
   logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
   
-  // get a list of user defined webhooks
-  const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
-  let filter2 = (o) => o[Object.keys(o)[0]].userId
-
-  const resp = await req.store.list({
-    prefix: `webhook/`,
-    cursor,
-    limit,
-    filter: (o) => filter1(o) && filter2(o),
-  })
-  let output = resp.data
+  let output = await getWebhooks(req.store, req.user.id, event)
   res.status(200)
 
   if (output.length > 0) {
@@ -52,7 +53,7 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
     userId: req.user.id,
     kind: 'webhook',
     name: req.body.name,
-    timestamp: createdAt,
+    createdAt: createdAt,
     event: req.body.event,
     url: req.body.url, // TODO validate this. 
     deleted: false
@@ -79,10 +80,9 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
   logger.info(`webhook params ${req.params.id}`)
 
   const webhook = await req.store.get(`webhook/${req.params.id}`)
-  // return res.json(webhook)
-  if ( !webhook || webhook.deleted ||
-    (webhook.userId !== req.user.id && !req.isUIAdmin)
-  ) {
+  if ( !webhook || (webhook.deleted ||
+    webhook.userId !== req.user.id) && !req.isUIAdmin)
+  {
     res.status(404)
     return res.json({ errors: ['not found'] })
   }
@@ -94,11 +94,8 @@ app.get('/:id', authMiddleware({}), async (req, res) => {
 app.put('/:id', authMiddleware({}), validatePost('webhook'), async (req, res) => {
   // modify a specific webhook
   const webhook = await req.store.get(`webhook/${req.body.id}`)
-  if (
-    !webhook ||
-    ((webhook.userId !== req.user.id || webhook.deleted) &&
-      !(req.user.admin && !stream.deleted))
-  ) {
+  if ((webhook.userId !== req.user.id || webhook.deleted) && 
+    !req.user.admin) {
     // do not reveal that webhooks exists
     res.status(404)
     return res.json({ errors: ['not found'] })
@@ -118,9 +115,9 @@ app.delete('/:id', authMiddleware({}), async (req, res) => {
   // delete a specific webhook
   const webhook = await req.store.get(`webhook/${req.params.id}`)
   
-  if ( !webhook || webhook.deleted ||
-    (webhook.userId !== req.user.id && !req.isUIAdmin)
-  ) {
+  if ( !webhook || (webhook.deleted ||
+    webhook.userId !== req.user.id) && !req.isUIAdmin
+  ){
     // do not reveal that webhooks exists
     res.status(404)
     return res.json({ errors: ['not found'] })
@@ -133,8 +130,8 @@ app.delete('/:id', authMiddleware({}), async (req, res) => {
     console.error(e)
     throw e
   }
-  res.status(200)
-  res.json({})
+  res.status(204)
+  res.end()
 })
 
 export default app

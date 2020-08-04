@@ -64,7 +64,7 @@ beforeAll(async () => {
     id: 'mock_webhook',
     name: 'test webhook 1',
     kind: 'webhook',
-    timestamp: new Date(),
+    createdAt: Date.now(),
     event: 'streamStarted',
     url: 'https://winter-darkness-88ea.livepeer.workers.dev/'
     // url: 'https://livepeer.com/'
@@ -145,7 +145,6 @@ describe('controllers/webhook', () => {
     it('update a webhook', async () => {
       let modifiedHook = {...generatedWebhook}
       modifiedHook.name = 'modified_name'
-      modifiedHook.timestamp = new Date(modifiedHook.timestamp)
       // console.log('modifiedHook', modifiedHook)
       const res = await client.put(`/webhook/${modifiedHook.id}`, modifiedHook)
       // console.log('res: ', res)
@@ -157,11 +156,12 @@ describe('controllers/webhook', () => {
 
     it('delete a webhook', async () => {
       const res = await client.delete(`/webhook/${generatedWebhook.id}`)
-      const resJson = await res.json()
-      expect(res.status).toBe(200)
+      expect(res.status).toBe(204)
 
       const res2 = await client.get(`/webhook/${generatedWebhook.id}`)
       const resJson2 = await res2.json()
+      console.log('resJson2: ', resJson2)
+      
       expect(res2.status).toBe(404)
     })
  

@@ -10,7 +10,7 @@ import { makeNextHREF, trackAction } from './helpers'
 import { generateStreamKey } from './generate-stream-key'
 import { geolocateMiddleware } from '../middleware'
 import { getBroadcasterHandler } from './broadcaster'
-import { util } from 'prettier'
+
 const { Resolver } = require('dns').promises;
 const resolver = new Resolver();
 resolver.setServers(['8.8.8.8', '8.8.4.4']);

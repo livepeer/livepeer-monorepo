@@ -30,7 +30,6 @@ components:
       required:
         - id
         - name
-        - timestamp
         - event
         - url
       properties:
@@ -47,9 +46,12 @@ components:
         userId:
           type: string
           readOnly: true
-        timestamp:
-          type: string
+          index: true
+        createdAt:
+          type: number
           readOnly: true
+          description: Timestamp (in milliseconds) at which stream object was created
+          example: 1587667174725
         event:
           type: string
           enum:
