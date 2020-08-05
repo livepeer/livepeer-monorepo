@@ -327,7 +327,9 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     const all = false // TODO remove hardcoding here 
     const limit = 100 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
     
-    let output = await getWebhooks(req.store, req.user.id, 'streamStarted')
+    let webhooks = await getWebhooks(req.store, req.user.id, 'streamStarted')
+    let output = webhooks.data
+    console.log('output : ', output)
     let webhookResps
     try {
       webhookResps = await Promise.all(
@@ -336,9 +338,12 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
           let ips, urlObj, isLocal
           try {
             urlObj = parseUrl(webhook.url)
-            ips = await resolver.resolve4(urlObj.host)
+            if (urlObj.host) {
+              ips = await resolver.resolve4(urlObj.host)
+            }
           } catch (e) {
             console.error('error: ', e)
+            throw e
           }
 
           // This is mainly useful for local testing
@@ -348,9 +353,12 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
             try {
               if (ips && ips.length) {
                 isLocal = isLocalIP(ips[0])
+              } else {
+                isLocal = true
               }
             } catch (e) {
               console.error('isLocal Error', isLocal, e)
+              throw e
             }
           }
           if (isLocal) {
@@ -387,12 +395,13 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               }
             } catch (e) {
               console.log('firing error', e)
-              // throw e 
+              throw e 
             }
           }
         })
       )
     } catch (e) {
+      console.error('webhook loop error', e)
       res.status(400)
       return res.end()
     }

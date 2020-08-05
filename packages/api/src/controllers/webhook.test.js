@@ -226,7 +226,7 @@ describe('controllers/webhook', () => {
         nonAdminUser,
         nonAdminToken,
       } = await setupUsers(server))
-      
+
       let localWebhook = { ...mockWebhook }
       localWebhook.url = '192.168.1.1'
       console.log('localwebhook: ', localWebhook)
@@ -254,7 +254,7 @@ describe('controllers/webhook', () => {
       // trigger
       const setActiveRes = await client.put(`/stream/${stream.id}/setactive`, {active: true})
       expect(setActiveRes).toBeDefined()
-      expect(setActiveRes.status).toBe(204)
+      expect(setActiveRes.status).toBe(400)
       // const setActiveResJson = await setActiveRes.json()
       // expect(setActiveResJson).toBeDefined()
       

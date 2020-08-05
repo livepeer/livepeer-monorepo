@@ -190,13 +190,14 @@ export async function fetchSegmentApi(body, endpoint, apiKey) {
   })
 }
 
-export async function getWebhooks(store, userId, event) {
-  let filter = (o) => !o.deleted && o.event === event
-  const { data } = await store.queryObjects({
+export async function getWebhooks(store, userId, event, limit = 100, cursor = undefined, includeDeleted = false) {
+  let filter = (o) => (!o.deleted || includeDeleted) && (!event || o.event === event)
+  const resp = await store.queryObjects({
     kind: 'webhook',
     query: { userId },
-    limit: 100,
+    limit,
+    cursor,
     filter
   })
-  return data
+  return resp
 }
