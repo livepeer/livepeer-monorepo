@@ -11,6 +11,8 @@ import { generateStreamKey } from './generate-stream-key'
 import { geolocateMiddleware } from '../middleware'
 import { getBroadcasterHandler } from './broadcaster'
 
+const WEBHOOK_TIMEOUT = 5 * 1000
+
 const isLocalIP = require('is-local-ip')
 const { Resolver } = require('dns').promises;
 const resolver = new Resolver();
@@ -302,7 +304,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   res.json(doc)
 })
 
-app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
+app.put('/:id/setactive', authMiddleware({admin: true}), async (req, res) => {
   const { id } = req.params
   const stream = await req.store.get(`stream/${id}`, false)
   if (!stream || stream.deleted || !req.user.admin) {
@@ -347,10 +349,16 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
         } catch (e) {
           console.error('error: ', e)
         }
-        try {
-          isLocal = isLocalIP(ips[0])
-        } catch (e) {
-          console.error('isLocal Error', isLocal, e)
+
+        // This is mainly useful for local testing
+        if (req.query.allowLocalWebhooks) {
+          isLocal = false
+        } else {
+          try {
+            isLocal = isLocalIP(ips[0])
+          } catch (e) {
+            console.error('isLocal Error', isLocal, e)
+          }
         }
         if (isLocal) {
           // don't fire this webhook.
@@ -364,7 +372,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               'content-type': 'application/json',
               'user-agent': 'livepeer.com'
             },
-            timeout: 10 * 1000, // 10 second timeout
+            timeout: WEBHOOK_TIMEOUT, // 10 second timeout
             body: JSON.stringify({
               id: webhook.id,
               event: 'streamStarted',

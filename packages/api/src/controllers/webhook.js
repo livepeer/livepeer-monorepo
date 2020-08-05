@@ -55,8 +55,7 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
     name: req.body.name,
     createdAt: createdAt,
     event: req.body.event,
-    url: req.body.url, // TODO validate this. 
-    deleted: false
+    url: req.body.url,
   }
 
   try {
