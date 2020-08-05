@@ -5,9 +5,6 @@ import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
 import { makeNextHREF, trackAction, getWebhooks } from './helpers'
-import fetch from 'isomorphic-fetch'
-import dns from 'dns'
-import isLocalIP from 'is-local-ip'
 
 const app = Router()
 
@@ -26,14 +23,6 @@ app.get('/', authMiddleware({}), async (req, res) => {
 })
 
 app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
-  // create a webhook
-  // if (!req.body || !req.body.name) {
-  //   res.status(422)
-  //   return res.json({
-  //     errors: ['missing name'],
-  //   })
-  // }
-
   const id = uuid()
   const createdAt = Date.now()
 

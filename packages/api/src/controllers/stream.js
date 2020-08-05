@@ -328,68 +328,74 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     const limit = 100 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
     
     let output = await getWebhooks(req.store, req.user.id, 'streamStarted')
-    res.status(200)
-
-    await Promise.all(
-      output.map(async (webhook, key) => {
-        // console.log('webhook: ', webhook)
-        let ips, urlObj, isLocal
-        try {
-          urlObj = parseUrl(webhook.url)
-          ips = await resolver.resolve4(urlObj.host)
-        } catch (e) {
-          console.error('error: ', e)
-        }
-
-        // This is mainly useful for local testing
-        if (req.isUIAdmin) {
-          isLocal = false
-        } else {
+    let webhookResps
+    try {
+      webhookResps = await Promise.all(
+        output.map(async (webhook, key) => {
+          // console.log('webhook: ', webhook)
+          let ips, urlObj, isLocal
           try {
-            isLocal = isLocalIP(ips[0])
+            urlObj = parseUrl(webhook.url)
+            ips = await resolver.resolve4(urlObj.host)
           } catch (e) {
-            console.error('isLocal Error', isLocal, e)
+            console.error('error: ', e)
           }
-        }
-        if (isLocal) {
-          // don't fire this webhook.
-          console.log(`webhook ${webhook.id} resolved to a localIP, url: ${webhook.url}, resolved IP: ${ips}`)
-        } else {
-          console.log('preparing to fire webhook ', webhook.url)
-          // go ahead
-          let params = {
-            method: 'POST',
-            headers: {
-              'content-type': 'application/json',
-              'user-agent': 'livepeer.com'
-            },
-            timeout: WEBHOOK_TIMEOUT, // 10 second timeout
-            body: JSON.stringify({
-              id: webhook.id,
-              event: webhook.event,
-              stream: sanitized,
-            })
-          }
-    
-          try {
-            console.log(`webhook ${webhook.id} firing`)
-            let resp = await fetchWithTimeout(webhook.url, params)
-            if (resp.status >= 200 && resp.status < 300) { // 2xx requests are cool.
-              // all is good
-              console.log(`webhook ${webhook.id} fired successfully`)
-              return true
-            } else {
-              // block this
-              console.error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
-              // throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+
+          // This is mainly useful for local testing
+          if (req.isUIAdmin) {
+            isLocal = false
+          } else {
+            try {
+              if (ips && ips.length) {
+                isLocal = isLocalIP(ips[0])
+              }
+            } catch (e) {
+              console.error('isLocal Error', isLocal, e)
             }
-          } catch (e) {
-            console.log('firing error', e)
-            // throw e 
           }
-        }
-      })
-    )
+          if (isLocal) {
+            // don't fire this webhook.
+            console.log(`webhook ${webhook.id} resolved to a localIP, url: ${webhook.url}, resolved IP: ${ips}`)
+          } else {
+            console.log('preparing to fire webhook ', webhook.url)
+            // go ahead
+            let params = {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json',
+                'user-agent': 'livepeer.com'
+              },
+              timeout: WEBHOOK_TIMEOUT, // 10 second timeout
+              body: JSON.stringify({
+                id: webhook.id,
+                event: webhook.event,
+                stream: sanitized,
+              })
+            }
+      
+            try {
+              console.log(`webhook ${webhook.id} firing`)
+              let resp = await fetchWithTimeout(webhook.url, params)
+              if (resp.status >= 200 && resp.status < 300) { // 2xx requests are cool.
+                // all is good
+                console.log(`webhook ${webhook.id} fired successfully`)
+                return true
+              } else {
+                // block this
+                console.error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+                // throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+              }
+            } catch (e) {
+              console.log('firing error', e)
+              // throw e 
+            }
+          }
+        })
+      )
+    } catch (e) {
+      res.status(400)
+      return res.end()
+    }
   }
   
   if (stream.parentId) {
