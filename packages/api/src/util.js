@@ -27,7 +27,7 @@ export const shuffle = (arr) => {
 export const fetchWithTimeout = (url, options) => new Promise((resolve, reject) => {
   const timeout = setTimeout(() => reject('timeout'), options.timeout || 10 * 1000);
 
-  return fetch(url)
+  return fetch(url, options)
     .then(response => {
       clearTimeout(timeout);
 
