@@ -373,7 +373,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
                 'content-type': 'application/json',
                 'user-agent': 'livepeer.com'
               },
-              timeout: WEBHOOK_TIMEOUT, // 10 second timeout
+              timeout: WEBHOOK_TIMEOUT,
               body: JSON.stringify({
                 id: webhook.id,
                 event: webhook.event,
