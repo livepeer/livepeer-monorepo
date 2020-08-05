@@ -26,6 +26,20 @@ app.post('/', authMiddleware({}), validatePost('webhook'), async (req, res) => {
   const id = uuid()
   const createdAt = Date.now()
 
+  let urlObj
+  try {
+    urlObj = parseUrl(req.body.url)
+  } catch (e) {
+    console.error(`couldn't parse the url provided ${req.body.url}`)
+    res.status(400)
+    return res.end()
+  }
+
+  if (!urlObj.protocol || (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:')) {
+    res.status(406)
+    return res.json({ errors: [ 'url provided should be http or https only']})
+  }
+
   const doc = {
     id,
     userId: req.user.id,
@@ -76,6 +90,20 @@ app.put('/:id', authMiddleware({}), validatePost('webhook'), async (req, res) =>
     // do not reveal that webhooks exists
     res.status(404)
     return res.json({ errors: ['not found'] })
+  }
+
+  let urlObj
+  try {
+    urlObj = parseUrl(req.body.url)
+  } catch (e) {
+    console.error(`couldn't parse the url provided ${req.body.url}`)
+    res.status(400)
+    return res.end()
+  }
+
+  if (!urlObj.protocol || (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:')) {
+    res.status(406)
+    return res.json({ errors: [ 'url provided should be http or https only']})
   }
 
   try {
