@@ -28,7 +28,6 @@ components:
     webhook:
       type: object
       required:
-        - id
         - name
         - event
         - url
