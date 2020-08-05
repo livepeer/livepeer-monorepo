@@ -6,7 +6,7 @@ import logger from '../logger'
 import uuid from 'uuid/v4'
 import wowzaHydrate from './wowza-hydrate'
 import { fetchWithTimeout } from '../util'
-import { makeNextHREF, trackAction } from './helpers'
+import { makeNextHREF, trackAction, getWebhooks } from './helpers'
 import { generateStreamKey } from './generate-stream-key'
 import { geolocateMiddleware } from '../middleware'
 import { getBroadcasterHandler } from './broadcaster'
@@ -304,7 +304,7 @@ app.post('/', authMiddleware({}), validatePost('stream'), async (req, res) => {
   res.json(doc)
 })
 
-app.put('/:id/setactive', authMiddleware({admin: true}), async (req, res) => {
+app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
   const { id } = req.params
   const stream = await req.store.get(`stream/${id}`, false)
   if (!stream || stream.deleted || !req.user.admin) {
@@ -326,22 +326,13 @@ app.put('/:id/setactive', authMiddleware({admin: true}), async (req, res) => {
 
     const all = false // TODO remove hardcoding here 
     const limit = 100 // hard limit so we won't spam endpoints, TODO , have a better adjustable limit 
-    const filter1 = all ? (o) => o : (o) => !o[Object.keys(o)[0]].deleted
-    let filter2 = (o) => o[Object.keys(o)[0]].userId
-    // TODO: change this to query once query can handle multiple query values.
-    const resp = await req.store.list({
-      prefix: `webhook/`,
-      limit,
-      filter: (o) => filter1(o) && filter2(o),
-    })
     
-    let output = resp.data
+    let output = await getWebhooks(req.store, req.user.id, 'streamStarted')
     res.status(200)
 
     await Promise.all(
-      output.map(async (webhookObj, key) => {
-        let webhook = webhookObj[Object.keys(webhookObj)[0]] // webhookObj has 1 key.
-        console.log('webhook: ', webhook)
+      output.map(async (webhook, key) => {
+        // console.log('webhook: ', webhook)
         let ips, urlObj, isLocal
         try {
           urlObj = parseUrl(webhook.url)
@@ -351,7 +342,7 @@ app.put('/:id/setactive', authMiddleware({admin: true}), async (req, res) => {
         }
 
         // This is mainly useful for local testing
-        if (req.query.allowLocalWebhooks) {
+        if (req.isUIAdmin) {
           isLocal = false
         } else {
           try {

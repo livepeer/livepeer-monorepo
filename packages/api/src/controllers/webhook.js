@@ -4,21 +4,10 @@ import { validatePost } from '../middleware'
 import Router from 'express/lib/router'
 import logger from '../logger'
 import uuid from 'uuid/v4'
-import { makeNextHREF, trackAction } from './helpers'
+import { makeNextHREF, trackAction, getWebhooks } from './helpers'
 import fetch from 'isomorphic-fetch'
 import dns from 'dns'
 import isLocalIP from 'is-local-ip'
-
-async function getWebhooks(store, userId, event) {
-  let filter = (o) => !o.deleted && o.event === event
-  const { data } = await store.queryObjects({
-    kind: 'webhook',
-    query: { userId },
-    limit: 100,
-    filter
-  })
-  return data
-}
 
 const app = Router()
 
