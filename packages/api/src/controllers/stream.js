@@ -329,7 +329,6 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
     
     let webhooks = await getWebhooks(req.store, req.user.id, 'streamStarted')
     let output = webhooks.data
-    console.log('output : ', output)
     let webhookResps
     try {
       webhookResps = await Promise.all(
@@ -391,7 +390,7 @@ app.put('/:id/setactive', authMiddleware({}), async (req, res) => {
               } else {
                 // block this
                 console.error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
-                // throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
+                throw new Error(`webhook ${webhook.id} didn't get 200 back! response status: ${resp.status}`)
               }
             } catch (e) {
               console.log('firing error', e)

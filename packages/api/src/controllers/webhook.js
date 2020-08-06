@@ -10,7 +10,6 @@ const app = Router()
 
 app.get('/', authMiddleware({}), async (req, res) => {
   let { limit, cursor, all, event } = req.query
-  logger.info(`cursor params ${cursor}, limit ${limit} all ${all}`)
   
   let output = await getWebhooks(req.store, req.user.id, event, limit, cursor, all)
   res.status(200)
