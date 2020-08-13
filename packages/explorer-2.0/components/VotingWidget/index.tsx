@@ -28,12 +28,6 @@ export default ({ data }) => {
     }
   }, [copied])
 
-  const pendingStake = data.myAccount?.delegator?.pendingStake
-    ? parseFloat(
-        Utils.fromWei(data.myAccount.delegator.pendingStake.toString()),
-      )
-    : 0
-
   let noVoteStake = parseFloat(
     Utils.fromWei(data.poll?.tally?.no ? data.poll?.tally?.no : '0'),
   )
@@ -41,13 +35,14 @@ export default ({ data }) => {
     Utils.fromWei(data.poll?.tally?.yes ? data.poll?.tally?.yes : '0'),
   )
   let totalVoteStake = noVoteStake + yesVoteStake
-
   let totalNonVoteStake = parseFloat(Utils.fromWei(data.poll.totalNonVoteStake))
+  let votingPower = getVotingPower(data?.myAccount, data?.vote)
 
   let delegate = null
   if (data?.myAccount?.delegator?.delegate) {
     delegate = data?.myAccount?.delegator?.delegate
   }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Box>
@@ -206,34 +201,15 @@ export default ({ data }) => {
                     {data?.vote?.choiceID ? data?.vote?.choiceID : 'N/A'}
                   </span>
                 </Flex>
-                {!data?.vote?.choiceID && data.poll.isActive && (
+                {((!data?.vote?.choiceID && data.poll.isActive) ||
+                  data?.vote?.choiceID) && (
                   <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
                     <span sx={{ color: 'muted' }}>My Voting Power</span>
                     <span sx={{ fontWeight: 500, color: 'white' }}>
                       <span>
-                        {abbreviateNumber(pendingStake, 4)} LPT (
+                        {abbreviateNumber(Utils.fromWei(votingPower), 4)} LPT (
                         {(
-                          (pendingStake /
-                            (totalVoteStake + totalNonVoteStake)) *
-                          100
-                        ).toPrecision(2)}
-                        %)
-                      </span>
-                    </span>
-                  </Flex>
-                )}
-                {data?.vote?.choiceID && data?.vote?.voteStake && (
-                  <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
-                    <span sx={{ color: 'muted' }}>My Voting Power</span>
-                    <span sx={{ fontWeight: 500, color: 'white' }}>
-                      <span>
-                        {abbreviateNumber(
-                          +Utils.fromWei(data?.vote?.voteStake),
-                          4,
-                        )}{' '}
-                        LPT (
-                        {(
-                          (+Utils.fromWei(data?.vote?.voteStake) /
+                          (+Utils.fromWei(votingPower) /
                             (totalVoteStake + totalNonVoteStake)) *
                           100
                         ).toPrecision(2)}
@@ -431,4 +407,26 @@ function renderVoteButton(data) {
         </Grid>
       )
   }
+}
+
+function getVotingPower(myAccount, vote) {
+  // if account is a delegate its voting power is its total stake minus its delegators' vote stake (nonVoteStake)
+  if (myAccount?.account.id === myAccount?.delegator?.delegate.id) {
+    if (vote?.voteStake) {
+      return Utils.toBN(vote.voteStake)
+        .sub(Utils.toBN(vote?.nonVoteStake ? vote.nonVoteStake : 0))
+        .toString()
+    }
+    return Utils.toBN(
+      myAccount?.delegator?.delegate?.totalStake
+        ? myAccount?.delegator?.delegate?.totalStake
+        : 0,
+    )
+      .sub(Utils.toBN(vote?.nonVoteStake ? vote.nonVoteStake : 0))
+      .toString()
+  }
+
+  return myAccount?.delegator?.pendingStake
+    ? myAccount?.delegator?.pendingStake
+    : '0'
 }
