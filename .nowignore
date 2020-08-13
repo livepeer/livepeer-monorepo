@@ -1,4 +1,0 @@
-coverage*
-/docs
-.nyc_output
-/packages/api/data
