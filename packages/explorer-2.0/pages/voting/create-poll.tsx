@@ -142,6 +142,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   variables: { proposal: hash },
                 })
               } catch (e) {
+                console.log('wat', e)
                 return {
                   error: e.message.replace('GraphQL error: ', ''),
                 }
@@ -338,6 +339,6 @@ export async function getStaticProps() {
       gitCommitHash: data.repository.defaultBranchRef.target.oid,
       lips: lips.sort((a, b) => (a.attributes.lip < b.attributes.lip ? 1 : -1)),
     },
-    unstable_revalidate: true,
+    revalidate: true,
   }
 }
