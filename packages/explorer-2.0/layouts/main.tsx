@@ -286,8 +286,22 @@ const Layout = ({
                 position: 'fixed',
                 bg: 'surface',
                 bottom: 0,
-                width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
-                left: [0, 0, 0, 275],
+                width: [
+                  '100%',
+                  '100%',
+                  'calc(100% - 275px)',
+                  'calc(100% - 275px)',
+                  'calc(100% - 275px)',
+                  'calc(100vw - ((100vw - 1500px) / 2 + 275px))',
+                ],
+                left: [
+                  0,
+                  0,
+                  275,
+                  275,
+                  275,
+                  'calc((100% - 1500px) / 2 + 275px)',
+                ],
               }}
             >
               <ProgressBar tx={lastTx} />
