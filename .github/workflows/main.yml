@@ -3,8 +3,6 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-      env:
-        INFURA_ENDPOINT: ${{ secrets.INFURA_ENDPOINT }}
       - name: checkout
         uses: actions/checkout@v2
 
@@ -13,8 +11,12 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
       - name: yarn install
+        env:
+          INFURA_ENDPOINT: ${{ secrets.INFURA_ENDPOINT }}
         run: |
           yarn install --frozen-lockfile
       - name: yarn test
+        env:
+          INFURA_ENDPOINT: ${{ secrets.INFURA_ENDPOINT }}
         run: |
           yarn test
