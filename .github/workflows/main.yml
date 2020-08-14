@@ -3,6 +3,8 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
+      env:
+        INFURA_ENDPOINT: super_secret: ${{ secrets.INFURA_ENDPOINT }}
       - name: checkout
         uses: actions/checkout@v2
 
