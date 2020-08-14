@@ -1,7 +1,6 @@
 import { Flex } from 'theme-ui'
 import { Box } from 'theme-ui'
 import moment from 'moment'
-import { useState, useEffect } from 'react'
 import { useTimeEstimate } from '../../hooks'
 import { txMessages } from '../../lib/utils'
 

@@ -66,6 +66,16 @@ const Layout = ({
     pollInterval: 10000,
     ssr: false,
   })
+  const { data: pollData } = useQuery(
+    gql`
+      {
+        polls {
+          isActive
+          endBlock
+        }
+      }
+    `,
+  )
   const mutations = useMutations()
   const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
   const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
@@ -76,7 +86,7 @@ const Layout = ({
     1: 'mainnet',
     4: 'rinkeby',
   }
-
+  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -107,7 +117,28 @@ const Layout = ({
       className: 'orchestrators',
     },
     {
-      name: 'Voting',
+      name: (
+        <Flex sx={{ alignItems: 'center' }}>
+          Voting{' '}
+          {totalActivePolls > 0 && (
+            <Flex
+              sx={{
+                fontSize: '10px',
+                color: 'white',
+                ml: '6px',
+                bg: 'red',
+                borderRadius: 1000,
+                width: 16,
+                height: 16,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {totalActivePolls}
+            </Flex>
+          )}
+        </Flex>
+      ),
       href: '/voting',
       as: '/voting',
       icon: Ballot,
@@ -286,8 +317,22 @@ const Layout = ({
                 position: 'fixed',
                 bg: 'surface',
                 bottom: 0,
-                width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
-                left: [0, 0, 0, 275],
+                width: [
+                  '100%',
+                  '100%',
+                  'calc(100% - 275px)',
+                  'calc(100% - 275px)',
+                  'calc(100% - 275px)',
+                  'calc(100vw - ((100vw - 1500px) / 2 + 275px))',
+                ],
+                left: [
+                  0,
+                  0,
+                  275,
+                  275,
+                  275,
+                  'calc((100% - 1500px) / 2 + 275px)',
+                ],
               }}
             >
               <ProgressBar tx={lastTx} />

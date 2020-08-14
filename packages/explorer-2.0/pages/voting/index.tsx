@@ -125,7 +125,7 @@ const Voting = () => {
           </Flex>
           <Box>
             {polls
-              .sort((a, b) => (a.endBlock > b.endBlock ? 1 : -1))
+              .sort((a, b) => (a.endBlock < b.endBlock ? 1 : -1))
               .map((poll) => (
                 <Link
                   key={poll.id}
