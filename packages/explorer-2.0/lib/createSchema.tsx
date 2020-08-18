@@ -262,15 +262,16 @@ export default async () => {
           `https://livepeer-pricing-tool.com/orchestratorStats`,
         )
         let transcodersWithPrice = await response.json()
-        transcodersWithPrice = transcodersWithPrice.map((t) => ({
-          id: t.Address,
-          price: t.PricePerPixel,
-        }))
-        const merged = mergeObjectsInUnique(
-          [...transcoders, ...transcodersWithPrice],
-          'id',
-        )
-        return merged
+        let arr = []
+        transcodersWithPrice.map((t) => {
+          if (transcoders.filter((a) => a.id === t.Address).length > 0) {
+            arr.push({
+              id: t.Address,
+              price: t.PricePerPixel,
+            })
+          }
+        })
+        return mergeObjectsInUnique([...transcoders, ...arr], 'id')
       },
     },
   }
