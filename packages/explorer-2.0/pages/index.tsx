@@ -21,7 +21,6 @@ const Home = () => {
     orderDirection: 'desc',
     where: {
       status: 'Registered',
-      id_not: '0x0000000000000000000000000000000000000000', // subgraph indexes this as a transcoder for some reason so need to filter it out
     },
   }
   const { data, loading } = useQuery(orchestratorsViewQuery, {
