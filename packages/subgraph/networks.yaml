@@ -24,6 +24,9 @@ mainnet:
     minter:
       address: '8573f2f5a3bd960eee3d998473e50c75cdbe6828'
       startBlock: 5533913
+    minter_LIP40:
+      address: '505F8c2ee81f1C6fa0D88e918eF0491222E05818'
+      startBlock: 10686186
     ticketBroker:
       address: '5b1ce829384eebfa30286f12d1e7a695ca45f5d2'
       startBlock: 9274420
