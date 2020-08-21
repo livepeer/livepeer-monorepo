@@ -1,5 +1,7 @@
 import { Delegator, Round, UnbondingLock } from '../@types'
 import Utils from 'web3-utils'
+import url from 'url'
+import parseDomain from 'parse-domain'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -115,10 +117,7 @@ export const textTruncate = (str, length, ending) => {
   }
 }
 
-const url = require('url')
-const parseDomain = require('parse-domain')
-
-const networksTypes = {
+export const networksTypes = {
   1: 'mainnet',
   2: 'morden',
   3: 'ropsten',

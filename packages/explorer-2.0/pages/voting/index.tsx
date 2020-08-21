@@ -13,21 +13,31 @@ import fm from 'front-matter'
 import { useEffect, useState } from 'react'
 import moment from 'moment'
 import Link from 'next/link'
-import gql from 'graphql-tag'
 import Head from 'next/head'
+import { usePageVisibility } from '../../hooks'
+import allPollsQuery from '../../queries/allPolls.gql'
 
 const Voting = () => {
+  const isVisible = usePageVisibility()
+  const pollInterval = 20000
   const ipfs = new IPFS({
     host: 'ipfs.infura.io',
     port: 5001,
     protocol: 'https',
   })
-  const allPollsQuery = require('../../queries/allPolls.gql')
   const [polls, setPolls] = useState([])
   const [loading, setLoading] = useState(true)
   const { data, startPolling, stopPolling } = useQuery(allPollsQuery, {
-    pollInterval: 20000,
+    pollInterval,
   })
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPolling()
+    } else {
+      startPolling(pollInterval)
+    }
+  }, [isVisible])
 
   useEffect(() => {
     if (data) {

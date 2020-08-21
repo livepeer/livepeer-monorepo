@@ -1,19 +1,18 @@
 import { useEffect, useContext } from 'react'
 import { Styled } from 'theme-ui'
 import Button from '../Button'
-import { useWeb3Mutation } from '../../hooks'
-import Spinner from '../Spinner'
-import { Flex } from 'theme-ui'
+import { usePageVisibility, useWeb3Mutation } from '../../hooks'
 import Router from 'next/router'
-import gql from 'graphql-tag'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
 import { useQuery } from '@apollo/react-hooks'
+import accountQuery from '../../queries/account.gql'
 
 export default ({ goTo, nextStep }) => {
-  const accountQuery = require('../../queries/account.gql')
   const context = useWeb3React()
+  const isVisible = usePageVisibility()
+  const pollInterval = 20000
   const { approve }: any = useContext(MutationsContext)
   const { data: dataMyAccount, startPolling, stopPolling } = useQuery(
     accountQuery,
@@ -21,11 +20,19 @@ export default ({ goTo, nextStep }) => {
       variables: {
         account: context?.account?.toLowerCase(),
       },
-      pollInterval: 20000,
+      pollInterval,
       skip: !context.active, // skip this query if wallet not connected
       ssr: false,
     },
   )
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPolling()
+    } else {
+      startPolling(pollInterval)
+    }
+  }, [isVisible])
 
   useEffect(() => {
     async function goToNextStep() {

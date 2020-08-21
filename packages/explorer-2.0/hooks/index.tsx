@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import { useWeb3React } from '@web3-react/core'
 import { Injected } from '../lib/connectors'
 import { isMobile } from 'react-device-detect'
+import submittedTxsQuery from '../queries/transactions.gql'
 
 export function useWeb3Mutation(mutation, options) {
   const client = useApolloClient()
@@ -70,8 +71,7 @@ export function useWeb3Mutation(mutation, options) {
     },
   )
 
-  const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
-  const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
+  const { data: transactionsData } = useQuery(submittedTxsQuery)
 
   useEffect(() => {
     if (data) {

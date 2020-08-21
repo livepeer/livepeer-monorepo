@@ -20,15 +20,19 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
 import FeesView from '../../../components/FeesView'
+import { usePageVisibility } from '../../../hooks'
+import { useEffect } from 'react'
+import accountViewQuery from '../../../queries/accountView.gql'
+import accountQuery from '../../../queries/account.gql'
 
 const Account = () => {
-  const accountViewQuery = require('../../../queries/accountView.gql')
-  const accountQuery = require('../../../queries/account.gql')
   const router = useRouter()
   const context = useWeb3React()
   const { width } = useWindowSize()
+  const isVisible = usePageVisibility()
   const { query, asPath } = router
   const slug = query.slug
+  const pollInterval = 20000
 
   const {
     data,
@@ -40,7 +44,7 @@ const Account = () => {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
-    pollInterval: 20000,
+    pollInterval,
     ssr: false,
   })
 
@@ -63,7 +67,7 @@ const Account = () => {
       }
     `,
     {
-      pollInterval: 20000,
+      pollInterval,
       ssr: false,
     },
   )
@@ -77,10 +81,22 @@ const Account = () => {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval: 20000,
+    pollInterval,
     skip: !context.active, // skip this query if wallet not connected
     ssr: false,
   })
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPollingOrchestrators()
+      stopPollingMyAccount()
+      stopPollingAccount()
+    } else {
+      startPollingOrchestrators(pollInterval)
+      startPollingMyAccount(pollInterval)
+      startPollingAccount(pollInterval)
+    }
+  }, [isVisible])
 
   const SELECTED_STAKING_ACTION = gql`
     {

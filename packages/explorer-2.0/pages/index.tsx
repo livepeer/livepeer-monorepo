@@ -11,11 +11,16 @@ import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Utils from 'web3-utils'
+import { useEffect } from 'react'
+import { usePageVisibility } from '../hooks'
+import orchestratorsViewQuery from '../queries/orchestratorsView.gql'
+import accountQuery from '../queries/account.gql'
 
 const Home = () => {
-  const orchestratorsViewQuery = require('../queries/orchestratorsView.gql')
-  const accountQuery = require('../queries/account.gql')
   const context = useWeb3React()
+  const isVisible = usePageVisibility()
+  const pollInterval = 20000
+
   const variables = {
     orderBy: 'totalStake',
     orderDirection: 'desc',
@@ -27,11 +32,11 @@ const Home = () => {
     data,
     loading,
     startPolling: startPollingOrchestrators,
-    stopPolling: stopPollingOrchesetrators,
+    stopPolling: stopPollingOrchestrators,
   } = useQuery(orchestratorsViewQuery, {
     variables,
     ssr: false,
-    pollInterval: 20000,
+    pollInterval,
   })
   const {
     data: dataMyAccount,
@@ -42,10 +47,20 @@ const Home = () => {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval: 20000,
+    pollInterval,
     skip: !context.active,
     ssr: false,
   })
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPollingOrchestrators()
+      stopPollingMyAccount()
+    } else {
+      startPollingOrchestrators(pollInterval)
+      startPollingMyAccount(pollInterval)
+    }
+  }, [isVisible])
 
   return (
     <>

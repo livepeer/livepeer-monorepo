@@ -9,6 +9,8 @@ import { useThemeUI } from 'theme-ui'
 import { buildStyles } from 'react-circular-progressbar'
 import { MdCheck, MdClose } from 'react-icons/md'
 import moment from 'moment'
+import { useEffect } from 'react'
+import { usePageVisibility } from '../../hooks'
 
 const GET_ROUND_MODAL_STATUS = gql`
   {
@@ -17,7 +19,9 @@ const GET_ROUND_MODAL_STATUS = gql`
 `
 
 export default () => {
+  const isVisible = usePageVisibility()
   const { data: modalData } = useQuery(GET_ROUND_MODAL_STATUS)
+  const pollInterval = 60000
   const {
     data: protocolData,
     loading: protocolDataloading,
@@ -37,7 +41,7 @@ export default () => {
       }
     `,
     {
-      pollInterval: 60000,
+      pollInterval,
     },
   )
   const {
@@ -52,12 +56,23 @@ export default () => {
       }
     `,
     {
-      pollInterval: 60000,
+      pollInterval,
     },
   )
 
   const { theme } = useThemeUI()
   const client = useApolloClient()
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPollingProtocol()
+      stopPollingBlock()
+    } else {
+      startPollingProtocol(pollInterval)
+      startPollingBlock(pollInterval)
+    }
+  }, [isVisible])
+
   const close = () => {
     client.writeData({
       data: {
