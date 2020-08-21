@@ -25,7 +25,7 @@ const Voting = () => {
   const allPollsQuery = require('../../queries/allPolls.gql')
   const [polls, setPolls] = useState([])
   const [loading, setLoading] = useState(true)
-  const { data } = useQuery(allPollsQuery, {
+  const { data, startPolling, stopPolling } = useQuery(allPollsQuery, {
     pollInterval: 20000,
   })
 

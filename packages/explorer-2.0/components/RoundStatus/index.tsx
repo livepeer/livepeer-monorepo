@@ -18,7 +18,12 @@ const GET_ROUND_MODAL_STATUS = gql`
 
 export default () => {
   const { data: modalData } = useQuery(GET_ROUND_MODAL_STATUS)
-  const { data: protocolData, loading: protocolDataloading } = useQuery(
+  const {
+    data: protocolData,
+    loading: protocolDataloading,
+    startPolling: startPollingProtocol,
+    stopPolling: stopPollingProtocol,
+  } = useQuery(
     gql`
       {
         protocol(id: "0") {
@@ -35,7 +40,12 @@ export default () => {
       pollInterval: 60000,
     },
   )
-  const { data: blockData, loading: blockDataLoading } = useQuery(
+  const {
+    data: blockData,
+    loading: blockDataLoading,
+    startPolling: startPollingBlock,
+    stopPolling: stopPollingBlock,
+  } = useQuery(
     gql`
       {
         block
@@ -181,9 +191,7 @@ export default () => {
             </strong>{' '}
             and approximately{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
-              {moment()
-                .add(timeRemaining, 'seconds')
-                .fromNow(true)}
+              {moment().add(timeRemaining, 'seconds').fromNow(true)}
             </strong>{' '}
             remaining until the current round ends and round{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>

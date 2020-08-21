@@ -30,7 +30,13 @@ const Account = () => {
   const { query, asPath } = router
   const slug = query.slug
 
-  const { data, loading, refetch } = useQuery(accountViewQuery, {
+  const {
+    data,
+    loading,
+    refetch,
+    startPolling: startPollingAccount,
+    stopPolling: stopPollingAccount,
+  } = useQuery(accountViewQuery, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
@@ -38,7 +44,12 @@ const Account = () => {
     ssr: false,
   })
 
-  const { data: dataTranscoders, loading: loadingTranscoders } = useQuery(
+  const {
+    data: dataTranscoders,
+    loading: loadingTranscoders,
+    startPolling: startPollingOrchestrators,
+    stopPolling: stopPollingOrchestrators,
+  } = useQuery(
     gql`
       {
         transcoders(
@@ -57,17 +68,19 @@ const Account = () => {
     },
   )
 
-  const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
-    accountQuery,
-    {
-      variables: {
-        account: context?.account?.toLowerCase(),
-      },
-      pollInterval: 20000,
-      skip: !context.active, // skip this query if wallet not connected
-      ssr: false,
+  const {
+    data: dataMyAccount,
+    loading: loadingMyAccount,
+    startPolling: startPollingMyAccount,
+    stopPolling: stopPollingMyAccount,
+  } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
     },
-  )
+    pollInterval: 20000,
+    skip: !context.active, // skip this query if wallet not connected
+    ssr: false,
+  })
 
   const SELECTED_STAKING_ACTION = gql`
     {

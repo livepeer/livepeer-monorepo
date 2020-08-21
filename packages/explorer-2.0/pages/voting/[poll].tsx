@@ -34,7 +34,11 @@ const Poll = () => {
   const [pollData, setPollData] = useState(null)
   const { query } = router
   const pollId = query.poll.toString().toLowerCase()
-  const { data } = useQuery(pollQuery, {
+  const {
+    data,
+    startPolling: startPollingPoll,
+    stopPolling: stopPollingPoll,
+  } = useQuery(pollQuery, {
     variables: {
       id: pollId,
     },
@@ -42,7 +46,11 @@ const Poll = () => {
     ssr: false,
   })
 
-  const { data: myAccountData } = useQuery(accountQuery, {
+  const {
+    data: myAccountData,
+    startPolling: startPollingMyAccount,
+    stopPolling: stopPollingMyAccount,
+  } = useQuery(accountQuery, {
     variables: {
       account: context?.account?.toLowerCase(),
     },
@@ -50,7 +58,11 @@ const Poll = () => {
     skip: !context.active,
   })
 
-  const { data: voteData } = useQuery(voteQuery, {
+  const {
+    data: voteData,
+    startPolling: startPollingVote,
+    stopPolling: stopPollingVote,
+  } = useQuery(voteQuery, {
     variables: {
       id: `${context?.account?.toLowerCase()}-${pollId}`,
     },
@@ -58,7 +70,11 @@ const Poll = () => {
     skip: !context.active,
   })
 
-  const { data: delegateVoteData } = useQuery(voteQuery, {
+  const {
+    data: delegateVoteData,
+    startPolling: startPollingDelegate,
+    stopPolling: stopPollingDelegate,
+  } = useQuery(voteQuery, {
     variables: {
       id: `${myAccountData?.delegator?.delegate?.id.toLowerCase()}-${pollId}`,
     },

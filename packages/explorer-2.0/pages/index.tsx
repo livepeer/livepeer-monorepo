@@ -23,22 +23,29 @@ const Home = () => {
       status: 'Registered',
     },
   }
-  const { data, loading } = useQuery(orchestratorsViewQuery, {
+  const {
+    data,
+    loading,
+    startPolling: startPollingOrchestrators,
+    stopPolling: stopPollingOrchesetrators,
+  } = useQuery(orchestratorsViewQuery, {
     variables,
     ssr: false,
     pollInterval: 20000,
   })
-  const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
-    accountQuery,
-    {
-      variables: {
-        account: context?.account?.toLowerCase(),
-      },
-      pollInterval: 20000,
-      skip: !context.active,
-      ssr: false,
+  const {
+    data: dataMyAccount,
+    loading: loadingMyAccount,
+    startPolling: startPollingMyAccount,
+    stopPolling: stopPollingMyAccount,
+  } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
     },
-  )
+    pollInterval: 20000,
+    skip: !context.active,
+    ssr: false,
+  })
 
   return (
     <>

@@ -38,7 +38,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     }
   `
 
-  const { data } = useQuery(accountQuery, {
+  const { data, startPolling, stopPolling } = useQuery(accountQuery, {
     variables: {
       account: context.account,
     },

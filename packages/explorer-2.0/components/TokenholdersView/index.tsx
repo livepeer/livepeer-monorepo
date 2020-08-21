@@ -40,7 +40,14 @@ export default () => {
   const query = router.query
   const account = query.account as string
 
-  const { data, loading, error, fetchMore, stopPolling } = useQuery(GET_DATA, {
+  const {
+    data,
+    loading,
+    error,
+    fetchMore,
+    startPolling,
+    stopPolling,
+  } = useQuery(GET_DATA, {
     variables: {
       account: account.toLowerCase(),
       address: account.toLowerCase(),

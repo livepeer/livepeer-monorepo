@@ -15,14 +15,17 @@ export default ({ goTo, nextStep }) => {
   const accountQuery = require('../../queries/account.gql')
   const context = useWeb3React()
   const { approve }: any = useContext(MutationsContext)
-  const { data: dataMyAccount } = useQuery(accountQuery, {
-    variables: {
-      account: context?.account?.toLowerCase(),
+  const { data: dataMyAccount, startPolling, stopPolling } = useQuery(
+    accountQuery,
+    {
+      variables: {
+        account: context?.account?.toLowerCase(),
+      },
+      pollInterval: 20000,
+      skip: !context.active, // skip this query if wallet not connected
+      ssr: false,
     },
-    pollInterval: 20000,
-    skip: !context.active, // skip this query if wallet not connected
-    ssr: false,
-  })
+  )
 
   useEffect(() => {
     async function goToNextStep() {
