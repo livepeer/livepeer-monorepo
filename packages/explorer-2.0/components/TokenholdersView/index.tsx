@@ -5,6 +5,8 @@ import gql from 'graphql-tag'
 import Spinner from '../Spinner'
 import Tokenholders from '../Tokenholders'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useEffect } from 'react'
+import { usePageVisibility } from '../../hooks'
 
 const GET_DATA = gql`
   query($account: ID!, $first: Int!, $skip: Int!) {
@@ -37,24 +39,32 @@ const GET_DATA = gql`
 
 export default () => {
   const router = useRouter()
+  const isVisible = usePageVisibility()
   const query = router.query
   const account = query.account as string
-
-  const { data, loading, error, fetchMore, stopPolling } = useQuery(GET_DATA, {
-    variables: {
-      account: account.toLowerCase(),
-      address: account.toLowerCase(),
-      first: 10,
-      skip: 0,
+  const pollInterval = 20000
+  const { data, loading, fetchMore, startPolling, stopPolling } = useQuery(
+    GET_DATA,
+    {
+      variables: {
+        account: account.toLowerCase(),
+        address: account.toLowerCase(),
+        first: 10,
+        skip: 0,
+      },
+      ssr: false,
+      pollInterval,
+      notifyOnNetworkStatusChange: true,
     },
-    ssr: false,
-    pollInterval: 20000,
-    notifyOnNetworkStatusChange: true,
-  })
+  )
 
-  if (error) {
-    console.error(error)
-  }
+  useEffect(() => {
+    if (!isVisible) {
+      stopPolling()
+    } else {
+      startPolling(pollInterval)
+    }
+  }, [isVisible])
 
   if (loading && !data) {
     return (

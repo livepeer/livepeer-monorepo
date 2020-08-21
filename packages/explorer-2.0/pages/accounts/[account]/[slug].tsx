@@ -20,25 +20,40 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
 import FeesView from '../../../components/FeesView'
+import { usePageVisibility } from '../../../hooks'
+import { useEffect } from 'react'
+import accountViewQuery from '../../../queries/accountView.gql'
+import accountQuery from '../../../queries/account.gql'
 
 const Account = () => {
-  const accountViewQuery = require('../../../queries/accountView.gql')
-  const accountQuery = require('../../../queries/account.gql')
   const router = useRouter()
   const context = useWeb3React()
   const { width } = useWindowSize()
+  const isVisible = usePageVisibility()
   const { query, asPath } = router
   const slug = query.slug
+  const pollInterval = 20000
 
-  const { data, loading, refetch } = useQuery(accountViewQuery, {
+  const {
+    data,
+    loading,
+    refetch,
+    startPolling: startPollingAccount,
+    stopPolling: stopPollingAccount,
+  } = useQuery(accountViewQuery, {
     variables: {
       account: query.account.toString().toLowerCase(),
     },
-    pollInterval: 20000,
+    pollInterval,
     ssr: false,
   })
 
-  const { data: dataTranscoders, loading: loadingTranscoders } = useQuery(
+  const {
+    data: dataTranscoders,
+    loading: loadingTranscoders,
+    startPolling: startPollingOrchestrators,
+    stopPolling: stopPollingOrchestrators,
+  } = useQuery(
     gql`
       {
         transcoders(
@@ -52,22 +67,36 @@ const Account = () => {
       }
     `,
     {
-      pollInterval: 20000,
+      pollInterval,
       ssr: false,
     },
   )
 
-  const { data: dataMyAccount, loading: loadingMyAccount } = useQuery(
-    accountQuery,
-    {
-      variables: {
-        account: context?.account?.toLowerCase(),
-      },
-      pollInterval: 20000,
-      skip: !context.active, // skip this query if wallet not connected
-      ssr: false,
+  const {
+    data: dataMyAccount,
+    loading: loadingMyAccount,
+    startPolling: startPollingMyAccount,
+    stopPolling: stopPollingMyAccount,
+  } = useQuery(accountQuery, {
+    variables: {
+      account: context?.account?.toLowerCase(),
     },
-  )
+    pollInterval,
+    skip: !context.active, // skip this query if wallet not connected
+    ssr: false,
+  })
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPollingOrchestrators()
+      stopPollingMyAccount()
+      stopPollingAccount()
+    } else {
+      startPollingOrchestrators(pollInterval)
+      startPollingMyAccount(pollInterval)
+      startPollingAccount(pollInterval)
+    }
+  }, [isVisible])
 
   const SELECTED_STAKING_ACTION = gql`
     {

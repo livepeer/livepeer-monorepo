@@ -9,6 +9,8 @@ import { useThemeUI } from 'theme-ui'
 import { buildStyles } from 'react-circular-progressbar'
 import { MdCheck, MdClose } from 'react-icons/md'
 import moment from 'moment'
+import { useEffect } from 'react'
+import { usePageVisibility } from '../../hooks'
 
 const GET_ROUND_MODAL_STATUS = gql`
   {
@@ -17,8 +19,15 @@ const GET_ROUND_MODAL_STATUS = gql`
 `
 
 export default () => {
+  const isVisible = usePageVisibility()
   const { data: modalData } = useQuery(GET_ROUND_MODAL_STATUS)
-  const { data: protocolData, loading: protocolDataloading } = useQuery(
+  const pollInterval = 60000
+  const {
+    data: protocolData,
+    loading: protocolDataloading,
+    startPolling: startPollingProtocol,
+    stopPolling: stopPollingProtocol,
+  } = useQuery(
     gql`
       {
         protocol(id: "0") {
@@ -32,22 +41,38 @@ export default () => {
       }
     `,
     {
-      pollInterval: 60000,
+      pollInterval,
     },
   )
-  const { data: blockData, loading: blockDataLoading } = useQuery(
+  const {
+    data: blockData,
+    loading: blockDataLoading,
+    startPolling: startPollingBlock,
+    stopPolling: stopPollingBlock,
+  } = useQuery(
     gql`
       {
         block
       }
     `,
     {
-      pollInterval: 60000,
+      pollInterval,
     },
   )
 
   const { theme } = useThemeUI()
   const client = useApolloClient()
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPollingProtocol()
+      stopPollingBlock()
+    } else {
+      startPollingProtocol(pollInterval)
+      startPollingBlock(pollInterval)
+    }
+  }, [isVisible])
+
   const close = () => {
     client.writeData({
       data: {
@@ -181,9 +206,7 @@ export default () => {
             </strong>{' '}
             and approximately{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>
-              {moment()
-                .add(timeRemaining, 'seconds')
-                .fromNow(true)}
+              {moment().add(timeRemaining, 'seconds').fromNow(true)}
             </strong>{' '}
             remaining until the current round ends and round{' '}
             <strong sx={{ borderBottom: '1px dashed', borderColor: 'text' }}>

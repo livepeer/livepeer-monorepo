@@ -13,9 +13,9 @@ import Approve from '../../public/img/approve.svg'
 import Play from '../../public/img/play.svg'
 import moment from 'moment'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import historyQuery from '../../queries/historyView.gql'
 
 export default () => {
-  const historyQuery = require('../../queries/historyView.gql')
   const router = useRouter()
   const query = router.query
   const account = query.account as string

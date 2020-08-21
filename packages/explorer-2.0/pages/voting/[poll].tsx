@@ -22,49 +22,83 @@ import { useWindowSize } from 'react-use'
 import BottomDrawer from '../../components/BottomDrawer'
 import Button from '../../components/Button'
 import Head from 'next/head'
+import { usePageVisibility } from '../../hooks'
+import pollQuery from '../../queries/poll.gql'
+import accountQuery from '../../queries/account.gql'
+import voteQuery from '../../queries/vote.gql'
 
 const Poll = () => {
-  const pollQuery = require('../../queries/poll.gql')
-  const accountQuery = require('../../queries/account.gql')
-  const voteQuery = require('../../queries/vote.gql')
   const router = useRouter()
   const context = useWeb3React()
   const client = useApolloClient()
   const { width } = useWindowSize()
+  const isVisible = usePageVisibility()
   const [pollData, setPollData] = useState(null)
   const { query } = router
   const pollId = query.poll.toString().toLowerCase()
-  const { data } = useQuery(pollQuery, {
+  const pollInterval = 20000
+
+  const {
+    data,
+    startPolling: startPollingPoll,
+    stopPolling: stopPollingPoll,
+  } = useQuery(pollQuery, {
     variables: {
       id: pollId,
     },
-    pollInterval: 10000,
+    pollInterval,
     ssr: false,
   })
 
-  const { data: myAccountData } = useQuery(accountQuery, {
+  const {
+    data: myAccountData,
+    startPolling: startPollingMyAccount,
+    stopPolling: stopPollingMyAccount,
+  } = useQuery(accountQuery, {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval: 10000,
+    pollInterval,
     skip: !context.active,
   })
 
-  const { data: voteData } = useQuery(voteQuery, {
+  const {
+    data: voteData,
+    startPolling: startPollingVote,
+    stopPolling: stopPollingVote,
+  } = useQuery(voteQuery, {
     variables: {
       id: `${context?.account?.toLowerCase()}-${pollId}`,
     },
-    pollInterval: 10000,
+    pollInterval,
     skip: !context.active,
   })
 
-  const { data: delegateVoteData } = useQuery(voteQuery, {
+  const {
+    data: delegateVoteData,
+    startPolling: startPollingDelegate,
+    stopPolling: stopPollingDelegate,
+  } = useQuery(voteQuery, {
     variables: {
       id: `${myAccountData?.delegator?.delegate?.id.toLowerCase()}-${pollId}`,
     },
-    pollInterval: 10000,
+    pollInterval,
     skip: !myAccountData?.delegator?.delegate,
   })
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPollingPoll()
+      stopPollingMyAccount()
+      stopPollingVote()
+      stopPollingDelegate()
+    } else {
+      startPollingPoll(pollInterval)
+      startPollingMyAccount(pollInterval)
+      startPollingVote(pollInterval)
+      startPollingDelegate(pollInterval)
+    }
+  }, [isVisible])
 
   useEffect(() => {
     const init = async () => {

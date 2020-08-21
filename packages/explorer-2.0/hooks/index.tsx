@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import { useWeb3React } from '@web3-react/core'
 import { Injected } from '../lib/connectors'
 import { isMobile } from 'react-device-detect'
+import submittedTxsQuery from '../queries/transactions.gql'
 
 export function useWeb3Mutation(mutation, options) {
   const client = useApolloClient()
@@ -70,15 +71,14 @@ export function useWeb3Mutation(mutation, options) {
     },
   )
 
-  const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
-  const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
+  const { data: transactionsData } = useQuery(submittedTxsQuery)
 
   useEffect(() => {
     if (data) {
       client.writeData({
         data: {
           txs: [
-            ...transactionsData.txs.filter(t => t.txHash !== data.tx.txHash),
+            ...transactionsData.txs.filter((t) => t.txHash !== data.tx.txHash),
             {
               __typename: mutation.definitions[0].name.value,
               txHash: data.tx.txHash,
@@ -168,7 +168,7 @@ export function useInactiveListener(suppress = false) {
         activate(Injected, undefined, true).catch(() => {})
       }
 
-      const handleAccountsChanged = accounts => {
+      const handleAccountsChanged = (accounts) => {
         if (accounts.length > 0) {
           // eat errors
           activate(Injected, undefined, true).catch(() => {})
@@ -201,7 +201,7 @@ export function useMutations() {
   const mutations = require('../mutations').default
   const context = useWeb3React()
   let mutationsObj: any = {}
-  Object.keys(mutations).map(key => {
+  Object.keys(mutations).map((key) => {
     const { mutate } = useWeb3Mutation(mutations[key], {
       context: {
         library: context?.library,
@@ -241,4 +241,41 @@ export function useTimeEstimate({ startTime, estimate }) {
   }, [timeLeft])
 
   return { timeLeft }
+}
+
+export function getBrowserVisibilityProp() {
+  if (typeof document.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later support
+    return 'visibilitychange'
+  } else if (typeof document['msHidden'] !== 'undefined') {
+    return 'msvisibilitychange'
+  } else if (typeof document['webkitHidden'] !== 'undefined') {
+    return 'webkitvisibilitychange'
+  }
+}
+export function getBrowserDocumentHiddenProp() {
+  if (typeof document.hidden !== 'undefined') {
+    return 'hidden'
+  } else if (typeof document['msHidden'] !== 'undefined') {
+    return 'msHidden'
+  } else if (typeof document['webkitHidden'] !== 'undefined') {
+    return 'webkitHidden'
+  }
+}
+
+export function getIsDocumentVisible() {
+  return !process.browser || !document[getBrowserDocumentHiddenProp()]
+}
+
+export function usePageVisibility() {
+  const [isVisible, setIsVisible] = useState(getIsDocumentVisible())
+  const onVisibilityChange = () => setIsVisible(getIsDocumentVisible())
+  useEffect(() => {
+    const visibilityChange = getBrowserVisibilityProp()
+    document.addEventListener(visibilityChange, onVisibilityChange, false)
+    return () => {
+      document.removeEventListener(visibilityChange, onVisibilityChange)
+    }
+  })
+  return isVisible
 }

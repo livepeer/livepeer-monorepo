@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
+import { networksTypes } from '../lib/utils'
 import Ballot from '../public/img/ballot.svg'
 import Orchestrators from '../public/img/orchestrators.svg'
 import Search from '../public/img/search.svg'
@@ -16,13 +17,15 @@ import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
-import { useMutations } from '../hooks'
+import { useMutations, usePageVisibility } from '../hooks'
 import { MutationsContext } from '../contexts'
 import TxStartedDialog from '../components/TxStartedDialog'
 import TxConfirmedDialog from '../components/TxConfirmedDialog'
 import Modal from '../components/Modal'
 import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
+import GET_SPACE from '../queries/threeBoxSpace.gql'
+import GET_SUBMITTED_TXS from '../queries/transactions.gql'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -38,32 +41,23 @@ type DrawerItem = {
   className?: string
 }
 
+const pollInterval = 20000
+
 const Layout = ({
   children,
   title = 'Livepeer Explorer',
   headerTitle = '',
 }) => {
-  useEffect(() => {
-    ReactGA.set({
-      customBrowserType: !isMobile
-        ? 'desktop'
-        : window['web3'] || window['ethereum']
-        ? 'mobileWeb3'
-        : 'mobileRegular',
-    })
-    ReactGA.pageview(window.location.pathname + window.location.search)
-  }, [])
-
   const client = useApolloClient()
-  const threeBoxSpaceQuery = require('../queries/threeBoxSpace.gql')
   const context = useWeb3React()
+  const isVisible = usePageVisibility()
   const { account } = context
-  const { data } = useQuery(threeBoxSpaceQuery, {
+  const { data, startPolling, stopPolling } = useQuery(GET_SPACE, {
     variables: {
       account: context?.account,
     },
     skip: !context.account,
-    pollInterval: 10000,
+    pollInterval,
     ssr: false,
   })
   const { data: pollData } = useQuery(
@@ -77,15 +71,11 @@ const Layout = ({
     `,
   )
   const mutations = useMutations()
-  const GET_SUBMITTED_TXS = require('../queries/transactions.gql')
   const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
-  const networksTypes = {
-    1: 'mainnet',
-    4: 'rinkeby',
-  }
+
   const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
@@ -95,8 +85,15 @@ const Layout = ({
       }
     }
   `
-
   const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL)
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPolling()
+    } else {
+      startPolling(pollInterval)
+    }
+  }, [isVisible])
 
   useEffect(() => {
     if (width > 1020) {
@@ -106,6 +103,17 @@ const Layout = ({
     if (width < 1020 && drawerOpen) {
       document.body.style.overflow = 'hidden'
     }
+  }, [])
+
+  useEffect(() => {
+    ReactGA.set({
+      customBrowserType: !isMobile
+        ? 'desktop'
+        : window['web3'] || window['ethereum']
+        ? 'mobileWeb3'
+        : 'mobileRegular',
+    })
+    ReactGA.pageview(window.location.pathname + window.location.search)
   }, [])
 
   let items: DrawerItem[] = [

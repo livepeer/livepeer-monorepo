@@ -7,9 +7,9 @@ import Button from '../Button'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import accountQuery from '../../queries/account.gql'
 
 export default ({ goTo, nextStep }) => {
-  const accountQuery = require('../../queries/account.gql')
   const client = useApolloClient()
   const context = useWeb3React()
   const [copied, setCopied] = useState(false)

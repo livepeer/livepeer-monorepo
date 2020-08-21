@@ -17,10 +17,12 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { MutationsContext } from '../../contexts'
 import Utils from 'web3-utils'
 import Head from 'next/head'
+import { usePageVisibility } from '../../hooks'
 
 const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   const context = useWeb3React()
   const client = useApolloClient()
+  const isVisible = usePageVisibility()
   const [sufficientAllowance, setSufficientAllowance] = useState(false)
   const [sufficientBalance, setSufficientBalance] = useState(false)
   const ipfs = new IPFS({
@@ -28,6 +30,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     port: 5001,
     protocol: 'https',
   })
+  const pollInterval = 20000
 
   const accountQuery = gql`
     query($account: ID!) {
@@ -38,16 +41,24 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     }
   `
 
-  const { data } = useQuery(accountQuery, {
+  const { data, startPolling, stopPolling } = useQuery(accountQuery, {
     variables: {
       account: context.account,
     },
-    pollInterval: 10000,
+    pollInterval,
     context: {
       library: context.library,
     },
     skip: !context.account,
   })
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopPolling()
+    } else {
+      startPolling(pollInterval)
+    }
+  }, [isVisible])
 
   useEffect(() => {
     if (data) {

@@ -14,9 +14,9 @@ import Step6 from './Step6'
 import Step7 from './Step7'
 import gql from 'graphql-tag'
 import { Box } from 'theme-ui'
+import accountQuery from '../../queries/account.gql'
 
 const Tour: any = dynamic(() => import('reactour'), { ssr: false })
-
 const GET_TOUR_OPEN = gql`
   {
     tourOpen @client
@@ -24,7 +24,6 @@ const GET_TOUR_OPEN = gql`
 `
 
 export default ({ children, ...props }) => {
-  const accountQuery = require('../../queries/account.gql')
   const client = useApolloClient()
   const [open, setOpen] = useState(false)
   const [tourKey, setTourKey] = useState(0)
@@ -90,7 +89,7 @@ export default ({ children, ...props }) => {
         },
       },
       {
-        action: node => node.focus(),
+        action: (node) => node.focus(),
         selector: '.tour-step-6',
         content: ({ goTo }) => {
           return <Step6 goTo={goTo} nextStep={nextStep} />
@@ -98,7 +97,7 @@ export default ({ children, ...props }) => {
         style: tourStyles,
       },
       {
-        action: node => node.focus(),
+        action: (node) => node.focus(),
         selector: '.tour-step-7',
         content: () => {
           return <Step7 />
@@ -139,7 +138,7 @@ export default ({ children, ...props }) => {
           })
           setTourKey(tourKey + 1)
         }}
-        getCurrentStep={curr => {
+        getCurrentStep={(curr) => {
           setNextStep(curr + 1)
         }}
         steps={steps}
