@@ -100,5 +100,12 @@ query($account: String!, $first: Int!, $skip: Int!) {
         id
       }
     }
+    ... on WinningTicketRedeemed {
+      __typename
+      faceValue
+      round {
+        id
+      }
+    }
   }
 }
