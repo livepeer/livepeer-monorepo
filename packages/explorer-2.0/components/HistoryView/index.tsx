@@ -9,6 +9,7 @@ import Unlink from '../../public/img/unlink.svg'
 import Link from '../../public/img/link.svg'
 import Claim from '../../public/img/claim.svg'
 import LPT from '../../public/img/lpt.svg'
+import ETH from '../../public/img/eth.svg'
 import Approve from '../../public/img/approve.svg'
 import Play from '../../public/img/play.svg'
 import moment from 'moment'
@@ -517,6 +518,48 @@ function renderSwitch(transaction: any, i: number) {
                 +{abbreviateNumber(Utils.fromWei(transaction.amount), 3)}
               </span>{' '}
               LPT
+            </div>
+          </Flex>
+        </ListItem>
+      )
+    case 'WinningTicketRedeemed':
+      return (
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+          }
+          key={i}
+          avatar={
+            <ETH sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
+          }
+        >
+          <Flex
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Box>Redeemed Winning Ticket</Box>
+              <Box sx={{ fontSize: 12, color: 'muted' }}>
+                {moment
+                  .unix(transaction.timestamp)
+                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
+                -- Round #{transaction.round.id}
+              </Box>
+            </Box>
+            <div sx={{ fontSize: 1, ml: 3 }}>
+              {' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                +{abbreviateNumber(Utils.fromWei(transaction.faceValue), 3)}
+              </span>{' '}
+              ETH
             </div>
           </Flex>
         </ListItem>

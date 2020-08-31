@@ -14,6 +14,8 @@ coverage
 .nyc_output
 yarn-error.log
 .env
+.env.local
+.env.rinkeby
 .env.build
 .poosh.cache
 
