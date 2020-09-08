@@ -2,6 +2,7 @@ import { Delegator, Round, UnbondingLock } from '../@types'
 import Utils from 'web3-utils'
 import url from 'url'
 import parseDomain from 'parse-domain'
+import { ethers } from 'ethers'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -182,6 +183,9 @@ export const detectNetwork = async (provider) => {
 }
 
 export const checkAddressEquality = (address1, address2) => {
+  if (!isAddress(address1) || !isAddress(address2)) {
+    return false
+  }
   return Utils.toChecksumAddress(address1) === Utils.toChecksumAddress(address2)
 }
 
@@ -396,4 +400,13 @@ export const simulateNewActiveSetOrder = ({
   return transcoders.sort((a, b) =>
     Utils.toBN(b.totalStake).cmp(Utils.toBN(a.totalStake)),
   )
+}
+
+export function isAddress(address) {
+  try {
+    ethers.utils.getAddress(address)
+  } catch (e) {
+    return false
+  }
+  return true
 }
