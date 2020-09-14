@@ -24,6 +24,9 @@ mainnet:
     minter:
       address: '8573f2f5a3bd960eee3d998473e50c75cdbe6828'
       startBlock: 5533913
+    minter_LIP40:
+      address: '505F8c2ee81f1C6fa0D88e918eF0491222E05818'
+      startBlock: 10686186
     ticketBroker:
       address: '5b1ce829384eebfa30286f12d1e7a695ca45f5d2'
       startBlock: 9274420
@@ -57,6 +60,9 @@ rinkeby:
     minter:
       address: 'e5056d1fE48F562dd8AcB1BBFFa147223d448C1B'
       startBlock: 5325851
+    minter_LIP40:
+      address: '63B12E71F9c620BeAdf53b0e95189a16A2Af8Ed2'
+      startBlock: 7041202
     ticketBroker:
       address: '40897Ff6e44Ca2e145A691701897844669Bf7cee'
       startBlock: 5325857
@@ -88,6 +94,9 @@ development:
       address: 'D833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
       startBlock: 0
     minter:
+      address: 'e982E462b094850F12AF94d21D470e21bE9D0E9C'
+      startBlock: 0
+    minter_LIP40:
       address: 'e982E462b094850F12AF94d21D470e21bE9D0E9C'
       startBlock: 0
     ticketBroker:

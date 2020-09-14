@@ -207,6 +207,31 @@ dataSources:
         - event: ParameterUpdate(string)
           handler: parameterUpdate
   - kind: ethereum/contract
+    name: Minter_LIP40
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.minter_LIP40.startBlock}}
+      address: {{contracts.minter_LIP40.address}}
+      abi: Minter
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/minter.ts
+      entities:
+        - Round
+        - Protocol
+        - ParameterUpdate
+        - SetCurrentRewardTokens
+      abis:
+        - name: Minter
+          file: ./abis/Minter.json
+      eventHandlers:
+        - event: SetCurrentRewardTokens(uint256,uint256)
+          handler: setCurrentRewardTokens
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
+  - kind: ethereum/contract
     name: TicketBroker
     network: {{networkName}}
     source:
