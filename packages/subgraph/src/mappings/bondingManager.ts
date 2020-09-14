@@ -325,22 +325,20 @@ export function unbond(event: UnbondEvent): void {
 
 // Handler for Reward events
 export function reward(event: RewardEvent): void {
-  let bondingManager = BondingManager.bind(event.address)
   let transcoderAddress = event.params.transcoder
   let transcoder = Transcoder.load(transcoderAddress.toHex())
   let delegate = Delegator.load(transcoderAddress.toHex())
-  let delegateData = bondingManager.getDelegator(transcoderAddress)
   let protocol = Protocol.load('0') || new Protocol('0')
   let poolId = makePoolId(transcoderAddress.toHex(), protocol.currentRound)
   let pool = Pool.load(poolId)
 
-  delegate.delegatedAmount = delegateData.value3
+  delegate.delegatedAmount = delegate.delegatedAmount.plus(event.params.amount)
 
   pool.rewardTokens = event.params.amount
   pool.feeShare = transcoder.feeShare
   pool.rewardCut = transcoder.rewardCut
 
-  transcoder.totalStake = delegateData.value3
+  transcoder.totalStake = transcoder.totalStake.plus(event.params.amount)
   transcoder.lastRewardRound = protocol.currentRound
 
   transcoder.save()
