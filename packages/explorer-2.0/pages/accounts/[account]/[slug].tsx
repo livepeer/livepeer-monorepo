@@ -12,7 +12,11 @@ import StakingView from '../../../components/StakingView'
 import Spinner from '../../../components/Spinner'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
-import { getDelegatorStatus, checkAddressEquality } from '../../../lib/utils'
+import {
+  isAddress,
+  getDelegatorStatus,
+  checkAddressEquality,
+} from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
 import BottomDrawer from '../../../components/BottomDrawer'
@@ -24,6 +28,7 @@ import { usePageVisibility } from '../../../hooks'
 import { useEffect } from 'react'
 import accountViewQuery from '../../../queries/accountView.gql'
 import accountQuery from '../../../queries/account.gql'
+import FourZeroFour from '../../404'
 
 const Account = () => {
   const router = useRouter()
@@ -34,6 +39,10 @@ const Account = () => {
   const slug = query.slug
   const pollInterval = 20000
 
+  if (!query?.account || !isAddress(query?.account.toString())) {
+    return <FourZeroFour />
+  }
+
   const {
     data,
     loading,
@@ -42,7 +51,7 @@ const Account = () => {
     stopPolling: stopPollingAccount,
   } = useQuery(accountViewQuery, {
     variables: {
-      account: query.account.toString().toLowerCase(),
+      account: query?.account.toString().toLowerCase(),
     },
     pollInterval,
     ssr: false,
@@ -127,7 +136,7 @@ const Account = () => {
 
   const isMyAccount = checkAddressEquality(
     context?.account,
-    query.account.toString(),
+    query?.account.toString(),
   )
   const isStaked = !!data?.delegator?.delegate
   const hasLivepeerToken =
@@ -143,11 +152,11 @@ const Account = () => {
   }
 
   const isMyDelegate =
-    query.account.toString() === dataMyAccount?.delegator?.delegate?.id
+    query?.account.toString() === dataMyAccount?.delegator?.delegate?.id
 
   const tabs: Array<TabType> = getTabs(
     role,
-    query.account.toString(),
+    query?.account.toString(),
     asPath,
     isMyDelegate,
   )
@@ -184,7 +193,7 @@ const Account = () => {
           />
         )}
         <Profile
-          account={query.account.toString()}
+          account={query?.account.toString()}
           delegator={data.delegator}
           threeBoxSpace={data.threeBoxSpace}
           hasLivepeerToken={hasLivepeerToken}

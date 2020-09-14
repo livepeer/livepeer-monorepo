@@ -36,7 +36,14 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 .next
+.now
+.vercel
+
+# local env files
 .env
 .env.build
 .env.rinkeby
-.now
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

@@ -26,6 +26,7 @@ import { usePageVisibility } from '../../hooks'
 import pollQuery from '../../queries/poll.gql'
 import accountQuery from '../../queries/account.gql'
 import voteQuery from '../../queries/vote.gql'
+import FourZeroFour from '../404'
 
 const Poll = () => {
   const router = useRouter()
@@ -35,6 +36,11 @@ const Poll = () => {
   const isVisible = usePageVisibility()
   const [pollData, setPollData] = useState(null)
   const { query } = router
+
+  if (!query?.poll) {
+    return <FourZeroFour />
+  }
+
   const pollId = query.poll.toString().toLowerCase()
   const pollInterval = 20000
 
