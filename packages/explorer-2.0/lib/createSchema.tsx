@@ -75,7 +75,11 @@ export default async () => {
     )
 
     return await contract.methods
-      .balanceOf(_ctx.livepeer.config.contracts.Minter.address)
+      .balanceOf(
+        _blockNumber < 10686186
+          ? '0x8573f2f5a3bd960eee3d998473e50c75cdbe6828'
+          : _ctx.livepeer.config.contracts.Minter.address,
+      )
       .call({}, _blockNumber ? _blockNumber : null)
   }
 
@@ -147,7 +151,9 @@ export default async () => {
         },
         totalNonVoteStake: {
           async resolve(_poll, _args, _ctx, _info) {
-            const blockNumber = await getBlock()
+            const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
+              'latest',
+            )
             const isActive = blockNumber <= parseInt(_poll.endBlock)
             const totalStake = await getTotalStake(
               _ctx,
@@ -162,7 +168,9 @@ export default async () => {
         },
         status: {
           async resolve(_poll, _args, _ctx, _info) {
-            const blockNumber = await getBlock()
+            const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
+              'latest',
+            )
             const isActive = blockNumber <= parseInt(_poll.endBlock)
             const totalStake = await getTotalStake(
               _ctx,
@@ -195,13 +203,17 @@ export default async () => {
         },
         isActive: {
           async resolve(_poll, _args, _ctx, _info) {
-            const blockNumber = await getBlock()
+            const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
+              'latest',
+            )
             return blockNumber <= parseInt(_poll.endBlock)
           },
         },
         estimatedTimeRemaining: {
           async resolve(_poll, _args, _ctx, _info) {
-            const blockNumber = await getBlock()
+            const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
+              'latest',
+            )
             if (blockNumber > parseInt(_poll.endBlock)) {
               return null
             }
@@ -213,7 +225,9 @@ export default async () => {
         },
         endTime: {
           async resolve(_poll, _args, _ctx, _info) {
-            const blockNumber = await getBlock()
+            const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
+              'latest',
+            )
             if (blockNumber < parseInt(_poll.endBlock)) {
               return null
             }

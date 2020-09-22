@@ -137,7 +137,7 @@ const Poll = () => {
       </Flex>
     )
   }
-
+  console.log(pollData)
   let noVoteStake = parseFloat(
     Utils.fromWei(pollData?.tally?.no ? pollData?.tally?.no : '0'),
   )
