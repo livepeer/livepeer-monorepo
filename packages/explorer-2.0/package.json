@@ -57,7 +57,7 @@
     "apollo-fetch": "^0.7.0",
     "apollo-link": "^1.2.11",
     "apollo-link-http": "^1.5.15",
-    "apollo-server-micro": "^2.9.6",
+    "apollo-server-micro": "2.9.6",
     "babel-loader": "^8.0.6",
     "dotenv": "^8.2.0",
     "dotenv-cli": "^3.1.0",
@@ -104,5 +104,8 @@
     "web3": "^1.2.6",
     "web3-utils": "1.2.1"
   },
-  "main": "package.json"
+  "main": "package.json",
+  "resolutions": {
+    "apollo-server-core": "2.9.6"
+  }
 }
