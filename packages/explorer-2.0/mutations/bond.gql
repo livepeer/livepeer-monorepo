@@ -5,6 +5,8 @@ mutation bond(
   $oldDelegateNewPosNext: String!
   $currDelegateNewPosPrev: String!
   $currDelegateNewPosNext: String!
+  $delegator: String!
+  $lastClaimRound: Int!
 ) {
   tx: bond(
     amount: $amount
@@ -13,5 +15,7 @@ mutation bond(
     oldDelegateNewPosNext: $oldDelegateNewPosNext
     currDelegateNewPosPrev: $currDelegateNewPosPrev
     currDelegateNewPosNext: $currDelegateNewPosNext
+    delegator: $delegator
+    lastClaimRound: $lastClaimRound
   )
 }

@@ -2,10 +2,14 @@ mutation rebond(
   $unbondingLockId: Int!
   $newPosPrev: String!
   $newPosNext: String!
+  $delegator: String!
+  $lastClaimRound: Int!
 ) {
   tx: rebond(
     unbondingLockId: $unbondingLockId
     newPosPrev: $newPosPrev
     newPosNext: $newPosNext
+    delegator: $delegator
+    lastClaimRound: $lastClaimRound
   )
 }
