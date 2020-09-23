@@ -2138,6 +2138,40 @@ export async function createLivepeerSDK(
       )
     },
 
+    getCalldata(
+      contractName: string,
+      methodName: string,
+      methodArgs: Array
+    ): string {
+      const contractABI = config.abis[contractName]
+      const methodABI = utils.findAbiByName(contractABI, methodName)
+      return utils.encodeMethodParams(methodABI, methodArgs)
+    },
+
+    async estimateGasRaw(tx) {
+      const gasRate = 1.2
+      return Math.round(
+        toNumber(
+          await config.eth.estimateGas({
+            ...tx
+          }),
+        ) * gasRate,
+      )
+    },
+
+    async sendTransaction(tx = config.defaultTx): Promise<TxReceipt> {
+      const txHash = await config.eth.sendTransaction({
+        ...config.defaultTx,
+        ...tx
+      })
+
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
     /**
      * Unbonds LPT from an address
      * @memberof livepeer~rpc
