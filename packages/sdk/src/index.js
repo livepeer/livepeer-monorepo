@@ -1669,6 +1669,10 @@ export async function createLivepeerSDK(
       }
     },
 
+    async getLipUpgradeRound(lipNumber) {
+      return (await RoundsManager.getLipUpgradeRound(lipNumber)).toNumber()
+    },
+
     /**
      * Gets LPT from the faucet
      * @memberof livepeer~rpc
