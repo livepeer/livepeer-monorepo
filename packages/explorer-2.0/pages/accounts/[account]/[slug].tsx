@@ -21,7 +21,6 @@ import HistoryView from '../../../components/HistoryView'
 import { withApollo } from '../../../lib/apollo'
 import BottomDrawer from '../../../components/BottomDrawer'
 import useWindowSize from 'react-use/lib/useWindowSize'
-import ClaimBanner from '../../../components/ClaimBanner'
 import Approve from '../../../components/Approve'
 import FeesView from '../../../components/FeesView'
 import { usePageVisibility } from '../../../hooks'
@@ -185,12 +184,6 @@ const Account = () => {
               parseFloat(Utils.fromWei(dataMyAccount.account.tokenBalance)) !==
                 0 && <Approve account={dataMyAccount.account} banner={true} />}
           </Box>
-        )}
-        {context.active && dataMyAccount?.delegator?.lastClaimRound && (
-          <ClaimBanner
-            delegator={dataMyAccount.delegator}
-            currentRound={data.currentRound[0]}
-          />
         )}
         <Profile
           account={query?.account.toString()}

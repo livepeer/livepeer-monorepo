@@ -1,4 +1,4 @@
-import { Flex, Styled } from 'theme-ui'
+import { Flex } from 'theme-ui'
 import Utils from 'web3-utils'
 import Card from '../Card'
 import NumberFormat from 'react-number-format'
@@ -8,7 +8,6 @@ import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 import Link from 'next/link'
 import WithdrawFees from '../WithdrawFees'
-import { MAX_EARNINGS_CLAIMS_ROUNDS } from '../../lib/utils'
 
 export default ({ delegator, currentRound, isMyAccount }) => {
   if (!delegator?.bondedAmount) {
@@ -40,7 +39,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
 
   const lastClaimRound = parseInt(delegator?.lastClaimRound?.id, 10)
   const roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
-  const mustClaim = roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS
+  const mustClaim = roundsSinceLastClaim > 0
   const withdrawButtonDisabled = mustClaim || delegator.pendingFees === '0'
 
   return (
@@ -186,18 +185,6 @@ export default ({ delegator, currentRound, isMyAccount }) => {
               >
                 Withdraw
               </WithdrawFees>
-              {mustClaim && (
-                <Box
-                  sx={{
-                    color: 'muted',
-                    fontSize: 0,
-                    mt: 1,
-                  }}
-                >
-                  It's been over 100 rounds since your last claim. You must
-                  claim your earnings before they can be withdrawn.
-                </Box>
-              )}
             </Card>
           )}
         </Box>

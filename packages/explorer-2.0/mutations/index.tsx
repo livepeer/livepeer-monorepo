@@ -5,7 +5,6 @@ import withdrawStake from './withdrawStake.gql'
 import withdrawFees from './withdrawFees.gql'
 import rebondFromUnbonded from './rebondFromUnbonded.gql'
 import rebond from './rebond.gql'
-import batchClaimEarnings from './batchClaimEarnings.gql'
 import createPoll from './createPoll.gql'
 import vote from './vote.gql'
 
@@ -17,7 +16,6 @@ export default {
   withdrawFees,
   rebondFromUnbonded,
   rebond,
-  batchClaimEarnings,
   createPoll,
   vote,
 }

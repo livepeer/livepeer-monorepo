@@ -5,7 +5,6 @@ import { Account, Delegator, Transcoder, Round } from '../../@types'
 import Utils from 'web3-utils'
 import {
   getDelegatorStatus,
-  MAX_EARNINGS_CLAIMS_ROUNDS,
   getHint,
   simulateNewActiveSetOrder,
 } from '../../lib/utils'
@@ -87,14 +86,12 @@ export default ({
 
   const canStake =
     sufficientBalance &&
-    roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     approved &&
     sufficientTransferAllowance
 
   const canUnstake =
     isMyTranscoder &&
     isStaked &&
-    roundsSinceLastClaim <= MAX_EARNINGS_CLAIMS_ROUNDS &&
     parseFloat(amount) > 0
 
   const newActiveSetOrder = simulateNewActiveSetOrder({
@@ -128,7 +125,6 @@ export default ({
           currDelegateNewPosNext={currDelegateNewPosNext}
         />
         {renderStakeWarnings(
-          roundsSinceLastClaim,
           amount,
           sufficientBalance,
           sufficientTransferAllowance,
@@ -149,7 +145,6 @@ export default ({
         disabled={!canUnstake}
       />
       {renderUnstakeWarnings(
-        roundsSinceLastClaim,
         amount,
         delegatorStatus,
         isStaked,
@@ -161,7 +156,6 @@ export default ({
 }
 
 function renderStakeWarnings(
-  roundsSinceLastClaim,
   amount,
   sufficientBalance,
   sufficientTransferAllowance,
@@ -179,17 +173,6 @@ function renderStakeWarnings(
       <Warning>
         Your transfer allowance is set too low.{' '}
         <Approve account={account} banner={false} />
-      </Warning>
-    )
-  }
-
-  if (
-    roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS &&
-    parseFloat(amount) >= 0
-  ) {
-    return (
-      <Warning>
-        You must claim your earnings before you can continue staking.
       </Warning>
     )
   }
@@ -226,23 +209,12 @@ function renderStakeWarnings(
 }
 
 function renderUnstakeWarnings(
-  roundsSinceLastClaim,
   amount,
   delegatorStatus,
   isStaked,
   sufficientStake,
   isMyTranscoder,
 ) {
-  if (
-    roundsSinceLastClaim > MAX_EARNINGS_CLAIMS_ROUNDS &&
-    parseFloat(amount) >= 0
-  ) {
-    return (
-      <Warning>
-        You must claim your earnings before you can continue staking.
-      </Warning>
-    )
-  }
   if (delegatorStatus == 'Pending') {
     return (
       <Warning>
