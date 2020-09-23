@@ -123,6 +123,7 @@ export default ({
           oldDelegateNewPosNext={newPosNext}
           currDelegateNewPosPrev={currDelegateNewPosPrev}
           currDelegateNewPosNext={currDelegateNewPosNext}
+          delegator = {delegator}
         />
         {renderStakeWarnings(
           amount,
@@ -142,6 +143,7 @@ export default ({
         amount={amount}
         newPosPrev={newPosPrev}
         newPosNext={newPosNext}
+        delegator = {delegator}
         disabled={!canUnstake}
       />
       {renderUnstakeWarnings(

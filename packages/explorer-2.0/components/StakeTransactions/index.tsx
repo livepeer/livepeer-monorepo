@@ -74,6 +74,7 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
                           unbondingLockId={lock.unbondingLockId}
                           newPosPrev={newPosPrev}
                           newPosNext={newPosNext}
+                          delegator={delegator}
                         />
                       ) : (
                         <RestakeFromUnstaked
@@ -81,6 +82,7 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
                           delegate={lock.delegate.id}
                           newPosPrev={newPosPrev}
                           newPosNext={newPosNext}
+                          delegator={delegator}
                         />
                       ))}
                     <div sx={{ ml: 3 }}>
@@ -139,6 +141,8 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
                             unbondingLockId={lock.unbondingLockId}
                             newPosPrev={newPosPrev}
                             newPosNext={newPosNext}
+                            delegator={delegator}
+
                           />
                         ) : (
                           <RestakeFromUnstaked
@@ -146,6 +150,7 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
                             delegate={lock.delegate.id}
                             newPosPrev={newPosPrev}
                             newPosNext={newPosNext}
+                            delegator={delegator}
                           />
                         )}
                         <WithdrawStake unbondingLockId={lock.unbondingLockId} />

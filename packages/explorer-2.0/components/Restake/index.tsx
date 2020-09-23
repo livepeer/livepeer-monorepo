@@ -4,7 +4,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ unbondingLockId, newPosPrev, newPosNext }) => {
+export default ({ unbondingLockId, newPosPrev, newPosNext, delegator}) => {
   const client = useApolloClient()
   const { rebond }: any = useContext(MutationsContext)
 
@@ -18,6 +18,8 @@ export default ({ unbondingLockId, newPosPrev, newPosNext }) => {
                 unbondingLockId,
                 newPosPrev,
                 newPosNext,
+                delegator: delegator?.id,
+                lastClaimRound: delegator?.lastClaimRound
               },
             })
           })

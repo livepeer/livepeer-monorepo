@@ -13,6 +13,7 @@ export default ({
   oldDelegateNewPosNext,
   currDelegateNewPosPrev,
   currDelegateNewPosNext,
+  delegator,
   disabled,
 }) => {
   const client = useApolloClient()
@@ -37,6 +38,8 @@ export default ({
                 oldDelegateNewPosNext,
                 currDelegateNewPosPrev,
                 currDelegateNewPosNext,
+                delegator: delegator?.id,
+                lastClaimRound: delegator?.lastClaimRound
               },
             })
             // If user staked inside tour, close tour after staking

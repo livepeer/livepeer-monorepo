@@ -20,7 +20,12 @@ export default ({ delegator, ...props }) => {
       <Button
         onClick={() => {
           initTransaction(client, async () => {
-            await withdrawFees()
+            await withdrawFees({
+              variables: {
+                delegator: delegator?.id,
+                lastClaiRound:delegator?.lastClaimRound
+              }
+            })
           })
         }}
         {...props}
