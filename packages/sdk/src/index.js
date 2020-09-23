@@ -8,6 +8,7 @@ import {
   encodeSignature,
 } from 'ethjs-abi'
 import ENS from 'ethjs-ens'
+
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
 import ControllerArtifact from '../etc/Controller'
@@ -16,6 +17,7 @@ import BondingManagerArtifact from '../etc/BondingManager'
 import MinterArtifact from '../etc/Minter'
 import PollCreatorArtifact from '../etc/PollCreator'
 import PollArtifact from '../etc/Poll'
+import MerkleSnapshotArtifact from '../etc/MerkleSnapshot'
 import { VIDEO_PROFILES } from './video_profiles.js'
 
 // Constants
@@ -53,6 +55,7 @@ export const DEFAULTS = {
     Minter: MinterArtifact,
     PollCreator: PollCreatorArtifact,
     Poll: PollArtifact,
+    MerkleSnapshot: MerkleSnapshotArtifact
   },
   ensRegistries: {
     // Mainnet
@@ -384,6 +387,7 @@ export async function initContracts(
     BondingManager: null,
     RoundsManager: null,
     Minter: null,
+    MerkleSnapshot: null
   }
   const hashes = {
     LivepeerToken: {},
@@ -391,6 +395,7 @@ export async function initContracts(
     BondingManager: {},
     RoundsManager: {},
     Minter: {},
+    MerkleSnapshot: {}
   }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
@@ -503,6 +508,7 @@ export async function createLivepeerSDK(
     RoundsManager,
     Minter,
     PollCreator,
+    MerkleSnapshot
   } = config.contracts
   const { resolveAddress } = utils
 
@@ -2431,6 +2437,10 @@ export async function createLivepeerSDK(
       }
       return await utils.getTxReceipt(txHash, config.eth)
     },
+
+    async verifySnapshot(id, proof, leafHash) {
+      return await merkleSnapshot.verify(id, proof, leafHash)
+    }
   }
 
   return {
