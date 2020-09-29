@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -330,6 +330,11 @@ export function reward(event: RewardEvent): void {
   let delegate = Delegator.load(transcoderAddress.toHex())
   let protocol = Protocol.load('0') || new Protocol('0')
   let poolId = makePoolId(transcoderAddress.toHex(), protocol.currentRound)
+  log.info('Debug: {}, {}, {}', [
+    transcoderAddress.toHex(),
+    protocol.currentRound,
+    poolId
+  ])
   let pool = Pool.load(poolId)
 
   delegate.delegatedAmount = delegate.delegatedAmount.plus(event.params.amount)

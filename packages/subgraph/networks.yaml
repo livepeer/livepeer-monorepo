@@ -37,38 +37,38 @@ mainnet:
 rinkeby:
   contracts:
     controller:
-      address: 'A268AEa9D048F8d3A592dD7f1821297972D4C8Ea'
-      startBlock: 5325848
+      address: '1665396c8511652533fE2bc923810932b3CAeB6C'
+      startBlock: 7282200
     bondingManager:
-      address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
-      startBlock: 5325862
+      address: '1057e5A31E1d2F1139A05612C76b96DD3d42a801'
+      startBlock: 7282200
     bondingManager_LIP11:
-      address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
-      startBlock: 5325862
+      address: '1057e5A31E1d2F1139A05612C76b96DD3d42a801'
+      startBlock: 7282200
     bondingManager_streamflow:
-      address: 'e75a5DccfFe8939F7f16CC7f63EB252bB542FE95'
-      startBlock: 5325862
+      address: '1057e5A31E1d2F1139A05612C76b96DD3d42a801'
+      startBlock: 7282200
     roundsManager:
-      address: '572d1591bD41f50130FD0212058eAe34F1B17290'
-      startBlock: 5325866
+      address: 'DD89e7246fC81592E2b5790d8EBEa7C20Da13dc5'
+      startBlock: 7282200
     roundsManager_streamflow:
-      address: '572d1591bD41f50130FD0212058eAe34F1B17290'
-      startBlock: 5325866
+      address: 'DD89e7246fC81592E2b5790d8EBEa7C20Da13dc5'
+      startBlock: 7282200
     livepeerToken:
-      address: '23b814a57D53b1a7A860194F53401D0D639abED7'
-      startBlock: 5325849
+      address: 'Fb0C236b307aA080B1Ca03620FA76D14Dd119976'
+      startBlock: 7282200
     minter:
-      address: 'e5056d1fE48F562dd8AcB1BBFFa147223d448C1B'
-      startBlock: 5325851
+      address: '964DB222bA29F0B2A6e7EF901c82f1BfF7A281BD'
+      startBlock: 7282200
     minter_LIP40:
-      address: '63B12E71F9c620BeAdf53b0e95189a16A2Af8Ed2'
-      startBlock: 7041202
+      address: '964DB222bA29F0B2A6e7EF901c82f1BfF7A281BD'
+      startBlock: 7282200
     ticketBroker:
-      address: '40897Ff6e44Ca2e145A691701897844669Bf7cee'
-      startBlock: 5325857
+      address: '318F97D1CCC05ff8cb7185C62a3aB7FE77070fD3'
+      startBlock: 7282200
     pollCreator:
-      address: '149805ef90fada12d27e8a020b6c138f3d86a9a3'
-      startBlock: 6459857
+      address: '637373ebb22D019beEe56B5Bd25C5DC7aB745650'
+      startBlock: 7282200
   networkName: rinkeby
 development:
   contracts:

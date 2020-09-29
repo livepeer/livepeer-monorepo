@@ -1,5 +1,5 @@
 specVersion: 0.0.2
-description: A protocol for affordable and reliable video encoding. Find transcoders, delegators, earning pools, and staking rounds.
+description: LIP - 52 A protocol for affordable and reliable video encoding. Find transcoders, delegators, earning pools, and staking rounds.
 repository: https://github.com/livepeer/livepeerjs/tree/master/packages/subgraph
 schema:
   file: ./schema.graphql

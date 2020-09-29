@@ -13,7 +13,7 @@
     "deploy:local": "graph deploy livepeer/livepeer --debug --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
     "deploy:docker": "graph deploy livepeer/livepeer --debug --ipfs http://ipfs:5001 --node http://graph-node:8020",
     "deploy:mainnet": "yarn prepare:mainnet && SUBGRAPH=livepeer/livepeer yarn deploy",
-    "deploy:rinkeby": "yarn prepare:rinkeby && SUBGRAPH=livepeer/livepeer-rinkeby yarn deploy",
+    "deploy:rinkeby": "yarn prepare:rinkeby && SUBGRAPH=kyriediculous/lip52 yarn deploy",
     "prepare:mainnet": "NETWORK_NAME=mainnet node ./templatify.js",
     "prepare:rinkeby": "NETWORK_NAME=rinkeby node ./templatify.js",
     "prepare:development": "NETWORK_NAME=development node ./templatify.js",
