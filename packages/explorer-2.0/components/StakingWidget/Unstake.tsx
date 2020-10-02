@@ -23,7 +23,6 @@ export default ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
         variant="red"
         onClick={() => {
           initTransaction(client, async () => {
-            console.log(delegator.id, delegator.lastClaimRound)
             try {
               await unbond({
                 variables: {

@@ -40,7 +40,7 @@ export default ({
                   currDelegateNewPosPrev,
                   currDelegateNewPosNext,
                   delegator: delegator?.id,
-                  lastClaimRound: delegator?.lastClaimRound,
+                  lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
                 },
               })
             } catch (err) {

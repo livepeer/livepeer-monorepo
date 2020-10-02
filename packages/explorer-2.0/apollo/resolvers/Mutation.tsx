@@ -54,7 +54,7 @@ export async function approve(_obj, _args, _ctx) {
 
 async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
   const { lastClaimRound, delegator } = _args
-  if (lastClaimRound == 0) {
+  if (!lastClaimRound || lastClaimRound == 0) {
     return null
   }
   const LIP52Round = await _ctx.livepeer.rpc.getLipUpgradeRound(52)
@@ -86,12 +86,11 @@ async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
   )
     return null
 
-  return _ctx.livepeer.getCalldata('BondingManager', 'claimSnapshotEarnings', [
-    pendingStake,
-    pendingFees,
-    proof,
-    stakingAction,
-  ])
+  return _ctx.livepeer.rpc.getCalldata(
+    'BondingManager',
+    'claimSnapshotEarnings',
+    [pendingStake, pendingFees, proof, stakingAction],
+  )
 }
 
 /**
@@ -111,7 +110,7 @@ export async function bond(_obj, _args, _ctx) {
     currDelegateNewPosNext,
   } = _args
 
-  let data = _ctx.livepeer.getCalldata('BondingManager', 'bondWithHint', [
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'bondWithHint', [
     amount,
     to,
     oldDelegateNewPosPrev,
