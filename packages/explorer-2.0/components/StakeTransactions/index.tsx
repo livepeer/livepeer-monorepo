@@ -142,7 +142,6 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
                             newPosPrev={newPosPrev}
                             newPosNext={newPosNext}
                             delegator={delegator}
-
                           />
                         ) : (
                           <RestakeFromUnstaked
