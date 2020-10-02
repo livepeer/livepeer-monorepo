@@ -1,5 +1,5 @@
-import {EarningsTree} from '../../lib/earningsTree'
-import {utils} from 'ethers'
+import { EarningsTree } from '../../lib/earningsTree'
+import { utils } from 'ethers'
 const earningsSnapshot = require('../../data/earningsTree')
 /**
  * Approve an amount for an ERC20 token transfer
@@ -53,35 +53,42 @@ export async function approve(_obj, _args, _ctx) {
 }
 
 async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
-  const {lastClaimRound, delegatorAddr} = _args
+  const { lastClaimRound, delegatorAddr } = _args
   const LIP52Round = await _ctx.livepeer.rpc.getLipUpgradeRound(52)
-  if (lastClaimRound <= LIP52Round) {
-    // get pendingStake and pendingFees for delegator
-    const [pendingStake, pendingFees] = await Promise.all([
-      _ctx.livepeer.rpc.getPendingStake(delegatorAddr, LIP52Round),
-      _ctx.livepeer.rpc.getPendingFees(delegatorAddr, LIP52Round)
-    ])
-
-    // generate the merkle tree from JSON 
-    const tree = EarningsTree.fromJSON(earningsSnapshot)
-    // generate the proof
-    const leaf = utils.defaultAbiCoder.encode(["address", "uint256", "uint256"], [delegatorAddr, pendingStake, pendingFees])
-    const proof = tree.getHexProof(leaf)
-
-    if (!(await _ctx.livepeer.rpc.verifySnapshot(utils.keccak256("LIP-52"), proof, utils.keccak256(leaf)))) return null;
-   
-    return _ctx.livepeer.getCalldata(
-      'BondingManager',
-      'claimSnapshotEarnings',
-      [
-        pendingStake,
-        pendingFees,
-        proof,
-        stakingAction
-      ]
-    )
+  if (lastClaimRound > LIP52Round) {
+    return null
   }
-  return null
+
+  // get pendingStake and pendingFees for delegator
+  const [pendingStake, pendingFees] = await Promise.all([
+    _ctx.livepeer.rpc.getPendingStake(delegatorAddr, LIP52Round),
+    _ctx.livepeer.rpc.getPendingFees(delegatorAddr, LIP52Round),
+  ])
+
+  // generate the merkle tree from JSON
+  const tree = EarningsTree.fromJSON(earningsSnapshot)
+  // generate the proof
+  const leaf = utils.defaultAbiCoder.encode(
+    ['address', 'uint256', 'uint256'],
+    [delegatorAddr, pendingStake, pendingFees],
+  )
+  const proof = tree.getHexProof(leaf)
+
+  if (
+    !(await _ctx.livepeer.rpc.verifySnapshot(
+      utils.keccak256('LIP-52'),
+      proof,
+      utils.keccak256(leaf),
+    ))
+  )
+    return null
+
+  return _ctx.livepeer.getCalldata('BondingManager', 'claimSnapshotEarnings', [
+    pendingStake,
+    pendingFees,
+    proof,
+    stakingAction,
+  ])
 }
 
 /**
@@ -101,31 +108,27 @@ export async function bond(_obj, _args, _ctx) {
     currDelegateNewPosNext,
   } = _args
 
-  let data = _ctx.livepeer.getCalldata(
-    'BondingManager',
-    'bondWithHint',
-    [
-      amount,
-      to,
-      oldDelegateNewPosPrev,
-      oldDelegateNewPosNext,
-      currDelegateNewPosPrev,
-      currDelegateNewPosNext,
-    ]
-  )
+  let data = _ctx.livepeer.getCalldata('BondingManager', 'bondWithHint', [
+    amount,
+    to,
+    oldDelegateNewPosPrev,
+    oldDelegateNewPosNext,
+    currDelegateNewPosPrev,
+    currDelegateNewPosNext,
+  ])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
   data = claimData ? claimData : data
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
-    data
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    data,
   })
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
     data,
     returnTxHash: true,
   })
@@ -147,24 +150,24 @@ export async function bond(_obj, _args, _ctx) {
 export async function unbond(_obj, _args, _ctx) {
   const { amount, newPosPrev, newPosNext } = _args
 
-  let data = _ctx.livepeer.rpc.getCalldata(
-    'BondingManager',
-    'unbondWithHint',
-    [amount, newPosPrev, newPosNext],
-  )
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'unbondWithHint', [
+    amount,
+    newPosPrev,
+    newPosNext,
+  ])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
   data = claimData ? claimData : data
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
-    data
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    data,
   })
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
     data,
     returnTxHash: true,
   })
@@ -186,24 +189,24 @@ export async function unbond(_obj, _args, _ctx) {
 export async function rebond(_obj, _args, _ctx) {
   const { unbondingLockId, newPosPrev, newPosNext } = _args
 
-  let data = _ctx.livepeer.rpc.getCalldata(
-    'BondingManager',
-    'rebondWithHint',
-    [unbondingLockId, newPosPrev, newPosNext],
-  )
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'rebondWithHint', [
+    unbondingLockId,
+    newPosPrev,
+    newPosNext,
+  ])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
   data = claimData ? claimData : data
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
-    data
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    data,
   })
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
     data,
     returnTxHash: true,
   })
@@ -252,24 +255,20 @@ export async function withdrawStake(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function withdrawFees(_obj, _args, _ctx) {
-  let data = _ctx.livepeer.rpc.getCalldata(
-    'BondingManager',
-    'withdrawFees',
-    [],
-  )
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'withdrawFees', [])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
   data = claimData ? claimData : data
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
-    data
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    data,
   })
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
     data,
     returnTxHash: true,
   })
@@ -302,13 +301,13 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
-    data
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    data,
   })
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    to: _ctx.livepeer.config.contracts['BondingManager'].address,
     data,
     returnTxHash: true,
   })
