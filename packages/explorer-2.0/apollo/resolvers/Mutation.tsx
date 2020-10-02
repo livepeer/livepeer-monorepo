@@ -54,6 +54,9 @@ export async function approve(_obj, _args, _ctx) {
 
 async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
   const { lastClaimRound, delegator } = _args
+  if (lastClaimRound == 0) {
+    return null
+  }
   const LIP52Round = await _ctx.livepeer.rpc.getLipUpgradeRound(52)
   if (lastClaimRound > LIP52Round.toNumber()) {
     return null

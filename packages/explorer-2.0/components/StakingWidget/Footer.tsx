@@ -84,15 +84,9 @@ export default ({
     delegator.lastClaimRound &&
     parseInt(currentRound.id, 10) - parseInt(delegator.lastClaimRound.id, 10)
 
-  const canStake =
-    sufficientBalance &&
-    approved &&
-    sufficientTransferAllowance
+  const canStake = sufficientBalance && approved && sufficientTransferAllowance
 
-  const canUnstake =
-    isMyTranscoder &&
-    isStaked &&
-    parseFloat(amount) > 0
+  const canUnstake = isMyTranscoder && isStaked && parseFloat(amount) > 0
 
   const newActiveSetOrder = simulateNewActiveSetOrder({
     action,
@@ -113,6 +107,9 @@ export default ({
   } = getHint(transcoder.id, newActiveSetOrder)
 
   if (action == 'stake') {
+    if (!isStaked) {
+      delegator.id = account.id
+    }
     return (
       <>
         <Stake
@@ -123,7 +120,7 @@ export default ({
           oldDelegateNewPosNext={newPosNext}
           currDelegateNewPosPrev={currDelegateNewPosPrev}
           currDelegateNewPosNext={currDelegateNewPosNext}
-          delegator = {delegator}
+          delegator={delegator}
         />
         {renderStakeWarnings(
           amount,
@@ -143,7 +140,7 @@ export default ({
         amount={amount}
         newPosPrev={newPosPrev}
         newPosNext={newPosNext}
-        delegator = {delegator}
+        delegator={delegator}
         disabled={!canUnstake}
       />
       {renderUnstakeWarnings(
