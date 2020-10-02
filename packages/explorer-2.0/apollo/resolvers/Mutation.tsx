@@ -53,16 +53,16 @@ export async function approve(_obj, _args, _ctx) {
 }
 
 async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
-  const { lastClaimRound, delegatorAddr } = _args
+  const { lastClaimRound, delegator } = _args
   const LIP52Round = await _ctx.livepeer.rpc.getLipUpgradeRound(52)
-  if (lastClaimRound > LIP52Round) {
+  if (lastClaimRound > LIP52Round.toNumber()) {
     return null
   }
 
   // get pendingStake and pendingFees for delegator
   const [pendingStake, pendingFees] = await Promise.all([
-    _ctx.livepeer.rpc.getPendingStake(delegatorAddr, LIP52Round),
-    _ctx.livepeer.rpc.getPendingFees(delegatorAddr, LIP52Round),
+    _ctx.livepeer.rpc.getPendingStake(delegator, LIP52Round),
+    _ctx.livepeer.rpc.getPendingFees(delegator, LIP52Round),
   ])
 
   // generate the merkle tree from JSON
@@ -70,7 +70,7 @@ async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
   // generate the proof
   const leaf = utils.defaultAbiCoder.encode(
     ['address', 'uint256', 'uint256'],
-    [delegatorAddr, pendingStake, pendingFees],
+    [delegator, pendingStake, pendingFees],
   )
   const proof = tree.getHexProof(leaf)
 
@@ -148,6 +148,7 @@ export async function bond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function unbond(_obj, _args, _ctx) {
+  console.log('unbond', _args)
   const { amount, newPosPrev, newPosNext } = _args
 
   let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'unbondWithHint', [

@@ -30,18 +30,22 @@ export default ({
         disabled={disabled}
         onClick={() => {
           initTransaction(client, async () => {
-            await bond({
-              variables: {
-                amount: Utils.toWei(amount ? amount.toString() : '0'),
-                to,
-                oldDelegateNewPosPrev,
-                oldDelegateNewPosNext,
-                currDelegateNewPosPrev,
-                currDelegateNewPosNext,
-                delegator: delegator?.id,
-                lastClaimRound: delegator?.lastClaimRound
-              },
-            })
+            try {
+              await bond({
+                variables: {
+                  amount: Utils.toWei(amount ? amount.toString() : '0'),
+                  to,
+                  oldDelegateNewPosPrev,
+                  oldDelegateNewPosNext,
+                  currDelegateNewPosPrev,
+                  currDelegateNewPosNext,
+                  delegator: delegator?.id,
+                  lastClaimRound: delegator?.lastClaimRound,
+                },
+              })
+            } catch (err) {
+              console.log(err)
+            }
             // If user staked inside tour, close tour after staking
             client.writeData({
               data: {

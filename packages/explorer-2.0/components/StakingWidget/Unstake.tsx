@@ -23,15 +23,20 @@ export default ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
         variant="red"
         onClick={() => {
           initTransaction(client, async () => {
-            await unbond({
-              variables: {
-                amount: Utils.toWei(amount ? amount.toString() : '0'),
-                newPosPrev,
-                newPosNext,
-                delegator: delegator?.id,
-                lastClaimRound: delegator?.lastClaimRound
-              },
-            })
+            console.log(delegator.id, delegator.lastClaimRound)
+            try {
+              await unbond({
+                variables: {
+                  amount: Utils.toWei(amount ? amount.toString() : '0'),
+                  newPosPrev,
+                  newPosNext,
+                  delegator: delegator?.id,
+                  lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
+                },
+              })
+            } catch (err) {
+              console.log(err)
+            }
           })
         }}
         sx={{ width: '100%' }}
