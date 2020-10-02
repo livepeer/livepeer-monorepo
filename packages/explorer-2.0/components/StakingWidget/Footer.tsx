@@ -109,7 +109,7 @@ export default ({
   if (action == 'stake') {
     if (!isStaked) {
       delegator = {
-        id: account.id,
+        id: account?.id,
         lastClaimRound: { id: '0' },
       }
     }
