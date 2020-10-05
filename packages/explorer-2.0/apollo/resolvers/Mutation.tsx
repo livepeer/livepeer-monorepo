@@ -57,8 +57,9 @@ async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
   if (!lastClaimRound || lastClaimRound == 0) {
     return null
   }
-  const LIP52Round = await _ctx.livepeer.rpc.getLipUpgradeRound(52)
-  if (lastClaimRound > LIP52Round.toNumber()) {
+
+  const LIP52Round = (await _ctx.livepeer.rpc.getLipUpgradeRound(52)).toNumber()
+  if (lastClaimRound > LIP52Round) {
     return null
   }
 
@@ -75,11 +76,12 @@ async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
     ['address', 'uint256', 'uint256'],
     [delegator, pendingStake, pendingFees],
   )
+
   const proof = tree.getHexProof(leaf)
 
   if (
     !(await _ctx.livepeer.rpc.verifySnapshot(
-      utils.keccak256('LIP-52'),
+      utils.keccak256(utils.toUtf8Bytes('LIP-52')),
       proof,
       utils.keccak256(leaf),
     ))
