@@ -2477,7 +2477,7 @@ export async function createLivepeerSDK(
     },
 
     async verifySnapshot(id, proof, leafHash) {
-      return await merkleSnapshot.verify(id, proof, leafHash)
+      return await MerkleSnapshot.verify(id, proof, leafHash)
     },
   }
 
