@@ -27,8 +27,6 @@ const nextConfig = {
       exclude: /node_modules/,
       loader: 'graphql-tag/loader',
     })
-    config.plugins.push(new webpack.IgnorePlugin(/^(?:electron)$/))
-    config.resolve.alias['scrypt'] = require.resolve('scrypt.js/js.js')
     return config
   },
 }
