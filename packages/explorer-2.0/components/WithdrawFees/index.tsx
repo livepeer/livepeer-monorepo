@@ -23,8 +23,8 @@ export default ({ delegator, ...props }) => {
             await withdrawFees({
               variables: {
                 delegator: delegator?.id,
-                lastClaiRound:delegator?.lastClaimRound
-              }
+                lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
+              },
             })
           })
         }}

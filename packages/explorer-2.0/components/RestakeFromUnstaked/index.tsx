@@ -5,7 +5,13 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ unbondingLockId, delegate, newPosPrev, newPosNext, delegator}) => {
+export default ({
+  unbondingLockId,
+  delegate,
+  newPosPrev,
+  newPosNext,
+  delegator,
+}) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -27,7 +33,7 @@ export default ({ unbondingLockId, delegate, newPosPrev, newPosNext, delegator})
                 newPosPrev,
                 newPosNext,
                 delegator: delegator?.id,
-                lastClaimRound: delegator?.lastClaimRound
+                lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
               },
             })
           })
