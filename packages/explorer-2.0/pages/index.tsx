@@ -125,6 +125,7 @@ const Home = () => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
+              mt: 3,
               width: '28%',
             }}
           >
