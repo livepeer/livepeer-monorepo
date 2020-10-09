@@ -40,7 +40,7 @@ export default ({ delegator, currentRound, isMyAccount }) => {
   const lastClaimRound = parseInt(delegator?.lastClaimRound?.id, 10)
   const roundsSinceLastClaim = parseInt(currentRound.id, 10) - lastClaimRound
   const mustClaim = roundsSinceLastClaim > 0
-  const withdrawButtonDisabled = mustClaim || delegator.pendingFees === '0'
+  const withdrawButtonDisabled = !mustClaim || delegator.pendingFees === '0'
 
   return (
     <Box sx={{ pt: 4 }}>
