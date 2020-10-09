@@ -342,7 +342,7 @@ export const getHint = (id, transcoders) => {
   } else if (index === 0) {
     // if transcoder is the first in the active set, only set posNex
     hint.newPosNext = transcoders[index + 1].id
-  } else if (index === transcoders.length) {
+  } else if (index === transcoders.length - 1) {
     // if transcoder is the last in the active set, only set posPrev
     hint.newPosPrev = transcoders[index - 1].id
   } else {
