@@ -27,7 +27,8 @@
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer-2.0 --ignore @livepeer/player --ignore @livepeer/chroma",
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
     "updated": "lerna updated --json",
-    "postinstall": "lerna run --stream postinstall"
+    "postinstall": "lerna run --stream postinstall",
+    "version": "lerna version"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
@@ -38,7 +39,7 @@
     "flow-bin": "^0.97.0",
     "husky": "^4.2.5",
     "lcov-result-merger": "^3.0.0",
-    "lerna": "^3.13.3",
+    "lerna": "^3.22.1",
     "now": "^17.1.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1"
