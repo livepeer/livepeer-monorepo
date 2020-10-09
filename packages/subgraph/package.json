@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/subgraph",
   "private": true,
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "create:local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
@@ -24,9 +24,9 @@
     "postinstall": "patch-package"
   },
   "devDependencies": {
-    "apollo-fetch": "^0.7.0",
     "@graphprotocol/graph-cli": "^0.18.0",
     "@graphprotocol/graph-ts": "^0.18.0",
+    "apollo-fetch": "^0.7.0",
     "bignumber.js": "^9.0.0",
     "fs-extra": "^8.1.0",
     "handlebars": "^4.5.2",

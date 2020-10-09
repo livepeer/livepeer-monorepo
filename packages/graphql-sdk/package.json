@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/graphql-sdk",
   "description": "A GraphQL schema that can be used to simplify protocol interactions in the browser or node.js.",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "main/index.js",
   "module": "lib/index.js",

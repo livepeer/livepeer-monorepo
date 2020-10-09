@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/ui",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "dev": "run-p dev:babel",
