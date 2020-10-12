@@ -1,6 +1,15 @@
 import { EarningsTree } from '../../lib/earningsTree'
 import { utils } from 'ethers'
-const earningsSnapshot = require('../../data/earningsTree')
+let earningsSnapshot
+
+if (process.env.NETWORK == 'mainnet') {
+  earningsSnapshot = require('../../data/earningsTree')
+} else if (process.env.NETWORK == 'rinkeby') {
+  earningsSnapshot = require('../../data/earningsTree_rinkeby')
+} else {
+  earningsSnapshot = ''
+}
+
 /**
  * Approve an amount for an ERC20 token transfer
  * @param obj
