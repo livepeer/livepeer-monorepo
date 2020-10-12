@@ -11,7 +11,13 @@ import RoundStatus from '../RoundStatus'
 import { useApolloClient } from '@apollo/react-hooks'
 import UniswapModal from '../UniswapModal'
 
-export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
+export default ({
+  items = [],
+  open,
+  onDrawerOpen,
+  onDrawerClose,
+  bannerDismissed = false,
+}) => {
   const router = useRouter()
   const client = useApolloClient()
   const { asPath } = router
@@ -31,7 +37,7 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
           top: 0,
           position: 'fixed',
           width: '100vw',
-          height: '100vh',
+          height: 'calc(100vh - 41px)',
           backgroundColor: 'rgba(0,0,0,.5)',
           visibility: [visibility, visibility, visibility, 'hidden'],
           zIndex: 100,
@@ -52,7 +58,7 @@ export default ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
           flexDirection: 'column',
           bg: 'background',
           zIndex: 100,
-          height: '100vh',
+          height: bannerDismissed ? '100vh' : 'calc(100vh - 41px)',
           pt: [3, 3, 5],
           pl: 3,
           borderRight: [0, 0, 0, '1px solid'],

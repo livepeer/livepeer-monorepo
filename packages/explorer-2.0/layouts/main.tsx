@@ -26,6 +26,8 @@ import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
 import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
+import { FiArrowRight, FiX } from 'react-icons/fi'
+import Link from 'next/link'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -73,6 +75,7 @@ const Layout = ({
   const mutations = useMutations()
   const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [bannerDismissed, setBannerDismissed] = useState(false)
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
@@ -86,6 +89,12 @@ const Layout = ({
     }
   `
   const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL)
+
+  useEffect(() => {
+    if (window.localStorage.getItem('bannerDismissed')) {
+      setBannerDismissed(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (!isVisible) {
@@ -234,7 +243,65 @@ const Layout = ({
         </Box>
       </Modal>
       <MutationsContext.Provider value={mutations}>
-        <Styled.root sx={{ height: '100vh' }}>
+        <Styled.root sx={{ height: 'calc(100vh - 82px)' }}>
+          {!bannerDismissed && (
+            <Flex
+              sx={{
+                py: 10,
+                px: 2,
+                width: '100%',
+                alignItems: 'center',
+                bg: 'surface',
+                justifyContent: 'center',
+                fontSize: [0, 1, 1, 2],
+              }}
+            >
+              <span
+                sx={{
+                  mr: 2,
+                  pr: 2,
+                  borderRight: '1px solid',
+                  borderColor: 'border',
+                }}
+              >
+                <span sx={{ fontWeight: '600' }}>New:</span>{' '}
+                <span sx={{ display: ['none', 'none', 'inline'] }}>
+                  Automatic earnings at
+                </span>{' '}
+                <span
+                  sx={{ textTransform: ['uppercase', 'uppercase', 'initial'] }}
+                >
+                  r
+                </span>
+                <span>educed gas costs</span>
+              </span>
+              <Link href="/whats-new">
+                <a
+                  sx={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: 'primary',
+                  }}
+                >
+                  Read more <FiArrowRight sx={{ ml: 1 }} />
+                </a>
+              </Link>
+              <FiX
+                onClick={() => {
+                  setBannerDismissed(true)
+                  window.localStorage.setItem('bannerDismissed', 'true')
+                }}
+                sx={{
+                  cursor: 'pointer',
+                  position: 'absolute',
+                  right: 20,
+                  top: 14,
+                }}
+              />
+            </Flex>
+          )}
+
           <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
           <WalletModal />
           <Box
@@ -249,6 +316,7 @@ const Layout = ({
               onDrawerOpen={onDrawerOpen}
               open={drawerOpen}
               items={items}
+              bannerDismissed={bannerDismissed}
             />
             <Flex
               sx={{

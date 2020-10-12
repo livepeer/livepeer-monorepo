@@ -70,9 +70,6 @@ export const getDelegatorStatus = (
 export const MAXIUMUM_VALUE_UINT256 =
   '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
-export const MAX_EARNINGS_CLAIMS_ROUNDS = 100
-export const MAX_BATCH_CLAIM_ROUNDS = 50
-
 export function removeURLParameter(url, parameter) {
   //prefer to use l.search if you have a location/link object
   var urlparts = url.split('?')
@@ -345,7 +342,7 @@ export const getHint = (id, transcoders) => {
   } else if (index === 0) {
     // if transcoder is the first in the active set, only set posNex
     hint.newPosNext = transcoders[index + 1].id
-  } else if (index === transcoders.length) {
+  } else if (index === transcoders.length - 1) {
     // if transcoder is the last in the active set, only set posPrev
     hint.newPosPrev = transcoders[index - 1].id
   } else {

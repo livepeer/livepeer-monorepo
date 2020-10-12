@@ -8,6 +8,7 @@ import {
   encodeSignature,
 } from 'ethjs-abi'
 import ENS from 'ethjs-ens'
+
 import LivepeerTokenArtifact from '../etc/LivepeerToken'
 import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
 import ControllerArtifact from '../etc/Controller'
@@ -16,6 +17,7 @@ import BondingManagerArtifact from '../etc/BondingManager'
 import MinterArtifact from '../etc/Minter'
 import PollCreatorArtifact from '../etc/PollCreator'
 import PollArtifact from '../etc/Poll'
+import MerkleSnapshotArtifact from '../etc/MerkleSnapshot'
 import { VIDEO_PROFILES } from './video_profiles.js'
 
 // Constants
@@ -53,14 +55,15 @@ export const DEFAULTS = {
     Minter: MinterArtifact,
     PollCreator: PollCreatorArtifact,
     Poll: PollArtifact,
+    MerkleSnapshot: MerkleSnapshotArtifact,
   },
   ensRegistries: {
     // Mainnet
-    '1': '0x314159265dd8dbb310642f98f50c066173c1259b',
+    1: '0x314159265dd8dbb310642f98f50c066173c1259b',
     // Ropsten
-    '3': '0x112234455c3a32fd11230c42e7bccd4a84e02010',
+    3: '0x112234455c3a32fd11230c42e7bccd4a84e02010',
     // Rinkeby
-    '4': '0xe7410170f87102df0055eb195163a03b7f2bff4a',
+    4: '0xe7410170f87102df0055eb195163a03b7f2bff4a',
   },
 }
 
@@ -384,6 +387,7 @@ export async function initContracts(
     BondingManager: null,
     RoundsManager: null,
     Minter: null,
+    MerkleSnapshot: null,
   }
   const hashes = {
     LivepeerToken: {},
@@ -391,6 +395,7 @@ export async function initContracts(
     BondingManager: {},
     RoundsManager: {},
     Minter: {},
+    MerkleSnapshot: {},
   }
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
@@ -503,6 +508,7 @@ export async function createLivepeerSDK(
     RoundsManager,
     Minter,
     PollCreator,
+    MerkleSnapshot,
   } = config.contracts
   const { resolveAddress } = utils
 
@@ -1663,6 +1669,10 @@ export async function createLivepeerSDK(
       }
     },
 
+    async getLipUpgradeRound(lipNumber) {
+      return (await RoundsManager.lipUpgradeRound(lipNumber))[0]
+    },
+
     /**
      * Gets LPT from the faucet
      * @memberof livepeer~rpc
@@ -2128,6 +2138,40 @@ export async function createLivepeerSDK(
       )
     },
 
+    getCalldata(
+      contractName: string,
+      methodName: string,
+      methodArgs: Array,
+    ): string {
+      const contractABI = config.abis[contractName]
+      const methodABI = utils.findAbiByName(contractABI, methodName)
+      return utils.encodeMethodParams(methodABI, methodArgs)
+    },
+
+    async estimateGasRaw(tx) {
+      const gasRate = 1.2
+      return Math.round(
+        toNumber(
+          await config.eth.estimateGas({
+            ...tx,
+          }),
+        ) * gasRate,
+      )
+    },
+
+    async sendTransaction(tx = config.defaultTx): Promise<TxReceipt> {
+      const txHash = await config.eth.sendTransaction({
+        ...config.defaultTx,
+        ...tx,
+      })
+
+      if (tx.returnTxHash) {
+        return txHash
+      }
+
+      return await utils.getTxReceipt(txHash, config.eth)
+    },
+
     /**
      * Unbonds LPT from an address
      * @memberof livepeer~rpc
@@ -2430,6 +2474,10 @@ export async function createLivepeerSDK(
         return txHash
       }
       return await utils.getTxReceipt(txHash, config.eth)
+    },
+
+    async verifySnapshot(id, proof, leafHash) {
+      return await MerkleSnapshot.verify(id, proof, leafHash)
     },
   }
 

@@ -9,25 +9,25 @@ type Mutation {
   approve(type: String!, amount: String!): JSON
   
   "Submits a bond transaction for a previously approved amount"
-  bond(amount: String!, to: String!, oldDelegateNewPosPrev: String!, oldDelegateNewPosNext: String!, currDelegateNewPosPrev: String!, currDelegateNewPosNext: String!): JSON
+  bond(amount: String!, to: String!, oldDelegateNewPosPrev: String!, oldDelegateNewPosNext: String!, currDelegateNewPosPrev: String!, currDelegateNewPosNext: String!, delegator: String!, lastClaimRound: Int!): JSON
   
   "Claims earnings from your last claim round through specified round"
   batchClaimEarnings(lastClaimRound: String!, endRound: String!): JSON
   
   "Submits a bond transaction for a previously approved amount"
-  unbond(amount: String!, newPosPrev: String!, newPosNext: String!): JSON
+  unbond(amount: String!, newPosPrev: String!, newPosNext: String!, delegator: String!, lastClaimRound: Int!): JSON
   
   "Withdraws unbonded stake into account wallet"
   withdrawStake(unbondingLockId: Int!): JSON
 
   "Withdraws pending fees into account wallet"
-  withdrawFees: JSON
+  withdrawFees(delegator: String!, lastClaimRound: Int!): JSON
   
   "Rebond tokens for an unbonding lock to a delegator's current delegate while a delegator is in the Bonded or Pending states"
-  rebond(unbondingLockId: Int!, newPosPrev: String!, newPosNext: String!): JSON
+  rebond(unbondingLockId: Int!, newPosPrev: String!, newPosNext: String!, delegator: String!, lastClaimRound: Int!): JSON
   
   "Rebond tokens for an unbonding lock to a delegate while a delegator is in the Unbonded state "
-  rebondFromUnbonded(delegate: String!, unbondingLockId: Int!, newPosPrev: String!, newPosNext: String!): JSON
+  rebondFromUnbonded(delegate: String!, unbondingLockId: Int!, newPosPrev: String!, newPosNext: String!, delegator: String!, lastClaimRound: Int!): JSON
   
   "Submits a round initialization transaction"
   initializeRound: JSON

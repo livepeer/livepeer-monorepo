@@ -404,6 +404,7 @@ const Poll = () => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
+              mt: 3,
               minWidth: '31%',
             }}
           >

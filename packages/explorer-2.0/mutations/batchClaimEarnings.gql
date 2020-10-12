@@ -1,3 +1,0 @@
-mutation batchClaimEarnings($lastClaimRound: String!, $endRound: String!) {
-  tx: batchClaimEarnings(lastClaimRound: $lastClaimRound, endRound: $endRound)
-}

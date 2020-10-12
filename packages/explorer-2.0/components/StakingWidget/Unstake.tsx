@@ -6,7 +6,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ amount, newPosPrev, newPosNext, disabled }) => {
+export default ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -23,13 +23,19 @@ export default ({ amount, newPosPrev, newPosNext, disabled }) => {
         variant="red"
         onClick={() => {
           initTransaction(client, async () => {
-            await unbond({
-              variables: {
-                amount: Utils.toWei(amount ? amount.toString() : '0'),
-                newPosPrev,
-                newPosNext,
-              },
-            })
+            try {
+              await unbond({
+                variables: {
+                  amount: Utils.toWei(amount ? amount.toString() : '0'),
+                  newPosPrev,
+                  newPosNext,
+                  delegator: delegator?.id,
+                  lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
+                },
+              })
+            } catch (err) {
+              console.log(err)
+            }
           })
         }}
         sx={{ width: '100%' }}

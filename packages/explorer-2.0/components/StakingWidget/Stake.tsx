@@ -13,6 +13,7 @@ export default ({
   oldDelegateNewPosNext,
   currDelegateNewPosPrev,
   currDelegateNewPosNext,
+  delegator,
   disabled,
 }) => {
   const client = useApolloClient()
@@ -29,16 +30,22 @@ export default ({
         disabled={disabled}
         onClick={() => {
           initTransaction(client, async () => {
-            await bond({
-              variables: {
-                amount: Utils.toWei(amount ? amount.toString() : '0'),
-                to,
-                oldDelegateNewPosPrev,
-                oldDelegateNewPosNext,
-                currDelegateNewPosPrev,
-                currDelegateNewPosNext,
-              },
-            })
+            try {
+              await bond({
+                variables: {
+                  amount: Utils.toWei(amount ? amount.toString() : '0'),
+                  to,
+                  oldDelegateNewPosPrev,
+                  oldDelegateNewPosNext,
+                  currDelegateNewPosPrev,
+                  currDelegateNewPosNext,
+                  delegator: delegator?.id,
+                  lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
+                },
+              })
+            } catch (err) {
+              console.log(err)
+            }
             // If user staked inside tour, close tour after staking
             client.writeData({
               data: {

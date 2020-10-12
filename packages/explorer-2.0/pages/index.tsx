@@ -7,7 +7,6 @@ import Spinner from '../components/Spinner'
 import { useWeb3React } from '@web3-react/core'
 import { getLayout } from '../layouts/main'
 import { withApollo } from '../lib/apollo'
-import ClaimBanner from '../components/ClaimBanner'
 import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Utils from 'web3-utils'
@@ -102,12 +101,6 @@ const Home = () => {
                   )}
               </Box>
             )}
-            {context.active && dataMyAccount?.delegator?.lastClaimRound && (
-              <ClaimBanner
-                delegator={dataMyAccount.delegator}
-                currentRound={data.protocol.currentRound}
-              />
-            )}
             <h1
               sx={{
                 fontWeight: 600,
@@ -132,6 +125,7 @@ const Home = () => {
               position: 'sticky',
               alignSelf: 'flex-start',
               top: 5,
+              mt: 3,
               width: '28%',
             }}
           >

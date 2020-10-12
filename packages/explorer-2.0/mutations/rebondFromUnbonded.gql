@@ -3,11 +3,15 @@ mutation rebondFromUnbonded(
   $delegate: String!
   $newPosPrev: String!
   $newPosNext: String!
+  $delegator: String!
+  $lastClaimRound: Int!
 ) {
   tx: rebondFromUnbonded(
     unbondingLockId: $unbondingLockId
     delegate: $delegate
     newPosPrev: $newPosPrev
     newPosNext: $newPosNext
+    delegator: $delegator
+    lastClaimRound: $lastClaimRound
   )
 }
