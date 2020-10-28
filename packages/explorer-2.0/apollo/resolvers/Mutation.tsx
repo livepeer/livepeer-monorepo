@@ -306,7 +306,7 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
 
   let data = _ctx.livepeer.rpc.getCalldata(
     'BondingManager',
-    'rebondFromUnbonded',
+    'rebondFromUnbondedWithHint',
     [delegate, unbondingLockId, newPosPrev, newPosNext],
   )
 
