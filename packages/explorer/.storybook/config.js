@@ -7,12 +7,12 @@ import Reset from '../lib/reset'
 const req = require.context('../components', true, /.stories.tsx$/)
 
 function loadStories() {
-  req.keys().forEach(filename => req(filename))
+  req.keys().forEach((filename) => req(filename))
 }
 
 configure(loadStories, module)
 
-const ThemeDecorator = storyFn => (
+const ThemeDecorator = (storyFn) => (
   <ThemeProvider theme={theme}>
     <Reset />
     <ColorMode />

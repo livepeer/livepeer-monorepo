@@ -117,7 +117,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     })()
   }, [debouncedSignature, debouncedEthereumAccount, message])
 
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     setPreviewImage(e.target.result)
   }
 

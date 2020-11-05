@@ -2,7 +2,7 @@ import { CircularProgressbar } from 'react-circular-progressbar'
 import { Box } from 'theme-ui'
 import { Flex } from '@theme-ui/components'
 
-export default props => {
+export default (props) => {
   const { children, ...otherProps } = props
 
   return (

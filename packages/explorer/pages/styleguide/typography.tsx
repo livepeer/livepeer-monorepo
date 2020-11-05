@@ -1,7 +1,7 @@
 import { Styled, useThemeUI } from 'theme-ui'
 import { TypeScale, TypeStyle } from '@theme-ui/style-guide'
 
-const Row = props => (
+const Row = (props) => (
   <div
     {...props}
     sx={{
@@ -28,7 +28,7 @@ export default () => {
         <div>
           <Styled.h3 sx={{ mb: 3 }}>Font Families</Styled.h3>
           <Row>
-            {Object.keys(fonts).map(name => (
+            {Object.keys(fonts).map((name) => (
               <div key={name}>
                 <TypeStyle fontFamily={name} fontSize={6}>
                   Aa
@@ -45,7 +45,7 @@ export default () => {
         <div>
           <Styled.h3>Font Weights</Styled.h3>
           <Row>
-            {Object.keys(fontWeights).map(name => (
+            {Object.keys(fontWeights).map((name) => (
               <div key={name}>
                 <TypeStyle fontSize={6} fontWeight={name}>
                   {fontWeights[name]}
@@ -60,7 +60,7 @@ export default () => {
         <div>
           <Styled.h3>Line Heights</Styled.h3>
           <Row>
-            {Object.keys(lineHeights).map(name => (
+            {Object.keys(lineHeights).map((name) => (
               <div key={name}>
                 <TypeStyle fontSize={6} lineHeight={name}>
                   {lineHeights[name]}

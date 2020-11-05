@@ -118,7 +118,7 @@ export default ({
           required={required}
           defaultValue={defaultValue}
           value={value}
-          onChange={onChange ? onChange : e => setScopedValue(e.target.value)}
+          onChange={onChange ? onChange : (e) => setScopedValue(e.target.value)}
           ref={inputRef}
           name={name}
           sx={{

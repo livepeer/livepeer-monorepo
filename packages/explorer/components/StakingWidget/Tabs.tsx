@@ -4,9 +4,9 @@ import {
   Tab as ReachTab,
 } from '@reach/tabs'
 
-export const Tabs = props => <ReachTabs {...props} />
+export const Tabs = (props) => <ReachTabs {...props} />
 
-export const TabList = props => (
+export const TabList = (props) => (
   <ReachTabList
     sx={{
       display: 'flex',
@@ -21,7 +21,7 @@ export const TabList = props => (
   />
 )
 
-export const Tab = props => (
+export const Tab = (props) => (
   <ReachTab
     sx={{
       flex: 1,

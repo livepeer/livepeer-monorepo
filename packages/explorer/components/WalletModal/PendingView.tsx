@@ -22,7 +22,7 @@ export default ({ connector }) => {
         <Spinner speed="1.5s" sx={{ width: 20, height: 20, mr: 2 }} />
         Initializing
       </Flex>
-      {Object.keys(SUPPORTED_WALLETS).map(key => {
+      {Object.keys(SUPPORTED_WALLETS).map((key) => {
         const option = SUPPORTED_WALLETS[key]
         if (option.connector === connector) {
           if (option.connector === Injected) {
