@@ -4,7 +4,7 @@ interface Props {
   children: JSX.Element[] | JSX.Element
 }
 
-export default ({ header = null, onScroll, children, ...props }: Props) => (
+const Index = ({ header = null, onScroll, children, ...props }: Props) => (
   <div onScroll={onScroll} sx={{ width: '100%' }} {...props}>
     {header && (
       <div sx={{ pb: 2, borderBottom: '1px solid', borderColor: 'border' }}>
@@ -14,3 +14,5 @@ export default ({ header = null, onScroll, children, ...props }: Props) => (
     <div>{children}</div>
   </div>
 )
+
+export default Index

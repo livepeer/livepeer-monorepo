@@ -1,6 +1,6 @@
 import { Flex, Box } from 'theme-ui'
 
-export default ({
+const Option = ({
   link = null,
   clickable = true,
   size = null,
@@ -47,3 +47,5 @@ export default ({
   }
   return content
 }
+
+export default Option

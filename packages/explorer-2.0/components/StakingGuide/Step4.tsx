@@ -9,7 +9,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import accountQuery from '../../queries/account.gql'
 
-export default ({ goTo, nextStep }) => {
+const Step4 = ({ goTo, nextStep }) => {
   const client = useApolloClient()
   const context = useWeb3React()
   const [copied, setCopied] = useState(false)
@@ -124,3 +124,5 @@ export default ({ goTo, nextStep }) => {
     </div>
   )
 }
+
+export default Step4

@@ -16,7 +16,7 @@ import moment from 'moment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import historyQuery from '../../queries/historyView.gql'
 
-export default () => {
+const Index = () => {
   const router = useRouter()
   const query = router.query
   const account = query.account as string
@@ -114,6 +114,8 @@ export default () => {
     </InfiniteScroll>
   )
 }
+
+export default Index
 
 function renderSwitch(transaction: any, i: number) {
   switch (transaction.__typename) {

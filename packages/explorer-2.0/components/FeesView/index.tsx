@@ -9,7 +9,7 @@ import Help from '../../public/img/help.svg'
 import Link from 'next/link'
 import WithdrawFees from '../WithdrawFees'
 
-export default ({ delegator, currentRound, isMyAccount }) => {
+const Index = ({ delegator, currentRound, isMyAccount }) => {
   if (!delegator?.bondedAmount) {
     if (isMyAccount) {
       return (
@@ -189,3 +189,5 @@ export default ({ delegator, currentRound, isMyAccount }) => {
     </Box>
   )
 }
+
+export default Index

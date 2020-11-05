@@ -1,6 +1,6 @@
 import { Flex } from 'theme-ui'
 
-export default ({ avatar = null, children, ...props }) => {
+const Index = ({ avatar = null, children, ...props }) => {
   return (
     <Flex
       sx={{
@@ -23,3 +23,5 @@ export default ({ avatar = null, children, ...props }) => {
     </Flex>
   )
 }
+
+export default Index

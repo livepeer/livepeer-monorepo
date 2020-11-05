@@ -23,7 +23,7 @@ const ActiveCircle = ({ active }, props) => {
   )
 }
 
-export default ({ threeBoxSpace, active, address }) => {
+const Index = ({ threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
       <Flex sx={{ minWidth: 40, minHeight: 40, position: 'relative', mr: 2 }}>
@@ -101,3 +101,5 @@ export default ({ threeBoxSpace, active, address }) => {
     </Flex>
   )
 }
+
+export default Index

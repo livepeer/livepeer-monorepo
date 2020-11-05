@@ -1,6 +1,6 @@
 import { Styled } from 'theme-ui'
 
-export default ({
+const Index = ({
   as = 'button',
   variant = 'primary',
   size = 'normal',
@@ -30,3 +30,5 @@ export default ({
     }}
   />
 )
+
+export default Index

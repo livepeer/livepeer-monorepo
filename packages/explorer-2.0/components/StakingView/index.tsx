@@ -10,7 +10,7 @@ import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
 import Button from '../Button'
 
-export default ({ delegator, transcoders, protocol, currentRound }) => {
+const Index = ({ delegator, transcoders, protocol, currentRound }) => {
   const router = useRouter()
   const query = router.query
   const context = useWeb3React()
@@ -382,3 +382,5 @@ export default ({ delegator, transcoders, protocol, currentRound }) => {
     </Box>
   )
 }
+
+export default Index

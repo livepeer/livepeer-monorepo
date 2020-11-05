@@ -1,4 +1,4 @@
-export default ({ label, variant = 'primary', ...props }) => (
+const Index = ({ label, variant = 'primary', ...props }) => (
   <div
     sx={{
       borderRadius: 1000,
@@ -14,3 +14,5 @@ export default ({ label, variant = 'primary', ...props }) => (
     {label}
   </div>
 )
+
+export default Index

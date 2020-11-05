@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Styled } from 'theme-ui'
 
-export default ({
+const Index = ({
   disabled = false,
   onFocus = null,
   onBlur = null,
@@ -118,7 +118,7 @@ export default ({
           required={required}
           defaultValue={defaultValue}
           value={value}
-          onChange={onChange ? onChange : e => setScopedValue(e.target.value)}
+          onChange={onChange ? onChange : (e) => setScopedValue(e.target.value)}
           ref={inputRef}
           name={name}
           sx={{
@@ -155,3 +155,5 @@ export default ({
     </div>
   )
 }
+
+export default Index

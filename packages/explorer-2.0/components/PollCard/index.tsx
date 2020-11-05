@@ -1,7 +1,7 @@
 import { Flex } from 'theme-ui'
 import { Box } from 'theme-ui'
 
-export default ({ ...props }) => {
+const Index = ({ ...props }) => {
   return (
     <Flex
       sx={{
@@ -35,3 +35,5 @@ export default ({ ...props }) => {
     </Flex>
   )
 }
+
+export default Index

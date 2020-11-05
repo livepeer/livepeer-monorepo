@@ -10,7 +10,7 @@ interface Props {
   title?: JSX.Element | string
 }
 
-export default ({ onDrawerOpen, title }: Props) => {
+const Index = ({ onDrawerOpen, title }: Props) => {
   const client = useApolloClient()
   const { active, account } = useWeb3React()
 
@@ -80,3 +80,5 @@ export default ({ onDrawerOpen, title }: Props) => {
     </Flex>
   )
 }
+
+export default Index

@@ -2,7 +2,7 @@ import { Styled } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
-export default ({ goTo, nextStep }) => {
+const Step1 = ({ goTo, nextStep }) => {
   const GET_WALLET_MODAL_STATUS = gql`
     {
       walletModalOpen @client
@@ -21,3 +21,5 @@ export default ({ goTo, nextStep }) => {
     </div>
   )
 }
+
+export default Step1

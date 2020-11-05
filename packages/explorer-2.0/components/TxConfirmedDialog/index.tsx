@@ -12,7 +12,7 @@ import Confetti from 'react-confetti'
 import Link from 'next/link'
 import Router from 'next/router'
 
-export default ({ tx, isOpen, onDismiss }) => {
+const Index = ({ tx, isOpen, onDismiss }) => {
   if (!isOpen) {
     return null
   }
@@ -40,6 +40,8 @@ export default ({ tx, isOpen, onDismiss }) => {
     </Modal>
   )
 }
+
+export default Index
 
 function renderSwitch({ tx, onDismiss }) {
   const { width, height } = useWindowSize()

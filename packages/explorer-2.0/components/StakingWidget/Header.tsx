@@ -1,7 +1,7 @@
 import { Styled, Flex } from 'theme-ui'
 import QRCode from 'qrcode.react'
 
-export default ({ transcoder }) => {
+const Header = ({ transcoder }) => {
   return (
     <Styled.h4
       as="h3"
@@ -58,3 +58,5 @@ export default ({ transcoder }) => {
     </Styled.h4>
   )
 }
+
+export default Header

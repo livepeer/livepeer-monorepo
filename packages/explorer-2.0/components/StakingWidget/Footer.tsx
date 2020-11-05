@@ -25,7 +25,7 @@ interface Props {
   account: Account
 }
 
-export default ({
+const Footer = ({
   transcoders,
   delegator,
   transcoder,
@@ -75,19 +75,10 @@ export default ({
         ? parseFloat(Utils.fromWei(delegator.pendingStake))
         : 0,
     )
-
   const isMyTranscoder = delegator?.delegate?.id === transcoder?.id
   const sufficientStake = delegator && amount && parseFloat(amount) <= stake
-  const roundsSinceLastClaim =
-    currentRound &&
-    delegator &&
-    delegator.lastClaimRound &&
-    parseInt(currentRound.id, 10) - parseInt(delegator.lastClaimRound.id, 10)
-
   const canStake = sufficientBalance && approved && sufficientTransferAllowance
-
   const canUnstake = isMyTranscoder && isStaked && parseFloat(amount) > 0
-
   const newActiveSetOrder = simulateNewActiveSetOrder({
     action,
     transcoders: JSON.parse(JSON.stringify(transcoders)),
@@ -95,12 +86,10 @@ export default ({
     newDelegate: transcoder.id,
     oldDelegate: delegator?.delegate?.id,
   })
-
   const { newPosPrev, newPosNext } = getHint(
     delegator?.delegate?.id,
     newActiveSetOrder,
   )
-
   const {
     newPosPrev: currDelegateNewPosPrev,
     newPosNext: currDelegateNewPosNext,
@@ -156,6 +145,8 @@ export default ({
     </>
   )
 }
+
+export default Footer
 
 function renderStakeWarnings(
   amount,

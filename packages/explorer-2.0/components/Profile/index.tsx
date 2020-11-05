@@ -30,7 +30,7 @@ interface Props {
   status: string
 }
 
-export default ({
+const Index = ({
   account,
   role = 'Orchestrator',
   hasLivepeerToken,
@@ -295,3 +295,5 @@ export default ({
     </Box>
   )
 }
+
+export default Index

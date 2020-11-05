@@ -12,7 +12,7 @@ const REMOVE_ADDRESS_LINK = gql`
   }
 `
 
-export default ({ threeBoxSpace, refetch, children }) => {
+const Index = ({ threeBoxSpace, refetch, children }) => {
   const [open, setOpen] = useState(false)
   const context = useWeb3React()
   const [removeAddressLink] = useMutation(REMOVE_ADDRESS_LINK)
@@ -132,3 +132,5 @@ export default ({ threeBoxSpace, refetch, children }) => {
     </div>
   )
 }
+
+export default Index

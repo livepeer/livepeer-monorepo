@@ -37,7 +37,7 @@ const GET_DATA = gql`
   }
 `
 
-export default () => {
+const Index = () => {
   const router = useRouter()
   const isVisible = usePageVisibility()
   const query = router.query
@@ -138,3 +138,5 @@ export default () => {
     </InfiniteScroll>
   )
 }
+
+export default Index

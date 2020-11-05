@@ -9,7 +9,7 @@ import Utils from 'web3-utils'
 import moment from 'moment'
 import { MdOpenInNew } from 'react-icons/md'
 
-export default ({ tx, isOpen, onDismiss }) => {
+const Index = ({ tx, isOpen, onDismiss }) => {
   if (!isOpen) {
     return null
   }
@@ -64,6 +64,8 @@ export default ({ tx, isOpen, onDismiss }) => {
     </Modal>
   )
 }
+
+export default Index
 
 function Table({ tx, timeLeft }) {
   return (

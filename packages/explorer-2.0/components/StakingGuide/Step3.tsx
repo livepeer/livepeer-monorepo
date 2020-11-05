@@ -2,7 +2,7 @@ import { Styled } from 'theme-ui'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
-export default ({ goTo, nextStep }) => {
+const Step3 = ({ goTo, nextStep }) => {
   const GET_UNISWAP_MODAL_STATUS = gql`
     {
       uniswapModalOpen @client
@@ -23,3 +23,5 @@ export default ({ goTo, nextStep }) => {
     </div>
   )
 }
+
+export default Step3

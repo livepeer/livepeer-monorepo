@@ -1,4 +1,4 @@
-export default ({ children }) => {
+const Warning = ({ children }) => {
   return (
     <div
       sx={{
@@ -13,3 +13,5 @@ export default ({ children }) => {
     </div>
   )
 }
+
+export default Warning

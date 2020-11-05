@@ -3,7 +3,7 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import CloseIcon from '../../public/img/close.svg'
 
-export default ({ children }) => {
+const Index = ({ children }) => {
   const client = useApolloClient()
   const GET_UNISWAP_MODAL_STATUS = gql`
     {
@@ -51,3 +51,5 @@ export default ({ children }) => {
     </DialogOverlay>
   )
 }
+
+export default Index
