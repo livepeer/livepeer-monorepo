@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "run-p dev:next",
-    "dev:rinkeby": "dotenv -e .env.rinkeby next -- -p 3009",
-    "dev:next": "next -- -p 3009",
+    "dev:rinkeby": "dotenv -e .env.rinkeby next",
+    "dev:next": "next",
     "build": "next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook"
