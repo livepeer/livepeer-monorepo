@@ -58,7 +58,7 @@ function hasExistingProfile(profile) {
   return profile.name || profile.website || profile.description || profile.image
 }
 
-export default ({ threeBoxSpace, refetch, account }: Props) => {
+const Index = ({ threeBoxSpace, refetch, account }: Props) => {
   const context = useWeb3React()
   const { register, handleSubmit, formState, watch } = useForm()
   const [previewImage, setPreviewImage] = useState(null)
@@ -117,7 +117,7 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     })()
   }, [debouncedSignature, debouncedEthereumAccount, message])
 
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     setPreviewImage(e.target.result)
   }
 
@@ -639,3 +639,5 @@ export default ({ threeBoxSpace, refetch, account }: Props) => {
     </>
   )
 }
+
+export default Index

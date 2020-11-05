@@ -16,7 +16,7 @@ interface Props {
   ref?: any
 }
 
-export default ({
+const Index = ({
   isOpen = false,
   setOpen,
   Icon,
@@ -89,3 +89,5 @@ export default ({
     </>
   )
 }
+
+export default Index

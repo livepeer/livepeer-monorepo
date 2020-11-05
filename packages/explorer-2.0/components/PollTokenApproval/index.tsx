@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 
-export default () => {
+const Index = () => {
   const client = useApolloClient()
   const { approve }: any = useContext(MutationsContext)
 
@@ -24,3 +24,5 @@ export default () => {
     </>
   )
 }
+
+export default Index

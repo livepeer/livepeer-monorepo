@@ -5,7 +5,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ delegator, ...props }) => {
+const Index = ({ delegator, ...props }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -35,3 +35,5 @@ export default ({ delegator, ...props }) => {
     </>
   )
 }
+
+export default Index
