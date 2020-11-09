@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 
-export default ({ account, banner = true }) => {
+const Index = ({ account, banner = true }) => {
   const context = useWeb3React()
   const client = useApolloClient()
   const { approve }: any = useContext(MutationsContext)
@@ -72,3 +72,5 @@ export default ({ account, banner = true }) => {
 
   return element
 }
+
+export default Index

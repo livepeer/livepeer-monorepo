@@ -4,7 +4,7 @@ import Input from './Input'
 import Utils from 'web3-utils'
 import ReactTooltip from 'react-tooltip'
 
-export default ({
+const InputBox = ({
   account,
   action,
   delegator,
@@ -102,3 +102,5 @@ export default ({
     </div>
   )
 }
+
+export default InputBox

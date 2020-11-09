@@ -18,7 +18,7 @@ const GET_ROUND_MODAL_STATUS = gql`
   }
 `
 
-export default () => {
+const Index = () => {
   const isVisible = usePageVisibility()
   const { data: modalData } = useQuery(GET_ROUND_MODAL_STATUS)
   const pollInterval = 60000
@@ -219,3 +219,5 @@ export default () => {
     </Flex>
   )
 }
+
+export default Index

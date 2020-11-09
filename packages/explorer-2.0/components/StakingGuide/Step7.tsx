@@ -1,6 +1,6 @@
 import { Styled } from 'theme-ui'
 
-export default () => {
+const Step7 = () => {
   return (
     <div sx={{ py: 1 }}>
       <Styled.h2 sx={{ mb: 2 }}>Stake</Styled.h2>
@@ -11,3 +11,5 @@ export default () => {
     </div>
   )
 }
+
+export default Step7

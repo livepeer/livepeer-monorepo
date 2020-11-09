@@ -6,7 +6,7 @@ import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
 import { initTransaction } from '../../lib/utils'
 
-export default ({
+const Stake = ({
   to,
   amount,
   oldDelegateNewPosPrev,
@@ -61,3 +61,5 @@ export default ({
     </>
   )
 }
+
+export default Stake

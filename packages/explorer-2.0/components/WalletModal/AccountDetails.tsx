@@ -7,7 +7,7 @@ import { Flex } from 'theme-ui'
 import Button from '../Button'
 import { SUPPORTED_WALLETS } from '../../lib/constants'
 
-export default ({ onClose, openOptions }) => {
+const AccountDetails = ({ onClose, openOptions }) => {
   const { account, connector } = useWeb3React()
 
   function formatConnectorName() {
@@ -15,11 +15,11 @@ export default ({ onClose, openOptions }) => {
       window['ethereum'] && window['ethereum'].isMetaMask ? true : false
     const name = Object.keys(SUPPORTED_WALLETS)
       .filter(
-        k =>
+        (k) =>
           SUPPORTED_WALLETS[k].connector === connector &&
           (connector !== Injected || isMetaMask === (k === 'METAMASK')),
       )
-      .map(k => SUPPORTED_WALLETS[k].name)[0]
+      .map((k) => SUPPORTED_WALLETS[k].name)[0]
     return <Box>{name}</Box>
   }
 
@@ -89,3 +89,5 @@ export default ({ onClose, openOptions }) => {
     </Box>
   )
 }
+
+export default AccountDetails

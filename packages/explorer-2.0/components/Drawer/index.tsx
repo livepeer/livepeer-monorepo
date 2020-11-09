@@ -11,7 +11,7 @@ import RoundStatus from '../RoundStatus'
 import { useApolloClient } from '@apollo/react-hooks'
 import UniswapModal from '../UniswapModal'
 
-export default ({
+const Index = ({
   items = [],
   open,
   onDrawerOpen,
@@ -250,3 +250,5 @@ export default ({
     </>
   )
 }
+
+export default Index

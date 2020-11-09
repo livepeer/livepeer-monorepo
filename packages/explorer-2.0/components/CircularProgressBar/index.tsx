@@ -2,7 +2,7 @@ import { CircularProgressbar } from 'react-circular-progressbar'
 import { Box } from 'theme-ui'
 import { Flex } from '@theme-ui/components'
 
-export default props => {
+const Index = (props) => {
   const { children, ...otherProps } = props
 
   return (
@@ -31,3 +31,5 @@ export default props => {
     </Box>
   )
 }
+
+export default Index

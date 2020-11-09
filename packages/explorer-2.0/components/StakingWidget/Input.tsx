@@ -6,7 +6,7 @@ let hoursPerYear = 8760
 let averageHoursPerRound = 21
 let roundsPerYear = hoursPerYear / averageHoursPerRound
 
-export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
+const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
   const totalSupply = Number(Utils.fromWei(protocol.totalTokenSupply))
@@ -76,6 +76,8 @@ export default ({ transcoder, value = '', onChange, protocol, ...props }) => {
     </div>
   )
 }
+
+export default Input
 
 function calculateAnnualROI({
   rewardCut,

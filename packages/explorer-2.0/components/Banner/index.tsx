@@ -8,7 +8,7 @@ interface Props {
   sx?: object
 }
 
-export default ({ open = true, label, button, ...props }: Props) =>
+const Index = ({ open = true, label, button, ...props }: Props) =>
   !open ? null : (
     <Box
       sx={{
@@ -27,3 +27,5 @@ export default ({ open = true, label, button, ...props }: Props) =>
       </Box>
     </Box>
   )
+
+export default Index

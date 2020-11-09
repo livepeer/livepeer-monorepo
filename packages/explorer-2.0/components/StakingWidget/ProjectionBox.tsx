@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { abbreviateNumber } from '../../lib/utils'
 
-export default ({ action }) => {
+const ProjectionBox = ({ action }) => {
   const GET_ROI = gql`
     {
       roi @client
@@ -56,3 +56,5 @@ export default ({ action }) => {
     </div>
   )
 }
+
+export default ProjectionBox

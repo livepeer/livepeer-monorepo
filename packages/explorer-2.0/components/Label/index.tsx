@@ -1,4 +1,4 @@
-export default ({ children, ...props }) => (
+const Index = ({ children, ...props }) => (
   <div
     {...props}
     sx={{
@@ -13,3 +13,5 @@ export default ({ children, ...props }) => (
     {children}
   </div>
 )
+
+export default Index

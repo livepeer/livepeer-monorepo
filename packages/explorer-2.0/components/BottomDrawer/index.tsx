@@ -14,7 +14,8 @@ const slideUp = keyframes`
     transform: translate3d(0,0%,0);
   }
 `
-export default ({ children }) => {
+
+const Index = ({ children }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
 
@@ -67,3 +68,5 @@ export default ({ children }) => {
     </Box>
   )
 }
+
+export default Index

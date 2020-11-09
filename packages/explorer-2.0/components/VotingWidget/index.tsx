@@ -14,7 +14,7 @@ import Copy from '../../public/img/copy.svg'
 import { useState, useEffect } from 'react'
 import Modal from '../Modal'
 
-export default ({ data }) => {
+const Index = ({ data }) => {
   const context = useWeb3React()
   const client = useApolloClient()
   const [copied, setCopied] = useState(false)
@@ -356,6 +356,8 @@ export default ({ data }) => {
     </Box>
   )
 }
+
+export default Index
 
 function renderVoteButton(data) {
   switch (data?.vote?.choiceID) {

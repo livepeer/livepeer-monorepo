@@ -6,7 +6,7 @@ const rotate = keyframes`
   }
 `
 
-export default ({ speed = '1s', ...props }) => (
+const Index = ({ speed = '1s', ...props }) => (
   <div
     {...props}
     sx={{
@@ -23,3 +23,5 @@ export default ({ speed = '1s', ...props }) => (
     }}
   ></div>
 )
+
+export default Index

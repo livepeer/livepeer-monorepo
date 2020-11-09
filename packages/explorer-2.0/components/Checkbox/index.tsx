@@ -1,6 +1,6 @@
 import Check from '../../public/img/check.svg'
 
-export default ({ isActive = false, ...props }) => (
+const Index = ({ isActive = false, ...props }) => (
   <div
     {...props}
     sx={{
@@ -19,3 +19,5 @@ export default ({ isActive = false, ...props }) => (
     {isActive && <Check sx={{ width: 16, height: 16 }} />}
   </div>
 )
+
+export default Index

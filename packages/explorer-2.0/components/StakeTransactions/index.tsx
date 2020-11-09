@@ -13,7 +13,7 @@ import Restake from '../Restake'
 import RestakeFromUnstaked from '../RestakeFromUnstaked'
 import WithdrawStake from '../WithdrawStake'
 
-export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
+const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
   const pendingStakeTransactions: Array<UnbondingLock> = delegator.unbondingLocks.filter(
     (item: UnbondingLock) =>
       item.withdrawRound && item.withdrawRound > parseInt(currentRound.id, 10),
@@ -173,3 +173,5 @@ export default ({ delegator, transcoders, currentRound, isMyAccount }) => {
     </>
   )
 }
+
+export default Index

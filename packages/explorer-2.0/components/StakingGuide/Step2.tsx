@@ -2,7 +2,7 @@ import { Styled } from 'theme-ui'
 import { useWeb3React } from '@web3-react/core'
 import { useApolloClient } from '@apollo/react-hooks'
 
-export default ({ goTo, nextStep }) => {
+const Step2 = ({ goTo, nextStep }) => {
   const { active } = useWeb3React()
   const client = useApolloClient()
 
@@ -25,3 +25,5 @@ export default ({ goTo, nextStep }) => {
     </div>
   )
 }
+
+export default Step2

@@ -6,7 +6,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
+const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -45,3 +45,5 @@ export default ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
     </>
   )
 }
+
+export default Unstake

@@ -5,7 +5,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({
+const Index = ({
   unbondingLockId,
   delegate,
   newPosPrev,
@@ -45,3 +45,5 @@ export default ({
     </>
   )
 }
+
+export default Index

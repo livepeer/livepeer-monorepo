@@ -14,7 +14,7 @@ import {
   MenuItemRadio,
 } from '@modulz/radix/dist/index.es'
 
-export default ({ currentRound, transcoder }) => {
+const Index = ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
   const targetRef = useRef()
   const [priceSetting, setPriceSetting] = useState('1t pixels')
@@ -296,3 +296,5 @@ export default ({ currentRound, transcoder }) => {
     </Box>
   )
 }
+
+export default Index

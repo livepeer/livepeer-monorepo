@@ -45,7 +45,8 @@ function getStepContent(step) {
       return 'Unknown step'
   }
 }
-export default ({ hasProfile, activeStep }) => {
+
+const Index = ({ hasProfile, activeStep }) => {
   let steps = getSteps(hasProfile)
 
   return (
@@ -61,3 +62,5 @@ export default ({ hasProfile, activeStep }) => {
     </Stepper>
   )
 }
+
+export default Index

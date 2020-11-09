@@ -7,7 +7,7 @@ export interface TabType {
   isActive?: boolean
 }
 
-export default ({ tabs, variant = 'primary', ...props }) => {
+const Index = ({ tabs, variant = 'primary', ...props }) => {
   return (
     <div
       sx={{
@@ -40,3 +40,5 @@ export default ({ tabs, variant = 'primary', ...props }) => {
     </div>
   )
 }
+
+export default Index

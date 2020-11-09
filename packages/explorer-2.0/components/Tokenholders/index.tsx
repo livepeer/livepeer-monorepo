@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 
-export default ({ protocol, delegators, ...props }) => {
+const Index = ({ protocol, delegators, ...props }) => {
   const columns: any = useMemo(
     () => [
       {
@@ -84,6 +84,8 @@ export default ({ protocol, delegators, ...props }) => {
     </table>
   )
 }
+
+export default Index
 
 function renderSwitch(cell, protocol) {
   switch (cell.column.Header) {

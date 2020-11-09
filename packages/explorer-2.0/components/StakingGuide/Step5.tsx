@@ -9,7 +9,7 @@ import { MutationsContext } from '../../contexts'
 import { useQuery } from '@apollo/react-hooks'
 import accountQuery from '../../queries/account.gql'
 
-export default ({ goTo, nextStep }) => {
+const Step5 = ({ goTo, nextStep }) => {
   const context = useWeb3React()
   const isVisible = usePageVisibility()
   const pollInterval = 20000
@@ -74,3 +74,5 @@ export default ({ goTo, nextStep }) => {
     </div>
   )
 }
+
+export default Step5

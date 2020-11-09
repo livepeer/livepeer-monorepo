@@ -5,7 +5,7 @@ import { MutationsContext } from '../../contexts'
 import { useApolloClient } from '@apollo/react-hooks'
 import { initTransaction } from '../../lib/utils'
 
-export default ({ unbondingLockId }) => {
+const Index = ({ unbondingLockId }) => {
   const context = useWeb3React()
   const client = useApolloClient()
 
@@ -34,3 +34,5 @@ export default ({ unbondingLockId }) => {
     </>
   )
 }
+
+export default Index

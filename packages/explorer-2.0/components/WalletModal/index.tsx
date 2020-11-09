@@ -21,8 +21,7 @@ const WALLET_VIEWS = {
   PENDING: 'pending',
 }
 
-// Borrowed from uniswap's WalletModal component implementation
-export default () => {
+const Index = () => {
   const { active, account, connector, activate, error } = useWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState()
@@ -238,3 +237,6 @@ export default () => {
     )
   )
 }
+
+// Borrowed from uniswap's WalletModal component implementation
+export default Index

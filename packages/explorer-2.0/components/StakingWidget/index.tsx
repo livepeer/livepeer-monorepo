@@ -19,7 +19,7 @@ interface Props {
   selectedAction?: string
 }
 
-export default ({
+const Index = ({
   transcoders,
   delegator,
   account,
@@ -89,3 +89,5 @@ export default ({
     </Box>
   )
 }
+
+export default Index

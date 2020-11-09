@@ -6,7 +6,7 @@ import Modal from '../Modal'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
-export default ({ isOpen, onDismiss }) => {
+const Index = ({ isOpen, onDismiss }) => {
   if (!isOpen) {
     return null
   }
@@ -42,6 +42,8 @@ export default ({ isOpen, onDismiss }) => {
     </Modal>
   )
 }
+
+export default Index
 
 function Header({ data }) {
   return (

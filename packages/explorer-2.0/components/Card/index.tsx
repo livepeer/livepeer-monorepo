@@ -1,6 +1,6 @@
 import { Flex } from 'theme-ui'
 
-export default ({
+const Index = ({
   title = null,
   subtitle = null,
   children = null,
@@ -29,3 +29,5 @@ export default ({
     </Flex>
   )
 }
+
+export default Index

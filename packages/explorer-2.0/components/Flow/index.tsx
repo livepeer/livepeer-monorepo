@@ -11,7 +11,7 @@ interface Props {
   currencyType?: string
 }
 
-export default ({
+const Index = ({
   action = 'stake',
   reverse = false,
   amount = 0,
@@ -57,3 +57,5 @@ export default ({
     </Flex>
   )
 }
+
+export default Index

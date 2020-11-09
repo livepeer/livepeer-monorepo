@@ -1,7 +1,7 @@
 import { Flex } from 'theme-ui'
 import Close from '../../public/img/close.svg'
 
-export default ({ children, onClose }) => (
+const Index = ({ children, onClose }) => (
   <div
     sx={{
       borderRadius: '3px',
@@ -26,3 +26,5 @@ export default ({ children, onClose }) => (
     </Flex>
   </div>
 )
+
+export default Index

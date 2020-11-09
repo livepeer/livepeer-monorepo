@@ -23,7 +23,7 @@ const GET_TOUR_OPEN = gql`
   }
 `
 
-export default ({ children, ...props }) => {
+const Index = ({ children, ...props }) => {
   const client = useApolloClient()
   const [open, setOpen] = useState(false)
   const [tourKey, setTourKey] = useState(0)
@@ -258,3 +258,5 @@ export default ({ children, ...props }) => {
     </Box>
   )
 }
+
+export default Index

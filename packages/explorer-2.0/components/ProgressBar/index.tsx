@@ -4,7 +4,7 @@ import moment from 'moment'
 import { useTimeEstimate } from '../../hooks'
 import { txMessages } from '../../lib/utils'
 
-export default ({ tx }) => {
+const Index = ({ tx }) => {
   if (!tx) {
     return null
   }
@@ -82,3 +82,5 @@ export default ({ tx }) => {
     </Box>
   )
 }
+
+export default Index

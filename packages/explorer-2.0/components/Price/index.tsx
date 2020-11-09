@@ -1,7 +1,7 @@
 import { Box } from 'theme-ui'
 import Utils from 'web3-utils'
 
-export default ({ value, per, useEthSymbol = true }) => {
+const Index = ({ value, per, useEthSymbol = true }) => {
   if (per === '1m pixels') {
     return (
       <Box sx={{ fontFamily: 'monospace' }}>
@@ -38,3 +38,5 @@ export default ({ value, per, useEthSymbol = true }) => {
     )
   }
 }
+
+export default Index

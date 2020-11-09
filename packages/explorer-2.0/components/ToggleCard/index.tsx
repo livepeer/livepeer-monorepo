@@ -2,7 +2,7 @@ import { Styled, Flex } from 'theme-ui'
 import Label from '../Label'
 import Checkbox from '../Checkbox'
 
-export default ({
+const Index = ({
   label = null,
   description,
   icon: Icon,
@@ -31,3 +31,5 @@ export default ({
     <Styled.p>{description}</Styled.p>
   </div>
 )
+
+export default Index

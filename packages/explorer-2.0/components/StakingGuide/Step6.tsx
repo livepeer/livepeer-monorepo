@@ -1,7 +1,7 @@
 import { Styled } from 'theme-ui'
 import Button from '../Button'
 
-export default ({ goTo, nextStep }) => {
+const Step6 = ({ goTo, nextStep }) => {
   return (
     <div sx={{ py: 1 }}>
       <Styled.h2 sx={{ mb: 2 }}>Choose Orchestrator</Styled.h2>
@@ -23,3 +23,5 @@ export default ({ goTo, nextStep }) => {
     </div>
   )
 }
+
+export default Step6

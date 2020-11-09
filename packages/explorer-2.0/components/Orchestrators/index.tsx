@@ -23,7 +23,7 @@ import {
 } from '@modulz/radix/dist/index.es'
 import Price from '../Price'
 
-export default ({ currentRound, transcoders }) => {
+const Index = ({ currentRound, transcoders }) => {
   const { width } = useWindowSize()
   const client = useApolloClient()
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
@@ -733,3 +733,5 @@ export default ({ currentRound, transcoders }) => {
     }
   }
 }
+
+export default Index
