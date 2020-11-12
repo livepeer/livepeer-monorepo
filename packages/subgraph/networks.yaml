@@ -33,6 +33,9 @@ mainnet:
     pollCreator:
       address: 'bf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c'
       startBlock: 10039868
+    serviceRegistry:
+      address: '406a112f3218b988c66778fd72fc8467f2601366'
+      startBlock: 6194966
   networkName: mainnet
 rinkeby:
   contracts:
@@ -69,6 +72,9 @@ rinkeby:
     pollCreator:
       address: '149805ef90fada12d27e8a020b6c138f3d86a9a3'
       startBlock: 6459857
+    serviceRegistry:
+      address: 'a7AFBB45eb8C27a26379F9C550B3b9be7f09c3eA'
+      startBlock: 5325870
   networkName: rinkeby
 development:
   contracts:
