@@ -111,4 +111,7 @@ development:
     pollCreator:
       address: '7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
       startBlock: 0
+    serviceRegistry:
+      address: 'aD888d0Ade988EbEe74B8D4F39BF29a8d0fe8A8D'
+      startBlock: 0
   networkName: development
