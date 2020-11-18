@@ -62,6 +62,7 @@ query($account: ID!) {
     }
     threeBoxSpace {
       __typename
+      id
       name
       website
       image
@@ -86,6 +87,7 @@ query($account: ID!) {
     defaultProfile
   }
   protocol(id: "0") {
+    id
     totalTokenSupply
     totalActiveStake
     inflation

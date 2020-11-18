@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import Button from '../Button'
 import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { initTransaction } from '../../lib/utils'
 
 const Index = ({ unbondingLockId, newPosPrev, newPosNext, delegator }) => {

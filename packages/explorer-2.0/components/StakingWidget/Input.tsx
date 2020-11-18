@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 import Utils from 'web3-utils'
 import useWindowSize from 'react-use/lib/useWindowSize'
 
@@ -27,7 +27,13 @@ const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
     totalSupply,
     totalStaked,
   })
-  client.writeData({
+  client.writeQuery({
+    query: gql`
+      query {
+        principle
+        roi
+      }
+    `,
     data: {
       principle,
       roi,

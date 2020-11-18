@@ -13,7 +13,7 @@ import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { withApollo } from '../../lib/apollo'
 import { useRouter } from 'next/router'
-import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useQuery, useApolloClient, gql } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 import Spinner from '../../components/Spinner'
 import { useEffect, useState } from 'react'
@@ -177,7 +177,7 @@ const Poll = () => {
             </Flex>
             <Styled.h1
               sx={{
-                fontSize: [3, 3, 4, 4, 5],
+                fontSize: [3, 3, 26],
                 display: 'flex',
                 mb: '10px',
                 alignItems: 'center',
@@ -205,7 +205,12 @@ const Poll = () => {
               <Button
                 sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2, mr: 2 }}
                 onClick={() =>
-                  client.writeData({
+                  client.writeQuery({
+                    query: gql`
+                      query {
+                        bottomDrawerOpen
+                      }
+                    `,
                     data: {
                       bottomDrawerOpen: true,
                     },

@@ -6,7 +6,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Button from '../Button'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import accountQuery from '../../queries/account.gql'
 
 const Step4 = ({ goTo, nextStep }) => {
@@ -82,7 +82,7 @@ const Step4 = ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace', mb: 1 }}>
         ETH Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {dataMyAccount.account &&
+          {dataMyAccount?.account &&
             parseFloat(Utils.fromWei(dataMyAccount.account.ethBalance)).toFixed(
               2,
             )}
@@ -91,27 +91,27 @@ const Step4 = ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace' }}>
         LPT Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {dataMyAccount.account &&
+          {dataMyAccount?.account &&
             parseFloat(
               Utils.fromWei(dataMyAccount.account.tokenBalance),
             ).toFixed(2)}
         </span>
       </div>
       <Button
-        disabled={
-          dataMyAccount.account && dataMyAccount.account.tokenBalance === '0'
-        }
+        disabled={dataMyAccount?.account.tokenBalance === '0'}
         sx={{ position: 'absolute', right: 30, bottom: 16 }}
         onClick={async () => {
-          client.writeData({
+          client.writeQuery({
+            query: gql`
+              query {
+                uniswapModalOpen
+              }
+            `,
             data: {
               uniswapModalOpen: false,
             },
           })
-          if (
-            dataMyAccount.account &&
-            dataMyAccount.account.allowance === '0'
-          ) {
+          if (dataMyAccount?.account.allowance === '0') {
             goTo(nextStep)
           } else {
             await Router.push('/')

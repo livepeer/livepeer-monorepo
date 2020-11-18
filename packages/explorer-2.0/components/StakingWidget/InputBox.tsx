@@ -32,9 +32,10 @@ const InputBox = ({
   return (
     <div
       sx={{
-        borderRadius: 10,
+        borderRadius: 16,
         width: '100%',
-        bg: 'background',
+        border: '1px solid',
+        borderColor: 'border',
       }}
     >
       <Box sx={{ px: 2, py: 2 }}>

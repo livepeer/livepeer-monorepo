@@ -3,6 +3,7 @@ import Utils from 'web3-utils'
 import url from 'url'
 import parseDomain from 'parse-domain'
 import { ethers } from 'ethers'
+import { gql } from '@apollo/client'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -231,7 +232,15 @@ export const txMessages = {
 
 export const initTransaction = async (client, mutation) => {
   try {
-    client.writeData({
+    client.writeQuery({
+      query: gql`
+        query {
+          txSummaryModal {
+            __typename
+            open
+          }
+        }
+      `,
       data: {
         txSummaryModal: {
           __typename: 'TxSummaryModal',
@@ -242,7 +251,15 @@ export const initTransaction = async (client, mutation) => {
 
     await mutation()
 
-    client.writeData({
+    client.writeQuery({
+      query: gql`
+        query {
+          txSummaryModal {
+            __typename
+            open
+          }
+        }
+      `,
       data: {
         txSummaryModal: {
           __typename: 'TxSummaryModal',
@@ -251,7 +268,15 @@ export const initTransaction = async (client, mutation) => {
       },
     })
   } catch (e) {
-    client.writeData({
+    client.writeQuery({
+      query: gql`
+        query {
+          txSummaryModal {
+            __typename
+            error
+          }
+        }
+      `,
       data: {
         txSummaryModal: {
           __typename: 'TxSummaryModal',

@@ -11,9 +11,14 @@ const Index = (props) => {
         position: 'relative',
         width: '100%',
         height: '100%',
+        '.CircularProgressbar': { verticalAlign: 'initial' },
       }}
     >
-      <Box style={{ position: 'absolute' }}>
+      <Box
+        style={{
+          position: 'absolute',
+        }}
+      >
         <CircularProgressbar {...otherProps} />
       </Box>
       <Flex

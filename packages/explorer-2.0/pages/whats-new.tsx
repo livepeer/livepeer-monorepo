@@ -2,7 +2,7 @@ import { Styled, Box, Flex } from 'theme-ui'
 import Spinner from '../components/Spinner'
 import Card from '../components/Card'
 import moment from 'moment'
-import Layout, { getLayout } from '../layouts/main'
+import { getLayout } from '../layouts/main'
 import Markdown from 'markdown-to-jsx'
 import { withApollo } from '../lib/apollo'
 import { createApolloFetch } from 'apollo-fetch'
@@ -44,7 +44,7 @@ function getBadgeColor(changeType) {
   }
 }
 
-const groupBy = key => array =>
+const groupBy = (key) => (array) =>
   array.reduce((objectsByKeyValue, obj) => {
     const value = obj[key]
     objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj)
@@ -90,7 +90,7 @@ const WhatsNew = () => {
           >
             <Styled.h1
               sx={{
-                fontSize: [3, 3, 4, 5],
+                fontSize: [3, 3, 4, 26],
                 mb: [3, 3, 3, 5],
                 display: 'flex',
                 alignItems: 'center',
@@ -98,13 +98,6 @@ const WhatsNew = () => {
             >
               <span sx={{ mr: 2 }}>🌟</span> What's New
             </Styled.h1>
-            {/* <Styled.h3>Coming Up</Styled.h3>
-            <ul sx={{ mb: 5, lineHeight: 2 }}>
-              <li>Earnings View</li>
-              <li>Network statistics view</li>
-              <li>Notifications system</li>
-            </ul> */}
-
             <Box sx={{ img: { maxWidth: '100%' } }}>
               {data.projectBySlugs.releases.edges.map(
                 ({ node }, i) =>

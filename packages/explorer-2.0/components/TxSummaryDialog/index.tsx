@@ -3,7 +3,7 @@ import { Box, Spinner } from '@theme-ui/components'
 import { Flex } from 'theme-ui'
 import Button from '../Button'
 import Modal from '../Modal'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
 const Index = ({ isOpen, onDismiss }) => {

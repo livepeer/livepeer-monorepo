@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Styled, Flex } from 'theme-ui'
-import { DialogOverlay, DialogContent } from '@reach/dialog'
 import Button from '../Button'
 import dynamic from 'next/dynamic'
 import { useWeb3React } from '@web3-react/core'
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/client'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
@@ -15,6 +14,7 @@ import Step7 from './Step7'
 import gql from 'graphql-tag'
 import { Box } from 'theme-ui'
 import accountQuery from '../../queries/account.gql'
+import { Dialog } from '@reach/dialog'
 
 const Tour: any = dynamic(() => import('reactour'), { ssr: false })
 const GET_TOUR_OPEN = gql`
@@ -34,6 +34,7 @@ const Index = ({ children, ...props }) => {
   const [tourStyles, setTourStyles] = useState({
     backgroundColor: '#131418',
     maxWidth: 'auto',
+    borderRadius: 16,
   })
 
   const { data: dataMyAccount } = useQuery(accountQuery, {
@@ -111,14 +112,13 @@ const Index = ({ children, ...props }) => {
     <Box {...props}>
       <Button
         sx={{ mt: 2, width: '100%' }}
-        variant="rainbow"
+        variant="transparent"
         onClick={async () => {
           setOpen(true)
         }}
       >
         {children}
       </Button>
-
       <Tour
         disableDotsNavigation={true}
         disableKeyboardNavigation={['right', 'left']}
@@ -131,7 +131,12 @@ const Index = ({ children, ...props }) => {
         nextButton={<Button>Next</Button>}
         closeWithMask={false}
         onRequestClose={() => {
-          client.writeData({
+          client.writeQuery({
+            query: gql`
+              query {
+                tourOpen
+              }
+            `,
             data: {
               tourOpen: false,
             },
@@ -143,118 +148,123 @@ const Index = ({ children, ...props }) => {
         }}
         steps={steps}
       />
-
-      {open && (
-        <Styled.div
-          as={DialogOverlay}
-          sx={{ background: 'rgba(0, 0, 0, 0.7)' }}
-          onDismiss={() => setOpen(false)}
+      <Dialog
+        onDismiss={() => {
+          document.body.style.overflow = ''
+          setOpen(false)
+        }}
+        isOpen={open}
+        aria-label="Staking Guide"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Flex
+          sx={{
+            background: 'linear-gradient(180deg, #2C785F 0%, #00ED6D 100%)',
+            minWidth: 220,
+            width: 220,
+            flexDirection: 'column',
+            px: 3,
+            py: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <Flex
-            as={DialogContent}
-            sx={{ p: 0, bg: 'surface', borderRadius: 2 }}
-          >
+          {[
+            'Connect Wallet',
+            'Get LPT',
+            'Unlock LPT',
+            'Choose Orchestrator',
+            'Stake',
+          ].map((title, i) => (
             <Flex
-              sx={{
-                background: 'linear-gradient(180deg, #2C785F 0%, #00ED6D 100%)',
-                minWidth: 220,
-                width: 220,
-                flexDirection: 'column',
-                px: 3,
-                py: 4,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              key={i}
+              sx={{ flexDirection: 'column', alignItems: 'center' }}
             >
-              {[
-                'Connect Wallet',
-                'Get LPT',
-                'Unlock LPT',
-                'Choose Orchestrator',
-                'Stake',
-              ].map((title, i) => (
-                <Flex
-                  key={i}
-                  sx={{ flexDirection: 'column', alignItems: 'center' }}
-                >
-                  <Flex
-                    sx={{
-                      color: 'rgba(255, 255, 255, .5)',
-                      border: '4px solid',
-                      borderRadius: 1000,
-                      borderColor: 'rgba(255, 255, 255, .5)',
-                      width: '40px',
-                      height: '40px',
-                      fontWeight: 500,
-                      fontSize: 3,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {i + 1}
-                  </Flex>
-                  <div
-                    sx={{
-                      lineHeight: '24px',
-                      textAlign: 'center',
-                      fontWeight: 500,
-                      mt: 1,
-                      mb: i == 4 ? 0 : 1,
-                    }}
-                  >
-                    {title}
-                  </div>
-                  {!(i == 4) && (
-                    <div
-                      sx={{
-                        width: 1,
-                        mb: 2,
-                        height: 18,
-                        backgroundColor: 'rgba(255, 255, 255, .5)',
-                      }}
-                    />
-                  )}
-                </Flex>
-              ))}
-            </Flex>
-            <Flex
-              sx={{
-                width: '100%',
-                py: 5,
-                px: 4,
-                alignItems: 'flex-start',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Styled.h1 as="h2" sx={{ mb: 2 }}>
-                Welcome to the Livepeer Staking Guide
-              </Styled.h1>
-              <Styled.p>
-                Not sure how to get started? No worries, we’ve got you covered.
-              </Styled.p>
-              <Styled.p>
-                Our staking guide takes you step-by-step through the process of
-                staking your first Livepeer tokens.
-              </Styled.p>
-              <Button
-                sx={{ justifySelf: 'flex-start', mt: 2 }}
-                variant="secondary"
-                onClick={() => {
-                  setOpen(false)
-                  client.writeData({
-                    data: {
-                      tourOpen: true,
-                    },
-                  })
+              <Flex
+                sx={{
+                  color: 'rgba(255, 255, 255, .5)',
+                  border: '4px solid',
+                  borderRadius: 1000,
+                  borderColor: 'rgba(255, 255, 255, .5)',
+                  width: '40px',
+                  height: '40px',
+                  fontWeight: 500,
+                  fontSize: 3,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                Let's Get Started
-              </Button>
+                {i + 1}
+              </Flex>
+              <div
+                sx={{
+                  lineHeight: '24px',
+                  textAlign: 'center',
+                  fontWeight: 500,
+                  mt: 1,
+                  mb: i == 4 ? 0 : 1,
+                }}
+              >
+                {title}
+              </div>
+              {!(i == 4) && (
+                <div
+                  sx={{
+                    width: 1,
+                    mb: 2,
+                    height: 18,
+                    backgroundColor: 'rgba(255, 255, 255, .5)',
+                  }}
+                />
+              )}
             </Flex>
-          </Flex>
-        </Styled.div>
-      )}
+          ))}
+        </Flex>
+        <Flex
+          sx={{
+            width: '100%',
+            py: 5,
+            px: 4,
+            alignItems: 'flex-start',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <Styled.h1 as="h2" sx={{ mb: 2 }}>
+            Welcome to the Livepeer Staking Guide
+          </Styled.h1>
+          <Styled.p>
+            Not sure how to get started? No worries, we’ve got you covered.
+          </Styled.p>
+          <Styled.p>
+            Our staking guide takes you step-by-step through the process of
+            staking your first Livepeer tokens.
+          </Styled.p>
+          <Button
+            sx={{ justifySelf: 'flex-start', mt: 2 }}
+            variant="secondary"
+            onClick={() => {
+              setOpen(false)
+              client.writeQuery({
+                query: gql`
+                  query {
+                    tourOpen
+                  }
+                `,
+                data: {
+                  tourOpen: true,
+                },
+              })
+            }}
+          >
+            Let's Get Started
+          </Button>
+        </Flex>
+      </Dialog>
     </Box>
   )
 }

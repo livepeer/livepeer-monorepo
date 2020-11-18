@@ -26,7 +26,7 @@ const Index = ({ value, per, useEthSymbol = true }) => {
         {parseFloat(
           Utils.fromWei(Math.round(value * 1000000000000).toString()),
         )}
-        <span sx={{ ml: 1, fontSize: 12 }}>{useEthSymbol ? 'Ξ' : 'ETH'}</span>
+        <span sx={{ ml: 1, fontSize: 12 }}>ETH</span>
       </Box>
     )
   } else {

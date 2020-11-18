@@ -1,5 +1,5 @@
 import { Flex, Box } from 'theme-ui'
-import Logo from '../../public/img/logo.svg'
+import Logo from '../Logo'
 import LPT from '../../public/img/lpt.svg'
 import WalletIcon from '../../public/img/wallet.svg'
 import NewIcon from '../../public/img/new.svg'
@@ -8,7 +8,7 @@ import Router, { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
 import RoundStatus from '../RoundStatus'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 import UniswapModal from '../UniswapModal'
 
 const Index = ({
@@ -38,15 +38,20 @@ const Index = ({
           position: 'fixed',
           width: '100vw',
           height: 'calc(100vh - 41px)',
-          backgroundColor: 'rgba(0,0,0,.5)',
+          bg: 'rgba(0,0,0,.5)',
           visibility: [visibility, visibility, visibility, 'hidden'],
           zIndex: 100,
         }}
       />
       <Flex
+        onClick={onDrawerOpen}
         sx={{
-          width: 275,
+          left: 0,
           top: 0,
+          bg: 'black',
+          visibility: [visibility, visibility, visibility, 'visible'],
+          zIndex: 100,
+          width: 240,
           transition: 'transform .3s',
           transform: [
             `translateX(${open ? 0 : '-100%'})`,
@@ -56,13 +61,9 @@ const Index = ({
           ],
           position: ['fixed', 'fixed', 'fixed', 'sticky'],
           flexDirection: 'column',
-          bg: 'background',
-          zIndex: 100,
           height: bannerDismissed ? '100vh' : 'calc(100vh - 41px)',
           pt: [3, 3, 5],
-          pl: 3,
-          borderRight: [0, 0, 0, '1px solid'],
-          borderColor: ['border', 'border', 'border', 'border'],
+          px: 3,
           boxShadow: [
             '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)',
             '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)',
@@ -71,6 +72,17 @@ const Index = ({
           ],
           alignItems: 'center',
           justifyContent: 'space-between',
+          ':after': {
+            pointerEvents: 'none',
+            content: '""',
+            position: 'absolute',
+            height: 550,
+            top: 0,
+            left: 0,
+            width: '100%',
+            background:
+              'linear-gradient(127.48deg,rgba(38,233,138,0.18) -29.81%,rgba(196,196,196,0) 58.42%)',
+          },
         }}
       >
         <Flex
@@ -79,33 +91,32 @@ const Index = ({
             flexDirection: 'column',
             width: '100%',
             height: '100%',
-            pr: 4,
           }}
         >
-          <Logo sx={{ mb: 3 }} />
+          <Logo isDark pushSx={{ width: 110, mb: 3 }} />
           <Box sx={{ marginBottom: 'auto' }}>
             {items.map((item, i) => (
               <Link key={i} href={item.href} as={item.as} passHref>
                 <a
                   sx={{
-                    color: asPath === item.as ? 'primary' : 'muted',
+                    color: asPath.split('?')[0] === item.as ? 'white' : 'muted',
                     lineHeight: 'initial',
                     display: 'flex',
-                    fontSize: 3,
-                    fontWeight: 600,
+                    fontSize: 14,
+                    fontWeight: 500,
                     cursor: 'pointer',
                     alignItems: 'center',
-                    py: 2,
+                    py: '10px',
                     backgroundColor: 'transparent',
                     borderRadius: 5,
                     transition: 'color .3s',
                     '&:hover': {
-                      color: 'primary',
+                      color: 'white',
                       transition: 'color .3s',
                     },
                   }}
                 >
-                  <item.icon sx={{ width: 20, height: 20, mr: 2 }} />
+                  <item.icon sx={{ width: 20, height: 20, mr: 1 }} />
                   {item.name}
                 </a>
               </Link>
@@ -113,7 +124,12 @@ const Index = ({
             {!context.active && (
               <Box
                 onClick={() => {
-                  client.writeData({
+                  client.writeQuery({
+                    query: gql`
+                      query {
+                        walletModalOpen
+                      }
+                    `,
                     data: {
                       walletModalOpen: true,
                     },
@@ -123,8 +139,8 @@ const Index = ({
                   color: 'muted',
                   lineHeight: 'initial',
                   display: 'flex',
-                  fontSize: 3,
-                  fontWeight: 600,
+                  fontSize: 14,
+                  fontWeight: 500,
                   cursor: 'pointer',
                   alignItems: 'center',
                   py: 2,
@@ -138,7 +154,7 @@ const Index = ({
                 }}
                 className="tour-step-1"
               >
-                <WalletIcon sx={{ width: 20, height: 20, mr: 2 }} />
+                <WalletIcon sx={{ width: 20, height: 20, mr: 1 }} />
                 Connect Wallet
               </Box>
             )}
@@ -179,7 +195,12 @@ const Index = ({
               </Box>
               <Flex
                 onClick={() =>
-                  client.writeData({
+                  client.writeQuery({
+                    query: gql`
+                      query {
+                        uniswapModalOpen
+                      }
+                    `,
                     data: {
                       uniswapModalOpen: true,
                     },
@@ -217,7 +238,12 @@ const Index = ({
               {context.active && (
                 <Flex
                   onClick={() => {
-                    client.writeData({
+                    client.writeQuery({
+                      query: gql`
+                        query {
+                          walletModalOpen
+                        }
+                      `,
                       data: {
                         walletModalOpen: true,
                       },

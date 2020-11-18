@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
+import { useState, useEffect, useRef } from 'react'
+import { useQuery, useMutation, useApolloClient } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useWeb3React } from '@web3-react/core'
 import { Injected } from '../lib/connectors'
@@ -7,7 +7,7 @@ import { isMobile } from 'react-device-detect'
 import submittedTxsQuery from '../queries/transactions.gql'
 
 export function useWeb3Mutation(mutation, options) {
-  const client = useApolloClient()
+  const client: any = useApolloClient()
   const context = useWeb3React()
   const [mutate, { data, loading: dataLoading }] = useMutation(mutation, {
     ...options,
@@ -75,7 +75,12 @@ export function useWeb3Mutation(mutation, options) {
 
   useEffect(() => {
     if (data) {
-      client.writeData({
+      client.writeQuery({
+        query: gql`
+          query {
+            txs
+          }
+        `,
         data: {
           txs: [
             ...transactionsData.txs.filter((t) => t.txHash !== data.tx.txHash),

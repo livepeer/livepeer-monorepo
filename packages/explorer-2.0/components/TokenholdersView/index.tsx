@@ -1,6 +1,6 @@
 import { Flex } from 'theme-ui'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import Spinner from '../Spinner'
 import Tokenholders from '../Tokenholders'

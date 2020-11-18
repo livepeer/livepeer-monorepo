@@ -1,5 +1,5 @@
 import { Flex, Box } from 'theme-ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { abbreviateNumber } from '../../lib/utils'
 
@@ -16,9 +16,10 @@ const ProjectionBox = ({ action }) => {
   return (
     <div
       sx={{
-        borderRadius: 10,
+        borderRadius: 16,
         width: '100%',
-        bg: 'background',
+        border: '1px solid',
+        borderColor: 'border',
         mb: 2,
       }}
     >

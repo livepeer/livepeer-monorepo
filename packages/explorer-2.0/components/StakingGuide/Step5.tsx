@@ -6,7 +6,7 @@ import Router from 'next/router'
 import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import accountQuery from '../../queries/account.gql'
 
 const Step5 = ({ goTo, nextStep }) => {

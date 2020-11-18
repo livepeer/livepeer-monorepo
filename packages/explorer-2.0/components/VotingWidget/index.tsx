@@ -6,7 +6,7 @@ import VoteButton from '../VoteButton'
 import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 import ReactTooltip from 'react-tooltip'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 import moment from 'moment'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Check from '../../public/img/check.svg'
@@ -49,7 +49,8 @@ const Index = ({ data }) => {
         <Box
           sx={{
             width: '100%',
-            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+            boxShadow:
+              'rgba(0, 0, 0, 0.03) 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 8px, rgba(0, 0, 0, 0.06) 0px 16px 24px, rgba(0, 0, 0, 0.03) 0px 24px 32px',
             borderRadius: 10,
             backgroundColor: 'surface',
             px: 3,
@@ -224,7 +225,12 @@ const Index = ({ data }) => {
           ) : (
             <Button
               onClick={() => {
-                client.writeData({
+                client.writeQuery({
+                  query: gql`
+                    query {
+                      walletModalOpen
+                    }
+                  `,
                   data: {
                     walletModalOpen: true,
                   },

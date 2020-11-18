@@ -15,7 +15,7 @@ const Index = ({
         borderColor: 'border',
         py: 3,
         px: 3,
-        borderRadius: 6,
+        borderRadius: 10,
       }}
       {...props}
     >
