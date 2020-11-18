@@ -5,15 +5,14 @@ import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
 import { networksTypes } from '../lib/utils'
 import Ballot from '../public/img/ballot.svg'
-import Orchestrators from '../public/img/orchestrators.svg'
-import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
+import DNS from '../public/img/dns.svg'
 import { useWeb3React } from '@web3-react/core'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import WalletModal from '../components/WalletModal'
-import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useQuery, useApolloClient } from '@apollo/client'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
@@ -50,7 +49,7 @@ const Layout = ({
   title = 'Livepeer Explorer',
   headerTitle = '',
 }) => {
-  const client = useApolloClient()
+  const client: any = useApolloClient()
   const context = useWeb3React()
   const isVisible = usePageVisibility()
   const { account } = context
@@ -130,7 +129,7 @@ const Layout = ({
       name: 'Orchestrators',
       href: '/',
       as: '/',
-      icon: Orchestrators,
+      icon: DNS,
       className: 'orchestrators',
     },
     {
@@ -160,13 +159,6 @@ const Layout = ({
       as: '/voting',
       icon: Ballot,
       className: 'voting',
-    },
-    {
-      name: 'Search',
-      href: '/search',
-      as: '/search',
-      icon: Search,
-      className: 'search',
     },
   ]
 
@@ -251,7 +243,7 @@ const Layout = ({
                 px: 2,
                 width: '100%',
                 alignItems: 'center',
-                bg: 'surface',
+                bg: 'black',
                 justifyContent: 'center',
                 fontSize: [0, 1, 1, 2],
               }}
@@ -306,9 +298,8 @@ const Layout = ({
           <WalletModal />
           <Box
             sx={{
-              maxWidth: 1500,
-              margin: '0 auto',
-              display: 'flex',
+              display: 'grid',
+              gridTemplateColumns: ['100%', '100%', '100%', '240px 1fr'],
             }}
           >
             <Drawer
@@ -322,9 +313,8 @@ const Layout = ({
               sx={{
                 bg: 'background',
                 position: 'relative',
-                paddingLeft: [2, 2, 2, 32],
-                paddingRight: [2, 2, 2, 32],
-                width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
+                px: [3, 3, 3, 4],
+                width: '100%',
               }}
             >
               <Flex sx={{ width: '100%' }} className="tour-step-6">
@@ -356,7 +346,16 @@ const Layout = ({
           <TxSummaryDialog
             isOpen={txSummaryModalData?.txSummaryModal.open}
             onDismiss={() => {
-              client.writeData({
+              client.writeQuery({
+                query: gql`
+                  query {
+                    txSummaryModal {
+                      __typename
+                      error
+                      open
+                    }
+                  }
+                `,
                 data: {
                   txSummaryModal: {
                     __typename: 'TxSummaryModal',
@@ -396,18 +395,18 @@ const Layout = ({
                 width: [
                   '100%',
                   '100%',
-                  'calc(100% - 275px)',
-                  'calc(100% - 275px)',
-                  'calc(100% - 275px)',
-                  'calc(100vw - ((100vw - 1500px) / 2 + 275px))',
+                  'calc(100% - 240px)',
+                  'calc(100% - 240px)',
+                  'calc(100% - 240px)',
+                  'calc(100vw - ((100vw - 1500px) / 2 + 240px))',
                 ],
                 left: [
                   0,
                   0,
-                  275,
-                  275,
-                  275,
-                  'calc((100% - 1500px) / 2 + 275px)',
+                  240,
+                  240,
+                  240,
+                  'calc((100% - 1500px) / 2 + 240px)',
                 ],
               }}
             >

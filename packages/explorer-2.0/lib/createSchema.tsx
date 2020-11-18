@@ -12,13 +12,12 @@ import {
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
 import {
-  getBlock,
   getBlockByNumber,
   getEstimatedBlockCountdown,
   mergeObjectsInUnique,
 } from './utils'
 
-export default async () => {
+const Index = async () => {
   const subgraphServiceLink = new HttpLink({
     uri: process.env.SUBGRAPH,
     fetch,
@@ -106,9 +105,18 @@ export default async () => {
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _ctx, _info) {
-            const apolloFetch = createApolloFetch({ uri: process.env.SUBGRAPH })
+            const apolloFetch = createApolloFetch({
+              uri: process.env.SUBGRAPH,
+            })
             const { data } = await apolloFetch({
-              query: `{ protocol(id: "0") { currentRound { id } } }`,
+              query: `{
+                protocol(id: "0") {
+                  id
+                  currentRound {
+                    id
+                  }
+                }
+              }`,
             })
             return await _ctx.livepeer.rpc.getPendingStake(
               _delegator.id.toString(),
@@ -118,9 +126,18 @@ export default async () => {
         },
         pendingFees: {
           async resolve(_delegator, _args, _ctx, _info) {
-            const apolloFetch = createApolloFetch({ uri: process.env.SUBGRAPH })
+            const apolloFetch = createApolloFetch({
+              uri: process.env.SUBGRAPH,
+            })
             const { data } = await apolloFetch({
-              query: `{ protocol(id: "0") { currentRound { id } } }`,
+              query: `{
+                protocol(id: "0") {
+                  id
+                  currentRound {
+                    id
+                  }
+                }
+              }`,
             })
             return await _ctx.livepeer.rpc.getPendingFees(
               _delegator.id,
@@ -266,28 +283,32 @@ export default async () => {
       transcoders: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info))
         const transcoders = await resolve(parent, args, ctx, info)
+        let arr = []
 
-        // if selection set does not include 'price', return transcoders as is, otherwise fetch and merge prices
-        if (!selectionSet.includes('price')) {
-          return transcoders
+        // if selection set includes 'price', return transcoders merge prices and performance metrics
+        if (selectionSet.includes('price')) {
+          // get price data
+          let response = await fetch(
+            `https://livepeer-pricing-tool.com/orchestratorStats`,
+          )
+          let transcodersWithPrice = await response.json()
+
+          transcodersWithPrice.map((t) => {
+            if (transcoders.filter((a) => a.id === t.Address).length > 0) {
+              arr.push({
+                id: t.Address,
+                price: t.PricePerPixel,
+              })
+            }
+          })
         }
 
-        const response = await fetch(
-          `https://livepeer-pricing-tool.com/orchestratorStats`,
-        )
-        let transcodersWithPrice = await response.json()
-        let arr = []
-        transcodersWithPrice.map((t) => {
-          if (transcoders.filter((a) => a.id === t.Address).length > 0) {
-            arr.push({
-              id: t.Address,
-              price: t.PricePerPixel,
-            })
-          }
-        })
+        // merge results
         return mergeObjectsInUnique([...transcoders, ...arr], 'id')
       },
     },
   }
   return applyMiddleware(merged, queryMiddleware)
 }
+
+export default Index

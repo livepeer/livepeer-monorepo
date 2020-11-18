@@ -13,7 +13,7 @@ import Warning from './Warning'
 import Approve from '../Approve'
 import ReactTooltip from 'react-tooltip'
 import Help from '../../public/img/help.svg'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 
 interface Props {
   transcoders: [Transcoder]
@@ -41,7 +41,12 @@ const Footer = ({
     return (
       <Button
         onClick={() =>
-          client.writeData({
+          client.writeQuery({
+            query: gql`
+              query {
+                walletModalOpen
+              }
+            `,
             data: {
               walletModalOpen: true,
             },

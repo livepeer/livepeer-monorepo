@@ -26,16 +26,17 @@ const theme = {
   breakpoints: ['480px', '672px', '1020px', '1380px', '1500px'],
   colors: {
     text: 'rgba(255, 255, 255, .87)',
-    background: '#131418',
+    background: '#14151A',
     primary: '#00EB88',
-    secondary: '#FAF5EF',
-    surface: '#1E2026',
-    muted: '#bdbdbd',
+    surface: '#17191e',
+    lightBlack: '#26282c',
+    muted: 'rgba(255,255,255,.6)',
     red: '#ff0022',
     yellow: '#FFC53A',
     blue: '#0062eb',
     skyBlue: '#5bc2ee',
     teal: '#00bfb2',
+    black: '#000',
     border: '#393a3d',
     gray: '#5a5a5a',
     highlight: 'transparent',
@@ -45,6 +46,7 @@ const theme = {
     primary: {
       color: 'background',
       bg: 'primary',
+      borderRadius: 10,
       '&:hover': {
         transition: '.2s background-color',
         backgroundColor: 'rgba(0, 235, 136, .7)',
@@ -56,6 +58,7 @@ const theme = {
       border: '1px solid',
       borderColor: 'border',
       transition: 'border-color .2s',
+      borderRadius: 10,
       '&:hover': {
         borderColor: 'text',
         transition: 'border-color .2s',
@@ -67,6 +70,7 @@ const theme = {
       border: '1px solid',
       borderColor: 'text',
       transition: 'border-color .2s',
+      borderRadius: 10,
       '&:hover': {
         borderColor: 'inherit',
         transition: 'border-color .2s',
@@ -92,6 +96,7 @@ const theme = {
       fontSize: 0,
       px: 1,
       py: '2px',
+      borderRadius: 10,
     },
     text: {
       color: 'primary',
@@ -100,7 +105,7 @@ const theme = {
       p: 0,
     },
     danger: {
-      borderRadius: 6,
+      borderRadius: 10,
       cursor: 'pointer',
       backgroundColor: 'rgba(211, 47, 47, .1)',
       transition: '.2s background-color',
@@ -116,13 +121,25 @@ const theme = {
       px: 2,
     },
     rainbow: {
+      borderRadius: 10,
       color: 'text',
-      background:
+      bg:
         'linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)',
+    },
+    transparent: {
+      borderRadius: 10,
+      color: 'text',
+      bg: 'rgba(255,255,255,.08)',
+      transition: '.2s background',
+      '&:hover': {
+        transition: '.2s background',
+        bg: 'rgba(255,255,255,.1)',
+      },
     },
     red: {
       color: 'background',
       bg: 'red',
+      borderRadius: 10,
       '&:hover': {
         transition: '.2s background-color',
         backgroundColor: 'rgba(211, 47, 47, .7)',

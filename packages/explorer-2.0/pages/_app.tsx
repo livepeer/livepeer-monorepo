@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { ThemeProvider, ColorMode } from 'theme-ui'
+import { ThemeProvider } from 'theme-ui'
 import theme from '../lib/theme'
 import { Web3ReactProvider } from '@web3-react/core'
 import { ethers } from 'ethers'
@@ -35,7 +35,6 @@ function App({ Component, pageProps }) {
       </Head>
 
       <ThemeProvider theme={theme}>
-        <ColorMode />
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ReactManager>
             <CookiesProvider>

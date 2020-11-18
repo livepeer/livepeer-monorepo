@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Flex } from 'theme-ui'
 import { Collapse } from 'react-collapse'
 import gql from 'graphql-tag'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 

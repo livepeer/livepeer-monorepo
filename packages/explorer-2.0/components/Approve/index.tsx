@@ -6,7 +6,7 @@ import { MAXIUMUM_VALUE_UINT256, initTransaction } from '../../lib/utils'
 import Banner from '../Banner'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 
 const Index = ({ account, banner = true }) => {
   const context = useWeb3React()

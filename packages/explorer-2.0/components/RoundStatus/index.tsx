@@ -1,7 +1,7 @@
 import { Flex } from 'theme-ui'
 import Play from '../../public/img/play.svg'
 import gql from 'graphql-tag'
-import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useQuery, useApolloClient } from '@apollo/client'
 import Modal from '../Modal'
 import { Box } from 'theme-ui'
 import CircularProgressbar from '../CircularProgressBar'
@@ -31,6 +31,7 @@ const Index = () => {
     gql`
       {
         protocol(id: "0") {
+          id
           roundLength
           lastInitializedRound
           currentRound {
@@ -74,7 +75,12 @@ const Index = () => {
   }, [isVisible])
 
   const close = () => {
-    client.writeData({
+    client.writeQuery({
+      query: gql`
+        query {
+          roundStatusModalOpen
+        }
+      `,
       data: {
         roundStatusModalOpen: false,
       },
@@ -107,38 +113,55 @@ const Index = () => {
         cursor: 'pointer',
         py: 1,
         px: 2,
-        fontSize: 0,
+        fontSize: 1,
         fontWeight: 600,
         alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'surface',
-        borderRadius: 5,
+        justifyContent: 'center',
       }}
+      variant="buttons.transparent"
       onClick={() =>
-        client.writeData({
+        client.writeQuery({
+          query: gql`
+            query {
+              roundStatusModalOpen
+            }
+          `,
           data: {
             roundStatusModalOpen: true,
           },
         })
       }
     >
-      <Flex
-        sx={{
-          textTransform: 'capitalize',
-          alignItems: 'center',
-          fontFamily: 'monospace',
-          color: 'primary',
-        }}
-      >
-        <Play sx={{ width: 10, height: 10, mr: 1 }} />
-        {process.env.NETWORK}
-      </Flex>
-      <Box sx={{ height: 16, mx: 1, backgroundColor: 'border', width: 1 }} />
-      <Box sx={{ fontFamily: 'monospace' }}>
-        Round{' '}
-        <Box sx={{ display: 'inline-flex', fontFamily: 'monospace' }}>
-          #{currentRoundNumber}
-        </Box>
+      <Box>
+        <Flex
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontFamily: 'monospace',
+          }}
+        >
+          <Box
+            sx={{
+              width: 16,
+              minWidth: 16,
+              height: 16,
+              minHeight: 16,
+              mr: 12,
+            }}
+          >
+            <CircularProgressbar
+              strokeWidth={10}
+              styles={buildStyles({
+                strokeLinecap: 'butt',
+                pathColor: theme.colors.primary,
+                textColor: theme.colors.text,
+                trailColor: theme.colors.border,
+              })}
+              value={Math.round(percentage)}
+            />
+          </Box>
+          Round #{currentRoundNumber}
+        </Flex>
       </Box>
       <Modal
         showCloseButton={false}
