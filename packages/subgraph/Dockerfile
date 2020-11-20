@@ -8,7 +8,6 @@ RUN git clone https://github.com/vishnubob/wait-for-it \
 
 WORKDIR /subgraph
 COPY abis /subgraph/abis
-COPY patches /subgraph/patches
 COPY src /subgraph/src
 COPY test /subgraph/test
 COPY utils /subgraph/utils

@@ -311,6 +311,26 @@ dataSources:
       eventHandlers:
         - event: PollCreated(indexed address,bytes,uint256,uint256,uint256)
           handler: pollCreated
+  - kind: ethereum/contract
+    name: ServiceRegistry
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.serviceRegistry.startBlock}}
+      address: {{contracts.serviceRegistry.address}}
+      abi: ServiceRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/serviceRegistry.ts   
+      entities:
+        - Transcoder
+      abis:
+        - name: ServiceRegistry
+          file: ./abis/ServiceRegistry.json
+      eventHandlers:
+        - event: ServiceURIUpdate(indexed address,string)
+          handler: serviceURIUpdate
 ###############################################################################
 #
 # Data source templates

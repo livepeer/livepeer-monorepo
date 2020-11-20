@@ -41,6 +41,8 @@ type Transcoder @entity {
   delegators: [Delegator!] @derivedFrom(field: "delegate")
   "Delegator that registered this transcoder"
   delegator: Delegator
+  "Service URI endpoint that can be used to send off-chain requests"
+  serviceURI: String
 }
 
 """

@@ -20,19 +20,16 @@
     "docker:build": "docker build --cache-from livepeer/subgraph:latest -t livepeer/subgraph:latest .",
     "test:docker": "DOCKER=true npx truffle test --network=docker",
     "test:development": "npx truffle test --network=development",
-    "test": "yarn docker:build && docker-compose -f test/integration/docker-compose.yaml up --abort-on-container-exit",
-    "postinstall": "patch-package"
+    "test": "yarn docker:build && docker-compose -f test/integration/docker-compose.yaml up --abort-on-container-exit"
   },
   "devDependencies": {
     "apollo-fetch": "^0.7.0",
-    "@graphprotocol/graph-cli": "^0.18.0",
-    "@graphprotocol/graph-ts": "^0.18.0",
+    "@graphprotocol/graph-cli": "^0.19.0",
+    "@graphprotocol/graph-ts": "^0.19.0",
     "bignumber.js": "^9.0.0",
     "fs-extra": "^8.1.0",
     "handlebars": "^4.5.2",
     "js-yaml": "^3.13.1",
-    "patch-package": "^6.2.2",
-    "postinstall-postinstall": "^2.1.0",
     "truffle": "^5.1.24",
     "typy": "^3.3.0"
   },
