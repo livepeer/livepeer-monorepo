@@ -36,7 +36,7 @@ export default class Channel extends Component {
     this.setState({ bannerOpen: false })
   }
 
-  openModal = modal => {
+  openModal = (modal) => {
     this.setState({ modal })
   }
 
@@ -44,7 +44,7 @@ export default class Channel extends Component {
     this.setState({ modal: '', didCopy: false, tipAmount: 0 })
   }
 
-  copyToClipboard = e => {
+  copyToClipboard = (e) => {
     this.text.select()
     document.execCommand('copy')
     this.setState({ didCopy: true })
@@ -73,7 +73,7 @@ export default class Channel extends Component {
     })}" ${allowFullscreen ? 'allowfullscreen' : ''}></iframe>`
     return (
       <div>
-        <BasicNavbar onSearch={url => this.setState({ redirect: url })} />
+        <BasicNavbar onSearch={(url) => this.setState({ redirect: url })} />
         {/*
          * Modals
          */}
@@ -87,7 +87,7 @@ export default class Channel extends Component {
           <div style={{ display: 'flex' }}>
             <input
               readOnly
-              ref={text => (this.text = text)}
+              ref={(text) => (this.text = text)}
               style={{
                 width: '100%',
                 borderRadius: 0,
@@ -118,7 +118,7 @@ export default class Channel extends Component {
           <h2>Copy Embed Link</h2>
           <textarea
             readOnly
-            ref={text => (this.text = text)}
+            ref={(text) => (this.text = text)}
             style={{
               display: 'block',
               width: 320,
@@ -133,7 +133,7 @@ export default class Channel extends Component {
 
           <Switch
             checked={this.state.allowFullscreen}
-            onChange={evt =>
+            onChange={(evt) =>
               this.setState({ allowFullscreen: evt.target.checked })
             }
           >
@@ -165,7 +165,7 @@ export default class Channel extends Component {
             onDead={() => {
               this.setState({ live: false })
             }}
-            ref={ref => {
+            ref={(ref) => {
               if (!ref) {
                 return
               }
@@ -321,10 +321,10 @@ export default class Channel extends Component {
                 <p style={{ margin: '0 0 0 auto' }}>
                   <Button
                     onClick={() => {
-                      window.open('https://livepeer.org/participate/')
+                      window.open('https://livepeer.org/developers/')
                     }}
                   >
-                    Join the Alpha
+                    Learn More
                   </Button>
 
                   <Button
