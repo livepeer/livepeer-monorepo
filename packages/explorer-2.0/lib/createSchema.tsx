@@ -37,6 +37,15 @@ const Index = async () => {
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace
       price: Float
+      scores: PerformanceLog
+      successRates: PerformanceLog
+      avgLatency: PerformanceLog
+    }
+    type PerformanceLog {
+      global: Float
+      fra: Float
+      mdw: Float
+      sin: Float
     }
     extend type ThreeBoxSpace {
       transcoder: Transcoder
@@ -284,6 +293,7 @@ const Index = async () => {
         const selectionSet = Object.keys(graphqlFields(info))
         const transcoders = await resolve(parent, args, ctx, info)
         let arr = []
+        let performanceMetrics = []
 
         // if selection set includes 'price', return transcoders merge prices and performance metrics
         if (selectionSet.includes('price')) {
@@ -303,8 +313,50 @@ const Index = async () => {
           })
         }
 
+        function avg(obj, key) {
+          let arr = Object.values(obj)
+          let sum = (prev, cur) => ({ [key]: prev[key] + cur[key] })
+          return arr.reduce(sum)[key] / arr.length
+        }
+
+        if (selectionSet.includes('scores')) {
+          let metricsResponse = await fetch(
+            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`,
+          )
+          let metrics = await metricsResponse.json()
+
+          for (const key in metrics) {
+            if (transcoders.filter((a) => a.id === key).length > 0) {
+              performanceMetrics.push({
+                id: key,
+                scores: {
+                  global: avg(metrics[key], 'score'),
+                  fra: metrics[key].FRA?.score,
+                  mdw: metrics[key].MDW?.score,
+                  sin: metrics[key].SIN?.score,
+                },
+                successRates: {
+                  global: avg(metrics[key], 'success_rate'),
+                  fra: metrics[key].FRA?.success_rate,
+                  mdw: metrics[key].MDW?.success_rate,
+                  sin: metrics[key].SIN?.success_rate,
+                },
+                avgLatency: {
+                  global: avg(metrics[key], 'avg_latency'),
+                  fra: metrics[key].FRA?.avg_latency,
+                  mdw: metrics[key].MDW?.avg_latency,
+                  sin: metrics[key].SIN?.avg_latency,
+                },
+              })
+            }
+          }
+        }
+
         // merge results
-        return mergeObjectsInUnique([...transcoders, ...arr], 'id')
+        return mergeObjectsInUnique(
+          [...transcoders, ...arr, ...performanceMetrics],
+          'id',
+        )
       },
     },
   }
