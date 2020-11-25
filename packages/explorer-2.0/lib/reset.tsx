@@ -29,6 +29,8 @@ const Reset = () =>
       },
       code: {
         fontFamily: theme.fonts.monospace,
+        whiteSpace: 'pre-wrap',
+        wordWrap: 'break-word',
       },
       button: {
         border: 0,
