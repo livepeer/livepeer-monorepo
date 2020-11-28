@@ -9,7 +9,7 @@ import {
   ParameterUpdate,
   SetCurrentRewardTokens,
 } from '../types/schema'
-import { makeEventId } from '../../utils/helpers'
+import { convertToDecimal, makeEventId } from '../../utils/helpers'
 
 export function setCurrentRewardTokens(
   event: SetCurrentRewardTokensEvent,
@@ -17,7 +17,7 @@ export function setCurrentRewardTokens(
   let minter = Minter.bind(event.address)
   let protocol = Protocol.load('0') || new Protocol('0')
   let round = new Round(protocol.currentRound)
-  round.mintableTokens = event.params.currentMintableTokens
+  round.mintableTokens = convertToDecimal(event.params.currentMintableTokens)
   round.save()
 
   // The variables targetBondingRate, inflationChange, and inflation are
@@ -39,8 +39,7 @@ export function setCurrentRewardTokens(
   setCurrentRewardTokens.from = event.transaction.from.toHex()
   setCurrentRewardTokens.to = event.transaction.to.toHex()
   setCurrentRewardTokens.round = protocol.currentRound
-  setCurrentRewardTokens.currentMintableTokens =
-    event.params.currentMintableTokens
+  setCurrentRewardTokens.currentMintableTokens = round.mintableTokens
   setCurrentRewardTokens.currentInflation = event.params.currentInflation
   setCurrentRewardTokens.save()
 }

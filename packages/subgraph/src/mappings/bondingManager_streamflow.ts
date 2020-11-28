@@ -15,19 +15,20 @@ import {
   Protocol,
 } from '../types/schema'
 
-import { MAXIMUM_VALUE_UINT256, makeEventId } from '../../utils/helpers'
+import {
+  MAXIMUM_VALUE_UINT256,
+  makeEventId,
+  convertToDecimal,
+} from '../../utils/helpers'
 
 export function transcoderUpdated(event: TranscoderUpdateEvent): void {
-  let transcoderAddress = event.params.transcoder
-  let rewardCut = event.params.rewardCut
-  let feeShare = event.params.feeShare
   let protocol = Protocol.load('0') || new Protocol('0')
   let transcoder =
-    Transcoder.load(transcoderAddress.toHex()) ||
-    new Transcoder(transcoderAddress.toHex())
+    Transcoder.load(event.params.transcoder.toHex()) ||
+    new Transcoder(event.params.transcoder.toHex())
 
-  transcoder.rewardCut = rewardCut
-  transcoder.feeShare = feeShare
+  transcoder.rewardCut = event.params.rewardCut
+  transcoder.feeShare = event.params.feeShare
 
   // Apply store updates
   transcoder.save()
@@ -44,19 +45,18 @@ export function transcoderUpdated(event: TranscoderUpdateEvent): void {
   transcoderUpdated.from = event.transaction.from.toHex()
   transcoderUpdated.to = event.transaction.to.toHex()
   transcoderUpdated.round = protocol.currentRound
-  transcoderUpdated.rewardCut = rewardCut
-  transcoderUpdated.feeShare = feeShare
-  transcoderUpdated.delegate = transcoderAddress.toHex()
+  transcoderUpdated.rewardCut = event.params.rewardCut
+  transcoderUpdated.feeShare = event.params.feeShare
+  transcoderUpdated.delegate = event.params.transcoder.toHex()
   transcoderUpdated.save()
 }
 
 export function transcoderActivated(event: TranscoderActivatedEvent): void {
-  let transcoderAddress = event.params.transcoder
   let protocol = Protocol.load('0') || new Protocol('0')
 
   let transcoder =
-    Transcoder.load(transcoderAddress.toHex()) ||
-    new Transcoder(transcoderAddress.toHex())
+    Transcoder.load(event.params.transcoder.toHex()) ||
+    new Transcoder(event.params.transcoder.toHex())
 
   transcoder.active = true
   transcoder.lastActiveStakeUpdateRound = event.params.activationRound
@@ -77,13 +77,12 @@ export function transcoderActivated(event: TranscoderActivatedEvent): void {
   transcoderActivated.to = event.transaction.to.toHex()
   transcoderActivated.round = protocol.currentRound
   transcoderActivated.activationRound = event.params.activationRound
-  transcoderActivated.delegate = transcoderAddress.toHex()
+  transcoderActivated.delegate = event.params.transcoder.toHex()
   transcoderActivated.save()
 }
 
 export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
-  let transcoderAddress = event.params.transcoder
-  let transcoder = Transcoder.load(transcoderAddress.toHex())
+  let transcoder = Transcoder.load(event.params.transcoder.toHex())
   let protocol = Protocol.load('0') || new Protocol('0')
 
   transcoder.active = false
@@ -103,25 +102,24 @@ export function transcoderDeactivated(event: TranscoderDeactivatedEvent): void {
   transcoderDeactivated.to = event.transaction.to.toHex()
   transcoderDeactivated.round = protocol.currentRound
   transcoderDeactivated.deactivationRound = event.params.deactivationRound
-  transcoderDeactivated.delegate = transcoderAddress.toHex()
+  transcoderDeactivated.delegate = event.params.transcoder.toHex()
   transcoderDeactivated.save()
 }
 
 export function earningsClaimed(event: EarningsClaimedEvent): void {
-  let delegateAddress = event.params.delegate
-  let delegatorAddress = event.params.delegator
-  let rewards = event.params.rewards
-  let fees = event.params.fees
-  let startRound = event.params.startRound
-  let endRound = event.params.startRound
   let protocol = Protocol.load('0') || new Protocol('0')
   let delegator =
-    Delegator.load(delegatorAddress.toHex()) ||
-    new Delegator(delegatorAddress.toHex())
+    Delegator.load(event.params.delegator.toHex()) ||
+    new Delegator(event.params.delegator.toHex())
 
   delegator.lastClaimRound = event.params.endRound.toString()
-  delegator.bondedAmount = delegator.bondedAmount.plus(rewards)
-  delegator.fees = delegator.fees.plus(fees)
+
+  delegator.bondedAmount = delegator.bondedAmount.plus(
+    convertToDecimal(event.params.rewards),
+  )
+
+  delegator.fees = delegator.fees.plus(convertToDecimal(event.params.fees))
+
   delegator.save()
 
   let earningsClaimed = new EarningsClaimed(
@@ -135,11 +133,11 @@ export function earningsClaimed(event: EarningsClaimedEvent): void {
   earningsClaimed.from = event.transaction.from.toHex()
   earningsClaimed.to = event.transaction.to.toHex()
   earningsClaimed.round = protocol.currentRound
-  earningsClaimed.delegate = delegateAddress.toHex()
-  earningsClaimed.delegator = delegatorAddress.toHex()
-  earningsClaimed.startRound = startRound.toString()
-  earningsClaimed.endRound = endRound.toString()
-  earningsClaimed.rewardTokens = rewards
-  earningsClaimed.fees = fees
+  earningsClaimed.delegate = event.params.delegate.toHex()
+  earningsClaimed.delegator = event.params.delegator.toHex()
+  earningsClaimed.startRound = event.params.startRound.toString()
+  earningsClaimed.endRound = event.params.startRound.toString()
+  earningsClaimed.rewardTokens = convertToDecimal(event.params.rewards)
+  earningsClaimed.fees = convertToDecimal(event.params.fees)
   earningsClaimed.save()
 }

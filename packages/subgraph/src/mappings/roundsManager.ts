@@ -25,6 +25,7 @@ import {
   getBondingManagerAddress,
   makeEventId,
   EMPTY_ADDRESS,
+  convertToDecimal,
 } from '../../utils/helpers'
 
 // Handler for NewRound events
@@ -89,7 +90,7 @@ export function newRound(event: NewRoundEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
-  protocol.totalActiveStake = bondingManager.getTotalBonded()
+  protocol.totalActiveStake = convertToDecimal(bondingManager.getTotalBonded())
   protocol.save()
 
   // Store transaction info
