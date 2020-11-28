@@ -83,9 +83,7 @@ const Step4 = ({ goTo, nextStep }) => {
         ETH Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
           {dataMyAccount?.account &&
-            parseFloat(Utils.fromWei(dataMyAccount.account.ethBalance)).toFixed(
-              2,
-            )}
+            parseFloat(dataMyAccount.account.ethBalance).toFixed(2)}
         </span>
       </div>
       <div sx={{ fontFamily: 'monospace' }}>

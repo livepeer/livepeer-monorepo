@@ -29,13 +29,13 @@ const Index = ({ data }) => {
   }, [copied])
 
   let noVoteStake = parseFloat(
-    Utils.fromWei(data.poll?.tally?.no ? data.poll?.tally?.no : '0'),
+    data.poll?.tally?.no ? data.poll?.tally?.no : '0',
   )
   let yesVoteStake = parseFloat(
-    Utils.fromWei(data.poll?.tally?.yes ? data.poll?.tally?.yes : '0'),
+    data.poll?.tally?.yes ? data.poll?.tally?.yes : '0',
   )
   let totalVoteStake = noVoteStake + yesVoteStake
-  let totalNonVoteStake = parseFloat(Utils.fromWei(data.poll.totalNonVoteStake))
+  let totalNonVoteStake = parseFloat(data.poll.totalNonVoteStake)
   let votingPower = getVotingPower(data?.myAccount, data?.vote)
 
   let delegate = null
@@ -208,9 +208,9 @@ const Index = ({ data }) => {
                     <span sx={{ color: 'muted' }}>My Voting Power</span>
                     <span sx={{ fontWeight: 500, color: 'white' }}>
                       <span>
-                        {abbreviateNumber(Utils.fromWei(votingPower), 4)} LPT (
+                        {abbreviateNumber(votingPower, 4)} LPT (
                         {(
-                          (+Utils.fromWei(votingPower) /
+                          (+votingPower /
                             (totalVoteStake + totalNonVoteStake)) *
                           100
                         ).toPrecision(2)}

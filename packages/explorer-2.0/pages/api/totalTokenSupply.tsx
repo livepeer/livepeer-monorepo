@@ -1,5 +1,3 @@
-import Utils from 'web3-utils'
-
 export default async (req, res) => {
   const response = await fetch(
     `https://${
@@ -9,5 +7,5 @@ export default async (req, res) => {
     }`,
   )
   const { result: totalTokenSupply } = await response.json()
-  res.end(Utils.fromWei(totalTokenSupply))
+  res.end(totalTokenSupply)
 }

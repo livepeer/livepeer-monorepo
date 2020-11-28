@@ -1,7 +1,6 @@
 import { Flex, Box } from 'theme-ui'
 import { useMemo, useState, useRef } from 'react'
 import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
-import Utils from 'web3-utils'
 import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import Search from '../../public/img/search.svg'
 import Help from '../../public/img/help.svg'
@@ -658,13 +657,13 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       case 'Stake':
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
+            {abbreviateNumber(cell.value ? cell.value : 0, 4)}
           </span>
         )
       case 'Fees':
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {cell.value ? +parseFloat(Utils.fromWei(cell.value)).toFixed(2) : 0}{' '}
+            {cell.value ? +parseFloat(cell.value).toFixed(2) : 0}{' '}
             <span sx={{ fontSize: 12 }}>ETH</span>
           </span>
         )

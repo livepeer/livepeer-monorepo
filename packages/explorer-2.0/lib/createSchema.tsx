@@ -148,10 +148,11 @@ const Index = async () => {
                 }
               }`,
             })
-            return await _ctx.livepeer.rpc.getPendingFees(
+            const pendingFees = await _ctx.livepeer.rpc.getPendingFees(
               _delegator.id,
               data.protocol.currentRound.id,
             )
+            return Utils.fromWei(pendingFees)
           },
         },
       },
@@ -170,9 +171,7 @@ const Index = async () => {
       Poll: {
         totalVoteStake: {
           async resolve(_poll, _args, _ctx, _info) {
-            return Utils.toBN(_poll?.tally?.no ? _poll?.tally?.no : '0')
-              .add(Utils.toBN(_poll?.tally?.yes ? _poll.tally.yes : '0'))
-              .toString()
+            return +_poll?.tally?.no + +_poll?.tally?.yes
           },
         },
         totalNonVoteStake: {
@@ -185,11 +184,8 @@ const Index = async () => {
               _ctx,
               isActive ? blockNumber : _poll.endBlock,
             )
-            const totalVoteStake = Utils.toBN(
-              _poll?.tally?.no ? _poll?.tally?.no : '0',
-            ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
-
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            const totalVoteStake = +_poll?.tally?.no + +_poll?.tally?.yes
+            return +Utils.fromWei(totalStake) - totalVoteStake
           },
         },
         status: {
@@ -203,17 +199,18 @@ const Index = async () => {
               isActive ? blockNumber : _poll.endBlock,
             )
             let noVoteStake = parseFloat(
-              Utils.fromWei(_poll?.tally?.no ? _poll?.tally?.no : '0'),
+              _poll?.tally?.no ? _poll?.tally?.no : '0',
             )
             let yesVoteStake = parseFloat(
-              Utils.fromWei(_poll?.tally?.yes ? _poll?.tally?.yes : '0'),
+              _poll?.tally?.yes ? _poll?.tally?.yes : '0',
             )
             let totalVoteStake = noVoteStake + yesVoteStake
             let totalSupport = isNaN(yesVoteStake / totalVoteStake)
               ? 0
               : (yesVoteStake / totalVoteStake) * 100
             let totalParticipation =
-              (totalVoteStake / parseFloat(Utils.fromWei(totalStake))) * 100
+              (totalVoteStake / +Utils.fromWei(totalStake)) * 100
+
             if (isActive) {
               return 'active'
             } else if (totalParticipation > _poll.quorum / 10000) {

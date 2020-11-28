@@ -1,5 +1,4 @@
 import { Flex, Box } from 'theme-ui'
-import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -151,8 +150,7 @@ function renderSwitch(transaction: any, i: number) {
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               <span sx={{ fontFamily: 'monospace' }}>
-                {parseFloat(Utils.fromWei(transaction.amount)).toPrecision(3) +
-                  ' LPT'}
+                {parseFloat(transaction.amount).toPrecision(3) + ' LPT'}
               </span>
             </div>
           </Flex>
@@ -197,11 +195,7 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +
-                {abbreviateNumber(
-                  Utils.fromWei(transaction.additionalAmount),
-                  3,
-                )}
+                +{abbreviateNumber(transaction.additionalAmount, 3)}
               </span>{' '}
               LPT
             </div>
@@ -243,13 +237,13 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ textAlign: 'right', fontSize: 1, ml: 3 }}>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(Utils.fromWei(transaction.rewardTokens), 3)}
+                  {abbreviateNumber(transaction.rewardTokens, 3)}
                 </span>{' '}
                 LPT
               </Box>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(Utils.fromWei(transaction.fees), 3)}
+                  {abbreviateNumber(transaction.fees, 3)}
                 </span>{' '}
                 ETH
               </Box>
@@ -337,7 +331,7 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(Utils.fromWei(transaction.amount), 3)}
+                +{abbreviateNumber(transaction.amount, 3)}
               </span>{' '}
               LPT
             </div>
@@ -383,7 +377,7 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                -{abbreviateNumber(Utils.fromWei(transaction.amount), 3)}
+                -{abbreviateNumber(transaction.amount, 3)}
               </span>{' '}
               LPT
             </div>
@@ -425,7 +419,7 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(Utils.fromWei(transaction.rewardTokens), 3)}
+                +{abbreviateNumber(transaction.rewardTokens, 3)}
               </span>{' '}
               LPT
             </div>
@@ -517,7 +511,7 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(Utils.fromWei(transaction.amount), 3)}
+                +{abbreviateNumber(transaction.amount, 3)}
               </span>{' '}
               LPT
             </div>
@@ -559,7 +553,7 @@ function renderSwitch(transaction: any, i: number) {
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(Utils.fromWei(transaction.faceValue), 3)}
+                +{abbreviateNumber(transaction.faceValue, 3)}
               </span>{' '}
               ETH
             </div>

@@ -45,7 +45,7 @@ export const getDelegatorStatus = (
   if (
     !delegator ||
     !delegator.bondedAmount ||
-    parseFloat(Utils.fromWei(delegator.bondedAmount)) === 0
+    parseFloat(delegator.bondedAmount) === 0
   ) {
     return 'Unbonded'
   } else if (
@@ -393,9 +393,7 @@ export const simulateNewActiveSetOrder = ({
   }
 
   if (action === 'stake') {
-    transcoders[index].totalStake = Utils.toBN(transcoders[index].totalStake)
-      .add(Utils.toBN(amount))
-      .toString()
+    transcoders[index].totalStake = +transcoders[index].totalStake + +amount
 
     // if delegator is moving stake, subtract amount from old delegate
     if (
@@ -406,22 +404,15 @@ export const simulateNewActiveSetOrder = ({
       const oldDelegateIndex = transcoders.findIndex(
         (t) => t.id.toLowerCase() === oldDelegate.toLowerCase(),
       )
-      transcoders[oldDelegateIndex].totalStake = Utils.toBN(
-        transcoders[oldDelegateIndex].totalStake,
-      )
-        .sub(Utils.toBN(amount))
-        .toString()
+      transcoders[oldDelegateIndex].totalStake =
+        +transcoders[oldDelegateIndex].totalStake - +amount
     }
   } else {
-    transcoders[index].totalStake = Utils.toBN(transcoders[index].totalStake)
-      .sub(Utils.toBN(amount))
-      .toString()
+    transcoders[index].totalStake = +transcoders[index].totalStake - +amount
   }
 
   // reorder transcoders array
-  return transcoders.sort((a, b) =>
-    Utils.toBN(b.totalStake).cmp(Utils.toBN(a.totalStake)),
-  )
+  return transcoders.sort((a, b) => +a.totalStake - +b.totalStake)
 }
 
 export function isAddress(address) {

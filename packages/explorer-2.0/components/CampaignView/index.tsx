@@ -1,5 +1,4 @@
 import { Flex } from 'theme-ui'
-import Utils from 'web3-utils'
 import Card from '../Card'
 import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import { Box } from 'theme-ui'
@@ -98,7 +97,7 @@ const Index = ({ currentRound, transcoder }) => {
                 fontFamily: 'monospace',
               }}
             >
-              {abbreviateNumber(Utils.fromWei(transcoder.totalStake), 4)}
+              {abbreviateNumber(transcoder.totalStake, 4)}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </Box>
           }
@@ -117,10 +116,7 @@ const Index = ({ currentRound, transcoder }) => {
               }}
             >
               {transcoder.totalGeneratedFees
-                ? abbreviateNumber(
-                    Utils.fromWei(transcoder.totalGeneratedFees),
-                    3,
-                  )
+                ? abbreviateNumber(transcoder.totalGeneratedFees, 3)
                 : 0}
               <span sx={{ ml: 1, fontSize: 12 }}>ETH</span>
             </Box>
