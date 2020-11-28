@@ -1,6 +1,5 @@
 import { Flex, Styled } from 'theme-ui'
 import { Text } from '@theme-ui/components'
-import Ballot from '../../public/img/ballot.svg'
 import { getLayout } from '../../layouts/main'
 import { Box } from 'theme-ui'
 import Button from '../../components/Button'

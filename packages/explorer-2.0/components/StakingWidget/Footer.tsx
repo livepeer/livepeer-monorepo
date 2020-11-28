@@ -73,9 +73,7 @@ const Footer = ({
   const stake =
     delegator &&
     Math.max(
-      delegator.bondedAmount
-        ? parseFloat(Utils.fromWei(delegator.bondedAmount))
-        : 0,
+      delegator.bondedAmount ? parseFloat(delegator.bondedAmount) : 0,
       delegator.pendingStake
         ? parseFloat(Utils.fromWei(delegator.pendingStake))
         : 0,

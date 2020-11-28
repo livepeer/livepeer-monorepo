@@ -1,5 +1,4 @@
 import { Flex, Styled } from 'theme-ui'
-import Ballot from '../../public/img/ballot.svg'
 import { getLayout } from '../../layouts/main'
 import IPFS from 'ipfs-mini'
 import fm from 'front-matter'

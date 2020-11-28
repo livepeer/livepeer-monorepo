@@ -138,11 +138,9 @@ const Poll = () => {
     )
   }
 
-  let noVoteStake = parseFloat(
-    Utils.fromWei(pollData?.tally?.no ? pollData?.tally?.no : '0'),
-  )
+  let noVoteStake = parseFloat(pollData?.tally?.no ? pollData?.tally?.no : '0')
   let yesVoteStake = parseFloat(
-    Utils.fromWei(pollData?.tally?.yes ? pollData?.tally?.yes : '0'),
+    pollData?.tally?.yes ? pollData?.tally?.yes : '0',
   )
   let totalVoteStake = noVoteStake + yesVoteStake
 
@@ -440,14 +438,10 @@ const Poll = () => {
 }
 
 async function transformData({ poll }) {
-  let noVoteStake = parseFloat(
-    Utils.fromWei(poll?.tally?.no ? poll?.tally?.no : '0'),
-  )
-  let yesVoteStake = parseFloat(
-    Utils.fromWei(poll?.tally?.yes ? poll?.tally?.yes : '0'),
-  )
-  let totalVoteStake = parseFloat(Utils.fromWei(poll.totalVoteStake))
-  let totalNonVoteStake = parseFloat(Utils.fromWei(poll.totalNonVoteStake))
+  let noVoteStake = parseFloat(poll?.tally?.no ? poll?.tally?.no : '0')
+  let yesVoteStake = parseFloat(poll?.tally?.yes ? poll?.tally?.yes : '0')
+  let totalVoteStake = parseFloat(poll.totalVoteStake)
+  let totalNonVoteStake = parseFloat(poll.totalNonVoteStake)
   let totalSupport = isNaN(yesVoteStake / totalVoteStake)
     ? 0
     : (yesVoteStake / totalVoteStake) * 100

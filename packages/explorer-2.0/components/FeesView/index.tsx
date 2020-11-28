@@ -33,9 +33,7 @@ const Index = ({ delegator, currentRound, isMyAccount }) => {
     }
   }
 
-  const lifetimeEarnings = Utils.toBN(delegator.pendingFees)
-    .add(Utils.toBN(delegator.withdrawnFees ? delegator.withdrawnFees : '0'))
-    .toString()
+  const lifetimeEarnings = +delegator.pendingFees + +delegator.withdrawnFees
 
   const withdrawButtonDisabled = delegator.pendingFees === '0'
 
@@ -66,7 +64,7 @@ const Index = ({ delegator, currentRound, isMyAccount }) => {
                 }}
               >
                 <NumberFormat
-                  value={Utils.fromWei(lifetimeEarnings)}
+                  value={lifetimeEarnings}
                   displayType="text"
                   decimalScale={13}
                 />
@@ -105,7 +103,7 @@ const Index = ({ delegator, currentRound, isMyAccount }) => {
                 </Flex>
                 <span sx={{ fontFamily: 'monospace' }}>
                   <NumberFormat
-                    value={Utils.fromWei(delegator.pendingFees)}
+                    value={delegator.pendingFees}
                     displayType="text"
                     decimalScale={13}
                   />{' '}
@@ -141,9 +139,9 @@ const Index = ({ delegator, currentRound, isMyAccount }) => {
                 </Flex>
                 <span sx={{ fontFamily: 'monospace' }}>
                   <NumberFormat
-                    value={Utils.fromWei(
-                      delegator.withdrawnFees ? delegator.withdrawnFees : '0',
-                    )}
+                    value={
+                      delegator.withdrawnFees ? delegator.withdrawnFees : '0'
+                    }
                     displayType="text"
                     decimalScale={13}
                   />{' '}
@@ -167,7 +165,7 @@ const Index = ({ delegator, currentRound, isMyAccount }) => {
                   }}
                 >
                   <NumberFormat
-                    value={Utils.fromWei(delegator.pendingFees)}
+                    value={delegator.pendingFees}
                     displayType="text"
                     decimalScale={13}
                   />
