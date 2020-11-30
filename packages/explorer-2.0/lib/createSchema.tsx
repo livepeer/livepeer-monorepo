@@ -39,7 +39,7 @@ const Index = async () => {
       price: Float
       scores: PerformanceLog
       successRates: PerformanceLog
-      avgLatency: PerformanceLog
+      roundTripScores: PerformanceLog
     }
     type PerformanceLog {
       global: Float
@@ -341,11 +341,11 @@ const Index = async () => {
                   mdw: metrics[key].MDW?.success_rate,
                   sin: metrics[key].SIN?.success_rate,
                 },
-                avgLatency: {
-                  global: avg(metrics[key], 'avg_latency'),
-                  fra: metrics[key].FRA?.avg_latency,
-                  mdw: metrics[key].MDW?.avg_latency,
-                  sin: metrics[key].SIN?.avg_latency,
+                roundTripScores: {
+                  global: avg(metrics[key], 'round_trip_score'),
+                  fra: metrics[key].FRA?.round_trip_score,
+                  mdw: metrics[key].MDW?.round_trip_score,
+                  sin: metrics[key].SIN?.round_trip_score,
                 },
               })
             }

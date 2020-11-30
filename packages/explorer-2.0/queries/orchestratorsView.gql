@@ -32,7 +32,7 @@ query(
       fra
       sin
     }
-    avgLatency {
+    roundTripScores {
       global
       mdw
       fra

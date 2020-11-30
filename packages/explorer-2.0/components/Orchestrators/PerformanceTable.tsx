@@ -114,7 +114,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
       },
       {
         Header: 'Latency Score',
-        accessor: `avgLatency.${region}`,
+        accessor: `roundTripScores.${region}`,
         sortType: 'basic',
         mobile: false,
       },
