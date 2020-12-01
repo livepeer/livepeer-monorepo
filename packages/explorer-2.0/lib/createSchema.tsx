@@ -189,7 +189,9 @@ const Index = async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            return Utils.toBN(totalStake)
+              .sub(totalVoteStake)
+              .toString()
           },
         },
         status: {
@@ -282,7 +284,7 @@ const Index = async () => {
         )
         let transcodersWithPrice = await response.json()
         let transcoderWithPrice = transcodersWithPrice.filter(
-          (t) => t.Address.toLowerCase() === args.id.toLowerCase(),
+          t => t.Address.toLowerCase() === args.id.toLowerCase(),
         )[0]
         transcoder['price'] = transcoderWithPrice?.PricePerPixel
           ? transcoderWithPrice?.PricePerPixel
@@ -303,8 +305,8 @@ const Index = async () => {
           )
           let transcodersWithPrice = await response.json()
 
-          transcodersWithPrice.map((t) => {
-            if (transcoders.filter((a) => a.id === t.Address).length > 0) {
+          transcodersWithPrice.map(t => {
+            if (transcoders.filter(a => a.id === t.Address).length > 0) {
               arr.push({
                 id: t.Address,
                 price: t.PricePerPixel,
@@ -326,26 +328,26 @@ const Index = async () => {
           let metrics = await metricsResponse.json()
 
           for (const key in metrics) {
-            if (transcoders.filter((a) => a.id === key).length > 0) {
+            if (transcoders.filter(a => a.id === key).length > 0) {
               performanceMetrics.push({
                 id: key,
                 scores: {
-                  global: avg(metrics[key], 'score'),
-                  fra: metrics[key].FRA?.score,
-                  mdw: metrics[key].MDW?.score,
-                  sin: metrics[key].SIN?.score,
+                  global: avg(metrics[key], 'score') * 100,
+                  fra: metrics[key].FRA?.score * 100,
+                  mdw: metrics[key].MDW?.score * 100,
+                  sin: metrics[key].SIN?.score * 100,
                 },
                 successRates: {
-                  global: avg(metrics[key], 'success_rate'),
-                  fra: metrics[key].FRA?.success_rate,
-                  mdw: metrics[key].MDW?.success_rate,
-                  sin: metrics[key].SIN?.success_rate,
+                  global: avg(metrics[key], 'success_rate') * 100,
+                  fra: metrics[key].FRA?.success_rate * 100,
+                  mdw: metrics[key].MDW?.success_rate * 100,
+                  sin: metrics[key].SIN?.success_rate * 100,
                 },
                 roundTripScores: {
-                  global: avg(metrics[key], 'round_trip_score'),
-                  fra: metrics[key].FRA?.round_trip_score,
-                  mdw: metrics[key].MDW?.round_trip_score,
-                  sin: metrics[key].SIN?.round_trip_score,
+                  global: avg(metrics[key], 'round_trip_score') * 100,
+                  fra: metrics[key].FRA?.round_trip_score * 100,
+                  mdw: metrics[key].MDW?.round_trip_score * 100,
+                  sin: metrics[key].SIN?.round_trip_score * 100,
                 },
               })
             }

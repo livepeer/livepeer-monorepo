@@ -15,12 +15,12 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
   const { width } = useWindowSize()
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
-      keys: [(row) => row.values[id]],
+      keys: [row => row.values[id]],
     })
   }
 
   // Let the table remove the filter if the string is empty
-  fuzzyTextFilterFn.autoRemove = (val) => !val
+  fuzzyTextFilterFn.autoRemove = val => !val
 
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
@@ -33,7 +33,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
         <Box
           value={filterValue || ''}
-          onChange={(e) => {
+          onChange={e => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
@@ -70,13 +70,12 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         Filter: DefaultColumnFilter,
         mobile: true,
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID)
-          let b = getRowValueByColumnID(rowB, columnID)
-          let aThreeBoxSpace = getRowValueByColumnID(rowA, 'threeBoxSpace')
-          let bThreeBoxSpace = getRowValueByColumnID(rowB, 'threeBoxSpace')
-          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a
-          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b
-
+          let rowAIdentity =
+            getRowValueByColumnID(rowA, 'threeBoxSpace')?.name ||
+            getRowValueByColumnID(rowA, columnID)
+          let rowBIdentity =
+            getRowValueByColumnID(rowB, 'threeBoxSpace')?.name ||
+            getRowValueByColumnID(rowB, columnID)
           return compareBasic(rowAIdentity, rowBIdentity)
         },
       },
@@ -104,18 +103,15 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         mobile: true,
         sortDescFirst: true,
         defaultCanSort: true,
-        sortType: 'basic',
       },
       {
         Header: 'Success Rate',
         accessor: `successRates.${region}`,
         mobile: false,
-        sortType: 'basic',
       },
       {
         Header: 'Latency Score',
         accessor: `roundTripScores.${region}`,
-        sortType: 'basic',
         mobile: false,
       },
     ],
@@ -145,7 +141,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter((row) => {
+        return rows.filter(row => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
