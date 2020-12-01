@@ -53,7 +53,7 @@ query($account: ID!) {
     status
     active
     totalStake
-    totalGeneratedFees
+    totalVolumeETH
     lastRewardRound {
       id
     }

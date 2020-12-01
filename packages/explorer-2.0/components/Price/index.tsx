@@ -7,7 +7,9 @@ const Index = ({ value, per, useEthSymbol = true }) => {
       <Box sx={{ fontFamily: 'monospace' }}>
         {parseFloat(
           Utils.fromWei(Math.round(value * 1000000).toString(), 'gwei'),
-        ).toLocaleString()}
+        )
+          .toFixed(4)
+          .toLocaleString()}
         <span sx={{ ml: 1, fontSize: 12 }}>GWEI</span>
       </Box>
     )
@@ -16,7 +18,9 @@ const Index = ({ value, per, useEthSymbol = true }) => {
       <Box sx={{ fontFamily: 'monospace' }}>
         {parseFloat(
           Utils.fromWei(Math.round(value * 1000000000).toString(), 'gwei'),
-        ).toLocaleString()}
+        )
+          .toFixed(4)
+          .toLocaleString()}
         <span sx={{ ml: 1, fontSize: 12 }}>GWEI</span>
       </Box>
     )
@@ -25,7 +29,7 @@ const Index = ({ value, per, useEthSymbol = true }) => {
       <Box sx={{ fontFamily: 'monospace' }}>
         {parseFloat(
           Utils.fromWei(Math.round(value * 1000000000000).toString()),
-        )}
+        ).toFixed(4)}
         <span sx={{ ml: 1, fontSize: 12 }}>ETH</span>
       </Box>
     )

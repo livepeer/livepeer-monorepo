@@ -118,7 +118,7 @@ const oneWeekAgo = Math.floor(
   new Date(new Date().setDate(new Date().getDate() - 7)).getTime() / 1000,
 )
 
-const Index = () => {
+const Index = ({ pageSize = 10, title = '' }) => {
   const { query } = useRouter()
   const isVisible = usePageVisibility()
   const pollInterval = 20000
@@ -160,11 +160,14 @@ const Index = () => {
 
   return (
     <Box className="tour-step-6">
-      <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
-        Top Orchestrators
-      </Styled.h2>
+      {title && (
+        <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
+          {title}
+        </Styled.h2>
+      )}
       <Box
         sx={{
+          position: 'relative',
           pt: 2,
           mb: 3,
           minHeight: 500,
@@ -274,8 +277,11 @@ const Index = () => {
             sx={{
               position: 'absolute',
               transform: 'translate(-50%, -50%)',
-              top: 'calc(50% + 62px)',
+              top: 'calc(50%)',
               left: '50%',
+              height: '500px',
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
             <Spinner />
@@ -284,6 +290,7 @@ const Index = () => {
           <Box>
             {query.orchestratorTable === 'performance' ? (
               <PerformanceTable
+                pageSize={pageSize}
                 data={{
                   currentRound: data.protocol.currentRound,
                   transcoders: data.transcoders,
@@ -292,6 +299,7 @@ const Index = () => {
               />
             ) : (
               <StakingTable
+                pageSize={pageSize}
                 data={{
                   currentRound: data.protocol.currentRound,
                   transcoders: data.transcoders,

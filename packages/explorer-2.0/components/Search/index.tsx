@@ -42,7 +42,6 @@ const Index = ({ pushSx }) => {
         />
       </button>
       <input
-        required
         name="search"
         sx={{
           outlineColor: '#00EB88',

@@ -4,6 +4,9 @@ import url from 'url'
 import parseDomain from 'parse-domain'
 import { ethers } from 'ethers'
 import { gql } from '@apollo/client'
+import Numeral from 'numeral'
+import dayjs from 'dayjs'
+import { timeframeOptions } from './constants'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -418,4 +421,97 @@ export function isAddress(address) {
     return false
   }
   return true
+}
+
+export const priceFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+})
+
+export const toK = (num) => {
+  return Numeral(num).format('0.[00]a')
+}
+
+export const formattedNum = (number, usd = false, acceptNegatives = false) => {
+  if (isNaN(number) || number === '' || number === undefined) {
+    return usd ? '$0' : 0
+  }
+  let num = parseFloat(number)
+
+  if (num > 500000000) {
+    return (usd ? '$' : '') + toK(num.toFixed(0))
+  }
+
+  if (num === 0) {
+    if (usd) {
+      return '$0'
+    }
+    return 0
+  }
+
+  if (num < 0.0001 && num > 0) {
+    return usd ? '< $0.0001' : '< 0.0001'
+  }
+
+  if (num > 1000) {
+    return usd
+      ? '$' + Number(num.toFixed(0)).toLocaleString()
+      : '' + Number(num.toFixed(0)).toLocaleString()
+  }
+
+  if (usd) {
+    if (num < 0.1) {
+      return '$' + Number(num.toFixed(4))
+    } else {
+      let usdString = priceFormatter.format(num)
+      return '$' + usdString.slice(1, usdString.length)
+    }
+  }
+  return Number(num.toFixed(5))
+}
+
+export function getTimeframe(timeWindow) {
+  const utcEndTime = dayjs.utc()
+  // based on window, get starttime
+  let utcStartTime
+  switch (timeWindow) {
+    case timeframeOptions.WEEK:
+      utcStartTime = utcEndTime.subtract(1, 'week').endOf('day').unix() - 1
+      break
+    case timeframeOptions.MONTH:
+      utcStartTime = utcEndTime.subtract(1, 'month').endOf('day').unix() - 1
+      break
+    case timeframeOptions.ALL_TIME:
+      utcStartTime = utcEndTime.subtract(1, 'year').endOf('day').unix() - 1
+      break
+    default:
+      utcStartTime = utcEndTime.subtract(1, 'year').startOf('year').unix() - 1
+      break
+  }
+  return utcStartTime
+}
+
+/**
+ * gets the amoutn difference plus the % change in change itself (second order change)
+ * @param {*} valueNow
+ * @param {*} value24HoursAgo
+ * @param {*} value48HoursAgo
+ */
+export const get2DayPercentChange = (
+  valueNow,
+  value24HoursAgo,
+  value48HoursAgo,
+) => {
+  // get volume info for both 24 hour periods
+  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo)
+  let previousChange = parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo)
+
+  const adjustedPercentChange =
+    (currentChange - previousChange / previousChange) * 100
+
+  if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
+    return [currentChange, 0]
+  }
+  return [currentChange, adjustedPercentChange]
 }

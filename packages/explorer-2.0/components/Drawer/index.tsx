@@ -116,7 +116,7 @@ const Index = ({
                     },
                   }}
                 >
-                  <item.icon sx={{ width: 20, height: 20, mr: 1 }} />
+                  <item.icon sx={{ width: 20, height: 20, mr: '10px' }} />
                   {item.name}
                 </a>
               </Link>

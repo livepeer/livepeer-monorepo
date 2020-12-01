@@ -11,7 +11,11 @@ import Router from 'next/router'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 
-const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
+const PerformanceTable = ({
+  pageSize = 10,
+  data: { currentRound, transcoders },
+  region,
+}) => {
   const { width } = useWindowSize()
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
@@ -160,6 +164,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
     disableSortRemove: true,
     autoResetPage: false,
     initialState: {
+      pageSize,
       sortBy: [
         {
           id: 'scores.global',
@@ -294,7 +299,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
 
           <tbody {...getTableBodyProps()}>
             {page.map((row: any, rowIndex) => {
-              const orchestratorIndex = rowIndex + pageIndex * 10
+              const orchestratorIndex = rowIndex + pageIndex * pageSize
               prepareRow(row)
               return (
                 <tr
@@ -495,7 +500,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
   function renderSwitch(rowIndex, pageIndex, cell, currentRound) {
     switch (cell.column.Header) {
       case '#':
-        return parseInt(rowIndex) + 1 + pageIndex * 10
+        return parseInt(rowIndex) + 1 + pageIndex * pageSize
       case 'Orchestrator':
         const active =
           cell.row.values.activationRound <= currentRound.id &&

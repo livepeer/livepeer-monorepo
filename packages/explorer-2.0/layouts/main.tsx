@@ -25,7 +25,8 @@ import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
 import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
-import { FiX, FiArrowUpRight } from 'react-icons/fi'
+import { FiArrowUpRight, FiX } from 'react-icons/fi'
+import { MdTrendingUp } from 'react-icons/md'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -129,9 +130,16 @@ const Layout = ({
 
   let items: DrawerItem[] = [
     {
-      name: 'Orchestrators',
+      name: 'Overview',
       href: '/',
       as: '/',
+      icon: MdTrendingUp,
+      className: 'overview',
+    },
+    {
+      name: 'Orchestrators',
+      href: '/orchestrators',
+      as: '/orchestrators',
       icon: DNS,
       className: 'orchestrators',
     },
