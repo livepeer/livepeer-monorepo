@@ -25,8 +25,7 @@ import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
 import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
-import { FiArrowRight, FiX } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiX, FiArrowUpRight } from 'react-icons/fi'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -43,6 +42,9 @@ type DrawerItem = {
 }
 
 const pollInterval = 20000
+
+// increment this value when updating the banner
+const uniqueBannerID = 1
 
 const Layout = ({
   children,
@@ -78,7 +80,7 @@ const Layout = ({
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
-  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
+  const totalActivePolls = pollData?.polls.filter(p => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -90,7 +92,8 @@ const Layout = ({
   const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL)
 
   useEffect(() => {
-    if (window.localStorage.getItem('bannerDismissed')) {
+    const storage = JSON.parse(window.localStorage.getItem(`bannersDismissed`))
+    if (storage && storage.includes(uniqueBannerID)) {
       setBannerDismissed(true)
     }
   }, [])
@@ -257,32 +260,41 @@ const Layout = ({
                 }}
               >
                 <span sx={{ fontWeight: '600' }}>New:</span>{' '}
-                <span sx={{ display: ['none', 'none', 'inline'] }}>
-                  Automatic earnings at
-                </span>{' '}
-                <span
-                  sx={{ textTransform: ['uppercase', 'uppercase', 'initial'] }}
-                >
-                  r
-                </span>
-                <span>educed gas costs</span>
+                <span>Showcasing Orchestrator Performance</span>
               </span>
-              <Link href="/whats-new">
-                <a
-                  sx={{
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'primary',
-                  }}
-                >
-                  Read more <FiArrowRight sx={{ ml: 1 }} />
-                </a>
-              </Link>
+              <a
+                href="https://medium.com/livepeer-blog/showcasing-and-rewarding-orchestrator-performance-286c13d33653"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  minWidth: 94,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'primary',
+                }}
+              >
+                Read more <FiArrowUpRight sx={{ ml: 1 }} />
+              </a>
+
               <FiX
                 onClick={() => {
                   setBannerDismissed(true)
-                  window.localStorage.setItem('bannerDismissed', 'true')
+                  const storage = JSON.parse(
+                    window.localStorage.getItem(`bannersDismissed`),
+                  )
+                  if (storage) {
+                    storage.push(uniqueBannerID)
+                    window.localStorage.setItem(
+                      `bannersDismissed`,
+                      JSON.stringify(storage),
+                    )
+                  } else {
+                    window.localStorage.setItem(
+                      `bannersDismissed`,
+                      JSON.stringify([uniqueBannerID]),
+                    )
+                  }
                 }}
                 sx={{
                   cursor: 'pointer',
@@ -326,14 +338,14 @@ const Layout = ({
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
                 ?.confirmedDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   confirmedDialog: {
                     dismissed: true,
@@ -369,14 +381,14 @@ const Layout = ({
           <TxStartedDialog
             isOpen={
               lastTx?.confirmed === false &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
                 ?.pendingDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   pendingDialog: {
                     dismissed: true,
@@ -419,6 +431,6 @@ const Layout = ({
   )
 }
 
-export const getLayout = (page) => <Layout>{page}</Layout>
+export const getLayout = page => <Layout>{page}</Layout>
 
 export default Layout
