@@ -418,7 +418,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip="The percentage of video segments sent by a broadcaster that are successfully transcoded. See the FAQ for more details on how this metric is calculated."
+              data-tip="The average percentage of video segments sent by a broadcaster that are successfully transcoded. See the FAQ for more details on how this metric is calculated."
               data-for="tooltip-success-rate"
               sx={{
                 cursor: 'pointer',
@@ -445,7 +445,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip='<span>The measurement of the time to return transcoded results to a broadcaster relative to the duration of a segment. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
+              data-tip='<span>The average utility of the overall transcoding latency for an orchestrator. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-latency-score"
               sx={{
                 cursor: 'pointer',
@@ -472,7 +472,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip='<span>The measurement of the overall quality and reliability of service provided to a broadcaster based on success rate and latency scores. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
+              data-tip='<span>The average utility of the overall quality and reliability of an orchestrator based on success rate and latency scores. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-score"
               sx={{
                 cursor: 'pointer',
@@ -516,13 +516,17 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
-          <span sx={{ fontFamily: 'monospace' }}>{(cell.value / 10).toFixed(2)}</span>
+          <span sx={{ fontFamily: 'monospace' }}>
+            {(cell.value / 10).toFixed(2)}
+          </span>
         )
       case 'Total Score (0-10)':
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
-          <span sx={{ fontFamily: 'monospace' }}>{(cell.value / 10).toFixed(2)}</span>
+          <span sx={{ fontFamily: 'monospace' }}>
+            {(cell.value / 10).toFixed(2)}
+          </span>
         )
       default:
         return null
