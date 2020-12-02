@@ -8512,9 +8512,9 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
-"assemblyscript@git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3":
+"assemblyscript@github:assemblyscript/assemblyscript#v0.6":
   version "0.6.0"
-  resolved "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
+  resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/3ed76a97f05335504166fce1653da75f4face28f"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
     binaryen "77.0.0-nightly.20190407"
@@ -8523,9 +8523,9 @@ asn1@~0.2.3:
     opencollective-postinstall "^2.0.0"
     source-map-support "^0.5.11"
 
-"assemblyscript@github:assemblyscript/assemblyscript#v0.6":
+"assemblyscript@https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3":
   version "0.6.0"
-  resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/3ed76a97f05335504166fce1653da75f4face28f"
+  resolved "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
     binaryen "77.0.0-nightly.20190407"
@@ -31679,10 +31679,10 @@ react@^16.10.1, react@^16.8.3, react@^16.8.6:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-reactour@1.15.4:
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.15.4.tgz#854dc63d99a334474c4c3a9d895e1095ca86278a"
-  integrity sha512-a5uOG5xM0XXPKyhuPbunS2gkAboyotQ80KIxoRAmFmDvEnPkzwVgvCdmAhtYE+gOaSYuo/++vZ+kDc1fc25MqQ==
+reactour@1.16.3:
+  version "1.16.3"
+  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.16.3.tgz#a14565fc0d6899a146aaa996d1b3836963617d72"
+  integrity sha512-JsFfY2GSFBmCY/smgHAu38cm24TMzMoEVAxONz7F0za4Hc/TUDU82n5oo/oKFMT/t9I35xqHPHiHmsuhqOBBEA==
   dependencies:
     "@rooks/use-mutation-observer" "3.4.0"
     classnames "2.2.6"

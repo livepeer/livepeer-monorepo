@@ -78,7 +78,7 @@ const Layout = ({
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
-  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
+  const totalActivePolls = pollData?.polls.filter(p => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -317,23 +317,21 @@ const Layout = ({
                 width: '100%',
               }}
             >
-              <Flex sx={{ width: '100%' }} className="tour-step-6">
-                {children}
-              </Flex>
+              <Flex sx={{ width: '100%' }}>{children}</Flex>
             </Flex>
           </Box>
 
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
                 ?.confirmedDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   confirmedDialog: {
                     dismissed: true,
@@ -369,14 +367,14 @@ const Layout = ({
           <TxStartedDialog
             isOpen={
               lastTx?.confirmed === false &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
                 ?.pendingDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   pendingDialog: {
                     dismissed: true,
@@ -419,6 +417,6 @@ const Layout = ({
   )
 }
 
-export const getLayout = (page) => <Layout>{page}</Layout>
+export const getLayout = page => <Layout>{page}</Layout>
 
 export default Layout

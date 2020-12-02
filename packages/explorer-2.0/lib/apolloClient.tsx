@@ -6,7 +6,7 @@ import { execute } from 'graphql/execution/execute'
 import LivepeerSDK from '@livepeer/sdk'
 
 export default function createApolloClient(initialState, ctx) {
-  const dataIdFromObject = (object) => {
+  const dataIdFromObject = object => {
     switch (object.__typename) {
       case 'ThreeBoxSpace':
         return object.id // use the `id` field as the identifier
@@ -56,10 +56,10 @@ export default function createApolloClient(initialState, ctx) {
     },
   })
 
-  const link: any = new ApolloLink((operation) => {
-    return new Observable((observer) => {
+  const link: any = new ApolloLink(operation => {
+    return new Observable(observer => {
       Promise.resolve(createSchema())
-        .then(async (data) => {
+        .then(async data => {
           const context = operation.getContext()
           const sdk = await LivepeerSDK({
             provider:
@@ -86,13 +86,13 @@ export default function createApolloClient(initialState, ctx) {
             operation.operationName,
           )
         })
-        .then((data) => {
+        .then(data => {
           if (!observer.closed) {
             observer.next(data)
             observer.complete()
           }
         })
-        .catch((error) => {
+        .catch(error => {
           if (!observer.closed) {
             observer.error(error)
           }

@@ -10,7 +10,6 @@ import Step3 from './Step3'
 import Step4 from './Step4'
 import Step5 from './Step5'
 import Step6 from './Step6'
-import Step7 from './Step7'
 import gql from 'graphql-tag'
 import { Box } from 'theme-ui'
 import accountQuery from '../../queries/account.gql'
@@ -46,19 +45,18 @@ const Index = ({ children, ...props }) => {
   })
   const { data } = useQuery(GET_TOUR_OPEN)
 
-  useEffect(() => {
-    if (nextStep === 6) {
-      setTourStyles({
-        ...tourStyles,
-        maxWidth: '270px',
-      })
-    } else {
-      setTourStyles({
-        ...tourStyles,
-        maxWidth: 'auto',
-      })
-    }
-  }, [nextStep])
+  const closeTour = () => {
+    client.writeQuery({
+      query: gql`
+        query {
+          tourOpen
+        }
+      `,
+      data: {
+        tourOpen: false,
+      },
+    })
+  }
 
   useEffect(() => {
     setSteps([
@@ -90,18 +88,10 @@ const Index = ({ children, ...props }) => {
         },
       },
       {
-        action: (node) => node.focus(),
         selector: '.tour-step-6',
+        position: [20, 20],
         content: ({ goTo }) => {
-          return <Step6 goTo={goTo} nextStep={nextStep} />
-        },
-        style: tourStyles,
-      },
-      {
-        action: (node) => node.focus(),
-        selector: '.tour-step-7',
-        content: () => {
-          return <Step7 />
+          return <Step6 goTo={goTo} nextStep={nextStep} onClose={closeTour} />
         },
         style: tourStyles,
       },
@@ -130,20 +120,12 @@ const Index = ({ children, ...props }) => {
         isOpen={data ? data.tourOpen : false}
         nextButton={<Button>Next</Button>}
         closeWithMask={false}
+        onBeforeClose={() => (document.body.style.overflowY = 'auto')}
         onRequestClose={() => {
-          client.writeQuery({
-            query: gql`
-              query {
-                tourOpen
-              }
-            `,
-            data: {
-              tourOpen: false,
-            },
-          })
+          closeTour()
           setTourKey(tourKey + 1)
         }}
-        getCurrentStep={(curr) => {
+        getCurrentStep={curr => {
           setNextStep(curr + 1)
         }}
         steps={steps}

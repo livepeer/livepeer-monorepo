@@ -140,7 +140,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
             )}
           </Flex>
           <form
-            onSubmit={async (e) => {
+            onSubmit={async e => {
               e.preventDefault()
               try {
                 const hash = await ipfs.addJSON({
@@ -150,7 +150,6 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   variables: { proposal: hash },
                 })
               } catch (e) {
-                console.log('wat', e)
                 return {
                   error: e.message.replace('GraphQL error: ', ''),
                 }
@@ -316,7 +315,7 @@ export async function getStaticProps() {
   let createdPolls = []
   if (pollsData) {
     await Promise.all(
-      pollsData.polls.map(async (poll) => {
+      pollsData.polls.map(async poll => {
         const obj = await ipfs.catJSON(poll.proposal)
         // check if proposal is valid format {text, gitCommitHash}
         if (obj?.text && obj?.gitCommitHash) {

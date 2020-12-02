@@ -1,7 +1,6 @@
 import { Flex, Box } from 'theme-ui'
 import { useRouter } from 'next/router'
 import { getLayout } from '../../../layouts/main'
-import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import Tabs, { TabType } from '../../../components/Tabs'
 import Profile from '../../../components/Profile'
@@ -28,6 +27,7 @@ import { useEffect } from 'react'
 import accountViewQuery from '../../../queries/accountView.gql'
 import accountQuery from '../../../queries/account.gql'
 import FourZeroFour from '../../404'
+import { gql } from '@apollo/client'
 
 const Account = () => {
   const router = useRouter()

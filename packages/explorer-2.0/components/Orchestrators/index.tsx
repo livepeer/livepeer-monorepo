@@ -38,7 +38,7 @@ const Index = () => {
   }, [isVisible])
 
   return (
-    <Box>
+    <Box className="tour-step-6">
       <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
         Top Orchestrators
       </Styled.h2>
