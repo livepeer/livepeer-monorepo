@@ -15,12 +15,12 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
   const { width } = useWindowSize()
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
-      keys: [row => row.values[id]],
+      keys: [(row) => row.values[id]],
     })
   }
 
   // Let the table remove the filter if the string is empty
-  fuzzyTextFilterFn.autoRemove = val => !val
+  fuzzyTextFilterFn.autoRemove = (val) => !val
 
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
@@ -33,7 +33,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
         <Box
           value={filterValue || ''}
-          onChange={e => {
+          onChange={(e) => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
@@ -98,19 +98,19 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         accessor: 'delegator',
       },
       {
-        Header: 'Total Score',
+        Header: 'Total Score (0-10)',
         accessor: `scores.${region}`,
         mobile: true,
         sortDescFirst: true,
         defaultCanSort: true,
       },
       {
-        Header: 'Success Rate',
+        Header: 'Success Rate (%)',
         accessor: `successRates.${region}`,
         mobile: false,
       },
       {
-        Header: 'Latency Score',
+        Header: 'Latency Score (0-10)',
         accessor: `roundTripScores.${region}`,
         mobile: false,
       },
@@ -141,7 +141,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter(row => {
+        return rows.filter((row) => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
