@@ -516,13 +516,13 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
-          <span sx={{ fontFamily: 'monospace' }}>{cell.value.toFixed(2)}</span>
+          <span sx={{ fontFamily: 'monospace' }}>{(cell.value / 10).toFixed(2)}</span>
         )
       case 'Total Score (0-10)':
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
-          <span sx={{ fontFamily: 'monospace' }}>{cell.value.toFixed(2)}</span>
+          <span sx={{ fontFamily: 'monospace' }}>{(cell.value / 10).toFixed(2)}</span>
         )
       default:
         return null

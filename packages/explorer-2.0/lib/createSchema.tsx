@@ -332,46 +332,22 @@ const Index = async () => {
               performanceMetrics.push({
                 id: key,
                 scores: {
-                  global: avg(metrics[key], 'score')
-                    ? avg(metrics[key], 'score') * 10
-                    : null,
-                  fra: metrics[key].FRA?.score
-                    ? metrics[key].FRA?.score * 10
-                    : null,
-                  mdw: metrics[key].MDW?.score
-                    ? metrics[key].MDW?.score * 10
-                    : null,
-                  sin: metrics[key].SIN?.score
-                    ? metrics[key].SIN?.score * 10
-                    : null,
+                  global: avg(metrics[key], 'score') * 100,
+                  fra: metrics[key].FRA?.score * 100,
+                  mdw: metrics[key].MDW?.score * 100,
+                  sin: metrics[key].SIN?.score * 100,
                 },
                 successRates: {
-                  global: avg(metrics[key], 'success_rate')
-                    ? avg(metrics[key], 'success_rate') * 100
-                    : null,
-                  fra: metrics[key].FRA?.success_rate
-                    ? metrics[key].FRA?.success_rate * 100
-                    : null,
-                  mdw: metrics[key].MDW?.success_rate
-                    ? metrics[key].MDW?.success_rate * 100
-                    : null,
-                  sin: metrics[key].SIN?.success_rate
-                    ? metrics[key].SIN?.success_rate * 100
-                    : null,
+                  global: avg(metrics[key], 'success_rate') * 100,
+                  fra: metrics[key].FRA?.success_rate * 100,
+                  mdw: metrics[key].MDW?.success_rate * 100,
+                  sin: metrics[key].SIN?.success_rate * 100,
                 },
                 roundTripScores: {
-                  global: avg(metrics[key], 'round_trip_score')
-                    ? avg(metrics[key], 'round_trip_score') * 10
-                    : null,
-                  fra: metrics[key].FRA?.round_trip_score
-                    ? metrics[key].FRA?.round_trip_score * 10
-                    : null,
-                  mdw: metrics[key].MDW?.round_trip_score
-                    ? metrics[key].MDW?.round_trip_score * 10
-                    : null,
-                  sin: metrics[key].SIN?.round_trip_score
-                    ? metrics[key].SIN?.round_trip_score * 10
-                    : null,
+                  global: avg(metrics[key], 'round_trip_score') * 100,
+                  fra: metrics[key].FRA?.round_trip_score * 100,
+                  mdw: metrics[key].MDW?.round_trip_score * 100,
+                  sin: metrics[key].SIN?.round_trip_score * 100,
                 },
               })
             }
