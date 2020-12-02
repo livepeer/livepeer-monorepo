@@ -203,7 +203,7 @@ const Index = () => {
                 </Box>
                 <Flex
                   ref={targetRef}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation()
                     setIsRegionSelectorOpen(true)
                   }}
@@ -240,7 +240,7 @@ const Index = () => {
                 >
                   <MenuItemRadioGroup
                     value={region}
-                    onChange={(value) => {
+                    onChange={value => {
                       setRegion(value)
                     }}
                   >
