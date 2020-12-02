@@ -506,19 +506,19 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
             address={cell.value}
           />
         )
-      case 'Success Rate':
+      case 'Success Rate (%)':
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
           <span sx={{ fontFamily: 'monospace' }}>{cell.value.toFixed(2)}%</span>
         )
-      case 'Latency Score':
+      case 'Latency Score (0-10)':
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
           <span sx={{ fontFamily: 'monospace' }}>{cell.value.toFixed(2)}</span>
         )
-      case 'Total Score':
+      case 'Total Score (0-10)':
         if (typeof cell.value === 'undefined' || cell.value === null)
           return null
         return (
