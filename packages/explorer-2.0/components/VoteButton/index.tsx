@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 import { useContext } from 'react'
 import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { initTransaction } from '../../lib/utils'
 
 const Index = ({ pollAddress, choiceId, children, ...props }) => {

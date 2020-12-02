@@ -12,13 +12,12 @@ import {
   makeRemoteExecutableSchema,
 } from 'graphql-tools'
 import {
-  getBlock,
   getBlockByNumber,
   getEstimatedBlockCountdown,
   mergeObjectsInUnique,
 } from './utils'
 
-export default async () => {
+const Index = async () => {
   const subgraphServiceLink = new HttpLink({
     uri: process.env.SUBGRAPH,
     fetch,
@@ -38,6 +37,15 @@ export default async () => {
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace
       price: Float
+      scores: PerformanceLog
+      successRates: PerformanceLog
+      roundTripScores: PerformanceLog
+    }
+    type PerformanceLog {
+      global: Float
+      fra: Float
+      mdw: Float
+      sin: Float
     }
     extend type ThreeBoxSpace {
       transcoder: Transcoder
@@ -106,9 +114,18 @@ export default async () => {
       Delegator: {
         pendingStake: {
           async resolve(_delegator, _args, _ctx, _info) {
-            const apolloFetch = createApolloFetch({ uri: process.env.SUBGRAPH })
+            const apolloFetch = createApolloFetch({
+              uri: process.env.SUBGRAPH,
+            })
             const { data } = await apolloFetch({
-              query: `{ protocol(id: "0") { currentRound { id } } }`,
+              query: `{
+                protocol(id: "0") {
+                  id
+                  currentRound {
+                    id
+                  }
+                }
+              }`,
             })
             return await _ctx.livepeer.rpc.getPendingStake(
               _delegator.id.toString(),
@@ -118,9 +135,18 @@ export default async () => {
         },
         pendingFees: {
           async resolve(_delegator, _args, _ctx, _info) {
-            const apolloFetch = createApolloFetch({ uri: process.env.SUBGRAPH })
+            const apolloFetch = createApolloFetch({
+              uri: process.env.SUBGRAPH,
+            })
             const { data } = await apolloFetch({
-              query: `{ protocol(id: "0") { currentRound { id } } }`,
+              query: `{
+                protocol(id: "0") {
+                  id
+                  currentRound {
+                    id
+                  }
+                }
+              }`,
             })
             return await _ctx.livepeer.rpc.getPendingFees(
               _delegator.id,
@@ -163,7 +189,9 @@ export default async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            return Utils.toBN(totalStake)
+              .sub(totalVoteStake)
+              .toString()
           },
         },
         status: {
@@ -256,7 +284,7 @@ export default async () => {
         )
         let transcodersWithPrice = await response.json()
         let transcoderWithPrice = transcodersWithPrice.filter(
-          (t) => t.Address.toLowerCase() === args.id.toLowerCase(),
+          t => t.Address.toLowerCase() === args.id.toLowerCase(),
         )[0]
         transcoder['price'] = transcoderWithPrice?.PricePerPixel
           ? transcoderWithPrice?.PricePerPixel
@@ -266,28 +294,75 @@ export default async () => {
       transcoders: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info))
         const transcoders = await resolve(parent, args, ctx, info)
+        let arr = []
+        let performanceMetrics = []
 
-        // if selection set does not include 'price', return transcoders as is, otherwise fetch and merge prices
-        if (!selectionSet.includes('price')) {
-          return transcoders
+        // if selection set includes 'price', return transcoders merge prices and performance metrics
+        if (selectionSet.includes('price')) {
+          // get price data
+          let response = await fetch(
+            `https://livepeer-pricing-tool.com/orchestratorStats`,
+          )
+          let transcodersWithPrice = await response.json()
+
+          transcodersWithPrice.map(t => {
+            if (transcoders.filter(a => a.id === t.Address).length > 0) {
+              arr.push({
+                id: t.Address,
+                price: t.PricePerPixel,
+              })
+            }
+          })
         }
 
-        const response = await fetch(
-          `https://livepeer-pricing-tool.com/orchestratorStats`,
-        )
-        let transcodersWithPrice = await response.json()
-        let arr = []
-        transcodersWithPrice.map((t) => {
-          if (transcoders.filter((a) => a.id === t.Address).length > 0) {
-            arr.push({
-              id: t.Address,
-              price: t.PricePerPixel,
-            })
+        function avg(obj, key) {
+          let arr = Object.values(obj)
+          let sum = (prev, cur) => ({ [key]: prev[key] + cur[key] })
+          return arr.reduce(sum)[key] / arr.length
+        }
+
+        if (selectionSet.includes('scores')) {
+          let metricsResponse = await fetch(
+            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`,
+          )
+          let metrics = await metricsResponse.json()
+
+          for (const key in metrics) {
+            if (transcoders.filter(a => a.id === key).length > 0) {
+              performanceMetrics.push({
+                id: key,
+                scores: {
+                  global: avg(metrics[key], 'score') * 100,
+                  fra: metrics[key].FRA?.score * 100,
+                  mdw: metrics[key].MDW?.score * 100,
+                  sin: metrics[key].SIN?.score * 100,
+                },
+                successRates: {
+                  global: avg(metrics[key], 'success_rate') * 100,
+                  fra: metrics[key].FRA?.success_rate * 100,
+                  mdw: metrics[key].MDW?.success_rate * 100,
+                  sin: metrics[key].SIN?.success_rate * 100,
+                },
+                roundTripScores: {
+                  global: avg(metrics[key], 'round_trip_score') * 100,
+                  fra: metrics[key].FRA?.round_trip_score * 100,
+                  mdw: metrics[key].MDW?.round_trip_score * 100,
+                  sin: metrics[key].SIN?.round_trip_score * 100,
+                },
+              })
+            }
           }
-        })
-        return mergeObjectsInUnique([...transcoders, ...arr], 'id')
+        }
+
+        // merge results
+        return mergeObjectsInUnique(
+          [...transcoders, ...arr, ...performanceMetrics],
+          'id',
+        )
       },
     },
   }
   return applyMiddleware(merged, queryMiddleware)
 }
+
+export default Index

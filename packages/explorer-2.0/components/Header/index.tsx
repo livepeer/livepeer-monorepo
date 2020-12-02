@@ -1,7 +1,7 @@
 import { Flex, Box } from 'theme-ui'
 import Hamburger from '../Hamburger'
 import Button from '../Button'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
 import WalletIcon from '../../public/img/wallet.svg'
 
@@ -35,7 +35,12 @@ const Index = ({ onDrawerOpen, title }: Props) => {
       {active && (
         <Flex
           onClick={() => {
-            client.writeData({
+            client.writeQuery({
+              query: gql`
+                query {
+                  walletModalOpen
+                }
+              `,
               data: {
                 walletModalOpen: true,
               },
@@ -58,7 +63,12 @@ const Index = ({ onDrawerOpen, title }: Props) => {
       {!active && (
         <Button
           onClick={() => {
-            client.writeData({
+            client.writeQuery({
+              query: gql`
+                query {
+                  walletModalOpen
+                }
+              `,
               data: {
                 walletModalOpen: true,
               },

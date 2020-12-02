@@ -25,6 +25,7 @@ query($account: ID!) {
       totalStake
       threeBoxSpace {
         __typename
+        id
         name
         website
         image

@@ -36,8 +36,12 @@ const Index = ({
       <Box
         sx={{
           width: '100%',
-          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-          borderRadius: 10,
+          boxShadow:
+            'rgba(0, 0, 0, 0.03) 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 8px, rgba(0, 0, 0, 0.06) 0px 16px 24px, rgba(0, 0, 0, 0.03) 0px 24px 32px',
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          borderBottomLeftRadius: [0, 0, 0, 16],
+          borderBottomRightRadius: [0, 0, 0, 16],
           backgroundColor: 'surface',
         }}
       >
@@ -67,12 +71,11 @@ const Index = ({
               alignItems: 'center',
               justifyContent: 'center',
               width: '95%',
-              bg: '#181a21',
               height: 32,
               margin: '0 auto',
             }}
           >
-            <ArrowDown sx={{ width: 8, color: 'rgba(255, 255, 255, .3)' }} />
+            <ArrowDown sx={{ width: 16, color: 'rgba(255, 255, 255, .8)' }} />
           </Flex>
           <ProjectionBox action={action} />
           <Footer

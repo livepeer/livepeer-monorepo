@@ -11,9 +11,9 @@ import { useState, useEffect, useContext } from 'react'
 import gql from 'graphql-tag'
 import { useWeb3React } from '@web3-react/core'
 import PollTokenApproval from '../../components/PollTokenApproval'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import { withApollo } from '../../lib/apollo'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { MutationsContext } from '../../contexts'
 import Utils from 'web3-utils'
 import Head from 'next/head'
@@ -112,26 +112,23 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
           >
             <Styled.h1
               sx={{
-                fontSize: [3, 3, 4, 5],
+                fontSize: [3, 3, 26],
                 display: 'flex',
                 alignItems: 'center',
               }}
             >
-              <Ballot
-                sx={{
-                  width: [20, 20, 20, 26],
-                  height: [20, 20, 20, 26],
-                  color: 'primary',
-                  mr: 2,
-                }}
-              />
               Create Poll
             </Styled.h1>
             {!context.account && (
               <Button
                 sx={{ display: ['none', 'none', 'none', 'block'] }}
                 onClick={() => {
-                  client.writeData({
+                  client.writeQuery({
+                    query: gql`
+                      query {
+                        walletModalOpen
+                      }
+                    `,
                     data: {
                       walletModalOpen: true,
                     },
@@ -143,7 +140,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
             )}
           </Flex>
           <form
-            onSubmit={async (e) => {
+            onSubmit={async e => {
               e.preventDefault()
               try {
                 const hash = await ipfs.addJSON({
@@ -153,7 +150,6 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   variables: { proposal: hash },
                 })
               } catch (e) {
-                console.log('wat', e)
                 return {
                   error: e.message.replace('GraphQL error: ', ''),
                 }
@@ -319,7 +315,7 @@ export async function getStaticProps() {
   let createdPolls = []
   if (pollsData) {
     await Promise.all(
-      pollsData.polls.map(async (poll) => {
+      pollsData.polls.map(async poll => {
         const obj = await ipfs.catJSON(poll.proposal)
         // check if proposal is valid format {text, gitCommitHash}
         if (obj?.text && obj?.gitCommitHash) {

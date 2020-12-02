@@ -1,34 +1,43 @@
-import { ApolloClient } from 'apollo-client'
-import {
-  InMemoryCache,
-  defaultDataIdFromObject,
-  IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory'
+import { ApolloClient, gql } from '@apollo/client'
+import { InMemoryCache, defaultDataIdFromObject } from '@apollo/client/cache'
 import { ApolloLink, Observable } from 'apollo-link'
 import createSchema from './createSchema'
 import { execute } from 'graphql/execution/execute'
 import LivepeerSDK from '@livepeer/sdk'
 
 export default function createApolloClient(initialState, ctx) {
-  const fragmentMatcher = new IntrospectionFragmentMatcher({
-    introspectionQueryResultData: {
-      __schema: { types: [] },
-    },
-  })
+  const dataIdFromObject = object => {
+    switch (object.__typename) {
+      case 'ThreeBoxSpace':
+        return object.id // use the `id` field as the identifier
+      default:
+        return defaultDataIdFromObject(object) // fall back to default handling
+    }
+  }
 
-  const cache = new InMemoryCache({
-    fragmentMatcher,
-    dataIdFromObject: (object) => {
-      switch (object.__typename) {
-        case 'ThreeBoxSpace':
-          return object.id // use the `id` field as the identifier
-        default:
-          return defaultDataIdFromObject(object) // fall back to default handling
-      }
-    },
+  const cache: any = new InMemoryCache({
+    dataIdFromObject,
   }).restore(initialState || {})
 
-  cache.writeData({
+  cache.writeQuery({
+    query: gql`
+      {
+        walletModalOpen
+        bottomDrawerOpen
+        selectedStakingAction
+        uniswapModalOpen
+        roundStatusModalOpen
+        txSummaryModal {
+          __typename
+          open
+          error
+        }
+        txs
+        tourOpen
+        roi
+        principle
+      }
+    `,
     data: {
       walletModalOpen: false,
       bottomDrawerOpen: false,
@@ -44,26 +53,13 @@ export default function createApolloClient(initialState, ctx) {
       tourOpen: false,
       roi: 0.0,
       principle: 0.0,
-      selectedTranscoder: {
-        __typename: 'Transcoder',
-        index: 0,
-        rewardCut: null,
-        id: null,
-        threeBoxSpace: {
-          __typename: 'ThreeBoxSpace',
-          name: '',
-          image: '',
-          website: '',
-          description: '',
-        },
-      },
     },
   })
 
-  const link = new ApolloLink((operation) => {
-    return new Observable((observer) => {
+  const link: any = new ApolloLink(operation => {
+    return new Observable(observer => {
       Promise.resolve(createSchema())
-        .then(async (data) => {
+        .then(async data => {
           const context = operation.getContext()
           const sdk = await LivepeerSDK({
             provider:
@@ -90,13 +86,13 @@ export default function createApolloClient(initialState, ctx) {
             operation.operationName,
           )
         })
-        .then((data) => {
+        .then(data => {
           if (!observer.closed) {
             observer.next(data)
             observer.complete()
           }
         })
-        .catch((error) => {
+        .catch(error => {
           if (!observer.closed) {
             observer.error(error)
           }

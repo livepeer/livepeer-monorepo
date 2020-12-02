@@ -1,6 +1,6 @@
 import React from 'react'
 import { Styled, Flex, Box } from 'theme-ui'
-import { DialogOverlay, DialogContent } from '@reach/dialog'
+import { Dialog } from '@reach/dialog'
 import CloseIcon from '../../public/img/close.svg'
 
 interface Props {
@@ -27,65 +27,61 @@ const Index = ({
   clickAnywhereToClose = true,
   showCloseButton = true,
   onDismiss,
-  ...props
 }: Props) => {
   return (
     <>
-      <Box
-        as={DialogOverlay}
+      <Dialog
+        aria-label="Dialog"
         isOpen={isOpen}
-        sx={{
-          background: 'rgba(0, 0, 0, 0.5)',
-          ...props,
-        }}
-        onDismiss={clickAnywhereToClose ? onDismiss : () => {}}
-        {...props}
+        onDismiss={
+          clickAnywhereToClose
+            ? () => {
+                document.body.style.overflow = ''
+                onDismiss()
+              }
+            : () => (document.body.style.overflow = '')
+        }
+        className={className}
+        sx={
+          title
+            ? { maxWidth: 700, bg: 'surface', borderRadius: 16 }
+            : {
+                borderRadius: 16,
+                margin: '40px auto',
+                height: 'calc(100vh - 80px)',
+              }
+        }
       >
-        <Box
-          ref={ref}
-          className={className}
-          as={DialogContent}
-          sx={
-            title
-              ? { maxWidth: 700, bg: 'surface', borderRadius: 16 }
-              : {
-                  borderRadius: 16,
-                  margin: '40px auto',
-                  height: 'calc(100vh - 80px)',
-                }
-          }
-        >
-          <Box sx={{ position: 'relative', px: 4, py: 3 }}>
-            {title && (
-              <Box sx={{ position: 'relative' }}>
-                <Flex
-                  sx={{
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 4,
-                  }}
-                >
-                  {Icon && <Flex sx={{ mr: 2 }}>{Icon}</Flex>}
-                  <Styled.h3 sx={{ width: '100%' }}>{title}</Styled.h3>
-                  {showCloseButton && (
-                    <CloseIcon
-                      onClick={onDismiss}
-                      sx={{
-                        cursor: 'pointer',
-                        zIndex: 1,
-                        right: 20,
-                        top: 20,
-                        color: 'white',
-                      }}
-                    />
-                  )}
-                </Flex>
-              </Box>
-            )}
-            {children}
-          </Box>
+        <Box sx={{ position: 'relative', px: 4, py: 3 }}>
+          {title && (
+            <Box sx={{ position: 'relative' }}>
+              <Flex
+                sx={{
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 4,
+                }}
+              >
+                {Icon && <Flex sx={{ mr: 2 }}>{Icon}</Flex>}
+                <Styled.h3 sx={{ width: '100%' }}>{title}</Styled.h3>
+                {showCloseButton && (
+                  <CloseIcon
+                    onClick={onDismiss}
+                    sx={{
+                      cursor: 'pointer',
+                      zIndex: 1,
+                      right: 20,
+                      top: 20,
+                      color: 'white',
+                    }}
+                  />
+                )}
+              </Flex>
+            </Box>
+          )}
+          {children}
         </Box>
-      </Box>
+      </Dialog>
     </>
   )
 }

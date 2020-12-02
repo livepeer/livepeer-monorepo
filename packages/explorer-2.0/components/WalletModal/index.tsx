@@ -11,7 +11,7 @@ import Option from './Option'
 import PendingView from './PendingView'
 import AccountDetails from './AccountDetails'
 import gql from 'graphql-tag'
-import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useQuery, useApolloClient } from '@apollo/client'
 import { usePrevious } from '../../hooks'
 import ReactGA from 'react-ga'
 
@@ -85,7 +85,12 @@ const Index = () => {
   }
 
   const close = () => {
-    client.writeData({
+    client.writeQuery({
+      query: gql`
+        query {
+          walletModalOpen
+        }
+      `,
       data: {
         walletModalOpen: false,
       },
@@ -231,7 +236,7 @@ const Index = () => {
 
   return (
     data.walletModalOpen && (
-      <Dialog style={{ overflow: 'hidden' }} onDismiss={close}>
+      <Dialog aria-label="Choose Wallet" onDismiss={close}>
         <Box className="tour-step-2">{getModalContent()}</Box>
       </Dialog>
     )

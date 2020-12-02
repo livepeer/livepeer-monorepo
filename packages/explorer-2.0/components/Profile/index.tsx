@@ -5,7 +5,6 @@ import Copy from '../../public/img/copy.svg'
 import Check from '../../public/img/check.svg'
 import LinkIcon from '../../public/img/link.svg'
 import { Transcoder, Delegator, ThreeBoxSpace } from '../../@types'
-import { getDelegationStatusColor } from '../../lib/utils'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Flex } from 'theme-ui'
 import ReactTooltip from 'react-tooltip'
@@ -15,7 +14,7 @@ import ShowMoreText from 'react-show-more-text'
 import Link from 'next/link'
 import { nl2br } from '../../lib/utils'
 import Button from '../Button'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 
 interface Props {
   account: string
@@ -115,7 +114,7 @@ const Index = ({
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
           <Styled.h1
             sx={{
-              fontSize: [3, 3, 3, 5],
+              fontSize: [3, 3, 3, 4],
               display: 'flex',
               alignItems: 'center',
             }}
@@ -193,7 +192,13 @@ const Index = ({
           <Button
             sx={{ mr: 2 }}
             onClick={() =>
-              client.writeData({
+              client.writeQuery({
+                query: gql`
+                  query {
+                    bottomDrawerOpen
+                    selectedStakingAction
+                  }
+                `,
                 data: {
                   bottomDrawerOpen: true,
                   selectedStakingAction: 'stake',
@@ -207,7 +212,13 @@ const Index = ({
         {isMyDelegate && (
           <Button
             onClick={() =>
-              client.writeData({
+              client.writeQuery({
+                query: gql`
+                  query {
+                    bottomDrawerOpen
+                    selectedStakingAction
+                  }
+                `,
                 data: {
                   bottomDrawerOpen: true,
                   selectedStakingAction: 'unstake',

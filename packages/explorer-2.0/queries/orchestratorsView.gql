@@ -20,9 +20,28 @@ query(
     rewardCut
     totalStake
     price
+    scores {
+      global
+      mdw
+      fra
+      sin
+    }
+    successRates {
+      global
+      mdw
+      fra
+      sin
+    }
+    roundTripScores {
+      global
+      mdw
+      fra
+      sin
+    }
     active
     threeBoxSpace {
       __typename
+      id
       did
       name
       website
@@ -41,25 +60,13 @@ query(
     }
   }
   protocol(id: "0") {
+    id
     totalTokenSupply
     totalActiveStake
     inflation
     inflationChange
     currentRound {
       id
-    }
-  }
-  selectedTranscoder @client {
-    __typename
-    index
-    rewardCut
-    id
-    threeBoxSpace {
-      __typename
-      name
-      website
-      description
-      image
     }
   }
 }

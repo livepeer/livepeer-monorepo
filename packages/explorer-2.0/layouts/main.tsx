@@ -5,15 +5,14 @@ import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
 import { networksTypes } from '../lib/utils'
 import Ballot from '../public/img/ballot.svg'
-import Orchestrators from '../public/img/orchestrators.svg'
-import Search from '../public/img/search.svg'
 import Account from '../public/img/account.svg'
+import DNS from '../public/img/dns.svg'
 import { useWeb3React } from '@web3-react/core'
 import Header from '../components/Header'
 import Router from 'next/router'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import WalletModal from '../components/WalletModal'
-import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useQuery, useApolloClient } from '@apollo/client'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
@@ -26,8 +25,7 @@ import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
 import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
-import { FiArrowRight, FiX } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiX, FiArrowUpRight } from 'react-icons/fi'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -45,12 +43,15 @@ type DrawerItem = {
 
 const pollInterval = 20000
 
+// increment this value when updating the banner
+const uniqueBannerID = 1
+
 const Layout = ({
   children,
   title = 'Livepeer Explorer',
   headerTitle = '',
 }) => {
-  const client = useApolloClient()
+  const client: any = useApolloClient()
   const context = useWeb3React()
   const isVisible = usePageVisibility()
   const { account } = context
@@ -79,7 +80,7 @@ const Layout = ({
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
-  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
+  const totalActivePolls = pollData?.polls.filter(p => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -91,7 +92,8 @@ const Layout = ({
   const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL)
 
   useEffect(() => {
-    if (window.localStorage.getItem('bannerDismissed')) {
+    const storage = JSON.parse(window.localStorage.getItem(`bannersDismissed`))
+    if (storage && storage.includes(uniqueBannerID)) {
       setBannerDismissed(true)
     }
   }, [])
@@ -130,7 +132,7 @@ const Layout = ({
       name: 'Orchestrators',
       href: '/',
       as: '/',
-      icon: Orchestrators,
+      icon: DNS,
       className: 'orchestrators',
     },
     {
@@ -160,13 +162,6 @@ const Layout = ({
       as: '/voting',
       icon: Ballot,
       className: 'voting',
-    },
-    {
-      name: 'Search',
-      href: '/search',
-      as: '/search',
-      icon: Search,
-      className: 'search',
     },
   ]
 
@@ -248,10 +243,11 @@ const Layout = ({
             <Flex
               sx={{
                 py: 10,
+                display: ['none', 'none', 'flex'],
                 px: 2,
                 width: '100%',
                 alignItems: 'center',
-                bg: 'surface',
+                bg: 'black',
                 justifyContent: 'center',
                 fontSize: [0, 1, 1, 2],
               }}
@@ -264,33 +260,42 @@ const Layout = ({
                   borderColor: 'border',
                 }}
               >
-                <span sx={{ fontWeight: '600' }}>New:</span>{' '}
-                <span sx={{ display: ['none', 'none', 'inline'] }}>
-                  Automatic earnings at
-                </span>{' '}
-                <span
-                  sx={{ textTransform: ['uppercase', 'uppercase', 'initial'] }}
-                >
-                  r
-                </span>
-                <span>educed gas costs</span>
+                <span sx={{ fontWeight: '600' }}>Introducing:</span>{' '}
+                <span>An Orchestrator Performance Leaderboard</span>
               </span>
-              <Link href="/whats-new">
-                <a
-                  sx={{
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'primary',
-                  }}
-                >
-                  Read more <FiArrowRight sx={{ ml: 1 }} />
-                </a>
-              </Link>
+              <a
+                href="https://medium.com/livepeer-blog/showcasing-and-rewarding-orchestrator-performance-286c13d33653"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  minWidth: 94,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'primary',
+                }}
+              >
+                Read more <FiArrowUpRight sx={{ ml: 1 }} />
+              </a>
+
               <FiX
                 onClick={() => {
                   setBannerDismissed(true)
-                  window.localStorage.setItem('bannerDismissed', 'true')
+                  const storage = JSON.parse(
+                    window.localStorage.getItem(`bannersDismissed`),
+                  )
+                  if (storage) {
+                    storage.push(uniqueBannerID)
+                    window.localStorage.setItem(
+                      `bannersDismissed`,
+                      JSON.stringify(storage),
+                    )
+                  } else {
+                    window.localStorage.setItem(
+                      `bannersDismissed`,
+                      JSON.stringify([uniqueBannerID]),
+                    )
+                  }
                 }}
                 sx={{
                   cursor: 'pointer',
@@ -306,9 +311,8 @@ const Layout = ({
           <WalletModal />
           <Box
             sx={{
-              maxWidth: 1500,
-              margin: '0 auto',
-              display: 'flex',
+              display: 'grid',
+              gridTemplateColumns: ['100%', '100%', '100%', '240px 1fr'],
             }}
           >
             <Drawer
@@ -322,28 +326,25 @@ const Layout = ({
               sx={{
                 bg: 'background',
                 position: 'relative',
-                paddingLeft: [2, 2, 2, 32],
-                paddingRight: [2, 2, 2, 32],
-                width: ['100%', '100%', '100%', 'calc(100% - 275px)'],
+                px: [2, 2, 2, 4],
+                width: '100%',
               }}
             >
-              <Flex sx={{ width: '100%' }} className="tour-step-6">
-                {children}
-              </Flex>
+              <Flex sx={{ width: '100%' }}>{children}</Flex>
             </Flex>
           </Box>
 
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
                 ?.confirmedDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   confirmedDialog: {
                     dismissed: true,
@@ -356,7 +357,16 @@ const Layout = ({
           <TxSummaryDialog
             isOpen={txSummaryModalData?.txSummaryModal.open}
             onDismiss={() => {
-              client.writeData({
+              client.writeQuery({
+                query: gql`
+                  query {
+                    txSummaryModal {
+                      __typename
+                      error
+                      open
+                    }
+                  }
+                `,
                 data: {
                   txSummaryModal: {
                     __typename: 'TxSummaryModal',
@@ -370,14 +380,14 @@ const Layout = ({
           <TxStartedDialog
             isOpen={
               lastTx?.confirmed === false &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
+              !txDialogState.find(t => t.txHash === lastTx.txHash)
                 ?.pendingDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   pendingDialog: {
                     dismissed: true,
@@ -396,18 +406,18 @@ const Layout = ({
                 width: [
                   '100%',
                   '100%',
-                  'calc(100% - 275px)',
-                  'calc(100% - 275px)',
-                  'calc(100% - 275px)',
-                  'calc(100vw - ((100vw - 1500px) / 2 + 275px))',
+                  'calc(100% - 240px)',
+                  'calc(100% - 240px)',
+                  'calc(100% - 240px)',
+                  'calc(100vw - ((100vw - 1500px) / 2 + 240px))',
                 ],
                 left: [
                   0,
                   0,
-                  275,
-                  275,
-                  275,
-                  'calc((100% - 1500px) / 2 + 275px)',
+                  240,
+                  240,
+                  240,
+                  'calc((100% - 1500px) / 2 + 240px)',
                 ],
               }}
             >
@@ -420,6 +430,6 @@ const Layout = ({
   )
 }
 
-export const getLayout = (page) => <Layout>{page}</Layout>
+export const getLayout = page => <Layout>{page}</Layout>
 
 export default Layout

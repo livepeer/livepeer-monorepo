@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import Button from '../Button'
 import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { initTransaction } from '../../lib/utils'
 
 const Index = ({ unbondingLockId }) => {

@@ -5,7 +5,7 @@ import { getLayout } from '../../layouts/main'
 import { Box } from 'theme-ui'
 import Button from '../../components/Button'
 import { withApollo } from '../../lib/apollo'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
 import IPFS from 'ipfs-mini'
@@ -112,19 +112,11 @@ const Voting = () => {
           >
             <Styled.h1
               sx={{
-                fontSize: [3, 3, 4, 5],
+                fontSize: [3, 3, 26],
                 display: 'flex',
                 alignItems: 'center',
               }}
             >
-              <Ballot
-                sx={{
-                  width: [20, 20, 20, 26],
-                  height: [20, 20, 20, 26],
-                  color: 'primary',
-                  mr: 2,
-                }}
-              />
               Voting
             </Styled.h1>
             <Link href="/voting/create-poll" as="/voting/create-poll">

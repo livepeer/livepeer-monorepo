@@ -1,13 +1,18 @@
 import { Styled } from 'theme-ui'
 import { useWeb3React } from '@web3-react/core'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 
 const Step2 = ({ goTo, nextStep }) => {
   const { active } = useWeb3React()
   const client = useApolloClient()
 
   if (active) {
-    client.writeData({
+    client.writeQuery({
+      query: gql`
+        query {
+          walletModalOpen
+        }
+      `,
       data: {
         walletModalOpen: false,
       },

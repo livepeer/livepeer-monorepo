@@ -1,5 +1,5 @@
 import { Styled } from 'theme-ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
 const Step3 = ({ goTo, nextStep }) => {

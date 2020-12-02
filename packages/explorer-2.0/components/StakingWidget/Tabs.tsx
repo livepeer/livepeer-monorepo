@@ -4,9 +4,9 @@ import {
   Tab as ReachTab,
 } from '@reach/tabs'
 
-export const Tabs = props => <ReachTabs {...props} />
+export const Tabs = (props) => <ReachTabs {...props} />
 
-export const TabList = props => (
+export const TabList = (props) => (
   <ReachTabList
     sx={{
       display: 'flex',
@@ -14,14 +14,13 @@ export const TabList = props => (
       width: '100%',
       position: 'relative',
       borderRadius: 32,
-      backgroundColor: '#181a21',
       mb: 2,
     }}
     {...props}
   />
 )
 
-export const Tab = props => (
+export const Tab = (props) => (
   <ReachTab
     sx={{
       flex: 1,
@@ -33,12 +32,16 @@ export const Tab = props => (
           ? 'red'
           : 'primary'
         : 'muted',
-      py: '10px',
+      py: 1,
       width: '50%',
       fontSize: 1,
       borderRadius: 32,
       fontWeight: 500,
-      bg: props.isSelected ? 'background' : 'transparent',
+      bg: props.isSelected
+        ? props.children == 'Unstake'
+          ? 'rgba(255,0,34,.08)'
+          : 'rgba(0,235,136,.08)'
+        : 'transparent',
     }}
     {...props}
   />

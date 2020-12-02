@@ -27,6 +27,7 @@ const nextConfig = {
       exclude: /node_modules/,
       loader: 'graphql-tag/loader',
     })
+    config.plugins.push(new webpack.IgnorePlugin(/^(?:electron)$/))
     return config
   },
 }

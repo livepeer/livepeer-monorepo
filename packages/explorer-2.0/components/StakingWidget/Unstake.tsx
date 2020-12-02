@@ -3,7 +3,7 @@ import Utils from 'web3-utils'
 import Button from '../Button'
 import { useWeb3React } from '@web3-react/core'
 import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient } from '@apollo/client'
 import { initTransaction } from '../../lib/utils'
 
 const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {

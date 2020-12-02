@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useApolloClient } from '@apollo/react-hooks'
+import { gql, useApolloClient } from '@apollo/client'
 import Utils from 'web3-utils'
 import Button from '../Button'
 import { useWeb3React } from '@web3-react/core'
@@ -47,7 +47,12 @@ const Stake = ({
               console.log(err)
             }
             // If user staked inside tour, close tour after staking
-            client.writeData({
+            client.writeQuery({
+              query: gql`
+                query {
+                  tourOpen
+                }
+              `,
               data: {
                 tourOpen: false,
               },

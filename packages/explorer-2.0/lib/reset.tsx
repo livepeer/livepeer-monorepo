@@ -29,6 +29,8 @@ const Reset = () =>
       },
       code: {
         fontFamily: theme.fonts.monospace,
+        whiteSpace: 'pre-wrap',
+        wordWrap: 'break-word',
       },
       button: {
         border: 0,
@@ -77,10 +79,11 @@ const Reset = () =>
       },
       '.tooltip': {
         boxShadow: '0px 4px 4px rgba(0,0,0,0.15)',
-        backgroundColor: `${theme.colors.surface} !important`,
+        backgroundColor: `${theme.colors.lightBlack} !important`,
         fontWeight: 400,
         color: `${theme.colors.text} !important`,
         maxWidth: 250,
+        textAlign: 'left',
         textTransform: 'initial',
         opacity: '1 !important',
         borderRadius: '6px !important',
