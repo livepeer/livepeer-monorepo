@@ -89,7 +89,7 @@ const Index = ({ children, ...props }) => {
       },
       {
         selector: '.tour-step-6',
-        position: [20, 20],
+        position: [20, 60],
         content: ({ goTo }) => {
           return <Step6 goTo={goTo} nextStep={nextStep} onClose={closeTour} />
         },
