@@ -409,6 +409,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
         return (
           <>
             <ReactTooltip
+              html={true}
               id="tooltip-success-rate"
               className="tooltip"
               place="bottom"
@@ -418,7 +419,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip="The average percentage of video segments sent by a broadcaster that are successfully transcoded. See the FAQ for more details on how this metric is calculated."
+              data-tip='<span>The average percentage of video segments sent by a broadcaster that are successfully transcoded. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-success-rate"
               sx={{
                 cursor: 'pointer',
