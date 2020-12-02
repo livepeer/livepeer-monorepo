@@ -255,9 +255,6 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
                       textTransform: 'uppercase',
                     }}
                     align="right"
-                    {...column.getHeaderProps(
-                      column.getSortByToggleProps({ title: '' }),
-                    )}
                     key={i}
                   >
                     <Flex
@@ -270,6 +267,9 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
                         sx={{
                           fontSize: 10,
                         }}
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps({ title: '' }),
+                        )}
                       >
                         <span>
                           {column.isSorted ? (
@@ -405,7 +405,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
   )
   function renderTooltip(title) {
     switch (title) {
-      case 'Success Rate':
+      case 'Success Rate (%)':
         return (
           <>
             <ReactTooltip
@@ -414,6 +414,8 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip="The percentage of video segments sent by a broadcaster that are successfully transcoded. See the FAQ for more details on how this metric is calculated."
@@ -422,55 +424,61 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
             />
           </>
         )
-      case 'Latency Score':
+      case 'Latency Score (0-10)':
         return (
           <>
             <ReactTooltip
+              html={true}
               id="tooltip-latency-score"
               className="tooltip"
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
-              data-tip="The measurement of the time to return transcoded results to a broadcaster relative to the duration of a segment. See the FAQ for more details on how this metric is calculated."
+              data-tip='<span>The measurement of the time to return transcoded results to a broadcaster relative to the duration of a segment. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-latency-score"
               sx={{
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
             />
           </>
         )
-      case 'Total Score':
+      case 'Total Score (0-10)':
         return (
           <>
             <ReactTooltip
+              html={true}
               id="tooltip-score"
               className="tooltip"
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
-              data-tip="The measurement of the overall quality and reliability of service provided to a broadcaster based on success rate and latency scores. See the FAQ for more details on how this metric is calculated."
+              data-tip='<span>The measurement of the overall quality and reliability of service provided to a broadcaster based on success rate and latency scores. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-score"
               sx={{
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}

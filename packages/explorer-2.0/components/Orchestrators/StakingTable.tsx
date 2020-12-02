@@ -324,9 +324,6 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                       textTransform: 'uppercase',
                     }}
                     align="right"
-                    {...column.getHeaderProps(
-                      column.getSortByToggleProps({ title: '' }),
-                    )}
                     key={i}
                   >
                     <Flex
@@ -339,6 +336,9 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                         sx={{
                           fontSize: 10,
                         }}
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps({ title: '' }),
+                        )}
                       >
                         <span>
                           {column.isSorted ? (
@@ -487,6 +487,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip="Total LPT staked with an orchestrator, including its own stake."
@@ -511,6 +513,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip="Total ETH earned from transcoding."
@@ -519,7 +523,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
@@ -535,6 +539,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip={`Price of transcoding per ${expandedPriceLabels[priceSetting]}.`}
@@ -543,7 +549,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
@@ -559,6 +565,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
@@ -567,7 +575,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
@@ -583,6 +591,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all delegators by how much they have staked relative to others."
@@ -591,7 +601,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
@@ -607,6 +617,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               place="bottom"
               type="dark"
               effect="solid"
+              delayHide={200}
+              delayUpdate={500}
             />
             <Help
               data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
@@ -615,7 +627,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                 cursor: 'pointer',
                 position: 'relative',
                 ml: 1,
-                top: '2px',
+                top: '1px',
                 width: 12,
                 height: 12,
               }}
