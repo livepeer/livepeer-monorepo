@@ -259,8 +259,8 @@ const Layout = ({
                   borderColor: 'border',
                 }}
               >
-                <span sx={{ fontWeight: '600' }}>New:</span>{' '}
-                <span>Showcasing Orchestrator Performance</span>
+                <span sx={{ fontWeight: '600' }}>Introducing:</span>{' '}
+                <span>An Orchestrator Performance Leaderboard</span>
               </span>
               <a
                 href="https://medium.com/livepeer-blog/showcasing-and-rewarding-orchestrator-performance-286c13d33653"
