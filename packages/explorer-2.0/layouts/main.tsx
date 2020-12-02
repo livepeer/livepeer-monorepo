@@ -243,6 +243,7 @@ const Layout = ({
             <Flex
               sx={{
                 py: 10,
+                display: ['none', 'none', 'flex'],
                 px: 2,
                 width: '100%',
                 alignItems: 'center',
@@ -325,7 +326,7 @@ const Layout = ({
               sx={{
                 bg: 'background',
                 position: 'relative',
-                px: [3, 3, 3, 4],
+                px: [2, 2, 2, 4],
                 width: '100%',
               }}
             >

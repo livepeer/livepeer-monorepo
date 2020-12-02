@@ -181,7 +181,7 @@ const Index = () => {
             flexDirection: ['column', 'column', 'row'],
             justifyContent: 'space-between',
             pt: '6px',
-            px: '22px',
+            px: 22,
             pb: 3,
           }}
         >

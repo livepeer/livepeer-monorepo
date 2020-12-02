@@ -246,8 +246,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
                       borderBottom: '1px solid',
                       borderColor: 'rgba(255,255,255,.05)',
                       pb: 1,
-                      pl: 3,
-                      pr: headerGroup.headers.length - 1 === i ? 3 : 0,
+                      px: 3,
                       display: [
                         column.mobile ? 'table-cell' : 'none',
                         column.mobile ? 'table-cell' : 'none',
@@ -311,14 +310,6 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
                   }}
                   sx={{
                     height: 64,
-                    'td:first-of-type': {
-                      borderTopLeftRadius: 6,
-                      borderBottomLeftRadius: 6,
-                    },
-                    'td:last-of-type': {
-                      borderTopRightRadius: 6,
-                      borderBottomRightRadius: 6,
-                    },
                     '&:hover': {
                       '.orchestratorLink': {
                         borderColor: 'text',
@@ -349,8 +340,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
                               : 'default',
                           width: i === 0 ? '10px' : 'auto',
                           fontSize: 1,
-                          pl: 3,
-                          pr: row.cells.length - 1 === i ? 3 : 0,
+                          px: 3,
                           borderBottom: '1px solid',
                           borderColor: 'rgba(255,255,255,.05)',
                         }}

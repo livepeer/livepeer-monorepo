@@ -27,12 +27,12 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
 
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
-      keys: [(row) => row.values[id]],
+      keys: [row => row.values[id]],
     })
   }
 
   // Let the table remove the filter if the string is empty
-  fuzzyTextFilterFn.autoRemove = (val) => !val
+  fuzzyTextFilterFn.autoRemove = val => !val
 
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
@@ -45,7 +45,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
         <Box
           value={filterValue || ''}
-          onChange={(e) => {
+          onChange={e => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
@@ -139,8 +139,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
           let a = getRowValueByColumnID(rowA, columnID)
           let b = getRowValueByColumnID(rowB, columnID)
 
-          let rowACallsMade = a.filter((r) => r.rewardTokens != null).length
-          let rowBCallsMade = b.filter((r) => r.rewardTokens != null).length
+          let rowACallsMade = a.filter(r => r.rewardTokens != null).length
+          let rowBCallsMade = b.filter(r => r.rewardTokens != null).length
 
           return compareBasic(rowACallsMade, rowBCallsMade)
         },
@@ -172,7 +172,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter((row) => {
+        return rows.filter(row => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
@@ -223,7 +223,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
   const PriceSettingToggle = () => (
     <span
       ref={targetRef}
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation()
         setIsPriceSettingOpen(true)
       }}
@@ -262,7 +262,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       >
         <MenuItemRadioGroup
           value={priceSetting}
-          onChange={(value) => {
+          onChange={value => {
             setPriceSetting(value)
           }}
         >
@@ -382,14 +382,6 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                   }}
                   sx={{
                     height: 64,
-                    'td:first-of-type': {
-                      borderTopLeftRadius: 6,
-                      borderBottomLeftRadius: 6,
-                    },
-                    'td:last-of-type': {
-                      borderTopRightRadius: 6,
-                      borderBottomRightRadius: 6,
-                    },
                     '&:hover': {
                       '.orchestratorLink': {
                         borderColor: 'text',
@@ -691,7 +683,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
           </span>
         )
       case 'Calls':
-        let callsMade = cell.value.filter((r) => r.rewardTokens != null).length
+        let callsMade = cell.value.filter(r => r.rewardTokens != null).length
         return (
           <span sx={{ fontFamily: 'monospace' }}>
             {`${callsMade}/${cell.value.length}`}
