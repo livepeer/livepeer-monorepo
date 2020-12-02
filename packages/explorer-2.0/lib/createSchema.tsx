@@ -37,6 +37,15 @@ const Index = async () => {
     extend type Transcoder {
       threeBoxSpace: ThreeBoxSpace
       price: Float
+      scores: PerformanceLog
+      successRates: PerformanceLog
+      roundTripScores: PerformanceLog
+    }
+    type PerformanceLog {
+      global: Float
+      fra: Float
+      mdw: Float
+      sin: Float
     }
     extend type ThreeBoxSpace {
       transcoder: Transcoder
@@ -180,7 +189,9 @@ const Index = async () => {
               _poll?.tally?.no ? _poll?.tally?.no : '0',
             ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
 
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            return Utils.toBN(totalStake)
+              .sub(totalVoteStake)
+              .toString()
           },
         },
         status: {
@@ -273,7 +284,7 @@ const Index = async () => {
         )
         let transcodersWithPrice = await response.json()
         let transcoderWithPrice = transcodersWithPrice.filter(
-          (t) => t.Address.toLowerCase() === args.id.toLowerCase(),
+          t => t.Address.toLowerCase() === args.id.toLowerCase(),
         )[0]
         transcoder['price'] = transcoderWithPrice?.PricePerPixel
           ? transcoderWithPrice?.PricePerPixel
@@ -284,6 +295,7 @@ const Index = async () => {
         const selectionSet = Object.keys(graphqlFields(info))
         const transcoders = await resolve(parent, args, ctx, info)
         let arr = []
+        let performanceMetrics = []
 
         // if selection set includes 'price', return transcoders merge prices and performance metrics
         if (selectionSet.includes('price')) {
@@ -293,8 +305,8 @@ const Index = async () => {
           )
           let transcodersWithPrice = await response.json()
 
-          transcodersWithPrice.map((t) => {
-            if (transcoders.filter((a) => a.id === t.Address).length > 0) {
+          transcodersWithPrice.map(t => {
+            if (transcoders.filter(a => a.id === t.Address).length > 0) {
               arr.push({
                 id: t.Address,
                 price: t.PricePerPixel,
@@ -303,8 +315,50 @@ const Index = async () => {
           })
         }
 
+        function avg(obj, key) {
+          let arr = Object.values(obj)
+          let sum = (prev, cur) => ({ [key]: prev[key] + cur[key] })
+          return arr.reduce(sum)[key] / arr.length
+        }
+
+        if (selectionSet.includes('scores')) {
+          let metricsResponse = await fetch(
+            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`,
+          )
+          let metrics = await metricsResponse.json()
+
+          for (const key in metrics) {
+            if (transcoders.filter(a => a.id === key).length > 0) {
+              performanceMetrics.push({
+                id: key,
+                scores: {
+                  global: avg(metrics[key], 'score') * 100,
+                  fra: metrics[key].FRA?.score * 100,
+                  mdw: metrics[key].MDW?.score * 100,
+                  sin: metrics[key].SIN?.score * 100,
+                },
+                successRates: {
+                  global: avg(metrics[key], 'success_rate') * 100,
+                  fra: metrics[key].FRA?.success_rate * 100,
+                  mdw: metrics[key].MDW?.success_rate * 100,
+                  sin: metrics[key].SIN?.success_rate * 100,
+                },
+                roundTripScores: {
+                  global: avg(metrics[key], 'round_trip_score') * 100,
+                  fra: metrics[key].FRA?.round_trip_score * 100,
+                  mdw: metrics[key].MDW?.round_trip_score * 100,
+                  sin: metrics[key].SIN?.round_trip_score * 100,
+                },
+              })
+            }
+          }
+        }
+
         // merge results
-        return mergeObjectsInUnique([...transcoders, ...arr], 'id')
+        return mergeObjectsInUnique(
+          [...transcoders, ...arr, ...performanceMetrics],
+          'id',
+        )
       },
     },
   }

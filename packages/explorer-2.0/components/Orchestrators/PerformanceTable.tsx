@@ -1,8 +1,6 @@
 import { Flex, Box } from 'theme-ui'
-import { useMemo, useState, useRef } from 'react'
+import { useMemo } from 'react'
 import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
-import Utils from 'web3-utils'
-import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import Search from '../../public/img/search.svg'
 import Help from '../../public/img/help.svg'
 import matchSorter from 'match-sorter'
@@ -12,27 +10,17 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 import Router from 'next/router'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
-import {
-  Menu,
-  MenuItemRadioGroup,
-  MenuItemRadio,
-} from '@modulz/radix/dist/index.es'
-import Price from '../Price'
 
-const StakingTable = ({ data: { currentRound, transcoders } }) => {
+const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
   const { width } = useWindowSize()
-  const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
-  const targetRef = useRef()
-  const [priceSetting, setPriceSetting] = useState('1t pixels')
-
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
-      keys: [row => row.values[id]],
+      keys: [(row) => row.values[id]],
     })
   }
 
   // Let the table remove the filter if the string is empty
-  fuzzyTextFilterFn.autoRemove = val => !val
+  fuzzyTextFilterFn.autoRemove = (val) => !val
 
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
@@ -45,7 +33,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
         <Box
           value={filterValue || ''}
-          onChange={e => {
+          onChange={(e) => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
@@ -82,13 +70,12 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
         Filter: DefaultColumnFilter,
         mobile: true,
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID)
-          let b = getRowValueByColumnID(rowB, columnID)
-          let aThreeBoxSpace = getRowValueByColumnID(rowA, 'threeBoxSpace')
-          let bThreeBoxSpace = getRowValueByColumnID(rowB, 'threeBoxSpace')
-          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a
-          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b
-
+          let rowAIdentity =
+            getRowValueByColumnID(rowA, 'threeBoxSpace')?.name ||
+            getRowValueByColumnID(rowA, columnID)
+          let rowBIdentity =
+            getRowValueByColumnID(rowB, 'threeBoxSpace')?.name ||
+            getRowValueByColumnID(rowB, columnID)
           return compareBasic(rowAIdentity, rowBIdentity)
         },
       },
@@ -111,42 +98,24 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
         accessor: 'delegator',
       },
       {
-        Header: 'Stake',
-        accessor: 'totalStake',
+        Header: 'Total Score (0-10)',
+        accessor: `scores.${region}`,
         mobile: true,
+        sortDescFirst: true,
+        defaultCanSort: true,
       },
       {
-        Header: 'Fees',
-        accessor: 'totalGeneratedFees',
+        Header: 'Success Rate (%)',
+        accessor: `successRates.${region}`,
+        mobile: false,
       },
       {
-        Header: 'Reward Cut',
-        accessor: 'rewardCut',
-      },
-      {
-        Header: 'Fee Cut',
-        accessor: 'feeShare',
-        sortInverted: true,
-      },
-      {
-        Header: 'Price',
-        accessor: 'price',
-      },
-      {
-        Header: 'Calls',
-        accessor: 'pools',
-        sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID)
-          let b = getRowValueByColumnID(rowB, columnID)
-
-          let rowACallsMade = a.filter(r => r.rewardTokens != null).length
-          let rowBCallsMade = b.filter(r => r.rewardTokens != null).length
-
-          return compareBasic(rowACallsMade, rowBCallsMade)
-        },
+        Header: 'Latency Score (0-10)',
+        accessor: `roundTripScores.${region}`,
+        mobile: false,
       },
     ],
-    [],
+    [region],
   )
 
   function getRowValueByColumnID(row, columnID) {
@@ -172,7 +141,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter(row => {
+        return rows.filter((row) => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
@@ -191,11 +160,29 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
     disableSortRemove: true,
     autoResetPage: false,
     initialState: {
-      sortBy: [{ id: 'totalStake', desc: true }],
+      sortBy: [
+        {
+          id: 'scores.global',
+          desc: true,
+        },
+        {
+          id: 'scores.mdw',
+          desc: true,
+        },
+        {
+          id: 'scores.fra',
+          desc: true,
+        },
+        {
+          id: 'scores.sin',
+          desc: true,
+        },
+      ],
       hiddenColumns: [
         'activationRound',
         'deactivationRound',
         'threeBoxSpace',
+        'global',
         'active',
         'delegator',
       ],
@@ -218,60 +205,10 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
     state: { pageIndex },
   }: any = useTable(tableOptions, useFilters, useSortBy, usePagination)
 
-  const accountColumn: any = headerGroups[0].headers[1]
+  const accountColumn = headerGroups[0].headers[1]
 
-  const PriceSettingToggle = () => (
-    <span
-      ref={targetRef}
-      onClick={e => {
-        e.stopPropagation()
-        setIsPriceSettingOpen(true)
-      }}
-      sx={{
-        fontSize: 10,
-      }}
-    >
-      <span sx={{ mx: '4px' }}>/</span>
-      <span
-        title={`Price of transcoding per ${expandedPriceLabels[priceSetting]}`}
-        sx={{
-          color: 'text',
-          borderBottom: '1px dashed',
-          borderColor: 'text',
-          transition: '.3s',
-          ':hover': { color: 'primary' },
-          ':active': { color: 'primary' },
-        }}
-      >
-        {priceSetting}
-      </span>
-    </span>
-  )
   return (
     <>
-      <Menu
-        style={{
-          background: '#1E2026',
-          padding: 0,
-          borderRadius: 10,
-          boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
-        }}
-        isOpen={isPriceSettingOpen}
-        onClose={() => setIsPriceSettingOpen(false)}
-        buttonRef={targetRef}
-      >
-        <MenuItemRadioGroup
-          value={priceSetting}
-          onChange={value => {
-            setPriceSetting(value)
-          }}
-        >
-          <MenuItemRadio value="pixel" label="1 pixel" />
-          <MenuItemRadio value="1m pixels" label="1 million pixels" />
-          <MenuItemRadio value="1b pixels" label="1 billion pixels" />
-          <MenuItemRadio value="1t pixels" label="1 trillion pixels" />
-        </MenuItemRadioGroup>
-      </Menu>
       <Flex
         sx={{
           position: 'relative',
@@ -309,13 +246,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                       borderBottom: '1px solid',
                       borderColor: 'rgba(255,255,255,.05)',
                       pb: 1,
-                      pl: 3,
-                      pr: [
-                        3,
-                        3,
-                        3,
-                        headerGroup.headers.length - 1 === i ? 3 : 0,
-                      ],
+                      px: 3,
                       display: [
                         column.mobile ? 'table-cell' : 'none',
                         column.mobile ? 'table-cell' : 'none',
@@ -353,9 +284,6 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                         </span>
                         {column.render('Header')}
                       </span>
-                      {column.render('Header') === 'Price' && (
-                        <PriceSettingToggle />
-                      )}
                       {renderTooltip(column.render('Header'))}
                     </Flex>
                   </th>
@@ -412,8 +340,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
                               : 'default',
                           width: i === 0 ? '10px' : 'auto',
                           fontSize: 1,
-                          pl: 3,
-                          pr: [3, 3, 3, row.cells.length - 1 === i ? 3 : 0],
+                          px: 3,
                           borderBottom: '1px solid',
                           borderColor: 'rgba(255,255,255,.05)',
                         }}
@@ -478,11 +405,11 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
   )
   function renderTooltip(title) {
     switch (title) {
-      case 'Stake':
+      case 'Success Rate (%)':
         return (
           <>
             <ReactTooltip
-              id="tooltip-stake"
+              id="tooltip-success-rate"
               className="tooltip"
               place="bottom"
               type="dark"
@@ -491,8 +418,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip="Total LPT staked with an orchestrator, including its own stake."
-              data-for="tooltip-stake"
+              data-tip="The average percentage of video segments sent by a broadcaster that are successfully transcoded. See the FAQ for more details on how this metric is calculated."
+              data-for="tooltip-success-rate"
               sx={{
                 cursor: 'pointer',
                 position: 'relative',
@@ -504,11 +431,12 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
             />
           </>
         )
-      case 'Fees':
+      case 'Latency Score (0-10)':
         return (
           <>
             <ReactTooltip
-              id="tooltip-fees"
+              html={true}
+              id="tooltip-latency-score"
               className="tooltip"
               place="bottom"
               type="dark"
@@ -517,8 +445,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip="Total ETH earned from transcoding."
-              data-for="tooltip-fees"
+              data-tip='<span>The average utility of the overall transcoding latency for an orchestrator. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
+              data-for="tooltip-latency-score"
               sx={{
                 cursor: 'pointer',
                 position: 'relative',
@@ -530,11 +458,12 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
             />
           </>
         )
-      case 'Price':
+      case 'Total Score (0-10)':
         return (
           <>
             <ReactTooltip
-              id="tooltip-price"
+              html={true}
+              id="tooltip-score"
               className="tooltip"
               place="bottom"
               type="dark"
@@ -543,86 +472,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip={`Price of transcoding per ${expandedPriceLabels[priceSetting]}.`}
-              data-for="tooltip-price"
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                ml: 1,
-                top: '1px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </>
-        )
-      case 'Reward Cut':
-        return (
-          <>
-            <ReactTooltip
-              id="tooltip-reward-cut"
-              className="tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-              delayHide={200}
-              delayUpdate={500}
-            />
-            <Help
-              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
-              data-for="tooltip-reward-cut"
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                ml: 1,
-                top: '1px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </>
-        )
-      case 'Fee Cut':
-        return (
-          <>
-            <ReactTooltip
-              id="tooltip-fee-cut"
-              className="tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-              delayHide={200}
-              delayUpdate={500}
-            />
-            <Help
-              data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all delegators by how much they have staked relative to others."
-              data-for="tooltip-fee-cut"
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                ml: 1,
-                top: '1px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </>
-        )
-      case 'Calls':
-        return (
-          <>
-            <ReactTooltip
-              id="tooltip-calls"
-              className="tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-              delayHide={200}
-              delayUpdate={500}
-            />
-            <Help
-              data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
-              data-for="tooltip-calls"
+              data-tip='<span>The average utility of the overall quality and reliability of an orchestrator based on success rate and latency scores. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
+              data-for="tooltip-score"
               sx={{
                 cursor: 'pointer',
                 position: 'relative',
@@ -655,50 +506,26 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
             address={cell.value}
           />
         )
-      case 'Stake':
+      case 'Success Rate (%)':
+        if (typeof cell.value === 'undefined' || cell.value === null)
+          return null
+        return (
+          <span sx={{ fontFamily: 'monospace' }}>{cell.value.toFixed(2)}%</span>
+        )
+      case 'Latency Score (0-10)':
+        if (typeof cell.value === 'undefined' || cell.value === null)
+          return null
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
+            {(cell.value / 10).toFixed(2)}
           </span>
         )
-      case 'Fees':
+      case 'Total Score (0-10)':
+        if (typeof cell.value === 'undefined' || cell.value === null)
+          return null
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {cell.value ? +parseFloat(Utils.fromWei(cell.value)).toFixed(2) : 0}{' '}
-            <span sx={{ fontSize: 12 }}>ETH</span>
-          </span>
-        )
-      case 'Reward Cut':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>{cell.value / 10000}%</span>
-        )
-      case 'Fee Cut':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            {cell.value === '0' || !cell.value
-              ? '100%'
-              : `${(100 - cell.value / 10000)
-                  .toFixed(2)
-                  .replace(/[.,]00$/, '')}%`}
-          </span>
-        )
-      case 'Price':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            <span data-html={true}>
-              {cell.value <= 0 ? (
-                'N/A'
-              ) : (
-                <Price value={cell.value} per={priceSetting} />
-              )}
-            </span>
-          </span>
-        )
-      case 'Calls':
-        let callsMade = cell.value.filter(r => r.rewardTokens != null).length
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            {`${callsMade}/${cell.value.length}`}
+            {(cell.value / 10).toFixed(2)}
           </span>
         )
       default:
@@ -707,4 +534,4 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
   }
 }
 
-export default StakingTable
+export default PerformanceTable

@@ -20,6 +20,24 @@ query(
     rewardCut
     totalStake
     price
+    scores {
+      global
+      mdw
+      fra
+      sin
+    }
+    successRates {
+      global
+      mdw
+      fra
+      sin
+    }
+    roundTripScores {
+      global
+      mdw
+      fra
+      sin
+    }
     active
     threeBoxSpace {
       __typename

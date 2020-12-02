@@ -25,8 +25,7 @@ import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
 import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
-import { FiArrowRight, FiX } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiX, FiArrowUpRight } from 'react-icons/fi'
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_TRACKING_ID)
@@ -43,6 +42,9 @@ type DrawerItem = {
 }
 
 const pollInterval = 20000
+
+// increment this value when updating the banner
+const uniqueBannerID = 1
 
 const Layout = ({
   children,
@@ -90,7 +92,8 @@ const Layout = ({
   const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL)
 
   useEffect(() => {
-    if (window.localStorage.getItem('bannerDismissed')) {
+    const storage = JSON.parse(window.localStorage.getItem(`bannersDismissed`))
+    if (storage && storage.includes(uniqueBannerID)) {
       setBannerDismissed(true)
     }
   }, [])
@@ -240,6 +243,7 @@ const Layout = ({
             <Flex
               sx={{
                 py: 10,
+                display: ['none', 'none', 'flex'],
                 px: 2,
                 width: '100%',
                 alignItems: 'center',
@@ -256,33 +260,42 @@ const Layout = ({
                   borderColor: 'border',
                 }}
               >
-                <span sx={{ fontWeight: '600' }}>New:</span>{' '}
-                <span sx={{ display: ['none', 'none', 'inline'] }}>
-                  Automatic earnings at
-                </span>{' '}
-                <span
-                  sx={{ textTransform: ['uppercase', 'uppercase', 'initial'] }}
-                >
-                  r
-                </span>
-                <span>educed gas costs</span>
+                <span sx={{ fontWeight: '600' }}>Introducing:</span>{' '}
+                <span>An Orchestrator Performance Leaderboard</span>
               </span>
-              <Link href="/whats-new">
-                <a
-                  sx={{
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'primary',
-                  }}
-                >
-                  Read more <FiArrowRight sx={{ ml: 1 }} />
-                </a>
-              </Link>
+              <a
+                href="https://medium.com/livepeer-blog/showcasing-and-rewarding-orchestrator-performance-286c13d33653"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  minWidth: 94,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'primary',
+                }}
+              >
+                Read more <FiArrowUpRight sx={{ ml: 1 }} />
+              </a>
+
               <FiX
                 onClick={() => {
                   setBannerDismissed(true)
-                  window.localStorage.setItem('bannerDismissed', 'true')
+                  const storage = JSON.parse(
+                    window.localStorage.getItem(`bannersDismissed`),
+                  )
+                  if (storage) {
+                    storage.push(uniqueBannerID)
+                    window.localStorage.setItem(
+                      `bannersDismissed`,
+                      JSON.stringify(storage),
+                    )
+                  } else {
+                    window.localStorage.setItem(
+                      `bannersDismissed`,
+                      JSON.stringify([uniqueBannerID]),
+                    )
+                  }
                 }}
                 sx={{
                   cursor: 'pointer',
@@ -313,7 +326,7 @@ const Layout = ({
               sx={{
                 bg: 'background',
                 position: 'relative',
-                px: [3, 3, 3, 4],
+                px: [2, 2, 2, 4],
                 width: '100%',
               }}
             >
