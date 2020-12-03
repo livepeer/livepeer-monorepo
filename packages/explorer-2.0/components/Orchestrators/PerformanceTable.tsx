@@ -518,7 +518,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
           return null
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {(cell.value / 10).toFixed(2)}
+            {(cell.value / 1000).toFixed(2)}
           </span>
         )
       case 'Total Score (0-10)':
@@ -526,7 +526,7 @@ const PerformanceTable = ({ data: { currentRound, transcoders }, region }) => {
           return null
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {(cell.value / 10).toFixed(2)}
+            {(cell.value / 1000).toFixed(2)}
           </span>
         )
       default:
