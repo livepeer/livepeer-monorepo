@@ -260,7 +260,7 @@ const Layout = ({
                   borderColor: 'border',
                 }}
               >
-                <span sx={{ fontWeight: '600' }}>Introducing:</span>{' '}
+                <span sx={{ fontWeight: '600' }}>New:</span>{' '}
                 <span>An Orchestrator Performance Leaderboard</span>
               </span>
               <a
