@@ -6,6 +6,7 @@ import {
   Withdrawal as WithdrawalEvent,
 } from '../types/TicketBroker/TicketBroker'
 import {
+  DayData,
   WinningTicketRedeemed,
   Protocol,
   Transcoder,
@@ -16,7 +17,7 @@ import {
   DepositFunded,
   Withdrawal,
 } from '../types/schema'
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal } from '@graphprotocol/graph-ts'
 import {
   convertToDecimal,
   makeEventId,
@@ -30,6 +31,8 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   let winningTicketRedeemed = new WinningTicketRedeemed(
     makeEventId(event.transaction.hash, event.logIndex),
   )
+  let faceValue = convertToDecimal(event.params.faceValue)
+
   winningTicketRedeemed.hash = event.transaction.hash.toHex()
   winningTicketRedeemed.blockNumber = event.block.number
   winningTicketRedeemed.gasUsed = event.transaction.gasUsed
@@ -40,7 +43,7 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   winningTicketRedeemed.round = protocol.currentRound
   winningTicketRedeemed.sender = event.params.sender.toHex()
   winningTicketRedeemed.recipient = event.params.recipient.toHex()
-  winningTicketRedeemed.faceValue = convertToDecimal(event.params.faceValue)
+  winningTicketRedeemed.faceValue = faceValue
   winningTicketRedeemed.winProb = event.params.winProb
   winningTicketRedeemed.senderNonce = event.params.senderNonce
   winningTicketRedeemed.recipientRand = event.params.recipientRand
@@ -49,37 +52,46 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
 
   // Update broadcaster's deposit & reserve
   let broadcaster = Broadcaster.load(event.params.sender.toHex())
-  if (
-    event.params.faceValue.toBigDecimal().gt(broadcaster.deposit as BigDecimal)
-  ) {
+  if (faceValue.gt(broadcaster.deposit as BigDecimal)) {
     broadcaster.deposit = ZERO_BD
   } else {
-    broadcaster.deposit = broadcaster.deposit.minus(
-      convertToDecimal(event.params.faceValue),
-    )
+    broadcaster.deposit = broadcaster.deposit.minus(faceValue)
   }
 
-  // Update accrued fees for this transcoder
+  // Update transcoder's fee volume
   let transcoder =
     Transcoder.load(event.params.recipient.toHex()) ||
     new Transcoder(event.params.recipient.toHex())
-  transcoder.totalGeneratedFees = transcoder.totalGeneratedFees.plus(
-    convertToDecimal(event.params.faceValue),
-  )
+  transcoder.totalVolumeETH = transcoder.totalVolumeETH.plus(faceValue)
+  transcoder.totalVolumeUSD = transcoder.totalVolumeETH.times(protocol.ethPrice as BigDecimal)
   transcoder.save()
 
-  // Update total protocol fees and total winning tickets
-  protocol.totalGeneratedFees = protocol.totalGeneratedFees.plus(
-    convertToDecimal(event.params.faceValue),
-  )
+  // Update protocol fee volume
+  protocol.totalVolumeETH = protocol.totalVolumeETH.plus(faceValue)
+  protocol.totalVolumeUSD = protocol.totalVolumeETH.times(protocol.ethPrice as BigDecimal)
+  
   protocol.totalWinningTickets = protocol.totalWinningTickets.plus(ZERO_BI)
   protocol.save()
 
-  // keep track of how many fees were generated this round
-  round.totalGeneratedFees = round.totalGeneratedFees.plus(
-    convertToDecimal(event.params.faceValue),
-  )
+  // Update fee volume for this day
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let dayData = DayData.load(dayID.toString())
+  if (dayData === null) {
+    dayData = new DayData(dayID.toString())
+    dayData.date = dayStartTimestamp
+    dayData.volumeUSD = ZERO_BD
+    dayData.volumeETH = ZERO_BD
+  }
 
+  dayData.volumeETH = dayData.volumeETH.plus(faceValue)
+  dayData.volumeUSD = dayData.volumeETH.times(protocol.ethPrice as BigDecimal)
+  dayData.save()
+
+  // Update fee volume for this round
+  round.totalVolumeETH = round.totalVolumeETH.plus(faceValue)
+  round.totalVolumeUSD = round.totalVolumeETH.times(protocol.ethPrice as BigDecimal)
   round.save()
 }
 

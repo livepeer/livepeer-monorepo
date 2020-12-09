@@ -13,7 +13,7 @@ query(
     orderDirection: $orderDirection
   ) {
     id
-    totalGeneratedFees
+    totalVolumeETH
     feeShare
     activationRound
     deactivationRound
