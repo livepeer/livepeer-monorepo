@@ -331,6 +331,26 @@ dataSources:
       eventHandlers:
         - event: ServiceURIUpdate(indexed address,string)
           handler: serviceURIUpdate
+  - kind: ethereum/contract
+    name: UniswapV2Pair
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.uniswapEthDaiPair.startBlock}}
+      address: {{contracts.uniswapEthDaiPair.address}}
+      abi: UniswapV2Pair
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/uniswapEthDaiPair.ts   
+      entities:
+        - Protocol
+      abis:
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+      eventHandlers:
+        - event: Sync(uint112,uint112)
+          handler: handleEthDaiSync
 ###############################################################################
 #
 # Data source templates

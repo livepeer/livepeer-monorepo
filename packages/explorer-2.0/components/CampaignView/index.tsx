@@ -115,8 +115,8 @@ const Index = ({ currentRound, transcoder }) => {
                 fontFamily: 'monospace',
               }}
             >
-              {transcoder.totalGeneratedFees
-                ? abbreviateNumber(transcoder.totalGeneratedFees, 3)
+              {transcoder.totalVolumeETH
+                ? abbreviateNumber(transcoder.totalVolumeETH, 3)
                 : 0}
               <span sx={{ ml: 1, fontSize: 12 }}>ETH</span>
             </Box>
