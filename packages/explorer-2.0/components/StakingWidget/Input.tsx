@@ -9,8 +9,8 @@ let roundsPerYear = hoursPerYear / averageHoursPerRound
 const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
-  const totalSupply = Number(protocol.totalTokenSupply)
-  const totalStaked = Number(protocol.totalActiveStake)
+  const totalSupply = +protocol.totalTokenSupply
+  const totalStaked = +protocol.totalActiveStake
   const rewardCut =
     transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0
   const inflation = protocol.inflation > 0 ? protocol.inflation / 1000000000 : 0
@@ -113,9 +113,5 @@ function calculateAnnualROI({
         : inflation + inflationChange
   }
 
-  return roi
-    ? Utils.fromWei(
-        Math.round(roi).toLocaleString('fullwide', { useGrouping: false }),
-      )
-    : 0
+  return Utils.fromWei((Math.round(+roi) || 0).toString())
 }

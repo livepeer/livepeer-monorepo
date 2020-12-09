@@ -42,11 +42,7 @@ export const getDelegatorStatus = (
   delegator: Delegator,
   currentRound: Round,
 ): string => {
-  if (
-    !delegator ||
-    !delegator.bondedAmount ||
-    parseFloat(delegator.bondedAmount) === 0
-  ) {
+  if (!+delegator?.bondedAmount) {
     return 'Unbonded'
   } else if (
     delegator.unbondingLocks.filter(
