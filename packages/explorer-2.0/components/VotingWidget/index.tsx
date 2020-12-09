@@ -28,14 +28,10 @@ const Index = ({ data }) => {
     }
   }, [copied])
 
-  let noVoteStake = parseFloat(
-    data.poll?.tally?.no ? data.poll?.tally?.no : '0',
-  )
-  let yesVoteStake = parseFloat(
-    data.poll?.tally?.yes ? data.poll?.tally?.yes : '0',
-  )
+  let noVoteStake = parseFloat(data.poll?.tally?.no || '0')
+  let yesVoteStake = parseFloat(data.poll?.tally?.yes || '0')
   let totalVoteStake = noVoteStake + yesVoteStake
-  let totalNonVoteStake = parseFloat(data.poll.totalNonVoteStake)
+  let totalNonVoteStake = +data?.poll?.totalNonVoteStake
   let votingPower = getVotingPower(data?.myAccount, data?.vote)
 
   let delegate = null

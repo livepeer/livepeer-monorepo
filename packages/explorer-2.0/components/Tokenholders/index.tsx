@@ -142,7 +142,7 @@ function renderSwitch(cell, protocol) {
     case 'Equity':
       return (
         <span sx={{ fontFamily: 'monospace' }}>{`${(
-          (parseFloat(cell.value) / parseFloat(protocol.totalActiveStake)) *
+          (+cell?.value / +protocol?.totalActiveStake) *
           100
         ).toFixed(3)}%`}</span>
       )

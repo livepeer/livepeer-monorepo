@@ -198,12 +198,8 @@ const Index = async () => {
               _ctx,
               isActive ? blockNumber : _poll.endBlock,
             )
-            let noVoteStake = parseFloat(
-              _poll?.tally?.no ? _poll?.tally?.no : '0',
-            )
-            let yesVoteStake = parseFloat(
-              _poll?.tally?.yes ? _poll?.tally?.yes : '0',
-            )
+            let noVoteStake = +_poll?.tally?.no || 0
+            let yesVoteStake = +_poll?.tally?.yes || 0
             let totalVoteStake = noVoteStake + yesVoteStake
             let totalSupport = isNaN(yesVoteStake / totalVoteStake)
               ? 0
