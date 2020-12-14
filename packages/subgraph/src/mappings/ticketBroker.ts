@@ -83,6 +83,9 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
     dayData.date = dayStartTimestamp
     dayData.volumeUSD = ZERO_BD
     dayData.volumeETH = ZERO_BD
+    dayData.totalSupply = ZERO_BD
+    dayData.totalActiveStake = ZERO_BD
+    dayData.participationRate = ZERO_BD
   }
 
   // Update fee volume for this day

@@ -91,6 +91,12 @@ type Round @entity {
   volumeETH: BigDecimal
   "Fees generated this round in USD"
   volumeUSD: BigDecimal
+  "Total active stake during the round"
+  totalActiveStake: BigDecimal
+  "Total Livepeer token supply during the round"
+  totalSupply: BigDecimal
+  "Participation rate during the round (totalActiveStake/totalSupply)"
+  participationRate: BigDecimal
   "Total stake moved from one delegate to another during the round"
   movedStake: BigDecimal
   "Total amount of new stake introduced during the round"
@@ -173,6 +179,8 @@ type Protocol @entity {
   roundLockAmount: BigInt
   targetBondingRate: BigInt
   totalActiveStake: BigDecimal
+  totalSupply: BigDecimal
+  participationRate: BigDecimal
   totalVolumeETH: BigDecimal
   totalVolumeUSD: BigDecimal
   totalWinningTickets: BigInt
@@ -233,6 +241,12 @@ type DayData @entity {
   date: Int!
   volumeETH: BigDecimal!
   volumeUSD: BigDecimal!
+  "Total active stake during the day"
+  totalActiveStake: BigDecimal!
+  "Total Livepeer token supply during the day"
+  totalSupply: BigDecimal!
+  "Participation rate during the day (totalActiveStake/totalSupply)"
+  participationRate: BigDecimal!
 }
 
 ###############################################################################
