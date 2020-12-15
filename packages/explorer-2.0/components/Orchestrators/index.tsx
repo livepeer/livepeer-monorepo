@@ -118,6 +118,10 @@ const oneWeekAgo = Math.floor(
   new Date(new Date().setDate(new Date().getDate() - 7)).getTime() / 1000,
 )
 
+const oneDayAgo = Math.floor(
+  new Date(new Date().setDate(new Date().getDate() - 1)).getTime() / 1000,
+)
+
 const Index = () => {
   const { query } = useRouter()
   const isVisible = usePageVisibility()
@@ -146,7 +150,7 @@ const Index = () => {
     pollInterval,
     notifyOnNetworkStatusChange: true,
     context: {
-      since: timeframe === '1W' ? oneWeekAgo : 1,
+      since: timeframe === '1W' ? oneWeekAgo : oneDayAgo,
     },
   })
 
@@ -203,7 +207,7 @@ const Index = () => {
                 </Box>
                 <Flex
                   ref={targetRef}
-                  onClick={e => {
+                  onClick={(e) => {
                     e.stopPropagation()
                     setIsRegionSelectorOpen(true)
                   }}
@@ -240,7 +244,7 @@ const Index = () => {
                 >
                   <MenuItemRadioGroup
                     value={region}
-                    onChange={value => {
+                    onChange={(value) => {
                       setRegion(value)
                     }}
                   >
