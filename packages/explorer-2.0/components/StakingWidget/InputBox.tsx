@@ -22,7 +22,7 @@ const InputBox = ({
   ) {
     stake = delegator?.bondedAmount || '0'
   } else {
-    stake = Utils.fromWei(Utils.fromWei(delegator?.pendingStake || '0'))
+    stake = Utils.fromWei(delegator?.pendingStake || '0')
   }
 
   return (
