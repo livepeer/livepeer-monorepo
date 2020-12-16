@@ -29,7 +29,7 @@ import { FiArrowUpRight, FiX } from 'react-icons/fi'
 import { MdTrendingUp } from 'react-icons/md'
 
 if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize(process.env.GA_TRACKING_ID)
+  ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID)
 } else {
   ReactGA.initialize('test', { testMode: true })
 }
@@ -81,7 +81,7 @@ const Layout = ({
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
-  const totalActivePolls = pollData?.polls.filter(p => p.isActive).length
+  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -177,7 +177,7 @@ const Layout = ({
     items.push({
       name: (
         <Box>
-          {process.env.THREEBOX_ENABLED && data?.threeBoxSpace?.name
+          {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && data?.threeBoxSpace?.name
             ? data.threeBoxSpace.name
             : 'My Account'}
         </Box>
@@ -225,7 +225,7 @@ const Layout = ({
         title="Oops, you’re on the wrong network"
         isOpen={
           context.chainId &&
-          networksTypes[context.chainId] !== process.env.NETWORK
+          networksTypes[context.chainId] !== process.env.NEXT_PUBLIC_NETWORK
         }
         showCloseButton={false}
       >
@@ -240,7 +240,7 @@ const Layout = ({
         >
           Simply open MetaMask and switch over to the{' '}
           <span sx={{ textTransform: 'capitalize' }}>
-            {process.env.NETWORK}
+            {process.env.NEXT_PUBLIC_NETWORK}
           </span>{' '}
           network.
         </Box>
@@ -345,14 +345,14 @@ const Layout = ({
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
-              !txDialogState.find(t => t.txHash === lastTx.txHash)
+              !txDialogState.find((t) => t.txHash === lastTx.txHash)
                 ?.confirmedDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   confirmedDialog: {
                     dismissed: true,
@@ -388,14 +388,14 @@ const Layout = ({
           <TxStartedDialog
             isOpen={
               lastTx?.confirmed === false &&
-              !txDialogState.find(t => t.txHash === lastTx.txHash)
+              !txDialogState.find((t) => t.txHash === lastTx.txHash)
                 ?.pendingDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   pendingDialog: {
                     dismissed: true,
@@ -438,6 +438,6 @@ const Layout = ({
   )
 }
 
-export const getLayout = page => <Layout>{page}</Layout>
+export const getLayout = (page) => <Layout>{page}</Layout>
 
 export default Layout

@@ -5,12 +5,12 @@ import { FortmaticConnector } from '@web3-react/fortmatic-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 const RPC_URLS: { [chainId: number]: string } = {
-  1: process.env.RPC_URL_1 as string,
-  4: process.env.RPC_URL_4 as string,
+  1: process.env.NEXT_PUBLIC_RPC_URL_1 as string,
+  4: process.env.NEXT_PUBLIC_RPC_URL_4 as string,
 }
 
 export const Network = new NetworkConnector({
-  defaultChainId: process.env.NETWORK === 'rinkeby' ? 4 : 1,
+  defaultChainId: process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 4 : 1,
   urls: RPC_URLS,
 })
 
@@ -20,13 +20,13 @@ export const Injected = new InjectedConnector({
 
 // mainnet only
 export const Portis = new PortisConnector({
-  dAppId: process.env.PORTIS_DAPP_ID,
+  dAppId: process.env.NEXT_PUBLIC_PORTIS_DAPP_ID,
   networks: [1],
 })
 
 // mainnet only
 export const Fortmatic = new FortmaticConnector({
-  apiKey: process.env.FORTMATIC_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_FORTMATIC_API_KEY,
   chainId: 1,
 })
 

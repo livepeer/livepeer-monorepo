@@ -63,7 +63,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     if (data) {
       if (
         parseFloat(Utils.fromWei(data.account.pollCreatorAllowance)) >=
-        (process.env.NETWORK === 'rinkeby' ? 10 : 100)
+        (process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 10 : 100)
       ) {
         setSufficientAllowance(true)
       } else {
@@ -71,7 +71,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
       }
       if (
         parseFloat(Utils.fromWei(data.account.tokenBalance)) >=
-        (process.env.NETWORK === 'rinkeby' ? 10 : 100)
+        (process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 10 : 100)
       ) {
         setSufficientBalance(true)
       } else {
@@ -139,7 +139,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
             )}
           </Flex>
           <form
-            onSubmit={async e => {
+            onSubmit={async (e) => {
               e.preventDefault()
               try {
                 const hash = await ipfs.addJSON({
@@ -227,8 +227,8 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   {sufficientAllowance && !sufficientBalance && (
                     <Box sx={{ color: 'muted', fontSize: 0 }}>
                       Insufficient balance. You need at least{' '}
-                      {process.env.NETWORK === 'rinkeby' ? 10 : 100} LPT to
-                      create a poll.
+                      {process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 10 : 100}{' '}
+                      LPT to create a poll.
                     </Box>
                   )}
                   <Button
@@ -237,7 +237,10 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                     sx={{ ml: 2, alignSelf: 'flex-end' }}
                   >
                     Create Poll (
-                    {process.env.NETWORK === 'rinkeby' ? '10' : '100'} LPT)
+                    {process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
+                      ? '10'
+                      : '100'}{' '}
+                    LPT)
                   </Button>
                 </Flex>
               ))}
@@ -263,7 +266,7 @@ export async function getStaticProps() {
   const lipsQuery = `
   {
     repository(owner: "${
-      process.env.NETWORK === 'mainnet' ? 'livepeer' : 'adamsoffer'
+      process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ? 'livepeer' : 'adamsoffer'
     }", name: "LIPS") {
       owner {
         login
@@ -305,7 +308,7 @@ export async function getStaticProps() {
   })
   const { data } = await apolloFetch({ query: lipsQuery })
   const apolloSubgraphFetch = createApolloFetch({
-    uri: process.env.SUBGRAPH,
+    uri: process.env.NEXT_PUBLIC_SUBGRAPH,
   })
   const { data: pollsData } = await apolloSubgraphFetch({
     query: `{ polls { proposal } }`,
@@ -314,7 +317,7 @@ export async function getStaticProps() {
   let createdPolls = []
   if (pollsData) {
     await Promise.all(
-      pollsData.polls.map(async poll => {
+      pollsData.polls.map(async (poll) => {
         const obj = await ipfs.catJSON(poll.proposal)
         // check if proposal is valid format {text, gitCommitHash}
         if (obj?.text && obj?.gitCommitHash) {

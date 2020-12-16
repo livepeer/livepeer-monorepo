@@ -293,9 +293,9 @@ export const initTransaction = async (client, mutation) => {
 export const getBlock = async () => {
   const blockDataResponse = await fetch(
     `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
     }.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${
-      process.env.ETHERSCAN_API_KEY
+      process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`,
   )
   const { result } = await blockDataResponse.json()
@@ -305,9 +305,9 @@ export const getBlock = async () => {
 export const getBlockByNumber = async (number) => {
   const blockDataResponse = await fetch(
     `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
     }.etherscan.io/api?module=block&action=getblockreward&blockno=${number}&apikey=${
-      process.env.ETHERSCAN_API_KEY
+      process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`,
   )
   const { result } = await blockDataResponse.json()
@@ -317,9 +317,9 @@ export const getBlockByNumber = async (number) => {
 export const getEstimatedBlockCountdown = async (number) => {
   const countdownRaw = await fetch(
     `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
     }.etherscan.io/api?module=block&action=getblockcountdown&blockno=${number}&apikey=${
-      process.env.ETHERSCAN_API_KEY
+      process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`,
   )
   const { result } = await countdownRaw.json()

@@ -39,7 +39,7 @@ export async function transaction(_obj, _args, _ctx, _info) {
 
 export async function txPrediction(_obj, _args, _ctx, _info) {
   const response = await fetch(
-    `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${_args.gasPrice}&apikey=${process.env.ETHERSCAN_API_KEY}`,
+    `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${_args.gasPrice}&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`,
   )
   return await response.json()
 }

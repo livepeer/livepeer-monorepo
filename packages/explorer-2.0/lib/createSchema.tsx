@@ -19,7 +19,7 @@ import {
 
 const Index = async () => {
   const subgraphServiceLink = new HttpLink({
-    uri: process.env.SUBGRAPH,
+    uri: process.env.NEXT_PUBLIC_SUBGRAPH,
     fetch,
   })
 
@@ -73,9 +73,9 @@ const Index = async () => {
   async function getTotalStake(_ctx, _blockNumber) {
     const Web3 = require('web3')
     let web3 = new Web3(
-      process.env.NETWORK === 'rinkeby'
-        ? process.env.RPC_URL_4
-        : process.env.RPC_URL_1,
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
+        ? process.env.NEXT_PUBLIC_RPC_URL_4
+        : process.env.NEXT_PUBLIC_RPC_URL_1,
     )
     let contract = new web3.eth.Contract(
       _ctx.livepeer.config.contracts.LivepeerToken.abi,
@@ -115,7 +115,7 @@ const Index = async () => {
         pendingStake: {
           async resolve(_delegator, _args, _ctx, _info) {
             const apolloFetch = createApolloFetch({
-              uri: process.env.SUBGRAPH,
+              uri: process.env.NEXT_PUBLIC_SUBGRAPH,
             })
             const { data } = await apolloFetch({
               query: `{
@@ -136,7 +136,7 @@ const Index = async () => {
         pendingFees: {
           async resolve(_delegator, _args, _ctx, _info) {
             const apolloFetch = createApolloFetch({
-              uri: process.env.SUBGRAPH,
+              uri: process.env.NEXT_PUBLIC_SUBGRAPH,
             })
             const { data } = await apolloFetch({
               query: `{

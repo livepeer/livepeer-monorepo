@@ -65,7 +65,7 @@ const Index = ({
           position: 'relative',
         }}
       >
-        {process.env.THREEBOX_ENABLED &&
+        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.image ? (
           <img
@@ -119,7 +119,9 @@ const Index = ({
               alignItems: 'center',
             }}
           >
-            {process.env.THREEBOX_ENABLED && threeBoxSpace && threeBoxSpace.name
+            {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
+            threeBoxSpace &&
+            threeBoxSpace.name
               ? threeBoxSpace.name
               : account.replace(account.slice(5, 39), '…')}
             <Flex
@@ -164,15 +166,17 @@ const Index = ({
             </Flex>
           </Styled.h1>
         </CopyToClipboard>
-        {process.env.THREEBOX_ENABLED && isMyAccount && threeBoxSpace && (
-          <EditProfile
-            account={account}
-            refetch={refetch}
-            threeBoxSpace={threeBoxSpace}
-          />
-        )}
+        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
+          isMyAccount &&
+          threeBoxSpace && (
+            <EditProfile
+              account={account}
+              refetch={refetch}
+              threeBoxSpace={threeBoxSpace}
+            />
+          )}
       </Flex>
-      {process.env.THREEBOX_ENABLED && threeBoxSpace?.website && (
+      {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.website && (
         <Flex sx={{ mb: 2, alignItems: 'center' }}>
           <LinkIcon sx={{ color: 'muted', mr: 1 }} />
           <a
@@ -232,7 +236,7 @@ const Index = ({
           </Button>
         )}
       </Flex>
-      {process.env.THREEBOX_ENABLED && threeBoxSpace?.description && (
+      {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.description && (
         <Box sx={{ mt: 3, a: { color: 'primary' } }}>
           <ShowMoreText
             lines={3}
@@ -248,7 +252,7 @@ const Index = ({
           </ShowMoreText>
         </Box>
       )}
-      {process.env.THREEBOX_ENABLED &&
+      {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.addressLinks &&
         threeBoxSpace.addressLinks.length > 0 &&

@@ -27,7 +27,7 @@ const Index = ({ threeBoxSpace, active, address }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
       <Flex sx={{ minWidth: 30, minHeight: 30, position: 'relative', mr: 2 }}>
-        {process.env.THREEBOX_ENABLED && threeBoxSpace.image ? (
+        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.image ? (
           <img
             sx={{
               objectFit: 'cover',
@@ -72,7 +72,7 @@ const Index = ({ threeBoxSpace, active, address }) => {
           sx={{ justifyContent: 'space-between', alignItems: 'center' }}
         >
           <div sx={{ fontWeight: 600 }}>
-            {process.env.THREEBOX_ENABLED && threeBoxSpace.name
+            {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.name
               ? textTruncate(threeBoxSpace.name, 15, '…')
               : address.replace(address.slice(5, 39), '…')}
           </div>

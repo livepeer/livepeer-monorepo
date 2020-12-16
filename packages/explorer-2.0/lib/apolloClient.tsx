@@ -6,7 +6,7 @@ import { execute } from 'graphql/execution/execute'
 import LivepeerSDK from '@livepeer/sdk'
 
 export default function createApolloClient(initialState, ctx) {
-  const dataIdFromObject = object => {
+  const dataIdFromObject = (object) => {
     switch (object.__typename) {
       case 'ThreeBoxSpace':
         return object.id // use the `id` field as the identifier
@@ -56,18 +56,18 @@ export default function createApolloClient(initialState, ctx) {
     },
   })
 
-  const link: any = new ApolloLink(operation => {
-    return new Observable(observer => {
+  const link: any = new ApolloLink((operation) => {
+    return new Observable((observer) => {
       Promise.resolve(createSchema())
-        .then(async data => {
+        .then(async (data) => {
           const context = operation.getContext()
           const sdk = await LivepeerSDK({
             provider:
-              process.env.NETWORK === 'rinkeby'
-                ? process.env.RPC_URL_4
-                : process.env.RPC_URL_1,
-            controllerAddress: process.env.CONTROLLER_ADDRESS,
-            pollCreatorAddress: process.env.POLL_CREATOR_ADDRESS,
+              process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
+                ? process.env.NEXT_PUBLIC_RPC_URL_4
+                : process.env.NEXT_PUBLIC_RPC_URL_1,
+            controllerAddress: process.env.NEXT_PUBLIC_CONTROLLER_ADDRESS,
+            pollCreatorAddress: process.env.NEXT_PUBLIC_POLL_CREATOR_ADDRESS,
             ...(context.library && {
               provider: context.library._web3Provider,
             }),
@@ -86,13 +86,13 @@ export default function createApolloClient(initialState, ctx) {
             operation.operationName,
           )
         })
-        .then(data => {
+        .then((data) => {
           if (!observer.closed) {
             observer.next(data)
             observer.complete()
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (!observer.closed) {
             observer.error(error)
           }
