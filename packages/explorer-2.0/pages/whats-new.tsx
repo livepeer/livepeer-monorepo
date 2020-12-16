@@ -4,7 +4,7 @@ import Card from '../components/Card'
 import moment from 'moment'
 import { getLayout } from '../layouts/main'
 import Markdown from 'markdown-to-jsx'
-import { withApollo } from '../lib/apollo'
+import { withApollo } from '../apollo'
 import { createApolloFetch } from 'apollo-fetch'
 import { useEffect, useState } from 'react'
 

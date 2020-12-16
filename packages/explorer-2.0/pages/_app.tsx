@@ -8,7 +8,7 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import 'react-circular-progressbar/dist/styles.css'
 import '@reach/dialog/styles.css'
 import Layout from '../layouts/main'
-import { withApollo } from '../lib/apollo'
+import { withApollo } from '../apollo'
 
 function getLibrary(provider) {
   const library = new ethers.providers.Web3Provider(provider)

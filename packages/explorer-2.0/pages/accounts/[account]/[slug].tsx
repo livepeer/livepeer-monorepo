@@ -17,7 +17,7 @@ import {
   checkAddressEquality,
 } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
-import { withApollo } from '../../../lib/apollo'
+import { withApollo } from '../../../apollo'
 import BottomDrawer from '../../../components/BottomDrawer'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Approve from '../../../components/Approve'

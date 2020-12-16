@@ -4,8 +4,6 @@ import Utils from 'web3-utils'
 import { createApolloFetch } from 'apollo-fetch'
 import { applyMiddleware } from 'graphql-middleware'
 import graphqlFields from 'graphql-fields'
-
-import schema from '../apollo'
 import {
   mergeSchemas,
   introspectSchema,
@@ -15,9 +13,22 @@ import {
   getBlockByNumber,
   getEstimatedBlockCountdown,
   mergeObjectsInUnique,
-} from './utils'
+} from '../lib/utils'
+import { makeExecutableSchema } from 'graphql-tools'
+import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
+import typeDefs from './types'
+import resolvers from './resolvers'
 
-const Index = async () => {
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers: {
+    ...resolvers,
+    JSON: GraphQLJSON,
+    JSONObject: GraphQLJSONObject,
+  },
+})
+
+const createSchema = async () => {
   const subgraphServiceLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_SUBGRAPH,
     fetch,
@@ -356,4 +367,4 @@ const Index = async () => {
   return applyMiddleware(merged, queryMiddleware)
 }
 
-export default Index
+export default createSchema

@@ -1,11 +1,11 @@
-import { ApolloClient, gql } from '@apollo/client'
+import { ApolloClient, gql, HttpLink } from '@apollo/client'
 import { InMemoryCache, defaultDataIdFromObject } from '@apollo/client/cache'
 import { ApolloLink, Observable } from 'apollo-link'
 import createSchema from './createSchema'
 import { execute } from 'graphql/execution/execute'
 import LivepeerSDK from '@livepeer/sdk'
 
-export default function createApolloClient(initialState, ctx) {
+export function createApolloClient(initialState, ctx) {
   const dataIdFromObject = (object) => {
     switch (object.__typename) {
       case 'ThreeBoxSpace':
@@ -107,3 +107,10 @@ export default function createApolloClient(initialState, ctx) {
     cache,
   })
 }
+
+export const client = new ApolloClient({
+  link: new HttpLink({
+    uri: process.env.NEXT_PUBLIC_SUBGRAPH,
+  }),
+  cache: new InMemoryCache(),
+})
