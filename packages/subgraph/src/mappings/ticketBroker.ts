@@ -63,12 +63,12 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
     Transcoder.load(event.params.recipient.toHex()) ||
     new Transcoder(event.params.recipient.toHex())
   transcoder.totalVolumeETH = transcoder.totalVolumeETH.plus(faceValue)
-  transcoder.totalVolumeUSD = transcoder.totalVolumeETH.times(protocol.ethPrice as BigDecimal)
+  transcoder.totalVolumeUSD = transcoder.totalVolumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
   transcoder.save()
 
-  // Update protocol fee volume
+  // Update total protocol fee volume
   protocol.totalVolumeETH = protocol.totalVolumeETH.plus(faceValue)
-  protocol.totalVolumeUSD = protocol.totalVolumeETH.times(protocol.ethPrice as BigDecimal)
+  protocol.totalVolumeUSD = protocol.totalVolumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
   
   protocol.totalWinningTickets = protocol.totalWinningTickets.plus(ZERO_BI)
   protocol.save()
@@ -85,13 +85,14 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
     dayData.volumeETH = ZERO_BD
   }
 
+  // Update fee volume for this day
   dayData.volumeETH = dayData.volumeETH.plus(faceValue)
-  dayData.volumeUSD = dayData.volumeETH.times(protocol.ethPrice as BigDecimal)
+  dayData.volumeUSD = dayData.volumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
   dayData.save()
 
   // Update fee volume for this round
-  round.totalVolumeETH = round.totalVolumeETH.plus(faceValue)
-  round.totalVolumeUSD = round.totalVolumeETH.times(protocol.ethPrice as BigDecimal)
+  round.volumeETH = round.volumeETH.plus(faceValue)
+  round.volumeUSD = round.volumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
   round.save()
 }
 
