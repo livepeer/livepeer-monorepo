@@ -73,14 +73,14 @@ export function bond(event: BondEvent): void {
     oldTranscoder.save()
 
     // keep track of how much stake moved during this round.
-    round.totalMovedStake = round.totalMovedStake.plus(
+    round.movedStake = round.movedStake.plus(
       convertToDecimal(delegatorData.value0).minus(
         convertToDecimal(event.params.additionalAmount),
       ),
     )
 
     // keep track of how much new stake was introduced this round
-    round.totalNewStake = round.totalNewStake.plus(
+    round.newStake = round.newStake.plus(
       convertToDecimal(event.params.additionalAmount),
     )
 

@@ -87,14 +87,14 @@ type Round @entity {
   pools: [Pool!] @derivedFrom(field: "round")
   "Mintable tokens for the round"
   mintableTokens: BigDecimal
+  "Fees generated this round in ETH"
+  volumeETH: BigDecimal
+  "Fees generated this round in USD"
+  volumeUSD: BigDecimal
   "Total stake moved from one delegate to another during the round"
-  totalMovedStake: BigDecimal
+  movedStake: BigDecimal
   "Total amount of new stake introduced during the round"
-  totalNewStake: BigDecimal
-  "Total amount of fees generated this round in ETH"
-  totalVolumeETH: BigDecimal
-  "Total amount of fees generated this round in USD"
-  totalVolumeUSD: BigDecimal
+  newStake: BigDecimal
 }
 
 """

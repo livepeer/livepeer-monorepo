@@ -223,12 +223,12 @@ export function bond(call: BondCall): void {
       oldTranscoder.save()
 
       // keep track of how much new stake was moved this round
-      round.totalMovedStake = round.totalMovedStake.plus(
+      round.movedStake = round.movedStake.plus(
         convertToDecimal(delegatorData.value0).minus(amount),
       )
 
       // keep track of how much new stake was introduced this round
-      round.totalNewStake = round.totalNewStake.plus(amount)
+      round.newStake = round.newStake.plus(amount)
 
       round.save()
     }
