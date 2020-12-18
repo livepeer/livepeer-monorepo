@@ -22,10 +22,23 @@ query($account: ID!) {
     }
     delegate {
       id
+      active
+      feeShare
       rewardCut
+      price
+      status
+      active
       totalStake
+      totalVolumeETH
+      lastRewardRound {
+        id
+      }
+      pools(first: 30, orderBy: id, orderDirection: desc) {
+        rewardTokens
+      }
       threeBoxSpace {
         __typename
+        id
         name
         website
         image
@@ -43,31 +56,6 @@ query($account: ID!) {
     image
     addressLinks
     defaultProfile
-  }
-  transcoder(id: $account) {
-    id
-    active
-    feeShare
-    rewardCut
-    price
-    status
-    active
-    totalStake
-    totalVolumeETH
-    lastRewardRound {
-      id
-    }
-    pools(first: 30, orderBy: id, orderDirection: desc) {
-      rewardTokens
-    }
-    threeBoxSpace {
-      __typename
-      id
-      name
-      website
-      image
-      description
-    }
   }
   account(id: $account) {
     id
@@ -92,8 +80,8 @@ query($account: ID!) {
     totalActiveStake
     inflation
     inflationChange
-  }
-  currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
-    id
+    currentRound {
+      id
+    }
   }
 }

@@ -77,7 +77,7 @@ const Layout = ({
   const mutations = useMutations()
   const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const [bannerActive, setBannerActive] = useState(false)
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
 
@@ -95,7 +95,9 @@ const Layout = ({
   useEffect(() => {
     const storage = JSON.parse(window.localStorage.getItem(`bannersDismissed`))
     if (storage && storage.includes(uniqueBannerID)) {
-      setBannerDismissed(true)
+      setBannerActive(false)
+    } else {
+      setBannerActive(true)
     }
   }, [])
 
@@ -247,7 +249,7 @@ const Layout = ({
       </Modal>
       <MutationsContext.Provider value={mutations}>
         <Styled.root sx={{ height: 'calc(100vh - 82px)' }}>
-          {!bannerDismissed && (
+          {bannerActive && (
             <Flex
               sx={{
                 py: 10,
@@ -288,7 +290,7 @@ const Layout = ({
 
               <FiX
                 onClick={() => {
-                  setBannerDismissed(true)
+                  setBannerActive(false)
                   const storage = JSON.parse(
                     window.localStorage.getItem(`bannersDismissed`),
                   )
@@ -328,7 +330,6 @@ const Layout = ({
               onDrawerOpen={onDrawerOpen}
               open={drawerOpen}
               items={items}
-              bannerDismissed={bannerDismissed}
             />
             <Flex
               sx={{

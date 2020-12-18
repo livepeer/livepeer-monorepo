@@ -269,9 +269,30 @@ const createSchema = async () => {
     },
   })
 
-  // intercept and transform transcoder query responses with price data
+  // intercept and transform query responses with price and performance data
   const queryMiddleware = {
     Query: {
+      delegator: async (resolve, parent, args, ctx, info) => {
+        const selectionSet = Object.keys(graphqlFields(info))
+        let delegator = await resolve(parent, args, ctx, info)
+
+        // if selection set does not include 'delegate', return delegator as is, otherwise fetch and merge price
+        if (!delegator || !selectionSet.includes('delegate')) {
+          return delegator
+        }
+
+        let response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`,
+        )
+        let transcodersWithPrice = await response.json()
+        let transcoderWithPrice = transcodersWithPrice.filter(
+          (t) => t.Address.toLowerCase() === delegator.delegate.id.toLowerCase(),
+        )[0]
+        delegator.delegate.price = transcoderWithPrice?.PricePerPixel
+          ? transcoderWithPrice?.PricePerPixel
+          : 0
+        return delegator
+      },
       transcoder: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info))
         let transcoder = await resolve(parent, args, ctx, info)

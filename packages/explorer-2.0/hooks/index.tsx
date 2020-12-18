@@ -284,3 +284,19 @@ export function usePageVisibility() {
   })
   return isVisible
 }
+
+export function useComponentDidMount(func: () => any) {
+  useEffect(func, [])
+}
+
+export function useComponentWillMount(func: () => any) {
+  const willMount = useRef(true)
+
+  if (willMount.current) {
+    func()
+  }
+
+  useComponentDidMount(() => {
+    willMount.current = false
+  })
+}

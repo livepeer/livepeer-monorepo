@@ -1,11 +1,24 @@
-import { ApolloClient, gql, HttpLink } from '@apollo/client'
-import { InMemoryCache, defaultDataIdFromObject } from '@apollo/client/cache'
-import { ApolloLink, Observable } from 'apollo-link'
-import createSchema from './createSchema'
-import { execute } from 'graphql/execution/execute'
+import { NextPageContext } from 'next'
+import {
+  ApolloClient,
+  ApolloLink,
+  defaultDataIdFromObject,
+  gql,
+  InMemoryCache,
+  NormalizedCacheObject,
+  Observable,
+} from '@apollo/client'
+import createSchema from '../createSchema'
 import LivepeerSDK from '@livepeer/sdk'
+import { execute } from 'graphql/execution/execute'
 
-export function createApolloClient(initialState, ctx) {
+export default function createApolloClient(
+  initialState: object,
+  ctx: NextPageContext | null,
+) {
+  // The `ctx` (NextPageContext) will only be present on the server.
+  // use it to extract auth headers (ctx.req) or similar.
+
   const dataIdFromObject = (object) => {
     switch (object.__typename) {
       case 'ThreeBoxSpace':
@@ -15,9 +28,9 @@ export function createApolloClient(initialState, ctx) {
     }
   }
 
-  const cache: any = new InMemoryCache({
-    dataIdFromObject,
-  }).restore(initialState || {})
+  let cache = new InMemoryCache().restore(
+    (initialState || {}) as NormalizedCacheObject,
+  )
 
   cache.writeQuery({
     query: gql`
@@ -101,16 +114,8 @@ export function createApolloClient(initialState, ctx) {
   })
 
   return new ApolloClient({
-    ssrMode: Boolean(ctx),
+    ssrMode: typeof window === 'undefined',
     link,
-    resolvers: {},
     cache,
   })
 }
-
-export const client = new ApolloClient({
-  link: new HttpLink({
-    uri: process.env.NEXT_PUBLIC_SUBGRAPH,
-  }),
-  cache: new InMemoryCache(),
-})

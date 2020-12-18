@@ -9,6 +9,7 @@ import 'react-circular-progressbar/dist/styles.css'
 import '@reach/dialog/styles.css'
 import Layout from '../layouts/main'
 import { withApollo } from '../apollo'
+import { NextPage } from 'next'
 
 function getLibrary(provider) {
   const library = new ethers.providers.Web3Provider(provider)
@@ -49,4 +50,4 @@ function App({ Component, pageProps }) {
 
 export default withApollo({
   ssr: false,
-})(App)
+})(App as NextPage)

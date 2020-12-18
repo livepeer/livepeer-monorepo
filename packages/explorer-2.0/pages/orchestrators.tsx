@@ -3,18 +3,23 @@ import { useQuery } from '@apollo/client'
 import Orchestrators from '../components/Orchestrators'
 import { useWeb3React } from '@web3-react/core'
 import { getLayout } from '../layouts/main'
-import { withApollo } from '../apollo'
 import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Utils from 'web3-utils'
 import { useEffect } from 'react'
 import { usePageVisibility } from '../hooks'
 import accountQuery from '../queries/account.gql'
+import { NextPage } from 'next'
+import { withApollo, getStaticApolloProps } from '../apollo'
+import Head from 'next/head'
+
+type Params = {}
+type Props = {}
 
 const OrchestratorsPage = () => {
   const context = useWeb3React()
   const isVisible = usePageVisibility()
-  const pollInterval = 20000
+  const pollInterval = 30000
 
   const {
     data: dataMyAccount,
@@ -38,6 +43,9 @@ const OrchestratorsPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Livepeer Explorer - Orchestrators</title>
+      </Head>
       <Flex sx={{ width: '100%' }}>
         <Flex
           sx={{
@@ -78,6 +86,11 @@ const OrchestratorsPage = () => {
 
 OrchestratorsPage.getLayout = getLayout
 
-export default withApollo({
-  ssr: false,
-})(OrchestratorsPage)
+export default withApollo({ ssr: false })(OrchestratorsPage as NextPage)
+
+export const getStaticProps = getStaticApolloProps<Props, Params>(
+  OrchestratorsPage,
+  {
+    revalidate: 20,
+  },
+)

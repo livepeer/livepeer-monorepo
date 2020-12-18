@@ -43,7 +43,7 @@ const TradingViewChart = ({
   })
 
   // adjust the scale based on the type of chart
-  const topScale = type === CHART_TYPES.AREA ? 0.3 : 0.1
+  const topScale = type === CHART_TYPES.AREA ? 0.3 : 0.2
 
   // get the title of the chart
   const setLastBarText = ({ toolTip, formattedPercentChange, color }) => {

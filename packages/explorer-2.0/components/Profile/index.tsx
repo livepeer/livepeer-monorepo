@@ -18,7 +18,7 @@ import { gql, useApolloClient } from '@apollo/client'
 
 interface Props {
   account: string
-  role: string
+  role?: string
   refetch?: any
   hasLivepeerToken: boolean
   isMyDelegate: boolean
@@ -31,7 +31,7 @@ interface Props {
 
 const Index = ({
   account,
-  role = 'Orchestrator',
+  role,
   hasLivepeerToken,
   isMyDelegate,
   delegator,
@@ -189,8 +189,6 @@ const Index = ({
           </a>
         </Flex>
       )}
-      {role === 'Tokenholder' && <Chip label={role} />}
-
       <Flex sx={{ display: ['flex', 'flex', 'flex', 'none'], mt: 2 }}>
         {(role === 'Orchestrator' || isMyDelegate) && (
           <Button

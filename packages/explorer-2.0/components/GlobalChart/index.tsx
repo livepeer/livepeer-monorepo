@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ResponsiveContainer } from 'recharts'
 import TradingviewChart, { CHART_TYPES } from '../TradingviewChart'
-import dayDataQuery from '../../queries/dayData.gql'
 import { gql, useQuery } from '@apollo/client'
 import Spinner from '../Spinner'
 

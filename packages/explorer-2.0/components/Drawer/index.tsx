@@ -11,13 +11,7 @@ import RoundStatus from '../RoundStatus'
 import { gql, useApolloClient } from '@apollo/client'
 import UniswapModal from '../UniswapModal'
 
-const Index = ({
-  items = [],
-  open,
-  onDrawerOpen,
-  onDrawerClose,
-  bannerDismissed = false,
-}) => {
+const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
   const router = useRouter()
   const client = useApolloClient()
   const { asPath } = router
@@ -61,7 +55,7 @@ const Index = ({
           ],
           position: ['fixed', 'fixed', 'fixed', 'sticky'],
           flexDirection: 'column',
-          height: bannerDismissed ? '100vh' : 'calc(100vh - 41px)',
+          height: '100vh',
           pt: [3, 3, 5],
           px: 3,
           boxShadow: [

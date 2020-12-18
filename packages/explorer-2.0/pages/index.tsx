@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client'
 import Orchestrators from '../components/Orchestrators'
 import { useWeb3React } from '@web3-react/core'
 import { getLayout } from '../layouts/main'
-import { withApollo } from '../apollo'
+import { NextPage } from 'next'
 import { Box } from 'theme-ui'
 import Approve from '../components/Approve'
 import Search from '../components/Search'
@@ -13,6 +13,10 @@ import { usePageVisibility } from '../hooks'
 import accountQuery from '../queries/account.gql'
 import GlobalChart from '../components/GlobalChart'
 import Link from 'next/link'
+import { withApollo, getStaticApolloProps } from '../apollo'
+
+type Params = {}
+type Props = {}
 
 const Panel = ({ children }) => (
   <Box
@@ -136,6 +140,8 @@ const Home = () => {
 
 Home.getLayout = getLayout
 
-export default withApollo({
-  ssr: false,
-})(Home)
+export default withApollo({ ssr: false })(Home as NextPage)
+
+export const getStaticProps = getStaticApolloProps<Props, Params>(Home, {
+  revalidate: 20,
+})

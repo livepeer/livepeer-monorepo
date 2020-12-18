@@ -24,6 +24,7 @@ import pollQuery from '../../queries/poll.gql'
 import accountQuery from '../../queries/account.gql'
 import voteQuery from '../../queries/vote.gql'
 import FourZeroFour from '../404'
+import { NextPage } from 'next'
 
 const Poll = () => {
   const router = useRouter()
@@ -50,7 +51,6 @@ const Poll = () => {
       id: pollId,
     },
     pollInterval,
-    ssr: false,
   })
 
   const {
@@ -436,4 +436,4 @@ Poll.getLayout = getLayout
 
 export default withApollo({
   ssr: true,
-})(Poll)
+})(Poll as NextPage)

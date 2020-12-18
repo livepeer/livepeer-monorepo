@@ -17,6 +17,7 @@ import { MutationsContext } from '../../contexts'
 import Utils from 'web3-utils'
 import Head from 'next/head'
 import { usePageVisibility } from '../../hooks'
+import { NextPage } from 'next'
 
 const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   const context = useWeb3React()
@@ -255,7 +256,7 @@ CreatePoll.getLayout = getLayout
 
 export default withApollo({
   ssr: false,
-})(CreatePoll)
+})(CreatePoll as NextPage)
 
 export async function getStaticProps() {
   const ipfs = new IPFS({

@@ -9,7 +9,7 @@ import {
 import dayDataQuery from '../../queries/dayData.gql'
 import protocolDataByBlockQuery from '../../queries/protocolDataByBlock.gql'
 import protocolDataQuery from '../../queries/protocolData.gql'
-import { client } from '../client'
+import { client } from '../'
 
 // format dayjs with the libraries that we need
 dayjs.extend(utc)
@@ -174,7 +174,6 @@ export async function getChartData(_obj, _args, _ctx, _info) {
           orderBy: 'date',
           orderDirection: 'desc',
         },
-        fetchPolicy: 'cache-first',
       })
       return result
     }
@@ -182,7 +181,6 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let getProtocolData = async () => {
       let result = await client.query({
         query: protocolDataQuery,
-        fetchPolicy: 'cache-first',
       })
       return result
     }
@@ -193,7 +191,6 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         variables: {
           block: { number: block },
         },
-        fetchPolicy: 'cache-first',
       })
       return result
     }
@@ -223,6 +220,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         oneDayData.totalVolumeUSD ? oneDayData.totalVolumeUSD : 0,
         twoDayData.totalVolumeUSD ? twoDayData.totalVolumeUSD : 0,
       )
+
       const [oneWeekVolume, weeklyVolumeChange] = get2DayPercentChange(
         data.totalVolumeUSD,
         oneWeekData.totalVolumeUSD,

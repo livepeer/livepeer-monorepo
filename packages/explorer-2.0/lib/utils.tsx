@@ -7,7 +7,6 @@ import { gql } from '@apollo/client'
 import Numeral from 'numeral'
 import dayjs from 'dayjs'
 import { timeframeOptions } from './constants'
-import { client } from '../apollo/client'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -472,27 +471,6 @@ export const formattedNum = (number, usd = false, acceptNegatives = false) => {
   return Number(num.toFixed(5))
 }
 
-export function getTimeframe(timeWindow) {
-  const utcEndTime = dayjs.utc()
-  // based on window, get starttime
-  let utcStartTime
-  switch (timeWindow) {
-    case timeframeOptions.WEEK:
-      utcStartTime = utcEndTime.subtract(1, 'week').endOf('day').unix() - 1
-      break
-    case timeframeOptions.MONTH:
-      utcStartTime = utcEndTime.subtract(1, 'month').endOf('day').unix() - 1
-      break
-    case timeframeOptions.ALL_TIME:
-      utcStartTime = utcEndTime.subtract(1, 'year').endOf('day').unix() - 1
-      break
-    default:
-      utcStartTime = utcEndTime.subtract(1, 'year').startOf('year').unix() - 1
-      break
-  }
-  return utcStartTime
-}
-
 /**
  * gets the amoutn difference plus the % change in change itself (second order change)
  * @param {*} valueNow
@@ -529,20 +507,17 @@ export async function getBlocksFromTimestamps(timestamps) {
     return []
   }
   let blocks = []
-
-  await Promise.all(
-    timestamps.map(async (timestamp) => {
-      let blockResponse = await await fetch(
-        `https://api${
-          process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? '-rinkeby' : ''
-        }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
-          process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
-        }`,
-      )
-      let json = await blockResponse.json()
-      blocks.push(+json.result)
-    }),
-  )
+  for (let i = 0; i < timestamps.length; i++) {
+    let blockResponse = await fetch(
+      `https://api${
+        process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? '-rinkeby' : ''
+      }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${
+        timestamps[i]
+      }&closest=before&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`,
+    )
+    let json = await blockResponse.json()
+    blocks.push(+json.result)
+  }
 
   return blocks
 }
