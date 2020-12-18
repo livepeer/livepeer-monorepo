@@ -29,6 +29,7 @@ type Query {
   transaction(txHash: String): JSON
   threeBoxSpace(id: ID!): ThreeBoxSpace
   block: JSON
+  getChartData: JSON
 }
 `
 

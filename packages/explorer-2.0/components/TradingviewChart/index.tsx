@@ -55,7 +55,7 @@ const TradingViewChart = ({
       (type === CHART_TYPES.AREA
         ? `${(parseFloat(base) * 100).toFixed(2)}%`
         : formattedNum(base, true)) +
-      // `<span style="margin-left: 10px; font-size: 16px; color: ${color};">${formattedPercentChange}</span>` +
+      `<span style="margin-left: 10px; font-size: 16px; color: ${color};">${formattedPercentChange}</span>` +
       '</div>'
   }
 

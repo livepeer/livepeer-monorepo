@@ -7,6 +7,7 @@ import { gql } from '@apollo/client'
 import Numeral from 'numeral'
 import dayjs from 'dayjs'
 import { timeframeOptions } from './constants'
+import { client } from '../apollo/client'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -493,7 +494,7 @@ export function getTimeframe(timeWindow) {
 }
 
 /**
- * gets the amount difference plus the % change in change itself (second order change)
+ * gets the amoutn difference plus the % change in change itself (second order change)
  * @param {*} valueNow
  * @param {*} value24HoursAgo
  * @param {*} value48HoursAgo
@@ -508,10 +509,56 @@ export const get2DayPercentChange = (
   let previousChange = parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo)
 
   const adjustedPercentChange =
-    (currentChange - previousChange / previousChange) * 100
+    ((currentChange - previousChange) / previousChange) * 100
 
   if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
     return [currentChange, 0]
   }
   return [currentChange, adjustedPercentChange]
+}
+
+/**
+ * @notice Fetches block objects for an array of timestamps.
+ * @dev blocks are returned in chronological order (ASC) regardless of input.
+ * @dev blocks are returned at string representations of Int
+ * @dev timestamps are returns as they were provided; not the block time.
+ * @param {Array} timestamps
+ */
+export async function getBlocksFromTimestamps(timestamps) {
+  if (timestamps?.length === 0) {
+    return []
+  }
+  let blocks = []
+
+  await Promise.all(
+    timestamps.map(async (timestamp) => {
+      let blockResponse = await await fetch(
+        `https://api${
+          process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? '-rinkeby' : ''
+        }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
+          process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
+        }`,
+      )
+      let json = await blockResponse.json()
+      blocks.push(+json.result)
+    }),
+  )
+
+  return blocks
+}
+
+/**
+ * get standard percent change between two values
+ * @param {*} valueNow
+ * @param {*} value24HoursAgo
+ */
+export const getPercentChange = (valueNow, value24HoursAgo) => {
+  const adjustedPercentChange =
+    ((parseFloat(valueNow) - parseFloat(value24HoursAgo)) /
+      parseFloat(value24HoursAgo)) *
+    100
+  if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
+    return 0
+  }
+  return adjustedPercentChange
 }
