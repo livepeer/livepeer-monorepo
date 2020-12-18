@@ -375,6 +375,8 @@ dataSources:
       eventHandlers:
         - event: Mint(indexed address,uint256)
           handler: mint
+        - event: Burn(indexed address,uint256)
+          handler: burn
 ###############################################################################
 #
 # Data source templates
