@@ -155,6 +155,16 @@
         "internalType": "bool",
         "name": "hasTranscoderRewardFeePool",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cumulativeRewardFactor",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cumulativeFeeFactor",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -372,7 +382,23 @@
         "internalType": "uint256",
         "name": "deactivationRound",
         "type": "uint256"
-      }
+      },
+      {
+        "internalType": "uint256",
+        "name": "activeCumulativeRewards",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cumulativeRewards",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cumulativeFees",
+        "type": "uint256"
+      },
+      { "internalType": "uint256", "name": "lastFeeRound", "type": "uint256" }
     ],
     "payable": false,
     "stateMutability": "view",
@@ -613,6 +639,24 @@
       { "internalType": "address", "name": "_to", "type": "address" }
     ],
     "name": "bond",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "internalType": "uint256", "name": "_pendingStake", "type": "uint256" },
+      { "internalType": "uint256", "name": "_pendingFees", "type": "uint256" },
+      {
+        "internalType": "bytes32[]",
+        "name": "_earningsProof",
+        "type": "bytes32[]"
+      },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
+    ],
+    "name": "claimSnapshotEarnings",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

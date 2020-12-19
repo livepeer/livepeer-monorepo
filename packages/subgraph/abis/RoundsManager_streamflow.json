@@ -24,6 +24,27 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      { "internalType": "uint256", "name": "_lip", "type": "uint256" },
+      { "internalType": "uint256", "name": "_round", "type": "uint256" }
+    ],
+    "name": "setLIPUpgradeRound",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "lipUpgradeRound",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "currentRoundInitialized",

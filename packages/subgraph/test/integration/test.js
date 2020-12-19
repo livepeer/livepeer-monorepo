@@ -13,7 +13,7 @@ const PollABI = require('../../abis/Poll.json')
 const roundsManagerAddress = '0x5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
 const bondingManagerAddress = '0xA94B7f0465E98609391C623d0560C5720a3f2D33'
 const livepeerTokenAddress = '0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
-const pollCreatorAddress = '0x7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
+const pollCreatorAddress = '0x4bf3A7dFB3b76b5B3E169ACE65f888A4b4FCa5Ee'
 
 const defaults = { gas: 1000000 }
 
@@ -216,6 +216,8 @@ contract('Subgraph Integration Tests', accounts => {
     delegator5 = accounts[6]
     delegator6 = accounts[7]
 
+    const lip36Round = await RoundsManager.methods.currentRound()
+    await RoundsManager.methods.setLIPUpgradeRound(new BN(36), lip36Round)
     await RoundsManager.methods.setRoundLength(20).send({ from: accounts[0] })
 
     pollCreationCost = await PollCreator.methods.POLL_CREATION_COST().call()
