@@ -200,13 +200,6 @@ export function updatePollTallyOnRebond(event: RebondEvent): void {
 export function updatePollTallyOnEarningsClaimed(
   event: EarningsClaimedEvent,
 ): void {
-  // After LIP-36 the pending stake of other delegators does not change 
-  // after earnings are claimed so after the LIP-36 mainnet upgrade block 
-  // we stop updating all voters vote weight on each EarningsClaim event
-  if(dataSource.network() != 'mainnet' || event.block.number.gt(BigInt.fromI32(10972430))) {
-    return
-  }
-  
   let voterAddress = dataSource.context().getString('voter')
   let delegator = Delegator.load(voterAddress) as Delegator
 
