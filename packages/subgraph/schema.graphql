@@ -185,8 +185,6 @@ type Protocol @entity {
   totalVolumeUSD: BigDecimal
   totalWinningTickets: BigInt
   unbondingPeriod: BigInt
-  # price of ETH usd
-  ethPrice: BigDecimal
 }
 
 """

@@ -94,6 +94,10 @@ export function getLivepeerTokenAddress(network: string): string {
   }
 }
 
+export function getDaiEthPairAddress(): string {
+  return 'a478c2975ab1ea89e8196811f51a7b7ade33eb11'
+}
+
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
   for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
