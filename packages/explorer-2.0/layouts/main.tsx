@@ -314,6 +314,8 @@ const Layout = ({
                 bg: 'background',
                 position: 'relative',
                 px: [2, 2, 2, 4],
+                maxWidth: 1500,
+                margin: '0 auto',
                 width: '100%',
               }}
             >

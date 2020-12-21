@@ -112,7 +112,7 @@ const TradingViewChart = ({
             if (type === CHART_TYPES.AREA) {
               return `${val.toFixed(2)}%`
             } else {
-              return formattedNum(val, true)
+              return formattedNum(val, true).toString().replace(/\.00$/, '')
             }
           },
         },
