@@ -238,6 +238,7 @@ const Index = ({ pageSize = 10, title = '' }) => {
                     background: '#1E2026',
                     padding: 0,
                     borderRadius: 10,
+                    zIndex: 10,
                     boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
                   }}
                   isOpen={isRegionSelectorOpen}
