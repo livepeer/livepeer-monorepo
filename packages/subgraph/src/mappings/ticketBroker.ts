@@ -5,6 +5,7 @@ import {
   ReserveClaimed as ReserveClaimedEvent,
   Withdrawal as WithdrawalEvent,
 } from '../types/TicketBroker/TicketBroker'
+import { UniswapV2Pair } from '../types/TicketBroker/UniswapV2Pair'
 import {
   DayData,
   WinningTicketRedeemed,
@@ -17,21 +18,31 @@ import {
   DepositFunded,
   Withdrawal,
 } from '../types/schema'
-import { BigDecimal } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import {
   convertToDecimal,
+  getDaiEthPairAddress,
   makeEventId,
   ZERO_BD,
   ZERO_BI,
 } from '../../utils/helpers'
 
 export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
+  let uniswapV2PairAddress = getDaiEthPairAddress()
+  let daiEthPair = UniswapV2Pair.bind(Address.fromString(uniswapV2PairAddress))
   let protocol = Protocol.load('0') || new Protocol('0')
   let round = Round.load(protocol.currentRound)
   let winningTicketRedeemed = new WinningTicketRedeemed(
     makeEventId(event.transaction.hash, event.logIndex),
   )
   let faceValue = convertToDecimal(event.params.faceValue)
+  let ethPrice = ZERO_BD
+
+  // DAI-ETH pair was created during this block
+  if(event.block.number.gt(BigInt.fromI32(10095742))) {
+    let daiEthPairReserves = daiEthPair.getReserves()
+    ethPrice = convertToDecimal(daiEthPairReserves.value0).div(convertToDecimal(daiEthPairReserves.value1))
+  }
 
   winningTicketRedeemed.hash = event.transaction.hash.toHex()
   winningTicketRedeemed.blockNumber = event.block.number
@@ -63,12 +74,12 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
     Transcoder.load(event.params.recipient.toHex()) ||
     new Transcoder(event.params.recipient.toHex())
   transcoder.totalVolumeETH = transcoder.totalVolumeETH.plus(faceValue)
-  transcoder.totalVolumeUSD = transcoder.totalVolumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
+  transcoder.totalVolumeUSD = transcoder.totalVolumeUSD.plus(faceValue.times(ethPrice))
   transcoder.save()
 
   // Update total protocol fee volume
   protocol.totalVolumeETH = protocol.totalVolumeETH.plus(faceValue)
-  protocol.totalVolumeUSD = protocol.totalVolumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
+  protocol.totalVolumeUSD = protocol.totalVolumeUSD.plus(faceValue.times(ethPrice))
   
   protocol.totalWinningTickets = protocol.totalWinningTickets.plus(ZERO_BI)
   protocol.save()
@@ -83,16 +94,19 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
     dayData.date = dayStartTimestamp
     dayData.volumeUSD = ZERO_BD
     dayData.volumeETH = ZERO_BD
+    dayData.totalSupply = protocol.totalSupply as BigDecimal
+    dayData.totalActiveStake = protocol.totalActiveStake as BigDecimal
+    dayData.participationRate = protocol.participationRate as BigDecimal
   }
 
   // Update fee volume for this day
   dayData.volumeETH = dayData.volumeETH.plus(faceValue)
-  dayData.volumeUSD = dayData.volumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
+  dayData.volumeUSD = dayData.volumeUSD.plus(faceValue.times(ethPrice))
   dayData.save()
 
   // Update fee volume for this round
   round.volumeETH = round.volumeETH.plus(faceValue)
-  round.volumeUSD = round.volumeUSD.plus(faceValue.times(protocol.ethPrice as BigDecimal))
+  round.volumeUSD = round.volumeUSD.plus(faceValue.times(ethPrice))
   round.save()
 }
 

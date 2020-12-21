@@ -3,28 +3,27 @@
     "constant": true,
     "inputs": [],
     "name": "QUORUM",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      { "internalType": "bytes", "name": "_proposal", "type": "bytes" }
+    ],
+    "name": "createPoll",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": true,
     "inputs": [],
     "name": "POLL_CREATION_COST",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -33,13 +32,7 @@
     "constant": true,
     "inputs": [],
     "name": "QUOTA",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -48,13 +41,7 @@
     "constant": true,
     "inputs": [],
     "name": "POLL_PERIOD",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -76,11 +63,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddr",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_tokenAddr", "type": "address" }
     ],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -122,20 +105,5 @@
     ],
     "name": "PollCreated",
     "type": "event"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "_proposal",
-        "type": "bytes"
-      }
-    ],
-    "name": "createPoll",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
   }
 ]

@@ -36,9 +36,6 @@ mainnet:
     serviceRegistry:
       address: '406a112f3218b988c66778fd72fc8467f2601366'
       startBlock: 6194966
-    uniswapEthDaiPair:
-      address: 'a478c2975ab1ea89e8196811f51a7b7ade33eb11'
-      startBlock: 10000835
   networkName: mainnet
 rinkeby:
   contracts:
@@ -112,12 +109,9 @@ development:
       address: 'A57B8a5584442B467b4689F1144D269d096A3daF'
       startBlock: 0
     pollCreator:
-      address: '7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
+      address: '4bf3A7dFB3b76b5B3E169ACE65f888A4b4FCa5Ee'
       startBlock: 0
     serviceRegistry:
       address: 'aD888d0Ade988EbEe74B8D4F39BF29a8d0fe8A8D'
-      startBlock: 0
-    uniswapEthDaiPair:
-      address: 'FE82b1C8A177EF370867803fdA5fA515a1642561'
       startBlock: 0
   networkName: development

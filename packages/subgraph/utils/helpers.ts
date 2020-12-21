@@ -84,6 +84,20 @@ export function getBondingManagerAddress(network: string): string {
   }
 }
 
+export function getLivepeerTokenAddress(network: string): string {
+  if (network == 'mainnet') {
+    return '58b6a8a3302369daec383334672404ee733ab239'
+  } else if (network == 'rinkeby') {
+    return '23b814a57D53b1a7A860194F53401D0D639abED7'
+  } else {
+    return 'D833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
+  }
+}
+
+export function getDaiEthPairAddress(): string {
+  return 'a478c2975ab1ea89e8196811f51a7b7ade33eb11'
+}
+
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
   for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
