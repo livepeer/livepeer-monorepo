@@ -35,7 +35,7 @@ function App({ Component, pageProps }) {
         />
       </Head>
 
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme as any}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ReactManager>
             <CookiesProvider>

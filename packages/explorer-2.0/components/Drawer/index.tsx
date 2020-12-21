@@ -181,11 +181,10 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
               >
                 Get LPT
                 <UniswapModal>
-                  <Box
-                    as="iframe"
+                  <iframe
                     className="tour-step-4"
-                    sx={{
-                      bg: '#323639',
+                    style={{
+                      background: '#323639',
                       width: '100%',
                       height: '100%',
                       border: '0',

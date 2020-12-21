@@ -35,15 +35,13 @@ const PerformanceTable = ({
         }}
       >
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
-        <Box
+        <input
           value={filterValue || ''}
           onChange={(e) => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
-          as="input"
           type="text"
-          variant="input"
           sx={{
             display: 'block',
             outline: 'none',
