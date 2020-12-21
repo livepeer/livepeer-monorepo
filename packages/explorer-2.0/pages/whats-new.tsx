@@ -4,9 +4,10 @@ import Card from '../components/Card'
 import moment from 'moment'
 import { getLayout } from '../layouts/main'
 import Markdown from 'markdown-to-jsx'
-import { withApollo } from '../lib/apollo'
+import { withApollo } from '../apollo'
 import { createApolloFetch } from 'apollo-fetch'
 import { useEffect, useState } from 'react'
+import Head from 'next/head'
 
 const query = `
   {
@@ -54,11 +55,12 @@ const groupBy = (key) => (array) =>
 const groupByType = groupBy('type')
 
 const WhatsNew = () => {
-  const uri = 'https://explorer.livepeer.org/api/graphql'
   const [data, setData] = useState(null)
-  const apolloFetch = createApolloFetch({ uri })
 
   useEffect(() => {
+    const apolloFetch = createApolloFetch({
+      uri: `${window.location.origin}/api/graphql`,
+    })
     async function getChangefeed() {
       const { data } = await apolloFetch({ query })
       setData(data)
@@ -68,6 +70,9 @@ const WhatsNew = () => {
 
   return (
     <>
+      <Head>
+        <title>Livepeer Explorer - What's New</title>
+      </Head>
       {!data ? (
         <Flex
           sx={{

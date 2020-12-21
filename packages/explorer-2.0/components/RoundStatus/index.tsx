@@ -155,7 +155,7 @@ const Index = () => {
                 strokeLinecap: 'butt',
                 pathColor: theme.colors.primary,
                 textColor: theme.colors.text,
-                trailColor: theme.colors.border,
+                trailColor: '#393a3d',
               })}
               value={Math.round(percentage)}
             />
@@ -208,7 +208,7 @@ const Index = () => {
                 strokeLinecap: 'butt',
                 pathColor: theme.colors.primary,
                 textColor: theme.colors.text,
-                trailColor: theme.colors.border,
+                trailColor: '#393a3d',
               })}
               value={Math.round(percentage)}
             >

@@ -1,4 +1,19 @@
-import { getBlock } from '../../lib/utils'
+import dayjs from 'dayjs'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
+import utc from 'dayjs/plugin/utc'
+import {
+  get2DayPercentChange,
+  getBlocksFromTimestamps,
+  getPercentChange,
+} from '../../lib/utils'
+import dayDataQuery from '../../queries/dayData.gql'
+import protocolDataByBlockQuery from '../../queries/protocolDataByBlock.gql'
+import protocolDataQuery from '../../queries/protocolData.gql'
+import { client } from '../'
+
+// format dayjs with the libraries that we need
+dayjs.extend(utc)
+dayjs.extend(weekOfYear)
 
 export async function account(_obj, _args, _ctx, _info) {
   return {
@@ -39,7 +54,7 @@ export async function transaction(_obj, _args, _ctx, _info) {
 
 export async function txPrediction(_obj, _args, _ctx, _info) {
   const response = await fetch(
-    `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${_args.gasPrice}&apikey=${process.env.ETHERSCAN_API_KEY}`,
+    `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${_args.gasPrice}&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`,
   )
   return await response.json()
 }
@@ -104,4 +119,151 @@ export async function block(_obj, _args, _ctx, _info) {
     number: blockNumber,
     time: ethGasStationResult.block_time,
   }
+}
+
+export async function getChartData(_obj, _args, _ctx, _info) {
+  let data = {
+    dayData: [],
+    weeklyData: [],
+    totalVolumeUSD: 0,
+    participationRate: 0,
+    oneDayVolumeUSD: 0,
+    oneWeekVolume: 0,
+    weeklyVolumeChange: 0,
+    volumeChangeUSD: 0,
+    participationRateChange: 0,
+  }
+
+  let dayData = []
+  let weeklyData = []
+  let oneDayData = {
+    totalVolumeUSD: 0,
+    participationRate: 0,
+  }
+  let twoDayData = {
+    totalVolumeUSD: 0,
+    participationRate: 0,
+  }
+
+  try {
+    // get timestamps for the days
+    const utcCurrentTime = dayjs()
+    const utcOneDayBack = utcCurrentTime.subtract(1, 'day').unix()
+    const utcTwoDaysBack = utcCurrentTime.subtract(2, 'day').unix()
+    const utcOneWeekBack = utcCurrentTime.subtract(1, 'week').unix()
+    const utcTwoWeeksBack = utcCurrentTime.subtract(2, 'week').unix()
+
+    // get the blocks needed for time travel queries
+    let [
+      oneDayBlock,
+      twoDayBlock,
+      oneWeekBlock,
+      twoWeekBlock,
+    ] = await getBlocksFromTimestamps([
+      utcOneDayBack,
+      utcTwoDaysBack,
+      utcOneWeekBack,
+      utcTwoWeeksBack,
+    ])
+
+    let getDayData = async () => {
+      let result = await client.query({
+        query: dayDataQuery,
+        variables: {
+          first: 1000,
+          orderBy: 'date',
+          orderDirection: 'desc',
+        },
+      })
+      return result
+    }
+
+    let getProtocolData = async () => {
+      let result = await client.query({
+        query: protocolDataQuery,
+      })
+      return result
+    }
+
+    let getProtocolDataByBlock = async (block) => {
+      let result = await client.query({
+        query: protocolDataByBlockQuery,
+        variables: {
+          block: { number: block },
+        },
+      })
+      return result
+    }
+
+    let dayDataResult = await getDayData()
+    dayData = dayDataResult.data.dayDatas
+
+    // fetch the historical data
+    let protocolDataResult = await getProtocolData()
+    data.totalVolumeUSD = +protocolDataResult.data.protocol.totalVolumeUSD
+    data.participationRate = +protocolDataResult.data.protocol.participationRate
+
+    let oneDayResult = await getProtocolDataByBlock(oneDayBlock)
+    oneDayData = oneDayResult.data.protocol
+
+    let twoDayResult = await getProtocolDataByBlock(twoDayBlock)
+    twoDayData = twoDayResult.data.protocol
+
+    let oneWeekResult = await getProtocolDataByBlock(oneWeekBlock)
+    const oneWeekData = oneWeekResult.data.protocol
+
+    let twoWeekResult = await getProtocolDataByBlock(twoWeekBlock)
+    const twoWeekData = twoWeekResult.data.protocol
+    if (data && dayData && oneDayData && twoDayData && twoWeekData) {
+      const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
+        data.totalVolumeUSD,
+        oneDayData.totalVolumeUSD ? oneDayData.totalVolumeUSD : 0,
+        twoDayData.totalVolumeUSD ? twoDayData.totalVolumeUSD : 0,
+      )
+
+      const [oneWeekVolume, weeklyVolumeChange] = get2DayPercentChange(
+        data.totalVolumeUSD,
+        oneWeekData.totalVolumeUSD,
+        twoWeekData.totalVolumeUSD,
+      )
+
+      // format the total participation change
+      const participationRateChange = getPercentChange(
+        data.participationRate,
+        oneDayData.participationRate,
+      )
+
+      // format weekly data for weekly sized chunks
+      let weeklySizedChucks = [...dayData].sort((a, b) =>
+        parseInt(a.date) > parseInt(b.date) ? 1 : -1,
+      )
+      let startIndexWeekly = -1
+      let currentWeek = -1
+      weeklySizedChucks.forEach((entry, i) => {
+        const week = dayjs.utc(dayjs.unix(weeklySizedChucks[i].date)).week()
+        if (week !== currentWeek) {
+          currentWeek = week
+          startIndexWeekly++
+        }
+        weeklyData[startIndexWeekly] = weeklyData[startIndexWeekly] || {}
+        weeklyData[startIndexWeekly].date = weeklySizedChucks[i].date
+        weeklyData[startIndexWeekly].weeklyVolumeUSD =
+          (weeklyData[startIndexWeekly].weeklyVolumeUSD ?? 0) +
+          +weeklySizedChucks[i].volumeUSD
+      })
+
+      // add relevant fields with the calculated amounts
+      data.dayData = [...dayData].reverse()
+      data.weeklyData = weeklyData
+      data.oneDayVolumeUSD = oneDayVolumeUSD
+      data.oneWeekVolume = oneWeekVolume
+      data.weeklyVolumeChange = weeklyVolumeChange
+      data.volumeChangeUSD = volumeChangeUSD
+      data.participationRateChange = participationRateChange
+    }
+  } catch (e) {
+    console.log(e)
+  }
+
+  return data
 }

@@ -207,7 +207,7 @@ function Header({ tx, timeLeft }) {
         target="_blank"
         rel="noopener noreferrer"
         href={`https://${
-          process.env.NETWORK === 'rinkeby' ? 'rinkeby.' : ''
+          process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'rinkeby.' : ''
         }etherscan.io/tx/${tx?.txHash}`}
       >
         Details <MdOpenInNew sx={{ ml: '6px', color: 'primary' }} />

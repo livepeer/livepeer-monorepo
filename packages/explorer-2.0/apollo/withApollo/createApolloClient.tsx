@@ -1,12 +1,25 @@
-import { ApolloClient, gql } from '@apollo/client'
-import { InMemoryCache, defaultDataIdFromObject } from '@apollo/client/cache'
-import { ApolloLink, Observable } from 'apollo-link'
-import createSchema from './createSchema'
-import { execute } from 'graphql/execution/execute'
+import { NextPageContext } from 'next'
+import {
+  ApolloClient,
+  ApolloLink,
+  defaultDataIdFromObject,
+  gql,
+  InMemoryCache,
+  NormalizedCacheObject,
+  Observable,
+} from '@apollo/client'
+import createSchema from '../createSchema'
 import LivepeerSDK from '@livepeer/sdk'
+import { execute } from 'graphql/execution/execute'
 
-export default function createApolloClient(initialState, ctx) {
-  const dataIdFromObject = object => {
+export default function createApolloClient(
+  initialState: object,
+  ctx: NextPageContext | null,
+) {
+  // The `ctx` (NextPageContext) will only be present on the server.
+  // use it to extract auth headers (ctx.req) or similar.
+
+  const dataIdFromObject = (object) => {
     switch (object.__typename) {
       case 'ThreeBoxSpace':
         return object.id // use the `id` field as the identifier
@@ -15,9 +28,9 @@ export default function createApolloClient(initialState, ctx) {
     }
   }
 
-  const cache: any = new InMemoryCache({
-    dataIdFromObject,
-  }).restore(initialState || {})
+  let cache = new InMemoryCache().restore(
+    (initialState || {}) as NormalizedCacheObject,
+  )
 
   cache.writeQuery({
     query: gql`
@@ -56,18 +69,18 @@ export default function createApolloClient(initialState, ctx) {
     },
   })
 
-  const link: any = new ApolloLink(operation => {
-    return new Observable(observer => {
+  const link: any = new ApolloLink((operation) => {
+    return new Observable((observer) => {
       Promise.resolve(createSchema())
-        .then(async data => {
+        .then(async (data) => {
           const context = operation.getContext()
           const sdk = await LivepeerSDK({
             provider:
-              process.env.NETWORK === 'rinkeby'
-                ? process.env.RPC_URL_4
-                : process.env.RPC_URL_1,
-            controllerAddress: process.env.CONTROLLER_ADDRESS,
-            pollCreatorAddress: process.env.POLL_CREATOR_ADDRESS,
+              process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
+                ? process.env.NEXT_PUBLIC_RPC_URL_4
+                : process.env.NEXT_PUBLIC_RPC_URL_1,
+            controllerAddress: process.env.NEXT_PUBLIC_CONTROLLER_ADDRESS,
+            pollCreatorAddress: process.env.NEXT_PUBLIC_POLL_CREATOR_ADDRESS,
             ...(context.library && {
               provider: context.library._web3Provider,
             }),
@@ -86,13 +99,13 @@ export default function createApolloClient(initialState, ctx) {
             operation.operationName,
           )
         })
-        .then(data => {
+        .then((data) => {
           if (!observer.closed) {
             observer.next(data)
             observer.complete()
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (!observer.closed) {
             observer.error(error)
           }
@@ -101,9 +114,8 @@ export default function createApolloClient(initialState, ctx) {
   })
 
   return new ApolloClient({
-    ssrMode: Boolean(ctx),
+    ssrMode: typeof window === 'undefined',
     link,
-    resolvers: {},
     cache,
   })
 }

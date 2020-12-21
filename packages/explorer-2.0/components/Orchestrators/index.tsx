@@ -20,54 +20,6 @@ const regions = {
   mdw: 'North America (Chicago)',
 }
 
-const TableToggle = () => {
-  const router = useRouter()
-  const { query } = router
-  return (
-    <Flex sx={{ alignItems: 'center' }}>
-      <Box
-        onClick={() => router.push('/')}
-        sx={{
-          fontSize: 0,
-          borderRadius: 8,
-          fontWeight: 600,
-          cursor: 'pointer',
-          border: '1px solid',
-          borderColor: 'rgba(255,255,255,.1)',
-          bg:
-            query.orchestratorTable === 'performance'
-              ? 'transparent'
-              : 'rgba(255,255,255,.1)',
-          py: '6px',
-          px: 1,
-          mr: 1,
-        }}
-      >
-        Staking
-      </Box>
-      <Box
-        onClick={() => router.push('?orchestratorTable=performance')}
-        sx={{
-          fontSize: 0,
-          borderRadius: 8,
-          fontWeight: 600,
-          cursor: 'pointer',
-          border: '1px solid',
-          borderColor: 'rgba(255,255,255,.1)',
-          bg:
-            query.orchestratorTable === 'performance'
-              ? 'rgba(255,255,255,.1)'
-              : 'transparent',
-          py: '6px',
-          px: 1,
-        }}
-      >
-        Performance
-      </Box>
-    </Flex>
-  )
-}
-
 const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
   return (
     <Flex sx={{ alignItems: 'center' }}>
@@ -114,22 +66,23 @@ const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
   )
 }
 
+const oneDayAgo = Math.floor(
+  new Date(new Date().setDate(new Date().getDate() - 1)).getTime() / 1000,
+)
 const oneWeekAgo = Math.floor(
   new Date(new Date().setDate(new Date().getDate() - 7)).getTime() / 1000,
 )
 
-const oneDayAgo = Math.floor(
-  new Date(new Date().setDate(new Date().getDate() - 1)).getTime() / 1000,
-)
-
-const Index = () => {
-  const { query } = useRouter()
+const Index = ({ pageSize = 10, title = '' }) => {
+  const router = useRouter()
+  const { query } = router
   const isVisible = usePageVisibility()
   const pollInterval = 20000
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState(false)
   const [region, setRegion] = useState('global')
   const targetRef = useRef()
   const [timeframe, setTimeframe] = useState('1D')
+  const [orchestratorTable, setOrchestratorTable] = useState('staking')
 
   const variables = {
     orderBy: 'totalStake',
@@ -147,8 +100,8 @@ const Index = () => {
     stopPolling: stopPollingOrchestrators,
   } = useQuery(orchestratorsViewQuery, {
     variables,
-    pollInterval,
     notifyOnNetworkStatusChange: true,
+    pollInterval: 20000,
     context: {
       since: timeframe === '1W' ? oneWeekAgo : oneDayAgo,
     },
@@ -162,13 +115,21 @@ const Index = () => {
     }
   }, [isVisible])
 
+  const performanceViewActive =
+    query?.orchestratorTable === 'performance' ||
+    orchestratorTable === 'performance'
+
   return (
     <Box className="tour-step-6">
-      <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
-        Top Orchestrators
-      </Styled.h2>
+      {title && (
+        <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
+          {title}
+        </Styled.h2>
+      )}
       <Box
         sx={{
+          boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 10px',
+          position: 'relative',
           pt: 2,
           mb: 3,
           minHeight: 500,
@@ -190,10 +151,54 @@ const Index = () => {
           }}
         >
           <Box sx={{ mb: [2, 2, 0] }}>
-            <TableToggle />
+            <Flex sx={{ alignItems: 'center' }}>
+              <Box
+                onClick={() => {
+                  setOrchestratorTable('staking')
+                  router.push('/')
+                }}
+                sx={{
+                  fontSize: 0,
+                  borderRadius: 8,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderColor: 'rgba(255,255,255,.1)',
+                  bg: performanceViewActive
+                    ? 'transparent'
+                    : 'rgba(255,255,255,.1)',
+                  py: '6px',
+                  px: 1,
+                  mr: 1,
+                }}
+              >
+                Staking
+              </Box>
+              <Box
+                onClick={() => {
+                  setOrchestratorTable('performance')
+                  router.push('?orchestratorTable=performance')
+                }}
+                sx={{
+                  fontSize: 0,
+                  borderRadius: 8,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderColor: 'rgba(255,255,255,.1)',
+                  bg: performanceViewActive
+                    ? 'rgba(255,255,255,.1)'
+                    : 'transparent',
+                  py: '6px',
+                  px: 1,
+                }}
+              >
+                Performance
+              </Box>
+            </Flex>
           </Box>
 
-          {query.orchestratorTable === 'performance' && (
+          {performanceViewActive && (
             <Flex sx={{ alignItems: 'center' }}>
               <Flex sx={{ alignItems: 'center' }}>
                 <Box
@@ -236,6 +241,7 @@ const Index = () => {
                     background: '#1E2026',
                     padding: 0,
                     borderRadius: 10,
+                    zIndex: 10,
                     boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
                   }}
                   isOpen={isRegionSelectorOpen}
@@ -278,16 +284,20 @@ const Index = () => {
             sx={{
               position: 'absolute',
               transform: 'translate(-50%, -50%)',
-              top: 'calc(50% + 62px)',
+              top: 'calc(50%)',
               left: '50%',
+              height: '500px',
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
             <Spinner />
           </Box>
         ) : (
           <Box>
-            {query.orchestratorTable === 'performance' ? (
+            {performanceViewActive ? (
               <PerformanceTable
+                pageSize={pageSize}
                 data={{
                   currentRound: data.protocol.currentRound,
                   transcoders: data.transcoders,
@@ -296,6 +306,7 @@ const Index = () => {
               />
             ) : (
               <StakingTable
+                pageSize={pageSize}
                 data={{
                   currentRound: data.protocol.currentRound,
                   transcoders: data.transcoders,

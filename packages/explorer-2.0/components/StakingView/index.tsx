@@ -73,7 +73,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     lineHeight: 'heading',
                   }}
                 >
-                  {process.env.THREEBOX_ENABLED &&
+                  {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
                   delegator.delegate.threeBoxSpace.name
                     ? delegator.delegate.threeBoxSpace.name
                     : delegator.delegate.id.replace(

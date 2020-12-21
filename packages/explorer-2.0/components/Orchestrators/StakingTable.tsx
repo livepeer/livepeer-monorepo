@@ -17,8 +17,12 @@ import {
   MenuItemRadio,
 } from '@modulz/radix/dist/index.es'
 import Price from '../Price'
+import { Input } from '@material-ui/core'
 
-const StakingTable = ({ data: { currentRound, transcoders } }) => {
+const StakingTable = ({
+  pageSize = 10,
+  data: { currentRound, transcoders },
+}) => {
   const { width } = useWindowSize()
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
   const targetRef = useRef()
@@ -42,15 +46,13 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
         }}
       >
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
-        <Box
+        <input
           value={filterValue || ''}
           onChange={(e) => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
-          as="input"
           type="text"
-          variant="input"
           sx={{
             display: 'block',
             outline: 'none',
@@ -190,6 +192,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
     disableSortRemove: true,
     autoResetPage: false,
     initialState: {
+      pageSize,
       sortBy: [{ id: 'totalStake', desc: true }],
       hiddenColumns: [
         'activationRound',
@@ -365,7 +368,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
 
           <tbody {...getTableBodyProps()}>
             {page.map((row: any, rowIndex) => {
-              const orchestratorIndex = rowIndex + pageIndex * 10
+              const orchestratorIndex = rowIndex + pageIndex * pageSize
               prepareRow(row)
               return (
                 <tr
@@ -568,7 +571,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed amongst delegators."
               data-for="tooltip-reward-cut"
               sx={{
                 cursor: 'pointer',
@@ -642,7 +645,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
   function renderSwitch(rowIndex, pageIndex, cell, currentRound) {
     switch (cell.column.Header) {
       case '#':
-        return parseInt(rowIndex) + 1 + pageIndex * 10
+        return parseInt(rowIndex) + 1 + pageIndex * pageSize
       case 'Orchestrator':
         const active =
           cell.row.values.activationRound <= currentRound.id &&

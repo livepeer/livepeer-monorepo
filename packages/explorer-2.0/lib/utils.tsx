@@ -4,6 +4,9 @@ import url from 'url'
 import parseDomain from 'parse-domain'
 import { ethers } from 'ethers'
 import { gql } from '@apollo/client'
+import Numeral from 'numeral'
+import dayjs from 'dayjs'
+import { timeframeOptions } from './constants'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -290,9 +293,9 @@ export const initTransaction = async (client, mutation) => {
 export const getBlock = async () => {
   const blockDataResponse = await fetch(
     `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
     }.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${
-      process.env.ETHERSCAN_API_KEY
+      process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`,
   )
   const { result } = await blockDataResponse.json()
@@ -302,9 +305,9 @@ export const getBlock = async () => {
 export const getBlockByNumber = async (number) => {
   const blockDataResponse = await fetch(
     `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
     }.etherscan.io/api?module=block&action=getblockreward&blockno=${number}&apikey=${
-      process.env.ETHERSCAN_API_KEY
+      process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`,
   )
   const { result } = await blockDataResponse.json()
@@ -314,9 +317,9 @@ export const getBlockByNumber = async (number) => {
 export const getEstimatedBlockCountdown = async (number) => {
   const countdownRaw = await fetch(
     `https://${
-      process.env.NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
     }.etherscan.io/api?module=block&action=getblockcountdown&blockno=${number}&apikey=${
-      process.env.ETHERSCAN_API_KEY
+      process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`,
   )
   const { result } = await countdownRaw.json()
@@ -418,4 +421,119 @@ export function isAddress(address) {
     return false
   }
   return true
+}
+
+export const priceFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+})
+
+export const toK = (num) => {
+  return Numeral(num).format('0.[00]a')
+}
+
+export const formattedNum = (number, usd = false, acceptNegatives = false) => {
+  if (isNaN(number) || number === '' || number === undefined) {
+    return usd ? '$0' : 0
+  }
+  let num = parseFloat(number)
+
+  if (num > 500000000) {
+    return (usd ? '$' : '') + toK(num.toFixed(0))
+  }
+
+  if (num === 0) {
+    if (usd) {
+      return '$0'
+    }
+    return 0
+  }
+
+  if (num < 0.0001 && num > 0) {
+    return usd ? '< $0.0001' : '< 0.0001'
+  }
+
+  if (num > 1000) {
+    return usd
+      ? '$' + Number(num.toFixed(0)).toLocaleString()
+      : '' + Number(num.toFixed(0)).toLocaleString()
+  }
+
+  if (usd) {
+    if (num < 0.1) {
+      return '$' + Number(num.toFixed(4))
+    } else {
+      let usdString = priceFormatter.format(num)
+      return '$' + usdString.slice(1, usdString.length)
+    }
+  }
+  return Number(num.toFixed(5))
+}
+
+/**
+ * gets the amoutn difference plus the % change in change itself (second order change)
+ * @param {*} valueNow
+ * @param {*} value24HoursAgo
+ * @param {*} value48HoursAgo
+ */
+export const get2DayPercentChange = (
+  valueNow,
+  value24HoursAgo,
+  value48HoursAgo,
+) => {
+  // get volume info for both 24 hour periods
+  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo)
+  let previousChange = parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo)
+
+  const adjustedPercentChange =
+    ((currentChange - previousChange) / previousChange) * 100
+
+  if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
+    return [currentChange, 0]
+  }
+  return [currentChange, adjustedPercentChange]
+}
+
+/**
+ * @notice Fetches block objects for an array of timestamps.
+ * @dev blocks are returned in chronological order (ASC) regardless of input.
+ * @dev blocks are returned at string representations of Int
+ * @dev timestamps are returns as they were provided; not the block time.
+ * @param {Array} timestamps
+ */
+export async function getBlocksFromTimestamps(timestamps) {
+  if (timestamps?.length === 0) {
+    return []
+  }
+  let blocks = []
+  for (let i = 0; i < timestamps.length; i++) {
+    let blockResponse = await fetch(
+      `https://api${
+        process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? '-rinkeby' : ''
+      }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${
+        timestamps[i]
+      }&closest=before&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`,
+    )
+    let json = await blockResponse.json()
+    blocks.push(+json.result)
+  }
+
+  return blocks
+}
+
+/**
+ * get standard percent change between two values
+ * @param {*} valueNow
+ * @param {*} value24HoursAgo
+ */
+export const getPercentChange = (valueNow, value24HoursAgo) => {
+  const adjustedPercentChange =
+    ((parseFloat(valueNow) - parseFloat(value24HoursAgo)) /
+      parseFloat(value24HoursAgo)) *
+    100
+  if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
+    return 0
+  }
+  return adjustedPercentChange
 }
