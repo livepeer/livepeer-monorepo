@@ -11,13 +11,9 @@ import StakingView from '../../../components/StakingView'
 import Spinner from '../../../components/Spinner'
 import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
-import {
-  isAddress,
-  getDelegatorStatus,
-  checkAddressEquality,
-} from '../../../lib/utils'
+import { getDelegatorStatus, checkAddressEquality } from '../../../lib/utils'
 import HistoryView from '../../../components/HistoryView'
-import { withApollo } from '../../../lib/apollo'
+import { withApollo } from '../../../apollo'
 import BottomDrawer from '../../../components/BottomDrawer'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import Approve from '../../../components/Approve'
@@ -26,21 +22,18 @@ import { usePageVisibility } from '../../../hooks'
 import { useEffect } from 'react'
 import accountViewQuery from '../../../queries/accountView.gql'
 import accountQuery from '../../../queries/account.gql'
-import FourZeroFour from '../../404'
 import { gql } from '@apollo/client'
+import { NextPage } from 'next'
+
+const pollInterval = 20000
 
 const Account = () => {
-  const router = useRouter()
   const context = useWeb3React()
   const { width } = useWindowSize()
   const isVisible = usePageVisibility()
+  const router = useRouter()
   const { query, asPath } = router
   const slug = query.slug
-  const pollInterval = 20000
-
-  if (!query?.account || !isAddress(query?.account.toString())) {
-    return <FourZeroFour />
-  }
 
   const {
     data,
@@ -50,12 +43,10 @@ const Account = () => {
     stopPolling: stopPollingAccount,
   } = useQuery(accountViewQuery, {
     variables: {
-      account: query?.account.toString().toLowerCase(),
+      account: query?.account?.toString().toLowerCase(),
+      pollInterval,
     },
-    pollInterval,
-    ssr: false,
   })
-
   const {
     data: dataTranscoders,
     loading: loadingTranscoders,
@@ -76,13 +67,11 @@ const Account = () => {
     `,
     {
       pollInterval,
-      ssr: false,
     },
   )
 
   const {
     data: dataMyAccount,
-    loading: loadingMyAccount,
     startPolling: startPollingMyAccount,
     stopPolling: stopPollingMyAccount,
   } = useQuery(accountQuery, {
@@ -91,7 +80,6 @@ const Account = () => {
     },
     pollInterval,
     skip: !context.active, // skip this query if wallet not connected
-    ssr: false,
   })
 
   useEffect(() => {
@@ -113,7 +101,7 @@ const Account = () => {
   `
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION)
 
-  if (loading || loadingMyAccount || loadingTranscoders) {
+  if (loading || loadingTranscoders) {
     return (
       <Flex
         sx={{
@@ -135,27 +123,28 @@ const Account = () => {
 
   const isMyAccount = checkAddressEquality(
     context?.account,
-    query?.account.toString(),
+    query?.account?.toString(),
   )
-  const isStaked = !!data?.delegator?.delegate
   const hasLivepeerToken =
     data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0
   let role: string
 
-  if (data?.transcoder?.id && isStaked) {
+  const isOrchestrator =
+    data?.delegator?.delegate?.status === 'Registered' &&
+    query?.account?.toString() === data?.delegator?.delegate?.id
+
+  if (isOrchestrator) {
     role = 'Orchestrator'
-  } else if (data?.delegator?.id || hasLivepeerToken) {
-    role = 'Tokenholder'
-  } else {
-    role = 'Lurker'
+  } else if (+data?.delegator?.bondedAmount > 0) {
+    role = 'Delegator'
   }
 
   const isMyDelegate =
-    query?.account.toString() === dataMyAccount?.delegator?.delegate?.id
+    query?.account?.toString() === dataMyAccount?.delegator?.delegate?.id
 
   const tabs: Array<TabType> = getTabs(
     role,
-    query?.account.toString(),
+    query?.account?.toString(),
     asPath,
     isMyDelegate,
   )
@@ -195,20 +184,23 @@ const Account = () => {
           refetch={refetch}
           role={role}
           sx={{ mb: 4 }}
-          status={getDelegatorStatus(data.delegator, data.currentRound[0])}
-          transcoder={data.transcoder}
+          status={getDelegatorStatus(
+            data.delegator,
+            data.protocol.currentRound,
+          )}
+          transcoder={data.delegator?.delegate}
         />
         <Tabs tabs={tabs} />
         {slug == 'campaign' && (
           <CampaignView
-            currentRound={data.currentRound[0]}
-            transcoder={data.transcoder}
+            currentRound={data.protocol.currentRound}
+            transcoder={data.delegator.delegate}
           />
         )}
         {slug == 'fees' && (
           <FeesView
             delegator={data.delegator}
-            currentRound={data.currentRound[0]}
+            currentRound={data.protocol.currentRound}
             isMyAccount={isMyAccount}
           />
         )}
@@ -218,7 +210,7 @@ const Account = () => {
             transcoders={dataTranscoders.transcoders}
             delegator={data.delegator}
             protocol={data.protocol}
-            currentRound={data.currentRound[0]}
+            currentRound={data.protocol.currentRound}
           />
         )}
         {slug == 'history' && <HistoryView />}
@@ -236,11 +228,11 @@ const Account = () => {
             }}
           >
             <StakingWidget
-              currentRound={data.currentRound[0]}
+              currentRound={data.protocol.currentRound}
               transcoders={dataTranscoders.transcoders}
               delegator={dataMyAccount?.delegator}
               account={dataMyAccount?.account}
-              transcoder={data.transcoder}
+              transcoder={data.delegator.delegate}
               protocol={data.protocol}
             />
           </Flex>
@@ -249,10 +241,10 @@ const Account = () => {
             <StakingWidget
               transcoders={dataTranscoders.transcoders}
               selectedAction={selectedStakingAction?.selectedStakingAction}
-              currentRound={data.currentRound[0]}
+              currentRound={data.protocol.currentRound}
               delegator={dataMyAccount?.delegator}
               account={dataMyAccount?.account}
-              transcoder={data.transcoder}
+              transcoder={data.delegator.delegate}
               protocol={data.protocol}
             />
           </BottomDrawer>
@@ -264,8 +256,8 @@ const Account = () => {
 Account.getLayout = getLayout
 
 export default withApollo({
-  ssr: true,
-})(Account)
+  ssr: false,
+})(Account as NextPage)
 
 function getTabs(
   role: string,

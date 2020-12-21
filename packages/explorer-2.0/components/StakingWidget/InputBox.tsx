@@ -17,16 +17,12 @@ const InputBox = ({
 
   let stake = '0'
   if (
-    Utils.fromWei(delegator?.bondedAmount ? delegator?.bondedAmount : '0') >
-    Utils.fromWei(delegator?.pendingStake ? delegator?.pendingStake : '0')
+    (delegator?.bondedAmount || '0') >
+    Utils.fromWei(delegator?.pendingStake || '0')
   ) {
-    stake = Utils.fromWei(
-      delegator?.bondedAmount ? delegator?.bondedAmount : '0',
-    )
+    stake = delegator?.bondedAmount || '0'
   } else {
-    stake = Utils.fromWei(
-      delegator?.pendingStake ? delegator?.pendingStake : '0',
-    )
+    stake = Utils.fromWei(delegator?.pendingStake || '0')
   }
 
   return (

@@ -1,7 +1,7 @@
 import { Styled } from 'theme-ui'
 
 const Index = ({
-  as = 'button',
+  as = null,
   variant = 'primary',
   size = 'normal',
   ...props

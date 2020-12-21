@@ -1,11 +1,10 @@
 import { Styled, Box, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
 import { networksTypes } from '../lib/utils'
 import Ballot from '../public/img/ballot.svg'
-import Account from '../public/img/account.svg'
 import DNS from '../public/img/dns.svg'
 import { useWeb3React } from '@web3-react/core'
 import Header from '../components/Header'
@@ -16,19 +15,19 @@ import { useQuery, useApolloClient } from '@apollo/client'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
-import { useMutations, usePageVisibility } from '../hooks'
+import { useMutations, useOnClickOutside } from '../hooks'
 import { MutationsContext } from '../contexts'
 import TxStartedDialog from '../components/TxStartedDialog'
 import TxConfirmedDialog from '../components/TxConfirmedDialog'
 import Modal from '../components/Modal'
 import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
-import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
-import { FiX, FiArrowUpRight } from 'react-icons/fi'
+import { FiArrowUpRight, FiX } from 'react-icons/fi'
+import { MdTrendingUp } from 'react-icons/md'
 
 if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize(process.env.GA_TRACKING_ID)
+  ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID)
 } else {
   ReactGA.initialize('test', { testMode: true })
 }
@@ -41,8 +40,6 @@ type DrawerItem = {
   className?: string
 }
 
-const pollInterval = 20000
-
 // increment this value when updating the banner
 const uniqueBannerID = 1
 
@@ -53,16 +50,7 @@ const Layout = ({
 }) => {
   const client: any = useApolloClient()
   const context = useWeb3React()
-  const isVisible = usePageVisibility()
-  const { account } = context
-  const { data, startPolling, stopPolling } = useQuery(GET_SPACE, {
-    variables: {
-      account: context?.account,
-    },
-    skip: !context.account,
-    pollInterval,
-    ssr: false,
-  })
+
   const { data: pollData } = useQuery(
     gql`
       {
@@ -76,11 +64,11 @@ const Layout = ({
   const mutations = useMutations()
   const { data: transactionsData } = useQuery(GET_SUBMITTED_TXS)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const [bannerActive, setBannerActive] = useState(false)
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
-
-  const totalActivePolls = pollData?.polls.filter(p => p.isActive).length
+  const ref = useRef()
+  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -94,17 +82,11 @@ const Layout = ({
   useEffect(() => {
     const storage = JSON.parse(window.localStorage.getItem(`bannersDismissed`))
     if (storage && storage.includes(uniqueBannerID)) {
-      setBannerDismissed(true)
+      setBannerActive(false)
+    } else {
+      setBannerActive(true)
     }
   }, [])
-
-  useEffect(() => {
-    if (!isVisible) {
-      stopPolling()
-    } else {
-      startPolling(pollInterval)
-    }
-  }, [isVisible])
 
   useEffect(() => {
     if (width > 1020) {
@@ -129,9 +111,16 @@ const Layout = ({
 
   let items: DrawerItem[] = [
     {
-      name: 'Orchestrators',
+      name: 'Overview',
       href: '/',
       as: '/',
+      icon: MdTrendingUp,
+      className: 'overview',
+    },
+    {
+      name: 'Orchestrators',
+      href: '/orchestrators',
+      as: '/orchestrators',
       icon: DNS,
       className: 'orchestrators',
     },
@@ -165,39 +154,24 @@ const Layout = ({
     },
   ]
 
-  if (context.active) {
-    items.push({
-      name: (
-        <Box>
-          {process.env.THREEBOX_ENABLED && data?.threeBoxSpace?.name
-            ? data.threeBoxSpace.name
-            : 'My Account'}
-        </Box>
-      ),
-      href: '/accounts/[account]/[slug]',
-      as: `/accounts/${account}/staking`,
-      icon: Account,
-    })
-  }
-
   Router.events.on('routeChangeComplete', () =>
     document.body.removeAttribute('style'),
   )
 
+  const visibility = drawerOpen ? 'visible' : 'hidden'
   const onDrawerOpen = () => {
-    if (drawerOpen) {
-      document.body.removeAttribute('style')
-      setDrawerOpen(false)
-    } else {
-      document.body.style.overflow = 'hidden'
-      setDrawerOpen(true)
-    }
+    document.body.style.overflow = 'hidden'
+    setDrawerOpen(true)
   }
 
   const onDrawerClose = () => {
     document.body.removeAttribute('style')
     setDrawerOpen(false)
   }
+
+  useOnClickOutside(ref, () => {
+    onDrawerClose()
+  })
 
   const lastTx = transactionsData?.txs[transactionsData?.txs?.length - 1]
 
@@ -217,7 +191,7 @@ const Layout = ({
         title="Oops, you’re on the wrong network"
         isOpen={
           context.chainId &&
-          networksTypes[context.chainId] !== process.env.NETWORK
+          networksTypes[context.chainId] !== process.env.NEXT_PUBLIC_NETWORK
         }
         showCloseButton={false}
       >
@@ -232,14 +206,14 @@ const Layout = ({
         >
           Simply open MetaMask and switch over to the{' '}
           <span sx={{ textTransform: 'capitalize' }}>
-            {process.env.NETWORK}
+            {process.env.NEXT_PUBLIC_NETWORK}
           </span>{' '}
           network.
         </Box>
       </Modal>
       <MutationsContext.Provider value={mutations}>
         <Styled.root sx={{ height: 'calc(100vh - 82px)' }}>
-          {!bannerDismissed && (
+          {bannerActive && (
             <Flex
               sx={{
                 py: 10,
@@ -280,7 +254,7 @@ const Layout = ({
 
               <FiX
                 onClick={() => {
-                  setBannerDismissed(true)
+                  setBannerActive(false)
                   const storage = JSON.parse(
                     window.localStorage.getItem(`bannersDismissed`),
                   )
@@ -315,18 +289,33 @@ const Layout = ({
               gridTemplateColumns: ['100%', '100%', '100%', '240px 1fr'],
             }}
           >
-            <Drawer
-              onDrawerClose={onDrawerClose}
-              onDrawerOpen={onDrawerOpen}
-              open={drawerOpen}
-              items={items}
-              bannerDismissed={bannerDismissed}
+            <Box
+              sx={{
+                left: 0,
+                top: 0,
+                position: 'fixed',
+                width: '100vw',
+                height: 'calc(100vh)',
+                bg: 'rgba(0,0,0,.5)',
+                visibility: [visibility, visibility, visibility, 'hidden'],
+                zIndex: 100,
+              }}
             />
+            <Box ref={ref}>
+              <Drawer
+                onDrawerClose={onDrawerClose}
+                onDrawerOpen={onDrawerOpen}
+                open={drawerOpen}
+                items={items}
+              />
+            </Box>
             <Flex
               sx={{
                 bg: 'background',
                 position: 'relative',
                 px: [2, 2, 2, 4],
+                maxWidth: 1500,
+                margin: '0 auto',
                 width: '100%',
               }}
             >
@@ -337,14 +326,14 @@ const Layout = ({
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
-              !txDialogState.find(t => t.txHash === lastTx.txHash)
+              !txDialogState.find((t) => t.txHash === lastTx.txHash)
                 ?.confirmedDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   confirmedDialog: {
                     dismissed: true,
@@ -380,14 +369,14 @@ const Layout = ({
           <TxStartedDialog
             isOpen={
               lastTx?.confirmed === false &&
-              !txDialogState.find(t => t.txHash === lastTx.txHash)
+              !txDialogState.find((t) => t.txHash === lastTx.txHash)
                 ?.pendingDialog?.dismissed
             }
             onDismiss={() => {
               setTxDialogState([
-                ...txDialogState.filter(t => t.txHash !== lastTx.txHash),
+                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
                 {
-                  ...txDialogState.find(t => t.txHash === lastTx.txHash),
+                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
                   txHash: lastTx.txHash,
                   pendingDialog: {
                     dismissed: true,
@@ -430,6 +419,6 @@ const Layout = ({
   )
 }
 
-export const getLayout = page => <Layout>{page}</Layout>
+export const getLayout = (page) => <Layout>{page}</Layout>
 
 export default Layout

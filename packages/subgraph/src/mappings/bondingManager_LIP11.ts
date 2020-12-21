@@ -26,75 +26,79 @@ import {
   makeUnbondingLockId,
   makeEventId,
   EMPTY_ADDRESS,
+  convertToDecimal,
 } from '../../utils/helpers'
 
 export function bond(event: BondEvent): void {
   let bondingManager = BondingManager.bind(event.address)
-  let newDelegateAddress = event.params.newDelegate
-  let oldDelegateAddress = event.params.oldDelegate
-  let delegatorAddress = event.params.delegator
-  let bondedAmount = event.params.bondedAmount
-  let additionalAmount = event.params.additionalAmount
-  let delegateData = bondingManager.getDelegator(newDelegateAddress)
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let delegateData = bondingManager.getDelegator(event.params.newDelegate)
+  let delegatorData = bondingManager.getDelegator(event.params.delegator)
   let protocol = Protocol.load('0') || new Protocol('0')
   let round = Round.load(protocol.currentRound)
   let transcoder =
-    Transcoder.load(newDelegateAddress.toHex()) ||
-    new Transcoder(newDelegateAddress.toHex())
+    Transcoder.load(event.params.newDelegate.toHex()) ||
+    new Transcoder(event.params.newDelegate.toHex())
   let delegate =
-    Delegator.load(newDelegateAddress.toHex()) ||
-    new Delegator(newDelegateAddress.toHex())
+    Delegator.load(event.params.newDelegate.toHex()) ||
+    new Delegator(event.params.newDelegate.toHex())
   let delegator =
-    Delegator.load(delegatorAddress.toHex()) ||
-    new Delegator(delegatorAddress.toHex())
+    Delegator.load(event.params.delegator.toHex()) ||
+    new Delegator(event.params.delegator.toHex())
 
   // If self delegating, set status and assign reference to self
-  if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
+  if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
     transcoder.status = 'Registered'
-    transcoder.delegator = delegatorAddress.toHex()
+    transcoder.delegator = event.params.delegator.toHex()
   }
 
   // Changing delegate
   if (
-    oldDelegateAddress.toHex() != EMPTY_ADDRESS.toHex() &&
-    oldDelegateAddress.toHex() != newDelegateAddress.toHex()
+    event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
+    event.params.oldDelegate.toHex() != event.params.newDelegate.toHex()
   ) {
-    let oldTranscoder = Transcoder.load(oldDelegateAddress.toHex())
-    let oldDelegate = Delegator.load(oldDelegateAddress.toHex())
-    let delegateData = bondingManager.getDelegator(oldDelegateAddress)
+    let oldTranscoder = Transcoder.load(event.params.oldDelegate.toHex())
+    let oldDelegate = Delegator.load(event.params.oldDelegate.toHex())
+    let delegateData = bondingManager.getDelegator(event.params.oldDelegate)
 
     // if previous delegate was itself, set status and unassign reference to self
-    if (oldDelegateAddress.toHex() == delegatorAddress.toHex()) {
+    if (event.params.oldDelegate.toHex() == event.params.delegator.toHex()) {
       oldTranscoder.status = 'NotRegistered'
       oldTranscoder.delegator = null
     }
 
-    oldTranscoder.totalStake = delegateData.value3
-    oldDelegate.delegatedAmount = delegateData.value3
+    oldTranscoder.totalStake = convertToDecimal(delegateData.value3)
+    oldDelegate.delegatedAmount = convertToDecimal(delegateData.value3)
 
     oldDelegate.save()
     oldTranscoder.save()
 
     // keep track of how much stake moved during this round.
-    round.totalMovedStake = round.totalMovedStake.plus(
-      delegatorData.value0.minus(additionalAmount),
+    round.movedStake = round.movedStake.plus(
+      convertToDecimal(delegatorData.value0).minus(
+        convertToDecimal(event.params.additionalAmount),
+      ),
     )
 
     // keep track of how much new stake was introduced this round
-    round.totalNewStake = round.totalNewStake.plus(additionalAmount)
+    round.newStake = round.newStake.plus(
+      convertToDecimal(event.params.additionalAmount),
+    )
+
     round.save()
   }
 
-  transcoder.totalStake = delegateData.value3
-  delegate.delegatedAmount = delegateData.value3
+  transcoder.totalStake = convertToDecimal(delegateData.value3)
+  delegate.delegatedAmount = convertToDecimal(delegateData.value3)
 
-  delegator.delegate = newDelegateAddress.toHex()
+  delegator.delegate = event.params.newDelegate.toHex()
   delegator.lastClaimRound = protocol.currentRound
-  delegator.bondedAmount = bondedAmount
-  delegator.fees = delegatorData.value1
+  delegator.bondedAmount = convertToDecimal(event.params.bondedAmount)
+  delegator.fees = convertToDecimal(delegatorData.value1)
   delegator.startRound = delegatorData.value4
-  delegator.principal = delegator.principal.plus(additionalAmount)
+
+  delegator.principal = delegator.principal.plus(
+    convertToDecimal(event.params.additionalAmount),
+  )
 
   delegate.save()
   delegator.save()
@@ -111,55 +115,55 @@ export function bond(event: BondEvent): void {
   bond.from = event.transaction.from.toHex()
   bond.to = event.transaction.to.toHex()
   bond.round = protocol.currentRound
-  bond.newDelegate = newDelegateAddress.toHex()
-  bond.oldDelegate = oldDelegateAddress.toHex()
-  bond.delegator = delegatorAddress.toHex()
-  bond.bondedAmount = bondedAmount
-  bond.additionalAmount = additionalAmount
+  bond.newDelegate = event.params.newDelegate.toHex()
+  bond.oldDelegate = event.params.oldDelegate.toHex()
+  bond.delegator = event.params.delegator.toHex()
+  bond.bondedAmount = convertToDecimal(event.params.bondedAmount)
+  bond.additionalAmount = convertToDecimal(event.params.additionalAmount)
   bond.save()
 }
 
 // Handler for Unbond events
 export function unbond(event: UnbondEvent): void {
   let bondingManager = BondingManager.bind(event.address)
-  let delegateAddress = event.params.delegate
-  let delegatorAddress = event.params.delegator
-  let unbondingLockId = event.params.unbondingLockId
   let uniqueUnbondingLockId = makeUnbondingLockId(
-    delegatorAddress,
-    unbondingLockId,
+    event.params.delegator,
+    event.params.unbondingLockId,
   )
   let withdrawRound = event.params.withdrawRound
-  let amount = event.params.amount
-  let delegator = Delegator.load(delegatorAddress.toHex())
-  let delegateData = bondingManager.getDelegator(delegateAddress)
+  let amount = convertToDecimal(event.params.amount)
+  let delegator = Delegator.load(event.params.delegator.toHex())
+  let delegateData = bondingManager.getDelegator(event.params.delegate)
   let protocol = Protocol.load('0') || new Protocol('0')
   let transcoder =
-    Transcoder.load(delegateAddress.toHex()) ||
-    new Transcoder(delegateAddress.toHex())
+    Transcoder.load(event.params.delegate.toHex()) ||
+    new Transcoder(event.params.delegate.toHex())
   let delegate =
-    Delegator.load(delegateAddress.toHex()) ||
-    new Delegator(delegateAddress.toHex())
+    Delegator.load(event.params.delegate.toHex()) ||
+    new Delegator(event.params.delegate.toHex())
   let unbondingLock =
     UnbondingLock.load(uniqueUnbondingLockId) ||
     new UnbondingLock(uniqueUnbondingLockId)
 
-  delegate.delegatedAmount = delegateData.value3
-  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = convertToDecimal(delegateData.value3)
+  transcoder.totalStake = convertToDecimal(delegateData.value3)
 
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
+  let delegatorData = bondingManager.getDelegator(event.params.delegator)
   delegator.lastClaimRound = protocol.currentRound
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
+  delegator.bondedAmount = convertToDecimal(delegatorData.value0)
+  delegator.fees = convertToDecimal(delegatorData.value1)
   delegator.startRound = delegatorData.value4
-  delegator.unbonded = delegator.unbonded.plus(amount)
+
+  delegator.unbonded = delegator.unbonded.plus(
+    convertToDecimal(event.params.amount),
+  )
 
   // Delegator no longer delegated to anyone if it does not have a bonded amount
   // so remove it from delegate
   if (delegatorData.value0.isZero()) {
     // If unbonding from self and no longer has a bonded amount
     // update transcoder status and delegator
-    if (delegatorAddress.toHex() == delegateAddress.toHex()) {
+    if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
       transcoder.status = 'NotRegistered'
       transcoder.delegator = null
     }
@@ -168,9 +172,9 @@ export function unbond(event: UnbondEvent): void {
     delegator.delegate = null
   }
 
-  unbondingLock.unbondingLockId = unbondingLockId.toI32()
-  unbondingLock.delegator = delegatorAddress.toHex()
-  unbondingLock.delegate = delegateAddress.toHex()
+  unbondingLock.unbondingLockId = event.params.unbondingLockId.toI32()
+  unbondingLock.delegator = event.params.delegator.toHex()
+  unbondingLock.delegate = event.params.delegate.toHex()
   unbondingLock.withdrawRound = withdrawRound
   unbondingLock.amount = amount
 
@@ -193,8 +197,8 @@ export function unbond(event: UnbondEvent): void {
   unbond.round = protocol.currentRound
   unbond.amount = amount
   unbond.withdrawRound = unbondingLock.withdrawRound
-  unbond.unbondingLockId = unbondingLock.unbondingLockId
-  unbond.delegate = delegateAddress.toHex()
+  unbond.unbondingLockId = event.params.unbondingLockId.toI32()
+  unbond.delegate = event.params.delegate.toHex()
   unbond.delegator = delegator.id
   unbond.save()
 }
@@ -202,41 +206,39 @@ export function unbond(event: UnbondEvent): void {
 // Handler for Rebond events
 export function rebond(event: RebondEvent): void {
   let bondingManager = BondingManager.bind(event.address)
-  let delegateAddress = event.params.delegate
-  let delegatorAddress = event.params.delegator
-  let amount = event.params.amount
-  let unbondingLockId = event.params.unbondingLockId
   let uniqueUnbondingLockId = makeUnbondingLockId(
-    delegatorAddress,
-    unbondingLockId,
+    event.params.delegator,
+    event.params.unbondingLockId,
   )
-  let transcoder = Transcoder.load(delegateAddress.toHex())
-  let delegate = Delegator.load(delegateAddress.toHex())
-  let delegator = Delegator.load(delegatorAddress.toHex())
-  let delegateData = bondingManager.getDelegator(delegateAddress)
+  let transcoder = Transcoder.load(event.params.delegate.toHex())
+  let delegate = Delegator.load(event.params.delegate.toHex())
+  let delegator = Delegator.load(event.params.delegator.toHex())
+  let delegateData = bondingManager.getDelegator(event.params.delegate)
   let protocol = Protocol.load('0') || new Protocol('0')
 
   // If rebonding from unbonded and is self-bonding then update transcoder status
   if (
     !delegator.delegate &&
-    delegateAddress.toHex() == delegatorAddress.toHex()
+    event.params.delegate.toHex() == event.params.delegator.toHex()
   ) {
     transcoder.status = 'Registered'
-    transcoder.delegator = delegatorAddress.toHex()
+    transcoder.delegator = event.params.delegator.toHex()
   }
 
   // update delegator
-  let delegatorData = bondingManager.getDelegator(delegatorAddress)
-  delegator.delegate = delegateAddress.toHex()
+  let delegatorData = bondingManager.getDelegator(event.params.delegator)
+  delegator.delegate = event.params.delegate.toHex()
   delegator.startRound = delegatorData.value4
   delegator.lastClaimRound = protocol.currentRound
-  delegator.bondedAmount = delegatorData.value0
-  delegator.fees = delegatorData.value1
-  delegator.unbonded = delegator.unbonded.minus(amount)
+  delegator.bondedAmount = convertToDecimal(delegatorData.value0)
+  delegator.fees = convertToDecimal(delegatorData.value1)
+  delegator.unbonded = delegator.unbonded.minus(
+    convertToDecimal(event.params.amount),
+  )
 
   // update delegate
-  delegate.delegatedAmount = delegateData.value3
-  transcoder.totalStake = delegateData.value3
+  delegate.delegatedAmount = convertToDecimal(delegateData.value3)
+  transcoder.totalStake = convertToDecimal(delegateData.value3)
 
   // Apply store updates
   delegate.save()
@@ -257,21 +259,18 @@ export function rebond(event: RebondEvent): void {
   rebond.round = protocol.currentRound
   rebond.delegator = delegator.id
   rebond.delegate = delegate.id
-  rebond.amount = amount
-  rebond.unbondingLockId = unbondingLockId.toI32()
+  rebond.amount = convertToDecimal(event.params.amount)
+  rebond.unbondingLockId = event.params.unbondingLockId.toI32()
   rebond.save()
 }
 
 // Handler for WithdrawStake events
 export function withdrawStake(event: WithdrawStakeEvent): void {
-  let delegatorAddress = event.params.delegator
-  let unbondingLockId = event.params.unbondingLockId
-  let amount = event.params.amount
   let protocol = Protocol.load('0') || new Protocol('0')
 
   let uniqueUnbondingLockId = makeUnbondingLockId(
-    delegatorAddress,
-    unbondingLockId,
+    event.params.delegator,
+    event.params.unbondingLockId,
   )
   store.remove('UnbondingLock', uniqueUnbondingLockId)
 
@@ -287,8 +286,8 @@ export function withdrawStake(event: WithdrawStakeEvent): void {
   withdrawStake.from = event.transaction.from.toHex()
   withdrawStake.to = event.transaction.to.toHex()
   withdrawStake.round = protocol.currentRound
-  withdrawStake.amount = amount
-  withdrawStake.unbondingLockId = unbondingLockId.toI32()
-  withdrawStake.delegator = delegatorAddress.toHex()
+  withdrawStake.amount = convertToDecimal(event.params.amount)
+  withdrawStake.unbondingLockId = event.params.unbondingLockId.toI32()
+  withdrawStake.delegator = event.params.delegator.toHex()
   withdrawStake.save()
 }

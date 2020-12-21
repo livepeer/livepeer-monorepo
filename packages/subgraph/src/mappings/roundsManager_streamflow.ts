@@ -1,5 +1,5 @@
 // Import types and APIs from graph-ts
-import { Address, dataSource } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
@@ -14,6 +14,7 @@ import {
   Round,
   InitializeRound,
   Protocol,
+  DayData,
 } from '../types/schema'
 
 import {
@@ -21,6 +22,8 @@ import {
   getBondingManagerAddress,
   makeEventId,
   EMPTY_ADDRESS,
+  convertToDecimal,
+  ZERO_BD,
 } from '../../utils/helpers'
 import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
 
@@ -62,19 +65,44 @@ export function newRound(event: NewRoundEvent): void {
     transcoder = Transcoder.load(currentTranscoder.toHex())
   }
 
+  let protocol = Protocol.load('0') || new Protocol('0')
+  let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded()) as BigDecimal
+
   // Create new round
   round = new Round(roundNumber.toString())
   round.initialized = true
   round.timestamp = event.block.timestamp
   round.length = roundsManager.roundLength()
   round.startBlock = roundsManager.currentRoundStartBlock()
-  round.save()
-
-  let protocol = Protocol.load('0') || new Protocol('0')
+  round.totalActiveStake = totalActiveStake
+  
   protocol.lastInitializedRound = roundsManager.lastInitializedRound()
   protocol.currentRound = roundNumber.toString()
-  protocol.totalActiveStake = bondingManager.getTotalBonded()
-  protocol.save()
+  protocol.totalActiveStake = totalActiveStake
+  
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let dayData = DayData.load(dayID.toString())
+  
+  if (dayData === null) {
+    dayData = new DayData(dayID.toString())
+    dayData.date = dayStartTimestamp
+    dayData.volumeUSD = ZERO_BD
+    dayData.volumeETH = ZERO_BD
+    dayData.totalSupply = ZERO_BD
+    dayData.totalActiveStake = ZERO_BD
+    dayData.participationRate = ZERO_BD
+  }
+
+  dayData.totalActiveStake = totalActiveStake
+  dayData.totalSupply = protocol.totalSupply as BigDecimal
+  
+  if(protocol.totalActiveStake.gt(ZERO_BD)) {
+    protocol.participationRate = protocol.totalActiveStake.div(protocol.totalSupply as BigDecimal)
+    round.participationRate = protocol.participationRate as BigDecimal
+    dayData.participationRate = protocol.participationRate as BigDecimal
+  }
 
   // Store transaction info
   let initializeRound = new InitializeRound(
@@ -88,5 +116,9 @@ export function newRound(event: NewRoundEvent): void {
   initializeRound.from = event.transaction.from.toHex()
   initializeRound.to = event.transaction.to.toHex()
   initializeRound.round = roundNumber.toString()
+
+  dayData.save()
+  protocol.save()
+  round.save()
   initializeRound.save()
 }

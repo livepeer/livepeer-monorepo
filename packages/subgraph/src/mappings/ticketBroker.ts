@@ -5,7 +5,9 @@ import {
   ReserveClaimed as ReserveClaimedEvent,
   Withdrawal as WithdrawalEvent,
 } from '../types/TicketBroker/TicketBroker'
+import { UniswapV2Pair } from '../types/TicketBroker/UniswapV2Pair'
 import {
+  DayData,
   WinningTicketRedeemed,
   Protocol,
   Transcoder,
@@ -16,15 +18,32 @@ import {
   DepositFunded,
   Withdrawal,
 } from '../types/schema'
-import { BigInt } from '@graphprotocol/graph-ts'
-import { makeEventId } from '../../utils/helpers'
+import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import {
+  convertToDecimal,
+  getDaiEthPairAddress,
+  makeEventId,
+  ZERO_BD,
+  ZERO_BI,
+} from '../../utils/helpers'
 
 export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
+  let uniswapV2PairAddress = getDaiEthPairAddress()
+  let daiEthPair = UniswapV2Pair.bind(Address.fromString(uniswapV2PairAddress))
   let protocol = Protocol.load('0') || new Protocol('0')
   let round = Round.load(protocol.currentRound)
   let winningTicketRedeemed = new WinningTicketRedeemed(
     makeEventId(event.transaction.hash, event.logIndex),
   )
+  let faceValue = convertToDecimal(event.params.faceValue)
+  let ethPrice = ZERO_BD
+
+  // DAI-ETH pair was created during this block
+  if(event.block.number.gt(BigInt.fromI32(10095742))) {
+    let daiEthPairReserves = daiEthPair.getReserves()
+    ethPrice = convertToDecimal(daiEthPairReserves.value0).div(convertToDecimal(daiEthPairReserves.value1))
+  }
+
   winningTicketRedeemed.hash = event.transaction.hash.toHex()
   winningTicketRedeemed.blockNumber = event.block.number
   winningTicketRedeemed.gasUsed = event.transaction.gasUsed
@@ -35,7 +54,7 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
   winningTicketRedeemed.round = protocol.currentRound
   winningTicketRedeemed.sender = event.params.sender.toHex()
   winningTicketRedeemed.recipient = event.params.recipient.toHex()
-  winningTicketRedeemed.faceValue = event.params.faceValue
+  winningTicketRedeemed.faceValue = faceValue
   winningTicketRedeemed.winProb = event.params.winProb
   winningTicketRedeemed.senderNonce = event.params.senderNonce
   winningTicketRedeemed.recipientRand = event.params.recipientRand
@@ -44,35 +63,50 @@ export function winningTicketRedeemed(event: WinningTicketRedeemedEvent): void {
 
   // Update broadcaster's deposit & reserve
   let broadcaster = Broadcaster.load(event.params.sender.toHex())
-  if (event.params.faceValue.gt(broadcaster.deposit as BigInt)) {
-    broadcaster.deposit = BigInt.fromI32(0)
+  if (faceValue.gt(broadcaster.deposit as BigDecimal)) {
+    broadcaster.deposit = ZERO_BD
   } else {
-    broadcaster.deposit = broadcaster.deposit.minus(event.params.faceValue)
+    broadcaster.deposit = broadcaster.deposit.minus(faceValue)
   }
 
-  // Update accrued fees for this transcoder
+  // Update transcoder's fee volume
   let transcoder =
     Transcoder.load(event.params.recipient.toHex()) ||
     new Transcoder(event.params.recipient.toHex())
-  transcoder.totalGeneratedFees = transcoder.totalGeneratedFees.plus(
-    event.params.faceValue,
-  )
+  transcoder.totalVolumeETH = transcoder.totalVolumeETH.plus(faceValue)
+  transcoder.totalVolumeUSD = transcoder.totalVolumeUSD.plus(faceValue.times(ethPrice))
   transcoder.save()
 
-  // Update total protocol fees and total winning tickets
-  protocol.totalGeneratedFees = protocol.totalGeneratedFees.plus(
-    event.params.faceValue,
-  )
-  protocol.totalWinningTickets = protocol.totalWinningTickets.plus(
-    BigInt.fromI32(1),
-  )
+  // Update total protocol fee volume
+  protocol.totalVolumeETH = protocol.totalVolumeETH.plus(faceValue)
+  protocol.totalVolumeUSD = protocol.totalVolumeUSD.plus(faceValue.times(ethPrice))
+  
+  protocol.totalWinningTickets = protocol.totalWinningTickets.plus(ZERO_BI)
   protocol.save()
 
-  // keep track of how many fees were generated this round
-  round.totalGeneratedFees = round.totalGeneratedFees.plus(
-    event.params.faceValue,
-  )
+  // Update fee volume for this day
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let dayData = DayData.load(dayID.toString())
+  if (dayData === null) {
+    dayData = new DayData(dayID.toString())
+    dayData.date = dayStartTimestamp
+    dayData.volumeUSD = ZERO_BD
+    dayData.volumeETH = ZERO_BD
+    dayData.totalSupply = protocol.totalSupply as BigDecimal
+    dayData.totalActiveStake = protocol.totalActiveStake as BigDecimal
+    dayData.participationRate = protocol.participationRate as BigDecimal
+  }
 
+  // Update fee volume for this day
+  dayData.volumeETH = dayData.volumeETH.plus(faceValue)
+  dayData.volumeUSD = dayData.volumeUSD.plus(faceValue.times(ethPrice))
+  dayData.save()
+
+  // Update fee volume for this round
+  round.volumeETH = round.volumeETH.plus(faceValue)
+  round.volumeUSD = round.volumeUSD.plus(faceValue.times(ethPrice))
   round.save()
 }
 
@@ -81,7 +115,9 @@ export function depositFunded(event: DepositFundedEvent): void {
   let broadcaster =
     Broadcaster.load(event.params.sender.toHex()) ||
     new Broadcaster(event.params.sender.toHex())
-  broadcaster.deposit = broadcaster.deposit.plus(event.params.amount)
+  broadcaster.deposit = broadcaster.deposit.plus(
+    convertToDecimal(event.params.amount),
+  )
   broadcaster.save()
 
   let depositFunded = new DepositFunded(
@@ -96,7 +132,7 @@ export function depositFunded(event: DepositFundedEvent): void {
   depositFunded.to = event.transaction.to.toHex()
   depositFunded.round = protocol.currentRound
   depositFunded.sender = event.params.sender.toHex()
-  depositFunded.amount = event.params.amount
+  depositFunded.amount = convertToDecimal(event.params.amount)
   depositFunded.save()
 }
 
@@ -106,7 +142,9 @@ export function reserveFunded(event: ReserveFundedEvent): void {
     Broadcaster.load(event.params.reserveHolder.toHex()) ||
     new Broadcaster(event.params.reserveHolder.toHex())
 
-  broadcaster.reserve = broadcaster.reserve.plus(event.params.amount)
+  broadcaster.reserve = broadcaster.reserve.plus(
+    convertToDecimal(event.params.amount),
+  )
   broadcaster.save()
 
   let reserveFunded = new ReserveFunded(
@@ -121,14 +159,16 @@ export function reserveFunded(event: ReserveFundedEvent): void {
   reserveFunded.to = event.transaction.to.toHex()
   reserveFunded.round = protocol.currentRound
   reserveFunded.reserveHolder = event.params.reserveHolder.toHex()
-  reserveFunded.amount = event.params.amount
+  reserveFunded.amount = convertToDecimal(event.params.amount)
   reserveFunded.save()
 }
 
 export function reserveClaimed(event: ReserveClaimedEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   let broadcaster = Broadcaster.load(event.params.reserveHolder.toHex())
-  broadcaster.reserve = broadcaster.reserve.minus(event.params.amount)
+  broadcaster.reserve = broadcaster.reserve.minus(
+    convertToDecimal(event.params.amount),
+  )
   broadcaster.save()
 
   let reserveClaimed = new ReserveClaimed(
@@ -144,15 +184,15 @@ export function reserveClaimed(event: ReserveClaimedEvent): void {
   reserveClaimed.round = protocol.currentRound
   reserveClaimed.reserveHolder = event.params.reserveHolder.toHex()
   reserveClaimed.claimant = event.params.claimant.toHex()
-  reserveClaimed.amount = event.params.amount
+  reserveClaimed.amount = convertToDecimal(event.params.amount)
   reserveClaimed.save()
 }
 
 export function withdrawal(event: WithdrawalEvent): void {
   let protocol = Protocol.load('0') || new Protocol('0')
   let broadcaster = Broadcaster.load(event.params.sender.toHex())
-  broadcaster.deposit = BigInt.fromI32(0)
-  broadcaster.reserve = BigInt.fromI32(0)
+  broadcaster.deposit = ZERO_BD
+  broadcaster.reserve = ZERO_BD
   broadcaster.save()
 
   let withdrawal = new Withdrawal(
@@ -167,7 +207,7 @@ export function withdrawal(event: WithdrawalEvent): void {
   withdrawal.to = event.transaction.to.toHex()
   withdrawal.round = protocol.currentRound
   withdrawal.sender = event.params.sender.toHex()
-  withdrawal.deposit = event.params.deposit
-  withdrawal.reserve = event.params.reserve
+  withdrawal.deposit = convertToDecimal(event.params.deposit)
+  withdrawal.reserve = convertToDecimal(event.params.reserve)
   withdrawal.save()
 }

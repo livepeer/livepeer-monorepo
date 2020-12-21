@@ -43,12 +43,10 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
   }
 
   const pendingStake = parseFloat(Utils.fromWei(delegator.pendingStake))
-  const unbonded = delegator.unbonded
-    ? parseFloat(Utils.fromWei(delegator.unbonded))
-    : 0
-  const principal = parseFloat(Utils.fromWei(delegator.principal))
+  const unbonded = delegator.unbonded ? +delegator.unbonded : 0
+  const principal = +delegator.principal
   const rewards = pendingStake + (unbonded ? unbonded : 0) - principal
-  const totalActiveStake = parseFloat(Utils.fromWei(protocol.totalActiveStake))
+  const totalActiveStake = +protocol.totalActiveStake
 
   return (
     <Box sx={{ pt: 4 }}>
@@ -75,7 +73,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     lineHeight: 'heading',
                   }}
                 >
-                  {process.env.THREEBOX_ENABLED &&
+                  {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
                   delegator.delegate.threeBoxSpace.name
                     ? delegator.delegate.threeBoxSpace.name
                     : delegator.delegate.id.replace(
@@ -312,10 +310,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     {totalActiveStake === 0
                       ? 0
                       : (
-                          (parseFloat(
-                            Utils.fromWei(delegator.delegate.totalStake),
-                          ) /
-                            totalActiveStake) *
+                          (+delegator.delegate.totalStake / totalActiveStake) *
                           100
                         ).toPrecision(4)}
                     %)
@@ -323,10 +318,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                 </span>
                 <span>
                   <span sx={{ fontFamily: 'monospace' }}>
-                    {abbreviateNumber(
-                      parseFloat(Utils.fromWei(delegator.delegate.totalStake)),
-                      3,
-                    )}
+                    {abbreviateNumber(+delegator.delegate.totalStake, 3)}
                   </span>
                 </span>
               </Flex>
@@ -344,9 +336,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     {(totalActiveStake === 0
                       ? 0
                       : ((totalActiveStake -
-                          parseFloat(
-                            Utils.fromWei(delegator.delegate.totalStake),
-                          ) -
+                          +delegator.delegate.totalStake -
                           pendingStake) /
                           totalActiveStake) *
                         100
@@ -360,9 +350,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                       totalActiveStake === 0
                         ? 0
                         : totalActiveStake -
-                            parseFloat(
-                              Utils.fromWei(delegator.delegate.totalStake),
-                            ) -
+                            +delegator.delegate.totalStake -
                             pendingStake,
                       3,
                     )}

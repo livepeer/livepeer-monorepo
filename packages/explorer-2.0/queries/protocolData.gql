@@ -1,0 +1,6 @@
+query {
+  protocol(id: 0) {
+    totalVolumeUSD
+    participationRate
+  }
+}

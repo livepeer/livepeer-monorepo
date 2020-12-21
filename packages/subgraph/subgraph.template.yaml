@@ -151,6 +151,8 @@ dataSources:
           file: ./abis/RoundsManager.json
         - name: BondingManager
           file: ./abis/BondingManager_LIP11.json
+        - name: LivepeerToken
+          file: ./abis/LivepeerToken.json
       eventHandlers:
         - event: NewRound(uint256)
           handler: newRound
@@ -178,6 +180,8 @@ dataSources:
           file: ./abis/RoundsManager_streamflow.json
         - name: BondingManager
           file: ./abis/BondingManager_streamflow.json
+        - name: LivepeerToken
+          file: ./abis/LivepeerToken.json
       eventHandlers:
         - event: NewRound(indexed uint256,bytes32)
           handler: newRound
@@ -255,6 +259,8 @@ dataSources:
       abis:
         - name: TicketBroker
           file: ./abis/TicketBroker.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
       eventHandlers:
         - event: WinningTicketRedeemed(indexed address,indexed address,uint256,uint256,uint256,uint256,bytes)
           handler: winningTicketRedeemed
@@ -331,6 +337,28 @@ dataSources:
       eventHandlers:
         - event: ServiceURIUpdate(indexed address,string)
           handler: serviceURIUpdate
+  - kind: ethereum/contract
+    name: LivepeerToken
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.livepeerToken.startBlock}}
+      address: {{contracts.livepeerToken.address}}
+      abi: LivepeerToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/livepeerToken.ts 
+      entities:
+        - Protocol
+      abis:
+        - name: LivepeerToken
+          file: ./abis/LivepeerToken.json
+      eventHandlers:
+        - event: Mint(indexed address,uint256)
+          handler: mint
+        - event: Burn(indexed address,uint256)
+          handler: burn
 ###############################################################################
 #
 # Data source templates

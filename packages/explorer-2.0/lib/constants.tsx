@@ -59,3 +59,9 @@ export const SUPPORTED_WALLETS = {
     mobile: true,
   },
 }
+
+export const timeframeOptions = {
+  WEEK: '1 week',
+  MONTH: '1 month',
+  ALL_TIME: 'All time',
+}

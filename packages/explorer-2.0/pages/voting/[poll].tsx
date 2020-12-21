@@ -5,13 +5,10 @@ import fm from 'front-matter'
 import IPFS from 'ipfs-mini'
 import { Box } from 'theme-ui'
 import Card from '../../components/Card'
-import ReactTooltip from 'react-tooltip'
-import Help from '../../public/img/help.svg'
 import VotingWidget from '../../components/VotingWidget'
 import ReactMarkdown from 'react-markdown'
-import Utils from 'web3-utils'
 import { abbreviateNumber } from '../../lib/utils'
-import { withApollo } from '../../lib/apollo'
+import { withApollo } from '../../apollo'
 import { useRouter } from 'next/router'
 import { useQuery, useApolloClient, gql } from '@apollo/client'
 import { useWeb3React } from '@web3-react/core'
@@ -27,6 +24,7 @@ import pollQuery from '../../queries/poll.gql'
 import accountQuery from '../../queries/account.gql'
 import voteQuery from '../../queries/vote.gql'
 import FourZeroFour from '../404'
+import { NextPage } from 'next'
 
 const Poll = () => {
   const router = useRouter()
@@ -53,7 +51,6 @@ const Poll = () => {
       id: pollId,
     },
     pollInterval,
-    ssr: false,
   })
 
   const {
@@ -138,12 +135,8 @@ const Poll = () => {
     )
   }
 
-  let noVoteStake = parseFloat(
-    Utils.fromWei(pollData?.tally?.no ? pollData?.tally?.no : '0'),
-  )
-  let yesVoteStake = parseFloat(
-    Utils.fromWei(pollData?.tally?.yes ? pollData?.tally?.yes : '0'),
-  )
+  let noVoteStake = +pollData?.tally?.no || 0
+  let yesVoteStake = +pollData?.tally?.yes || 0
   let totalVoteStake = noVoteStake + yesVoteStake
 
   return (
@@ -242,24 +235,6 @@ const Poll = () => {
                     <Box sx={{ color: 'muted' }}>
                       Total Support ({pollData.quota / 10000}% needed)
                     </Box>
-                    {/* <Flex>
-                      <ReactTooltip
-                        id="tooltip-total-staked"
-                        className="tooltip"
-                        place="top"
-                        type="dark"
-                        effect="solid"
-                      />
-                      <Help
-                        data-tip="This is the amount currently delegated to an Orchestrator."
-                        data-for="tooltip-total-staked"
-                        sx={{
-                          color: 'muted',
-                          cursor: 'pointer',
-                          ml: 1,
-                        }}
-                      />
-                    </Flex> */}
                   </Flex>
                 }
                 subtitle={
@@ -324,24 +299,6 @@ const Poll = () => {
                     <Box sx={{ color: 'muted' }}>
                       Total Participation ({pollData.quorum / 10000}% needed)
                     </Box>
-                    {/* <Flex>
-                      <ReactTooltip
-                        id="tooltip-equity"
-                        className="tooltip"
-                        place="top"
-                        type="dark"
-                        effect="solid"
-                      />
-                      <Help
-                        data-tip="Account's equity relative to the entire network."
-                        data-for="tooltip-equity"
-                        sx={{
-                          color: 'muted',
-                          cursor: 'pointer',
-                          ml: 1,
-                        }}
-                      />
-                    </Flex> */}
                   </Flex>
                 }
                 subtitle={
@@ -440,14 +397,10 @@ const Poll = () => {
 }
 
 async function transformData({ poll }) {
-  let noVoteStake = parseFloat(
-    Utils.fromWei(poll?.tally?.no ? poll?.tally?.no : '0'),
-  )
-  let yesVoteStake = parseFloat(
-    Utils.fromWei(poll?.tally?.yes ? poll?.tally?.yes : '0'),
-  )
-  let totalVoteStake = parseFloat(Utils.fromWei(poll.totalVoteStake))
-  let totalNonVoteStake = parseFloat(Utils.fromWei(poll.totalNonVoteStake))
+  let noVoteStake = +poll?.tally?.no || 0
+  let yesVoteStake = +poll?.tally?.yes || 0
+  let totalVoteStake = +poll?.totalVoteStake
+  let totalNonVoteStake = +poll?.totalNonVoteStake
   let totalSupport = isNaN(yesVoteStake / totalVoteStake)
     ? 0
     : (yesVoteStake / totalVoteStake) * 100
@@ -483,4 +436,4 @@ Poll.getLayout = getLayout
 
 export default withApollo({
   ssr: true,
-})(Poll)
+})(Poll as NextPage)

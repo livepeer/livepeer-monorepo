@@ -89,7 +89,7 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
                       {' '}
                       -
                       <span sx={{ fontFamily: 'monospace' }}>
-                        {abbreviateNumber(Utils.fromWei(lock.amount), 4)}
+                        {abbreviateNumber(lock.amount, 4)}
                       </span>{' '}
                       LPT
                     </div>
@@ -159,7 +159,7 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
                       {' '}
                       -
                       <span sx={{ fontFamily: 'monospace' }}>
-                        {abbreviateNumber(Utils.fromWei(lock.amount), 3)}
+                        {abbreviateNumber(lock.amount, 3)}
                       </span>{' '}
                       LPT
                     </div>

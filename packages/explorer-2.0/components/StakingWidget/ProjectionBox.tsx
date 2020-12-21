@@ -2,6 +2,7 @@ import { Flex, Box } from 'theme-ui'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { abbreviateNumber } from '../../lib/utils'
+import Utils from 'web3-utils'
 
 const ProjectionBox = ({ action }) => {
   const GET_ROI = gql`
@@ -41,7 +42,7 @@ const ProjectionBox = ({ action }) => {
               <div sx={{ fontFamily: 'monospace', color: 'muted' }}>
                 +
                 {data.principle
-                  ? ((data.roi / data.principle) * 100).toFixed(2) + '%'
+                  ? ((data.roi / +data.principle) * 100).toFixed(2) + '%'
                   : 0 + '%'}
               </div>
             )}

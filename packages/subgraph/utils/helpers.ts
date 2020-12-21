@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt, Bytes } from '@graphprotocol/graph-ts'
 
 let x = BigInt.fromI32(2)
 let y = <u8>255
@@ -9,6 +9,12 @@ export let EMPTY_ADDRESS = Address.fromString(
   '0000000000000000000000000000000000000000',
 )
 export let PERC_DIVISOR = 1000000
+
+export let ZERO_BI = BigInt.fromI32(0)
+export let ONE_BI = BigInt.fromI32(1)
+export let ZERO_BD = BigDecimal.fromString('0')
+export let ONE_BD = BigDecimal.fromString('1')
+export let BI_18 = BigInt.fromI32(18)
 
 // Make a number the specified number of digits
 export function leftPad(str: string, size: i32): string {
@@ -76,4 +82,30 @@ export function getBondingManagerAddress(network: string): string {
   } else {
     return 'A94B7f0465E98609391C623d0560C5720a3f2D33'
   }
+}
+
+export function getLivepeerTokenAddress(network: string): string {
+  if (network == 'mainnet') {
+    return '58b6a8a3302369daec383334672404ee733ab239'
+  } else if (network == 'rinkeby') {
+    return '23b814a57D53b1a7A860194F53401D0D639abED7'
+  } else {
+    return 'D833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
+  }
+}
+
+export function getDaiEthPairAddress(): string {
+  return 'a478c2975ab1ea89e8196811f51a7b7ade33eb11'
+}
+
+export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
+  let bd = BigDecimal.fromString('1')
+  for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
+    bd = bd.times(BigDecimal.fromString('10'))
+  }
+  return bd
+}
+
+export function convertToDecimal(eth: BigInt): BigDecimal {
+  return eth.toBigDecimal().div(exponentToBigDecimal(BI_18))
 }

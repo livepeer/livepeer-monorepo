@@ -2,9 +2,7 @@
 import { ServiceURIUpdate as ServiceURIUpdateEvent } from '../types/ServiceRegistry/ServiceRegistry'
 
 // Import entity types generated from the GraphQL schema
-import {
-  Transcoder
-} from '../types/schema'
+import { Transcoder } from '../types/schema'
 
 export function serviceURIUpdate(event: ServiceURIUpdateEvent): void {
   let transcoder =

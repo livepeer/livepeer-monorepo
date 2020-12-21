@@ -13,7 +13,7 @@ const PollABI = require('../../abis/Poll.json')
 const roundsManagerAddress = '0x5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1'
 const bondingManagerAddress = '0xA94B7f0465E98609391C623d0560C5720a3f2D33'
 const livepeerTokenAddress = '0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb'
-const pollCreatorAddress = '0x7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
+const pollCreatorAddress = '0x4bf3A7dFB3b76b5B3E169ACE65f888A4b4FCa5Ee'
 
 const defaults = { gas: 1000000 }
 
@@ -52,7 +52,7 @@ const fetchSubgraph = createApolloFetch({
   uri: `http://${graphNodeIP}:8000/subgraphs/name/livepeer/livepeer`,
 })
 
-const exec = cmd => {
+const exec = (cmd) => {
   try {
     return execSync(cmd, { cwd: srcDir, stdio: 'inherit' })
   } catch (e) {
@@ -110,7 +110,7 @@ let waitForSubgraphToBeSynced = async () =>
     setTimeout(checkSubgraphSynced, 8000)
   })
 
-contract('Subgraph Integration Tests', accounts => {
+contract('Subgraph Integration Tests', (accounts) => {
   const TOKEN_UNIT = 10 ** 18
   const rpc = new RPC(web3)
   const voteMap = ['Yes', 'No']
@@ -131,17 +131,16 @@ contract('Subgraph Integration Tests', accounts => {
   let delegator1StartStake
   let delegator2StartStake
   let delegator3StartStake
-  let delegator4StartStake
   let roundLength
   let pollCreationCost
   let voters = {}
 
-  const mineAndInitializeRound = async roundLength => {
+  const mineAndInitializeRound = async (roundLength) => {
     await rpc.waitUntilNextBlockMultiple(parseInt(roundLength))
     await RoundsManager.methods.initializeRound().send({ from: accounts[0] })
   }
 
-  const getStake = async addr => {
+  const getStake = async (addr) => {
     const currentRound = await RoundsManager.methods.currentRound().call()
     return await BondingManager.methods.pendingStake(addr, currentRound).call()
   }
@@ -191,7 +190,7 @@ contract('Subgraph Integration Tests', accounts => {
 
     assert.equal(
       subgraphPollData.data.polls[0].tally
-        ? subgraphPollData.data.polls[0].tally.yes
+        ? web3.utils.toWei(subgraphPollData.data.polls[0].tally.yes)
         : '0',
       yesTally,
       'incorrect yes tally',
@@ -199,7 +198,7 @@ contract('Subgraph Integration Tests', accounts => {
 
     assert.equal(
       subgraphPollData.data.polls[0].tally
-        ? subgraphPollData.data.polls[0].tally.no
+        ? web3.utils.toWei(subgraphPollData.data.polls[0].tally.no)
         : '0',
       noTally,
       'incorrect no tally',
@@ -529,7 +528,7 @@ contract('Subgraph Integration Tests', accounts => {
       .send({ from: delegator1 })
 
     voters[transcoder1].overrides = voters[transcoder1].overrides.filter(
-      t => t !== delegator1,
+      (t) => t !== delegator1,
     )
 
     await waitForSubgraphToBeSynced()
@@ -558,7 +557,7 @@ contract('Subgraph Integration Tests', accounts => {
       .bond(bondAmount, delegator2)
       .send({ from: delegator2 })
     voters[transcoder1].overrides = voters[transcoder1].overrides.filter(
-      t => t !== delegator2,
+      (t) => t !== delegator2,
     )
     voters[delegator2].registeredTranscoder = true
     await waitForSubgraphToBeSynced()

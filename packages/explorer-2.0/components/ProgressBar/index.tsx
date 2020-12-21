@@ -73,7 +73,7 @@ const Index = ({ tx }) => {
           target="_blank"
           rel="noopener noreferrer"
           href={`https://${
-            process.env.NETWORK === 'rinkeby' ? 'rinkeby.' : ''
+            process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'rinkeby.' : ''
           }etherscan.io/tx/${txHash}`}
         >
           Details

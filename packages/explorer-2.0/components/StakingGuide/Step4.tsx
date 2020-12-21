@@ -8,6 +8,7 @@ import Utils from 'web3-utils'
 import { useWeb3React } from '@web3-react/core'
 import { gql, useApolloClient, useQuery } from '@apollo/client'
 import accountQuery from '../../queries/account.gql'
+import { abbreviateNumber } from '../../lib/utils'
 
 const Step4 = ({ goTo, nextStep }) => {
   const client = useApolloClient()
@@ -82,19 +83,20 @@ const Step4 = ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace', mb: 1 }}>
         ETH Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {dataMyAccount?.account &&
-            parseFloat(Utils.fromWei(dataMyAccount.account.ethBalance)).toFixed(
-              2,
-            )}
+          {abbreviateNumber(
+            +Utils.fromWei(dataMyAccount?.account?.ethBalance),
+            2,
+          )}
         </span>
       </div>
       <div sx={{ fontFamily: 'monospace' }}>
         LPT Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
           {dataMyAccount?.account &&
-            parseFloat(
-              Utils.fromWei(dataMyAccount.account.tokenBalance),
-            ).toFixed(2)}
+            abbreviateNumber(
+              +Utils.fromWei(dataMyAccount?.account?.tokenBalance),
+              2,
+            )}
         </span>
       </div>
       <Button

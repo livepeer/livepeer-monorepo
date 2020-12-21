@@ -109,7 +109,7 @@ const Index = ({
         }}
       >
         <Styled.div
-          as={as ? as : 'input'}
+          as="input"
           rows={rows}
           onFocus={onFocus ? onFocus : () => setFocused(true)}
           onBlur={() => setFocused(false)}

@@ -4,8 +4,6 @@ import Utils from 'web3-utils'
 import { createApolloFetch } from 'apollo-fetch'
 import { applyMiddleware } from 'graphql-middleware'
 import graphqlFields from 'graphql-fields'
-
-import schema from '../apollo'
 import {
   mergeSchemas,
   introspectSchema,
@@ -15,11 +13,24 @@ import {
   getBlockByNumber,
   getEstimatedBlockCountdown,
   mergeObjectsInUnique,
-} from './utils'
+} from '../lib/utils'
+import { makeExecutableSchema } from 'graphql-tools'
+import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
+import typeDefs from './types'
+import resolvers from './resolvers'
 
-const Index = async () => {
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers: {
+    ...resolvers,
+    JSON: GraphQLJSON,
+    JSONObject: GraphQLJSONObject,
+  },
+})
+
+const createSchema = async () => {
   const subgraphServiceLink = new HttpLink({
-    uri: process.env.SUBGRAPH,
+    uri: process.env.NEXT_PUBLIC_SUBGRAPH,
     fetch,
   })
 
@@ -73,9 +84,9 @@ const Index = async () => {
   async function getTotalStake(_ctx, _blockNumber) {
     const Web3 = require('web3')
     let web3 = new Web3(
-      process.env.NETWORK === 'rinkeby'
-        ? process.env.RPC_URL_4
-        : process.env.RPC_URL_1,
+      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
+        ? process.env.NEXT_PUBLIC_RPC_URL_4
+        : process.env.NEXT_PUBLIC_RPC_URL_1,
     )
     let contract = new web3.eth.Contract(
       _ctx.livepeer.config.contracts.LivepeerToken.abi,
@@ -115,7 +126,7 @@ const Index = async () => {
         pendingStake: {
           async resolve(_delegator, _args, _ctx, _info) {
             const apolloFetch = createApolloFetch({
-              uri: process.env.SUBGRAPH,
+              uri: process.env.NEXT_PUBLIC_SUBGRAPH,
             })
             const { data } = await apolloFetch({
               query: `{
@@ -136,7 +147,7 @@ const Index = async () => {
         pendingFees: {
           async resolve(_delegator, _args, _ctx, _info) {
             const apolloFetch = createApolloFetch({
-              uri: process.env.SUBGRAPH,
+              uri: process.env.NEXT_PUBLIC_SUBGRAPH,
             })
             const { data } = await apolloFetch({
               query: `{
@@ -148,10 +159,11 @@ const Index = async () => {
                 }
               }`,
             })
-            return await _ctx.livepeer.rpc.getPendingFees(
+            const pendingFees = await _ctx.livepeer.rpc.getPendingFees(
               _delegator.id,
               data.protocol.currentRound.id,
             )
+            return Utils.fromWei(pendingFees)
           },
         },
       },
@@ -170,9 +182,7 @@ const Index = async () => {
       Poll: {
         totalVoteStake: {
           async resolve(_poll, _args, _ctx, _info) {
-            return Utils.toBN(_poll?.tally?.no ? _poll?.tally?.no : '0')
-              .add(Utils.toBN(_poll?.tally?.yes ? _poll.tally.yes : '0'))
-              .toString()
+            return +_poll?.tally?.no + +_poll?.tally?.yes
           },
         },
         totalNonVoteStake: {
@@ -185,11 +195,8 @@ const Index = async () => {
               _ctx,
               isActive ? blockNumber : _poll.endBlock,
             )
-            const totalVoteStake = Utils.toBN(
-              _poll?.tally?.no ? _poll?.tally?.no : '0',
-            ).add(Utils.toBN(_poll?.tally?.yes ? _poll?.tally?.yes : '0'))
-
-            return Utils.toBN(totalStake).sub(totalVoteStake).toString()
+            const totalVoteStake = +_poll?.tally?.no + +_poll?.tally?.yes
+            return +Utils.fromWei(totalStake) - totalVoteStake
           },
         },
         status: {
@@ -202,18 +209,15 @@ const Index = async () => {
               _ctx,
               isActive ? blockNumber : _poll.endBlock,
             )
-            let noVoteStake = parseFloat(
-              Utils.fromWei(_poll?.tally?.no ? _poll?.tally?.no : '0'),
-            )
-            let yesVoteStake = parseFloat(
-              Utils.fromWei(_poll?.tally?.yes ? _poll?.tally?.yes : '0'),
-            )
+            let noVoteStake = +_poll?.tally?.no || 0
+            let yesVoteStake = +_poll?.tally?.yes || 0
             let totalVoteStake = noVoteStake + yesVoteStake
             let totalSupport = isNaN(yesVoteStake / totalVoteStake)
               ? 0
               : (yesVoteStake / totalVoteStake) * 100
             let totalParticipation =
-              (totalVoteStake / parseFloat(Utils.fromWei(totalStake))) * 100
+              (totalVoteStake / +Utils.fromWei(totalStake)) * 100
+
             if (isActive) {
               return 'active'
             } else if (totalParticipation > _poll.quorum / 10000) {
@@ -265,9 +269,30 @@ const Index = async () => {
     },
   })
 
-  // intercept and transform transcoder query responses with price data
+  // intercept and transform query responses with price and performance data
   const queryMiddleware = {
     Query: {
+      delegator: async (resolve, parent, args, ctx, info) => {
+        const selectionSet = Object.keys(graphqlFields(info))
+        let delegator = await resolve(parent, args, ctx, info)
+
+        // if selection set does not include 'delegate', return delegator as is, otherwise fetch and merge price
+        if (!delegator || !selectionSet.includes('delegate')) {
+          return delegator
+        }
+
+        let response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`,
+        )
+        let transcodersWithPrice = await response.json()
+        let transcoderWithPrice = transcodersWithPrice.filter(
+          (t) => t.Address.toLowerCase() === delegator.delegate.id.toLowerCase(),
+        )[0]
+        delegator.delegate.price = transcoderWithPrice?.PricePerPixel
+          ? transcoderWithPrice?.PricePerPixel
+          : 0
+        return delegator
+      },
       transcoder: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info))
         let transcoder = await resolve(parent, args, ctx, info)
@@ -363,4 +388,4 @@ const Index = async () => {
   return applyMiddleware(merged, queryMiddleware)
 }
 
-export default Index
+export default createSchema

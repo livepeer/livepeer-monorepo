@@ -1,7 +1,6 @@
 import { Flex, Box } from 'theme-ui'
 import { useMemo, useState, useRef } from 'react'
 import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
-import Utils from 'web3-utils'
 import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import Search from '../../public/img/search.svg'
 import Help from '../../public/img/help.svg'
@@ -18,8 +17,12 @@ import {
   MenuItemRadio,
 } from '@modulz/radix/dist/index.es'
 import Price from '../Price'
+import { Input } from '@material-ui/core'
 
-const StakingTable = ({ data: { currentRound, transcoders } }) => {
+const StakingTable = ({
+  pageSize = 10,
+  data: { currentRound, transcoders },
+}) => {
   const { width } = useWindowSize()
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
   const targetRef = useRef()
@@ -27,12 +30,12 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
 
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
-      keys: [row => row.values[id]],
+      keys: [(row) => row.values[id]],
     })
   }
 
   // Let the table remove the filter if the string is empty
-  fuzzyTextFilterFn.autoRemove = val => !val
+  fuzzyTextFilterFn.autoRemove = (val) => !val
 
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
@@ -43,15 +46,13 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
         }}
       >
         <Search sx={{ width: 16, height: 16, mr: 1, color: 'muted' }} />
-        <Box
+        <input
           value={filterValue || ''}
-          onChange={e => {
+          onChange={(e) => {
             setFilter(e.target.value || undefined)
           }}
           placeholder={`Filter`}
-          as="input"
           type="text"
-          variant="input"
           sx={{
             display: 'block',
             outline: 'none',
@@ -117,7 +118,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       },
       {
         Header: 'Fees',
-        accessor: 'totalGeneratedFees',
+        accessor: 'totalVolumeETH',
       },
       {
         Header: 'Reward Cut',
@@ -139,8 +140,8 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
           let a = getRowValueByColumnID(rowA, columnID)
           let b = getRowValueByColumnID(rowB, columnID)
 
-          let rowACallsMade = a.filter(r => r.rewardTokens != null).length
-          let rowBCallsMade = b.filter(r => r.rewardTokens != null).length
+          let rowACallsMade = a.filter((r) => r.rewardTokens != null).length
+          let rowBCallsMade = b.filter((r) => r.rewardTokens != null).length
 
           return compareBasic(rowACallsMade, rowBCallsMade)
         },
@@ -172,7 +173,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       // Or, override the default text filter to use
       // "startWith"
       text: (rows, id, filterValue) => {
-        return rows.filter(row => {
+        return rows.filter((row) => {
           const rowValue = row.values[id]
           return rowValue !== undefined
             ? String(rowValue)
@@ -191,6 +192,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
     disableSortRemove: true,
     autoResetPage: false,
     initialState: {
+      pageSize,
       sortBy: [{ id: 'totalStake', desc: true }],
       hiddenColumns: [
         'activationRound',
@@ -223,7 +225,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
   const PriceSettingToggle = () => (
     <span
       ref={targetRef}
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation()
         setIsPriceSettingOpen(true)
       }}
@@ -262,7 +264,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       >
         <MenuItemRadioGroup
           value={priceSetting}
-          onChange={value => {
+          onChange={(value) => {
             setPriceSetting(value)
           }}
         >
@@ -366,7 +368,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
 
           <tbody {...getTableBodyProps()}>
             {page.map((row: any, rowIndex) => {
-              const orchestratorIndex = rowIndex + pageIndex * 10
+              const orchestratorIndex = rowIndex + pageIndex * pageSize
               prepareRow(row)
               return (
                 <tr
@@ -569,7 +571,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
               delayUpdate={500}
             />
             <Help
-              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed amongst delegators."
               data-for="tooltip-reward-cut"
               sx={{
                 cursor: 'pointer',
@@ -643,7 +645,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
   function renderSwitch(rowIndex, pageIndex, cell, currentRound) {
     switch (cell.column.Header) {
       case '#':
-        return parseInt(rowIndex) + 1 + pageIndex * 10
+        return parseInt(rowIndex) + 1 + pageIndex * pageSize
       case 'Orchestrator':
         const active =
           cell.row.values.activationRound <= currentRound.id &&
@@ -658,13 +660,13 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
       case 'Stake':
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {abbreviateNumber(cell.value ? Utils.fromWei(cell.value) : 0, 4)}
+            {abbreviateNumber(cell.value ? cell.value : 0, 4)}
           </span>
         )
       case 'Fees':
         return (
           <span sx={{ fontFamily: 'monospace' }}>
-            {cell.value ? +parseFloat(Utils.fromWei(cell.value)).toFixed(2) : 0}{' '}
+            {cell.value ? +parseFloat(cell.value).toFixed(2) : 0}{' '}
             <span sx={{ fontSize: 12 }}>ETH</span>
           </span>
         )
@@ -695,7 +697,7 @@ const StakingTable = ({ data: { currentRound, transcoders } }) => {
           </span>
         )
       case 'Calls':
-        let callsMade = cell.value.filter(r => r.rewardTokens != null).length
+        let callsMade = cell.value.filter((r) => r.rewardTokens != null).length
         return (
           <span sx={{ fontFamily: 'monospace' }}>
             {`${callsMade}/${cell.value.length}`}

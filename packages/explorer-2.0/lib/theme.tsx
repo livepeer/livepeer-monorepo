@@ -26,7 +26,7 @@ const theme = {
   breakpoints: ['480px', '672px', '1020px', '1380px', '1500px'],
   colors: {
     text: 'rgba(255, 255, 255, .87)',
-    background: '#14151A',
+    background: '#0d1117',
     primary: '#00EB88',
     surface: '#17191e',
     lightBlack: '#26282c',

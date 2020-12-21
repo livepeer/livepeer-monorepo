@@ -1,10 +1,9 @@
 import { Flex, Styled } from 'theme-ui'
 import { Text } from '@theme-ui/components'
-import Ballot from '../../public/img/ballot.svg'
 import { getLayout } from '../../layouts/main'
 import { Box } from 'theme-ui'
 import Button from '../../components/Button'
-import { withApollo } from '../../lib/apollo'
+import { getStaticApolloProps, withApollo } from '../../apollo'
 import { useQuery } from '@apollo/client'
 import Spinner from '../../components/Spinner'
 import Card from '../../components/Card'
@@ -16,6 +15,10 @@ import Link from 'next/link'
 import Head from 'next/head'
 import { usePageVisibility } from '../../hooks'
 import allPollsQuery from '../../queries/allPolls.gql'
+import { NextPage } from 'next'
+
+type Params = {}
+type Props = {}
 
 const Voting = () => {
   const isVisible = usePageVisibility()
@@ -195,4 +198,8 @@ Voting.getLayout = getLayout
 
 export default withApollo({
   ssr: false,
-})(Voting)
+})(Voting as NextPage)
+
+export const getStaticProps = getStaticApolloProps<Props, Params>(Voting, {
+  revalidate: 20,
+})
