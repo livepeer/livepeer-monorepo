@@ -17,10 +17,7 @@
     "prepare:mainnet": "NETWORK_NAME=mainnet node ./templatify.js",
     "prepare:rinkeby": "NETWORK_NAME=rinkeby node ./templatify.js",
     "prepare:development": "NETWORK_NAME=development node ./templatify.js",
-    "docker:build": "docker build --cache-from livepeer/subgraph:latest -t livepeer/subgraph:latest .",
-    "test:docker": "DOCKER=true npx truffle test --network=docker",
-    "test:development": "npx truffle test --network=development",
-    "test": "yarn docker:build && docker-compose -f test/integration/docker-compose.yaml up --abort-on-container-exit"
+    "docker:build": "docker build --cache-from livepeer/subgraph:latest -t livepeer/subgraph:latest ."
   },
   "devDependencies": {
     "apollo-fetch": "^0.7.0",
