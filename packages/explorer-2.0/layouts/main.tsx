@@ -1,11 +1,10 @@
 import { Styled, Box, Flex } from 'theme-ui'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Drawer from '../components/Drawer'
 import Reset from '../lib/reset'
 import { networksTypes } from '../lib/utils'
 import Ballot from '../public/img/ballot.svg'
-import Account from '../public/img/account.svg'
 import DNS from '../public/img/dns.svg'
 import { useWeb3React } from '@web3-react/core'
 import Header from '../components/Header'
@@ -16,14 +15,13 @@ import { useQuery, useApolloClient } from '@apollo/client'
 import ReactGA from 'react-ga'
 import { isMobile } from 'react-device-detect'
 import ProgressBar from '../components/ProgressBar'
-import { useMutations, usePageVisibility } from '../hooks'
+import { useMutations, useOnClickOutside } from '../hooks'
 import { MutationsContext } from '../contexts'
 import TxStartedDialog from '../components/TxStartedDialog'
 import TxConfirmedDialog from '../components/TxConfirmedDialog'
 import Modal from '../components/Modal'
 import TxSummaryDialog from '../components/TxSummaryDialog'
 import gql from 'graphql-tag'
-import GET_SPACE from '../queries/threeBoxSpace.gql'
 import GET_SUBMITTED_TXS from '../queries/transactions.gql'
 import { FiArrowUpRight, FiX } from 'react-icons/fi'
 import { MdTrendingUp } from 'react-icons/md'
@@ -42,8 +40,6 @@ type DrawerItem = {
   className?: string
 }
 
-const pollInterval = 20000
-
 // increment this value when updating the banner
 const uniqueBannerID = 1
 
@@ -54,16 +50,7 @@ const Layout = ({
 }) => {
   const client: any = useApolloClient()
   const context = useWeb3React()
-  const isVisible = usePageVisibility()
-  const { account } = context
-  const { data, startPolling, stopPolling } = useQuery(GET_SPACE, {
-    variables: {
-      account: context?.account,
-    },
-    skip: !context.account,
-    pollInterval,
-    ssr: false,
-  })
+
   const { data: pollData } = useQuery(
     gql`
       {
@@ -80,7 +67,7 @@ const Layout = ({
   const [bannerActive, setBannerActive] = useState(false)
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
-
+  const ref = useRef()
   const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
@@ -100,14 +87,6 @@ const Layout = ({
       setBannerActive(true)
     }
   }, [])
-
-  useEffect(() => {
-    if (!isVisible) {
-      stopPolling()
-    } else {
-      startPolling(pollInterval)
-    }
-  }, [isVisible])
 
   useEffect(() => {
     if (width > 1020) {
@@ -175,39 +154,24 @@ const Layout = ({
     },
   ]
 
-  if (context.active) {
-    items.push({
-      name: (
-        <Box>
-          {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && data?.threeBoxSpace?.name
-            ? data.threeBoxSpace.name
-            : 'My Account'}
-        </Box>
-      ),
-      href: '/accounts/[account]/[slug]',
-      as: `/accounts/${account}/staking`,
-      icon: Account,
-    })
-  }
-
   Router.events.on('routeChangeComplete', () =>
     document.body.removeAttribute('style'),
   )
 
+  const visibility = drawerOpen ? 'visible' : 'hidden'
   const onDrawerOpen = () => {
-    if (drawerOpen) {
-      document.body.removeAttribute('style')
-      setDrawerOpen(false)
-    } else {
-      document.body.style.overflow = 'hidden'
-      setDrawerOpen(true)
-    }
+    document.body.style.overflow = 'hidden'
+    setDrawerOpen(true)
   }
 
   const onDrawerClose = () => {
     document.body.removeAttribute('style')
     setDrawerOpen(false)
   }
+
+  useOnClickOutside(ref, () => {
+    onDrawerClose()
+  })
 
   const lastTx = transactionsData?.txs[transactionsData?.txs?.length - 1]
 
@@ -325,12 +289,26 @@ const Layout = ({
               gridTemplateColumns: ['100%', '100%', '100%', '240px 1fr'],
             }}
           >
-            <Drawer
-              onDrawerClose={onDrawerClose}
-              onDrawerOpen={onDrawerOpen}
-              open={drawerOpen}
-              items={items}
+            <Box
+              sx={{
+                left: 0,
+                top: 0,
+                position: 'fixed',
+                width: '100vw',
+                height: 'calc(100vh)',
+                bg: 'rgba(0,0,0,.5)',
+                visibility: [visibility, visibility, visibility, 'hidden'],
+                zIndex: 100,
+              }}
             />
+            <Box ref={ref}>
+              <Drawer
+                onDrawerClose={onDrawerClose}
+                onDrawerOpen={onDrawerOpen}
+                open={drawerOpen}
+                items={items}
+              />
+            </Box>
             <Flex
               sx={{
                 bg: 'background',

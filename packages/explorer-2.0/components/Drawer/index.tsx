@@ -1,22 +1,17 @@
 import { Flex, Box } from 'theme-ui'
 import Logo from '../Logo'
-import LPT from '../../public/img/lpt.svg'
-import WalletIcon from '../../public/img/wallet.svg'
-import NewIcon from '../../public/img/new.svg'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
-import { useWeb3React } from '@web3-react/core'
 import StakingGuide from '../StakingGuide'
 import RoundStatus from '../RoundStatus'
 import { gql, useApolloClient } from '@apollo/client'
 import UniswapModal from '../UniswapModal'
+import AccountMenu from '../AccountMenu'
 
 const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
   const router = useRouter()
   const client = useApolloClient()
   const { asPath } = router
-  const context = useWeb3React()
-  const visibility = open ? 'visible' : 'hidden'
 
   Router.events.on('routeChangeStart', () => {
     onDrawerClose()
@@ -24,29 +19,15 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
 
   return (
     <>
-      <Box
-        onClick={onDrawerOpen}
-        sx={{
-          left: 0,
-          top: 0,
-          position: 'fixed',
-          width: '100vw',
-          height: 'calc(100vh - 41px)',
-          bg: 'rgba(0,0,0,.5)',
-          visibility: [visibility, visibility, visibility, 'hidden'],
-          zIndex: 100,
-        }}
-      />
       <Flex
         onClick={onDrawerOpen}
         sx={{
           left: 0,
           top: 0,
           bg: 'black',
-          visibility: [visibility, visibility, visibility, 'visible'],
           zIndex: 100,
           width: 240,
-          transition: 'transform .3s',
+          transition: '.3s',
           transform: [
             `translateX(${open ? 0 : '-100%'})`,
             `translateX(${open ? 0 : '-100%'})`,
@@ -115,43 +96,9 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 </a>
               </Link>
             ))}
-            {!context.active && (
-              <Box
-                onClick={() => {
-                  client.writeQuery({
-                    query: gql`
-                      query {
-                        walletModalOpen
-                      }
-                    `,
-                    data: {
-                      walletModalOpen: true,
-                    },
-                  })
-                }}
-                sx={{
-                  color: 'muted',
-                  lineHeight: 'initial',
-                  display: 'flex',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  alignItems: 'center',
-                  py: 2,
-                  backgroundColor: 'transparent',
-                  borderRadius: 5,
-                  transition: 'color .3s',
-                  '&:hover': {
-                    color: 'primary',
-                    transition: 'color .3s',
-                  },
-                }}
-                className="tour-step-1"
-              >
-                <WalletIcon sx={{ width: 20, height: 20, mr: 1 }} />
-                Connect Wallet
-              </Box>
-            )}
+            <Box className="tour-step-1">
+              <AccountMenu />
+            </Box>
             <StakingGuide sx={{ display: ['none', 'none', 'none', 'block'] }}>
               Staking Guide
             </StakingGuide>
@@ -160,32 +107,50 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
             <Box
               sx={{
                 mb: 3,
-                pb: 3,
+                pb: 18,
                 borderBottom: '1px solid',
                 borderColor: 'border',
               }}
             >
-              <Box sx={{ mb: 2 }}>
-                <Link href="/whats-new" as="/whats-new" passHref>
-                  <a
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: 1,
-                      color: 'muted',
+              <Box sx={{ mb: 10 }}>
+                <a
+                  href="https://livepeer.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 1,
+                    color: 'muted',
+                    transition: 'color .3s',
+                    '&:hover': {
+                      color: 'primary',
                       transition: 'color .3s',
-                      '&:hover': {
-                        color: 'primary',
-                        transition: 'color .3s',
-                      },
-                    }}
-                  >
-                    <NewIcon
-                      sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }}
-                    />
-                    What's New
-                  </a>
-                </Link>
+                    },
+                  }}
+                >
+                  Livpeeer.org
+                </a>
+              </Box>
+              <Box sx={{ mb: 10 }}>
+                <a
+                  href="https://livepeer.readthedocs.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 1,
+                    color: 'muted',
+                    transition: 'color .3s',
+                    '&:hover': {
+                      color: 'primary',
+                      transition: 'color .3s',
+                    },
+                  }}
+                >
+                  Docs
+                </a>
               </Box>
               <Flex
                 onClick={() =>
@@ -205,6 +170,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                   cursor: 'pointer',
                   transition: 'color .3s',
                   fontSize: 1,
+                  mb: 10,
                   color: 'muted',
                   '&:hover': {
                     color: 'primary',
@@ -213,7 +179,6 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 }}
                 className="tour-step-3"
               >
-                <LPT sx={{ color: 'inherit', width: 20, height: 20, mr: 1 }} />{' '}
                 Get LPT
                 <UniswapModal>
                   <Box
@@ -229,7 +194,58 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                   />
                 </UniswapModal>
               </Flex>
-              {context.active && (
+              <Box>
+                <a
+                  href="https://discord.gg/uaPhtyrWsF"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 1,
+                    mb: 10,
+                    color: 'muted',
+                    transition: 'color .3s',
+                    '&:hover': {
+                      color: 'primary',
+                      transition: 'color .3s',
+                    },
+                  }}
+                >
+                  Discord
+                </a>
+              </Box>
+              <Box>
+                <Link href="/whats-new" as="/whats-new" passHref>
+                  <a
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: 1,
+                      color: 'muted',
+                      transition: 'color .3s',
+                      '&:hover': {
+                        color: 'primary',
+                        transition: 'color .3s',
+                      },
+                    }}
+                  >
+                    What's New
+                  </a>
+                </Link>
+              </Box>
+            </Box>
+            <RoundStatus />
+          </Box>
+        </Flex>
+      </Flex>
+    </>
+  )
+}
+
+export default Index
+
+/* {context.active && (
                 <Flex
                   onClick={() => {
                     client.writeQuery({
@@ -256,19 +272,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                     },
                   }}
                 >
-                  <WalletIcon
-                    sx={{ color: 'inherit', width: 18, height: 18, mr: 1 }}
-                  />
+                  
                   {context.account.replace(context.account.slice(5, 39), '…')}
                 </Flex>
-              )}
-            </Box>
-            <RoundStatus />
-          </Box>
-        </Flex>
-      </Flex>
-    </>
-  )
-}
-
-export default Index
+              )} */

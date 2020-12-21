@@ -69,10 +69,7 @@ const OrchestratorsPage = () => {
           <Styled.h1
             sx={{
               fontSize: [3, 3, 26],
-              fontWeight: 600,
-              mb: 22,
-              display: ['none', 'none', 'none', 'flex'],
-              alignItems: 'center',
+              mb: 4,
             }}
           >
             Top Orchestrators

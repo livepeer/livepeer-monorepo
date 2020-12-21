@@ -125,6 +125,7 @@ const Index = ({ pageSize = 10, title = '' }) => {
       )}
       <Box
         sx={{
+          boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 10px',
           position: 'relative',
           pt: 2,
           mb: 3,

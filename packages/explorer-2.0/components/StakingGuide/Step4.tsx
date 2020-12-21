@@ -83,16 +83,20 @@ const Step4 = ({ goTo, nextStep }) => {
       <div sx={{ fontFamily: 'monospace', mb: 1 }}>
         ETH Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
-          {abbreviateNumber(+dataMyAccount?.account?.ethBalance, 2)}
+          {abbreviateNumber(
+            +Utils.fromWei(dataMyAccount?.account?.ethBalance),
+            2,
+          )}
         </span>
       </div>
       <div sx={{ fontFamily: 'monospace' }}>
         LPT Balance:{' '}
         <span sx={{ fontWeight: 'bold' }}>
           {dataMyAccount?.account &&
-            parseFloat(
-              Utils.fromWei(dataMyAccount.account.tokenBalance),
-            ).toFixed(2)}
+            abbreviateNumber(
+              +Utils.fromWei(dataMyAccount?.account?.tokenBalance),
+              2,
+            )}
         </span>
       </div>
       <Button

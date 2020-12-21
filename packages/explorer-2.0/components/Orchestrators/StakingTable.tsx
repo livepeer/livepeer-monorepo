@@ -572,7 +572,7 @@ const StakingTable = ({
               delayUpdate={500}
             />
             <Help
-              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed across all staked tokenholders by how much you stake relative to others."
+              data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed amongst delegators."
               data-for="tooltip-reward-cut"
               sx={{
                 cursor: 'pointer',
