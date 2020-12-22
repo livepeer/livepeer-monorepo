@@ -21,12 +21,12 @@ type Props = {}
 const Panel = ({ children }) => (
   <Box
     sx={{
-      minHeight: '350px',
+      minHeight: 350,
+      height: 350,
       position: 'relative',
       backgroundColor: 'rgba(255,255,255,.01)',
       padding: 3,
       width: '100%',
-      height: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
