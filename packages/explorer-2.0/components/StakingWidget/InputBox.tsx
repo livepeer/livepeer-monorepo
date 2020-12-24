@@ -14,16 +14,9 @@ const InputBox = ({
   protocol,
 }) => {
   const tokenBalance = account && Utils.fromWei(account.tokenBalance.toString())
-
-  let stake = '0'
-  if (
-    (delegator?.bondedAmount || '0') >
-    Utils.fromWei(delegator?.pendingStake || '0')
-  ) {
-    stake = delegator?.bondedAmount || '0'
-  } else {
-    stake = Utils.fromWei(delegator?.pendingStake || '0')
-  }
+  const stake = delegator?.pendingStake
+    ? Utils.fromWei(delegator.pendingStake)
+    : '0'
 
   return (
     <div
@@ -61,7 +54,7 @@ const InputBox = ({
                 </div>
               ) : (
                 <>
-                  {stake && (
+                  {+stake > 0 && (
                     <div
                       data-tip="Enter max"
                       data-for="stake"
@@ -76,9 +69,7 @@ const InputBox = ({
                         effect="solid"
                       />
                       Stake:{' '}
-                      <span sx={{ fontFamily: 'monospace' }}>
-                        {parseFloat(stake).toPrecision(4)}
-                      </span>
+                      <span sx={{ fontFamily: 'monospace' }}>{+stake}</span>
                     </div>
                   )}
                 </>

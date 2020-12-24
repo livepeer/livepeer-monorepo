@@ -28,7 +28,7 @@ const GET_DATA = gql`
       }
     }
     protocol {
-      totalTokenSupply
+      totalSupply
       totalActiveStake
     }
     currentRound: rounds(first: 1, orderBy: timestamp, orderDirection: desc) {
