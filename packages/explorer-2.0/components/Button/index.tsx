@@ -1,11 +1,18 @@
 import { Styled } from 'theme-ui'
 
+interface Props {
+  as?: any
+  variant?: string
+  size?: string
+  [x: string]: any
+}
+
 const Index = ({
-  as = null,
+  as = 'button',
   variant = 'primary',
   size = 'normal',
   ...props
-}) => (
+}: Props) => (
   <Styled.div
     as={as}
     {...props}
