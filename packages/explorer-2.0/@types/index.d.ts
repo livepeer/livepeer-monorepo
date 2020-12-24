@@ -81,7 +81,7 @@ export interface UnbondingLock {
 }
 
 export interface Protocol {
-  totalTokenSupply?: string
+  totalSupply?: string
   totalBondedToken?: string
   paused?: boolean
   targetBondingRate?: string

@@ -61,7 +61,7 @@ query(
   }
   protocol(id: "0") {
     id
-    totalTokenSupply
+    totalSupply
     totalActiveStake
     inflation
     inflationChange

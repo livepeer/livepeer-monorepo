@@ -9,23 +9,25 @@ let roundsPerYear = hoursPerYear / averageHoursPerRound
 const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
   const client = useApolloClient()
   const { width } = useWindowSize()
-  const totalSupply = +protocol.totalTokenSupply
+  const totalSupply = +protocol.totalSupply
   const totalStaked = +protocol.totalActiveStake
+  const participationRate = +protocol.participationRate
   const rewardCut =
     transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0
   const inflation = protocol.inflation > 0 ? protocol.inflation / 1000000000 : 0
   const inflationChange =
     protocol.inflationChange > 0 ? protocol.inflationChange / 1000000000 : 0
-  let principle: number
-  principle = parseFloat(value) ? parseFloat(value) : 0
-  let roi = calculateAnnualROI({
+  const principle = +value ? +value : 0
+  const roi = calculateAnnualROI({
     inflation,
     inflationChange,
     rewardCut,
     principle,
     totalSupply,
     totalStaked,
+    participationRate,
   })
+
   client.writeQuery({
     query: gql`
       query {
@@ -38,6 +40,7 @@ const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
       roi,
     },
   })
+
   return (
     <div
       sx={{
@@ -91,27 +94,25 @@ function calculateAnnualROI({
   principle,
   totalSupply,
   totalStaked,
+  participationRate,
 }) {
   let totalRewardTokens = 0
   let roi = 0
   let percentOfTotalStaked = principle / totalStaked
-  let participationRate = totalStaked / totalSupply
-  let totalRewardTokensMinusFee: number
-  let currentMintableTokens: number
+  let totalRewardTokensMinusFee
+  let currentMintableTokens
 
   for (let i = 0; i < roundsPerYear; i++) {
-    if (inflation < 0) break
     currentMintableTokens = totalSupply * inflation
     totalRewardTokens = percentOfTotalStaked * currentMintableTokens
     totalRewardTokensMinusFee =
       totalRewardTokens - totalRewardTokens * rewardCut
-    roi = roi + totalRewardTokensMinusFee
-    totalSupply = totalSupply + currentMintableTokens
+    roi += totalRewardTokensMinusFee
+    totalSupply += currentMintableTokens
     inflation =
       participationRate > 0.5
         ? inflation - inflationChange
         : inflation + inflationChange
   }
-
-  return Utils.fromWei((Math.round(+roi) || 0).toString())
+  return roi
 }

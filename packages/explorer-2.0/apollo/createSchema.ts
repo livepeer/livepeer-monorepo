@@ -63,7 +63,6 @@ const createSchema = async () => {
     }
     extend type Protocol {
       totalStake(block: String): String
-      totalTokenSupply: String
     }
     extend type Delegator {
       pendingStake: String
@@ -172,12 +171,7 @@ const createSchema = async () => {
           async resolve(_protocol, _args, _ctx, _info) {
             return await getTotalStake(_ctx, _args.blockNumber)
           },
-        },
-        totalTokenSupply: {
-          async resolve(_protocol, _args, _ctx, _info) {
-            return await _ctx.livepeer.rpc.getTokenTotalSupply()
-          },
-        },
+        }
       },
       Poll: {
         totalVoteStake: {

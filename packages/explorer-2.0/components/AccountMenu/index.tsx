@@ -220,7 +220,7 @@ const AccountMenu = ({ isInHeader = false }) => {
             fontWeight: 500,
             cursor: 'pointer',
             alignItems: 'center',
-            py: 2,
+            py: 1,
             backgroundColor: 'transparent',
             borderRadius: 5,
             transition: 'color .3s',
