@@ -1,23 +1,22 @@
 // Import types and APIs from graph-ts
-import { Address, dataSource, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
+import { Address, dataSource, BigInt } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
   RoundsManager,
-  NewRound as NewRoundEvent,
-  ParameterUpdate as ParameterUpdateEvent,
+  NewRound,
+  ParameterUpdate,
 } from '../types/RoundsManager/RoundsManager'
 import { BondingManager } from '../types/BondingManager/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import {
+  Transaction,
   Transcoder,
   Pool,
-  Round,
-  InitializeRound,
   Protocol,
-  ParameterUpdate,
-  DayData,
+  NewRoundEvent,
+  ParameterUpdateEvent,
 } from '../types/schema'
 
 import {
@@ -27,32 +26,42 @@ import {
   makeEventId,
   EMPTY_ADDRESS,
   convertToDecimal,
-  getLivepeerTokenAddress,
   ZERO_BD,
+  createOrLoadDay,
+  createRound,
+  createOrLoadRound,
 } from '../../utils/helpers'
 
 // Handler for NewRound events
-export function newRound(event: NewRoundEvent): void {
-  let roundsManager = RoundsManager.bind(event.address)
-  let roundNumber = event.params.round
+export function newRound(event: NewRound): void {
   let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
   let bondingManager = BondingManager.bind(
     Address.fromString(bondingManagerAddress),
   )
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
+
+  let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded())
+
+  let round = createOrLoadRound(event.block.number)
+  round.initialized = true
+  round.totalActiveStake = totalActiveStake
+  round.save()
+
   let active: boolean
   let poolId: string
   let pool: Pool
-  let round: Round
 
   // Iterate over all registered transcoders
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
     // Update transcoder active state
-    active = bondingManager.isActiveTranscoder(currentTranscoder, roundNumber)
+    active = bondingManager.isActiveTranscoder(
+      currentTranscoder,
+      event.params.round,
+    )
     transcoder.active = active
-    transcoder.rewardCut = transcoder.pendingRewardCut
-    transcoder.feeShare = transcoder.pendingFeeShare
+    transcoder.rewardCut = transcoder.pendingRewardCut as BigInt
+    transcoder.feeShare = transcoder.pendingFeeShare as BigInt
     transcoder.pricePerSegment = transcoder.pendingPricePerSegment
     transcoder.save()
 
@@ -62,13 +71,16 @@ export function newRound(event: NewRoundEvent): void {
     // "rewardTokens" is null for a given transcoder and round then we know
     // the transcoder failed to call reward()
     if (active) {
-      poolId = makePoolId(currentTranscoder.toHex(), roundNumber.toString())
+      poolId = makePoolId(
+        currentTranscoder.toHex(),
+        event.params.round.toString(),
+      )
       pool = new Pool(poolId)
-      pool.round = roundNumber.toString()
+      pool.round = event.params.round.toString()
       pool.delegate = currentTranscoder.toHex()
       pool.totalStake = transcoder.totalStake
-      pool.rewardCut = transcoder.pendingRewardCut
-      pool.feeShare = transcoder.pendingFeeShare
+      pool.rewardCut = transcoder.rewardCut
+      pool.feeShare = transcoder.feeShare
 
       // Apply store updates
       pool.save()
@@ -81,97 +93,90 @@ export function newRound(event: NewRoundEvent): void {
     transcoder = Transcoder.load(currentTranscoder.toHex())
   }
 
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded()) as BigDecimal
-  
-  // Create new round
-  round = new Round(roundNumber.toString())
-  round.initialized = true
-  round.timestamp = event.block.timestamp
-  round.length = roundsManager.roundLength()
-  round.startBlock = roundsManager.currentRoundStartBlock()
-  round.totalActiveStake = totalActiveStake
-
-  // Update protocol
-  protocol.lastInitializedRound = roundsManager.lastInitializedRound()
-  protocol.currentRound = roundNumber.toString()
+  let protocol = Protocol.load('0')
+  protocol.lastInitializedRound = event.params.round.toString()
   protocol.totalActiveStake = totalActiveStake
 
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let dayData = DayData.load(dayID.toString())
-  
-  if (dayData === null) {
-    dayData = new DayData(dayID.toString())
-    dayData.date = dayStartTimestamp
-    dayData.volumeUSD = ZERO_BD
-    dayData.volumeETH = ZERO_BD
-    dayData.totalSupply = ZERO_BD
-    dayData.totalActiveStake = ZERO_BD
-    dayData.participationRate = ZERO_BD
+  let day = createOrLoadDay(event.block.timestamp.toI32())
+  day.totalActiveStake = totalActiveStake
+  day.totalSupply = protocol.totalSupply
+
+  if (protocol.totalActiveStake.gt(ZERO_BD)) {
+    protocol.participationRate = protocol.totalActiveStake.div(
+      protocol.totalSupply,
+    )
+    round.participationRate = protocol.participationRate
+    day.participationRate = protocol.participationRate
   }
+  day.save()
+  protocol.save()
 
-  dayData.totalActiveStake = totalActiveStake
-  dayData.totalSupply = protocol.totalSupply as BigDecimal
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
 
-  if(protocol.totalActiveStake.gt(ZERO_BD)) {
-    protocol.participationRate = protocol.totalActiveStake.div(protocol.totalSupply as BigDecimal)
-    round.participationRate = protocol.participationRate as BigDecimal
-    dayData.participationRate = protocol.participationRate as BigDecimal
-  }
-
-  // Store transaction info
-  let initializeRound = new InitializeRound(
+  let newRound = new NewRoundEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  initializeRound.hash = event.transaction.hash.toHex()
-  initializeRound.blockNumber = event.block.number
-  initializeRound.gasUsed = event.transaction.gasUsed
-  initializeRound.gasPrice = event.transaction.gasPrice
-  initializeRound.timestamp = event.block.timestamp
-  initializeRound.from = event.transaction.from.toHex()
-  initializeRound.to = event.transaction.to.toHex()
-  initializeRound.round = roundNumber.toString()
-
-  dayData.save()
-  protocol.save()
-  round.save()
-  initializeRound.save()
+  newRound.transaction = event.transaction.hash.toHex()
+  newRound.timestamp = event.block.timestamp.toI32()
+  newRound.round = event.params.round.toString()
+  newRound.blockHash = event.block.hash.toString()
+  newRound.save()
 }
 
-export function parameterUpdate(event: ParameterUpdateEvent): void {
+export function parameterUpdate(event: ParameterUpdate): void {
   let roundsManager = RoundsManager.bind(event.address)
-  let protocol = Protocol.load('0') || new Protocol('0')
+  let protocol = Protocol.load('0')
+  let currentRound = roundsManager.currentRound()
 
   if (event.params.param == 'roundLength') {
-    protocol.roundLength = roundsManager.roundLength()
-    protocol.lastRoundLengthUpdateStartBlock = roundsManager.lastRoundLengthUpdateStartBlock()
-    protocol.lastRoundLengthUpdateRound = roundsManager.lastRoundLengthUpdateRound()
+    let roundLength = roundsManager.roundLength()
+    let lastRoundLengthUpdateStartBlock = roundsManager.lastRoundLengthUpdateStartBlock()
+
+    if (protocol.roundLength.toI32() == 0) {
+      createRound(event.block.number, roundLength, currentRound)
+    }
+    protocol.roundLength = roundLength
+    protocol.lastRoundLengthUpdateStartBlock = lastRoundLengthUpdateStartBlock
+    protocol.lastRoundLengthUpdateRound = currentRound.toString()
+    protocol.currentRound = currentRound.toString()
   }
 
   if (event.params.param == 'roundLockAmount') {
     protocol.roundLockAmount = roundsManager.roundLockAmount()
+    protocol.lockPeriod = roundsManager
+      .roundLength()
+      .times(roundsManager.roundLockAmount())
+      .div(BigInt.fromI32(PERC_DIVISOR))
   }
-
-  protocol.lockPeriod = roundsManager
-    .roundLength()
-    .times(roundsManager.roundLockAmount())
-    .div(BigInt.fromI32(PERC_DIVISOR))
 
   protocol.save()
 
-  let parameterUpdate = new ParameterUpdate(
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let parameterUpdate = new ParameterUpdateEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  parameterUpdate.hash = event.transaction.hash.toHex()
-  parameterUpdate.blockNumber = event.block.number
-  parameterUpdate.gasUsed = event.transaction.gasUsed
-  parameterUpdate.gasPrice = event.transaction.gasPrice
-  parameterUpdate.timestamp = event.block.timestamp
-  parameterUpdate.from = event.transaction.from.toHex()
-  parameterUpdate.to = event.transaction.to.toHex()
-  parameterUpdate.round = protocol.currentRound
+  parameterUpdate.transaction = event.transaction.hash.toHex()
+  parameterUpdate.timestamp = event.block.timestamp.toI32()
+  parameterUpdate.round = currentRound.toString()
   parameterUpdate.param = event.params.param
   parameterUpdate.save()
 }

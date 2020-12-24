@@ -1,20 +1,16 @@
 // Import types and APIs from graph-ts
-import { Address, BigDecimal, dataSource } from '@graphprotocol/graph-ts'
+import { Address, BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
-import {
-  RoundsManager,
-  NewRound as NewRoundEvent,
-} from '../types/RoundsManager_streamflow/RoundsManager'
+import { NewRound } from '../types/RoundsManager_streamflow/RoundsManager'
 
 // Import entity types generated from the GraphQL schema
 import {
+  Transaction,
   Transcoder,
   Pool,
-  Round,
-  InitializeRound,
+  NewRoundEvent,
   Protocol,
-  DayData,
 } from '../types/schema'
 
 import {
@@ -24,22 +20,28 @@ import {
   EMPTY_ADDRESS,
   convertToDecimal,
   ZERO_BD,
+  createOrLoadDay,
+  createOrLoadRound,
 } from '../../utils/helpers'
 import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
 
 // Handler for NewRound events
-export function newRound(event: NewRoundEvent): void {
-  let roundsManager = RoundsManager.bind(event.address)
-  let roundNumber = event.params.round
+export function newRound(event: NewRound): void {
   let bondingManagerAddress = getBondingManagerAddress(dataSource.network())
   let bondingManager = BondingManager.bind(
     Address.fromString(bondingManagerAddress),
   )
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
+  let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded())
+
+  let round = createOrLoadRound(event.block.number)
+  round.initialized = true
+  round.totalActiveStake = totalActiveStake
+  round.save()
+
   let poolId: string
   let pool: Pool
-  let round: Round
 
   // Iterate over all active transcoders
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
@@ -47,13 +49,16 @@ export function newRound(event: NewRoundEvent): void {
     // reward() for a given round, we store its reward tokens inside this Pool
     // entry in a field called "rewardTokens". If "rewardTokens" is null for a
     // given transcoder and round then we know the transcoder failed to call reward()
-    poolId = makePoolId(currentTranscoder.toHex(), roundNumber.toString())
+    poolId = makePoolId(
+      currentTranscoder.toHex(),
+      event.params.round.toString(),
+    )
     pool = new Pool(poolId)
-    pool.round = roundNumber.toString()
+    pool.round = event.params.round.toString()
     pool.delegate = currentTranscoder.toHex()
     pool.totalStake = transcoder.totalStake
-    pool.rewardCut = transcoder.rewardCut
-    pool.feeShare = transcoder.feeShare
+    pool.rewardCut = transcoder.rewardCut as BigInt
+    pool.feeShare = transcoder.feeShare as BigInt
 
     // Apply store updates
     pool.save()
@@ -65,60 +70,42 @@ export function newRound(event: NewRoundEvent): void {
     transcoder = Transcoder.load(currentTranscoder.toHex())
   }
 
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded()) as BigDecimal
-
-  // Create new round
-  round = new Round(roundNumber.toString())
-  round.initialized = true
-  round.timestamp = event.block.timestamp
-  round.length = roundsManager.roundLength()
-  round.startBlock = roundsManager.currentRoundStartBlock()
-  round.totalActiveStake = totalActiveStake
-  
-  protocol.lastInitializedRound = roundsManager.lastInitializedRound()
-  protocol.currentRound = roundNumber.toString()
+  let protocol = Protocol.load('0')
+  protocol.lastInitializedRound = event.params.round.toString()
   protocol.totalActiveStake = totalActiveStake
-  
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let dayData = DayData.load(dayID.toString())
-  
-  if (dayData === null) {
-    dayData = new DayData(dayID.toString())
-    dayData.date = dayStartTimestamp
-    dayData.volumeUSD = ZERO_BD
-    dayData.volumeETH = ZERO_BD
-    dayData.totalSupply = ZERO_BD
-    dayData.totalActiveStake = ZERO_BD
-    dayData.participationRate = ZERO_BD
+
+  let day = createOrLoadDay(event.block.timestamp.toI32())
+  day.totalActiveStake = totalActiveStake
+  day.totalSupply = protocol.totalSupply
+
+  if (protocol.totalActiveStake.gt(ZERO_BD)) {
+    protocol.participationRate = protocol.totalActiveStake.div(
+      protocol.totalSupply,
+    )
+    round.participationRate = protocol.participationRate
+    day.participationRate = protocol.participationRate
   }
 
-  dayData.totalActiveStake = totalActiveStake
-  dayData.totalSupply = protocol.totalSupply as BigDecimal
-  
-  if(protocol.totalActiveStake.gt(ZERO_BD)) {
-    protocol.participationRate = protocol.totalActiveStake.div(protocol.totalSupply as BigDecimal)
-    round.participationRate = protocol.participationRate as BigDecimal
-    dayData.participationRate = protocol.participationRate as BigDecimal
-  }
+  protocol.save()
+  day.save()
 
-  // Store transaction info
-  let initializeRound = new InitializeRound(
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let newRound = new NewRoundEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  initializeRound.hash = event.transaction.hash.toHex()
-  initializeRound.blockNumber = event.block.number
-  initializeRound.gasUsed = event.transaction.gasUsed
-  initializeRound.gasPrice = event.transaction.gasPrice
-  initializeRound.timestamp = event.block.timestamp
-  initializeRound.from = event.transaction.from.toHex()
-  initializeRound.to = event.transaction.to.toHex()
-  initializeRound.round = roundNumber.toString()
-
-  dayData.save()
-  protocol.save()
-  round.save()
-  initializeRound.save()
+  newRound.transaction = event.transaction.hash.toHex()
+  newRound.timestamp = event.block.timestamp.toI32()
+  newRound.round = event.params.round.toString()
+  newRound.blockHash = event.params.blockHash.toString()
+  newRound.save()
 }

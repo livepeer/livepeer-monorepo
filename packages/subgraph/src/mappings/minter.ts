@@ -1,22 +1,24 @@
 import {
   Minter,
-  SetCurrentRewardTokens as SetCurrentRewardTokensEvent,
-  ParameterUpdate as ParameterUpdateEvent,
+  SetCurrentRewardTokens,
+  ParameterUpdate,
 } from '../types/Minter/Minter'
 import {
-  Round,
+  Transaction,
   Protocol,
-  ParameterUpdate,
-  SetCurrentRewardTokens,
+  ParameterUpdateEvent,
+  SetCurrentRewardTokensEvent,
 } from '../types/schema'
-import { convertToDecimal, makeEventId } from '../../utils/helpers'
+import {
+  convertToDecimal,
+  createOrLoadRound,
+  makeEventId,
+} from '../../utils/helpers'
 
-export function setCurrentRewardTokens(
-  event: SetCurrentRewardTokensEvent,
-): void {
+export function setCurrentRewardTokens(event: SetCurrentRewardTokens): void {
   let minter = Minter.bind(event.address)
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let round = new Round(protocol.currentRound)
+  let protocol = Protocol.load('0')
+  let round = createOrLoadRound(event.block.number)
   round.mintableTokens = convertToDecimal(event.params.currentMintableTokens)
   round.save()
 
@@ -28,25 +30,34 @@ export function setCurrentRewardTokens(
   protocol.inflation = minter.inflation()
   protocol.save()
 
-  let setCurrentRewardTokens = new SetCurrentRewardTokens(
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let setCurrentRewardTokens = new SetCurrentRewardTokensEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  setCurrentRewardTokens.hash = event.transaction.hash.toHex()
-  setCurrentRewardTokens.blockNumber = event.block.number
-  setCurrentRewardTokens.gasUsed = event.transaction.gasUsed
-  setCurrentRewardTokens.gasPrice = event.transaction.gasPrice
-  setCurrentRewardTokens.timestamp = event.block.timestamp
-  setCurrentRewardTokens.from = event.transaction.from.toHex()
-  setCurrentRewardTokens.to = event.transaction.to.toHex()
-  setCurrentRewardTokens.round = protocol.currentRound
-  setCurrentRewardTokens.currentMintableTokens = round.mintableTokens
+  setCurrentRewardTokens.transaction = event.transaction.hash.toHex()
+  setCurrentRewardTokens.timestamp = event.block.timestamp.toI32()
+  setCurrentRewardTokens.round = round.id
+  setCurrentRewardTokens.currentMintableTokens = convertToDecimal(
+    event.params.currentMintableTokens,
+  )
   setCurrentRewardTokens.currentInflation = event.params.currentInflation
   setCurrentRewardTokens.save()
 }
 
-export function parameterUpdate(event: ParameterUpdateEvent): void {
+export function parameterUpdate(event: ParameterUpdate): void {
   let minter = Minter.bind(event.address)
-  let protocol = Protocol.load('0') || new Protocol('0')
+  let protocol = Protocol.load('0')
+  let round = createOrLoadRound(event.block.number)
 
   if (event.params.param == 'targetBondingRate') {
     protocol.targetBondingRate = minter.targetBondingRate()
@@ -58,17 +69,23 @@ export function parameterUpdate(event: ParameterUpdateEvent): void {
 
   protocol.save()
 
-  let parameterUpdate = new ParameterUpdate(
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let parameterUpdate = new ParameterUpdateEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  parameterUpdate.hash = event.transaction.hash.toHex()
-  parameterUpdate.blockNumber = event.block.number
-  parameterUpdate.gasUsed = event.transaction.gasUsed
-  parameterUpdate.gasPrice = event.transaction.gasPrice
-  parameterUpdate.timestamp = event.block.timestamp
-  parameterUpdate.from = event.transaction.from.toHex()
-  parameterUpdate.to = event.transaction.to.toHex()
-  parameterUpdate.round = protocol.currentRound
+  parameterUpdate.transaction = event.transaction.hash.toHex()
+  parameterUpdate.timestamp = event.block.timestamp.toI32()
+  parameterUpdate.round = round.id
   parameterUpdate.param = event.params.param
   parameterUpdate.save()
 }
