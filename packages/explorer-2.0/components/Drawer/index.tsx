@@ -129,7 +129,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                     },
                   }}
                 >
-                  Livepeeer.org
+                  Livepeer.org
                 </a>
               </Box>
               <Box sx={{ mb: 10 }}>
