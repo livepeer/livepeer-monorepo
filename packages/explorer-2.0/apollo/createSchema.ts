@@ -171,7 +171,7 @@ const createSchema = async () => {
           async resolve(_protocol, _args, _ctx, _info) {
             return await getTotalStake(_ctx, _args.blockNumber)
           },
-        }
+        },
       },
       Poll: {
         totalVoteStake: {
@@ -280,11 +280,16 @@ const createSchema = async () => {
         )
         let transcodersWithPrice = await response.json()
         let transcoderWithPrice = transcodersWithPrice.filter(
-          (t) => t.Address.toLowerCase() === delegator.delegate.id.toLowerCase(),
+          (t) =>
+            t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase(),
         )[0]
-        delegator.delegate.price = transcoderWithPrice?.PricePerPixel
+        
+        if(delegator?.delegate) {
+          delegator.delegate.price = transcoderWithPrice?.PricePerPixel
           ? transcoderWithPrice?.PricePerPixel
           : 0
+        }
+
         return delegator
       },
       transcoder: async (resolve, parent, args, ctx, info) => {
