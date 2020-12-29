@@ -14,7 +14,7 @@ jobs:
         env:
           INFURA_ENDPOINT: ${{ secrets.INFURA_ENDPOINT }}
         run: |
-          yarn install --frozen-lockfile
+          yarn --frozen-lockfile
       - name: yarn test
         env:
           INFURA_ENDPOINT: ${{ secrets.INFURA_ENDPOINT }}

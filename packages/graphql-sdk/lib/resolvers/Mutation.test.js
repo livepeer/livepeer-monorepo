@@ -1,0 +1,16 @@
+'use strict'
+
+var _interopRequireDefault = require('@babel/runtime/helpers/interopRequireDefault')
+
+var _ava = _interopRequireDefault(require('ava'))
+
+_ava.default.todo('approve()')
+
+_ava.default.todo('bond()')
+
+_ava.default.todo('claimEarnings()')
+
+_ava.default.todo('sendTransaction()')
+
+_ava.default.todo('unbond()')
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9yZXNvbHZlcnMvTXV0YXRpb24udGVzdC5qcyJdLCJuYW1lcyI6WyJ0ZXN0IiwidG9kbyJdLCJtYXBwaW5ncyI6Ijs7OztBQUFBOztBQUVBQSxhQUFLQyxJQUFMLENBQVUsV0FBVjs7QUFDQUQsYUFBS0MsSUFBTCxDQUFVLFFBQVY7O0FBQ0FELGFBQUtDLElBQUwsQ0FBVSxpQkFBVjs7QUFDQUQsYUFBS0MsSUFBTCxDQUFVLG1CQUFWOztBQUNBRCxhQUFLQyxJQUFMLENBQVUsVUFBViIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB0ZXN0IGZyb20gJ2F2YSdcblxudGVzdC50b2RvKCdhcHByb3ZlKCknKVxudGVzdC50b2RvKCdib25kKCknKVxudGVzdC50b2RvKCdjbGFpbUVhcm5pbmdzKCknKVxudGVzdC50b2RvKCdzZW5kVHJhbnNhY3Rpb24oKScpXG50ZXN0LnRvZG8oJ3VuYm9uZCgpJylcbiJdfQ==
