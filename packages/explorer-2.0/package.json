@@ -27,7 +27,7 @@
     "typescript": "4.0.5"
   },
   "dependencies": {
-    "3box": "1.19.0",
+    "3box": "1.20.2",
     "3id-blockchain-utils": "0.3.4",
     "@apollo/client": "^3.3.6",
     "@babel/core": "^7.5.5",
@@ -109,6 +109,7 @@
   },
   "main": "package.json",
   "resolutions": {
-    "apollo-server-core": "2.9.6"
+    "apollo-server-core": "2.9.6",
+    "orbit-db": "0.22.0"
   }
 }

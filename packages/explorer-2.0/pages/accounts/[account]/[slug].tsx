@@ -129,18 +129,16 @@ const Account = () => {
     data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0
   let role: string
 
-  const isOrchestrator =
-    data?.delegator?.delegate?.status === 'Registered' &&
-    query?.account?.toString() === data?.delegator?.delegate?.id
+  const isOrchestrator = data?.transcoder
 
-  if (isOrchestrator) {
+  const isMyDelegate =
+    query?.account?.toString() === dataMyAccount?.transcoder?.id
+
+  if (isOrchestrator || isMyDelegate) {
     role = 'Orchestrator'
   } else if (+data?.delegator?.bondedAmount > 0) {
     role = 'Delegator'
   }
-
-  const isMyDelegate =
-    query?.account?.toString() === dataMyAccount?.delegator?.delegate?.id
 
   const tabs: Array<TabType> = getTabs(
     role,
@@ -188,13 +186,13 @@ const Account = () => {
             data.delegator,
             data.protocol.currentRound,
           )}
-          transcoder={data.delegator?.delegate}
+          transcoder={data.transcoder}
         />
         <Tabs tabs={tabs} />
         {slug == 'campaign' && (
           <CampaignView
             currentRound={data.protocol.currentRound}
-            transcoder={data.delegator.delegate}
+            transcoder={data.transcoder}
           />
         )}
         {slug == 'fees' && (
@@ -232,7 +230,7 @@ const Account = () => {
               transcoders={dataTranscoders.transcoders}
               delegator={dataMyAccount?.delegator}
               account={dataMyAccount?.account}
-              transcoder={data.delegator.delegate}
+              transcoder={data.transcoder}
               protocol={data.protocol}
             />
           </Flex>
@@ -244,7 +242,7 @@ const Account = () => {
               currentRound={data.protocol.currentRound}
               delegator={dataMyAccount?.delegator}
               account={dataMyAccount?.account}
-              transcoder={data.delegator.delegate}
+              transcoder={data.delegator.id}
               protocol={data.protocol}
             />
           </BottomDrawer>
