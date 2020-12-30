@@ -9,7 +9,6 @@ import Link from '../../public/img/link.svg'
 import Claim from '../../public/img/claim.svg'
 import LPT from '../../public/img/lpt.svg'
 import ETH from '../../public/img/eth.svg'
-import Approve from '../../public/img/approve.svg'
 import Play from '../../public/img/play.svg'
 import moment from 'moment'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -28,7 +27,6 @@ const Index = () => {
         first: 10,
         skip: 0,
       },
-      ssr: false,
       notifyOnNetworkStatusChange: true,
     },
   )
@@ -55,6 +53,11 @@ const Index = () => {
   if (!data?.transactions?.length) {
     return <div sx={{ pt: 5 }}>No history</div>
   }
+
+  const events = data.transactions.reduce(
+    (res, { events }) => res.concat(...events),
+    [],
+  )
 
   return (
     <InfiniteScroll
@@ -91,9 +94,7 @@ const Index = () => {
     >
       <div sx={{ mt: 3, mb: 4, pb: 6, position: 'relative' }}>
         <div sx={{ pb: 2 }}>
-          {data.transactions.map((transaction: any, i: number) =>
-            renderSwitch(transaction, i),
-          )}
+          {events.map((event: any, i: number) => renderSwitch(event, i))}
         </div>
         {loading && data.transactions.length >= 10 && (
           <Flex
@@ -116,51 +117,16 @@ const Index = () => {
 
 export default Index
 
-function renderSwitch(transaction: any, i: number) {
-  switch (transaction.__typename) {
-    case 'Approval':
-      return (
-        <ListItem
-          sx={{
-            cursor: 'pointer',
-            px: 2,
-            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
-          }}
-          onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
-          }
-          key={i}
-          avatar={<Approve sx={{ color: 'primary', mr: 2 }} />}
-        >
-          <Flex
-            sx={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box>
-              <Box>Approved LPT for Staking</Box>
-              <Box sx={{ fontSize: 12, color: 'muted' }}>
-                {moment
-                  .unix(transaction.timestamp)
-                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
-              </Box>
-            </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
-              <span sx={{ fontFamily: 'monospace' }}>
-                {parseFloat(transaction.amount).toPrecision(3) + ' LPT'}
-              </span>
-            </div>
-          </Flex>
-        </ListItem>
-      )
-    case 'Bond':
+function renderSwitch(event: any, i: number) {
+  switch (event.__typename) {
+    case 'BondEvent':
       return (
         <ListItem
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           sx={{
             cursor: 'pointer',
@@ -180,29 +146,29 @@ function renderSwitch(transaction: any, i: number) {
             <Box>
               <Box>
                 Staked towards{' '}
-                {transaction.newDelegate.id.replace(
-                  transaction.newDelegate.id.slice(7, 37),
+                {event.newDelegate.id.replace(
+                  event.newDelegate.id.slice(7, 37),
                   '…',
                 )}
               </Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(transaction.additionalAmount, 3)}
+                +{abbreviateNumber(event.additionalAmount, 3)}
               </span>{' '}
               LPT
             </div>
           </Flex>
         </ListItem>
       )
-    case 'EarningsClaimed':
+    case 'EarningsClaimedEvent':
       return (
         <ListItem
           sx={{
@@ -211,7 +177,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={
@@ -229,21 +198,21 @@ function renderSwitch(transaction: any, i: number) {
               <Box>Claimed Earnings</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ textAlign: 'right', fontSize: 1, ml: 3 }}>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(transaction.rewardTokens, 3)}
+                  {abbreviateNumber(event.rewardTokens, 3)}
                 </span>{' '}
                 LPT
               </Box>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {abbreviateNumber(transaction.fees, 3)}
+                  {abbreviateNumber(event.fees, 3)}
                 </span>{' '}
                 ETH
               </Box>
@@ -251,7 +220,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'InitializeRound':
+    case 'NewRoundEvent':
       return (
         <ListItem
           sx={{
@@ -260,7 +229,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={
@@ -278,21 +250,19 @@ function renderSwitch(transaction: any, i: number) {
               <Box>Initialized round</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               Round #
-              <span sx={{ fontFamily: 'monospace' }}>
-                {transaction.round.id}
-              </span>
+              <span sx={{ fontFamily: 'monospace' }}>{event.round.id}</span>
             </div>
           </Flex>
         </ListItem>
       )
-    case 'Rebond':
+    case 'RebondEvent':
       return (
         <ListItem
           sx={{
@@ -301,7 +271,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={<Link sx={{ color: 'primary', mr: 2 }} />}
@@ -316,29 +289,26 @@ function renderSwitch(transaction: any, i: number) {
             <Box>
               <Box>
                 Restaked to{' '}
-                {transaction.delegate.id.replace(
-                  transaction.delegate.id.slice(7, 37),
-                  '…',
-                )}
+                {event.delegate.id.replace(event.delegate.id.slice(7, 37), '…')}
               </Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(transaction.amount, 3)}
+                +{abbreviateNumber(event.amount, 3)}
               </span>{' '}
               LPT
             </div>
           </Flex>
         </ListItem>
       )
-    case 'Unbond':
+    case 'UnbondEvent':
       return (
         <ListItem
           sx={{
@@ -347,7 +317,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={<Unlink sx={{ color: 'primary', mr: 2 }} />}
@@ -362,29 +335,26 @@ function renderSwitch(transaction: any, i: number) {
             <Box>
               <Box>
                 Unstaked from{' '}
-                {transaction.delegate.id.replace(
-                  transaction.delegate.id.slice(7, 37),
-                  '…',
-                )}
+                {event.delegate.id.replace(event.delegate.id.slice(7, 37), '…')}
               </Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                -{abbreviateNumber(transaction.amount, 3)}
+                -{abbreviateNumber(event.amount, 3)}
               </span>{' '}
               LPT
             </div>
           </Flex>
         </ListItem>
       )
-    case 'Reward':
+    case 'RewardEvent':
       return (
         <ListItem
           sx={{
@@ -393,7 +363,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={
@@ -411,22 +384,22 @@ function renderSwitch(transaction: any, i: number) {
               <Box>Claimed Inflationary Token Reward</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(transaction.rewardTokens, 3)}
+                +{abbreviateNumber(event.rewardTokens, 3)}
               </span>{' '}
               LPT
             </div>
           </Flex>
         </ListItem>
       )
-    case 'TranscoderUpdated':
+    case 'TranscoderUpdateEvent':
       return (
         <ListItem
           sx={{
@@ -435,7 +408,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={
@@ -453,20 +429,20 @@ function renderSwitch(transaction: any, i: number) {
               <Box>Updated Orchestrator Cut</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ textAlign: 'right', fontSize: 1, ml: 3 }}>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {transaction.rewardCut / 10000}% R
+                  {event.rewardCut / 10000}% R
                 </span>{' '}
               </Box>
               <Box>
                 <span sx={{ fontFamily: 'monospace' }}>
-                  {(100 - transaction.feeShare / 10000)
+                  {(100 - event.feeShare / 10000)
                     .toFixed(2)
                     .replace(/[.,]00$/, '')}
                   % F
@@ -476,7 +452,7 @@ function renderSwitch(transaction: any, i: number) {
           </Flex>
         </ListItem>
       )
-    case 'WithdrawStake':
+    case 'WithdrawStakeEvent':
       return (
         <ListItem
           sx={{
@@ -485,7 +461,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={
@@ -503,22 +482,22 @@ function renderSwitch(transaction: any, i: number) {
               <Box>Withdrew Unstaked Tokens</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(transaction.amount, 3)}
+                +{abbreviateNumber(event.amount, 3)}
               </span>{' '}
               LPT
             </div>
           </Flex>
         </ListItem>
       )
-    case 'WinningTicketRedeemed':
+    case 'WinningTicketRedeemedEvent':
       return (
         <ListItem
           sx={{
@@ -527,7 +506,10 @@ function renderSwitch(transaction: any, i: number) {
             '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
           }}
           onClick={() =>
-            window.open(`https://etherscan.io/tx/${transaction.hash}`, '_blank')
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
           }
           key={i}
           avatar={
@@ -545,15 +527,15 @@ function renderSwitch(transaction: any, i: number) {
               <Box>Redeemed Winning Ticket</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
-                  .unix(transaction.timestamp)
+                  .unix(event.transaction.timestamp)
                   .format('MM/DD/YYYY h:mm:ss a')}{' '}
-                -- Round #{transaction.round.id}
+                -- Round #{event.round.id}
               </Box>
             </Box>
             <div sx={{ fontSize: 1, ml: 3 }}>
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
-                +{abbreviateNumber(transaction.faceValue, 3)}
+                +{abbreviateNumber(event.faceValue, 3)}
               </span>{' '}
               ETH
             </div>

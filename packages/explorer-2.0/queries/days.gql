@@ -1,0 +1,7 @@
+query($first: Int, $orderBy: Day_orderBy, $orderDirection: OrderDirection) {
+  days(first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
+    date
+    volumeUSD
+    participationRate
+  }
+}

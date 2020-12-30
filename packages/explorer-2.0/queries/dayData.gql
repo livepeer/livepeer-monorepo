@@ -1,7 +1,0 @@
-query($first: Int, $orderBy: DayData_orderBy, $orderDirection: OrderDirection) {
-  dayDatas(first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
-    date
-    volumeUSD
-    participationRate
-  }
-}
