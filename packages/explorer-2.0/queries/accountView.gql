@@ -20,30 +20,43 @@ query($account: ID!) {
         id
       }
     }
-    delegate {
+    delegate(id: $account) {
       id
       active
-      feeShare
-      rewardCut
-      price
       status
       active
       totalStake
-      totalVolumeETH
-      lastRewardRound {
-        id
-      }
-      pools(first: 30, orderBy: id, orderDirection: desc) {
-        rewardTokens
-      }
       threeBoxSpace {
         __typename
         id
         name
-        website
         image
-        description
       }
+    }
+  }
+  transcoder(id: $account) {
+    id
+    active
+    feeShare
+    rewardCut
+    price
+    status
+    active
+    totalStake
+    totalVolumeETH
+    lastRewardRound {
+      id
+    }
+    pools(first: 30, orderBy: id, orderDirection: desc) {
+      rewardTokens
+    }
+    threeBoxSpace {
+      __typename
+      id
+      name
+      website
+      image
+      description
     }
   }
   threeBoxSpace(id: $account) {
