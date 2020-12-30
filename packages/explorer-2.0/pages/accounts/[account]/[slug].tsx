@@ -242,7 +242,7 @@ const Account = () => {
               currentRound={data.protocol.currentRound}
               delegator={dataMyAccount?.delegator}
               account={dataMyAccount?.account}
-              transcoder={data.delegator.id}
+              transcoder={data.transcoder}
               protocol={data.protocol}
             />
           </BottomDrawer>
