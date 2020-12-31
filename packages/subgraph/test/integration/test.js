@@ -4,8 +4,8 @@ const path = require('path')
 const RPC = require('../../utils/rpc')
 const execSync = require('child_process').execSync
 
-const RoundsManagerABI = require('../../abis/RoundsManager_streamflow.json')
-const BondingManagerABI = require('../../abis/BondingManager_streamflow.json')
+const RoundsManagerABI = require('../../abis/RoundsManager.json')
+const BondingManagerABI = require('../../abis/BondingManager.json')
 const LivepeerTokenABI = require('../../abis/LivepeerToken.json')
 const PollCreatorABI = require('../../abis/PollCreator.json')
 const PollABI = require('../../abis/Poll.json')

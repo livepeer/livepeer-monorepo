@@ -7,9 +7,9 @@ import {
   Unbond,
   Rebond,
   EarningsClaimed,
-} from '../types/BondingManager_streamflow/BondingManager'
+} from '../types/BondingManager/BondingManager'
 
-import { Delegator, Protocol, Poll, Vote, Transcoder } from '../types/schema'
+import { Delegator, Poll, Vote, Transcoder } from '../types/schema'
 
 import {
   makeVoteId,
@@ -222,7 +222,6 @@ export function updatePollTallyOnEarningsClaimed(event: EarningsClaimed): void {
   if (transcoder.status == 'Registered') {
     vote.voteStake = transcoder.totalStake as BigDecimal
   } else {
-    let protocol = Protocol.load('0')
     let bondingManager = BondingManager.bind(event.address)
     let pendingStake = convertToDecimal(
       bondingManager.pendingStake(

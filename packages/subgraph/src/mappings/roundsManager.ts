@@ -1,26 +1,24 @@
 // Import types and APIs from graph-ts
-import { Address, dataSource, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
-  RoundsManager,
   NewRound,
   ParameterUpdate,
+  RoundsManager,
 } from '../types/RoundsManager/RoundsManager'
-import { BondingManager } from '../types/BondingManager/BondingManager'
 
 // Import entity types generated from the GraphQL schema
 import {
   Transaction,
   Transcoder,
   Pool,
-  Protocol,
   NewRoundEvent,
+  Protocol,
   ParameterUpdateEvent,
 } from '../types/schema'
 
 import {
-  PERC_DIVISOR,
   makePoolId,
   getBondingManagerAddress,
   makeEventId,
@@ -28,9 +26,11 @@ import {
   convertToDecimal,
   ZERO_BD,
   createOrLoadDay,
-  createRound,
   createOrLoadRound,
+  PERC_DIVISOR,
+  createRound,
 } from '../../utils/helpers'
+import { BondingManager } from '../types/BondingManager/BondingManager'
 
 // Handler for NewRound events
 export function newRound(event: NewRound): void {
@@ -40,7 +40,6 @@ export function newRound(event: NewRound): void {
   )
   let currentTranscoder = bondingManager.getFirstTranscoderInPool()
   let transcoder = Transcoder.load(currentTranscoder.toHex())
-
   let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded())
 
   let round = createOrLoadRound(event.block.number)
@@ -48,43 +47,28 @@ export function newRound(event: NewRound): void {
   round.totalActiveStake = totalActiveStake
   round.save()
 
-  let active: boolean
   let poolId: string
   let pool: Pool
 
-  // Iterate over all registered transcoders
+  // Iterate over all active transcoders
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
-    // Update transcoder active state
-    active = bondingManager.isActiveTranscoder(
-      currentTranscoder,
-      event.params.round,
+    // create a unique "pool" for each active transcoder. If a transcoder calls
+    // reward() for a given round, we store its reward tokens inside this Pool
+    // entry in a field called "rewardTokens". If "rewardTokens" is null for a
+    // given transcoder and round then we know the transcoder failed to call reward()
+    poolId = makePoolId(
+      currentTranscoder.toHex(),
+      event.params.round.toString(),
     )
-    transcoder.active = active
-    transcoder.rewardCut = transcoder.pendingRewardCut as BigInt
-    transcoder.feeShare = transcoder.pendingFeeShare as BigInt
-    transcoder.pricePerSegment = transcoder.pendingPricePerSegment
-    transcoder.save()
+    pool = new Pool(poolId)
+    pool.round = event.params.round.toString()
+    pool.delegate = currentTranscoder.toHex()
+    pool.totalStake = transcoder.totalStake
+    pool.rewardCut = transcoder.rewardCut as BigInt
+    pool.feeShare = transcoder.feeShare as BigInt
 
-    // create a unique "pool" for each active transcoder on every
-    // round. If a transcoder calls reward() for a given round, we store its
-    // reward tokens inside this Pool entry in a field called "rewardTokens". If
-    // "rewardTokens" is null for a given transcoder and round then we know
-    // the transcoder failed to call reward()
-    if (active) {
-      poolId = makePoolId(
-        currentTranscoder.toHex(),
-        event.params.round.toString(),
-      )
-      pool = new Pool(poolId)
-      pool.round = event.params.round.toString()
-      pool.delegate = currentTranscoder.toHex()
-      pool.totalStake = transcoder.totalStake
-      pool.rewardCut = transcoder.rewardCut
-      pool.feeShare = transcoder.feeShare
-
-      // Apply store updates
-      pool.save()
-    }
+    // Apply store updates
+    pool.save()
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
       currentTranscoder,
@@ -108,8 +92,9 @@ export function newRound(event: NewRound): void {
     round.participationRate = protocol.participationRate
     day.participationRate = protocol.participationRate
   }
-  day.save()
+
   protocol.save()
+  day.save()
 
   let tx =
     Transaction.load(event.transaction.hash.toHex()) ||
@@ -128,7 +113,7 @@ export function newRound(event: NewRound): void {
   newRound.transaction = event.transaction.hash.toHex()
   newRound.timestamp = event.block.timestamp.toI32()
   newRound.round = event.params.round.toString()
-  newRound.blockHash = event.block.hash.toString()
+  newRound.blockHash = event.params.blockHash.toString()
   newRound.save()
 }
 

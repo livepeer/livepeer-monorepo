@@ -21,7 +21,7 @@ import {
 } from '../../utils/helpers'
 import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
 import { PollTallyTemplate } from '../types/templates'
-import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
+import { BondingManager } from '../types/BondingManager/BondingManager'
 import { integer } from '@protofire/subgraph-toolkit'
 
 export function vote(event: VoteEventParam): void {

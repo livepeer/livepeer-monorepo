@@ -5,7 +5,7 @@ import {
   ReserveClaimed,
   Withdrawal,
 } from '../types/TicketBroker/TicketBroker'
-import { UniswapV2Pair } from '../types/TicketBroker/UniswapV2Pair'
+import { UniswapPairV2 } from '../types/TicketBroker/UniswapPairV2'
 import {
   Transaction,
   Protocol,
@@ -29,8 +29,8 @@ import {
 } from '../../utils/helpers'
 
 export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
-  let uniswapV2PairAddress = getDaiEthPairAddress()
-  let daiEthPair = UniswapV2Pair.bind(Address.fromString(uniswapV2PairAddress))
+  let uniswapPairV2Address = getDaiEthPairAddress()
+  let daiEthPair = UniswapPairV2.bind(Address.fromString(uniswapPairV2Address))
   let protocol = Protocol.load('0')
   let round = createOrLoadRound(event.block.number)
   let winningTicketRedeemed = new WinningTicketRedeemedEvent(
