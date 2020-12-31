@@ -64,6 +64,7 @@ export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
   winningTicketRedeemed.sender = event.params.sender.toHex()
   winningTicketRedeemed.recipient = event.params.recipient.toHex()
   winningTicketRedeemed.faceValue = faceValue
+  winningTicketRedeemed.faceValueUSD = faceValue.times(ethPrice)
   winningTicketRedeemed.winProb = event.params.winProb
   winningTicketRedeemed.senderNonce = event.params.senderNonce
   winningTicketRedeemed.recipientRand = event.params.recipientRand

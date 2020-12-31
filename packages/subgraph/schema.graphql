@@ -460,9 +460,10 @@ type WinningTicketRedeemedEvent implements Event @entity {
   transaction: Transaction!
   timestamp: Int!
   round: Round!
-  sender: String!
-  recipient: String!
+  sender: Broadcaster!
+  recipient: Transcoder!
   faceValue: BigDecimal!
+  faceValueUSD: BigDecimal!
   winProb: BigInt!
   senderNonce: BigInt!
   recipientRand: BigInt!
@@ -474,7 +475,7 @@ type DepositFundedEvent implements Event @entity {
   transaction: Transaction!
   timestamp: Int!
   round: Round!
-  sender: String!
+  sender: Broadcaster!
   amount: BigDecimal!
 }
 
@@ -483,7 +484,7 @@ type ReserveFundedEvent implements Event @entity {
   transaction: Transaction!
   timestamp: Int!
   round: Round!
-  reserveHolder: String!
+  reserveHolder: Broadcaster!
   amount: BigDecimal!
 }
 
@@ -492,8 +493,8 @@ type ReserveClaimedEvent implements Event @entity {
   transaction: Transaction!
   timestamp: Int!
   round: Round!
-  reserveHolder: String!
-  claimant: String!
+  reserveHolder: Broadcaster!
+  claimant: Transcoder!
   amount: BigDecimal!
 }
 
@@ -502,7 +503,7 @@ type WithdrawalEvent implements Event @entity {
   transaction: Transaction!
   timestamp: Int!
   round: Round!
-  sender: String!
+  sender: Broadcaster!
   deposit: BigDecimal!
   reserve: BigDecimal!
 }
