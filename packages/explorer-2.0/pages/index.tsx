@@ -12,6 +12,7 @@ import { useEffect } from 'react'
 import { usePageVisibility } from '../hooks'
 import accountQuery from '../queries/account.gql'
 import GlobalChart from '../components/GlobalChart'
+import WinningTickets from '../components/WinningTickets'
 import Link from 'next/link'
 import { withApollo, getStaticApolloProps } from '../apollo'
 
@@ -117,21 +118,37 @@ const Home = () => {
               <GlobalChart display="participation" />
             </Panel>
           </Grid>
-          <Flex
-            sx={{
-              justifyContent: 'space-between',
-              mb: 2,
-              alignItems: 'center',
-            }}
-          >
-            <Styled.h2 sx={{ fontWeight: 500, fontSize: 18 }}>
-              Top Orchestrators
-            </Styled.h2>
-            <Link href="/orchestrators" passHref>
-              <a sx={{ fontSize: 1, pr: 3 }}>See All</a>
-            </Link>
-          </Flex>
-          <Orchestrators />
+          <Box sx={{ mb: 3 }}>
+            <Flex
+              sx={{
+                justifyContent: 'space-between',
+                mb: 2,
+                alignItems: 'center',
+              }}
+            >
+              <Styled.h2 sx={{ fontWeight: 500, fontSize: 18 }}>
+                Top Orchestrators
+              </Styled.h2>
+              <Link href="/orchestrators" passHref>
+                <a sx={{ fontSize: 1, pr: 3 }}>See All</a>
+              </Link>
+            </Flex>
+            <Orchestrators />
+          </Box>
+          <Box>
+            <Flex
+              sx={{
+                justifyContent: 'space-between',
+                mb: 2,
+                alignItems: 'center',
+              }}
+            >
+              <Styled.h2 sx={{ fontWeight: 500, fontSize: 18 }}>
+                Winning Tickets
+              </Styled.h2>
+            </Flex>
+            <WinningTickets />
+          </Box>
         </Flex>
       </Flex>
     </>

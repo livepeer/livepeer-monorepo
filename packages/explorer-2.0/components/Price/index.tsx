@@ -1,7 +1,7 @@
 import { Box } from 'theme-ui'
 import Utils from 'web3-utils'
 
-const Index = ({ value, per, useEthSymbol = true }) => {
+const Index = ({ value, per }) => {
   if (per === '1m pixels') {
     return (
       <Box sx={{ fontFamily: 'monospace' }}>

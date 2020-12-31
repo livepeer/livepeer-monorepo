@@ -51,10 +51,11 @@ const GlobalChart = ({ display }) => {
       {display === 'volume' && (
         <ResponsiveContainer aspect={60 / 28}>
           <TradingviewChart
-            // only show volume after this date (5.13.20) because we don't start
-            // tracking volume in USD until Uniswap V2
+            // Let's start showing volume around April 2020,
+            // a few months after streamflow launch, since the first few months
+            // don't tell much of a story
             data={data.chartData.weeklyData.filter(
-              (obj) => obj.date > 1589328000,
+              (obj) => obj.date > 1585699200,
             )}
             base={data.chartData.oneWeekVolume}
             baseChange={data.chartData.weeklyVolumeChange}

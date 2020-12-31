@@ -283,11 +283,11 @@ const createSchema = async () => {
           (t) =>
             t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase(),
         )[0]
-        
-        if(delegator?.delegate) {
+
+        if (delegator?.delegate) {
           delegator.delegate.price = transcoderWithPrice?.PricePerPixel
-          ? transcoderWithPrice?.PricePerPixel
-          : 0
+            ? transcoderWithPrice?.PricePerPixel
+            : 0
         }
 
         return delegator

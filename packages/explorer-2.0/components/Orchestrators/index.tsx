@@ -101,7 +101,7 @@ const Index = ({ pageSize = 10, title = '' }) => {
   } = useQuery(orchestratorsViewQuery, {
     variables,
     notifyOnNetworkStatusChange: true,
-    pollInterval: 20000,
+    pollInterval,
     context: {
       since: timeframe === '1W' ? oneWeekAgo : oneDayAgo,
     },

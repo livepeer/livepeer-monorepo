@@ -542,6 +542,101 @@ function renderSwitch(event: any, i: number) {
           </Flex>
         </ListItem>
       )
+    case 'DepositFundedEvent':
+      return (
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
+          }
+          key={i}
+          avatar={
+            <ETH sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
+          }
+        >
+          <Flex
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Box>Deposit Funded</Box>
+              <Box sx={{ fontSize: 12, color: 'muted' }}>
+                {moment
+                  .unix(event.transaction.timestamp)
+                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
+                -- Round #{event.round.id}
+              </Box>
+            </Box>
+            <div sx={{ fontSize: 1, ml: 3 }}>
+              {' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                +{abbreviateNumber(event.amount, 3)}
+              </span>{' '}
+              ETH
+            </div>
+          </Flex>
+        </ListItem>
+      )
+    case 'ReserveFundedEvent':
+      // Ignore funded reserve events where amount is 0
+      // (unable to do this on the graphql query as of now)
+      if (+event.amount === 0) {
+        return
+      }
+      return (
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
+          }
+          key={i}
+          avatar={
+            <ETH sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
+          }
+        >
+          <Flex
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Box>Reserve Funded</Box>
+              <Box sx={{ fontSize: 12, color: 'muted' }}>
+                {moment
+                  .unix(event.transaction.timestamp)
+                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
+                -- Round #{event.round.id}
+              </Box>
+            </Box>
+            <div sx={{ fontSize: 1, ml: 3 }}>
+              {' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                +{abbreviateNumber(event.amount, 3)}
+              </span>{' '}
+              ETH
+            </div>
+          </Flex>
+        </ListItem>
+      )
     default:
       return null
   }
