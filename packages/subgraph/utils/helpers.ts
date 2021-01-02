@@ -103,7 +103,11 @@ export function getLivepeerTokenAddress(network: string): string {
   }
 }
 
-export function getDaiEthPairAddress(): string {
+export function getUniswapV1DaiEthExchangeAddress(): string {
+  return '2a1530C4C41db0B0b2bB646CB5Eb1A67b7158667'
+}
+
+export function getUniswapV2DaiEthPairAddress(): string {
   return 'a478c2975ab1ea89e8196811f51a7b7ade33eb11'
 }
 

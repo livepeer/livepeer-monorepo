@@ -135,8 +135,10 @@ dataSources:
       abis:
         - name: TicketBroker
           file: ./abis/TicketBroker.json
-        - name: UniswapPairV2
-          file: ./abis/UniswapPairV2.json
+        - name: UniswapV1Exchange
+          file: ./abis/UniswapV1Exchange.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
       entities:
         - Transaction
         - Day
