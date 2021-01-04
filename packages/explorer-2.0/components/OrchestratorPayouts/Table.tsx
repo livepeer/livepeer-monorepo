@@ -85,7 +85,7 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
         accessor: 'deactivationRound',
       },
       {
-        Header: 'Face Value',
+        Header: 'Amount',
         accessor: 'faceValue',
       },
       {
@@ -313,7 +313,7 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                             </Link>
                           </TableCell>
                         )
-                      case 'Face Value':
+                      case 'Amount':
                         return (
                           <TableCell
                             cell={cell}

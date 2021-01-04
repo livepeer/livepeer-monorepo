@@ -12,7 +12,7 @@ import { useEffect } from 'react'
 import { usePageVisibility } from '../hooks'
 import accountQuery from '../queries/account.gql'
 import GlobalChart from '../components/GlobalChart'
-import WinningTickets from '../components/WinningTickets'
+import OrchestratorPayouts from '../components/OrchestratorPayouts'
 import Link from 'next/link'
 import { withApollo, getStaticApolloProps } from '../apollo'
 
@@ -144,10 +144,10 @@ const Home = () => {
               }}
             >
               <Styled.h2 sx={{ fontWeight: 500, fontSize: 18 }}>
-                Winning Tickets
+                Orchestrator Payouts
               </Styled.h2>
             </Flex>
-            <WinningTickets />
+            <OrchestratorPayouts />
           </Box>
         </Flex>
       </Flex>
