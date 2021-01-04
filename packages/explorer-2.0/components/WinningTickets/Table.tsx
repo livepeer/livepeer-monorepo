@@ -318,11 +318,24 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{ fontFamily: 'monospace' }}
+                            pushSx={{ fontSize: '12px' }}
                           >
-                            <span>{parseFloat((+cell.value).toFixed(3))}</span>{' '}
-                            <span sx={{ fontSize: 12 }}>ETH</span> (
-                            <span>
+                            <Box
+                              sx={{
+                                display: 'inline-block',
+                                background: 'rgba(255,255,255,.06)',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                mr: 1,
+                              }}
+                            >
+                              <span sx={{ fontFamily: 'monospace' }}>
+                                {parseFloat((+cell.value).toFixed(3))}
+                              </span>{' '}
+                              <span>ETH</span>
+                            </Box>
+                            (
+                            <span sx={{ fontFamily: 'monospace' }}>
                               $
                               {parseFloat(
                                 (+cell.row.values.faceValueUSD).toFixed(2),
