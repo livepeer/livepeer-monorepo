@@ -61,7 +61,7 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
   const columns: any = useMemo(
     () => [
       {
-        Header: 'Recipient',
+        Header: 'Orchestrator',
         accessor: 'recipient',
         filter: 'fuzzyText',
         Filter: DefaultColumnFilter,
@@ -280,7 +280,7 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                 >
                   {row.cells.map((cell, i) => {
                     switch (cell.column.Header) {
-                      case 'Recipient':
+                      case 'Orchestrator':
                         const active =
                           cell.row.values.recipient.activationRound <=
                             currentRound.id &&
