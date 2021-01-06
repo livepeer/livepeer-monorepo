@@ -55,7 +55,7 @@ const Index = () => {
   }
 
   const events = data.transactions.reduce(
-    (res, { events }) => res.concat(...events),
+    (res, { events }) => res.concat(events),
     [],
   )
 
