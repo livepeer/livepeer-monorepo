@@ -16,78 +16,37 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       file: ./src/mappings/bondingManager.ts
-      entities:
-        - Transcoder
-        - Pool
-        - Delegator
-        - TranscoderUpdated
-        - TranscoderResigned
-        - TranscoderEvicted
-        - TranscoderSlashed
-        - Bond
-        - Unbond
-        - Reward
-        - EarningsClaimed
-        - WithdrawFees
-        - WithdrawStake
-        - WithdrawFees
-        - Round
-        - ParameterUpdate
-        - Protocol
       abis:
         - name: BondingManager
           file: ./abis/BondingManager.json
-      eventHandlers:
-        - event: TranscoderUpdate(indexed address,uint256,uint256,uint256,bool)
-          handler: transcoderUpdated
-        - event: TranscoderResigned(indexed address)
-          handler: transcoderResigned
-        - event: TranscoderEvicted(indexed address)
-          handler: transcoderEvicted
-        - event: TranscoderSlashed(indexed address,address,uint256,uint256)
-          handler: transcoderSlashed
-        - event: Unbond(indexed address,indexed address)
-          handler: unbond
-        - event: Reward(indexed address,uint256)
-          handler: reward
-        - event: WithdrawStake(indexed address)
-          handler: withdrawStake
-        - event: WithdrawFees(indexed address)
-          handler: withdrawFees
-        - event: ParameterUpdate(string)
-          handler: parameterUpdate
-      {{#ifEquals networkName "mainnet"}}
-      callHandlers:
-        - function: claimEarnings(uint256)
-          handler: claimEarnings
-        - function: bond(uint256,address)
-          handler: bond
-      {{/ifEquals}}
-  - kind: ethereum/contract
-    name: BondingManager_LIP11
-    network: {{networkName}}
-    source:
-      startBlock: {{contracts.bondingManager_LIP11.startBlock}}
-      address: {{contracts.bondingManager_LIP11.address}}
-      abi: BondingManager
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/bondingManager_LIP11.ts
       entities:
-        - Transcoder
-        - Delegator
-        - UnbondingLock
-        - Bond
-        - Unbond
-        - Rebond
-        - WithdrawStake
-        - Round
-      abis:
-        - name: BondingManager
-          file: ./abis/BondingManager_LIP11.json
+          - BondEvent
+          - Delegator
+          - EarningsClaimedEvent
+          - ParameterUpdateEvent
+          - Pool
+          - Protocol
+          - RebondEvent
+          - RewardEvent
+          - Transaction
+          - Transcoder
+          - TranscoderActivatedEvent
+          - TranscoderDeactivatedEvent
+          - TranscoderSlashedEvent
+          - TranscoderUpdateEvent
+          - UnbondEvent
+          - UnbondingLock
+          - WithdrawFeesEvent
+          - WithdrawStakeEvent
       eventHandlers:
+        - event: TranscoderUpdate(indexed address,uint256,uint256)
+          handler: transcoderUpdate
+        - event: TranscoderActivated(indexed address,uint256)
+          handler: transcoderActivated
+        - event: TranscoderDeactivated(indexed address,uint256)
+          handler: transcoderDeactivated
+        - event: EarningsClaimed(indexed address,indexed address,uint256,uint256,uint256,uint256)
+          handler: earningsClaimed
         - event: Bond(indexed address,indexed address,indexed address,uint256,uint256)
           handler: bond
         - event: Unbond(indexed address,indexed address,uint256,uint256,uint256)
@@ -96,37 +55,12 @@ dataSources:
           handler: rebond
         - event: WithdrawStake(indexed address,uint256,uint256,uint256)
           handler: withdrawStake
-  - kind: ethereum/contract
-    name: BondingManager_streamflow
-    network: {{networkName}}
-    source:
-      startBlock: {{contracts.bondingManager_streamflow.startBlock}}
-      address: {{contracts.bondingManager_streamflow.address}}
-      abi: BondingManager
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/bondingManager_streamflow.ts
-      entities:
-        - Transcoder
-        - Delegator
-        - TranscoderUpdated
-        - TranscoderActivated
-        - TranscoderDeactivated
-        - EarningsClaimed
-      abis:
-        - name: BondingManager
-          file: ./abis/BondingManager_streamflow.json
-      eventHandlers:
-        - event: TranscoderUpdate(indexed address,uint256,uint256)
-          handler: transcoderUpdated
-        - event: TranscoderActivated(indexed address,uint256)
-          handler: transcoderActivated
-        - event: TranscoderDeactivated(indexed address,uint256)
-          handler: transcoderDeactivated
-        - event: EarningsClaimed(indexed address,indexed address,uint256,uint256,uint256,uint256)
-          handler: earningsClaimed
+        - event: Reward(indexed address,uint256)
+          handler: reward
+        - event: WithdrawFees(indexed address)
+          handler: withdrawFees
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
   - kind: ethereum/contract
     name: RoundsManager
     network: {{networkName}}
@@ -139,52 +73,27 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       file: ./src/mappings/roundsManager.ts
-      entities:
-        - Transcoder
-        - Pool
-        - Round
-        - InitializeRound
-        - ParameterUpdate
-        - Protocol
       abis:
         - name: RoundsManager
           file: ./abis/RoundsManager.json
         - name: BondingManager
-          file: ./abis/BondingManager_LIP11.json
+          file: ./abis/BondingManager.json
         - name: LivepeerToken
           file: ./abis/LivepeerToken.json
-      eventHandlers:
-        - event: NewRound(uint256)
-          handler: newRound
-        - event: ParameterUpdate(string)
-          handler: parameterUpdate
-  - kind: ethereum/contract
-    name: RoundsManager_streamflow
-    network: {{networkName}}
-    source:
-      startBlock: {{contracts.roundsManager_streamflow.startBlock}}
-      address: {{contracts.roundsManager_streamflow.address}}
-      abi: RoundsManager
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/roundsManager_streamflow.ts
       entities:
-        - Transcoder
+        - Day
+        - NewRoundEvent
+        - ParameterUpdateEvent
         - Pool
+        - Protocol
         - Round
-        - InitializeRound
-      abis:
-        - name: RoundsManager
-          file: ./abis/RoundsManager_streamflow.json
-        - name: BondingManager
-          file: ./abis/BondingManager_streamflow.json
-        - name: LivepeerToken
-          file: ./abis/LivepeerToken.json
+        - Transaction
+        - Transcoder
       eventHandlers:
         - event: NewRound(indexed uint256,bytes32)
           handler: newRound
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
   - kind: ethereum/contract
     name: Minter
     network: {{networkName}}
@@ -197,39 +106,15 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       file: ./src/mappings/minter.ts
-      entities:
-        - Round
-        - Protocol
-        - ParameterUpdate
-        - SetCurrentRewardTokens
       abis:
         - name: Minter
           file: ./abis/Minter.json
-      eventHandlers:
-        - event: SetCurrentRewardTokens(uint256,uint256)
-          handler: setCurrentRewardTokens
-        - event: ParameterUpdate(string)
-          handler: parameterUpdate
-  - kind: ethereum/contract
-    name: Minter_LIP40
-    network: {{networkName}}
-    source:
-      startBlock: {{contracts.minter_LIP40.startBlock}}
-      address: {{contracts.minter_LIP40.address}}
-      abi: Minter
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/minter.ts
       entities:
         - Round
+        - Transaction
         - Protocol
-        - ParameterUpdate
-        - SetCurrentRewardTokens
-      abis:
-        - name: Minter
-          file: ./abis/Minter.json
+        - ParameterUpdateEvent
+        - SetCurrentRewardTokensEvent
       eventHandlers:
         - event: SetCurrentRewardTokens(uint256,uint256)
           handler: setCurrentRewardTokens
@@ -246,21 +131,26 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/ticketBroker.ts   
-      entities:
-        - Protocol
-        - Broadcaster
-        - WinningTicketRedeemed
-        - Round
-        - ReserveFunded
-        - ReserveClaimed
-        - DepositFunded
-        - Withdrawal
+      file: ./src/mappings/ticketBroker.ts
       abis:
         - name: TicketBroker
           file: ./abis/TicketBroker.json
+        - name: UniswapV1Exchange
+          file: ./abis/UniswapV1Exchange.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
+      entities:
+        - Transaction
+        - Day
+        - Protocol
+        - Transcoder
+        - Broadcaster
+        - Round
+        - WinningTicketRedeemedEvent
+        - ReserveFundedEvent
+        - ReserveClaimedEvent
+        - DepositFundedEvent
+        - WithdrawalEvent
       eventHandlers:
         - event: WinningTicketRedeemed(indexed address,indexed address,uint256,uint256,uint256,uint256,bytes)
           handler: winningTicketRedeemed
@@ -283,14 +173,13 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/controller.ts   
-      entities:
-        - Protocol
-        - Pause
-        - Unpause
+      file: ./src/mappings/controller.ts
       abis:
         - name: Controller
           file: ./abis/Controller.json
+      entities:
+        - Pause
+        - Unpause
       eventHandlers:
         - event: Pause()
           handler: pause
@@ -307,13 +196,15 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/pollCreator.ts   
-      entities:
-        - PollCreated
-        - Poll
+      file: ./src/mappings/pollCreator.ts
       abis:
         - name: PollCreator
           file: ./abis/PollCreator.json
+      entities:
+        - Transaction
+        - Protocol
+        - Poll
+        - PollCreatedEvent 
       eventHandlers:
         - event: PollCreated(indexed address,bytes,uint256,uint256,uint256)
           handler: pollCreated
@@ -329,11 +220,14 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       file: ./src/mappings/serviceRegistry.ts   
-      entities:
-        - Transcoder
       abis:
         - name: ServiceRegistry
           file: ./abis/ServiceRegistry.json
+      entities:
+        - Transaction
+        - Transcoder
+        - Protocol
+        - ServiceURIUpdateEvent
       eventHandlers:
         - event: ServiceURIUpdate(indexed address,string)
           handler: serviceURIUpdate
@@ -349,16 +243,136 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       file: ./src/mappings/livepeerToken.ts 
-      entities:
-        - Protocol
       abis:
         - name: LivepeerToken
           file: ./abis/LivepeerToken.json
+      entities:
+        - Transaction
+        - MintEvent
+        - BurnEvent
+        - Day
+        - Protocol
+        - Round
       eventHandlers:
         - event: Mint(indexed address,uint256)
           handler: mint
         - event: Burn(indexed address,uint256)
           handler: burn
+  
+###############################################################################
+#
+# Deprecated data sources
+# https://github.com/livepeer/wiki/blob/master/Deployed-Contract-Addresses.md#mainnet-deprecated
+#
+###############################################################################
+  - kind: ethereum/contract
+    name: BondingManagerV1
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.bondingManager.startBlock}}
+      address: {{contracts.bondingManager.address}}
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/bondingManager_deprecated.ts
+      abis:
+        - name: BondingManager
+          file: ./abis/BondingManagerV1.json
+      entities:
+        - BondEvent
+        - Delegator
+        - EarningsClaimedEvent
+        - ParameterUpdateEvent
+        - Pool
+        - Protocol
+        - RewardEvent
+        - Round
+        - Transaction
+        - Transcoder
+        - TranscoderEvictedEvent
+        - TranscoderResignedEvent
+        - TranscoderSlashedEvent
+        - TranscoderUpdateEvent
+        - UnbondEvent
+        - WithdrawFeesEvent
+        - WithdrawStakeEvent
+      eventHandlers:
+        - event: TranscoderUpdate(indexed address,uint256,uint256,uint256,bool)
+          handler: transcoderUpdate
+        - event: TranscoderResigned(indexed address)
+          handler: transcoderResigned
+        - event: TranscoderEvicted(indexed address)
+          handler: transcoderEvicted
+        - event: TranscoderSlashed(indexed address,address,uint256,uint256)
+          handler: transcoderSlashed
+        - event: Unbond(indexed address,indexed address)
+          handler: unbond
+        - event: WithdrawStake(indexed address)
+          handler: withdrawStake    
+      {{#ifEquals networkName "mainnet"}}
+      callHandlers:
+        - function: claimEarnings(uint256)
+          handler: claimEarnings
+        - function: bond(uint256,address)
+          handler: bond
+      {{/ifEquals}}
+  - kind: ethereum/contract
+    name: RoundsManagerV1
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.roundsManager.startBlock}}
+      address: {{contracts.roundsManager.address}}
+      abi: RoundsManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/roundsManager_deprecated.ts
+      abis:
+        - name: RoundsManager
+          file: ./abis/RoundsManagerV1.json
+        - name: BondingManager
+          file: ./abis/BondingManagerV1.json
+        - name: LivepeerToken
+          file: ./abis/LivepeerToken.json
+      entities:
+        - Transaction
+        - Transcoder
+        - Pool
+        - Protocol
+        - NewRoundEvent
+        - Day
+      eventHandlers:
+        - event: NewRound(uint256)
+          handler: newRound
+  - kind: ethereum/contract
+    name: MinterV1
+    network: {{networkName}}
+    source:
+      startBlock: {{contracts.minterV1.startBlock}}
+      address: {{contracts.minterV1.address}}
+      abi: Minter
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/minter.ts
+      abis:
+        - name: Minter
+          file: ./abis/Minter.json
+      entities:
+        - Round
+        - Transaction
+        - Protocol
+        - ParameterUpdateEvent
+        - SetCurrentRewardTokensEvent
+      eventHandlers:
+        - event: SetCurrentRewardTokens(uint256,uint256)
+          handler: setCurrentRewardTokens
+        - event: ParameterUpdate(string)
+          handler: parameterUpdate
 ###############################################################################
 #
 # Data source templates
@@ -378,14 +392,14 @@ templates:
       file: ./src/mappings/pollTallyHandlers.ts
       abis:
         - name: BondingManager
-          file: ./abis/BondingManager_streamflow.json
+          file: ./abis/BondingManager.json
       entities:
-        - Delegator
-        - Protocol
-        - Poll,
-        - Vote
-        - Transcoder
-        - PollTally
+        - BondingManager
+        - Reward
+        - Bond
+        - Unbond
+        - Rebond
+        - EarningsClaimed
       eventHandlers:
         - event: Reward(indexed address,uint256)
           handler: updatePollTallyOnReward
@@ -411,10 +425,16 @@ templates:
         - name: Poll
           file: ./abis/Poll.json
         - name: BondingManager
-          file: ./abis/BondingManager_streamflow.json
+          file: ./abis/BondingManager.json
       entities:
+        - Transaction
+        - Protocol
         - Poll
+        - PollTally
         - Vote
+        - Delegator
+        - Transcoder
+        - VoteEvent
       eventHandlers:
         - event: Vote(indexed address,uint256)
           handler: vote

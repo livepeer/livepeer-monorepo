@@ -1,12 +1,13 @@
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
-import { Vote as VoteEvent } from '../types/templates/Poll/Poll'
+import { BigDecimal } from '@graphprotocol/graph-ts'
+import { Vote as VoteEventParam } from '../types/templates/Poll/Poll'
 import {
-  Protocol,
+  Transaction,
   Poll,
   PollTally,
   Vote,
   Delegator,
   Transcoder,
+  VoteEvent,
 } from '../types/schema'
 import {
   makeVoteId,
@@ -15,12 +16,15 @@ import {
   ZERO_BD,
   ZERO_BI,
   ONE_BI,
+  makeEventId,
+  createOrLoadRound,
 } from '../../utils/helpers'
 import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
 import { PollTallyTemplate } from '../types/templates'
-import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
+import { BondingManager } from '../types/BondingManager/BondingManager'
+import { integer } from '@protofire/subgraph-toolkit'
 
-export function vote(event: VoteEvent): void {
+export function vote(event: VoteEventParam): void {
   // Vote must be a "Yes" or "No"
   if (
     event.params.choiceID.notEqual(ZERO_BI) &&
@@ -28,7 +32,7 @@ export function vote(event: VoteEvent): void {
   ) {
     return
   }
-
+  let round = createOrLoadRound(event.block.number)
   let poll = Poll.load(event.address.toHex()) as Poll
   let voteId = makeVoteId(event.params.voter.toHex(), poll.id)
 
@@ -64,7 +68,7 @@ export function vote(event: VoteEvent): void {
 
       // If voter is a registered transcoder
       if (event.params.voter.toHex() == delegator.delegate) {
-        vote.voteStake = delegate.totalStake
+        vote.voteStake = delegate.totalStake as BigDecimal
         vote.registeredTranscoder = true
       } else {
         let bondingManagerAddress = getBondingManagerAddress(
@@ -73,11 +77,10 @@ export function vote(event: VoteEvent): void {
         let bondingManager = BondingManager.bind(
           Address.fromString(bondingManagerAddress),
         )
-        let protocol = Protocol.load('0') || new Protocol('0')
         let pendingStake = convertToDecimal(
           bondingManager.pendingStake(
             event.params.voter,
-            BigInt.fromI32(protocol.currentRound as i32),
+            integer.fromString(round.id),
           ),
         )
         vote.voteStake = pendingStake
@@ -118,6 +121,28 @@ export function vote(event: VoteEvent): void {
   if (vote.voteStake) {
     tallyVotes(poll)
   }
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let voteEvent = new VoteEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  voteEvent.transaction = event.transaction.hash.toHex()
+  voteEvent.timestamp = event.block.timestamp.toI32()
+  voteEvent.round = round.id
+  voteEvent.choiceID = event.params.choiceID
+  voteEvent.voter = event.params.voter.toHex()
+  voteEvent.poll = event.address.toHex()
+  voteEvent.save()
 }
 
 export function tallyVotes(poll: Poll): void {
@@ -132,7 +157,9 @@ export function tallyVotes(poll: Poll): void {
     v = Vote.load(votes[i]) as Vote
 
     // Only subtract nonVoteStake if delegate was registered during poll period
-    nonVoteStake = v.registeredTranscoder ? v.nonVoteStake as BigDecimal : ZERO_BD
+    nonVoteStake = v.registeredTranscoder
+      ? (v.nonVoteStake as BigDecimal)
+      : ZERO_BD
 
     if (v.choiceID == 'Yes') {
       pollTally.yes = pollTally.yes.plus(v.voteStake.minus(nonVoteStake))

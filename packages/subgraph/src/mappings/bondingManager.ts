@@ -1,482 +1,371 @@
-import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+// Import types and APIs from graph-ts
+import { store } from '@graphprotocol/graph-ts'
 
 // Import event types from the registrar contract ABIs
 import {
   BondingManager,
-  ClaimEarningsCall,
-  BondCall,
-  Unbond as UnbondEvent,
-  WithdrawStake as WithdrawStakeEvent,
-  TranscoderUpdate as TranscoderUpdateEvent,
-  TranscoderResigned as TranscoderResignedEvent,
-  TranscoderEvicted as TranscoderEvictedEvent,
-  TranscoderSlashed as TranscoderSlashedEvent,
-  WithdrawFees as WithdrawFeesEvent,
-  ParameterUpdate as ParameterUpdateEvent,
-  Reward as RewardEvent,
-} from '../types/BondingManager/BondingManager'
-
-// Import entity types generated from the GraphQL schema
-import {
-  Transcoder,
-  Delegator,
-  Pool,
-  TranscoderUpdated,
-  TranscoderSlashed,
-  TranscoderResigned,
-  TranscoderEvicted,
+  WithdrawStake,
   Bond,
   Unbond,
-  Reward,
-  EarningsClaimed,
-  WithdrawStake,
+  Rebond,
   WithdrawFees,
+  Reward,
+  TranscoderSlashed,
+  TranscoderUpdate,
+  TranscoderActivated,
+  TranscoderDeactivated,
+  EarningsClaimed,
   ParameterUpdate,
-  Round,
+} from '../types/BondingManager/BondingManager'
+
+import {
+  BondEvent,
+  Delegator,
+  EarningsClaimedEvent,
+  ParameterUpdateEvent,
+  Pool,
   Protocol,
+  RebondEvent,
+  RewardEvent,
+  Transaction,
+  Transcoder,
+  TranscoderActivatedEvent,
+  TranscoderDeactivatedEvent,
+  TranscoderSlashedEvent,
+  TranscoderUpdateEvent,
+  UnbondEvent,
+  UnbondingLock,
+  WithdrawFeesEvent,
+  WithdrawStakeEvent,
 } from '../types/schema'
 
 import {
-  makePoolId,
+  makeUnbondingLockId,
   makeEventId,
+  EMPTY_ADDRESS,
   convertToDecimal,
-  ZERO_BD,
+  createOrLoadTranscoder,
+  createOrLoadDelegator,
+  createOrLoadRound,
+  makePoolId,
+  MAXIMUM_VALUE_UINT256,
+  createOrLoadProtocol,
 } from '../../utils/helpers'
 
-// Handler for TranscoderUpdate events
-export function transcoderUpdated(event: TranscoderUpdateEvent): void {
+export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address)
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let transcoder =
-    Transcoder.load(event.params.transcoder.toHex()) ||
-    new Transcoder(event.params.transcoder.toHex())
-
-  let active = bondingManager.isActiveTranscoder(
-    event.params.transcoder,
-    BigInt.fromI32(protocol.currentRound as i32),
-  )
-
-  // Update transcoder
-  transcoder.delegator = event.params.transcoder.toHex()
-  transcoder.pendingRewardCut = event.params.pendingRewardCut
-  transcoder.pendingFeeShare = event.params.pendingFeeShare
-  transcoder.pendingPricePerSegment = event.params.pendingPricePerSegment
-  transcoder.active = active
-
-  // Apply store updates
-  transcoder.save()
-
-  // Store transaction info
-  let transcoderUpdated = new TranscoderUpdated(
-    makeEventId(event.transaction.hash, event.logIndex),
-  )
-  transcoderUpdated.hash = event.transaction.hash.toHex()
-  transcoderUpdated.blockNumber = event.block.number
-  transcoderUpdated.gasUsed = event.transaction.gasUsed
-  transcoderUpdated.gasPrice = event.transaction.gasPrice
-  transcoderUpdated.timestamp = event.block.timestamp
-  transcoderUpdated.from = event.transaction.from.toHex()
-  transcoderUpdated.to = event.transaction.to.toHex()
-  transcoderUpdated.round = protocol.currentRound
-  transcoderUpdated.delegate = event.params.transcoder.toHex()
-  transcoderUpdated.rewardCut = event.params.pendingRewardCut
-  transcoderUpdated.feeShare = event.params.pendingFeeShare
-  transcoderUpdated.save()
-}
-
-// Handler for TranscoderResigned events
-export function transcoderResigned(event: TranscoderResignedEvent): void {
-  let transcoder = Transcoder.load(event.params.transcoder.toHex())
-  let protocol = Protocol.load('0') || new Protocol('0')
-
-  // Update transcoder
-  transcoder.active = false
-  transcoder.status = 'NotRegistered'
-  transcoder.delegator = null
-
-  // Apply store updates
-  transcoder.save()
-
-  // Store transaction info
-  let transcoderResigned = new TranscoderResigned(
-    makeEventId(event.transaction.hash, event.logIndex),
-  )
-  transcoderResigned.hash = event.transaction.hash.toHex()
-  transcoderResigned.blockNumber = event.block.number
-  transcoderResigned.gasUsed = event.transaction.gasUsed
-  transcoderResigned.gasPrice = event.transaction.gasPrice
-  transcoderResigned.timestamp = event.block.timestamp
-  transcoderResigned.from = event.transaction.from.toHex()
-  transcoderResigned.to = event.transaction.to.toHex()
-  transcoderResigned.round = protocol.currentRound
-  transcoderResigned.delegate = event.params.transcoder.toHex()
-  transcoderResigned.save()
-}
-
-// Handler for TranscoderEvicted events
-export function transcoderEvicted(event: TranscoderEvictedEvent): void {
-  let transcoder = Transcoder.load(event.params.transcoder.toHex())
-  let protocol = Protocol.load('0') || new Protocol('0')
-
-  // Update transcoder
-  transcoder.active = false
-
-  // Apply store updates
-  transcoder.save()
-
-  let transcoderEvicted = new TranscoderEvicted(
-    makeEventId(event.transaction.hash, event.logIndex),
-  )
-  transcoderEvicted.hash = event.transaction.hash.toHex()
-  transcoderEvicted.blockNumber = event.block.number
-  transcoderEvicted.gasUsed = event.transaction.gasUsed
-  transcoderEvicted.gasPrice = event.transaction.gasPrice
-  transcoderEvicted.timestamp = event.block.timestamp
-  transcoderEvicted.from = event.transaction.from.toHex()
-  transcoderEvicted.to = event.transaction.to.toHex()
-  transcoderEvicted.round = protocol.currentRound
-  transcoderEvicted.delegate = event.params.transcoder.toHex()
-  transcoderEvicted.save()
-}
-
-// Handler for TranscoderSlashed events
-export function transcoderSlashed(event: TranscoderSlashedEvent): void {
-  let transcoder = Transcoder.load(event.params.transcoder.toHex())
-  let bondingManager = BondingManager.bind(event.address)
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let delegateData = bondingManager.getDelegator(event.params.transcoder)
-
-  // Update transcoder total stake
-  transcoder.totalStake = convertToDecimal(delegateData.value3)
-
-  // Apply store updates
-  transcoder.save()
-
-  // Store transaction info
-  let transcoderSlashed = new TranscoderSlashed(
-    makeEventId(event.transaction.hash, event.logIndex),
-  )
-
-  transcoderSlashed.hash = event.transaction.hash.toHex()
-  transcoderSlashed.blockNumber = event.block.number
-  transcoderSlashed.gasUsed = event.transaction.gasUsed
-  transcoderSlashed.gasPrice = event.transaction.gasPrice
-  transcoderSlashed.timestamp = event.block.timestamp
-  transcoderSlashed.from = event.transaction.from.toHex()
-  transcoderSlashed.to = event.transaction.to.toHex()
-  transcoderSlashed.round = protocol.currentRound
-  transcoderSlashed.delegate = event.params.transcoder.toHex()
-  transcoderSlashed.save()
-}
-
-export function bond(call: BondCall): void {
-  // After LIP11 was deployed (at block 6192000), we no longer have to rely on
-  // this call handler to get the amount bonded.
-  // https://forum.livepeer.org/t/tributary-release-protocol-upgrade/354
-  if (call.block.number.le(BigInt.fromI32(6192000))) {
-    let bondingManager = BondingManager.bind(call.to)
-    let newDelegateAddress = call.inputs._to
-    let delegatorAddress = call.from
-    let amount = convertToDecimal(call.inputs._amount)
-    let delegatorData = bondingManager.getDelegator(delegatorAddress)
-    let delegateData = bondingManager.getDelegator(newDelegateAddress)
-    let protocol = Protocol.load('0') || new Protocol('0')
-    let round = Round.load(protocol.currentRound)
-    let transcoder =
-      Transcoder.load(newDelegateAddress.toHex()) ||
-      new Transcoder(newDelegateAddress.toHex())
-    let delegator =
-      Delegator.load(delegatorAddress.toHex()) ||
-      new Delegator(delegatorAddress.toHex())
-    let delegate =
-      Delegator.load(newDelegateAddress.toHex()) ||
-      new Delegator(newDelegateAddress.toHex())
-
-    // If self delegating, set status and assign reference to self
-    if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
-      transcoder.status = 'Registered'
-      transcoder.delegator = delegatorAddress.toHex()
-    }
-
-    // Changing delegate
-    if (
-      delegator.delegate != null &&
-      delegator.delegate != newDelegateAddress.toHex()
-    ) {
-      let oldTranscoder = Transcoder.load(delegator.delegate) as Transcoder
-      let oldDelegate = Delegator.load(delegator.delegate) as Delegator
-
-      // if previous delegate was itself, set status and unassign reference to self
-      if (delegator.delegate == delegatorAddress.toHex()) {
-        oldTranscoder.status = 'NotRegistered'
-        oldTranscoder.delegator = null
-      }
-
-      let delegateData = bondingManager.getDelegator(
-        Address.fromString(oldTranscoder.id),
-      )
-
-      oldTranscoder.totalStake = convertToDecimal(delegateData.value3)
-      oldDelegate.delegatedAmount = convertToDecimal(delegateData.value3)
-
-      oldDelegate.save()
-      oldTranscoder.save()
-
-      // keep track of how much new stake was moved this round
-      round.movedStake = round.movedStake.plus(
-        convertToDecimal(delegatorData.value0).minus(amount),
-      )
-
-      // keep track of how much new stake was introduced this round
-      round.newStake = round.newStake.plus(amount)
-
-      round.save()
-    }
-
-    transcoder.totalStake = convertToDecimal(delegateData.value3)
-    delegate.delegatedAmount = convertToDecimal(delegateData.value3)
-
-    // delegator rebonding
-    if (!delegator.delegate && delegator.bondedAmount.gt(ZERO_BD)) {
-      delegator.unbonded = delegator.unbonded.minus(
-        delegator.bondedAmount as BigDecimal,
-      )
-    }
-
-    delegator.delegate = newDelegateAddress.toHex()
-    delegator.lastClaimRound = protocol.currentRound
-    delegator.bondedAmount = convertToDecimal(delegatorData.value0)
-    delegator.fees = convertToDecimal(delegatorData.value1)
-    delegator.startRound = delegatorData.value4
-
-    delegator.principal = delegator.principal.plus(amount)
-
-    delegate.save()
-    delegator.save()
-    transcoder.save()
-    protocol.save()
-
-    // Store transaction info
-    let bond = new Bond(
-      makeEventId(call.transaction.hash, call.transaction.index),
-    )
-    bond.hash = call.transaction.hash.toHex()
-    bond.blockNumber = call.block.number
-    bond.gasUsed = call.transaction.gasUsed
-    bond.gasPrice = call.transaction.gasPrice
-    bond.timestamp = call.block.timestamp
-    bond.from = call.transaction.from.toHex()
-    bond.to = call.transaction.to.toHex()
-    bond.round = protocol.currentRound
-    bond.newDelegate = newDelegateAddress.toHex()
-    bond.bondedAmount = convertToDecimal(delegatorData.value0)
-    bond.additionalAmount = amount
-    bond.delegator = delegatorAddress.toHex()
-    bond.save()
-  }
-}
-
-export function unbond(event: UnbondEvent): void {
-  let bondingManager = BondingManager.bind(event.address)
-  let delegator = Delegator.load(event.params.delegator.toHex())
-  let transcoderAddress = delegator.delegate
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let transcoder =
-    Transcoder.load(transcoderAddress) || new Transcoder(transcoderAddress)
-  let delegate =
-    Delegator.load(transcoderAddress) || new Delegator(transcoderAddress)
-  let delegateData = bondingManager.getDelegator(
-    Address.fromString(transcoderAddress),
-  )
+  let delegateData = bondingManager.getDelegator(event.params.newDelegate)
   let delegatorData = bondingManager.getDelegator(event.params.delegator)
+  let protocol = Protocol.load('0')
+  let round = createOrLoadRound(event.block.number)
+  let transcoder = createOrLoadTranscoder(event.params.newDelegate.toHex())
+  let delegate = createOrLoadDelegator(event.params.newDelegate.toHex())
+  let delegator = createOrLoadDelegator(event.params.delegator.toHex())
+
+  // If self delegating, set status and assign reference to self
+  if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
+    transcoder.status = 'Registered'
+    transcoder.delegator = event.params.delegator.toHex()
+  }
+
+  // Changing delegate
+  if (
+    event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
+    event.params.oldDelegate.toHex() != event.params.newDelegate.toHex()
+  ) {
+    let oldTranscoder = Transcoder.load(event.params.oldDelegate.toHex())
+    let oldDelegate = Delegator.load(event.params.oldDelegate.toHex())
+    let delegateData = bondingManager.getDelegator(event.params.oldDelegate)
+
+    // if previous delegate was itself, set status and unassign reference to self
+    if (event.params.oldDelegate.toHex() == event.params.delegator.toHex()) {
+      oldTranscoder.status = 'NotRegistered'
+      oldTranscoder.delegator = null
+    }
+
+    oldTranscoder.totalStake = convertToDecimal(delegateData.value3)
+    oldDelegate.delegatedAmount = convertToDecimal(delegateData.value3)
+
+    oldDelegate.save()
+    oldTranscoder.save()
+
+    // keep track of how much stake moved during this round.
+    round.movedStake = round.movedStake.plus(
+      convertToDecimal(delegatorData.value0).minus(
+        convertToDecimal(event.params.additionalAmount),
+      ),
+    )
+
+    // keep track of how much new stake was introduced this round
+    round.newStake = round.newStake.plus(
+      convertToDecimal(event.params.additionalAmount),
+    )
+
+    round.save()
+  }
 
   transcoder.totalStake = convertToDecimal(delegateData.value3)
   delegate.delegatedAmount = convertToDecimal(delegateData.value3)
 
-  // Delegator no longer bonded to anyone
-  delegator.delegate = null
-  delegator.lastClaimRound = protocol.currentRound
+  delegator.delegate = event.params.newDelegate.toHex()
+  delegator.lastClaimRound = round.id
+  delegator.bondedAmount = convertToDecimal(event.params.bondedAmount)
+  delegator.fees = convertToDecimal(delegatorData.value1)
+  delegator.startRound = delegatorData.value4
+  delegator.principal = delegator.principal.plus(
+    convertToDecimal(event.params.additionalAmount),
+  )
+
+  delegate.save()
+  delegator.save()
+  transcoder.save()
+  protocol.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let bond = new BondEvent(makeEventId(event.transaction.hash, event.logIndex))
+  bond.transaction = event.transaction.hash.toHex()
+  bond.timestamp = event.block.timestamp.toI32()
+  bond.round = round.id
+  bond.newDelegate = event.params.newDelegate.toHex()
+  bond.oldDelegate = event.params.oldDelegate.toHex()
+  bond.delegator = event.params.delegator.toHex()
+  bond.bondedAmount = convertToDecimal(event.params.bondedAmount)
+  bond.additionalAmount = convertToDecimal(event.params.additionalAmount)
+  bond.save()
+}
+
+// Handler for Unbond events
+export function unbond(event: Unbond): void {
+  let bondingManager = BondingManager.bind(event.address)
+  let uniqueUnbondingLockId = makeUnbondingLockId(
+    event.params.delegator,
+    event.params.unbondingLockId,
+  )
+  let withdrawRound = event.params.withdrawRound
+  let amount = convertToDecimal(event.params.amount)
+  let delegator = Delegator.load(event.params.delegator.toHex())
+  let delegateData = bondingManager.getDelegator(event.params.delegate)
+  let protocol = Protocol.load('0')
+  let round = createOrLoadRound(event.block.number)
+  let transcoder = createOrLoadTranscoder(event.params.delegate.toHex())
+  let delegate = createOrLoadDelegator(event.params.delegate.toHex())
+  let unbondingLock =
+    UnbondingLock.load(uniqueUnbondingLockId) ||
+    new UnbondingLock(uniqueUnbondingLockId)
+
+  delegate.delegatedAmount = convertToDecimal(delegateData.value3)
+  transcoder.totalStake = convertToDecimal(delegateData.value3)
+
+  let delegatorData = bondingManager.getDelegator(event.params.delegator)
+  delegator.lastClaimRound = round.id
   delegator.bondedAmount = convertToDecimal(delegatorData.value0)
   delegator.fees = convertToDecimal(delegatorData.value1)
   delegator.startRound = delegatorData.value4
-
   delegator.unbonded = delegator.unbonded.plus(
-    convertToDecimal(delegatorData.value0),
+    convertToDecimal(event.params.amount),
   )
+
+  // Delegator no longer delegated to anyone if it does not have a bonded amount
+  // so remove it from delegate
+  if (delegatorData.value0.isZero()) {
+    // If unbonding from self and no longer has a bonded amount
+    // update transcoder status and delegator
+    if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
+      transcoder.status = 'NotRegistered'
+      transcoder.delegator = null
+    }
+
+    // Update delegator's delegate
+    delegator.delegate = null
+  }
+
+  unbondingLock.unbondingLockId = event.params.unbondingLockId.toI32()
+  unbondingLock.delegator = event.params.delegator.toHex()
+  unbondingLock.delegate = event.params.delegate.toHex()
+  unbondingLock.withdrawRound = withdrawRound
+  unbondingLock.amount = amount
 
   // Apply store updates
   delegate.save()
-  delegator.save()
   transcoder.save()
+  unbondingLock.save()
+  delegator.save()
   protocol.save()
 
-  // Store transaction info
-  let unbond = new Unbond(makeEventId(event.transaction.hash, event.logIndex))
-  unbond.hash = event.transaction.hash.toHex()
-  unbond.blockNumber = event.block.number
-  unbond.gasUsed = event.transaction.gasUsed
-  unbond.gasPrice = event.transaction.gasPrice
-  unbond.timestamp = event.block.timestamp
-  unbond.from = event.transaction.from.toHex()
-  unbond.to = event.transaction.to.toHex()
-  unbond.round = protocol.currentRound
-  unbond.amount = convertToDecimal(delegatorData.value0)
-  unbond.withdrawRound = delegatorData.value5
-  unbond.delegate = transcoderAddress
-  unbond.delegator = event.params.delegator.toHex()
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let unbond = new UnbondEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  unbond.transaction = event.transaction.hash.toHex()
+  unbond.timestamp = event.block.timestamp.toI32()
+  unbond.round = round.id
+  unbond.amount = amount
+  unbond.withdrawRound = unbondingLock.withdrawRound
+  unbond.unbondingLockId = event.params.unbondingLockId.toI32()
+  unbond.delegate = event.params.delegate.toHex()
+  unbond.delegator = delegator.id
   unbond.save()
 }
 
-// Handler for Reward events
-export function reward(event: RewardEvent): void {
-  let transcoder = Transcoder.load(event.params.transcoder.toHex())
-  let delegate = Delegator.load(event.params.transcoder.toHex())
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let poolId = makePoolId(
-    event.params.transcoder.toHex(),
-    protocol.currentRound,
+// Handler for Rebond events
+export function rebond(event: Rebond): void {
+  let bondingManager = BondingManager.bind(event.address)
+  let uniqueUnbondingLockId = makeUnbondingLockId(
+    event.params.delegator,
+    event.params.unbondingLockId,
   )
-  let pool = Pool.load(poolId)
+  let round = createOrLoadRound(event.block.number)
+  let transcoder = Transcoder.load(event.params.delegate.toHex())
+  let delegate = Delegator.load(event.params.delegate.toHex())
+  let delegator = Delegator.load(event.params.delegator.toHex())
+  let delegateData = bondingManager.getDelegator(event.params.delegate)
+  let protocol = Protocol.load('0')
 
-  delegate.delegatedAmount = delegate.delegatedAmount.plus(
-    convertToDecimal(event.params.amount),
-  )
-
-  pool.rewardTokens = convertToDecimal(event.params.amount)
-  pool.feeShare = transcoder.feeShare
-  pool.rewardCut = transcoder.rewardCut
-
-  transcoder.totalStake = transcoder.totalStake.plus(
-    convertToDecimal(event.params.amount),
-  )
-  transcoder.lastRewardRound = protocol.currentRound
-
-  transcoder.save()
-  delegate.save()
-  pool.save()
-  protocol.save()
-
-  let reward = new Reward(makeEventId(event.transaction.hash, event.logIndex))
-  reward.hash = event.transaction.hash.toHex()
-  reward.blockNumber = event.block.number
-  reward.gasUsed = event.transaction.gasUsed
-  reward.gasPrice = event.transaction.gasPrice
-  reward.timestamp = event.block.timestamp
-  reward.from = event.transaction.from.toHex()
-  reward.to = event.transaction.to.toHex()
-  reward.round = protocol.currentRound
-  reward.rewardTokens = convertToDecimal(event.params.amount)
-  reward.delegate = event.params.transcoder.toHex()
-  reward.save()
-}
-
-export function claimEarnings(call: ClaimEarningsCall): void {
-  // The Streamflow release introduced an event emitter for EarningsClaimed, so
-  // we can ignore this call handler henceforth after the block in which the
-  // protocol was paused prior to the streamflow upgrade
-  if (call.block.number.le(BigInt.fromI32(9274414))) {
-    let delegatorAddress = call.from
-    let endRound = call.inputs._endRound
-    let protocol = Protocol.load('0') || new Protocol('0')
-    let delegator =
-      Delegator.load(delegatorAddress.toHex()) ||
-      new Delegator(delegatorAddress.toHex())
-    let bondingManager = BondingManager.bind(call.to)
-    let delegatorData = bondingManager.getDelegator(delegatorAddress)
-    let bondedAmount = delegator.bondedAmount
-    let lastClaimRound = delegator.lastClaimRound
-
-    delegator.bondedAmount = convertToDecimal(delegatorData.value0)
-    delegator.fees = convertToDecimal(delegatorData.value1)
-    delegator.lastClaimRound = endRound.toString()
-    delegator.save()
-
-    let earningsClaimed = new EarningsClaimed(
-      makeEventId(call.transaction.hash, call.transaction.index),
-    )
-
-    earningsClaimed.hash = call.transaction.hash.toHex()
-    earningsClaimed.blockNumber = call.block.number
-    earningsClaimed.gasUsed = call.transaction.gasUsed
-    earningsClaimed.gasPrice = call.transaction.gasPrice
-    earningsClaimed.timestamp = call.block.timestamp
-    earningsClaimed.from = call.transaction.from.toHex()
-    earningsClaimed.to = call.transaction.to.toHex()
-    earningsClaimed.round = protocol.currentRound
-    earningsClaimed.delegate = delegator.id
-    earningsClaimed.delegator = delegatorAddress.toHex()
-    earningsClaimed.startRound = lastClaimRound.toString()
-    earningsClaimed.endRound = endRound.toString()
-    earningsClaimed.rewardTokens = convertToDecimal(delegatorData.value0).minus(
-      bondedAmount as BigDecimal,
-    )
-    earningsClaimed.fees = convertToDecimal(delegatorData.value1).minus(
-      delegator.fees as BigDecimal,
-    )
-
-    earningsClaimed.save()
+  // If rebonding from unbonded and is self-bonding then update transcoder status
+  if (
+    !delegator.delegate &&
+    event.params.delegate.toHex() == event.params.delegator.toHex()
+  ) {
+    transcoder.status = 'Registered'
+    transcoder.delegator = event.params.delegator.toHex()
   }
+
+  // update delegator
+  let delegatorData = bondingManager.getDelegator(event.params.delegator)
+  delegator.delegate = event.params.delegate.toHex()
+  delegator.startRound = delegatorData.value4
+  delegator.lastClaimRound = round.id
+  delegator.bondedAmount = convertToDecimal(delegatorData.value0)
+  delegator.fees = convertToDecimal(delegatorData.value1)
+  delegator.unbonded = delegator.unbonded.minus(
+    convertToDecimal(event.params.amount),
+  )
+
+  // update delegate
+  delegate.delegatedAmount = convertToDecimal(delegateData.value3)
+  transcoder.totalStake = convertToDecimal(delegateData.value3)
+
+  // Apply store updates
+  delegate.save()
+  transcoder.save()
+  delegator.save()
+  protocol.save()
+  store.remove('UnbondingLock', uniqueUnbondingLockId)
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let rebond = new RebondEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  rebond.transaction = event.transaction.hash.toHex()
+  rebond.timestamp = event.block.timestamp.toI32()
+  rebond.round = round.id
+  rebond.delegator = delegator.id
+  rebond.delegate = delegate.id
+  rebond.amount = convertToDecimal(event.params.amount)
+  rebond.unbondingLockId = event.params.unbondingLockId.toI32()
+  rebond.save()
 }
 
 // Handler for WithdrawStake events
-export function withdrawStake(event: WithdrawStakeEvent): void {
-  let delegator = Delegator.load(event.params.delegator.toHex())
-  let protocol = Protocol.load('0') || new Protocol('0')
+export function withdrawStake(event: WithdrawStake): void {
+  let round = createOrLoadRound(event.block.number)
 
-  // Store transaction info
-  let withdrawStake = new WithdrawStake(
+  let uniqueUnbondingLockId = makeUnbondingLockId(
+    event.params.delegator,
+    event.params.unbondingLockId,
+  )
+  store.remove('UnbondingLock', uniqueUnbondingLockId)
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let withdrawStake = new WithdrawStakeEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  withdrawStake.hash = event.transaction.hash.toHex()
-  withdrawStake.blockNumber = event.block.number
-  withdrawStake.gasUsed = event.transaction.gasUsed
-  withdrawStake.gasPrice = event.transaction.gasPrice
-  withdrawStake.timestamp = event.block.timestamp
-  withdrawStake.from = event.transaction.from.toHex()
-  withdrawStake.to = event.transaction.to.toHex()
-  withdrawStake.round = protocol.currentRound
-  withdrawStake.amount = delegator.bondedAmount
+  withdrawStake.transaction = event.transaction.hash.toHex()
+  withdrawStake.timestamp = event.block.timestamp.toI32()
+  withdrawStake.round = round.id
+  withdrawStake.amount = convertToDecimal(event.params.amount)
+  withdrawStake.unbondingLockId = event.params.unbondingLockId.toI32()
   withdrawStake.delegator = event.params.delegator.toHex()
   withdrawStake.save()
-
-  delegator.bondedAmount = ZERO_BD
-  delegator.save()
 }
 
-export function withdrawFees(event: WithdrawFeesEvent): void {
+export function withdrawFees(event: WithdrawFees): void {
   let bondingManager = BondingManager.bind(event.address)
   let delegator = Delegator.load(event.params.delegator.toHex())
-  let protocol = Protocol.load('0') || new Protocol('0')
   let delegatorData = bondingManager.getDelegator(event.params.delegator)
+  let round = createOrLoadRound(event.block.number)
 
-  // Store transaction info
-  let withdrawFeesTransaction = new WithdrawFees(
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let withdrawFees = new WithdrawFeesEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  withdrawFeesTransaction.hash = event.transaction.hash.toHex()
-  withdrawFeesTransaction.blockNumber = event.block.number
-  withdrawFeesTransaction.gasUsed = event.transaction.gasUsed
-  withdrawFeesTransaction.gasPrice = event.transaction.gasPrice
-  withdrawFeesTransaction.timestamp = event.block.timestamp
-  withdrawFeesTransaction.from = event.transaction.from.toHex()
-  withdrawFeesTransaction.to = event.transaction.to.toHex()
-  withdrawFeesTransaction.round = protocol.currentRound
-  withdrawFeesTransaction.amount = delegator.fees
-  withdrawFeesTransaction.delegator = event.params.delegator.toHex()
-  withdrawFeesTransaction.save()
+  withdrawFees.transaction = event.transaction.hash.toHex()
+  withdrawFees.timestamp = event.block.timestamp.toI32()
+  withdrawFees.round = round.id
+  withdrawFees.amount = delegator.fees
+  withdrawFees.delegator = event.params.delegator.toHex()
+  withdrawFees.save()
 
   delegator.bondedAmount = convertToDecimal(delegatorData.value0)
   delegator.fees = convertToDecimal(delegatorData.value1)
-  delegator.withdrawnFees = delegator.withdrawnFees.plus(
-    delegator.fees as BigDecimal,
-  )
-  delegator.lastClaimRound = protocol.currentRound
+  delegator.withdrawnFees = delegator.withdrawnFees.plus(delegator.fees)
+  delegator.lastClaimRound = round.id
   delegator.save()
 }
 
-export function parameterUpdate(event: ParameterUpdateEvent): void {
+export function parameterUpdate(event: ParameterUpdate): void {
   let bondingManager = BondingManager.bind(event.address)
-  let protocol = Protocol.load('0') || new Protocol('0')
+  let protocol = createOrLoadProtocol()
 
   if (event.params.param == 'unbondingPeriod') {
     protocol.unbondingPeriod = bondingManager.unbondingPeriod()
@@ -492,22 +381,233 @@ export function parameterUpdate(event: ParameterUpdateEvent): void {
 
   protocol.save()
 
-  let parameterUpdate = new ParameterUpdate(
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let parameterUpdate = new ParameterUpdateEvent(
     makeEventId(event.transaction.hash, event.logIndex),
   )
-  parameterUpdate.hash = event.transaction.hash.toHex()
-  parameterUpdate.blockNumber = event.block.number
-  parameterUpdate.gasUsed = event.transaction.gasUsed
-  parameterUpdate.gasPrice = event.transaction.gasPrice
-  parameterUpdate.timestamp = event.block.timestamp
-  parameterUpdate.from = event.transaction.from.toHex()
-  parameterUpdate.to = event.transaction.to.toHex()
+  parameterUpdate.transaction = event.transaction.hash.toHex()
+  parameterUpdate.timestamp = event.block.timestamp.toI32()
   parameterUpdate.param = event.params.param
-
-  // The first time this event was emitted the first round was not yet set
-  if (protocol.currentRound) {
-    parameterUpdate.round = protocol.currentRound
-  }
-
+  parameterUpdate.round = protocol.currentRound
   parameterUpdate.save()
+}
+
+// Handler for Reward events
+export function reward(event: Reward): void {
+  let transcoder = Transcoder.load(event.params.transcoder.toHex())
+  let delegate = Delegator.load(event.params.transcoder.toHex())
+  let protocol = Protocol.load('0')
+  let round = createOrLoadRound(event.block.number)
+  let poolId = makePoolId(event.params.transcoder.toHex(), round.id)
+  let pool = Pool.load(poolId)
+
+  delegate.delegatedAmount = delegate.delegatedAmount.plus(
+    convertToDecimal(event.params.amount),
+  )
+
+  pool.rewardTokens = convertToDecimal(event.params.amount)
+  pool.feeShare = transcoder.feeShare
+  pool.rewardCut = transcoder.rewardCut
+
+  transcoder.totalStake = transcoder.totalStake.plus(
+    convertToDecimal(event.params.amount),
+  )
+  transcoder.lastRewardRound = round.id
+
+  transcoder.save()
+  delegate.save()
+  pool.save()
+  protocol.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let reward = new RewardEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  reward.transaction = event.transaction.hash.toHex()
+  reward.timestamp = event.block.timestamp.toI32()
+  reward.round = round.id
+  reward.rewardTokens = convertToDecimal(event.params.amount)
+  reward.delegate = event.params.transcoder.toHex()
+  reward.save()
+}
+
+// Handler for TranscoderSlashed events
+export function transcoderSlashed(event: TranscoderSlashed): void {
+  let transcoder = Transcoder.load(event.params.transcoder.toHex())
+  let bondingManager = BondingManager.bind(event.address)
+  let round = createOrLoadRound(event.block.number)
+  let delegateData = bondingManager.getDelegator(event.params.transcoder)
+
+  // Update transcoder total stake
+  transcoder.totalStake = convertToDecimal(delegateData.value3)
+
+  // Apply store updates
+  transcoder.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let transcoderSlashed = new TranscoderSlashedEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  transcoderSlashed.transaction = event.transaction.hash.toHex()
+  transcoderSlashed.timestamp = event.block.timestamp.toI32()
+  transcoderSlashed.round = round.id
+  transcoderSlashed.delegate = event.params.transcoder.toHex()
+  transcoderSlashed.save()
+}
+
+export function transcoderUpdate(event: TranscoderUpdate): void {
+  let round = createOrLoadRound(event.block.number)
+  let transcoder = createOrLoadTranscoder(event.params.transcoder.toHex())
+  transcoder.rewardCut = event.params.rewardCut
+  transcoder.feeShare = event.params.feeShare
+  transcoder.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let transcoderUpdate = new TranscoderUpdateEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  transcoderUpdate.transaction = event.transaction.hash.toHex()
+  transcoderUpdate.timestamp = event.block.timestamp.toI32()
+  transcoderUpdate.round = round.id
+  transcoderUpdate.rewardCut = event.params.rewardCut
+  transcoderUpdate.feeShare = event.params.feeShare
+  transcoderUpdate.delegate = event.params.transcoder.toHex()
+  transcoderUpdate.save()
+}
+
+export function transcoderActivated(event: TranscoderActivated): void {
+  let round = createOrLoadRound(event.block.number)
+  let transcoder = createOrLoadTranscoder(event.params.transcoder.toHex())
+  transcoder.active = true
+  transcoder.lastActiveStakeUpdateRound = event.params.activationRound
+  transcoder.activationRound = event.params.activationRound
+  transcoder.deactivationRound = MAXIMUM_VALUE_UINT256
+  transcoder.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let transcoderActivated = new TranscoderActivatedEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  transcoderActivated.transaction = event.transaction.hash.toHex()
+  transcoderActivated.timestamp = event.block.timestamp.toI32()
+  transcoderActivated.round = round.id
+  transcoderActivated.activationRound = event.params.activationRound
+  transcoderActivated.delegate = event.params.transcoder.toHex()
+  transcoderActivated.save()
+}
+
+export function transcoderDeactivated(event: TranscoderDeactivated): void {
+  let transcoder = Transcoder.load(event.params.transcoder.toHex())
+  let round = createOrLoadRound(event.block.number)
+
+  transcoder.active = false
+  transcoder.deactivationRound = event.params.deactivationRound
+  transcoder.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let transcoderDeactivated = new TranscoderDeactivatedEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  transcoderDeactivated.transaction = event.transaction.hash.toHex()
+  transcoderDeactivated.timestamp = event.block.timestamp.toI32()
+  transcoderDeactivated.round = round.id
+  transcoderDeactivated.deactivationRound = event.params.deactivationRound
+  transcoderDeactivated.delegate = event.params.transcoder.toHex()
+  transcoderDeactivated.save()
+}
+
+export function earningsClaimed(event: EarningsClaimed): void {
+  let round = createOrLoadRound(event.block.number)
+  let delegator = createOrLoadDelegator(event.params.delegator.toHex())
+  delegator.lastClaimRound = event.params.endRound.toString()
+  delegator.bondedAmount = delegator.bondedAmount.plus(
+    convertToDecimal(event.params.rewards),
+  )
+  delegator.fees = delegator.fees.plus(convertToDecimal(event.params.fees))
+  delegator.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let earningsClaimed = new EarningsClaimedEvent(
+    makeEventId(event.transaction.hash, event.logIndex),
+  )
+  earningsClaimed.transaction = event.transaction.hash.toHex()
+  earningsClaimed.timestamp = event.block.timestamp.toI32()
+  earningsClaimed.round = round.id
+  earningsClaimed.delegate = event.params.delegate.toHex()
+  earningsClaimed.delegator = event.params.delegator.toHex()
+  earningsClaimed.startRound = event.params.startRound.toString()
+  earningsClaimed.endRound = event.params.startRound.toString()
+  earningsClaimed.rewardTokens = convertToDecimal(event.params.rewards)
+  earningsClaimed.fees = convertToDecimal(event.params.fees)
+  earningsClaimed.save()
 }

@@ -1,84 +1,98 @@
-import { BigDecimal } from '@graphprotocol/graph-ts'
-import { convertToDecimal, ZERO_BD } from '../../utils/helpers'
-import { Mint as MintEvent, Burn as BurnEvent } from '../types/LivepeerToken/LivepeerToken'
-import { DayData, Protocol, Round } from '../types/schema'
+import {
+  convertToDecimal,
+  createOrLoadDay,
+  createOrLoadRound,
+  makeEventId,
+  ZERO_BD,
+} from '../../utils/helpers'
+import { Mint, Burn } from '../types/LivepeerToken/LivepeerToken'
+import { Transaction, MintEvent, BurnEvent, Protocol } from '../types/schema'
 
-export function mint(event: MintEvent): void {
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let totalSupply = protocol.totalSupply.plus(convertToDecimal(event.params.amount) as BigDecimal)
-  
+export function mint(event: Mint): void {
+  let protocol = Protocol.load('0')
+  let amount = convertToDecimal(event.params.amount)
+  let totalSupply = protocol.totalSupply.plus(amount)
+
   protocol.totalSupply = totalSupply
-  
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let dayData = DayData.load(dayID.toString())
-  
-  if (dayData === null) {
-    dayData = new DayData(dayID.toString())
-    dayData.date = dayStartTimestamp
-    dayData.volumeUSD = ZERO_BD
-    dayData.volumeETH = ZERO_BD
-    dayData.totalSupply = ZERO_BD
-    dayData.totalActiveStake = ZERO_BD
-    dayData.participationRate = ZERO_BD
+
+  let day = createOrLoadDay(event.block.timestamp.toI32())
+  day.totalSupply = totalSupply
+  day.totalActiveStake = protocol.totalActiveStake
+
+  // check if total active stake is greater than 0 to avoid divide by zero
+  if (protocol.totalActiveStake.gt(ZERO_BD)) {
+    protocol.participationRate = protocol.totalActiveStake.div(totalSupply)
+    day.participationRate = protocol.participationRate
   }
 
-  dayData.totalSupply = totalSupply
-  dayData.totalActiveStake = protocol.totalActiveStake as BigDecimal
-  
-  if(protocol.totalActiveStake.gt(ZERO_BD)) {
-    protocol.participationRate = protocol.totalActiveStake.div(totalSupply)
-    dayData.participationRate = protocol.participationRate as BigDecimal
-  }
-  
-  let round = Round.load(protocol.currentRound)
-  if(round != null && protocol.totalActiveStake.gt(ZERO_BD)) {
-    round.totalSupply = totalSupply
-    round.participationRate = protocol.participationRate as BigDecimal
-    round.save()
-  }
-  
+  let round = createOrLoadRound(event.block.number)
+  round.totalSupply = totalSupply
+  round.participationRate = protocol.participationRate
+  round.save()
+
   protocol.save()
-  dayData.save()
+  day.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let mint = new MintEvent(makeEventId(event.transaction.hash, event.logIndex))
+  mint.transaction = event.transaction.hash.toHex()
+  mint.timestamp = event.block.timestamp.toI32()
+  mint.round = round.id
+  mint.to = event.params.to.toHex()
+  mint.amount = amount
+  mint.save()
 }
 
-export function burn(event: BurnEvent): void {
-  let protocol = Protocol.load('0') || new Protocol('0')
-  let totalSupply = protocol.totalSupply.minus(convertToDecimal(event.params.value) as BigDecimal)
-  
+export function burn(event: Burn): void {
+  let protocol = Protocol.load('0')
+  let value = convertToDecimal(event.params.value)
+  let totalSupply = protocol.totalSupply.minus(value)
+
   protocol.totalSupply = totalSupply
-  
-  let timestamp = event.block.timestamp.toI32()
-  let dayID = timestamp / 86400
-  let dayStartTimestamp = dayID * 86400
-  let dayData = DayData.load(dayID.toString())
-  
-  if (dayData === null) {
-    dayData = new DayData(dayID.toString())
-    dayData.date = dayStartTimestamp
-    dayData.volumeUSD = ZERO_BD
-    dayData.volumeETH = ZERO_BD
-    dayData.totalSupply = ZERO_BD
-    dayData.totalActiveStake = ZERO_BD
-    dayData.participationRate = ZERO_BD
+
+  let day = createOrLoadDay(event.block.timestamp.toI32())
+
+  day.totalSupply = totalSupply
+  day.totalActiveStake = protocol.totalActiveStake
+
+  if (protocol.totalActiveStake.gt(ZERO_BD)) {
+    protocol.participationRate = protocol.totalActiveStake.div(totalSupply)
+    day.participationRate = protocol.participationRate
   }
 
-  dayData.totalSupply = totalSupply
-  dayData.totalActiveStake = protocol.totalActiveStake as BigDecimal
-  
-  if(protocol.totalActiveStake.gt(ZERO_BD)) {
-    protocol.participationRate = protocol.totalActiveStake.div(totalSupply)
-    dayData.participationRate = protocol.participationRate as BigDecimal
-  }
-  
-  let round = Round.load(protocol.currentRound)
-  if(round != null && protocol.totalActiveStake.gt(ZERO_BD)) {
-    round.totalSupply = totalSupply
-    round.participationRate = protocol.participationRate as BigDecimal
-    round.save()
-  }
-  
+  let round = createOrLoadRound(event.block.number)
+  round.totalSupply = totalSupply
+  round.participationRate = protocol.participationRate
+  round.save()
+
   protocol.save()
-  dayData.save()
+  day.save()
+
+  let tx =
+    Transaction.load(event.transaction.hash.toHex()) ||
+    new Transaction(event.transaction.hash.toHex())
+  tx.blockNumber = event.block.number
+  tx.gasUsed = event.transaction.gasUsed
+  tx.gasPrice = event.transaction.gasPrice
+  tx.timestamp = event.block.timestamp.toI32()
+  tx.from = event.transaction.from.toHex()
+  tx.to = event.transaction.to.toHex()
+  tx.save()
+
+  let burn = new BurnEvent(makeEventId(event.transaction.hash, event.logIndex))
+  burn.transaction = event.transaction.hash.toHex()
+  burn.timestamp = event.block.timestamp.toI32()
+  burn.round = round.id
+  burn.value = value
+  burn.save()
 }

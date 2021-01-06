@@ -224,11 +224,7 @@ const Index = ({ currentRound, transcoder }) => {
               {transcoder.price <= 0 ? (
                 'N/A'
               ) : (
-                <Price
-                  value={transcoder.price}
-                  per={priceSetting}
-                  useEthSymbol={false}
-                />
+                <Price value={transcoder.price} per={priceSetting} />
               )}
             </Box>
           }

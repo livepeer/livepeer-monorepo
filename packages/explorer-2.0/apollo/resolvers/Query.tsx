@@ -6,7 +6,7 @@ import {
   getBlocksFromTimestamps,
   getPercentChange,
 } from '../../lib/utils'
-import dayDataQuery from '../../queries/dayData.gql'
+import dayDataQuery from '../../queries/days.gql'
 import protocolDataByBlockQuery from '../../queries/protocolDataByBlock.gql'
 import protocolDataQuery from '../../queries/protocolData.gql'
 import { client } from '../'
@@ -196,7 +196,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     }
 
     let dayDataResult = await getDayData()
-    dayData = dayDataResult.data.dayDatas
+    dayData = dayDataResult.data.days
 
     // fetch the historical data
     let protocolDataResult = await getProtocolData()

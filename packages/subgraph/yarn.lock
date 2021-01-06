@@ -70,6 +70,18 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@protofire/subgraph-prettier-config@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@protofire/subgraph-prettier-config/-/subgraph-prettier-config-0.1.1.tgz#da616048f8d77f27446ac0298d8fdd9bbc4eb16a"
+  integrity sha512-XJNXRYotEcywkCMsUMsbpzbC5xZUwQGwdk2NS+NNMhwNhm24i3SSO2dqJgnWYscmBGwpVZJTGVYK6f8g/Gn16g==
+
+"@protofire/subgraph-toolkit@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@protofire/subgraph-toolkit/-/subgraph-toolkit-0.1.1.tgz#bf0cf73caf1e23f3cb473be499bd242cb10aadc2"
+  integrity sha512-TWbjnVtdUeeAiDJ7319FwUlvSx+MXVD+Go3LEOHBR5y1yUy/rs1mSBDv7w7/eR/6EUtiRdSJDEpbW6ZlHCq1Fw==
+  dependencies:
+    "@protofire/subgraph-prettier-config" "^0.1.1"
+
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -259,6 +271,14 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
+assemblyscript@^0.17.11:
+  version "0.17.11"
+  resolved "https://registry.yarnpkg.com/assemblyscript/-/assemblyscript-0.17.11.tgz#dfc7559c26e05d6302dafc88cf2f2071f9538fe7"
+  integrity sha512-mynMSe3DOYKI2MsIdD5WSMOD8Gggt2PVVaVfVvFvpCpslJb5YMKCtcSe2pgd74+X2duHox9xg5jBgiYXjBBXTQ==
+  dependencies:
+    binaryen "98.0.0-nightly.20201109"
+    long "^4.0.0"
+
 "assemblyscript@https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3":
   version "0.6.0"
   resolved "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
@@ -347,6 +367,11 @@ binaryen@77.0.0-nightly.20190407:
   version "77.0.0-nightly.20190407"
   resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-77.0.0-nightly.20190407.tgz#fbe4f8ba0d6bd0809a84eb519d2d5b5ddff3a7d1"
   integrity sha512-1mxYNvQ0xywMe582K7V6Vo2zzhZZxMTeGHH8aE/+/AND8f64D8Q1GThVY3RVRwGY/4p+p95ccw9Xbw2ovFXRIg==
+
+binaryen@98.0.0-nightly.20201109:
+  version "98.0.0-nightly.20201109"
+  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-98.0.0-nightly.20201109.tgz#512bf6ca15c67bf7402144734a4836e63993aa05"
+  integrity sha512-iRarAqdH5lMWlMBzrDuJgLYJR2g4QXk93iYE2zpr6gEZkb/jCgDpPUXdhuN11Ge1zZ/6By4DwA1mmifcx7FWaw==
 
 bindings@^1.5.0:
   version "1.5.0"

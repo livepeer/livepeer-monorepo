@@ -6,105 +6,76 @@ query($account: String!, $first: Int!, $skip: Int!) {
     first: $first
     skip: $skip
   ) {
-    hash
-    timestamp
-    ... on Bond {
-      __typename
-      delegator {
-        id
-      }
-      newDelegate {
-        id
-      }
-      oldDelegate {
-        id
-      }
-      round {
-        id
-      }
-      additionalAmount
-    }
-    ... on Unbond {
+    events {
       __typename
       round {
         id
       }
-      delegate {
+      transaction {
         id
+        timestamp
       }
-      amount
-    }
-    ... on Rebond {
-      __typename
-      delegate {
-        id
+      ... on BondEvent {
+        delegator {
+          id
+        }
+        newDelegate {
+          id
+        }
+        oldDelegate {
+          id
+        }
+        additionalAmount
       }
-      amount
-      round {
-        id
+      ... on UnbondEvent {
+        delegate {
+          id
+        }
+        amount
       }
-    }
-    ... on TranscoderUpdated {
-      __typename
-      rewardCut
-      feeShare
-      round {
-        id
+      ... on RebondEvent {
+        delegate {
+          id
+        }
+        amount
       }
-    }
-    ... on Reward {
-      __typename
-      rewardTokens
-      round {
-        id
+      ... on TranscoderUpdateEvent {
+        rewardCut
+        feeShare
       }
-    }
-    ... on EarningsClaimed {
-      __typename
-      startRound {
-        id
+      ... on RewardEvent {
+        rewardTokens
       }
-      endRound {
-        id
+      ... on EarningsClaimedEvent {
+        startRound {
+          id
+        }
+        endRound {
+          id
+        }
+        rewardTokens
+        fees
       }
-      rewardTokens
-      fees
-      round {
-        id
+      ... on WithdrawStakeEvent {
+        amount
       }
-    }
-    ... on WithdrawStake {
-      __typename
-      amount
-      round {
-        id
+      ... on WithdrawFeesEvent {
+        amount
       }
-    }
-    ... on WithdrawFees {
-      __typename
-      amount
-      round {
-        id
+      ... on WinningTicketRedeemedEvent {
+        faceValue
       }
-    }
-    ... on Approval {
-      __typename
-      round {
-        id
+      ... on DepositFundedEvent {
+        sender {
+          id
+        }
+        amount
       }
-      amount
-    }
-    ... on InitializeRound {
-      __typename
-      round {
-        id
-      }
-    }
-    ... on WinningTicketRedeemed {
-      __typename
-      faceValue
-      round {
-        id
+      ... on ReserveFundedEvent {
+        reserveHolder {
+          id
+        }
+        amount
       }
     }
   }

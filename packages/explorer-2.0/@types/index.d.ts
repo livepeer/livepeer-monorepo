@@ -99,3 +99,13 @@ export interface Transaction {
   gasUsed?: string
   gasPrice?: string
 }
+
+type TableCellProps = {
+  children?: ReactNode
+  href?: string
+  target?: string
+  cell?: Cell
+  as?: ElementType<any>
+  onClick?: MouseEventHandler<HTMLButtonElement>
+  pushSx?: SxStyleProp
+}
