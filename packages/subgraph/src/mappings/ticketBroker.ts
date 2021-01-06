@@ -23,6 +23,7 @@ import {
   convertToDecimal,
   createOrLoadDay,
   createOrLoadRound,
+  createOrLoadTranscoderDay,
   getUniswapV1DaiEthExchangeAddress,
   getUniswapV2DaiEthPairAddress,
   makeEventId,
@@ -112,6 +113,16 @@ export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
   day.volumeETH = day.volumeETH.plus(faceValue)
   day.volumeUSD = day.volumeUSD.plus(faceValue.times(ethPrice))
   day.save()
+
+  let transcoderDay = createOrLoadTranscoderDay(
+    event.block.timestamp.toI32(),
+    event.params.recipient.toHex(),
+  )
+  transcoderDay.volumeETH = transcoderDay.volumeETH.plus(faceValue)
+  transcoderDay.volumeUSD = transcoderDay.volumeUSD.plus(
+    faceValue.times(ethPrice),
+  )
+  transcoderDay.save()
 
   // Update fee volume for this round
   round.volumeETH = round.volumeETH.plus(faceValue)

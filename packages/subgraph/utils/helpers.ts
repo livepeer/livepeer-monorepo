@@ -3,10 +3,10 @@ import { integer } from '@protofire/subgraph-toolkit'
 import {
   Day,
   Delegator,
-  Pool,
   Protocol,
   Round,
   Transcoder,
+  TranscoderDay,
 } from '../src/types/schema'
 
 let x = BigInt.fromI32(2)
@@ -210,6 +210,28 @@ export function createOrLoadDay(timestamp: i32): Day {
     day.save()
   }
   return day as Day
+}
+
+export function createOrLoadTranscoderDay(
+  timestamp: i32,
+  transcoderAddress: string,
+): TranscoderDay {
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let transcoderDayID = transcoderAddress
+    .concat('-')
+    .concat(BigInt.fromI32(dayID).toString())
+  let transcoderDay = TranscoderDay.load(transcoderDayID)
+
+  if (transcoderDay == null) {
+    transcoderDay = new TranscoderDay(transcoderDayID)
+    transcoderDay.date = dayStartTimestamp
+    transcoderDay.transcoder = transcoderAddress
+    transcoderDay.volumeUSD = ZERO_BD
+    transcoderDay.volumeETH = ZERO_BD
+    transcoderDay.save()
+  }
+  return transcoderDay as TranscoderDay
 }
 
 export function createOrLoadRound(blockNumber: BigInt): Round {
