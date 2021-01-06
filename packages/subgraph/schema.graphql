@@ -293,6 +293,22 @@ type Day @entity {
   participationRate: BigDecimal!
 }
 
+"""
+Transcoder data accumulated and condensed into day stats
+"""
+type TranscoderDay @entity {
+  "Timestamp rounded to current day by dividing by 86400"
+  id: ID!
+  "The date beginning at 12:00am UTC"
+  date: Int!
+  "Fees generated this day in ETH"
+  volumeETH: BigDecimal!
+  "Fees generated this day in USD"
+  volumeUSD: BigDecimal!
+  "Transcoder associated with the day"
+  transcoder: Transcoder!
+}
+
 ###############################################################################
 #
 # Event types && transactions for historical records
