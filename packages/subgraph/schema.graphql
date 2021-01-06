@@ -297,7 +297,7 @@ type Day @entity {
 Transcoder data accumulated and condensed into day stats
 """
 type TranscoderDay @entity {
-  "Timestamp rounded to current day by dividing by 86400"
+  "Combination of the transcoder address and the timestamp rounded to current day by dividing by 86400"
   id: ID!
   "The date beginning at 12:00am UTC"
   date: Int!
