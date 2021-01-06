@@ -33,7 +33,9 @@ const Index = () => {
         protocol(id: "0") {
           id
           roundLength
-          lastInitializedRound
+          lastInitializedRound {
+            id
+          }
           currentRound {
             id
             startBlock
@@ -95,7 +97,7 @@ const Index = () => {
     blockData.block.number / protocolData.protocol.roundLength,
   )
   const initialized =
-    +protocolData.protocol.lastInitializedRound === currentRoundNumber
+    +protocolData.protocol.lastInitializedRound.id === currentRoundNumber
   const blocksRemaining = initialized
     ? +protocolData.protocol.roundLength -
       (blockData.block.number - +protocolData.protocol.currentRound.startBlock)

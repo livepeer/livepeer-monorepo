@@ -1,5 +1,5 @@
-import { Flex, Box } from 'theme-ui'
-import { useMemo, useState, useRef } from 'react'
+import { Flex, Box, Styled } from 'theme-ui'
+import { useMemo, useState, useRef, forwardRef } from 'react'
 import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
 import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
 import Search from '../../public/img/search.svg'
@@ -7,8 +7,7 @@ import Help from '../../public/img/help.svg'
 import matchSorter from 'match-sorter'
 import AccountCell from '../AccountCell'
 import ReactTooltip from 'react-tooltip'
-import useWindowSize from 'react-use/lib/useWindowSize'
-import Router from 'next/router'
+import Link from 'next/link'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import {
@@ -17,13 +16,12 @@ import {
   MenuItemRadio,
 } from '@modulz/radix/dist/index.es'
 import Price from '../Price'
-import { Input } from '@material-ui/core'
+import { TableCellProps } from '../../@types'
 
 const StakingTable = ({
   pageSize = 10,
   data: { currentRound, transcoders },
 }) => {
-  const { width } = useWindowSize()
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
   const targetRef = useRef()
   const [priceSetting, setPriceSetting] = useState('1t pixels')
@@ -198,7 +196,6 @@ const StakingTable = ({
         'activationRound',
         'deactivationRound',
         'threeBoxSpace',
-        'active',
         'delegator',
       ],
     },
@@ -284,48 +281,48 @@ const StakingTable = ({
           alignItems: 'flex-start',
           pt: 0,
           pb: 3,
-          ml: 0,
-          mr: 0,
+          mx: 0,
           justifyContent: 'space-between',
         }}
       >
         <Box>{accountColumn.render('Filter')}</Box>
       </Flex>
-      <Box>
-        <table
+      <Box sx={{ overflow: 'scroll', WebkitOverflowScrolling: 'touch' }}>
+        <Box
           sx={{
             display: 'table',
+            tableLayout: 'fixed',
             width: '100%',
-            minWidth: ['100%', '100%', '100%', 650],
+            minWidth: 1060,
             borderSpacing: '0',
             borderCollapse: 'collapse',
           }}
           {...getTableProps()}
         >
-          <thead sx={{ display: 'table-header-group' }}>
+          <Box sx={{ display: 'table-header-group' }}>
             {headerGroups.map((headerGroup, i) => (
-              <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+              <Box
+                sx={{ display: 'table-row' }}
+                key={i}
+                {...headerGroup.getHeaderGroupProps()}
+              >
                 {headerGroup.headers.map((column: any, i) => (
-                  <th
+                  <Box
                     sx={{
                       borderBottom: '1px solid',
                       borderColor: 'rgba(255,255,255,.05)',
                       pb: 1,
                       pl: 3,
-                      pr: [
-                        3,
-                        3,
-                        3,
-                        headerGroup.headers.length - 1 === i ? 3 : 0,
-                      ],
-                      display: [
-                        column.mobile ? 'table-cell' : 'none',
-                        column.mobile ? 'table-cell' : 'none',
-                        'table-cell',
-                      ],
+                      pr:
+                        column.render('Header') === 'Price' ||
+                        column.render('Header') === '#'
+                          ? 0
+                          : 3,
+                      width: i === 0 ? 30 : 'auto',
+                      fontWeight: 700,
+                      display: 'table-cell',
                       textTransform: 'uppercase',
                     }}
-                    align="right"
                     key={i}
                   >
                     <Flex
@@ -360,85 +357,166 @@ const StakingTable = ({
                       )}
                       {renderTooltip(column.render('Header'))}
                     </Flex>
-                  </th>
+                  </Box>
                 ))}
-              </tr>
+              </Box>
             ))}
-          </thead>
+          </Box>
 
-          <tbody {...getTableBodyProps()}>
-            {page.map((row: any, rowIndex) => {
+          <Box sx={{ display: 'table-row-group' }} {...getTableBodyProps()}>
+            {page.map((row, rowIndex) => {
               const orchestratorIndex = rowIndex + pageIndex * pageSize
               prepareRow(row)
+
               return (
-                <tr
+                <Box
                   {...row.getRowProps()}
                   key={orchestratorIndex}
-                  onClick={() => {
-                    if (width < 1020) {
-                      Router.push(
-                        '/accounts/[account]/[slug]',
-                        `/accounts/${row.values.id}/campaign`,
-                      )
-                    }
-                  }}
                   sx={{
+                    display: 'table-row',
                     height: 64,
-                    '&:hover': {
-                      '.orchestratorLink': {
-                        borderColor: 'text',
-                        display: 'inlineBlock',
-                        transition: 'all .3s',
-                      },
-                    },
-                    '.status': {
-                      borderColor: 'surface',
-                    },
                   }}
                 >
                   {row.cells.map((cell, i) => {
-                    return (
-                      <td
-                        sx={{
-                          display: [
-                            cell.column.mobile ? 'table-cell' : 'none',
-                            cell.column.mobile ? 'table-cell' : 'none',
-                            'table-cell',
-                          ],
-                          textAlign: i === 0 || i === 1 ? 'left' : 'right',
-                          cursor:
-                            i == 1
-                              ? 'pointer'
-                              : width < 1020
-                              ? 'pointer'
-                              : 'default',
-                          width: i === 0 ? '10px' : 'auto',
-                          fontSize: 1,
-                          pl: 3,
-                          pr: [3, 3, 3, row.cells.length - 1 === i ? 3 : 0],
-                          borderBottom: '1px solid',
-                          borderColor: 'rgba(255,255,255,.05)',
-                        }}
-                        {...cell.getCellProps()}
-                        onClick={() => {
-                          if (i === 1 && width > 1020) {
-                            Router.push(
-                              '/accounts/[account]/[slug]',
-                              `/accounts/${row.values.id}/campaign`,
-                            )
-                          }
-                        }}
-                        key={i}
-                      >
-                        {renderSwitch(rowIndex, pageIndex, cell, currentRound)}
-                      </td>
-                    )
+                    switch (cell.column.Header) {
+                      case '#':
+                        return (
+                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                            {parseInt(rowIndex) + 1 + pageIndex * pageSize}
+                          </TableCell>
+                        )
+                      case 'Orchestrator':
+                        const active =
+                          cell.row.values.activationRound <= currentRound.id &&
+                          cell.row.values.deactivationRound > currentRound.id
+                        return (
+                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                            <Link
+                              href={`/accounts/${cell.value}/campaign`}
+                              passHref
+                            >
+                              <a
+                                sx={{
+                                  display: 'inherit',
+                                  color: 'inherit',
+                                  ':hover': {
+                                    textDecoration: 'underline',
+                                  },
+                                }}
+                              >
+                                <AccountCell
+                                  active={active}
+                                  threeBoxSpace={cell.row.values.threeBoxSpace}
+                                  address={cell.value}
+                                />
+                              </a>
+                            </Link>
+                          </TableCell>
+                        )
+                      case 'Stake':
+                        return (
+                          <TableCell
+                            cell={cell}
+                            key={i}
+                            pushSx={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                            }}
+                          >
+                            {abbreviateNumber(cell.value ? cell.value : 0, 4)}
+                          </TableCell>
+                        )
+                      case 'Fees':
+                        return (
+                          <TableCell
+                            cell={cell}
+                            key={i}
+                            pushSx={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                            }}
+                          >
+                            {cell.value
+                              ? +parseFloat(cell.value).toFixed(2)
+                              : 0}{' '}
+                            <span sx={{ fontSize: 12 }}>ETH</span>
+                          </TableCell>
+                        )
+                      case 'Reward Cut':
+                        return (
+                          <TableCell
+                            cell={cell}
+                            key={i}
+                            pushSx={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                            }}
+                          >
+                            {cell.value / 10000}%
+                          </TableCell>
+                        )
+                      case 'Fee Cut':
+                        return (
+                          <TableCell
+                            cell={cell}
+                            key={i}
+                            pushSx={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                            }}
+                          >
+                            {cell.value === '0' || !cell.value
+                              ? '100%'
+                              : `${(100 - cell.value / 10000)
+                                  .toFixed(2)
+                                  .replace(/[.,]00$/, '')}%`}
+                          </TableCell>
+                        )
+                      case 'Price':
+                        return (
+                          <TableCell
+                            cell={cell}
+                            key={i}
+                            pushSx={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                              pr: 0,
+                            }}
+                          >
+                            <span data-html={true}>
+                              {cell.value <= 0 ? (
+                                'N/A'
+                              ) : (
+                                <Price value={cell.value} per={priceSetting} />
+                              )}
+                            </span>
+                          </TableCell>
+                        )
+                      case 'Calls':
+                        let callsMade = cell.value.filter(
+                          (r) => r.rewardTokens != null,
+                        ).length
+                        return (
+                          <TableCell
+                            cell={cell}
+                            key={i}
+                            pushSx={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                            }}
+                          >
+                            {`${callsMade}/${cell.value.length}`}
+                          </TableCell>
+                        )
+                      default:
+                        return null
+                    }
                   })}
-                </tr>
+                </Box>
               )
             })}
-          </tbody>
-        </table>
+          </Box>
+        </Box>
       </Box>
       <Flex
         sx={{
@@ -641,72 +719,38 @@ const StakingTable = ({
         return null
     }
   }
-
-  function renderSwitch(rowIndex, pageIndex, cell, currentRound) {
-    switch (cell.column.Header) {
-      case '#':
-        return parseInt(rowIndex) + 1 + pageIndex * pageSize
-      case 'Orchestrator':
-        const active =
-          cell.row.values.activationRound <= currentRound.id &&
-          cell.row.values.deactivationRound > currentRound.id
-        return (
-          <AccountCell
-            active={active}
-            threeBoxSpace={cell.row.values.threeBoxSpace}
-            address={cell.value}
-          />
-        )
-      case 'Stake':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            {abbreviateNumber(cell.value ? cell.value : 0, 4)}
-          </span>
-        )
-      case 'Fees':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            {cell.value ? +parseFloat(cell.value).toFixed(2) : 0}{' '}
-            <span sx={{ fontSize: 12 }}>ETH</span>
-          </span>
-        )
-      case 'Reward Cut':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>{cell.value / 10000}%</span>
-        )
-      case 'Fee Cut':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            {cell.value === '0' || !cell.value
-              ? '100%'
-              : `${(100 - cell.value / 10000)
-                  .toFixed(2)
-                  .replace(/[.,]00$/, '')}%`}
-          </span>
-        )
-      case 'Price':
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            <span data-html={true}>
-              {cell.value <= 0 ? (
-                'N/A'
-              ) : (
-                <Price value={cell.value} per={priceSetting} />
-              )}
-            </span>
-          </span>
-        )
-      case 'Calls':
-        let callsMade = cell.value.filter((r) => r.rewardTokens != null).length
-        return (
-          <span sx={{ fontFamily: 'monospace' }}>
-            {`${callsMade}/${cell.value.length}`}
-          </span>
-        )
-      default:
-        return null
-    }
-  }
 }
+
+const TableCell = forwardRef(
+  (
+    { children, href, target, cell, onClick, as, pushSx }: TableCellProps,
+    ref,
+  ) => {
+    return (
+      <Styled.div
+        as={as}
+        target={target}
+        href={href}
+        ref={ref}
+        onClick={onClick}
+        sx={{
+          justifyContent: 'flex-end',
+          color: 'inherit',
+          display: 'table-cell',
+          width: 'auto',
+          fontSize: 1,
+          px: 3,
+          verticalAlign: 'middle',
+          borderBottom: '1px solid',
+          borderColor: 'rgba(255,255,255,.05)',
+          ...pushSx,
+        }}
+        {...cell.getCellProps()}
+      >
+        {children}
+      </Styled.div>
+    )
+  },
+)
 
 export default StakingTable

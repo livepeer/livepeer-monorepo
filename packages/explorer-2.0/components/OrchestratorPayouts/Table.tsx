@@ -1,26 +1,25 @@
 import { Flex, Box, Styled } from 'theme-ui'
-import { forwardRef, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTable, useFilters, useSortBy, usePagination } from 'react-table'
 import Search from '../../public/img/search.svg'
-import Help from '../../public/img/help.svg'
 import matchSorter from 'match-sorter'
 import AccountCell from '../AccountCell'
-import ReactTooltip from 'react-tooltip'
-import useWindowSize from 'react-use/lib/useWindowSize'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
+import moment from 'moment'
 import Link from 'next/link'
+import { forwardRef } from 'react'
 import { TableCellProps } from '../../@types'
 
-const PerformanceTable = ({
-  pageSize = 10,
-  data: { currentRound, transcoders },
-  region,
-}) => {
-  const { width } = useWindowSize()
+const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
-      keys: [(row) => row.values[id]],
+      keys: [
+        (row) => {
+          console.log(row)
+          return row.values[id]
+        },
+      ],
     })
   }
 
@@ -62,23 +61,18 @@ const PerformanceTable = ({
   const columns: any = useMemo(
     () => [
       {
-        Header: '#',
-        accessor: 'rank',
-        disableSortBy: true,
-      },
-      {
         Header: 'Orchestrator',
-        accessor: 'id',
+        accessor: 'recipient',
         filter: 'fuzzyText',
         Filter: DefaultColumnFilter,
-        mobile: true,
         sortType: (rowA, rowB, columnID) => {
-          let rowAIdentity =
-            getRowValueByColumnID(rowA, 'threeBoxSpace')?.name ||
-            getRowValueByColumnID(rowA, columnID)
-          let rowBIdentity =
-            getRowValueByColumnID(rowB, 'threeBoxSpace')?.name ||
-            getRowValueByColumnID(rowB, columnID)
+          let a = getRowValueByColumnID(rowA, columnID)
+          let b = getRowValueByColumnID(rowB, columnID)
+          let aThreeBoxSpace = getRowValueByColumnID(rowA, 'threeBoxSpace')
+          let bThreeBoxSpace = getRowValueByColumnID(rowB, 'threeBoxSpace')
+          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a
+          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b
+
           return compareBasic(rowAIdentity, rowBIdentity)
         },
       },
@@ -91,34 +85,27 @@ const PerformanceTable = ({
         accessor: 'deactivationRound',
       },
       {
-        Header: 'ThreeBoxSpace',
-        accessor: 'threeBoxSpace',
-        filter: 'fuzzyText',
-        Filter: DefaultColumnFilter,
+        Header: 'Amount',
+        accessor: 'faceValue',
       },
       {
-        Header: 'Delegator',
-        accessor: 'delegator',
+        Header: 'Value (USD)',
+        accessor: 'faceValueUSD',
       },
       {
-        Header: 'Total Score (0-10)',
-        accessor: `scores.${region}`,
-        mobile: true,
-        sortDescFirst: true,
-        defaultCanSort: true,
+        Header: 'Transaction',
+        accessor: 'transaction',
       },
       {
-        Header: 'Success Rate (%)',
-        accessor: `successRates.${region}`,
-        mobile: false,
+        Header: 'Broadcaster',
+        accessor: 'sender',
       },
       {
-        Header: 'Latency Score (0-10)',
-        accessor: `roundTripScores.${region}`,
-        mobile: false,
+        Header: 'Time',
+        accessor: 'timestamp',
       },
     ],
-    [region],
+    [],
   )
 
   function getRowValueByColumnID(row, columnID) {
@@ -159,35 +146,17 @@ const PerformanceTable = ({
 
   const tableOptions: any = {
     columns,
-    data: transcoders,
+    data: tickets,
     disableSortRemove: true,
     autoResetPage: false,
     initialState: {
       pageSize,
-      sortBy: [
-        {
-          id: 'scores.global',
-          desc: true,
-        },
-        {
-          id: 'scores.mdw',
-          desc: true,
-        },
-        {
-          id: 'scores.fra',
-          desc: true,
-        },
-        {
-          id: 'scores.sin',
-          desc: true,
-        },
-      ],
+      sortBy: [{ id: 'timestamp', desc: true }],
       hiddenColumns: [
+        'transaction',
         'activationRound',
         'deactivationRound',
-        'threeBoxSpace',
-        'global',
-        'delegator',
+        'faceValueUSD',
       ],
     },
     defaultColumn,
@@ -208,7 +177,7 @@ const PerformanceTable = ({
     state: { pageIndex },
   }: any = useTable(tableOptions, useFilters, useSortBy, usePagination)
 
-  const accountColumn = headerGroups[0].headers[1]
+  const accountColumn: any = headerGroups[0].headers[1]
 
   return (
     <>
@@ -235,9 +204,10 @@ const PerformanceTable = ({
             display: 'table',
             tableLayout: 'fixed',
             width: '100%',
-            minWidth: 780,
             borderSpacing: '0',
             borderCollapse: 'collapse',
+            position: 'relative',
+            minWidth: 800,
           }}
           {...getTableProps()}
         >
@@ -251,14 +221,12 @@ const PerformanceTable = ({
                 {headerGroup.headers.map((column, i) => (
                   <Box
                     sx={{
+                      display: 'table-cell',
                       borderBottom: '1px solid',
+                      fontWeight: 700,
                       borderColor: 'rgba(255,255,255,.05)',
                       pb: 1,
-                      pl: 3,
-                      pr: i === 0 ? 0 : 3,
-                      width: i === 0 ? 30 : 'auto',
-                      fontWeight: 700,
-                      display: 'table-cell',
+                      px: 3,
                       textTransform: 'uppercase',
                     }}
                     key={i}
@@ -290,14 +258,12 @@ const PerformanceTable = ({
                         </span>
                         {column.render('Header')}
                       </span>
-                      {renderTooltip(column.render('Header'))}
                     </Flex>
                   </Box>
                 ))}
               </Box>
             ))}
           </Box>
-
           <Box sx={{ display: 'table-row-group' }} {...getTableBodyProps()}>
             {page.map((row, rowIndex) => {
               const orchestratorIndex = rowIndex + pageIndex * pageSize
@@ -313,22 +279,18 @@ const PerformanceTable = ({
                   }}
                 >
                   {row.cells.map((cell, i) => {
-                    console.log(row.cells.length)
                     switch (cell.column.Header) {
-                      case '#':
-                        return (
-                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
-                            {parseInt(rowIndex) + 1 + pageIndex * pageSize}
-                          </TableCell>
-                        )
                       case 'Orchestrator':
                         const active =
-                          cell.row.values.activationRound <= currentRound.id &&
-                          cell.row.values.deactivationRound > currentRound.id
+                          cell.row.values.recipient.activationRound <=
+                            currentRound.id &&
+                          cell.row.values.recipient.deactivationRound >
+                            currentRound.id
+
                         return (
-                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                          <TableCell cell={cell} key={i}>
                             <Link
-                              href={`/accounts/${cell.value}/campaign`}
+                              href={`/accounts/${cell.value.id}/campaign`}
                               passHref
                             >
                               <a
@@ -342,74 +304,97 @@ const PerformanceTable = ({
                               >
                                 <AccountCell
                                   active={active}
-                                  threeBoxSpace={cell.row.values.threeBoxSpace}
-                                  address={cell.value}
+                                  threeBoxSpace={
+                                    cell.row.values.recipient.threeBoxSpace
+                                  }
+                                  address={cell.value.id}
                                 />
                               </a>
                             </Link>
                           </TableCell>
                         )
-                      case 'Success Rate (%)':
-                        if (
-                          typeof cell.value === 'undefined' ||
-                          cell.value === null
-                        ) {
-                          return <TableCell cell={cell} key={i} />
-                        }
+                      case 'Amount':
                         return (
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
-                              fontFamily: 'monospace',
-                              textAlign: 'right',
-                            }}
+                            pushSx={{ fontSize: '12px' }}
                           >
-                            {cell.value.toFixed(2)}%
+                            <Box
+                              sx={{
+                                display: 'inline-block',
+                                background: 'rgba(255,255,255,.06)',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                mr: 1,
+                              }}
+                            >
+                              <span sx={{ fontFamily: 'monospace' }}>
+                                {parseFloat((+cell.value).toFixed(3))}
+                              </span>{' '}
+                              <span>ETH</span>
+                            </Box>
+                            (
+                            <span sx={{ fontFamily: 'monospace' }}>
+                              $
+                              {parseFloat(
+                                (+cell.row.values.faceValueUSD).toFixed(2),
+                              )}
+                            </span>
+                            )
                           </TableCell>
                         )
-                      case 'Latency Score (0-10)':
-                        if (
-                          typeof cell.value === 'undefined' ||
-                          cell.value === null
-                        ) {
-                          return <TableCell cell={cell} key={i} />
-                        }
-
+                      case 'Broadcaster':
                         return (
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
-                              fontFamily: 'monospace',
-                              textAlign: 'right',
-                            }}
+                            pushSx={{ textAlign: 'right' }}
                           >
-                            {(cell.value / 1000).toFixed(2)}
+                            <Link
+                              href={`/accounts/${cell.value.id}/history`}
+                              passHref
+                            >
+                              <a
+                                sx={{
+                                  color: 'inherit',
+                                  ':hover': {
+                                    textDecoration: 'underline',
+                                  },
+                                }}
+                              >
+                                {cell.value.id.replace(
+                                  cell.value.id.slice(5, 39),
+                                  '…',
+                                )}
+                              </a>
+                            </Link>
                           </TableCell>
                         )
-                      case 'Total Score (0-10)':
-                        if (
-                          typeof cell.value === 'undefined' ||
-                          cell.value === null
-                        ) {
-                          return <TableCell cell={cell} key={i} />
-                        }
-
+                      case 'Time':
                         return (
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
-                              fontFamily: 'monospace',
-                              textAlign: 'right',
-                            }}
+                            pushSx={{ textAlign: 'right' }}
                           >
-                            {(cell.value / 1000).toFixed(2)}
+                            <a
+                              sx={{
+                                color: 'inherit',
+                                ':hover': {
+                                  textDecoration: 'underline',
+                                },
+                              }}
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              href={`https://etherscan.io/tx/${cell.row.values.transaction.id}`}
+                            >
+                              {moment(cell.value * 1000).fromNow()}
+                            </a>
                           </TableCell>
                         )
                       default:
-                        return <TableCell cell={cell} key={i} />
+                        return null
                     }
                   })}
                 </Box>
@@ -456,107 +441,11 @@ const PerformanceTable = ({
       </Flex>
     </>
   )
-  function renderTooltip(title) {
-    switch (title) {
-      case 'Success Rate (%)':
-        return (
-          <>
-            <ReactTooltip
-              html={true}
-              id="tooltip-success-rate"
-              className="tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-              delayHide={200}
-              delayUpdate={500}
-            />
-            <Help
-              data-tip='<span>The average percentage of video segments sent by a broadcaster that are successfully transcoded. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
-              data-for="tooltip-success-rate"
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                ml: 1,
-                top: '1px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </>
-        )
-      case 'Latency Score (0-10)':
-        return (
-          <>
-            <ReactTooltip
-              html={true}
-              id="tooltip-latency-score"
-              className="tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-              delayHide={200}
-              delayUpdate={500}
-            />
-            <Help
-              data-tip='<span>The average utility of the overall transcoding latency for an orchestrator. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
-              data-for="tooltip-latency-score"
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                ml: 1,
-                top: '1px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </>
-        )
-      case 'Total Score (0-10)':
-        return (
-          <>
-            <ReactTooltip
-              html={true}
-              id="tooltip-score"
-              className="tooltip"
-              place="bottom"
-              type="dark"
-              effect="solid"
-              delayHide={200}
-              delayUpdate={500}
-            />
-            <Help
-              data-tip='<span>The average utility of the overall quality and reliability of an orchestrator based on success rate and latency scores. See <a href="http://livepeer.readthedocs.io/en/latest/reference/leaderboard_faq.html" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
-              data-for="tooltip-score"
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                ml: 1,
-                top: '1px',
-                width: 12,
-                height: 12,
-              }}
-            />
-          </>
-        )
-
-      default:
-        return null
-    }
-  }
 }
 
 const TableCell = forwardRef(
   (
-    {
-      children,
-      href,
-      target,
-      cell,
-      onClick,
-      as = 'div',
-      pushSx,
-    }: TableCellProps,
+    { children, href, target, cell, as, onClick, pushSx }: TableCellProps,
     ref,
   ) => {
     return (
@@ -567,7 +456,6 @@ const TableCell = forwardRef(
         ref={ref}
         onClick={onClick}
         sx={{
-          justifyContent: 'flex-end',
           color: 'inherit',
           display: 'table-cell',
           width: 'auto',
@@ -586,4 +474,4 @@ const TableCell = forwardRef(
   },
 )
 
-export default PerformanceTable
+export default Table

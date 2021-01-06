@@ -65,6 +65,18 @@ query($account: String!, $first: Int!, $skip: Int!) {
       ... on WinningTicketRedeemedEvent {
         faceValue
       }
+      ... on DepositFundedEvent {
+        sender {
+          id
+        }
+        amount
+      }
+      ... on ReserveFundedEvent {
+        reserveHolder {
+          id
+        }
+        amount
+      }
     }
   }
 }

@@ -65,11 +65,15 @@ const Index = ({ threeBoxSpace, active, address }) => {
           borderColor: 'transparent',
           justifyContent: 'space-between',
           width: '100%',
+          minWidth: '100%',
         }}
       >
         <Flex
           className="orchestratorLink"
-          sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
         >
           <div sx={{ fontWeight: 600 }}>
             {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.name

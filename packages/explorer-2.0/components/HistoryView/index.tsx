@@ -145,7 +145,7 @@ function renderSwitch(event: any, i: number) {
           >
             <Box>
               <Box>
-                Staked towards{' '}
+                Staked with{' '}
                 {event.newDelegate.id.replace(
                   event.newDelegate.id.slice(7, 37),
                   '…',
@@ -195,7 +195,7 @@ function renderSwitch(event: any, i: number) {
             }}
           >
             <Box>
-              <Box>Claimed Earnings</Box>
+              <Box>Claimed earnings</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
                   .unix(event.transaction.timestamp)
@@ -288,7 +288,7 @@ function renderSwitch(event: any, i: number) {
           >
             <Box>
               <Box>
-                Restaked to{' '}
+                Restaked with{' '}
                 {event.delegate.id.replace(event.delegate.id.slice(7, 37), '…')}
               </Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
@@ -381,7 +381,7 @@ function renderSwitch(event: any, i: number) {
             }}
           >
             <Box>
-              <Box>Claimed Inflationary Token Reward</Box>
+              <Box>Claimed inflationary token reward</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
                   .unix(event.transaction.timestamp)
@@ -426,7 +426,7 @@ function renderSwitch(event: any, i: number) {
             }}
           >
             <Box>
-              <Box>Updated Orchestrator Cut</Box>
+              <Box>Updated orchestrator cut</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
                   .unix(event.transaction.timestamp)
@@ -479,7 +479,7 @@ function renderSwitch(event: any, i: number) {
             }}
           >
             <Box>
-              <Box>Withdrew Unstaked Tokens</Box>
+              <Box>Withdrew unstaked tokens</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
                   .unix(event.transaction.timestamp)
@@ -493,6 +493,51 @@ function renderSwitch(event: any, i: number) {
                 +{abbreviateNumber(event.amount, 3)}
               </span>{' '}
               LPT
+            </div>
+          </Flex>
+        </ListItem>
+      )
+    case 'WithdrawFeesEvent':
+      return (
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
+          }
+          key={i}
+          avatar={
+            <ETH sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
+          }
+        >
+          <Flex
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Box>Withdrew earned fees</Box>
+              <Box sx={{ fontSize: 12, color: 'muted' }}>
+                {moment
+                  .unix(event.transaction.timestamp)
+                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
+                -- Round #{event.round.id}
+              </Box>
+            </Box>
+            <div sx={{ fontSize: 1, ml: 3 }}>
+              {' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                {abbreviateNumber(event.amount, 3)}
+              </span>{' '}
+              ETH
             </div>
           </Flex>
         </ListItem>
@@ -524,7 +569,7 @@ function renderSwitch(event: any, i: number) {
             }}
           >
             <Box>
-              <Box>Redeemed Winning Ticket</Box>
+              <Box>Redeemed winning ticket</Box>
               <Box sx={{ fontSize: 12, color: 'muted' }}>
                 {moment
                   .unix(event.transaction.timestamp)
@@ -536,6 +581,101 @@ function renderSwitch(event: any, i: number) {
               {' '}
               <span sx={{ fontFamily: 'monospace' }}>
                 +{abbreviateNumber(event.faceValue, 3)}
+              </span>{' '}
+              ETH
+            </div>
+          </Flex>
+        </ListItem>
+      )
+    case 'DepositFundedEvent':
+      return (
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
+          }
+          key={i}
+          avatar={
+            <ETH sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
+          }
+        >
+          <Flex
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Box>Deposit funded</Box>
+              <Box sx={{ fontSize: 12, color: 'muted' }}>
+                {moment
+                  .unix(event.transaction.timestamp)
+                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
+                -- Round #{event.round.id}
+              </Box>
+            </Box>
+            <div sx={{ fontSize: 1, ml: 3 }}>
+              {' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                +{abbreviateNumber(event.amount, 3)}
+              </span>{' '}
+              ETH
+            </div>
+          </Flex>
+        </ListItem>
+      )
+    case 'ReserveFundedEvent':
+      // Ignore funded reserve events where amount is 0
+      // (unable to do this on the graphql query as of now)
+      if (+event.amount === 0) {
+        return
+      }
+      return (
+        <ListItem
+          sx={{
+            cursor: 'pointer',
+            px: 2,
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, .04)' },
+          }}
+          onClick={() =>
+            window.open(
+              `https://etherscan.io/tx/${event.transaction.id}`,
+              '_blank',
+            )
+          }
+          key={i}
+          avatar={
+            <ETH sx={{ width: 20, height: 20, color: 'primary', mr: 2 }} />
+          }
+        >
+          <Flex
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box>
+              <Box>Reserve funded</Box>
+              <Box sx={{ fontSize: 12, color: 'muted' }}>
+                {moment
+                  .unix(event.transaction.timestamp)
+                  .format('MM/DD/YYYY h:mm:ss a')}{' '}
+                -- Round #{event.round.id}
+              </Box>
+            </Box>
+            <div sx={{ fontSize: 1, ml: 3 }}>
+              {' '}
+              <span sx={{ fontFamily: 'monospace' }}>
+                +{abbreviateNumber(event.amount, 3)}
               </span>{' '}
               ETH
             </div>
