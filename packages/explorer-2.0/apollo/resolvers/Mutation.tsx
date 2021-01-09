@@ -121,13 +121,9 @@ export async function bond(_obj, _args, _ctx) {
     currDelegateNewPosNext,
   } = _args
 
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'bondWithHint', [
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'bond', [
     amount,
     to,
-    oldDelegateNewPosPrev,
-    oldDelegateNewPosNext,
-    currDelegateNewPosPrev,
-    currDelegateNewPosNext,
   ])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
@@ -161,14 +157,9 @@ export async function bond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function unbond(_obj, _args, _ctx) {
-  console.log('unbond', _args)
   const { amount, newPosPrev, newPosNext } = _args
 
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'unbondWithHint', [
-    amount,
-    newPosPrev,
-    newPosNext,
-  ])
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'unbond', [amount])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
   data = claimData ? claimData : data
@@ -203,10 +194,8 @@ export async function unbond(_obj, _args, _ctx) {
 export async function rebond(_obj, _args, _ctx) {
   const { unbondingLockId, newPosPrev, newPosNext } = _args
 
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'rebondWithHint', [
+  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'rebond', [
     unbondingLockId,
-    newPosPrev,
-    newPosNext,
   ])
 
   const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
