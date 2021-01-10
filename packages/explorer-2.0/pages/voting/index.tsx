@@ -201,5 +201,5 @@ export default withApollo({
 })(Voting as NextPage)
 
 export const getStaticProps = getStaticApolloProps<Props, Params>(Voting, {
-  revalidate: 20,
+  revalidate: 1,
 })
