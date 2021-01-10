@@ -160,5 +160,5 @@ Home.getLayout = getLayout
 export default withApollo({ ssr: false })(Home as NextPage)
 
 export const getStaticProps = getStaticApolloProps<Props, Params>(Home, {
-  revalidate: 20,
+  revalidate: 1,
 })

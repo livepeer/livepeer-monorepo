@@ -88,6 +88,6 @@ export default withApollo({ ssr: false })(OrchestratorsPage as NextPage)
 export const getStaticProps = getStaticApolloProps<Props, Params>(
   OrchestratorsPage,
   {
-    revalidate: 20,
+    revalidate: 1,
   },
 )
