@@ -1,4 +1,4 @@
-import { Address, BigInt, dataSource } from '@graphprotocol/graph-ts'
+import { Address, BigInt, BigDecimal, dataSource, log, Value } from '@graphprotocol/graph-ts'
 
 import {
   BondingManager,
@@ -13,6 +13,27 @@ import { Delegator, Protocol, Poll, Vote, Transcoder } from '../types/schema'
 
 import { makeVoteId, EMPTY_ADDRESS } from '../../utils/helpers'
 import { tallyVotes } from './poll'
+
+function getPendingStake(delegator: Delegator, bondingManagerAddr: Address): BigInt {
+  let protocol = Protocol.load('0')
+  let bondingManager = BondingManager.bind(bondingManagerAddr)
+
+  let pendingStake = delegator.bondedAmount
+  let lastClaimRound = BigDecimal.fromString(delegator.lastClaimRound)
+  let currentRound = BigDecimal.fromString(protocol.currentRound)
+  log.info("BONDED AMOUNT = {}", [pendingStake.toString()])
+  log.info("LAST CLAIM ROUND = {} CURRENT ROUND = {}", [lastClaimRound.toString(), currentRound.toString()])
+  if (lastClaimRound < currentRound) {
+    pendingStake = bondingManager.pendingStake(
+      Address.fromString(delegator.id),
+      BigInt.fromI32(protocol.currentRound as i32)
+    )
+  }
+
+  log.info("RETURNED PENDING STAKE = {}", [pendingStake.toString()])
+
+  return pendingStake as BigInt
+}
 
 export function updatePollTallyOnReward(event: RewardEvent): void {
   let voterAddress = dataSource.context().getString('voter')
@@ -43,11 +64,7 @@ export function updatePollTallyOnReward(event: RewardEvent): void {
   if (voterAddress == event.params.transcoder.toHex()) {
     vote.voteStake = transcoder.totalStake
   } else {
-    let bondingManager = BondingManager.bind(event.address)
-    let pendingStake = bondingManager.pendingStake(
-      Address.fromString(voterAddress),
-      BigInt.fromI32(protocol.currentRound as i32),
-    )
+    let pendingStake = getPendingStake(delegator, event.address)
 
     let delegateVoteId = makeVoteId(event.params.transcoder.toHex(), poll.id)
     let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
@@ -111,7 +128,7 @@ export function updatePollTallyOnBond(event: BondEvent): void {
       // if caller is voter, remove its nonVoteStake from old delegate
       if (voterAddress == event.params.delegator.toHex()) {
         oldDelegateVote.nonVoteStake = oldDelegateVote.nonVoteStake.minus(
-          event.params.bondedAmount,
+          event.params.bondedAmount.minus(event.params.additionalAmount),
         )
       }
     }
@@ -156,6 +173,16 @@ export function updatePollTallyOnBond(event: BondEvent): void {
     if(isSwitchingDelegates) {
       newDelegateVote.nonVoteStake = newDelegateVote.nonVoteStake
       .plus(event.params.bondedAmount)
+
+      // let protocol = Protocol.load('0')
+      // let bondingManager = BondingManager.bind(event.address)
+      // let pendingStake = bondingManager.pendingStake(
+      //   Address.fromString(voterAddress),
+      //   BigInt.fromI32(protocol.currentRound as i32),
+      // )
+
+      // log.info("SUBRAPH ROUND = {}", [protocol.currentRound])
+      // log.info("BOND HANDLER PENDING STAKE = {} BOND HANDLER BONDED AMOUNT = {}", [pendingStake.toString(), event.params.bondedAmount.toString()])
     } else {
       newDelegateVote.nonVoteStake = newDelegateVote.nonVoteStake
       .minus(vote.voteStake as BigInt)
@@ -186,6 +213,10 @@ export function updatePollTallyOnRebond(event: RebondEvent): void {
 export function updatePollTallyOnEarningsClaimed(
   event: EarningsClaimedEvent,
 ): void {
+  if (dataSource.network() != 'mainnet') {
+    return
+  }
+
   let voterAddress = dataSource.context().getString('voter')
   let delegator = Delegator.load(voterAddress) as Delegator
 
@@ -212,16 +243,12 @@ export function updatePollTallyOnEarningsClaimed(
   if (transcoder.status == 'Registered') {
     vote.voteStake = transcoder.totalStake
   } else {
-    let protocol = Protocol.load('0')
-    let bondingManager = BondingManager.bind(event.address)
-    let pendingStake = bondingManager.pendingStake(
-      Address.fromString(voterAddress),
-      BigInt.fromI32(protocol.currentRound as i32),
-    )
-
+    let pendingStake = getPendingStake(delegator, event.address)
     let delegateVoteId = makeVoteId(event.params.delegate.toHex(), poll.id)
     let delegateVote = Vote.load(delegateVoteId) || new Vote(delegateVoteId)
     delegateVote.voter = event.params.delegate.toHex()
+
+    log.info("VOTER = {} PREV NON VOTE STAKE = {} PREV VOTE STAKE = {}, PENDING STAKE = {}", [voterAddress, delegateVote.nonVoteStake.toString(), vote.voteStake.toString(), pendingStake.toString()])
 
     // update delegate nonVoteStake
     delegateVote.nonVoteStake = delegateVote.nonVoteStake
@@ -279,10 +306,8 @@ function updatePollTally<T extends RebondEvent>(event: T): void {
   ) {
     updateTally = true
 
-    let pendingStake = bondingManager.pendingStake(
-      Address.fromString(voterAddress),
-      BigInt.fromI32(protocol.currentRound as i32),
-    )
+    let delegator = Delegator.load(voterAddress) as Delegator
+    let pendingStake = getPendingStake(delegator, event.address)
 
     if (delegateVote == null) {
       delegateVote = new Vote(delegateVoteId)

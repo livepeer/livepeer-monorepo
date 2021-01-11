@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigInt, BigDecimal, log } from '@graphprotocol/graph-ts'
 import { Vote as VoteEvent } from '../types/templates/Poll/Poll'
 import {
   Protocol,
@@ -12,6 +12,27 @@ import { makeVoteId, getBondingManagerAddress } from '../../utils/helpers'
 import { DataSourceContext, Address, dataSource } from '@graphprotocol/graph-ts'
 import { PollTallyTemplate } from '../types/templates'
 import { BondingManager } from '../types/BondingManager_streamflow/BondingManager'
+
+function getPendingStake(delegator: Delegator, bondingManagerAddr: Address): BigInt {
+  let protocol = Protocol.load('0')
+  let bondingManager = BondingManager.bind(bondingManagerAddr)
+
+  let pendingStake = delegator.bondedAmount
+  let lastClaimRound = BigDecimal.fromString(delegator.lastClaimRound)
+  let currentRound = BigDecimal.fromString(protocol.currentRound)
+  log.info("BONDED AMOUNT = {}", [pendingStake.toString()])
+  log.info("LAST CLAIM ROUND = {} CURRENT ROUND = {}", [lastClaimRound.toString(), currentRound.toString()])
+  if (lastClaimRound < currentRound) {
+    pendingStake = bondingManager.pendingStake(
+      Address.fromString(delegator.id),
+      BigInt.fromI32(protocol.currentRound as i32)
+    )
+  }
+
+  log.info("RETURNED PENDING STAKE = {}", [pendingStake.toString()])
+
+  return pendingStake as BigInt
+}
 
 export function vote(event: VoteEvent): void {
   // Vote must be a "Yes" or "No"
@@ -63,14 +84,7 @@ export function vote(event: VoteEvent): void {
         let bondingManagerAddress = getBondingManagerAddress(
           dataSource.network(),
         )
-        let bondingManager = BondingManager.bind(
-          Address.fromString(bondingManagerAddress),
-        )
-        let protocol = Protocol.load('0') || new Protocol('0')
-        let pendingStake = bondingManager.pendingStake(
-          event.params.voter,
-          BigInt.fromI32(protocol.currentRound as i32),
-        )
+        let pendingStake = getPendingStake(delegator as Delegator, Address.fromString(bondingManagerAddress))
         vote.voteStake = pendingStake
         vote.registeredTranscoder = false
 

@@ -109,7 +109,7 @@ development:
       address: 'A57B8a5584442B467b4689F1144D269d096A3daF'
       startBlock: 0
     pollCreator:
-      address: '7414e38377D6DAf6045626EC8a8ABB8a1BC4B97a'
+      address: '4bf3A7dFB3b76b5B3E169ACE65f888A4b4FCa5Ee'
       startBlock: 0
     serviceRegistry:
       address: 'aD888d0Ade988EbEe74B8D4F39BF29a8d0fe8A8D'
