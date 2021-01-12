@@ -1,6 +1,6 @@
 {
   "name": "@livepeer/explorer-2.0",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "dev": "run-p dev:next",
@@ -33,7 +33,7 @@
     "3id-blockchain-utils": "0.3.4",
     "@apollo/client": "^3.3.6",
     "@emotion/react": "^11.1.4",
-    "@livepeer/sdk": "1.0.0-alpha.20",
+    "@livepeer/sdk": "^1.0.0",
     "@material-ui/core": "^4.8.0",
     "@mdx-js/loader": "^1.5.5",
     "@mdx-js/react": "^1.4.5",
