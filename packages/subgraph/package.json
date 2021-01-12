@@ -1,7 +1,7 @@
 {
   "name": "@livepeer/subgraph",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1-alpha.0",
   "license": "MIT",
   "scripts": {
     "create:local": "graph create livepeer/livepeer --node http://127.0.0.1:8020",
