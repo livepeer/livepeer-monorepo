@@ -48,6 +48,7 @@ const baseFakeRouter = {
     emit: notImplemented,
   },
   isFallback: false,
+  isReady: false,
 }
 
 export default function getStaticApolloProps<

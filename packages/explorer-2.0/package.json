@@ -54,7 +54,7 @@
     "apollo-fetch": "^0.7.0",
     "apollo-link": "^1.2.11",
     "apollo-link-http": "^1.5.15",
-    "apollo-server-micro": "2.9.6",
+    "apollo-server-micro": "2.19.1",
     "babel-loader": "^8.0.6",
     "dayjs": "^1.9.6",
     "dotenv": "^8.2.0",
@@ -76,7 +76,7 @@
     "match-sorter": "^4.0.1",
     "micro-cors": "^0.1.1",
     "moment": "^2.24.0",
-    "next": "10.0.4",
+    "next": "10.0.5",
     "next-transpile-modules": "^4.1.0",
     "numeral": "^2.0.6",
     "parse-domain": "^2.3.4",
@@ -109,7 +109,6 @@
   },
   "main": "package.json",
   "resolutions": {
-    "apollo-server-core": "2.9.6",
     "orbit-db": "0.22.0"
   }
 }
