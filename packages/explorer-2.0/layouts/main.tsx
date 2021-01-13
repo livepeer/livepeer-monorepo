@@ -244,6 +244,7 @@ const Layout = ({
                 bg: 'black',
                 justifyContent: 'center',
                 fontSize: [0, 1, 1, 2],
+                position: 'relative',
               }}
             >
               <span
