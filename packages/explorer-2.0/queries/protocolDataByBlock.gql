@@ -1,5 +1,6 @@
 query($block: Block_height) {
   protocol(id: 0, block: $block) {
+    id
     totalVolumeUSD
     participationRate
   }

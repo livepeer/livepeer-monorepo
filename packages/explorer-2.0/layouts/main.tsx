@@ -59,6 +59,7 @@ const Layout = ({
           endBlock
         }
         protocol(id: "0") {
+          id
           paused
         }
       }

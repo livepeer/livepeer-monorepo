@@ -277,9 +277,7 @@ const Index = ({ pageSize = 10, title = '' }) => {
 
         {/* Show loading indicator if this is the first time time fetching or we're refetching
         https://github.com/apollographql/apollo-client/blob/main/src/core/networkStatus.ts */}
-        {!data ||
-        networkStatus === NetworkStatus.loading ||
-        networkStatus === NetworkStatus.refetch ? (
+        {!data || networkStatus === NetworkStatus.refetch ? (
           <Box
             sx={{
               position: 'absolute',
