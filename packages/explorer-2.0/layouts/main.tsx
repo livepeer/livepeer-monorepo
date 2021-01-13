@@ -51,12 +51,15 @@ const Layout = ({
   const client: any = useApolloClient()
   const context = useWeb3React()
 
-  const { data: pollData } = useQuery(
+  const { data } = useQuery(
     gql`
       {
         polls {
           isActive
           endBlock
+        }
+        protocol(id: "0") {
+          paused
         }
       }
     `,
@@ -68,7 +71,7 @@ const Layout = ({
   const [txDialogState, setTxDialogState]: any = useState([])
   const { width } = useWindowSize()
   const ref = useRef()
-  const totalActivePolls = pollData?.polls.filter((p) => p.isActive).length
+  const totalActivePolls = data?.polls.filter((p) => p.isActive).length
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -213,6 +216,23 @@ const Layout = ({
       </Modal>
       <MutationsContext.Provider value={mutations}>
         <Styled.root sx={{ height: 'calc(100vh - 82px)' }}>
+          {data?.protocol.paused && (
+            <Flex
+              sx={{
+                py: 10,
+                px: 2,
+                width: '100%',
+                alignItems: 'center',
+                color: 'black',
+                justifyContent: 'center',
+                background: 'orange',
+                fontWeight: 500,
+                fontSize: 2,
+              }}
+            >
+              The protocol is paused.
+            </Flex>
+          )}
           {bannerActive && (
             <Flex
               sx={{
