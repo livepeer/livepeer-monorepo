@@ -5,8 +5,6 @@ import parseDomain from 'parse-domain'
 import { ethers } from 'ethers'
 import { gql } from '@apollo/client'
 import Numeral from 'numeral'
-import dayjs from 'dayjs'
-import { timeframeOptions } from './constants'
 
 export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -507,13 +505,13 @@ export async function getBlocksFromTimestamps(timestamps) {
     return []
   }
   let blocks = []
-  for (let i = 0; i < timestamps.length; i++) {
+  for (const timestamp of timestamps) {
     let blockResponse = await fetch(
       `https://api${
         process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? '-rinkeby' : ''
-      }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${
-        timestamps[i]
-      }&closest=before&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`,
+      }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
+        process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
+      }`,
     )
     let json = await blockResponse.json()
     blocks.push(+json.result)
