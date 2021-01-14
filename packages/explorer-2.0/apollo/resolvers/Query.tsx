@@ -169,6 +169,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let getDayData = async () => {
       let result = await client.query({
         query: dayDataQuery,
+        fetchPolicy: 'network-only',
         variables: {
           first: 1000,
           orderBy: 'date',
@@ -181,6 +182,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let getProtocolData = async () => {
       let result = await client.query({
         query: protocolDataQuery,
+        fetchPolicy: 'network-only',
       })
       return result
     }
@@ -188,6 +190,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let getProtocolDataByBlock = async (block) => {
       let result = await client.query({
         query: protocolDataByBlockQuery,
+        fetchPolicy: 'network-only',
         variables: {
           block: { number: block },
         },
@@ -234,23 +237,23 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       )
 
       // format weekly data for weekly sized chunks
-      let weeklySizedChucks = [...dayData].sort((a, b) =>
+      let weeklySizedChunks = [...dayData].sort((a, b) =>
         parseInt(a.date) > parseInt(b.date) ? 1 : -1,
       )
       let startIndexWeekly = -1
       let currentWeek = -1
-      weeklySizedChucks.forEach((entry, i) => {
-        const week = dayjs.utc(dayjs.unix(weeklySizedChucks[i].date)).week()
+      for (const weeklySizedChunk of weeklySizedChunks) {
+        const week = dayjs.utc(dayjs.unix(weeklySizedChunk.date)).week()
         if (week !== currentWeek) {
           currentWeek = week
           startIndexWeekly++
         }
         weeklyData[startIndexWeekly] = weeklyData[startIndexWeekly] || {}
-        weeklyData[startIndexWeekly].date = weeklySizedChucks[i].date
+        weeklyData[startIndexWeekly].date = weeklySizedChunk.date
         weeklyData[startIndexWeekly].weeklyVolumeUSD =
           (weeklyData[startIndexWeekly].weeklyVolumeUSD ?? 0) +
-          +weeklySizedChucks[i].volumeUSD
-      })
+          +weeklySizedChunk.volumeUSD
+      }
 
       // add relevant fields with the calculated amounts
       data.dayData = [...dayData].reverse()
