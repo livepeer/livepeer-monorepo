@@ -121,7 +121,7 @@ export function updatePollTallyOnBond(event: Bond): void {
       // if caller is voter, remove its nonVoteStake from old delegate
       if (voterAddress == event.params.delegator.toHex()) {
         oldDelegateVote.nonVoteStake = oldDelegateVote.nonVoteStake.minus(
-          bondedAmount
+          bondedAmount.minus(convertToDecimal(event.params.additionalAmount))
         );
       }
     }
