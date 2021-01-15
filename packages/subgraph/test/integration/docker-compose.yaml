@@ -3,7 +3,7 @@ services:
   subgraph-tests:
     image: livepeer/subgraph:latest
     container_name: subgraph-tests
-    entrypoint: ["wait-for-it.sh", "ganache:8545", "--", "yarn", "test:docker"]
+    entrypoint: ["wait-for-it.sh", "graph-node:8020", "--", "yarn", "test:docker"]
     links:
         - ganache
         - graph-node
