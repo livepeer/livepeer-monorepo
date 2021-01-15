@@ -15,9 +15,15 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg?style=flat-square)](https://lernajs.io/)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md)
 
-The Livepeer project aims to deliver a live video streaming network protocol that is fully decentralized, highly scalable, crypto token incentivized, and results in a solution which can serve as the live media layer in the decentralized development (web3) stack. You can learn more about the protocol and economic incentives by reading [our whitepaper](https://github.com/livepeer/wiki/blob/master/WHITEPAPER.md).
+The Livepeer project aims to deliver a live video streaming network protocol
+that is fully decentralized, highly scalable, crypto token incentivized, and
+results in a solution which can serve as the live media layer in the
+decentralized development (web3) stack. You can learn more about the protocol
+and economic incentives by reading
+[our whitepaper](https://github.com/livepeer/wiki/blob/master/WHITEPAPER.md).
 
-This monorepo contains JavaScript tools and applications that interact with Livepeer's smart contracts and peer-to-peer network.
+This monorepo contains JavaScript tools and applications that interact with
+Livepeer's smart contracts and peer-to-peer network.
 
 <!-- hide-on-docup-start -->
 
@@ -33,7 +39,8 @@ This monorepo contains JavaScript tools and applications that interact with Live
 
 ## Requirements
 
-This project requires `node >=10.0.0` and `yarn >=1.0.0`. A unix shell is also required.
+This project requires `node >=10.0.0` and `yarn >=1.0.0`. A unix shell is also
+required.
 
 - [Installing Node](https://docs.npmjs.com/getting-started/installing-node)
 - [Installing Yarn](https://yarnpkg.com/lang/en/docs/install/)
@@ -49,21 +56,28 @@ cd livepeerjs
 yarn
 ```
 
-For development purposes there's a top-level `dev` script that will watch and continuously compile all packages concurrently:
+For development purposes there's a top-level `dev` script that will watch and
+continuously compile all packages concurrently:
 
 ```bash
 yarn dev
 ```
 
-For next steps, take a look at documentation for the individual package(s) you want to run and/or develop.
+For next steps, take a look at documentation for the individual package(s) you
+want to run and/or develop.
 
 ## Contributing
 
-Thanks for your interest in LivepeerJS. There are many ways you can contribute. To start, take a few minutes to look over the official guide:
+Thanks for your interest in LivepeerJS. There are many ways you can contribute.
+To start, take a few minutes to look over the official guide:
 
 **[Read the "Contributing to LivepeerJS" Guide &raquo;](https://github.com/livepeer/livepeerjs/blob/master/CONTRIBUTING.md)**
 
-We happily await your pull requests and/or involvement in our [issues page](https://github.com/livepeer/livepeerjs/issues) and hope to see your username on our [list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors) 🎉🎉🎉
+We happily await your pull requests and/or involvement in our
+[issues page](https://github.com/livepeer/livepeerjs/issues) and hope to see
+your username on our
+[list of contributors](https://github.com/livepeer/livepeerjs/graphs/contributors)
+🎉🎉🎉
 
 ## Packages
 
@@ -84,7 +98,8 @@ We happily await your pull requests and/or involvement in our [issues page](http
 
 ## Resources
 
-To get a full idea of what Livepeer is about, be sure to take a look at these other resources:
+To get a full idea of what Livepeer is about, be sure to take a look at these
+other resources:
 
 - 🌐 [The Livepeer Website](https://livepeer.org)
 - ✍ [The Livepeer Blog](https://medium.com/livepeer-blog)

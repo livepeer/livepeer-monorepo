@@ -1,5 +1,5 @@
-import { Styled } from 'theme-ui'
-import Button from '../Button'
+import { Styled } from "theme-ui";
+import Button from "../Button";
 
 const Step6 = ({ goTo, nextStep, onClose }) => {
   return (
@@ -14,13 +14,12 @@ const Step6 = ({ goTo, nextStep, onClose }) => {
         of LPT you'd like to stake in the staking widget and hit "Stake".
       </Styled.p>
       <Button
-        sx={{ position: 'absolute', right: 30, bottom: 16 }}
-        onClick={onClose}
-      >
+        sx={{ position: "absolute", right: 30, bottom: 16 }}
+        onClick={onClose}>
         Finish
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default Step6
+export default Step6;

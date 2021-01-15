@@ -1,19 +1,19 @@
-import { useEffect, useContext } from 'react'
-import { Styled } from 'theme-ui'
-import Button from '../Button'
-import { usePageVisibility, useWeb3Mutation } from '../../hooks'
-import Router from 'next/router'
-import { MAXIUMUM_VALUE_UINT256 } from '../../lib/utils'
-import { useWeb3React } from '@web3-react/core'
-import { MutationsContext } from '../../contexts'
-import { useQuery } from '@apollo/client'
-import accountQuery from '../../queries/account.gql'
+import { useEffect, useContext } from "react";
+import { Styled } from "theme-ui";
+import Button from "../Button";
+import { usePageVisibility, useWeb3Mutation } from "../../hooks";
+import Router from "next/router";
+import { MAXIUMUM_VALUE_UINT256 } from "../../lib/utils";
+import { useWeb3React } from "@web3-react/core";
+import { MutationsContext } from "../../contexts";
+import { useQuery } from "@apollo/client";
+import accountQuery from "../../queries/account.gql";
 
 const Step5 = ({ goTo, nextStep }) => {
-  const context = useWeb3React()
-  const isVisible = usePageVisibility()
-  const pollInterval = 20000
-  const { approve }: any = useContext(MutationsContext)
+  const context = useWeb3React();
+  const isVisible = usePageVisibility();
+  const pollInterval = 20000;
+  const { approve }: any = useContext(MutationsContext);
   const { data: dataMyAccount, startPolling, stopPolling } = useQuery(
     accountQuery,
     {
@@ -23,26 +23,26 @@ const Step5 = ({ goTo, nextStep }) => {
       pollInterval,
       skip: !context.active, // skip this query if wallet not connected
       ssr: false,
-    },
-  )
+    }
+  );
 
   useEffect(() => {
     if (!isVisible) {
-      stopPolling()
+      stopPolling();
     } else {
-      startPolling(pollInterval)
+      startPolling(pollInterval);
     }
-  }, [isVisible])
+  }, [isVisible]);
 
   useEffect(() => {
     async function goToNextStep() {
-      if (dataMyAccount?.account?.allowance !== '0') {
-        await Router.push('/')
-        goTo(nextStep)
+      if (dataMyAccount?.account?.allowance !== "0") {
+        await Router.push("/");
+        goTo(nextStep);
       }
     }
-    goToNextStep()
-  }, [dataMyAccount?.account?.allowance])
+    goToNextStep();
+  }, [dataMyAccount?.account?.allowance]);
 
   return (
     <div sx={{ py: 1 }}>
@@ -57,22 +57,21 @@ const Step5 = ({ goTo, nextStep }) => {
           try {
             await approve({
               variables: {
-                type: 'bond',
+                type: "bond",
                 amount: MAXIUMUM_VALUE_UINT256,
               },
-            })
+            });
           } catch (e) {
             return {
-              error: e.message.replace('GraphQL error: ', ''),
-            }
+              error: e.message.replace("GraphQL error: ", ""),
+            };
           }
         }}
-        sx={{ position: 'absolute', right: 30, bottom: 16 }}
-      >
+        sx={{ position: "absolute", right: 30, bottom: 16 }}>
         Unlock LPT
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default Step5
+export default Step5;

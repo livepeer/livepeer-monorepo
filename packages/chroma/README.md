@@ -5,6 +5,8 @@
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
 [![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/chroma.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/chroma)
 
-A component library that contains some UI building blocks for livestreaming video applications.
+A component library that contains some UI building blocks for livestreaming
+video applications.
 
-More docs to come soon! For now, take a look at the `scripts` section of [`package.json`](https://github.com/livepeer/livepeerjs/blob/master/packages/chroma/package.json#L17)
+More docs to come soon! For now, take a look at the `scripts` section of
+[`package.json`](https://github.com/livepeer/livepeerjs/blob/master/packages/chroma/package.json#L17)

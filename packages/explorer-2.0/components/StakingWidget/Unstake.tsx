@@ -1,20 +1,20 @@
-import { useContext } from 'react'
-import Utils from 'web3-utils'
-import Button from '../Button'
-import { useWeb3React } from '@web3-react/core'
-import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/client'
-import { initTransaction } from '../../lib/utils'
+import { useContext } from "react";
+import Utils from "web3-utils";
+import Button from "../Button";
+import { useWeb3React } from "@web3-react/core";
+import { MutationsContext } from "../../contexts";
+import { useApolloClient } from "@apollo/client";
+import { initTransaction } from "../../lib/utils";
 
 const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
-  const context = useWeb3React()
-  const client = useApolloClient()
+  const context = useWeb3React();
+  const client = useApolloClient();
 
   if (!context.active) {
-    return null
+    return null;
   }
 
-  const { unbond }: any = useContext(MutationsContext)
+  const { unbond }: any = useContext(MutationsContext);
 
   return (
     <>
@@ -26,24 +26,23 @@ const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
             try {
               await unbond({
                 variables: {
-                  amount: Utils.toWei(amount ? amount.toString() : '0'),
+                  amount: Utils.toWei(amount ? amount.toString() : "0"),
                   newPosPrev,
                   newPosNext,
                   delegator: delegator?.id,
                   lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
                 },
-              })
+              });
             } catch (err) {
-              console.log(err)
+              console.log(err);
             }
-          })
+          });
         }}
-        sx={{ width: '100%' }}
-      >
+        sx={{ width: "100%" }}>
         Unstake
       </Button>
     </>
-  )
-}
+  );
+};
 
-export default Unstake
+export default Unstake;

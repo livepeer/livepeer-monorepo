@@ -1,25 +1,25 @@
-import { Styled, useThemeUI } from 'theme-ui'
-import { TypeScale, TypeStyle } from '@theme-ui/style-guide'
+import { Styled, useThemeUI } from "theme-ui";
+import { TypeScale, TypeStyle } from "@theme-ui/style-guide";
 
 const Row = (props) => (
   <div
     {...props}
     sx={{
-      display: 'flex',
-      alignItems: 'baseline',
-      flexWrap: 'wrap',
+      display: "flex",
+      alignItems: "baseline",
+      flexWrap: "wrap",
       mb: 6,
       mx: -3,
-      '& > div': {
+      "& > div": {
         px: 3,
       },
     }}
   />
-)
+);
 
 const Typography = () => {
-  const { theme } = useThemeUI()
-  const { fonts, fontWeights, lineHeights } = theme
+  const { theme } = useThemeUI();
+  const { fonts, fontWeights, lineHeights } = theme;
 
   return (
     <section id="typography">
@@ -72,7 +72,7 @@ const Typography = () => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};
 
-export default Typography
+export default Typography;

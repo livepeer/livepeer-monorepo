@@ -6,15 +6,16 @@
 [![coverage](https://github.com/livepeer/livepeerjs/raw/master/packages/sdk/coverage.svg?sanitize=true)](https://codeclimate.com/github/livepeer/livepeerjs/code?q=packages%2Fsdk%2Fsrc)
 [![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/sdk.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/sdk)
 
-A module for interacting with Livepeer's smart contracts. The SDK is a core dependency of most LivepeerJS packages.
+A module for interacting with Livepeer's smart contracts. The SDK is a core
+dependency of most LivepeerJS packages.
 
 <!-- hide-on-docup-start -->
 
 ## Table of Contents
 
--   [Installation](#installation)
--   [Usage](#usage)
--   [API](#api)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
 
 <!-- hide-on-docup-stop -->
 
@@ -68,200 +69,200 @@ The following section details the rpc API's function signatures and typedefs.
 
 #### Table of Contents
 
--   [module~exports](#moduleexports)
-    -   [default](#default)
-        -   [Parameters](#parameters)
-        -   [Examples](#examples)
--   [livepeer~rpc](#livepeerrpc)
-    -   [Examples](#examples-1)
-    -   [getENSName](#getensname)
-        -   [Parameters](#parameters-1)
-        -   [Examples](#examples-2)
-    -   [getENSAddress](#getensaddress)
-        -   [Parameters](#parameters-2)
-        -   [Examples](#examples-3)
-    -   [getBlock](#getblock)
-        -   [Parameters](#parameters-3)
-        -   [Examples](#examples-4)
-    -   [getEthBalance](#getethbalance)
-        -   [Parameters](#parameters-4)
-        -   [Examples](#examples-5)
-    -   [getUnbondingPeriod](#getunbondingperiod)
-        -   [Examples](#examples-6)
-    -   [getNumActiveTranscoders](#getnumactivetranscoders)
-        -   [Examples](#examples-7)
-    -   [getMaxEarningsClaimsRounds](#getmaxearningsclaimsrounds)
-        -   [Examples](#examples-8)
-    -   [getTotalBonded](#gettotalbonded)
-        -   [Examples](#examples-9)
-    -   [getTokenTotalSupply](#gettokentotalsupply)
-        -   [Examples](#examples-10)
-    -   [getTokenBalance](#gettokenbalance)
-        -   [Parameters](#parameters-5)
-        -   [Examples](#examples-11)
-    -   [getTokenInfo](#gettokeninfo)
-        -   [Parameters](#parameters-6)
-        -   [Examples](#examples-12)
-    -   [transferToken](#transfertoken)
-        -   [Parameters](#parameters-7)
-        -   [Examples](#examples-13)
-    -   [getFaucetAmount](#getfaucetamount)
-        -   [Examples](#examples-14)
-    -   [getFaucetWait](#getfaucetwait)
-        -   [Examples](#examples-15)
-    -   [getFaucetNext](#getfaucetnext)
-        -   [Parameters](#parameters-8)
-        -   [Examples](#examples-16)
-    -   [getFaucetInfo](#getfaucetinfo)
-        -   [Parameters](#parameters-9)
-        -   [Examples](#examples-17)
-    -   [getInflation](#getinflation)
-        -   [Examples](#examples-18)
-    -   [getInflationChange](#getinflationchange)
-        -   [Examples](#examples-19)
-    -   [getDelegatorStatus](#getdelegatorstatus)
-        -   [Parameters](#parameters-10)
-        -   [Examples](#examples-20)
-    -   [getDelegator](#getdelegator)
-        -   [Parameters](#parameters-11)
-        -   [Examples](#examples-21)
-    -   [rebond](#rebond)
-        -   [Parameters](#parameters-12)
-        -   [Examples](#examples-22)
-    -   [rebondWithHint](#rebondwithhint)
-        -   [Parameters](#parameters-13)
-        -   [Examples](#examples-23)
-    -   [rebondFromUnbonded](#rebondfromunbonded)
-        -   [Parameters](#parameters-14)
-        -   [Examples](#examples-24)
-    -   [rebondFromUnbondedWithHint](#rebondfromunbondedwithhint)
-        -   [Parameters](#parameters-15)
-        -   [Examples](#examples-25)
-    -   [getPendingStake](#getpendingstake)
-        -   [Parameters](#parameters-16)
-        -   [Examples](#examples-26)
-    -   [getPendingFees](#getpendingfees)
-        -   [Parameters](#parameters-17)
-        -   [Examples](#examples-27)
-    -   [getTranscoderIsActive](#gettranscoderisactive)
-        -   [Parameters](#parameters-18)
-        -   [Examples](#examples-28)
-    -   [getTranscoderStatus](#gettranscoderstatus)
-        -   [Parameters](#parameters-19)
-        -   [Examples](#examples-29)
-    -   [getTranscoderTotalStake](#gettranscodertotalstake)
-        -   [Parameters](#parameters-20)
-        -   [Examples](#examples-30)
-    -   [getTranscoderPoolMaxSize](#gettranscoderpoolmaxsize)
-        -   [Examples](#examples-31)
-    -   [getTranscoder](#gettranscoder)
-        -   [Parameters](#parameters-21)
-        -   [Examples](#examples-32)
-    -   [getTranscoders](#gettranscoders)
-        -   [Examples](#examples-33)
-    -   [getProtocolPaused](#getprotocolpaused)
-        -   [Examples](#examples-34)
-    -   [getProtocol](#getprotocol)
-        -   [Examples](#examples-35)
-    -   [getRoundLength](#getroundlength)
-        -   [Examples](#examples-36)
-    -   [getRoundsPerYear](#getroundsperyear)
-        -   [Examples](#examples-37)
-    -   [getCurrentRound](#getcurrentround)
-        -   [Examples](#examples-38)
-    -   [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
-        -   [Examples](#examples-39)
-    -   [getCurrentRoundStartBlock](#getcurrentroundstartblock)
-        -   [Examples](#examples-40)
-    -   [getLastInitializedRound](#getlastinitializedround)
-        -   [Examples](#examples-41)
-    -   [getCurrentRoundInfo](#getcurrentroundinfo)
-        -   [Examples](#examples-42)
-    -   [tapFaucet](#tapfaucet)
-        -   [Parameters](#parameters-22)
-        -   [Examples](#examples-43)
-    -   [initializeRound](#initializeround)
-        -   [Parameters](#parameters-23)
-        -   [Examples](#examples-44)
-    -   [createPoll](#createpoll)
-        -   [Parameters](#parameters-24)
-        -   [Examples](#examples-45)
-    -   [getPollCreatorAllowance](#getpollcreatorallowance)
-        -   [Parameters](#parameters-25)
-        -   [Examples](#examples-46)
-    -   [getBondingManagerAllowance](#getbondingmanagerallowance)
-        -   [Parameters](#parameters-26)
-        -   [Examples](#examples-47)
-    -   [vote](#vote)
-        -   [Parameters](#parameters-27)
-        -   [Examples](#examples-48)
-    -   [claimEarnings](#claimearnings)
-        -   [Parameters](#parameters-28)
-        -   [Examples](#examples-49)
-    -   [bondWithHint](#bondwithhint)
-        -   [Parameters](#parameters-29)
-        -   [Examples](#examples-50)
-    -   [estimateGas](#estimategas)
-        -   [Parameters](#parameters-30)
-        -   [Examples](#examples-51)
-    -   [unbond](#unbond)
-        -   [Parameters](#parameters-31)
-        -   [Examples](#examples-52)
-    -   [unbondWithHint](#unbondwithhint)
-        -   [Parameters](#parameters-32)
-        -   [Examples](#examples-53)
-    -   [setupTranscoder](#setuptranscoder)
-        -   [Parameters](#parameters-33)
-        -   [Examples](#examples-54)
-    -   [getTargetBondingRate](#gettargetbondingrate)
-        -   [Examples](#examples-55)
-    -   [withdrawStake](#withdrawstake)
-        -   [Parameters](#parameters-34)
-        -   [Examples](#examples-56)
-    -   [withdrawStakeWithUnbondLock](#withdrawstakewithunbondlock)
-        -   [Parameters](#parameters-35)
-        -   [Examples](#examples-57)
-    -   [withdrawFees](#withdrawfees)
-        -   [Parameters](#parameters-36)
-        -   [Examples](#examples-58)
--   [getDelegatorUnbondingLocks](#getdelegatorunbondinglocks)
-    -   [Parameters](#parameters-37)
-    -   [Examples](#examples-59)
--   [getDelegatorUnbondingLock](#getdelegatorunbondinglock)
-    -   [Parameters](#parameters-38)
-    -   [Examples](#examples-60)
--   [ABIPropDescriptor](#abipropdescriptor)
-    -   [Properties](#properties)
--   [ContractArtifact](#contractartifact)
-    -   [Properties](#properties-1)
--   [LivepeerSDKOptions](#livepeersdkoptions)
-    -   [Properties](#properties-2)
--   [LivepeerSDK](#livepeersdk)
-    -   [Properties](#properties-3)
--   [TokenInfo](#tokeninfo)
-    -   [Properties](#properties-4)
--   [Protocol](#protocol)
-    -   [Properties](#properties-5)
--   [TxReceipt](#txreceipt)
-    -   [Properties](#properties-6)
--   [Log](#log)
-    -   [Properties](#properties-7)
--   [FaucetInfo](#faucetinfo)
-    -   [Properties](#properties-8)
--   [Broadcaster](#broadcaster)
-    -   [Properties](#properties-9)
--   [Delegator](#delegator)
-    -   [Properties](#properties-10)
--   [Transcoder](#transcoder)
-    -   [Properties](#properties-11)
--   [UnbondingLock](#unbondinglock)
-    -   [Properties](#properties-12)
--   [RoundInfo](#roundinfo)
-    -   [Properties](#properties-13)
--   [Block](#block)
-    -   [Properties](#properties-14)
--   [TxConfig](#txconfig)
-    -   [Properties](#properties-15)
+- [module~exports](#moduleexports)
+  - [default](#default)
+    - [Parameters](#parameters)
+    - [Examples](#examples)
+- [livepeer~rpc](#livepeerrpc)
+  - [Examples](#examples-1)
+  - [getENSName](#getensname)
+    - [Parameters](#parameters-1)
+    - [Examples](#examples-2)
+  - [getENSAddress](#getensaddress)
+    - [Parameters](#parameters-2)
+    - [Examples](#examples-3)
+  - [getBlock](#getblock)
+    - [Parameters](#parameters-3)
+    - [Examples](#examples-4)
+  - [getEthBalance](#getethbalance)
+    - [Parameters](#parameters-4)
+    - [Examples](#examples-5)
+  - [getUnbondingPeriod](#getunbondingperiod)
+    - [Examples](#examples-6)
+  - [getNumActiveTranscoders](#getnumactivetranscoders)
+    - [Examples](#examples-7)
+  - [getMaxEarningsClaimsRounds](#getmaxearningsclaimsrounds)
+    - [Examples](#examples-8)
+  - [getTotalBonded](#gettotalbonded)
+    - [Examples](#examples-9)
+  - [getTokenTotalSupply](#gettokentotalsupply)
+    - [Examples](#examples-10)
+  - [getTokenBalance](#gettokenbalance)
+    - [Parameters](#parameters-5)
+    - [Examples](#examples-11)
+  - [getTokenInfo](#gettokeninfo)
+    - [Parameters](#parameters-6)
+    - [Examples](#examples-12)
+  - [transferToken](#transfertoken)
+    - [Parameters](#parameters-7)
+    - [Examples](#examples-13)
+  - [getFaucetAmount](#getfaucetamount)
+    - [Examples](#examples-14)
+  - [getFaucetWait](#getfaucetwait)
+    - [Examples](#examples-15)
+  - [getFaucetNext](#getfaucetnext)
+    - [Parameters](#parameters-8)
+    - [Examples](#examples-16)
+  - [getFaucetInfo](#getfaucetinfo)
+    - [Parameters](#parameters-9)
+    - [Examples](#examples-17)
+  - [getInflation](#getinflation)
+    - [Examples](#examples-18)
+  - [getInflationChange](#getinflationchange)
+    - [Examples](#examples-19)
+  - [getDelegatorStatus](#getdelegatorstatus)
+    - [Parameters](#parameters-10)
+    - [Examples](#examples-20)
+  - [getDelegator](#getdelegator)
+    - [Parameters](#parameters-11)
+    - [Examples](#examples-21)
+  - [rebond](#rebond)
+    - [Parameters](#parameters-12)
+    - [Examples](#examples-22)
+  - [rebondWithHint](#rebondwithhint)
+    - [Parameters](#parameters-13)
+    - [Examples](#examples-23)
+  - [rebondFromUnbonded](#rebondfromunbonded)
+    - [Parameters](#parameters-14)
+    - [Examples](#examples-24)
+  - [rebondFromUnbondedWithHint](#rebondfromunbondedwithhint)
+    - [Parameters](#parameters-15)
+    - [Examples](#examples-25)
+  - [getPendingStake](#getpendingstake)
+    - [Parameters](#parameters-16)
+    - [Examples](#examples-26)
+  - [getPendingFees](#getpendingfees)
+    - [Parameters](#parameters-17)
+    - [Examples](#examples-27)
+  - [getTranscoderIsActive](#gettranscoderisactive)
+    - [Parameters](#parameters-18)
+    - [Examples](#examples-28)
+  - [getTranscoderStatus](#gettranscoderstatus)
+    - [Parameters](#parameters-19)
+    - [Examples](#examples-29)
+  - [getTranscoderTotalStake](#gettranscodertotalstake)
+    - [Parameters](#parameters-20)
+    - [Examples](#examples-30)
+  - [getTranscoderPoolMaxSize](#gettranscoderpoolmaxsize)
+    - [Examples](#examples-31)
+  - [getTranscoder](#gettranscoder)
+    - [Parameters](#parameters-21)
+    - [Examples](#examples-32)
+  - [getTranscoders](#gettranscoders)
+    - [Examples](#examples-33)
+  - [getProtocolPaused](#getprotocolpaused)
+    - [Examples](#examples-34)
+  - [getProtocol](#getprotocol)
+    - [Examples](#examples-35)
+  - [getRoundLength](#getroundlength)
+    - [Examples](#examples-36)
+  - [getRoundsPerYear](#getroundsperyear)
+    - [Examples](#examples-37)
+  - [getCurrentRound](#getcurrentround)
+    - [Examples](#examples-38)
+  - [getCurrentRoundIsInitialized](#getcurrentroundisinitialized)
+    - [Examples](#examples-39)
+  - [getCurrentRoundStartBlock](#getcurrentroundstartblock)
+    - [Examples](#examples-40)
+  - [getLastInitializedRound](#getlastinitializedround)
+    - [Examples](#examples-41)
+  - [getCurrentRoundInfo](#getcurrentroundinfo)
+    - [Examples](#examples-42)
+  - [tapFaucet](#tapfaucet)
+    - [Parameters](#parameters-22)
+    - [Examples](#examples-43)
+  - [initializeRound](#initializeround)
+    - [Parameters](#parameters-23)
+    - [Examples](#examples-44)
+  - [createPoll](#createpoll)
+    - [Parameters](#parameters-24)
+    - [Examples](#examples-45)
+  - [getPollCreatorAllowance](#getpollcreatorallowance)
+    - [Parameters](#parameters-25)
+    - [Examples](#examples-46)
+  - [getBondingManagerAllowance](#getbondingmanagerallowance)
+    - [Parameters](#parameters-26)
+    - [Examples](#examples-47)
+  - [vote](#vote)
+    - [Parameters](#parameters-27)
+    - [Examples](#examples-48)
+  - [claimEarnings](#claimearnings)
+    - [Parameters](#parameters-28)
+    - [Examples](#examples-49)
+  - [bondWithHint](#bondwithhint)
+    - [Parameters](#parameters-29)
+    - [Examples](#examples-50)
+  - [estimateGas](#estimategas)
+    - [Parameters](#parameters-30)
+    - [Examples](#examples-51)
+  - [unbond](#unbond)
+    - [Parameters](#parameters-31)
+    - [Examples](#examples-52)
+  - [unbondWithHint](#unbondwithhint)
+    - [Parameters](#parameters-32)
+    - [Examples](#examples-53)
+  - [setupTranscoder](#setuptranscoder)
+    - [Parameters](#parameters-33)
+    - [Examples](#examples-54)
+  - [getTargetBondingRate](#gettargetbondingrate)
+    - [Examples](#examples-55)
+  - [withdrawStake](#withdrawstake)
+    - [Parameters](#parameters-34)
+    - [Examples](#examples-56)
+  - [withdrawStakeWithUnbondLock](#withdrawstakewithunbondlock)
+    - [Parameters](#parameters-35)
+    - [Examples](#examples-57)
+  - [withdrawFees](#withdrawfees)
+    - [Parameters](#parameters-36)
+    - [Examples](#examples-58)
+- [getDelegatorUnbondingLocks](#getdelegatorunbondinglocks)
+  - [Parameters](#parameters-37)
+  - [Examples](#examples-59)
+- [getDelegatorUnbondingLock](#getdelegatorunbondinglock)
+  - [Parameters](#parameters-38)
+  - [Examples](#examples-60)
+- [ABIPropDescriptor](#abipropdescriptor)
+  - [Properties](#properties)
+- [ContractArtifact](#contractartifact)
+  - [Properties](#properties-1)
+- [LivepeerSDKOptions](#livepeersdkoptions)
+  - [Properties](#properties-2)
+- [LivepeerSDK](#livepeersdk)
+  - [Properties](#properties-3)
+- [TokenInfo](#tokeninfo)
+  - [Properties](#properties-4)
+- [Protocol](#protocol)
+  - [Properties](#properties-5)
+- [TxReceipt](#txreceipt)
+  - [Properties](#properties-6)
+- [Log](#log)
+  - [Properties](#properties-7)
+- [FaucetInfo](#faucetinfo)
+  - [Properties](#properties-8)
+- [Broadcaster](#broadcaster)
+  - [Properties](#properties-9)
+- [Delegator](#delegator)
+  - [Properties](#properties-10)
+- [Transcoder](#transcoder)
+  - [Properties](#properties-11)
+- [UnbondingLock](#unbondinglock)
+  - [Properties](#properties-12)
+- [RoundInfo](#roundinfo)
+  - [Properties](#properties-13)
+- [Block](#block)
+  - [Properties](#properties-14)
+- [TxConfig](#txconfig)
+  - [Properties](#properties-15)
 
 ### module~exports
 
@@ -269,25 +270,28 @@ Livepeer SDK main module exports
 
 #### default
 
-Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an object with useful methods for interacting with Livepeer protocol smart contracts
+Livepeer SDK factory function. Creates an instance of the Livepeer SDK -- an
+object with useful methods for interacting with Livepeer protocol smart
+contracts
 
 ##### Parameters
 
--   `opts` **[LivepeerSDKOptions](#livepeersdkoptions)** SDK configuration options
+- `opts` **[LivepeerSDKOptions](#livepeersdkoptions)** SDK configuration options
 
 ##### Examples
 
 ```javascript
 // Here we're naming the default export "LivepeerSDK"
-import LivepeerSDK from '@livepeer/sdk'
+import LivepeerSDK from "@livepeer/sdk";
 
 // Call the factory function and await its Promise
-LivepeerSDK().then(sdk => {
+LivepeerSDK().then((sdk) => {
   // Your Livepeer SDK instance is now ready to use
-})
+});
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[LivepeerSDK](#livepeersdk)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[LivepeerSDK](#livepeersdk)>**
 
 ### livepeer~rpc
 
@@ -296,35 +300,37 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 #### Examples
 
 ```javascript
-import LivepeerSDK from '@livepeer/sdk'
+import LivepeerSDK from "@livepeer/sdk";
 
 LivepeerSDK().then(({ rpc }) => {
   // Here, we're destructuring the sdk to expose only its rpc namespace
   // Now, you you are able call rpc.<method-name>()
   // All rpc method yield Promises. Their usage is further explained below.
-})
+});
 ```
 
 #### getENSName
 
 Gets the ENS name for an address. This is known as a reverse lookup.
-Unfortunately, users must explicitly set their own resolver.
-So most of the time, this method just returns an empty string
-More info here:
+Unfortunately, users must explicitly set their own resolver. So most of the
+time, this method just returns an empty string More info here:
 (<https://docs.ens.domains/en/latest/userguide.html#reverse-name-resolution>)
 
 ##### Parameters
 
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** address to look up an ENS name for
+- `address`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  address to look up an ENS name for
 
 ##### Examples
 
 ```javascript
-await rpc.getENSName('0xd34db33f...')
+await rpc.getENSName("0xd34db33f...");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getENSAddress
 
@@ -332,16 +338,19 @@ Gets the address for an ENS name
 
 ##### Parameters
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ENS name to look up an address for
+- `name`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  ENS name to look up an address for
 
 ##### Examples
 
 ```javascript
-await rpc.getENSAddress('vitalik.eth')
+await rpc.getENSAddress("vitalik.eth");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getBlock
 
@@ -349,8 +358,11 @@ Gets a block by number, hash, or keyword ('earliest' | 'latest')
 
 ##### Parameters
 
--   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `block` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Number of block to get
+- `id`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `block`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  Number of block to get
 
 ##### Examples
 
@@ -381,7 +393,8 @@ await rpc.getBlock('latest')
 }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Block](#block)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Block](#block)>**
 
 #### getEthBalance
 
@@ -389,16 +402,19 @@ Gets the ETH balance for an account
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ETH account address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  ETH account address
 
 ##### Examples
 
 ```javascript
-await rpc.getEthBalance('0xf00...')
+await rpc.getEthBalance("0xf00...");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getUnbondingPeriod
 
@@ -407,11 +423,12 @@ Gets the unbonding period for transcoders
 ##### Examples
 
 ```javascript
-await rpc.getUnbondingPeriod()
+await rpc.getUnbondingPeriod();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getNumActiveTranscoders
 
@@ -420,11 +437,12 @@ Gets the number of active transcoders
 ##### Examples
 
 ```javascript
-await rpc.getNumActiveTranscoders()
+await rpc.getNumActiveTranscoders();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getMaxEarningsClaimsRounds
 
@@ -433,11 +451,12 @@ Gets the maximum earnings for claims rounds
 ##### Examples
 
 ```javascript
-await rpc.getMaxEarningsClaimsRounds()
+await rpc.getMaxEarningsClaimsRounds();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTotalBonded
 
@@ -446,11 +465,12 @@ Gets the total amount of bonded tokens
 ##### Examples
 
 ```javascript
-await rpc.getTotalBonded()
+await rpc.getTotalBonded();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTokenTotalSupply
 
@@ -459,11 +479,12 @@ Gets the total supply of token (LTPU) available in the protocol
 ##### Examples
 
 ```javascript
-await rpc.getTokenTotalSupply()
+await rpc.getTokenTotalSupply();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTokenBalance
 
@@ -471,16 +492,19 @@ Gets a user's token balance (LPTU)
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getTokenBalance('0xf00...')
+await rpc.getTokenBalance("0xf00...");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTokenInfo
 
@@ -488,16 +512,19 @@ Gets general information about tokens
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getTokenInfo()
+await rpc.getTokenInfo();
 // => TokenInfo { totalSupply: string, balance: string }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TokenInfo](#tokeninfo)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TokenInfo](#tokeninfo)>**
 
 #### transferToken
 
@@ -505,14 +532,19 @@ Transfers tokens (LPTU) from one account to another
 
 ##### Parameters
 
--   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the account ETH address to send tokens to
--   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of token to send (LPTU)
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `to`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the account ETH address to send tokens to
+- `amount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of token to send (LPTU)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.transferToken('0xf00...', '10')
+await rpc.transferToken("0xf00...", "10");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -534,7 +566,8 @@ await rpc.transferToken('0xf00...', '10')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### getFaucetAmount
 
@@ -543,11 +576,12 @@ The amount of LPT the faucet distributes when tapped
 ##### Examples
 
 ```javascript
-await rpc.getFaucetAmount()
+await rpc.getFaucetAmount();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getFaucetWait
 
@@ -556,11 +590,12 @@ How often an address can tap the faucet (in hours)
 ##### Examples
 
 ```javascript
-await rpc.getFaucetWait()
+await rpc.getFaucetWait();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getFaucetNext
 
@@ -568,16 +603,19 @@ Next timestamp at which the given address will be allowed to tap the faucet
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getFaucetNext()
+await rpc.getFaucetNext();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getFaucetInfo
 
@@ -585,12 +623,14 @@ Info about the state of the LPT faucet
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getFaucetInfo('0xf00...')
+await rpc.getFaucetInfo("0xf00...");
 // => FaucetInfo {
 //   amount: string,
 //   wait: string,
@@ -598,7 +638,8 @@ await rpc.getFaucetInfo('0xf00...')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[FaucetInfo](#faucetinfo)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[FaucetInfo](#faucetinfo)>**
 
 #### getInflation
 
@@ -607,24 +648,27 @@ Gets the per round inflation rate
 ##### Examples
 
 ```javascript
-await rpc.getInflation()
+await rpc.getInflation();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getInflationChange
 
-Gets the change in inflation rate per round until the target bonding rate is achieved
+Gets the change in inflation rate per round until the target bonding rate is
+achieved
 
 ##### Examples
 
 ```javascript
-await rpc.getInflationChange()
+await rpc.getInflationChange();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getDelegatorStatus
 
@@ -632,16 +676,19 @@ The delegator status of the given address
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getDelegatorStatus('0xf00...')
+await rpc.getDelegatorStatus("0xf00...");
 // => 'Pending' | 'Bonded' | 'Unbonded'
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getDelegator
 
@@ -649,12 +696,14 @@ General info about a delegator
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getDelegator('0xf00...')
+await rpc.getDelegator("0xf00...");
 // => Delegator {
 //   allowance: string,
 //   address: string,
@@ -672,7 +721,8 @@ await rpc.getDelegator('0xf00...')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Delegator](#delegator)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Delegator](#delegator)>**
 
 #### rebond
 
@@ -680,13 +730,15 @@ Rebonds LPT from an address
 
 ##### Parameters
 
--   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `unbondingLockId`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.rebond(0)
+await rpc.rebond(0);
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -708,7 +760,8 @@ await rpc.rebond(0)
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### rebondWithHint
 
@@ -716,15 +769,19 @@ Rebonds LPT from an address with hint
 
 ##### Parameters
 
--   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
--   `newPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `newPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `unbondingLockId`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+- `newPosPrev`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `newPosNext`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.rebondWithHint(0, "0x", "0x")
+await rpc.rebondWithHint(0, "0x", "0x");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -746,7 +803,8 @@ await rpc.rebondWithHint(0, "0x", "0x")
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### rebondFromUnbonded
 
@@ -754,14 +812,17 @@ Rebonds LPT from an address
 
 ##### Parameters
 
--   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `to`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `unbondingLockId`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.rebondFromUnbonded("0x", 1)
+await rpc.rebondFromUnbonded("0x", 1);
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -783,7 +844,8 @@ await rpc.rebondFromUnbonded("0x", 1)
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### rebondFromUnbondedWithHint
 
@@ -791,16 +853,21 @@ Rebonds LPT from an address with hint
 
 ##### Parameters
 
--   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `unbondingLockId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
--   `newPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `newPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `to`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `unbondingLockId`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+- `newPosPrev`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `newPosNext`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.rebondFromUnbondedWithHint("0x", 1, "0x", "0x")
+await rpc.rebondFromUnbondedWithHint("0x", 1, "0x", "0x");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -822,7 +889,8 @@ await rpc.rebondFromUnbondedWithHint("0x", 1, "0x", "0x")
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### getPendingStake
 
@@ -830,17 +898,22 @@ Get a delegator's pending stake
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
--   `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The last round to compute pending stake from
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
+- `endRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  The last round to compute pending stake from
 
 ##### Examples
 
 ```javascript
-await rpc.getPendingStake('0xf00...')
+await rpc.getPendingStake("0xf00...");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getPendingFees
 
@@ -848,17 +921,22 @@ Get a delegator's pending fees
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
--   `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The last round to compute pending fees from
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
+- `endRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  The last round to compute pending fees from
 
 ##### Examples
 
 ```javascript
-await rpc.getPendingFees('0xf00...')
+await rpc.getPendingFees("0xf00...");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTranscoderIsActive
 
@@ -866,16 +944,19 @@ Whether or not the transcoder is active
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getTranscoderIsActive('0xf00...')
+await rpc.getTranscoderIsActive("0xf00...");
 // => boolean
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**
 
 #### getTranscoderStatus
 
@@ -883,16 +964,19 @@ Gets the status of a transcoder
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getTranscoderStatus('0xf00...')
+await rpc.getTranscoderStatus("0xf00...");
 // => 'NotRegistered' | 'Registered'
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTranscoderTotalStake
 
@@ -900,16 +984,19 @@ Gets a transcoder's total stake
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getTranscoderTotalStake('0xf00...')
+await rpc.getTranscoderTotalStake("0xf00...");
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTranscoderPoolMaxSize
 
@@ -918,11 +1005,12 @@ Gets a transcoder's pool max size
 ##### Examples
 
 ```javascript
-await rpc.getTranscoderPoolMaxSize()
+await rpc.getTranscoderPoolMaxSize();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getTranscoder
 
@@ -930,12 +1018,14 @@ Gets info about a transcoder
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
 
 ##### Examples
 
 ```javascript
-await rpc.getTranscoder('0xf00...')
+await rpc.getTranscoder("0xf00...");
 // => Transcoder {
 //   active: boolean,
 //   address: string,
@@ -951,7 +1041,8 @@ await rpc.getTranscoder('0xf00...')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Transcoder](#transcoder)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Transcoder](#transcoder)>**
 
 #### getTranscoders
 
@@ -960,11 +1051,12 @@ Gets transcoders
 ##### Examples
 
 ```javascript
-await rpc.getTranscoders()
+await rpc.getTranscoders();
 // => Array<Transcoder>
 ```
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Transcoder](#transcoder)>** 
+Returns
+**[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Transcoder](#transcoder)>**
 
 #### getProtocolPaused
 
@@ -973,11 +1065,12 @@ Whether the protocol is paused
 ##### Examples
 
 ```javascript
-await rpc.getProtocolPaused()
+await rpc.getProtocolPaused();
 // => boolean
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**
 
 #### getProtocol
 
@@ -997,7 +1090,8 @@ maxEarningsClaimsRounds
 }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Protocol](#protocol)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Protocol](#protocol)>**
 
 #### getRoundLength
 
@@ -1006,11 +1100,12 @@ Gets the length of a round (in blocks)
 ##### Examples
 
 ```javascript
-await rpc.getRoundLength()
+await rpc.getRoundLength();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getRoundsPerYear
 
@@ -1019,11 +1114,12 @@ Gets the estimated number of rounds per year
 ##### Examples
 
 ```javascript
-await rpc.getRoundsPerYear()
+await rpc.getRoundsPerYear();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getCurrentRound
 
@@ -1032,11 +1128,12 @@ Gets the number of the current round
 ##### Examples
 
 ```javascript
-await rpc.getCurrentRound()
+await rpc.getCurrentRound();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getCurrentRoundIsInitialized
 
@@ -1045,11 +1142,12 @@ Whether or not the current round is initalized
 ##### Examples
 
 ```javascript
-await rpc.getCurrentRoundIsInitialized()
+await rpc.getCurrentRoundIsInitialized();
 // => boolean
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**
 
 #### getCurrentRoundStartBlock
 
@@ -1058,11 +1156,12 @@ The block at which the current round started
 ##### Examples
 
 ```javascript
-await rpc.getCurrentRoundStartBlock()
+await rpc.getCurrentRoundStartBlock();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getLastInitializedRound
 
@@ -1071,11 +1170,12 @@ The previously intitialized round
 ##### Examples
 
 ```javascript
-await rpc.getLastInitializedRound()
+await rpc.getLastInitializedRound();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### getCurrentRoundInfo
 
@@ -1084,7 +1184,7 @@ Gets general information about the rounds in the protocol
 ##### Examples
 
 ```javascript
-await rpc.getCurrentRoundInfo()
+await rpc.getCurrentRoundInfo();
 // => RoundInfo {
 //   id: string,
 //   initialized: boolean,
@@ -1094,7 +1194,8 @@ await rpc.getCurrentRoundInfo()
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[RoundInfo](#roundinfo)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[RoundInfo](#roundinfo)>**
 
 #### tapFaucet
 
@@ -1102,12 +1203,13 @@ Gets LPT from the faucet
 
 ##### Parameters
 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.tapFaucet('1337')
+await rpc.tapFaucet("1337");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1129,7 +1231,8 @@ await rpc.tapFaucet('1337')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### initializeRound
 
@@ -1137,12 +1240,13 @@ Initializes the round
 
 ##### Parameters
 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.initializeRound()
+await rpc.initializeRound();
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1164,7 +1268,8 @@ await rpc.initializeRound()
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### createPoll
 
@@ -1172,13 +1277,16 @@ Creates a poll
 
 ##### Parameters
 
--   `proposal` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The IPFS multihash for the proposal
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `proposal`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  The IPFS multihash for the proposal
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.createPoll('Qm...')
+await rpc.createPoll("Qm...");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1200,7 +1308,8 @@ await rpc.createPoll('Qm...')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### getPollCreatorAllowance
 
@@ -1208,13 +1317,16 @@ Get PollCreator transfer allowance
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.getPollCreatorAllowance('0x...')
+await rpc.getPollCreatorAllowance("0x...");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1236,7 +1348,8 @@ await rpc.getPollCreatorAllowance('0x...')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### getBondingManagerAllowance
 
@@ -1244,13 +1357,16 @@ Get BondingManager transfer allowance
 
 ##### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's ETH address
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's ETH address
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.getBondingManagerAllowance('0x...')
+await rpc.getBondingManagerAllowance("0x...");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1272,7 +1388,8 @@ await rpc.getBondingManagerAllowance('0x...')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### vote
 
@@ -1280,14 +1397,17 @@ Creates a poll
 
 ##### Parameters
 
--   `pollAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** poll contract address
--   `choiceId` **int** vote (0 = yes, 1 = no)
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `pollAddress`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  poll contract address
+- `choiceId` **int** vote (0 = yes, 1 = no)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.initializeRound()
+await rpc.initializeRound();
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1309,25 +1429,31 @@ await rpc.initializeRound()
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### claimEarnings
 
-Claims token and eth earnings from the sender's `lastClaimRound + 1` through a given `endRound`
+Claims token and eth earnings from the sender's `lastClaimRound + 1` through a
+given `endRound`
 
 ##### Parameters
 
--   `endRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round to claim earnings until
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `endRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the round to claim earnings until
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.claimEarnings()
+await rpc.claimEarnings();
 // => string
 ```
 
-Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns
+**[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 #### bondWithHint
 
@@ -1335,18 +1461,25 @@ Bonds to a transcoder with hint
 
 ##### Parameters
 
--   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `to` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `oldDelegateNewPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `oldDelegateNewPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `currDelegateNewPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `currDelegateNewPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `amount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `to`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `oldDelegateNewPosPrev`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `oldDelegateNewPosNext`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `currDelegateNewPosPrev`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `currDelegateNewPosNext`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.bondWithHint("100", "0x", "0x", "0x", "0x", "0x")
+await rpc.bondWithHint("100", "0x", "0x", "0x", "0x", "0x");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1368,39 +1501,37 @@ await rpc.bondWithHint("100", "0x", "0x", "0x", "0x", "0x")
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### estimateGas
 
-Gets the estimated amount of gas to be used by a smart contract
-method.
+Gets the estimated amount of gas to be used by a smart contract method.
 
 ##### Parameters
 
--   `contractName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : name of contract containing method you wish to find gas price for.
-     methodName: name of method on contract.
-     methodArgs: array of argument to be passed to the contract in specified order.
-     tx: (optioanl){
-       from: address - 0x...,
-       gas: number,
-       value: (optional) number or string containing number
-     }
--   `methodName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `methodArgs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
--   `tx`   (optional, default `config.defaultTx`)
+- `contractName`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  : name of contract containing method you wish to find gas price for.
+  methodName: name of method on contract. methodArgs: array of argument to be
+  passed to the contract in specified order. tx: (optioanl){ from: address -
+  0x..., gas: number, value: (optional) number or string containing number }
+- `methodName`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `methodArgs`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
+- `tx` (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.estimateGas(
- 'BondingManager',
- 'bond',
- [10, '0x00.....']
-)
+await rpc.estimateGas("BondingManager", "bond", [10, "0x00....."]);
 // => 33454
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>** containing estimated gas price
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**
+containing estimated gas price
 
 #### unbond
 
@@ -1408,13 +1539,15 @@ Unbonds LPT from an address
 
 ##### Parameters
 
--   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `amount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.unbond(amount)
+await rpc.unbond(amount);
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1436,7 +1569,8 @@ await rpc.unbond(amount)
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### unbondWithHint
 
@@ -1444,15 +1578,19 @@ Unbonds LPT from an address with hint
 
 ##### Parameters
 
--   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `newPosPrev` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `newPosNext` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `amount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `newPosPrev`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `newPosNext`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.unbondWithHint("100", "0x", "0x")
+await rpc.unbondWithHint("100", "0x", "0x");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1474,7 +1612,8 @@ await rpc.unbondWithHint("100", "0x", "0x")
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### setupTranscoder
 
@@ -1482,15 +1621,22 @@ Sets transcoder parameters
 
 ##### Parameters
 
--   `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the block reward cut you wish to set
--   `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the fee share you wish to set
--   `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the price per segment you wish to set
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `rewardCut`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the block reward cut you wish to set
+- `feeShare`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the fee share you wish to set
+- `pricePerSegment`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the price per segment you wish to set
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.setupTranscoder('10', '10', '5')
+await rpc.setupTranscoder("10", "10", "5");
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1512,7 +1658,8 @@ await rpc.setupTranscoder('10', '10', '5')
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[TxReceipt](#txreceipt)>**
 
 #### getTargetBondingRate
 
@@ -1521,25 +1668,30 @@ Get target bonding rate
 ##### Examples
 
 ```javascript
-await rpc.getTargetBondingRate()
+await rpc.getTargetBondingRate();
 // => string
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
 
 #### withdrawStake
 
-Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their `tokenBalance`)
+Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their
+`tokenBalance`)
 
 ##### Parameters
 
--   `unbondLockId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** the unbond lock id
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `unbondLockId`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**
+  the unbond lock id
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.withdrawStake()
+await rpc.withdrawStake();
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1561,21 +1713,28 @@ await rpc.withdrawStake()
 // }
 ```
 
-Returns **[TxReceipt](#txreceipt)** 
+Returns **[TxReceipt](#txreceipt)**
 
 #### withdrawStakeWithUnbondLock
 
-Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their `tokenBalance`)
+Withdraws earned token (Transfers a sender's delegator `bondedAmount` to their
+`tokenBalance`)
 
 ##### Parameters
 
--   `unbondlock` **{id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), amount: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), withdrawRound: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}** 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `unbondlock` **{id:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  amount:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  withdrawRound:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}**
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.withdrawStakeWithUnbondLock(unbondlock)
+await rpc.withdrawStakeWithUnbondLock(unbondlock);
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1597,20 +1756,22 @@ await rpc.withdrawStakeWithUnbondLock(unbondlock)
 // }
 ```
 
-Returns **[TxReceipt](#txreceipt)** 
+Returns **[TxReceipt](#txreceipt)**
 
 #### withdrawFees
 
-Withdraws earned fees (Transfers a sender's delegator `fees` to their `ethBalance`)
+Withdraws earned fees (Transfers a sender's delegator `fees` to their
+`ethBalance`)
 
 ##### Parameters
 
--   `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas` values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
+  values of the transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 
 ```javascript
-await rpc.withdrawFees()
+await rpc.withdrawFees();
 // => TxReceipt {
 //   transactionHash: string,
 //   transactionIndex": BN,
@@ -1632,7 +1793,7 @@ await rpc.withdrawFees()
 // }
 ```
 
-Returns **[TxReceipt](#txreceipt)** 
+Returns **[TxReceipt](#txreceipt)**
 
 ### getDelegatorUnbondingLocks
 
@@ -1640,12 +1801,14 @@ Get all the unbonding locks for a delegator
 
 #### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** delegator's ETH address
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  delegator's ETH address
 
 #### Examples
 
 ```javascript
-await rpc.getDelegatorUnbondingLocks('0xf00...')
+await rpc.getDelegatorUnbondingLocks("0xf00...");
 // => UnbondingLock [{
 //   id: string,
 //   delegator: string,
@@ -1654,7 +1817,8 @@ await rpc.getDelegatorUnbondingLocks('0xf00...')
 // }]
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[UnbondingLock](#unbondinglock)>>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[UnbondingLock](#unbondinglock)>>**
 
 ### getDelegatorUnbondingLock
 
@@ -1662,13 +1826,17 @@ Get an unbonding lock for a delegator
 
 #### Parameters
 
--   `addr` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** delegator's ETH address
--   `unbondingLockId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** unbonding lock ID
+- `addr`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  delegator's ETH address
+- `unbondingLockId`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  unbonding lock ID
 
 #### Examples
 
 ```javascript
-await rpc.getDelegatorUnbondingLock('0xf00...', 1)
+await rpc.getDelegatorUnbondingLock("0xf00...", 1);
 // => UnbondingLock {
 //   id: string,
 //   delegator: string,
@@ -1677,256 +1845,499 @@ await rpc.getDelegatorUnbondingLock('0xf00...', 1)
 // }
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[UnbondingLock](#unbondinglock)>** 
+Returns
+**[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;[UnbondingLock](#unbondinglock)>**
 
 ### ABIPropDescriptor
 
 ABI property descriptor
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `constants` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method constant?
--   `inputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** the method params
--   `outputs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** method return values
--   `payable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** is the method payable?
--   `stateMutability` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of state mutability
--   `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of contract property
+- `constants`
+  **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+  is the method constant?
+- `inputs`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  type:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
+  the method params
+- `outputs`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;{name:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  type:
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
+  method return values
+- `payable`
+  **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+  is the method payable?
+- `stateMutability`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  type of state mutability
+- `type`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  type of contract property
 
 ### ContractArtifact
 
-Mostly "`truffle`-style" ABI artifacts but no bytecode/network properties required
+Mostly "`truffle`-style" ABI artifacts but no bytecode/network properties
+required
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the contract
--   `abi` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[ABIPropDescriptor](#abipropdescriptor)>** lists info about contract properties
+- `name`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  name of the contract
+- `abi`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[ABIPropDescriptor](#abipropdescriptor)>**
+  lists info about contract properties
 
 ### LivepeerSDKOptions
 
 SDK configuration options
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `controllerAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The address of the delpoyed Controller contract
--   `provider` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** The ETH http provider for rpc methods
--   `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** the amount of gas to include with transactions by default
--   `artifacts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [ContractArtifact](#contractartifact)>** an object containing contract name -> ContractArtifact mappings
--   `privateKeys` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** an object containing public -> private key mappings. Should be specified if using the SDK for transactions without MetaMask (via CLI, etc)
--   `account` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** the account that will be used for transacting and data-fetching. Can be one of the publicKeys specified in the `privateKeys` option or an index of an account available via MetaMask
+- `controllerAddress`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**
+  The address of the delpoyed Controller contract
+- `provider`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**
+  The ETH http provider for rpc methods
+- `gas`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**
+  the amount of gas to include with transactions by default
+- `artifacts`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  [ContractArtifact](#contractartifact)>** an object containing contract name ->
+  ContractArtifact mappings
+- `privateKeys`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
+  an object containing public -> private key mappings. Should be specified if
+  using the SDK for transactions without MetaMask (via CLI, etc)
+- `account`
+  **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+  \|
+  [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))**
+  the account that will be used for transacting and data-fetching. Can be one of
+  the publicKeys specified in the `privateKeys` option or an index of an account
+  available via MetaMask
 
 ### LivepeerSDK
 
-An object containing contract info and utility methods for interacting with the Livepeer protocol's smart contracts
+An object containing contract info and utility methods for interacting with the
+Livepeer protocol's smart contracts
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `config` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** this prop is mostly for debugging purposes and could change a lot in the future. Currently, it contains the following props: `abis`, `accounts`, `contracts`, `defaultTx`, `eth`
--   `constants` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** Exposes some constant values. Currently, it contains the following props: `ADDRESS_PAD`, `DELEGATOR_STATUS`, `EMPTY_ADDRESS`, `TRANSCODER_STATUS`, `VIDEO_PROFILES`, `VIDEO_PROFILE_ID_SIZE`
--   `create` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** same as the `createLivepeerSDK` function
--   `events` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>** Object mapping an event name -> contract event descriptor object
--   `rpc` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>** contains all of the rpc methods available for interacting with the Livepeer protocol
--   `utils` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>** contains utility methods. Mostly here just because. Could possibly be removed or moved into its own module in the future
+- `config`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  any>** this prop is mostly for debugging purposes and could change a lot in
+  the future. Currently, it contains the following props: `abis`, `accounts`,
+  `contracts`, `defaultTx`, `eth`
+- `constants`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  any>** Exposes some constant values. Currently, it contains the following
+  props: `ADDRESS_PAD`, `DELEGATOR_STATUS`, `EMPTY_ADDRESS`,
+  `TRANSCODER_STATUS`, `VIDEO_PROFILES`, `VIDEO_PROFILE_ID_SIZE`
+- `create`
+  **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)**
+  same as the `createLivepeerSDK` function
+- `events`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>**
+  Object mapping an event name -> contract event descriptor object
+- `rpc`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>**
+  contains all of the rpc methods available for interacting with the Livepeer
+  protocol
+- `utils`
+  **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String),
+  [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)>**
+  contains utility methods. Mostly here just because. Could possibly be removed
+  or moved into its own module in the future
 
 ### TokenInfo
 
 An object containing the total token supply and a user's account balance.
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `totalSupply` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total supply of token available in the protocol (LPTU)
--   `balance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** user's token balance (LPTU)
+- `totalSupply`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  total supply of token available in the protocol (LPTU)
+- `balance`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  user's token balance (LPTU)
 
 ### Protocol
 
 A Protocol struct
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `paused` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** the protocol paused or not
--   `totalTokenSupply` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total token supply for protocol
--   `totalBondedToken` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total bonded token for protocol
--   `targetBondingRate` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** target bonding rate for protocol
--   `transcoderPoolMaxSize` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** transcoder pool max size
+- `paused`
+  **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+  the protocol paused or not
+- `totalTokenSupply`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  total token supply for protocol
+- `totalBondedToken`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  total bonded token for protocol
+- `targetBondingRate`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  target bonding rate for protocol
+- `transcoderPoolMaxSize`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  transcoder pool max size
 
 ### TxReceipt
 
 Transaction receipt
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash
--   `transactionIndex` **BN** the transaction index
--   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction block hash
--   `blockNumber` **BN** the transaction block number
--   `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
--   `gasUsed` **BN** the gas used in the transaction
--   `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the contract address of the transaction method
--   `logs` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>** an object containing logs that were fired during the transaction
+- `transactionHash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the transaction hash
+- `transactionIndex` **BN** the transaction index
+- `blockHash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the transaction block hash
+- `blockNumber` **BN** the transaction block number
+- `cumulativeGasUsed` **BN** the cumulative gas used in the transaction
+- `gasUsed` **BN** the gas used in the transaction
+- `contractAddress`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the contract address of the transaction method
+- `logs`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Log](#log)>**
+  an object containing logs that were fired during the transaction
 
 ### Log
 
 An object representing a contract log
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `logIndex` **BN** the log index
--   `blockNumber` **BN** the log block number
--   `blockHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log block hash
--   `transactionHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's transaction hash
--   `transactionIndex` **BN** the log's transaction index
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's address
--   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the log's data
--   `topics` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the log's topics
+- `logIndex` **BN** the log index
+- `blockNumber` **BN** the log block number
+- `blockHash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the log block hash
+- `transactionHash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the log's transaction hash
+- `transactionIndex` **BN** the log's transaction index
+- `address`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the log's address
+- `data`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the log's data
+- `topics`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**
+  the log's topics
 
 ### FaucetInfo
 
 Information about the status of the LPT faucet
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount distributed by the faucet
--   `wait` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the faucet request cooldown time
--   `next` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next time a valid faucet request may be made
+- `amount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount distributed by the faucet
+- `wait`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the faucet request cooldown time
+- `next`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the next time a valid faucet request may be made
 
 ### Broadcaster
 
 A Broadcaster struct
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the broadcaster
--   `deposit` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPT the broadcaster has deposited
--   `withdrawBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next block at which a broadcaster may withdraw their deposit
+- `address`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the ETH address of the broadcaster
+- `deposit`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of LPT the broadcaster has deposited
+- `withdrawBlock`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the next block at which a broadcaster may withdraw their deposit
 
 ### Delegator
 
 A Delegator struct
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `allowance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's LivepeerToken approved amount for transfer
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's ETH address
--   `bondedAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The amount of LPTU a delegator has bonded
--   `delegateAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH address of the delegator's delegate
--   `delegatedAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU the delegator has delegated
--   `fees` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU a delegator has collected
--   `lastClaimRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the last round that the delegator claimed reward and fee pool shares
--   `pendingFees` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of ETH the delegator has earned up to the current round
--   `pendingStake` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of token the delegator has earned up to the current round
--   `startRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round the delegator becomes bonded and delegated to its delegate
--   `status` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's status
--   `withdrawableAmount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of LPTU a delegator can withdraw
--   `withdrawRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round the delegator can withdraw its stake
--   `nextUnbondingLockId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the next unbonding lock ID for the delegator
+- `allowance`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the delegator's LivepeerToken approved amount for transfer
+- `address`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the delegator's ETH address
+- `bondedAmount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  The amount of LPTU a delegator has bonded
+- `delegateAddress`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the ETH address of the delegator's delegate
+- `delegatedAmount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of LPTU the delegator has delegated
+- `fees`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of LPTU a delegator has collected
+- `lastClaimRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the last round that the delegator claimed reward and fee pool shares
+- `pendingFees`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of ETH the delegator has earned up to the current round
+- `pendingStake`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of token the delegator has earned up to the current round
+- `startRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the round the delegator becomes bonded and delegated to its delegate
+- `status`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the delegator's status
+- `withdrawableAmount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of LPTU a delegator can withdraw
+- `withdrawRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the round the delegator can withdraw its stake
+- `nextUnbondingLockId`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the next unbonding lock ID for the delegator
 
 ### Transcoder
 
 A Transcoder struct
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `active` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the transcoder is active
--   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's ETH address
--   `rewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of block reward cut paid to transcoder by a delegator
--   `feeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** % of fees paid to delegators by transcoder
--   `lastRewardRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** last round that the transcoder called reward
--   `pendingRewardCut` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending block reward cut for next round if the transcoder is active
--   `pendingFeeShare` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending fee share for next round if the transcoder is active
--   `pendingPricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** pending price per segment for next round if the transcoder is active
--   `pricePerSegment` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** price per segment for a stream (LPTU)
--   `status` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transcoder's status
--   `totalStake` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total tokens delegated toward a transcoder (including their own)
+- `active`
+  **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+  whether or not the transcoder is active
+- `address`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the transcoder's ETH address
+- `rewardCut`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  % of block reward cut paid to transcoder by a delegator
+- `feeShare`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  % of fees paid to delegators by transcoder
+- `lastRewardRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  last round that the transcoder called reward
+- `pendingRewardCut`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  pending block reward cut for next round if the transcoder is active
+- `pendingFeeShare`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  pending fee share for next round if the transcoder is active
+- `pendingPricePerSegment`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  pending price per segment for next round if the transcoder is active
+- `pricePerSegment`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  price per segment for a stream (LPTU)
+- `status`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the transcoder's status
+- `totalStake`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  total tokens delegated toward a transcoder (including their own)
 
 ### UnbondingLock
 
 An UnbondingLock struct
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the unbonding lock ID
--   `delegator` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the delegator's ETH address
--   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the amount of tokens being unbonded
--   `withdrawRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the round at which unbonding period is over and tokens can be withdrawn
+- `id`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the unbonding lock ID
+- `delegator`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the delegator's ETH address
+- `amount`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the amount of tokens being unbonded
+- `withdrawRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the round at which unbonding period is over and tokens can be withdrawn
 
 ### RoundInfo
 
 An object containing information about the current round
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the number of the current round
--   `initialized` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether or not the current round is initialized
--   `startBlock` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the start block of the current round
--   `lastInitializedRound` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the last round that was initialized prior to the current
--   `length` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the length of rounds
+- `id`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the number of the current round
+- `initialized`
+  **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+  whether or not the current round is initialized
+- `startBlock`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the start block of the current round
+- `lastInitializedRound`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the last round that was initialized prior to the current
+- `length`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the length of rounds
 
 ### Block
 
 An object containing information about an Ethereum block
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `number` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block number
--   `hash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block hash
--   `parentHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** parent has of the block
--   `nonce` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block nonce
--   `sha3Uncles` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block sha3 uncles
--   `logsBloom` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** logss bloom for the block
--   `transactionsRoot` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block transaction root hash
--   `stateRoot` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block state root hash
--   `receiptsRoot` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block receipts root hash
--   `miner` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block miner hash
--   `mixHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block mixHash
--   `difficulty` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** difficulty int
--   `totalDifficulty` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** total difficulty int
--   `extraData` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** hash of extra data
--   `size` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block size
--   `gasLimit` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block gas limit
--   `gasUsed` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** gas used in block
--   `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** block timestamp
--   `transactions` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block transactions hash
--   `uncles` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** block uncles hash
--   `transactions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;Transaction>** transactions in the block
--   `transactionsRoot` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** root transaction hash
--   `uncles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;Uncle>** block uncles
+- `number`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block number
+- `hash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block hash
+- `parentHash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  parent has of the block
+- `nonce`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block nonce
+- `sha3Uncles`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block sha3 uncles
+- `logsBloom`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  logss bloom for the block
+- `transactionsRoot`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block transaction root hash
+- `stateRoot`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block state root hash
+- `receiptsRoot`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block receipts root hash
+- `miner`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block miner hash
+- `mixHash`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block mixHash
+- `difficulty`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  difficulty int
+- `totalDifficulty`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  total difficulty int
+- `extraData`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  hash of extra data
+- `size`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block size
+- `gasLimit`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block gas limit
+- `gasUsed`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  gas used in block
+- `timestamp`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+  block timestamp
+- `transactions`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block transactions hash
+- `uncles`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  block uncles hash
+- `transactions`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;Transaction>**
+  transactions in the block
+- `transactionsRoot`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  root transaction hash
+- `uncles`
+  **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;Uncle>**
+  block uncles
 
 ### TxConfig
 
 Transaction config object
 
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+Type:
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 #### Properties
 
--   `from` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the ETH account address to sign the transaction from
--   `gas` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** the amount of gas to include in the transaction
+- `from`
+  **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+  the ETH account address to sign the transaction from
+- `gas`
+  **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+  the amount of gas to include in the transaction

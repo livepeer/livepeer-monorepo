@@ -1,8 +1,8 @@
-import React, { Component, ReactChildren, ReactElement } from 'react'
-import PropTypes from 'prop-types'
-import { Player, BigPlayButton, ControlBar } from 'video-react'
-import GlobalStyles from './styles'
-import Hls from 'hls.js'
+import React, { Component, ReactChildren, ReactElement } from "react";
+import PropTypes from "prop-types";
+import { Player, BigPlayButton, ControlBar } from "video-react";
+import GlobalStyles from "./styles";
+import Hls from "hls.js";
 
 /**
  * A playlist loader class that implements custom logic
@@ -15,7 +15,7 @@ class pLoader extends Hls.DefaultConfig.loader {
    * @param {Object} config - loading config
    * @param {Object} callbacks - loading callbacks
    */
-  _load = this.load.bind(this)
+  _load = this.load.bind(this);
   /**
    * Modified playlist load method
    * Mostly just adds some extra logging whenever a manifest is requested
@@ -24,20 +24,20 @@ class pLoader extends Hls.DefaultConfig.loader {
    * @param {Object} callbacks - loading callbacks
    */
   load = (ctx, config, cbs) => {
-    const { type, url } = ctx
-    if (type === 'manifest') console.log(`Manifest ${url} will be loaded.`)
-    else console.log('loading', url)
-    const loader = new ctx.loader(config)
-    const _ctx = { ...ctx, loader }
+    const { type, url } = ctx;
+    if (type === "manifest") console.log(`Manifest ${url} will be loaded.`);
+    else console.log("loading", url);
+    const loader = new ctx.loader(config);
+    const _ctx = { ...ctx, loader };
     const _cbs = {
       ...cbs,
       onSuccess: (res, stats, ctx) => {
         // we can also add in some extra success logging here if desired
-        cbs.onSuccess(res, stats, ctx)
+        cbs.onSuccess(res, stats, ctx);
       },
-    }
-    this._load(_ctx, config, _cbs)
-  }
+    };
+    this._load(_ctx, config, _cbs);
+  };
 }
 
 /**
@@ -47,26 +47,26 @@ class pLoader extends Hls.DefaultConfig.loader {
  */
 const getSourceType = (src: string): string => {
   const types = [
-    ['.m3u8', 'application/x-mpegURL'],
-    ['.mov', 'video/quicktime'],
-    ['.mp4', 'video/mp4'],
-    ['.ogm', 'video/ogg'],
-    ['.ogv', 'video/ogg'],
-    ['.ogg', 'video/ogg'],
-    ['.webm', 'video/webm'],
-  ]
+    [".m3u8", "application/x-mpegURL"],
+    [".mov", "video/quicktime"],
+    [".mp4", "video/mp4"],
+    [".ogm", "video/ogg"],
+    [".ogv", "video/ogg"],
+    [".ogg", "video/ogg"],
+    [".webm", "video/webm"],
+  ];
   for (const [end, type] of types) {
-    if (src && src.endsWith(end)) return type
+    if (src && src.endsWith(end)) return type;
   }
-  console.warn(`Could not determine type for src "${src}"`)
-  return ''
-}
+  console.warn(`Could not determine type for src "${src}"`);
+  return "";
+};
 
 /**
  * Whether a mimeType represents an HLS file (.m3u8)
  * @param {string} x - a mimeType
  */
-const isHLS = (x: string): boolean => x === 'application/x-mpegURL'
+const isHLS = (x: string): boolean => x === "application/x-mpegURL";
 
 /**
  * Quality picker controller for HLS multibitrate videos
@@ -78,20 +78,20 @@ export class QualityPicker extends Component {
     video: PropTypes.object,
     levels: PropTypes.array,
     currentLevel: PropTypes.number,
-  }
+  };
 
   constructor(props, context) {
-    super(props, context)
-    this.createResOptions = this.createResOptions.bind(this)
+    super(props, context);
+    this.createResOptions = this.createResOptions.bind(this);
     this.state = {
       visible: false,
-    }
+    };
   }
   /**
    * toggles menu visibility
    */
   toggleMenu() {
-    this.setState({ visible: !this.state.visible })
+    this.setState({ visible: !this.state.visible });
   }
 
   /**
@@ -99,11 +99,11 @@ export class QualityPicker extends Component {
    * @param  {event} ev button HTML event object
    */
   handleQualityChange(ev) {
-    let { video } = this.props
+    let { video } = this.props;
     if (video) {
-      video.loadLevel(parseInt(ev.target.dataset['id']))
+      video.loadLevel(parseInt(ev.target.dataset["id"]));
     } else {
-      console.error(`ev: this.video is null ${this.video}`)
+      console.error(`ev: this.video is null ${this.video}`);
     }
   }
 
@@ -112,19 +112,19 @@ export class QualityPicker extends Component {
    * @return {Array} returns an array of items.
    */
   createResOptions(levels, video) {
-    levels = levels || this.props.levels
-    let res = []
-    let currentLevel = this.props.currentLevel || -1
+    levels = levels || this.props.levels;
+    let res = [];
+    let currentLevel = this.props.currentLevel || -1;
     if (levels && levels.length >= 1 && levels[0].attrs) {
       for (let i = levels.length - 1; i >= 0; i--) {
         res.push(
-          this.generateListItem(currentLevel, i, levels[i].attrs.RESOLUTION),
-        )
+          this.generateListItem(currentLevel, i, levels[i].attrs.RESOLUTION)
+        );
       }
     }
 
-    res.push(this.generateListItem(currentLevel, -1, 'auto'))
-    return res
+    res.push(this.generateListItem(currentLevel, -1, "auto"));
+    return res;
   }
 
   /**
@@ -138,40 +138,38 @@ export class QualityPicker extends Component {
     return (
       <li key={i}>
         <button
-          className={currentLevel === i ? 'active' : ''}
+          className={currentLevel === i ? "active" : ""}
           data-id={i}
-          onClick={this.handleQualityChange.bind(this)}
-        >
+          onClick={this.handleQualityChange.bind(this)}>
           {resolution}
         </button>
       </li>
-    )
+    );
   }
 
   render() {
-    const { levels, video } = this.props
+    const { levels, video } = this.props;
     return (
-      <div className={'video-react-control'}>
+      <div className={"video-react-control"}>
         <div
-          className={'menu-container'}
+          className={"menu-container"}
           style={{
-            display: !this.state.visible ? 'none' : 'block',
-          }}
-        >
+            display: !this.state.visible ? "none" : "block",
+          }}>
           <ul>{this.createResOptions(levels, video)}</ul>
         </div>
         <button
-          ref={c => {
-            this.button = c
+          ref={(c) => {
+            this.button = c;
           }}
           className={
-            'video-react-icon video-react-control video-react-button video-react-icon-settings'
+            "video-react-icon video-react-control video-react-button video-react-icon-settings"
           }
           tabIndex="0"
           onClick={this.toggleMenu.bind(this)}
         />
       </div>
-    )
+    );
   }
 }
 
@@ -193,7 +191,7 @@ export default class VideoPlayer extends Component {
     src: PropTypes.string,
     poster: PropTypes.string,
     className: PropTypes.string,
-    preload: PropTypes.oneOf(['auto', 'metadata', 'none']),
+    preload: PropTypes.oneOf(["auto", "metadata", "none"]),
     crossOrigin: PropTypes.string,
     onLoadStart: PropTypes.func,
     onWaiting: PropTypes.func,
@@ -221,20 +219,20 @@ export default class VideoPlayer extends Component {
     // custom props
     onLive: PropTypes.func,
     onDead: PropTypes.func,
-  }
+  };
   static defaultProps = {
-    preload: 'auto',
+    preload: "auto",
     onLive: () => {},
     onDead: () => {},
-  }
+  };
 
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       levels: [],
       currentLevel: -1,
-    }
+    };
 
     // this.onLevels = this.onLevels.bind(this)
   }
@@ -245,9 +243,9 @@ export default class VideoPlayer extends Component {
    */
   getLevels() {
     if (this.source) {
-      return this.source.getLevels()
+      return this.source.getLevels();
     } else {
-      return []
+      return [];
     }
   }
 
@@ -257,10 +255,10 @@ export default class VideoPlayer extends Component {
    */
   getCurrentLevel() {
     if (this.source) {
-      let x = this.source.getCurrentLevel()
-      return x
+      let x = this.source.getCurrentLevel();
+      return x;
     } else {
-      return -1
+      return -1;
     }
   }
 
@@ -270,8 +268,8 @@ export default class VideoPlayer extends Component {
    */
   loadLevel(level) {
     if (this.source) {
-      this.source.loadLevel(level)
-      this.setState({ currentLevel: level })
+      this.source.loadLevel(level);
+      this.setState({ currentLevel: level });
     }
   }
 
@@ -279,9 +277,9 @@ export default class VideoPlayer extends Component {
     this.setState({
       levels: args[0].levels,
       currentLevel: this.getCurrentLevel(),
-    })
+    });
     // pass it along to onLive (check @livepeer/player/src/Channel/index.js)
-    this.props.onLive(...args)
+    this.props.onLive(...args);
   }
 
   render() {
@@ -293,7 +291,7 @@ export default class VideoPlayer extends Component {
       hlsOptions,
       videoOptions,
       ...props
-    } = this.props
+    } = this.props;
     return (
       <Player muted autoPlay={autoPlay} playsInline {...props}>
         <BigPlayButton position="center" />
@@ -306,8 +304,8 @@ export default class VideoPlayer extends Component {
           />
         </ControlBar>
         <Source
-          ref={instance => {
-            this.source = instance
+          ref={(instance) => {
+            this.source = instance;
           }}
           isVideoChild
           onLive={this.onLive.bind(this)}
@@ -325,7 +323,7 @@ export default class VideoPlayer extends Component {
           }}
         />
       </Player>
-    )
+    );
   }
 }
 
@@ -404,7 +402,7 @@ export class Source extends Component {
     onLive: PropTypes.func,
     /** Called when it is determiend the video is unable to play */
     onDead: PropTypes.func,
-  }
+  };
   static defaultProps = {
     autoPlay: true,
     hlsOptions: {
@@ -419,81 +417,81 @@ export class Source extends Component {
     },
     onLive: () => {},
     onDead: () => {},
-  }
-  retries: number = 0
-  maxRetries: number = this.props.videoOptions.maxRetries
-  waitingTimeout: number = this.props.videoOptions.waitingTimeout
+  };
+  retries: number = 0;
+  maxRetries: number = this.props.videoOptions.maxRetries;
+  waitingTimeout: number = this.props.videoOptions.waitingTimeout;
   /**
    * Logs things to the console if props.debug === true
    */
   debug = (...args): void => {
-    if (this.props.hlsOptions.debug) console.info('[debug]', ...args)
-  }
+    if (this.props.hlsOptions.debug) console.info("[debug]", ...args);
+  };
   /**
    * Updates the <source> element with the latest src and type attributes
    * Also reinitializes hls.js (if applicable) and any event listeners
    */
   updateSource = (): void => {
-    const { hlsOptions, src, video } = this.props
-    const canPlayHLS = video.canPlayType('application/vnd.apple.mpegurl')
-    const useHLSJS = Hls.isSupported() && !canPlayHLS
-    this.debug('updating src ->', src)
-    if (!src) return
+    const { hlsOptions, src, video } = this.props;
+    const canPlayHLS = video.canPlayType("application/vnd.apple.mpegurl");
+    const useHLSJS = Hls.isSupported() && !canPlayHLS;
+    this.debug("updating src ->", src);
+    if (!src) return;
     if (useHLSJS) {
       // Handle m3u8 playback with hls.js
       if (this.hls) {
         // stop load and destroy old instance
-        this.hls.stopLoad()
-        this.hls.destroy()
+        this.hls.stopLoad();
+        this.hls.destroy();
       }
       // create new hls.js instance
-      this.hls = new Hls(hlsOptions)
-      this.hls.on(Hls.Events.MEDIA_ATTACHED, this.onMediaAttached)
-      this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed)
-      this.hls.on(Hls.Events.ERROR, this.onError)
+      this.hls = new Hls(hlsOptions);
+      this.hls.on(Hls.Events.MEDIA_ATTACHED, this.onMediaAttached);
+      this.hls.on(Hls.Events.MANIFEST_PARSED, this.onManifestParsed);
+      this.hls.on(Hls.Events.ERROR, this.onError);
       // console.info('modded chroma2')
-      this.debug('attaching media')
-      this.hls.attachMedia(video)
+      this.debug("attaching media");
+      this.hls.attachMedia(video);
     } else if (canPlayHLS) {
       // Handle m3u8 playback natively
-      video.removeEventListener('canplay', this.onVideoCanPlay)
-      video.removeEventListener('waiting', this.onVideoWaiting)
-      video.removeEventListener('error', this.onVideoError)
-      video.addEventListener('canplay', this.onVideoCanPlay)
-      video.addEventListener('waiting', this.onVideoWaiting)
-      video.addEventListener('error', this.onVideoError)
-      video.src = src
+      video.removeEventListener("canplay", this.onVideoCanPlay);
+      video.removeEventListener("waiting", this.onVideoWaiting);
+      video.removeEventListener("error", this.onVideoError);
+      video.addEventListener("canplay", this.onVideoCanPlay);
+      video.addEventListener("waiting", this.onVideoWaiting);
+      video.addEventListener("error", this.onVideoError);
+      video.src = src;
     }
-  }
+  };
 
   /**
    * get HLS.js bitrate levels
    */
   getLevels = (): Array<Mixed> => {
     if (this.hls) {
-      let levels = this.hls.levels
-      return levels
+      let levels = this.hls.levels;
+      return levels;
     } else {
-      return []
+      return [];
     }
-  }
+  };
 
   /**
    * get currentl playing resolution index
    */
   getCurrentLevel = (): Number => {
     if (!this.hls) {
-      return -1
+      return -1;
     }
-    return this.hls.currentLevel
-  }
+    return this.hls.currentLevel;
+  };
 
   /**
    * change resolution
    */
   loadLevel = (level: Number): void => {
-    this.hls.currentLevel = level
-  }
+    this.hls.currentLevel = level;
+  };
 
   /**
    * Event handler that is fired when native 'canplay' event is triggered on <video>
@@ -501,138 +499,138 @@ export class Source extends Component {
    * @param {Event} e - event object
    */
   onVideoCanPlay = async (e: Event): Promise<void> => {
-    this.debug('video can play!')
-    const { onLive } = this.props
-    this.retries = 0
+    this.debug("video can play!");
+    const { onLive } = this.props;
+    this.retries = 0;
     // no autoplay on mobile safari
     // if not muted, playback must be started by user-initiated event
     // https://webkit.org/blog/6784/new-video-policies-for-ios/
     // we can enable, if desired, but video would have to be muted during initial playback
-    onLive()
-  }
+    onLive();
+  };
   /**
    * Event handler that is fired when native 'waiting' event is triggered on <video>
    * @note This handler is only bound when HLS is natively supported
    * @param {Event} e - event object
    */
   onVideoWaiting = (e: Event): void => {
-    const { currentTime, buffered } = e.target
-    if (!buffered.length) return // nothing was loaded
-    const duration = buffered.end(0)
-    const aMins = parseInt(currentTime / 60, 10)
-    const aSecs = `${Math.round(currentTime % 60)}`.padStart(2, 0)
-    const bMins = parseInt(duration / 60, 10)
-    const bSecs = `${Math.round(duration % 60)}`.padStart(2, 0)
-    this.debug('Playback waiting at', `${aMins}:${aSecs}/${bMins}:${bSecs}`)
+    const { currentTime, buffered } = e.target;
+    if (!buffered.length) return; // nothing was loaded
+    const duration = buffered.end(0);
+    const aMins = parseInt(currentTime / 60, 10);
+    const aSecs = `${Math.round(currentTime % 60)}`.padStart(2, 0);
+    const bMins = parseInt(duration / 60, 10);
+    const bSecs = `${Math.round(duration % 60)}`.padStart(2, 0);
+    this.debug("Playback waiting at", `${aMins}:${aSecs}/${bMins}:${bSecs}`);
     // Check if playback is still buffering after `waitingTimeout` ms
     setTimeout(() => {
-      const { currentTime: c, buffered: b } = this.props.video
+      const { currentTime: c, buffered: b } = this.props.video;
       // console.log(b.length)
       // console.log('currentTime:', currentTime, c)
       // console.log('duration:', duration, b.end(0))
       if (currentTime === c && duration === b.end(0)) {
-        this.debug('Wait exceeded maximum duration; stream appears to be dead')
-        this.props.onDead()
-        this.retryUpdateSource()
+        this.debug("Wait exceeded maximum duration; stream appears to be dead");
+        this.props.onDead();
+        this.retryUpdateSource();
       }
-    }, this.waitingTimeout)
-  }
+    }, this.waitingTimeout);
+  };
   /**
    * Event handler that is fired when native 'error' event is triggered on <video>
    * @note This handler is only bound when HLS is natively supported
    * @param {Event} e - event object
    */
   onVideoError = async (e: Event): void => {
-    const { onDead } = this.props
-    const { error } = e.target
+    const { onDead } = this.props;
+    const { error } = e.target;
     const errorCodes = {
-      1: 'MEDIA_ERR_ABORTED',
-      2: 'MEDIA_ERR_NETWORK',
-      3: 'MEDIA_ERR_DECODE',
-      4: 'MEDIA_ERR_SRC_NOT_SUPPORTED',
-      5: 'MEDIA_ERR_ENCRYPTED',
-    }
-    console.error(`MediaError code ${error.code}`, errorCodes[error.code])
-    onDead(error)
+      1: "MEDIA_ERR_ABORTED",
+      2: "MEDIA_ERR_NETWORK",
+      3: "MEDIA_ERR_DECODE",
+      4: "MEDIA_ERR_SRC_NOT_SUPPORTED",
+      5: "MEDIA_ERR_ENCRYPTED",
+    };
+    console.error(`MediaError code ${error.code}`, errorCodes[error.code]);
+    onDead(error);
     if (error.code === 4 && this.retries < 4)
-      setImmediate(this.retryUpdateSource)
-  }
+      setImmediate(this.retryUpdateSource);
+  };
   /**
    * Calls updateSource() and increments retries
    * Used for retry logic in environments with native HLS support
    */
   retryUpdateSource = (): void => {
-    this.retries++
+    this.retries++;
     this.debug(
       `Retry update src (${this.retries}/${this.maxRetries})`,
-      this.props.src,
-    )
-    this.updateSource()
-  }
+      this.props.src
+    );
+    this.updateSource();
+  };
   /**
    * Called when Hls.Events.MEDIA_ATTACHED is triggered
    * @param {string} e - event name
    * @param {Object} data - event data
    */
   onMediaAttached = (e: string, data: Object): void => {
-    const { src } = this.props
-    this.debug('loading src', src)
-    this.hls.loadSource(src)
-  }
+    const { src } = this.props;
+    this.debug("loading src", src);
+    this.hls.loadSource(src);
+  };
   /**
    * Called when Hls.Events.MANIFEST_PARSED is triggered
    * @param {string} e - event name
    * @param {Object} data - event data
    */
   onManifestParsed = async (e: string, data): void => {
-    const { autoPlay, onLive, video } = this.props
+    const { autoPlay, onLive, video } = this.props;
     this.debug(
-      'manifest loaded, found levels\n',
-      data.levels.map(x => x.url.toString()).join('\n'),
-      data.levels,
-    )
+      "manifest loaded, found levels\n",
+      data.levels.map((x) => x.url.toString()).join("\n"),
+      data.levels
+    );
     // onLevels(data.levels)
     // this.getLevels()
-    this.debug('will load level', this.hls.loadLevel)
-    this.hls.startLoad()
-    if (autoPlay) await video.play()
-    onLive(data)
-  }
+    this.debug("will load level", this.hls.loadLevel);
+    this.hls.startLoad();
+    if (autoPlay) await video.play();
+    onLive(data);
+  };
   /**
    * Called when Hls.Events.ERROR is triggered
    * @param {string} e - event name
    * @param {Object} data - event data
    */
   onError = (e: string, data): void => {
-    const { onDead } = this.props
-    this.debug(e, data)
-    if (!data.fatal) return
+    const { onDead } = this.props;
+    this.debug(e, data);
+    if (!data.fatal) return;
     switch (data.details) {
       case Hls.ErrorDetails.INTERNAL_EXCEPTION:
-        this.updateSource()
-        break
+        this.updateSource();
+        break;
       default:
-        this.hls.stopLoad()
-        onDead(data)
-        break
+        this.hls.stopLoad();
+        onDead(data);
+        break;
     }
-  }
+  };
   /**
    * If props.src is set, calls updateSource()
    */
   componentDidMount(): void {
-    this.debug('mounting', this.props)
-    if (this.props.src) this.updateSource()
+    this.debug("mounting", this.props);
+    if (this.props.src) this.updateSource();
   }
   /**
    * Destroys hls.js or removes native <video> event listeners
    */
   componentWillUnmount(): void {
-    if (this.hls) this.hls.destroy()
+    if (this.hls) this.hls.destroy();
     else {
-      video.removeEventListener('canplay', this.onVideoCanPlay)
-      video.removeEventListener('waiting', this.onVideoWaiting)
-      video.removeEventListener('error', this.onVideoError)
+      video.removeEventListener("canplay", this.onVideoCanPlay);
+      video.removeEventListener("waiting", this.onVideoWaiting);
+      video.removeEventListener("error", this.onVideoError);
     }
   }
   /**
@@ -640,25 +638,25 @@ export class Source extends Component {
    * @param {Object} nextProps - the incoming props object
    */
   componentWillReceiveProps(nextProps: Object): void {
-    if (nextProps.src === this.props.src) return
-    this.retries = 0
+    if (nextProps.src === this.props.src) return;
+    this.retries = 0;
     if (nextProps.src) {
-      this.debug('received new source', nextProps.src)
-      requestAnimationFrame(this.updateSource)
+      this.debug("received new source", nextProps.src);
+      requestAnimationFrame(this.updateSource);
     } else if (this.hls) {
-      this.hls.stopLoad()
+      this.hls.stopLoad();
     }
   }
   /**
    * Renders the <source> element
    */
   render(): ReactElement {
-    const { src, type } = this.props
+    const { src, type } = this.props;
     return (
       <React.Fragment>
         <GlobalStyles />
         <source src={src} type={type} />
       </React.Fragment>
-    )
+    );
   }
 }

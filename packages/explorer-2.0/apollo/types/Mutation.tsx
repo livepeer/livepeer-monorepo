@@ -43,6 +43,6 @@ type Mutation {
 
   "Unlink an external account from a user's 3box"
   removeAddressLink(address: String): Boolean
-}`
+}`;
 
-export default Mutation
+export default Mutation;

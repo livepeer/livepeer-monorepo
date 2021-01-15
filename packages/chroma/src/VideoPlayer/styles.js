@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
   .video-react .video-react-big-play-button:before, .video-react .video-react-control:before {
@@ -935,4 +935,4 @@ export default createGlobalStyle`
   .active {
     font-weight: 700;
   }
-`
+`;

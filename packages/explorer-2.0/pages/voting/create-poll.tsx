@@ -1,36 +1,36 @@
-import { Flex, Styled } from 'theme-ui'
-import { getLayout } from '../../layouts/main'
-import IPFS from 'ipfs-mini'
-import fm from 'front-matter'
-import { Box } from 'theme-ui'
-import Button from '../../components/Button'
-import { createApolloFetch } from 'apollo-fetch'
-import { Radio, Label, Spinner } from '@theme-ui/components'
-import { useState, useEffect, useContext } from 'react'
-import gql from 'graphql-tag'
-import { useWeb3React } from '@web3-react/core'
-import PollTokenApproval from '../../components/PollTokenApproval'
-import { useQuery } from '@apollo/client'
-import { withApollo } from '../../apollo'
-import { useApolloClient } from '@apollo/client'
-import { MutationsContext } from '../../contexts'
-import Utils from 'web3-utils'
-import Head from 'next/head'
-import { usePageVisibility } from '../../hooks'
-import { NextPage } from 'next'
+import { Flex, Styled } from "theme-ui";
+import { getLayout } from "../../layouts/main";
+import IPFS from "ipfs-mini";
+import fm from "front-matter";
+import { Box } from "theme-ui";
+import Button from "../../components/Button";
+import { createApolloFetch } from "apollo-fetch";
+import { Radio, Label, Spinner } from "@theme-ui/components";
+import { useState, useEffect, useContext } from "react";
+import gql from "graphql-tag";
+import { useWeb3React } from "@web3-react/core";
+import PollTokenApproval from "../../components/PollTokenApproval";
+import { useQuery } from "@apollo/client";
+import { withApollo } from "../../apollo";
+import { useApolloClient } from "@apollo/client";
+import { MutationsContext } from "../../contexts";
+import Utils from "web3-utils";
+import Head from "next/head";
+import { usePageVisibility } from "../../hooks";
+import { NextPage } from "next";
 
 const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
-  const context = useWeb3React()
-  const client = useApolloClient()
-  const isVisible = usePageVisibility()
-  const [sufficientAllowance, setSufficientAllowance] = useState(false)
-  const [sufficientBalance, setSufficientBalance] = useState(false)
+  const context = useWeb3React();
+  const client = useApolloClient();
+  const isVisible = usePageVisibility();
+  const [sufficientAllowance, setSufficientAllowance] = useState(false);
+  const [sufficientBalance, setSufficientBalance] = useState(false);
   const ipfs = new IPFS({
-    host: 'ipfs.infura.io',
+    host: "ipfs.infura.io",
     port: 5001,
-    protocol: 'https',
-  })
-  const pollInterval = 20000
+    protocol: "https",
+  });
+  const pollInterval = 20000;
 
   const accountQuery = gql`
     query($account: ID!) {
@@ -39,7 +39,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
         tokenBalance
       }
     }
-  `
+  `;
 
   const { data, startPolling, stopPolling } = useQuery(accountQuery, {
     variables: {
@@ -50,45 +50,45 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
       library: context.library,
     },
     skip: !context.account,
-  })
+  });
 
   useEffect(() => {
     if (!isVisible) {
-      stopPolling()
+      stopPolling();
     } else {
-      startPolling(pollInterval)
+      startPolling(pollInterval);
     }
-  }, [isVisible])
+  }, [isVisible]);
 
   useEffect(() => {
     if (data) {
       if (
         parseFloat(Utils.fromWei(data.account.pollCreatorAllowance)) >=
-        (process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 10 : 100)
+        (process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? 10 : 100)
       ) {
-        setSufficientAllowance(true)
+        setSufficientAllowance(true);
       } else {
-        setSufficientAllowance(false)
+        setSufficientAllowance(false);
       }
       if (
         parseFloat(Utils.fromWei(data.account.tokenBalance)) >=
-        (process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 10 : 100)
+        (process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? 10 : 100)
       ) {
-        setSufficientBalance(true)
+        setSufficientBalance(true);
       } else {
-        setSufficientBalance(false)
+        setSufficientBalance(false);
       }
     }
-  }, [data, context.account])
+  }, [data, context.account]);
 
-  const [selectedProposal, setSelectedProposal] = useState(null)
-  const { createPoll }: any = useContext(MutationsContext)
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const { createPoll }: any = useContext(MutationsContext);
 
   useEffect(() => {
     if (lips.length) {
-      setSelectedProposal({ gitCommitHash, text: lips[0].text })
+      setSelectedProposal({ gitCommitHash, text: lips[0].text });
     }
-  }, [])
+  }, []);
 
   return (
     <>
@@ -98,30 +98,27 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
       <Flex
         sx={{
           mt: [3, 3, 3, 5],
-          width: '100%',
-          flexDirection: 'column',
-        }}
-      >
+          width: "100%",
+          flexDirection: "column",
+        }}>
         <Box>
           <Flex
             sx={{
               mb: 4,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
             <Styled.h1
               sx={{
                 fontSize: [3, 3, 26],
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
+                display: "flex",
+                alignItems: "center",
+              }}>
               Create Poll
             </Styled.h1>
             {!context.account && (
               <Button
-                sx={{ display: ['none', 'none', 'none', 'block'] }}
+                sx={{ display: ["none", "none", "none", "block"] }}
                 onClick={() => {
                   client.writeQuery({
                     query: gql`
@@ -132,30 +129,28 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                     data: {
                       walletModalOpen: true,
                     },
-                  })
-                }}
-              >
+                  });
+                }}>
                 Connect Wallet
               </Button>
             )}
           </Flex>
           <form
             onSubmit={async (e) => {
-              e.preventDefault()
+              e.preventDefault();
               try {
                 const hash = await ipfs.addJSON({
                   ...selectedProposal,
-                })
+                });
                 await createPoll({
                   variables: { proposal: hash },
-                })
+                });
               } catch (e) {
                 return {
-                  error: e.message.replace('GraphQL error: ', ''),
-                }
+                  error: e.message.replace("GraphQL error: ", ""),
+                };
               }
-            }}
-          >
+            }}>
             {!lips.length && (
               <Box>
                 There are currently no LIPs in a proposed state for which there
@@ -166,29 +161,27 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
               <Label
                 key={i}
                 sx={{
-                  cursor: 'pointer',
+                  cursor: "pointer",
                   p: 3,
                   mb: 2,
                   borderRadius: 10,
-                  border: '1px solid',
-                }}
-              >
+                  border: "1px solid",
+                }}>
                 <Flex
                   sx={{
-                    width: '100%',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Flex sx={{ alignItems: 'center' }}>
+                    width: "100%",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}>
+                  <Flex sx={{ alignItems: "center" }}>
                     <Radio
                       defaultChecked={i === 0}
                       onChange={() => {
-                        setSelectedProposal({ gitCommitHash, text: lip.text })
+                        setSelectedProposal({ gitCommitHash, text: lip.text });
                       }}
                       name="lip"
                     />
-                    <Box sx={{ width: '100%' }}>
+                    <Box sx={{ width: "100%" }}>
                       LIP-{lip.attributes.lip} - {lip.attributes.title}
                     </Box>
                   </Flex>
@@ -196,12 +189,11 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                     sx={{
                       ml: 1,
                       minWidth: 108,
-                      display: 'block',
-                      color: 'primary',
+                      display: "block",
+                      color: "primary",
                     }}
                     target="_blank"
-                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
-                  >
+                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}>
                     View Proposal
                   </a>
                 </Flex>
@@ -211,8 +203,11 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
               !!lips.length &&
               (!data ? (
                 <Flex
-                  sx={{ alignItems: 'center', mt: 4, justifyContent: 'center' }}
-                >
+                  sx={{
+                    alignItems: "center",
+                    mt: 4,
+                    justifyContent: "center",
+                  }}>
                   <Box sx={{ mr: 2 }}>Loading LPT Balance</Box>
                   <Spinner variant="styles.spinner" />
                 </Flex>
@@ -220,27 +215,25 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                 <Flex
                   sx={{
                     mt: 4,
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                  }}
-                >
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}>
                   {!sufficientAllowance && <PollTokenApproval />}
                   {sufficientAllowance && !sufficientBalance && (
-                    <Box sx={{ color: 'muted', fontSize: 0 }}>
-                      Insufficient balance. You need at least{' '}
-                      {process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 10 : 100}{' '}
+                    <Box sx={{ color: "muted", fontSize: 0 }}>
+                      Insufficient balance. You need at least{" "}
+                      {process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? 10 : 100}{" "}
                       LPT to create a poll.
                     </Box>
                   )}
                   <Button
                     disabled={!sufficientAllowance || !sufficientBalance}
                     type="submit"
-                    sx={{ ml: 2, alignSelf: 'flex-end' }}
-                  >
+                    sx={{ ml: 2, alignSelf: "flex-end" }}>
                     Create Poll (
-                    {process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
-                      ? '10'
-                      : '100'}{' '}
+                    {process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
+                      ? "10"
+                      : "100"}{" "}
                     LPT)
                   </Button>
                 </Flex>
@@ -249,25 +242,25 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
         </Box>
       </Flex>
     </>
-  )
-}
+  );
+};
 
-CreatePoll.getLayout = getLayout
+CreatePoll.getLayout = getLayout;
 
 export default withApollo({
   ssr: false,
-})(CreatePoll as NextPage)
+})(CreatePoll as NextPage);
 
 export async function getStaticProps() {
   const ipfs = new IPFS({
-    host: 'ipfs.infura.io',
+    host: "ipfs.infura.io",
     port: 5001,
-    protocol: 'https',
-  })
+    protocol: "https",
+  });
   const lipsQuery = `
   {
     repository(owner: "${
-      process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ? 'livepeer' : 'adamsoffer'
+      process.env.NEXT_PUBLIC_NETWORK === "mainnet" ? "livepeer" : "adamsoffer"
     }", name: "LIPS") {
       owner {
         login
@@ -292,55 +285,55 @@ export async function getStaticProps() {
       }
     }
   }
-  `
+  `;
   const apolloFetch = createApolloFetch({
-    uri: 'https://api.github.com/graphql',
-  })
+    uri: "https://api.github.com/graphql",
+  });
 
   apolloFetch.use(({ options }, next) => {
     if (!options.headers) {
-      options.headers = {} // Create the headers object if needed.
+      options.headers = {}; // Create the headers object if needed.
     }
     options.headers[
-      'authorization'
-    ] = `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`
+      "authorization"
+    ] = `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`;
 
-    next()
-  })
-  const { data } = await apolloFetch({ query: lipsQuery })
+    next();
+  });
+  const { data } = await apolloFetch({ query: lipsQuery });
   const apolloSubgraphFetch = createApolloFetch({
     uri: process.env.NEXT_PUBLIC_SUBGRAPH,
-  })
+  });
   const { data: pollsData } = await apolloSubgraphFetch({
     query: `{ polls { proposal } }`,
-  })
+  });
 
-  let createdPolls = []
+  let createdPolls = [];
   if (pollsData) {
     await Promise.all(
       pollsData.polls.map(async (poll) => {
-        const obj = await ipfs.catJSON(poll.proposal)
+        const obj = await ipfs.catJSON(poll.proposal);
         // check if proposal is valid format {text, gitCommitHash}
         if (obj?.text && obj?.gitCommitHash) {
-          const transformedProposal = fm(obj.text)
-          transformedProposal.attributes.lip
-          createdPolls.push(transformedProposal.attributes.lip)
+          const transformedProposal = fm(obj.text);
+          transformedProposal.attributes.lip;
+          createdPolls.push(transformedProposal.attributes.lip);
         }
-      }),
-    )
+      })
+    );
   }
 
-  let lips = []
+  let lips = [];
   data.repository.content.entries.map((lip: any) => {
-    let transformedLip: any = fm(lip.content.text)
-    transformedLip.attributes.created = transformedLip.attributes.created.toString()
+    let transformedLip: any = fm(lip.content.text);
+    transformedLip.attributes.created = transformedLip.attributes.created.toString();
     if (
-      transformedLip.attributes.status === 'Proposed' &&
-      !transformedLip.attributes['part-of'] &&
+      transformedLip.attributes.status === "Proposed" &&
+      !transformedLip.attributes["part-of"] &&
       !createdPolls.includes(transformedLip.attributes.lip)
     )
-      lips.push({ ...transformedLip, text: lip.content.text })
-  })
+      lips.push({ ...transformedLip, text: lip.content.text });
+  });
 
   return {
     props: {
@@ -350,5 +343,5 @@ export async function getStaticProps() {
       lips: lips.sort((a, b) => (a.attributes.lip < b.attributes.lip ? 1 : -1)),
     },
     revalidate: 1,
-  }
+  };
 }

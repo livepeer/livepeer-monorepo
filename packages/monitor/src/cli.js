@@ -1,5 +1,5 @@
-import { poll } from './monitor'
+import { poll } from "./monitor";
 
 if (!module.parent) {
-  poll()
+  poll();
 }

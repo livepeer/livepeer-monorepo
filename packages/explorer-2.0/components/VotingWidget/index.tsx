@@ -1,80 +1,77 @@
-import { Box, Flex } from 'theme-ui'
-import { Grid } from '@theme-ui/components'
-import Utils from 'web3-utils'
-import { abbreviateNumber } from '../../lib/utils'
-import VoteButton from '../VoteButton'
-import { useWeb3React } from '@web3-react/core'
-import Button from '../Button'
-import ReactTooltip from 'react-tooltip'
-import { gql, useApolloClient } from '@apollo/client'
-import moment from 'moment'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
-import Check from '../../public/img/check.svg'
-import Copy from '../../public/img/copy.svg'
-import { useState, useEffect } from 'react'
-import Modal from '../Modal'
+import { Box, Flex } from "theme-ui";
+import { Grid } from "@theme-ui/components";
+import Utils from "web3-utils";
+import { abbreviateNumber } from "../../lib/utils";
+import VoteButton from "../VoteButton";
+import { useWeb3React } from "@web3-react/core";
+import Button from "../Button";
+import ReactTooltip from "react-tooltip";
+import { gql, useApolloClient } from "@apollo/client";
+import moment from "moment";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import Check from "../../public/img/check.svg";
+import Copy from "../../public/img/copy.svg";
+import { useState, useEffect } from "react";
+import Modal from "../Modal";
 
 const Index = ({ data }) => {
-  const context = useWeb3React()
-  const client = useApolloClient()
-  const [copied, setCopied] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
+  const context = useWeb3React();
+  const client = useApolloClient();
+  const [copied, setCopied] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (copied) {
       setTimeout(() => {
-        setCopied(false)
-      }, 2000)
+        setCopied(false);
+      }, 2000);
     }
-  }, [copied])
+  }, [copied]);
 
-  let noVoteStake = parseFloat(data.poll?.tally?.no || '0')
-  let yesVoteStake = parseFloat(data.poll?.tally?.yes || '0')
-  let totalVoteStake = noVoteStake + yesVoteStake
-  let totalNonVoteStake = +data?.poll?.totalNonVoteStake
-  let votingPower = getVotingPower(data?.myAccount, data?.vote)
+  let noVoteStake = parseFloat(data.poll?.tally?.no || "0");
+  let yesVoteStake = parseFloat(data.poll?.tally?.yes || "0");
+  let totalVoteStake = noVoteStake + yesVoteStake;
+  let totalNonVoteStake = +data?.poll?.totalNonVoteStake;
+  let votingPower = getVotingPower(data?.myAccount, data?.vote);
 
-  let delegate = null
+  let delegate = null;
   if (data?.myAccount?.delegator?.delegate) {
-    delegate = data?.myAccount?.delegator?.delegate
+    delegate = data?.myAccount?.delegator?.delegate;
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "100%" }}>
       <Box>
         <Box
           sx={{
-            width: '100%',
+            width: "100%",
             boxShadow:
-              'rgba(0, 0, 0, 0.03) 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 8px, rgba(0, 0, 0, 0.06) 0px 16px 24px, rgba(0, 0, 0, 0.03) 0px 24px 32px',
+              "rgba(0, 0, 0, 0.03) 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 8px, rgba(0, 0, 0, 0.06) 0px 16px 24px, rgba(0, 0, 0, 0.03) 0px 24px 32px",
             borderRadius: 10,
-            backgroundColor: 'surface',
+            backgroundColor: "surface",
             px: 3,
             py: 2,
-          }}
-        >
-          <Box sx={{ fontWeight: 'bold', fontSize: 3, mb: 2 }}>
+          }}>
+          <Box sx={{ fontWeight: "bold", fontSize: 3, mb: 2 }}>
             Do you support LIP-{data.poll.lip}?
           </Box>
           <Box
             sx={{
               mb: 2,
               pb: 2,
-              borderBottom: '1px solid',
-              borderColor: 'border',
-            }}
-          >
+              borderBottom: "1px solid",
+              borderColor: "border",
+            }}>
             <Box sx={{ mb: 2 }}>
               <Flex
                 sx={{
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  position: 'relative',
-                  width: '100%',
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  position: "relative",
+                  width: "100%",
                   height: 24,
-                  mb: '8px',
-                }}
-              >
+                  mb: "8px",
+                }}>
                 <Box
                   sx={{
                     borderTopLeftRadius: 6,
@@ -83,9 +80,9 @@ const Index = ({ data }) => {
                       yesVoteStake / totalVoteStake === 1 ? 6 : 0,
                     borderBottomRightRadius:
                       yesVoteStake / totalVoteStake === 1 ? 6 : 0,
-                    position: 'absolute',
-                    height: '100%',
-                    bg: 'rgba(255, 255, 255, .2)',
+                    position: "absolute",
+                    height: "100%",
+                    bg: "rgba(255, 255, 255, .2)",
                     width: `${(yesVoteStake / totalVoteStake) * 100}%`,
                   }}
                 />
@@ -94,13 +91,12 @@ const Index = ({ data }) => {
                     lineHeight: 1,
                     fontWeight: 500,
                     pl: 1,
-                    color: 'text',
+                    color: "text",
                     fontSize: 1,
-                  }}
-                >
+                  }}>
                   Yes
                 </Box>
-                <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
+                <Box sx={{ lineHeight: 1, pr: 1, color: "text", fontSize: 1 }}>
                   {isNaN(yesVoteStake / totalVoteStake)
                     ? 0
                     : ((yesVoteStake / totalVoteStake) * 100).toPrecision(5)}
@@ -109,13 +105,12 @@ const Index = ({ data }) => {
               </Flex>
               <Flex
                 sx={{
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  position: 'relative',
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  position: "relative",
                   height: 24,
-                  width: '100%',
-                }}
-              >
+                  width: "100%",
+                }}>
                 <Box
                   sx={{
                     borderTopLeftRadius: 6,
@@ -124,9 +119,9 @@ const Index = ({ data }) => {
                       noVoteStake / totalVoteStake === 1 ? 6 : 0,
                     borderBottomRightRadius:
                       noVoteStake / totalVoteStake === 1 ? 6 : 0,
-                    position: 'absolute',
-                    height: '100%',
-                    bg: 'rgba(255, 255, 255, .2)',
+                    position: "absolute",
+                    height: "100%",
+                    bg: "rgba(255, 255, 255, .2)",
                     width: `${(noVoteStake / totalVoteStake) * 100}%`,
                   }}
                 />
@@ -135,13 +130,12 @@ const Index = ({ data }) => {
                     lineHeight: 1,
                     pl: 1,
                     fontWeight: 500,
-                    color: 'text',
+                    color: "text",
                     fontSize: 1,
-                  }}
-                >
+                  }}>
                   No
                 </Box>
-                <Box sx={{ lineHeight: 1, pr: 1, color: 'text', fontSize: 1 }}>
+                <Box sx={{ lineHeight: 1, pr: 1, color: "text", fontSize: 1 }}>
                   {isNaN(noVoteStake / totalVoteStake)
                     ? 0
                     : ((noVoteStake / totalVoteStake) * 100).toPrecision(5)}
@@ -149,19 +143,19 @@ const Index = ({ data }) => {
                 </Box>
               </Flex>
             </Box>
-            <Box sx={{ fontSize: 1, color: 'muted' }}>
-              {data.poll.votes.length}{' '}
+            <Box sx={{ fontSize: 1, color: "muted" }}>
+              {data.poll.votes.length}{" "}
               {`${
                 data.poll.votes.length > 1 || data.poll.votes.length === 0
-                  ? 'votes'
-                  : 'vote'
-              }`}{' '}
-              · {abbreviateNumber(totalVoteStake, 4)} LPT ·{' '}
+                  ? "votes"
+                  : "vote"
+              }`}{" "}
+              · {abbreviateNumber(totalVoteStake, 4)} LPT ·{" "}
               {!data.poll.isActive
-                ? 'Final Results'
+                ? "Final Results"
                 : moment
-                    .duration(data.poll.estimatedTimeRemaining, 'seconds')
-                    .humanize() + ' left'}
+                    .duration(data.poll.estimatedTimeRemaining, "seconds")
+                    .humanize() + " left"}
             </Box>
           </Box>
 
@@ -172,37 +166,35 @@ const Index = ({ data }) => {
                   sx={{
                     fontSize: 1,
                     mb: 1,
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <span sx={{ color: 'muted' }}>
-                    My Delegate Vote{' '}
+                    justifyContent: "space-between",
+                  }}>
+                  <span sx={{ color: "muted" }}>
+                    My Delegate Vote{" "}
                     {delegate &&
-                      `(${delegate.id.replace(delegate.id.slice(5, 39), '…')})`}
+                      `(${delegate.id.replace(delegate.id.slice(5, 39), "…")})`}
                   </span>
-                  <span sx={{ fontWeight: 500, color: 'white' }}>
+                  <span sx={{ fontWeight: 500, color: "white" }}>
                     {data?.delegateVote?.choiceID
                       ? data?.delegateVote?.choiceID
-                      : 'N/A'}
+                      : "N/A"}
                   </span>
                 </Flex>
                 <Flex
-                  sx={{ mb: 1, fontSize: 1, justifyContent: 'space-between' }}
-                >
-                  <span sx={{ color: 'muted' }}>
+                  sx={{ mb: 1, fontSize: 1, justifyContent: "space-between" }}>
+                  <span sx={{ color: "muted" }}>
                     My Vote (
-                    {context.account.replace(context.account.slice(5, 39), '…')}
+                    {context.account.replace(context.account.slice(5, 39), "…")}
                     )
                   </span>
-                  <span sx={{ fontWeight: 500, color: 'white' }}>
-                    {data?.vote?.choiceID ? data?.vote?.choiceID : 'N/A'}
+                  <span sx={{ fontWeight: 500, color: "white" }}>
+                    {data?.vote?.choiceID ? data?.vote?.choiceID : "N/A"}
                   </span>
                 </Flex>
                 {((!data?.vote?.choiceID && data.poll.isActive) ||
                   data?.vote?.choiceID) && (
-                  <Flex sx={{ fontSize: 1, justifyContent: 'space-between' }}>
-                    <span sx={{ color: 'muted' }}>My Voting Power</span>
-                    <span sx={{ fontWeight: 500, color: 'white' }}>
+                  <Flex sx={{ fontSize: 1, justifyContent: "space-between" }}>
+                    <span sx={{ color: "muted" }}>My Voting Power</span>
+                    <span sx={{ fontWeight: 500, color: "white" }}>
                       <span>
                         {abbreviateNumber(votingPower, 4)} LPT (
                         {(
@@ -230,12 +222,11 @@ const Index = ({ data }) => {
                   data: {
                     walletModalOpen: true,
                   },
-                })
+                });
               }}
               sx={{
-                width: '100%',
-              }}
-            >
+                width: "100%",
+              }}>
               Connect Wallet
             </Button>
           )}
@@ -244,23 +235,21 @@ const Index = ({ data }) => {
       {data.poll.isActive && (
         <Box
           sx={{
-            display: ['none', 'none', 'none', 'block'],
+            display: ["none", "none", "none", "block"],
             mt: 2,
             fontSize: 0,
             borderRadius: 6,
-            border: '1px solid',
-            borderColor: 'border',
+            border: "1px solid",
+            borderColor: "border",
             p: 2,
-          }}
-        >
+          }}>
           <Box sx={{ lineHeight: 1.8 }}>
-            Are you an orchestrator?{' '}
+            Are you an orchestrator?{" "}
             <span
               onClick={() => setModalOpen(true)}
-              sx={{ color: 'primary', cursor: 'pointer' }}
-            >
+              sx={{ color: "primary", cursor: "pointer" }}>
               Follow these instructions
-            </span>{' '}
+            </span>{" "}
             if you prefer to vote with the Livepeer CLI.
           </Box>
         </Box>
@@ -268,8 +257,7 @@ const Index = ({ data }) => {
       <Modal
         title="Livepeer CLI Voting Instructions"
         isOpen={modalOpen}
-        onDismiss={() => setModalOpen(false)}
-      >
+        onDismiss={() => setModalOpen(false)}>
         <ol sx={{ pl: 15 }}>
           <li sx={{ mb: 4 }}>
             <div sx={{ mb: 2 }}>
@@ -281,38 +269,35 @@ const Index = ({ data }) => {
               sx={{
                 p: 2,
                 mb: 1,
-                position: 'relative',
-                color: 'primary',
-                bg: 'background',
+                position: "relative",
+                color: "primary",
+                bg: "background",
                 borderRadius: 4,
-                fontFamily: 'monospace',
-              }}
-            >
+                fontFamily: "monospace",
+              }}>
               {data.poll.id}
               <CopyToClipboard
                 text={data.poll.id}
-                onCopy={() => setCopied(true)}
-              >
+                onCopy={() => setCopied(true)}>
                 <Flex
                   data-for="copyAddress"
                   data-tip={`${
-                    copied ? 'Copied' : 'Copy poll address to clipboard'
+                    copied ? "Copied" : "Copy poll address to clipboard"
                   }`}
                   sx={{
                     ml: 1,
-                    mt: '3px',
-                    position: 'absolute',
+                    mt: "3px",
+                    position: "absolute",
                     right: 12,
                     top: 10,
-                    cursor: 'pointer',
+                    cursor: "pointer",
                     borderRadius: 1000,
-                    bg: 'surface',
+                    bg: "surface",
                     width: 26,
                     height: 26,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}>
                   <ReactTooltip
                     id="copyAddress"
                     className="tooltip"
@@ -325,7 +310,7 @@ const Index = ({ data }) => {
                       sx={{
                         width: 12,
                         height: 12,
-                        color: 'muted',
+                        color: "muted",
                       }}
                     />
                   ) : (
@@ -333,7 +318,7 @@ const Index = ({ data }) => {
                       sx={{
                         width: 12,
                         height: 12,
-                        color: 'muted',
+                        color: "muted",
                       }}
                     />
                   )}
@@ -356,36 +341,34 @@ const Index = ({ data }) => {
         </ol>
       </Modal>
     </Box>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
 
 function renderVoteButton(data) {
   switch (data?.vote?.choiceID) {
-    case 'Yes':
+    case "Yes":
       return (
         <VoteButton
           disabled={!(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)}
-          sx={{ mt: 3, width: '100%' }}
+          sx={{ mt: 3, width: "100%" }}
           variant="red"
           choiceId={1}
-          pollAddress={data.poll.id}
-        >
+          pollAddress={data.poll.id}>
           Change Vote To No
         </VoteButton>
-      )
-    case 'No':
+      );
+    case "No":
       return (
         <VoteButton
           disabled={!(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)}
-          sx={{ mt: 3, width: '100%' }}
+          sx={{ mt: 3, width: "100%" }}
           choiceId={0}
-          pollAddress={data.poll.id}
-        >
+          pollAddress={data.poll.id}>
           Change Vote To Yes
         </VoteButton>
-      )
+      );
     default:
       return (
         <Grid sx={{ mt: 3 }} gap={2} columns={[2]}>
@@ -394,8 +377,7 @@ function renderVoteButton(data) {
               !(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)
             }
             choiceId={0}
-            pollAddress={data.poll.id}
-          >
+            pollAddress={data.poll.id}>
             Yes
           </VoteButton>
           <VoteButton
@@ -404,12 +386,11 @@ function renderVoteButton(data) {
             }
             variant="red"
             choiceId={1}
-            pollAddress={data.poll.id}
-          >
+            pollAddress={data.poll.id}>
             No
           </VoteButton>
         </Grid>
-      )
+      );
   }
 }
 
@@ -419,18 +400,18 @@ function getVotingPower(myAccount, vote) {
     if (vote?.voteStake) {
       return Utils.toBN(vote.voteStake)
         .sub(Utils.toBN(vote?.nonVoteStake ? vote.nonVoteStake : 0))
-        .toString()
+        .toString();
     }
     return Utils.toBN(
       myAccount?.delegator?.delegate?.totalStake
         ? myAccount?.delegator?.delegate?.totalStake
-        : 0,
+        : 0
     )
       .sub(Utils.toBN(vote?.nonVoteStake ? vote.nonVoteStake : 0))
-      .toString()
+      .toString();
   }
 
   return myAccount?.delegator?.pendingStake
     ? myAccount?.delegator?.pendingStake
-    : '0'
+    : "0";
 }

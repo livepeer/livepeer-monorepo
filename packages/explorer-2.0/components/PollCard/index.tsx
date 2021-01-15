@@ -1,23 +1,22 @@
-import { Flex } from 'theme-ui'
-import { Box } from 'theme-ui'
+import { Flex } from "theme-ui";
+import { Box } from "theme-ui";
 
 const Index = ({ ...props }) => {
   return (
     <Flex
       sx={{
-        borderTop: '1px solid',
-        borderColor: 'border',
+        borderTop: "1px solid",
+        borderColor: "border",
         py: 2,
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        '&:first-of-type': {
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "space-between",
+        "&:first-of-type": {
           borderTop: 0,
         },
       }}
-      {...props}
-    >
-      <Flex sx={{ width: '100%', justifyContent: 'space-between' }}>
+      {...props}>
+      <Flex sx={{ width: "100%", justifyContent: "space-between" }}>
         <Box>
           <Box>
             Title <span>(LIP-16)</span>
@@ -33,7 +32,7 @@ const Index = ({ ...props }) => {
         similique sunt in culpa qui officia deserunt mollitia animi.
       </Box>
     </Flex>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

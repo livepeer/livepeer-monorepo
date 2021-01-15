@@ -1,9 +1,9 @@
-import { useContext } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import Button from '../Button'
-import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/client'
-import { initTransaction } from '../../lib/utils'
+import { useContext } from "react";
+import { useWeb3React } from "@web3-react/core";
+import Button from "../Button";
+import { MutationsContext } from "../../contexts";
+import { useApolloClient } from "@apollo/client";
+import { initTransaction } from "../../lib/utils";
 
 const Index = ({
   unbondingLockId,
@@ -12,14 +12,14 @@ const Index = ({
   newPosNext,
   delegator,
 }) => {
-  const context = useWeb3React()
-  const client = useApolloClient()
+  const context = useWeb3React();
+  const client = useApolloClient();
 
   if (!context.active) {
-    return null
+    return null;
   }
 
-  const { rebondFromUnbonded }: any = useContext(MutationsContext)
+  const { rebondFromUnbonded }: any = useContext(MutationsContext);
 
   return (
     <>
@@ -35,15 +35,14 @@ const Index = ({
                 delegator: delegator?.id,
                 lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
               },
-            })
-          })
+            });
+          });
         }}
-        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
-      >
+        sx={{ py: 1, mr: 2, variant: "buttons.secondary" }}>
         Rebond
       </Button>
     </>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

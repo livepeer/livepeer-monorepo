@@ -1,32 +1,31 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
+import React, { useState } from "react";
+import styled from "styled-components";
 import {
   GitHub as GitHubIcon,
   MessageCircle as MessageCircleIcon,
   // Search,
   Twitter as TwitterIcon,
-} from 'react-feather'
-import Navbar from './Navbar'
-import { MenuItem, SimpleMenu } from 'rmwc/Menu'
-import { Button } from 'rmwc/Button'
-import { Icon } from 'rmwc/Icon'
+} from "react-feather";
+import Navbar from "./Navbar";
+import { MenuItem, SimpleMenu } from "rmwc/Menu";
+import { Button } from "rmwc/Button";
+import { Icon } from "rmwc/Icon";
 
 const BasicNavbar = ({ onSearch }) => (
   <Navbar>
     <Nav>
-      <a href="/" style={{ lineHeight: 0, padding: '8px 0' }}>
+      <a href="/" style={{ lineHeight: 0, padding: "8px 0" }}>
         <img src="/wordmark.svg" height="24" alt="The Livepeer wordmark" />
       </a>
       <NavSearch onSearch={onSearch} />
       <div
         style={{
-          display: 'inline-flex',
-          flexFlow: 'row wrap',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          width: '100%',
-        }}
-      >
+          display: "inline-flex",
+          flexFlow: "row wrap",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          width: "100%",
+        }}>
         <NavSocialLink href="https://github.com/livepeer" target="_blank">
           <GitHubIcon color="#fff" size={16} />
           <span>&nbsp;Code</span>
@@ -46,25 +45,23 @@ const BasicNavbar = ({ onSearch }) => (
                 minWidth: 0,
                 width: 32,
                 height: 32,
-                color: '#fff',
+                color: "#fff",
                 marginLeft: 16,
-              }}
-            >
+              }}>
               <Icon use="more_vert" />
             </Button>
           }
           onSelected={async ({ detail }) => {
-            const { action } = detail.item.dataset
+            const { action } = detail.item.dataset;
             switch (action) {
-              case 'feedback':
+              case "feedback":
                 return window.open(
-                  'https://github.com/livepeer/livepeerjs/issues',
-                )
+                  "https://github.com/livepeer/livepeerjs/issues"
+                );
               default:
-                throw new Error(`unexpected action: ${action}`)
+                throw new Error(`unexpected action: ${action}`);
             }
-          }}
-        >
+          }}>
           <MenuItem data-action="feedback">
             <Icon use="feedback" style={{ marginRight: 8 }} />
             Report an issue
@@ -73,7 +70,7 @@ const BasicNavbar = ({ onSearch }) => (
       </div>
     </Nav>
   </Navbar>
-)
+);
 
 const Nav = styled.nav`
   display: flex;
@@ -92,7 +89,7 @@ const Nav = styled.nav`
     font-size: 16px;
     color: #fff;
   }
-`
+`;
 
 const NavSocialLink = styled.a`
   display: inline-flex;
@@ -107,7 +104,7 @@ const NavSocialLink = styled.a`
       display: none;
     }
   }
-`
+`;
 
 const NavSearchContainer = styled.form`
   display: block;
@@ -117,7 +114,7 @@ const NavSearchContainer = styled.form`
   @media (max-width: 480px) {
     display: none;
   }
-`
+`;
 
 const NavSearchInput = styled.input`
   width: 100%;
@@ -129,21 +126,20 @@ const NavSearchInput = styled.input`
   outline: 0;
   border: none;
   border-radius: 1;
-`
+`;
 
 const NavSearch = ({ onSearch }) => {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState("");
   return (
     <NavSearchContainer
-      onSubmit={e => {
-        e.preventDefault()
+      onSubmit={(e) => {
+        e.preventDefault();
         if (!search) {
-          return
+          return;
         }
-        onSearch(search)
-        setSearch('')
-      }}
-    >
+        onSearch(search);
+        setSearch("");
+      }}>
       {/*
 <Search
 color="#fff"
@@ -152,13 +148,13 @@ style={{ opacity: 0.75, position: 'absolute', top: 4, left: 8 }}
 />
 */}
       <NavSearchInput
-        onChange={e => setSearch(e.target.value)}
+        onChange={(e) => setSearch(e.target.value)}
         value={search}
         type="search"
         placeholder="Enter stream URL"
       />
     </NavSearchContainer>
-  )
-}
+  );
+};
 
-export default BasicNavbar
+export default BasicNavbar;

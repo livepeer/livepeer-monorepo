@@ -31,6 +31,6 @@ type Query {
   block: JSON
   getChartData: JSON
 }
-`
+`;
 
-export default Query
+export default Query;

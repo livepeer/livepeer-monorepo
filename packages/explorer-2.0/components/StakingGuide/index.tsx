@@ -1,40 +1,40 @@
-import { useState, useEffect } from 'react'
-import { Styled, Flex } from 'theme-ui'
-import Button from '../Button'
-import dynamic from 'next/dynamic'
-import { useWeb3React } from '@web3-react/core'
-import { useApolloClient, useQuery } from '@apollo/client'
-import Step1 from './Step1'
-import Step2 from './Step2'
-import Step3 from './Step3'
-import Step4 from './Step4'
-import Step5 from './Step5'
-import Step6 from './Step6'
-import gql from 'graphql-tag'
-import { Box } from 'theme-ui'
-import accountQuery from '../../queries/account.gql'
-import { Dialog } from '@reach/dialog'
+import { useState, useEffect } from "react";
+import { Styled, Flex } from "theme-ui";
+import Button from "../Button";
+import dynamic from "next/dynamic";
+import { useWeb3React } from "@web3-react/core";
+import { useApolloClient, useQuery } from "@apollo/client";
+import Step1 from "./Step1";
+import Step2 from "./Step2";
+import Step3 from "./Step3";
+import Step4 from "./Step4";
+import Step5 from "./Step5";
+import Step6 from "./Step6";
+import gql from "graphql-tag";
+import { Box } from "theme-ui";
+import accountQuery from "../../queries/account.gql";
+import { Dialog } from "@reach/dialog";
 
-const Tour: any = dynamic(() => import('reactour'), { ssr: false })
+const Tour: any = dynamic(() => import("reactour"), { ssr: false });
 const GET_TOUR_OPEN = gql`
   {
     tourOpen @client
   }
-`
+`;
 
 const Index = ({ children, ...props }) => {
-  const client = useApolloClient()
-  const [open, setOpen] = useState(false)
-  const [tourKey, setTourKey] = useState(0)
-  const context = useWeb3React()
-  const [nextStep, setNextStep] = useState(1)
-  const inititalSteps = []
-  const [steps, setSteps] = useState([...inititalSteps])
+  const client = useApolloClient();
+  const [open, setOpen] = useState(false);
+  const [tourKey, setTourKey] = useState(0);
+  const context = useWeb3React();
+  const [nextStep, setNextStep] = useState(1);
+  const inititalSteps = [];
+  const [steps, setSteps] = useState([...inititalSteps]);
   const [tourStyles, setTourStyles] = useState({
-    backgroundColor: '#131418',
-    maxWidth: 'auto',
+    backgroundColor: "#131418",
+    maxWidth: "auto",
     borderRadius: 16,
-  })
+  });
 
   const { data: dataMyAccount } = useQuery(accountQuery, {
     variables: {
@@ -42,8 +42,8 @@ const Index = ({ children, ...props }) => {
     },
     skip: !context.active,
     ssr: false,
-  })
-  const { data } = useQuery(GET_TOUR_OPEN)
+  });
+  const { data } = useQuery(GET_TOUR_OPEN);
 
   const closeTour = () => {
     client.writeQuery({
@@ -55,63 +55,62 @@ const Index = ({ children, ...props }) => {
       data: {
         tourOpen: false,
       },
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     setSteps([
       {
-        selector: '.tour-step-1',
+        selector: ".tour-step-1",
         content: ({ goTo }) => <Step1 goTo={goTo} nextStep={nextStep} />,
         style: tourStyles,
       },
       {
-        selector: '.tour-step-2',
+        selector: ".tour-step-2",
         content: ({ goTo }) => <Step2 goTo={goTo} nextStep={nextStep} />,
         style: tourStyles,
       },
 
       {
-        selector: '.tour-step-3',
+        selector: ".tour-step-3",
         content: ({ goTo }) => <Step3 goTo={goTo} nextStep={nextStep} />,
         style: tourStyles,
       },
       {
-        selector: '.tour-step-4',
+        selector: ".tour-step-4",
         content: ({ goTo }) => <Step4 goTo={goTo} nextStep={nextStep} />,
         style: tourStyles,
       },
       {
         style: tourStyles,
         content: ({ goTo }) => {
-          return <Step5 goTo={goTo} nextStep={nextStep} />
+          return <Step5 goTo={goTo} nextStep={nextStep} />;
         },
       },
       {
-        selector: '.tour-step-6',
+        selector: ".tour-step-6",
         position: [20, 60],
         content: ({ goTo }) => {
-          return <Step6 goTo={goTo} nextStep={nextStep} onClose={closeTour} />
+          return <Step6 goTo={goTo} nextStep={nextStep} onClose={closeTour} />;
         },
         style: tourStyles,
       },
-    ])
-  }, [dataMyAccount?.account, context.active, nextStep, tourStyles])
+    ]);
+  }, [dataMyAccount?.account, context.active, nextStep, tourStyles]);
 
   return (
     <Box {...props}>
       <Button
-        sx={{ mt: 2, width: '100%' }}
+        sx={{ mt: 2, width: "100%" }}
         variant="transparent"
         onClick={async () => {
-          setOpen(true)
-        }}
-      >
+          setOpen(true);
+        }}>
         {children}
       </Button>
       <Tour
         disableDotsNavigation={true}
-        disableKeyboardNavigation={['right', 'left']}
+        disableKeyboardNavigation={["right", "left"]}
         key={tourKey}
         showButtons={false}
         accentColor="#E926BE"
@@ -120,77 +119,72 @@ const Index = ({ children, ...props }) => {
         isOpen={data ? data.tourOpen : false}
         nextButton={<Button>Next</Button>}
         closeWithMask={false}
-        onBeforeClose={() => (document.body.style.overflowY = 'auto')}
+        onBeforeClose={() => (document.body.style.overflowY = "auto")}
         onRequestClose={() => {
-          closeTour()
-          setTourKey(tourKey + 1)
+          closeTour();
+          setTourKey(tourKey + 1);
         }}
-        getCurrentStep={curr => {
-          setNextStep(curr + 1)
+        getCurrentStep={(curr) => {
+          setNextStep(curr + 1);
         }}
         steps={steps}
       />
       <Dialog
         onDismiss={() => {
-          document.body.style.overflow = ''
-          setOpen(false)
+          document.body.style.overflow = "";
+          setOpen(false);
         }}
         isOpen={open}
         aria-label="Staking Guide"
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         <Flex
           sx={{
-            background: 'linear-gradient(180deg, #2C785F 0%, #00ED6D 100%)',
+            background: "linear-gradient(180deg, #2C785F 0%, #00ED6D 100%)",
             minWidth: 220,
             width: 220,
-            flexDirection: 'column',
+            flexDirection: "column",
             px: 3,
             py: 4,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
           {[
-            'Connect Wallet',
-            'Get LPT',
-            'Unlock LPT',
-            'Choose Orchestrator',
-            'Stake',
+            "Connect Wallet",
+            "Get LPT",
+            "Unlock LPT",
+            "Choose Orchestrator",
+            "Stake",
           ].map((title, i) => (
             <Flex
               key={i}
-              sx={{ flexDirection: 'column', alignItems: 'center' }}
-            >
+              sx={{ flexDirection: "column", alignItems: "center" }}>
               <Flex
                 sx={{
-                  color: 'rgba(255, 255, 255, .5)',
-                  border: '4px solid',
+                  color: "rgba(255, 255, 255, .5)",
+                  border: "4px solid",
                   borderRadius: 1000,
-                  borderColor: 'rgba(255, 255, 255, .5)',
-                  width: '40px',
-                  height: '40px',
+                  borderColor: "rgba(255, 255, 255, .5)",
+                  width: "40px",
+                  height: "40px",
                   fontWeight: 500,
                   fontSize: 3,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}>
                 {i + 1}
               </Flex>
               <div
                 sx={{
-                  lineHeight: '24px',
-                  textAlign: 'center',
+                  lineHeight: "24px",
+                  textAlign: "center",
                   fontWeight: 500,
                   mt: 1,
                   mb: i == 4 ? 0 : 1,
-                }}
-              >
+                }}>
                 {title}
               </div>
               {!(i == 4) && (
@@ -199,7 +193,7 @@ const Index = ({ children, ...props }) => {
                     width: 1,
                     mb: 2,
                     height: 18,
-                    backgroundColor: 'rgba(255, 255, 255, .5)',
+                    backgroundColor: "rgba(255, 255, 255, .5)",
                   }}
                 />
               )}
@@ -208,14 +202,13 @@ const Index = ({ children, ...props }) => {
         </Flex>
         <Flex
           sx={{
-            width: '100%',
+            width: "100%",
             py: 5,
             px: 4,
-            alignItems: 'flex-start',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
+            alignItems: "flex-start",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}>
           <Styled.h1 as="h2" sx={{ mb: 2 }}>
             Welcome to the Livepeer Staking Guide
           </Styled.h1>
@@ -227,10 +220,10 @@ const Index = ({ children, ...props }) => {
             staking your first Livepeer tokens.
           </Styled.p>
           <Button
-            sx={{ justifySelf: 'flex-start', mt: 2 }}
+            sx={{ justifySelf: "flex-start", mt: 2 }}
             variant="secondary"
             onClick={() => {
-              setOpen(false)
+              setOpen(false);
               client.writeQuery({
                 query: gql`
                   query {
@@ -240,15 +233,14 @@ const Index = ({ children, ...props }) => {
                 data: {
                   tourOpen: true,
                 },
-              })
-            }}
-          >
+              });
+            }}>
             Let's Get Started
           </Button>
         </Flex>
       </Dialog>
     </Box>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

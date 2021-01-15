@@ -1,23 +1,24 @@
-import { gql, useApolloClient } from '@apollo/client'
-import Utils from 'web3-utils'
-import useWindowSize from 'react-use/lib/useWindowSize'
+import { gql, useApolloClient } from "@apollo/client";
+import Utils from "web3-utils";
+import useWindowSize from "react-use/lib/useWindowSize";
 
-let hoursPerYear = 8760
-let averageHoursPerRound = 21
-let roundsPerYear = hoursPerYear / averageHoursPerRound
+let hoursPerYear = 8760;
+let averageHoursPerRound = 21;
+let roundsPerYear = hoursPerYear / averageHoursPerRound;
 
-const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
-  const client = useApolloClient()
-  const { width } = useWindowSize()
-  const totalSupply = +protocol.totalSupply
-  const totalStaked = +protocol.totalActiveStake
-  const participationRate = +protocol.participationRate
+const Input = ({ transcoder, value = "", onChange, protocol, ...props }) => {
+  const client = useApolloClient();
+  const { width } = useWindowSize();
+  const totalSupply = +protocol.totalSupply;
+  const totalStaked = +protocol.totalActiveStake;
+  const participationRate = +protocol.participationRate;
   const rewardCut =
-    transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0
-  const inflation = protocol.inflation > 0 ? protocol.inflation / 1000000000 : 0
+    transcoder?.rewardCut > 0 ? transcoder?.rewardCut / 1000000 : 0;
+  const inflation =
+    protocol.inflation > 0 ? protocol.inflation / 1000000000 : 0;
   const inflationChange =
-    protocol.inflationChange > 0 ? protocol.inflationChange / 1000000000 : 0
-  const principle = +value ? +value : 0
+    protocol.inflationChange > 0 ? protocol.inflationChange / 1000000000 : 0;
+  const principle = +value ? +value : 0;
   const roi = calculateAnnualROI({
     inflation,
     inflationChange,
@@ -26,7 +27,7 @@ const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
     totalSupply,
     totalStaked,
     participationRate,
-  })
+  });
 
   client.writeQuery({
     query: gql`
@@ -39,18 +40,17 @@ const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
       principle,
       roi,
     },
-  })
+  });
 
   return (
     <div
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%',
-        position: 'relative',
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        position: "relative",
       }}
-      {...props}
-    >
+      {...props}>
       <input
         placeholder="0.0"
         type="number"
@@ -58,34 +58,34 @@ const Input = ({ transcoder, value = '', onChange, protocol, ...props }) => {
         value={value}
         onChange={onChange}
         sx={{
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           borderTop: 0,
           borderLeft: 0,
           borderRight: 0,
           borderBottom: 0,
-          color: 'text',
+          color: "text",
           py: 0,
           pl: 0,
           pr: 6,
-          boxShadow: 'none',
-          width: '100%',
-          outline: 'none',
+          boxShadow: "none",
+          width: "100%",
+          outline: "none",
           fontSize: 4,
-          fontFamily: 'monospace',
-          '&::-webkit-inner-spin-button': {
-            WebkitAppearance: 'none',
+          fontFamily: "monospace",
+          "&::-webkit-inner-spin-button": {
+            WebkitAppearance: "none",
           },
-          '&::-webkit-outer-spin-button': {
-            WebkitAppearance: 'none',
+          "&::-webkit-outer-spin-button": {
+            WebkitAppearance: "none",
           },
         }}
       />
-      <div sx={{ fontSize: 1, right: 0, position: 'absolute' }}>LPT</div>
+      <div sx={{ fontSize: 1, right: 0, position: "absolute" }}>LPT</div>
     </div>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;
 
 function calculateAnnualROI({
   rewardCut,
@@ -96,23 +96,23 @@ function calculateAnnualROI({
   totalStaked,
   participationRate,
 }) {
-  let totalRewardTokens = 0
-  let roi = 0
-  let percentOfTotalStaked = principle / totalStaked
-  let totalRewardTokensMinusFee
-  let currentMintableTokens
+  let totalRewardTokens = 0;
+  let roi = 0;
+  let percentOfTotalStaked = principle / totalStaked;
+  let totalRewardTokensMinusFee;
+  let currentMintableTokens;
 
   for (let i = 0; i < roundsPerYear; i++) {
-    currentMintableTokens = totalSupply * inflation
-    totalRewardTokens = percentOfTotalStaked * currentMintableTokens
+    currentMintableTokens = totalSupply * inflation;
+    totalRewardTokens = percentOfTotalStaked * currentMintableTokens;
     totalRewardTokensMinusFee =
-      totalRewardTokens - totalRewardTokens * rewardCut
-    roi += totalRewardTokensMinusFee
-    totalSupply += currentMintableTokens
+      totalRewardTokens - totalRewardTokens * rewardCut;
+    roi += totalRewardTokensMinusFee;
+    totalSupply += currentMintableTokens;
     inflation =
       participationRate > 0.5
         ? inflation - inflationChange
-        : inflation + inflationChange
+        : inflation + inflationChange;
   }
-  return roi
+  return roi;
 }

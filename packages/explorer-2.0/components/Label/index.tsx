@@ -2,16 +2,15 @@ const Index = ({ children, ...props }) => (
   <div
     {...props}
     sx={{
-      border: '1px solid',
+      border: "1px solid",
       borderRadius: 2,
-      borderColor: 'muted',
+      borderColor: "muted",
       px: 1,
-      py: '4px',
+      py: "4px",
       fontSize: 12,
-    }}
-  >
+    }}>
     {children}
   </div>
-)
+);
 
-export default Index
+export default Index;

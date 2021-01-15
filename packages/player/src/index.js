@@ -1,15 +1,15 @@
-import 'url-search-params-polyfill'
-import React from 'react'
-import { render } from 'react-dom'
-import { createGlobalStyle } from 'styled-components'
-import Root from './containers/Root'
-import App from './containers/App'
+import "url-search-params-polyfill";
+import React from "react";
+import { render } from "react-dom";
+import { createGlobalStyle } from "styled-components";
+import Root from "./containers/Root";
+import App from "./containers/App";
 // import registerServiceWorker from './registerServiceWorker'
-const isProd = process.env.NODE_ENV === 'production'
-const isDev = process.env.NODE_ENV === 'development'
-const hot = module.hot && isDev
-const trackingId = process.env.REACT_APP_GA_TRACKING_ID
-;(async () => {
+const isProd = process.env.NODE_ENV === "production";
+const isDev = process.env.NODE_ENV === "development";
+const hot = module.hot && isDev;
+const trackingId = process.env.REACT_APP_GA_TRACKING_ID;
+(async () => {
   // Dump global styles
   const GlobalStyle = createGlobalStyle`
     :root {
@@ -40,7 +40,7 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
     }
     p { color: var(--text); line-height: 1.5; }
     a { color: #03a678; }
-  `
+  `;
 
   // Main UI rendering function
   const update = () =>
@@ -49,39 +49,39 @@ const trackingId = process.env.REACT_APP_GA_TRACKING_ID
         <GlobalStyle />
         <App />
       </Root>,
-      document.getElementById('main-root'),
-    )
+      document.getElementById("main-root")
+    );
 
   // Update the UI
-  update()
+  update();
 
   // Analytics
   if (isProd && trackingId) {
     // Google Analytics
-    let script = document.createElement('script')
-    script.type = 'text/javascript'
-    script.async = true
-    document.body.appendChild(script)
+    let script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    document.body.appendChild(script);
     script.onload = () => {
-      window.dataLayer = window.dataLayer || []
-      window.gtag = function() {
-        window.dataLayer.push(arguments)
-      }
-      window.gtag('js', new Date())
-      window.gtag('config', trackingId)
-    }
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () {
+        window.dataLayer.push(arguments);
+      };
+      window.gtag("js", new Date());
+      window.gtag("config", trackingId);
+    };
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`;
 
     // Mux
-    script = document.createElement('script')
-    script.type = 'text/javascript'
-    script.async = true
-    document.body.appendChild(script)
-    script.src = `https://src.litix.io/core/2/mux.js`
+    script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    document.body.appendChild(script);
+    script.src = `https://src.litix.io/core/2/mux.js`;
   }
 
   // Hot module reloading
-  if (hot) module.hot.accept(update)
-})()
+  if (hot) module.hot.accept(update);
+})();
 
 // registerServiceWorker()

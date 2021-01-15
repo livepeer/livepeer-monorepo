@@ -1,4 +1,4 @@
-import { Flex } from 'theme-ui'
+import { Flex } from "theme-ui";
 
 const Index = ({
   title = null,
@@ -9,25 +9,24 @@ const Index = ({
   return (
     <Flex
       sx={{
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        border: '1px solid',
-        borderColor: 'border',
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        border: "1px solid",
+        borderColor: "border",
         py: 3,
         px: 3,
         borderRadius: 10,
       }}
-      {...props}
-    >
+      {...props}>
       {title && (
-        <div sx={{ mb: '8px', fontWeight: 500, fontSize: 0, color: 'muted' }}>
+        <div sx={{ mb: "8px", fontWeight: 500, fontSize: 0, color: "muted" }}>
           {title}
         </div>
       )}
       {subtitle}
       {children}
     </Flex>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

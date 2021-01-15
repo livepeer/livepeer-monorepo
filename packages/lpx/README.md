@@ -5,6 +5,8 @@
 [![Discord](https://img.shields.io/discord/423160867534929930.svg?style=flat-square)](https://discord.gg/7wRSUGX)
 [![GitHub issues](https://img.shields.io/github/issues/livepeer/livepeerjs/lpx.svg?style=flat-square)](https://github.com/livepeer/livepeerjs/labels/lpx)
 
-A command line protocol explorer. It has a console mode that allows you to interactively use the sdk.
+A command line protocol explorer. It has a console mode that allows you to
+interactively use the sdk.
 
-More docs to come soon! For now, take a look at the `scripts` section of [`package.json`](https://github.com/livepeer/livepeerjs/blob/master/packages/lpx/package.json#L22)
+More docs to come soon! For now, take a look at the `scripts` section of
+[`package.json`](https://github.com/livepeer/livepeerjs/blob/master/packages/lpx/package.json#L22)

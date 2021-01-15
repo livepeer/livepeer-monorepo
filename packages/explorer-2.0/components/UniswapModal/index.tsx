@@ -1,17 +1,17 @@
-import { Dialog } from '@reach/dialog'
-import { useApolloClient, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
-import CloseIcon from '../../public/img/close.svg'
+import { Dialog } from "@reach/dialog";
+import { useApolloClient, useQuery } from "@apollo/client";
+import gql from "graphql-tag";
+import CloseIcon from "../../public/img/close.svg";
 
 const Index = ({ children }) => {
-  const client = useApolloClient()
+  const client = useApolloClient();
   const GET_UNISWAP_MODAL_STATUS = gql`
     {
       uniswapModalOpen @client
     }
-  `
+  `;
 
-  const { data } = useQuery(GET_UNISWAP_MODAL_STATUS)
+  const { data } = useQuery(GET_UNISWAP_MODAL_STATUS);
   const close = () => {
     client.writeQuery({
       query: gql`
@@ -22,8 +22,8 @@ const Index = ({ children }) => {
       data: {
         uniswapModalOpen: false,
       },
-    })
-  }
+    });
+  };
 
   return (
     <Dialog
@@ -31,27 +31,26 @@ const Index = ({ children }) => {
       isOpen={data?.uniswapModalOpen}
       aria-label="Uniswap"
       style={{
-        display: 'flex',
-        alignItems: 'center',
+        display: "flex",
+        alignItems: "center",
         maxWidth: 600,
-        justifyContent: 'center',
-        height: '80vh',
-      }}
-    >
+        justifyContent: "center",
+        height: "80vh",
+      }}>
       <CloseIcon
         onClick={close}
         sx={{
-          cursor: 'pointer',
-          position: 'fixed',
+          cursor: "pointer",
+          position: "fixed",
           right: 20,
           top: 20,
           zIndex: 1000,
-          color: 'white',
+          color: "white",
         }}
       />
       {children}
     </Dialog>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

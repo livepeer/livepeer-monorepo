@@ -1,12 +1,12 @@
-import { useContext } from 'react'
-import Button from '../Button'
-import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/client'
-import { initTransaction } from '../../lib/utils'
+import { useContext } from "react";
+import Button from "../Button";
+import { MutationsContext } from "../../contexts";
+import { useApolloClient } from "@apollo/client";
+import { initTransaction } from "../../lib/utils";
 
 const Index = ({ unbondingLockId, newPosPrev, newPosNext, delegator }) => {
-  const client = useApolloClient()
-  const { rebond }: any = useContext(MutationsContext)
+  const client = useApolloClient();
+  const { rebond }: any = useContext(MutationsContext);
 
   return (
     <>
@@ -21,15 +21,14 @@ const Index = ({ unbondingLockId, newPosPrev, newPosNext, delegator }) => {
                 delegator: delegator?.id,
                 lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
               },
-            })
-          })
+            });
+          });
         }}
-        sx={{ py: 1, mr: 2, variant: 'buttons.secondary' }}
-      >
+        sx={{ py: 1, mr: 2, variant: "buttons.secondary" }}>
         Restake
       </Button>
     </>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

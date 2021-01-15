@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
-import { Redirect } from 'react-router-dom'
-import styled from 'styled-components'
-import Navbar from '../../components/Navbar'
-import Footer from '../../components/Footer'
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
+import styled from "styled-components";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 export default ({ query, changeURL }) => {
-  const [search, setSearch] = useState('')
-  const [redirect, setRedirect] = useState(null)
+  const [search, setSearch] = useState("");
+  const [redirect, setRedirect] = useState(null);
   if (redirect) {
-    return <Redirect to={redirect} />
+    return <Redirect to={redirect} />;
   }
   return (
     <Container>
@@ -19,36 +19,35 @@ export default ({ query, changeURL }) => {
       <br />
       <p>Enter the URL of a video stream</p>
       <SearchForm
-        onSubmit={e => {
-          e.preventDefault()
+        onSubmit={(e) => {
+          e.preventDefault();
           if (!search) {
-            return
+            return;
           }
-          setRedirect(`/play?url=${encodeURIComponent(search)}`)
-        }}
-      >
+          setRedirect(`/play?url=${encodeURIComponent(search)}`);
+        }}>
         <SearchBar
           type="search"
           placeholder="example: http://example.com/stream.m3u8"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <br />
         <br />
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: "right" }}>
           <SearchButton>search</SearchButton>
         </div>
       </SearchForm>
       <Footer />
     </Container>
-  )
-}
+  );
+};
 
 const SearchForm = styled.form`
   display: block;
   max-width: 100%;
   width: 480px;
-`
+`;
 
 const Container = styled.div`
   display: flex;
@@ -60,7 +59,7 @@ const Container = styled.div`
   padding-bottom: 33.33vh;
   background: #000;
   color: #fff;
-`
+`;
 
 const SearchBar = styled.input`
   width: 100%;
@@ -71,7 +70,7 @@ const SearchBar = styled.input`
   border: none;
   font-size: 16px;
   outline: 0;
-`
+`;
 
 const SearchButton = styled.button`
   display: inline-block;
@@ -86,4 +85,4 @@ const SearchButton = styled.button`
   outline: 0;
   border: none;
   cursor: pointer;
-`
+`;

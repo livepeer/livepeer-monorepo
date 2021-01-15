@@ -1,12 +1,12 @@
-import { useInactiveListener, useEagerConnect } from '../../hooks'
+import { useInactiveListener, useEagerConnect } from "../../hooks";
 
 const Index = ({ children }) => {
-  const triedEager = useEagerConnect()
+  const triedEager = useEagerConnect();
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
-  useInactiveListener(!triedEager)
+  useInactiveListener(!triedEager);
 
-  return children
-}
+  return children;
+};
 
-export default Index
+export default Index;

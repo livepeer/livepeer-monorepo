@@ -1,24 +1,24 @@
-import { useState, useEffect, useRef } from 'react'
-import { useQuery, useMutation, useApolloClient } from '@apollo/client'
-import gql from 'graphql-tag'
-import { useWeb3React } from '@web3-react/core'
-import { Injected } from '../lib/connectors'
-import { isMobile } from 'react-device-detect'
-import submittedTxsQuery from '../queries/transactions.gql'
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useApolloClient } from "@apollo/client";
+import gql from "graphql-tag";
+import { useWeb3React } from "@web3-react/core";
+import { Injected } from "../lib/connectors";
+import { isMobile } from "react-device-detect";
+import submittedTxsQuery from "../queries/transactions.gql";
 
 export function useWeb3Mutation(mutation, options) {
-  const client: any = useApolloClient()
-  const context = useWeb3React()
+  const client: any = useApolloClient();
+  const context = useWeb3React();
   const [mutate, { data, loading: dataLoading }] = useMutation(mutation, {
     ...options,
-  })
+  });
   const GET_TRANSACTION_STATUS = gql`
     query getTxReceiptStatus($txHash: String) {
       getTxReceiptStatus(txHash: $txHash) {
         status
       }
     }
-  `
+  `;
 
   let {
     data: transactionStatusData,
@@ -28,16 +28,16 @@ export function useWeb3Mutation(mutation, options) {
     variables: {
       txHash: data?.tx?.txHash,
     },
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     notifyOnNetworkStatusChange: true,
     context: options?.context,
-  })
+  });
 
   const GET_TRANSACTION = gql`
     query transaction($txHash: String) {
       transaction(txHash: $txHash)
     }
-  `
+  `;
 
   let { data: transactionData, loading: transactionLoading } = useQuery(
     GET_TRANSACTION,
@@ -47,16 +47,16 @@ export function useWeb3Mutation(mutation, options) {
         txHash: data?.tx?.txHash,
       },
       skip: !data?.tx?.txHash,
-      fetchPolicy: 'no-cache',
+      fetchPolicy: "no-cache",
       notifyOnNetworkStatusChange: true,
-    },
-  )
+    }
+  );
 
   const GET_TX_PREDICTION = gql`
     query txPrediction($gasPrice: String) {
       txPrediction(gasPrice: $gasPrice)
     }
-  `
+  `;
 
   let { data: txPredictionData, loading: txPredictionLoading } = useQuery(
     GET_TX_PREDICTION,
@@ -66,12 +66,12 @@ export function useWeb3Mutation(mutation, options) {
         gasPrice: transactionData?.transaction?.gasPrice?.toString(),
       },
       skip: !transactionData?.transaction?.gasPrice?.toString(),
-      fetchPolicy: 'no-cache',
+      fetchPolicy: "no-cache",
       notifyOnNetworkStatusChange: true,
-    },
-  )
+    }
+  );
 
-  const { data: transactionsData } = useQuery(submittedTxsQuery)
+  const { data: transactionsData } = useQuery(submittedTxsQuery);
 
   useEffect(() => {
     if (data) {
@@ -101,111 +101,111 @@ export function useWeb3Mutation(mutation, options) {
             },
           ],
         },
-      })
+      });
     }
   }, [
     dataLoading,
     transactionLoading,
     txPredictionLoading,
     transactionStatusLoading,
-  ])
+  ]);
   return {
     mutate,
-  }
+  };
 }
 
 // modified from https://usehooks.com/usePrevious/
 export function usePrevious(value) {
   // The ref object is a generic container whose current property is mutable ...
   // ... and can hold any value, similar to an instance property on a class
-  const ref = useRef()
+  const ref = useRef();
 
   // Store current value in ref
   useEffect(() => {
-    ref.current = value
-  }, [value]) // Only re-run if value changes
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
 
   // Return previous value (happens before update in useEffect above)
-  return ref.current
+  return ref.current;
 }
 
 export function useEagerConnect() {
-  const { activate, active } = useWeb3React()
-  const [tried, setTried] = useState(false)
+  const { activate, active } = useWeb3React();
+  const [tried, setTried] = useState(false);
 
   useEffect(() => {
     Injected.isAuthorized().then((isAuthorized: boolean) => {
       if (isAuthorized) {
         activate(Injected, undefined, true).catch(() => {
-          setTried(true)
-        })
+          setTried(true);
+        });
       } else {
-        if (isMobile && window['ethereum']) {
+        if (isMobile && window["ethereum"]) {
           activate(Injected, undefined, true).catch(() => {
-            setTried(true)
-          })
+            setTried(true);
+          });
         } else {
-          setTried(true)
+          setTried(true);
         }
       }
-    })
-  }, []) // intentionally only running on mount (make sure it's only mounted once :))
+    });
+  }, []); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
     if (!tried && active) {
-      setTried(true)
+      setTried(true);
     }
-  }, [tried, active])
+  }, [tried, active]);
 
-  return tried
+  return tried;
 }
 
 export function useInactiveListener(suppress = false) {
-  const { active, error, activate } = useWeb3React()
+  const { active, error, activate } = useWeb3React();
 
   useEffect(() => {
-    const ethereum = window['ethereum']
+    const ethereum = window["ethereum"];
 
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = () => {
         // eat errors
-        activate(Injected, undefined, true).catch(() => {})
-      }
+        activate(Injected, undefined, true).catch(() => {});
+      };
 
       const handleAccountsChanged = (accounts) => {
         if (accounts.length > 0) {
           // eat errors
-          activate(Injected, undefined, true).catch(() => {})
+          activate(Injected, undefined, true).catch(() => {});
         }
-      }
+      };
 
       const handleNetworkChanged = () => {
         // eat errors
-        activate(Injected, undefined, true).catch(() => {})
-      }
+        activate(Injected, undefined, true).catch(() => {});
+      };
 
-      ethereum.on('chainChanged', handleChainChanged)
-      ethereum.on('networkChanged', handleNetworkChanged)
-      ethereum.on('accountsChanged', handleAccountsChanged)
+      ethereum.on("chainChanged", handleChainChanged);
+      ethereum.on("networkChanged", handleNetworkChanged);
+      ethereum.on("accountsChanged", handleAccountsChanged);
 
       return () => {
         if (ethereum.removeListener) {
-          ethereum.removeListener('chainChanged', handleChainChanged)
-          ethereum.removeListener('networkChanged', handleNetworkChanged)
-          ethereum.removeListener('accountsChanged', handleAccountsChanged)
+          ethereum.removeListener("chainChanged", handleChainChanged);
+          ethereum.removeListener("networkChanged", handleNetworkChanged);
+          ethereum.removeListener("accountsChanged", handleAccountsChanged);
         }
-      }
+      };
     }
 
-    return () => {}
-  }, [active, error, suppress, activate])
+    return () => {};
+  }, [active, error, suppress, activate]);
 }
 
 export function useMutations() {
-  const mutations = require('../mutations').default
-  const context = useWeb3React()
-  let mutationsObj: any = {}
+  const mutations = require("../mutations").default;
+  const context = useWeb3React();
+  let mutationsObj: any = {};
   Object.keys(mutations).map((key) => {
     const { mutate } = useWeb3Mutation(mutations[key], {
       context: {
@@ -213,92 +213,92 @@ export function useMutations() {
         account: context?.account?.toLowerCase(),
         returnTxHash: true,
       },
-    })
-    mutationsObj[key] = mutate
-  })
-  return mutationsObj
+    });
+    mutationsObj[key] = mutate;
+  });
+  return mutationsObj;
 }
 
 export function useTimeEstimate({ startTime, estimate }) {
-  const [timeLeft, setTimeLeft] = useState(null)
-  const [timeElapsed] = useState((new Date().getTime() - startTime) / 1000)
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [timeElapsed] = useState((new Date().getTime() - startTime) / 1000);
 
   useEffect(() => {
     if (estimate) {
-      setTimeLeft(estimate - timeElapsed)
+      setTimeLeft(estimate - timeElapsed);
     }
-  }, [estimate])
+  }, [estimate]);
 
   useEffect(() => {
     // exit early when we reach 0
-    if (!timeLeft) return
+    if (!timeLeft) return;
 
     // save intervalId to clear the interval when the
     // component re-renders
     const intervalId = setInterval(() => {
-      setTimeLeft(timeLeft - 1)
-    }, 1000)
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
 
     // clear interval on re-render to avoid memory leaks
-    return () => clearInterval(intervalId)
+    return () => clearInterval(intervalId);
     // add timeLeft as a dependency to re-rerun the effect
     // when we update it
-  }, [timeLeft])
+  }, [timeLeft]);
 
-  return { timeLeft }
+  return { timeLeft };
 }
 
 export function getBrowserVisibilityProp() {
-  if (typeof document.hidden !== 'undefined') {
+  if (typeof document.hidden !== "undefined") {
     // Opera 12.10 and Firefox 18 and later support
-    return 'visibilitychange'
-  } else if (typeof document['msHidden'] !== 'undefined') {
-    return 'msvisibilitychange'
-  } else if (typeof document['webkitHidden'] !== 'undefined') {
-    return 'webkitvisibilitychange'
+    return "visibilitychange";
+  } else if (typeof document["msHidden"] !== "undefined") {
+    return "msvisibilitychange";
+  } else if (typeof document["webkitHidden"] !== "undefined") {
+    return "webkitvisibilitychange";
   }
 }
 export function getBrowserDocumentHiddenProp() {
-  if (typeof document.hidden !== 'undefined') {
-    return 'hidden'
-  } else if (typeof document['msHidden'] !== 'undefined') {
-    return 'msHidden'
-  } else if (typeof document['webkitHidden'] !== 'undefined') {
-    return 'webkitHidden'
+  if (typeof document.hidden !== "undefined") {
+    return "hidden";
+  } else if (typeof document["msHidden"] !== "undefined") {
+    return "msHidden";
+  } else if (typeof document["webkitHidden"] !== "undefined") {
+    return "webkitHidden";
   }
 }
 
 export function getIsDocumentVisible() {
-  return !process.browser || !document[getBrowserDocumentHiddenProp()]
+  return !process.browser || !document[getBrowserDocumentHiddenProp()];
 }
 
 export function usePageVisibility() {
-  const [isVisible, setIsVisible] = useState(getIsDocumentVisible())
-  const onVisibilityChange = () => setIsVisible(getIsDocumentVisible())
+  const [isVisible, setIsVisible] = useState(getIsDocumentVisible());
+  const onVisibilityChange = () => setIsVisible(getIsDocumentVisible());
   useEffect(() => {
-    const visibilityChange = getBrowserVisibilityProp()
-    document.addEventListener(visibilityChange, onVisibilityChange, false)
+    const visibilityChange = getBrowserVisibilityProp();
+    document.addEventListener(visibilityChange, onVisibilityChange, false);
     return () => {
-      document.removeEventListener(visibilityChange, onVisibilityChange)
-    }
-  })
-  return isVisible
+      document.removeEventListener(visibilityChange, onVisibilityChange);
+    };
+  });
+  return isVisible;
 }
 
 export function useComponentDidMount(func: () => any) {
-  useEffect(func, [])
+  useEffect(func, []);
 }
 
 export function useComponentWillMount(func: () => any) {
-  const willMount = useRef(true)
+  const willMount = useRef(true);
 
   if (willMount.current) {
-    func()
+    func();
   }
 
   useComponentDidMount(() => {
-    willMount.current = false
-  })
+    willMount.current = false;
+  });
 }
 
 export function useOnClickOutside(ref, handler) {
@@ -307,19 +307,19 @@ export function useOnClickOutside(ref, handler) {
       const listener = (event) => {
         // Do nothing if clicking ref's element or descendent elements
         if (!ref.current || ref.current.contains(event.target)) {
-          return
+          return;
         }
 
-        handler(event)
-      }
+        handler(event);
+      };
 
-      document.addEventListener('mousedown', listener)
-      document.addEventListener('touchstart', listener)
+      document.addEventListener("mousedown", listener);
+      document.addEventListener("touchstart", listener);
 
       return () => {
-        document.removeEventListener('mousedown', listener)
-        document.removeEventListener('touchstart', listener)
-      }
+        document.removeEventListener("mousedown", listener);
+        document.removeEventListener("touchstart", listener);
+      };
     },
     // Add ref and handler to effect dependencies
     // It's worth noting that because passed in handler is a new ...
@@ -327,6 +327,6 @@ export function useOnClickOutside(ref, handler) {
     // ... callback/cleanup to run every render. It's not a big deal ...
     // ... but to optimize you can wrap handler in useCallback before ...
     // ... passing it into this hook.
-    [ref, handler],
-  )
+    [ref, handler]
+  );
 }
