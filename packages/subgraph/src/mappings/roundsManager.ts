@@ -113,7 +113,7 @@ export function newRound(event: NewRound): void {
   newRound.transaction = event.transaction.hash.toHex();
   newRound.timestamp = event.block.timestamp.toI32();
   newRound.round = event.params.round.toString();
-  newRound.blockHash = event.params.blockHash.toString();
+  newRound.blockHash = event.params.blockHash.toHexString();
   newRound.save();
 }
 
