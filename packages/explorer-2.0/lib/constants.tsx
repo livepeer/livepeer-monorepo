@@ -1,8 +1,15 @@
-import { Injected, Portis, Fortmatic, walletlink } from "./connectors";
+import {
+  Injected,
+  Portis,
+  Fortmatic,
+  walletLink,
+  walletConnect,
+} from "./connectors";
 import MetaMaskIcon from "../public/img/metamask.svg";
 import PortisIcon from "../public/img/portis.svg";
 import FortmaticIcon from "../public/img/fortmatic.svg";
 import CoinbaseWalletIcon from "../public/img/coinbase-wallet.svg";
+import WalletConnectIcon from "../public/img/wallet-connect.svg";
 import InjectedIcon from "../public/img/arrow-right.svg";
 
 export const SUPPORTED_WALLETS = {
@@ -23,8 +30,17 @@ export const SUPPORTED_WALLETS = {
     href: null,
     color: "#E8831D",
   },
+  WALLET_CONNECT: {
+    connector: walletConnect,
+    name: "WalletConnect",
+    icon: WalletConnectIcon,
+    description: "Connect to Trust Wallet, Rainbow Wallet and more...",
+    href: null,
+    color: "#4196FC",
+    mobile: true,
+  },
   WALLET_LINK: {
-    connector: walletlink,
+    connector: walletLink,
     name: "Coinbase Wallet",
     icon: CoinbaseWalletIcon,
     description: "Use Coinbase Wallet app on mobile device",

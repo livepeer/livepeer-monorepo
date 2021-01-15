@@ -538,8 +538,8 @@ Transfers tokens (LPTU) from one account to another
 - `amount`
   **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
   the amount of token to send (LPTU)
-- `tx` **[TxConfig](#txconfig)** an object specifying the `from` and `gas`
-  values of the transaction (optional, default `config.defaultTx`)
+- `tx` **[TxConfig](#txconfig)** an object specifying the `from` value of the
+  transaction (optional, default `config.defaultTx`)
 
 ##### Examples
 

@@ -11,6 +11,7 @@ import {
 import createSchema from "../createSchema";
 import LivepeerSDK from "@livepeer/sdk";
 import { execute } from "graphql/execution/execute";
+import Utils from "web3-utils";
 
 export default function createApolloClient(
   initialState: object,
@@ -69,22 +70,21 @@ export default function createApolloClient(
     },
   });
 
-  const link: any = new ApolloLink((operation) => {
+  const link = new ApolloLink((operation) => {
     return new Observable((observer) => {
       Promise.resolve(createSchema())
         .then(async (data) => {
-          const context = operation.getContext();
-          const sdk = await LivepeerSDK({
-            provider:
-              process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
-                ? process.env.NEXT_PUBLIC_RPC_URL_4
-                : process.env.NEXT_PUBLIC_RPC_URL_1,
+          let context = operation.getContext();
+          let provider = context?.library?._web3Provider
+            ? context.library._web3Provider
+            : process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
+            ? process.env.NEXT_PUBLIC_RPC_URL_4
+            : process.env.NEXT_PUBLIC_RPC_URL_1;
+          let sdk = await LivepeerSDK({
             controllerAddress: process.env.NEXT_PUBLIC_CONTROLLER_ADDRESS,
             pollCreatorAddress: process.env.NEXT_PUBLIC_POLL_CREATOR_ADDRESS,
-            ...(context.library && {
-              provider: context.library._web3Provider,
-            }),
-            ...(context.account && { account: context.account }),
+            provider,
+            account: context?.account,
           });
 
           return execute(
