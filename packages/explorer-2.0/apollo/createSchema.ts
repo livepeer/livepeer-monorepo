@@ -1,23 +1,23 @@
-import { HttpLink } from 'apollo-link-http'
-import fetch from 'isomorphic-unfetch'
-import Utils from 'web3-utils'
-import { createApolloFetch } from 'apollo-fetch'
-import { applyMiddleware } from 'graphql-middleware'
-import graphqlFields from 'graphql-fields'
+import { HttpLink } from "apollo-link-http";
+import fetch from "isomorphic-unfetch";
+import Utils from "web3-utils";
+import { createApolloFetch } from "apollo-fetch";
+import { applyMiddleware } from "graphql-middleware";
+import graphqlFields from "graphql-fields";
 import {
   mergeSchemas,
   introspectSchema,
   makeRemoteExecutableSchema,
-} from 'graphql-tools'
+} from "graphql-tools";
 import {
   getBlockByNumber,
   getEstimatedBlockCountdown,
   mergeObjectsInUnique,
-} from '../lib/utils'
-import { makeExecutableSchema } from 'graphql-tools'
-import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
-import typeDefs from './types'
-import resolvers from './resolvers'
+} from "../lib/utils";
+import { makeExecutableSchema } from "graphql-tools";
+import GraphQLJSON, { GraphQLJSONObject } from "graphql-type-json";
+import typeDefs from "./types";
+import resolvers from "./resolvers";
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -26,23 +26,23 @@ const schema = makeExecutableSchema({
     JSON: GraphQLJSON,
     JSONObject: GraphQLJSONObject,
   },
-})
+});
 
 const createSchema = async () => {
   const subgraphServiceLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_SUBGRAPH,
     fetch,
-  })
+  });
 
   const createSubgraphServiceSchema = async () => {
     const executableSchema = makeRemoteExecutableSchema({
       schema: await introspectSchema(subgraphServiceLink),
       link: subgraphServiceLink,
-    })
-    return executableSchema
-  }
+    });
+    return executableSchema;
+  };
 
-  const subgraphSchema = await createSubgraphServiceSchema()
+  const subgraphSchema = await createSubgraphServiceSchema();
 
   const linkTypeDefs = `
     extend type Transcoder {
@@ -79,26 +79,26 @@ const createSchema = async () => {
     extend type Query {
       txs: [JSON]
     }
-  `
+  `;
   async function getTotalStake(_ctx, _blockNumber) {
-    const Web3 = require('web3')
+    const Web3 = require("web3");
     let web3 = new Web3(
-      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby'
+      process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
         ? process.env.NEXT_PUBLIC_RPC_URL_4
-        : process.env.NEXT_PUBLIC_RPC_URL_1,
-    )
+        : process.env.NEXT_PUBLIC_RPC_URL_1
+    );
     let contract = new web3.eth.Contract(
       _ctx.livepeer.config.contracts.LivepeerToken.abi,
-      _ctx.livepeer.config.contracts.LivepeerToken.address,
-    )
+      _ctx.livepeer.config.contracts.LivepeerToken.address
+    );
 
     return await contract.methods
       .balanceOf(
         _blockNumber < 10686186
-          ? '0x8573f2f5a3bd960eee3d998473e50c75cdbe6828'
-          : _ctx.livepeer.config.contracts.Minter.address,
+          ? "0x8573f2f5a3bd960eee3d998473e50c75cdbe6828"
+          : _ctx.livepeer.config.contracts.Minter.address
       )
-      .call({}, _blockNumber ? _blockNumber : null)
+      .call({}, _blockNumber ? _blockNumber : null);
   }
 
   const merged = mergeSchemas({
@@ -109,15 +109,15 @@ const createSchema = async () => {
           async resolve(_transcoder, _args, _ctx, _info) {
             const threeBoxSpace = await _info.mergeInfo.delegateToSchema({
               schema: schema,
-              operation: 'query',
-              fieldName: 'threeBoxSpace',
+              operation: "query",
+              fieldName: "threeBoxSpace",
               args: {
                 id: _transcoder.id,
               },
               context: _ctx,
               info: _info,
-            })
-            return threeBoxSpace
+            });
+            return threeBoxSpace;
           },
         },
       },
@@ -126,7 +126,7 @@ const createSchema = async () => {
           async resolve(_delegator, _args, _ctx, _info) {
             const apolloFetch = createApolloFetch({
               uri: process.env.NEXT_PUBLIC_SUBGRAPH,
-            })
+            });
             const { data } = await apolloFetch({
               query: `{
                 protocol(id: "0") {
@@ -136,18 +136,18 @@ const createSchema = async () => {
                   }
                 }
               }`,
-            })
+            });
             return await _ctx.livepeer.rpc.getPendingStake(
               _delegator.id.toString(),
-              data.protocol.currentRound.id.toString(),
-            )
+              data.protocol.currentRound.id.toString()
+            );
           },
         },
         pendingFees: {
           async resolve(_delegator, _args, _ctx, _info) {
             const apolloFetch = createApolloFetch({
               uri: process.env.NEXT_PUBLIC_SUBGRAPH,
-            })
+            });
             const { data } = await apolloFetch({
               query: `{
                 protocol(id: "0") {
@@ -157,221 +157,221 @@ const createSchema = async () => {
                   }
                 }
               }`,
-            })
+            });
             const pendingFees = await _ctx.livepeer.rpc.getPendingFees(
               _delegator.id,
-              data.protocol.currentRound.id,
-            )
-            return Utils.fromWei(pendingFees)
+              data.protocol.currentRound.id
+            );
+            return Utils.fromWei(pendingFees);
           },
         },
       },
       Protocol: {
         totalStake: {
           async resolve(_protocol, _args, _ctx, _info) {
-            return await getTotalStake(_ctx, _args.blockNumber)
+            return await getTotalStake(_ctx, _args.blockNumber);
           },
         },
       },
       Poll: {
         totalVoteStake: {
           async resolve(_poll, _args, _ctx, _info) {
-            return +_poll?.tally?.no + +_poll?.tally?.yes
+            return +_poll?.tally?.no + +_poll?.tally?.yes;
           },
         },
         totalNonVoteStake: {
           async resolve(_poll, _args, _ctx, _info) {
             const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
-              'latest',
-            )
-            const isActive = blockNumber <= parseInt(_poll.endBlock)
+              "latest"
+            );
+            const isActive = blockNumber <= parseInt(_poll.endBlock);
             const totalStake = await getTotalStake(
               _ctx,
-              isActive ? blockNumber : _poll.endBlock,
-            )
-            const totalVoteStake = +_poll?.tally?.no + +_poll?.tally?.yes
-            return +Utils.fromWei(totalStake) - totalVoteStake
+              isActive ? blockNumber : _poll.endBlock
+            );
+            const totalVoteStake = +_poll?.tally?.no + +_poll?.tally?.yes;
+            return +Utils.fromWei(totalStake) - totalVoteStake;
           },
         },
         status: {
           async resolve(_poll, _args, _ctx, _info) {
             const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
-              'latest',
-            )
-            const isActive = blockNumber <= parseInt(_poll.endBlock)
+              "latest"
+            );
+            const isActive = blockNumber <= parseInt(_poll.endBlock);
             const totalStake = await getTotalStake(
               _ctx,
-              isActive ? blockNumber : _poll.endBlock,
-            )
-            let noVoteStake = +_poll?.tally?.no || 0
-            let yesVoteStake = +_poll?.tally?.yes || 0
-            let totalVoteStake = noVoteStake + yesVoteStake
+              isActive ? blockNumber : _poll.endBlock
+            );
+            let noVoteStake = +_poll?.tally?.no || 0;
+            let yesVoteStake = +_poll?.tally?.yes || 0;
+            let totalVoteStake = noVoteStake + yesVoteStake;
             let totalSupport = isNaN(yesVoteStake / totalVoteStake)
               ? 0
-              : (yesVoteStake / totalVoteStake) * 100
+              : (yesVoteStake / totalVoteStake) * 100;
             let totalParticipation =
-              (totalVoteStake / +Utils.fromWei(totalStake)) * 100
+              (totalVoteStake / +Utils.fromWei(totalStake)) * 100;
 
             if (isActive) {
-              return 'active'
+              return "active";
             } else if (totalParticipation > _poll.quorum / 10000) {
               if (totalSupport > _poll.quota / 10000) {
-                return 'passed'
+                return "passed";
               } else {
-                return 'rejected'
+                return "rejected";
               }
             } else {
-              return 'Quorum not met'
+              return "Quorum not met";
             }
           },
         },
         isActive: {
           async resolve(_poll, _args, _ctx, _info) {
             const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
-              'latest',
-            )
-            return blockNumber <= parseInt(_poll.endBlock)
+              "latest"
+            );
+            return blockNumber <= parseInt(_poll.endBlock);
           },
         },
         estimatedTimeRemaining: {
           async resolve(_poll, _args, _ctx, _info) {
             const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
-              'latest',
-            )
+              "latest"
+            );
             if (blockNumber > parseInt(_poll.endBlock)) {
-              return null
+              return null;
             }
             const countdownData = await getEstimatedBlockCountdown(
-              _poll.endBlock,
-            )
-            return parseInt(countdownData.EstimateTimeInSec)
+              _poll.endBlock
+            );
+            return parseInt(countdownData.EstimateTimeInSec);
           },
         },
         endTime: {
           async resolve(_poll, _args, _ctx, _info) {
             const { number: blockNumber } = await _ctx.livepeer.rpc.getBlock(
-              'latest',
-            )
+              "latest"
+            );
             if (blockNumber < parseInt(_poll.endBlock)) {
-              return null
+              return null;
             }
-            const endBlockData = await getBlockByNumber(_poll.endBlock)
-            return endBlockData.timeStamp
+            const endBlockData = await getBlockByNumber(_poll.endBlock);
+            return endBlockData.timeStamp;
           },
         },
       },
     },
-  })
+  });
 
   // intercept and transform query responses with price and performance data
   const queryMiddleware = {
     Query: {
       delegator: async (resolve, parent, args, ctx, info) => {
-        const selectionSet = Object.keys(graphqlFields(info))
-        let delegator = await resolve(parent, args, ctx, info)
+        const selectionSet = Object.keys(graphqlFields(info));
+        let delegator = await resolve(parent, args, ctx, info);
 
         // if selection set does not include 'delegate', return delegator as is, otherwise fetch and merge price
-        if (!delegator || !selectionSet.includes('delegate')) {
-          return delegator
+        if (!delegator || !selectionSet.includes("delegate")) {
+          return delegator;
         }
 
         let response = await fetch(
-          `https://livepeer-pricing-tool.com/orchestratorStats`,
-        )
-        let transcodersWithPrice = await response.json()
+          `https://livepeer-pricing-tool.com/orchestratorStats`
+        );
+        let transcodersWithPrice = await response.json();
         let transcoderWithPrice = transcodersWithPrice.filter(
           (t) =>
-            t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase(),
-        )[0]
+            t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase()
+        )[0];
 
         if (delegator?.delegate) {
           delegator.delegate.price = transcoderWithPrice?.PricePerPixel
             ? transcoderWithPrice?.PricePerPixel
-            : 0
+            : 0;
         }
 
-        return delegator
+        return delegator;
       },
       transcoder: async (resolve, parent, args, ctx, info) => {
-        const selectionSet = Object.keys(graphqlFields(info))
-        let transcoder = await resolve(parent, args, ctx, info)
+        const selectionSet = Object.keys(graphqlFields(info));
+        let transcoder = await resolve(parent, args, ctx, info);
 
         // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
-        if (!transcoder || !selectionSet.includes('price')) {
-          return transcoder
+        if (!transcoder || !selectionSet.includes("price")) {
+          return transcoder;
         }
 
         let response = await fetch(
-          `https://livepeer-pricing-tool.com/orchestratorStats`,
-        )
-        let transcodersWithPrice = await response.json()
+          `https://livepeer-pricing-tool.com/orchestratorStats`
+        );
+        let transcodersWithPrice = await response.json();
         let transcoderWithPrice = transcodersWithPrice.filter(
-          (t) => t.Address.toLowerCase() === args.id.toLowerCase(),
-        )[0]
-        transcoder['price'] = transcoderWithPrice?.PricePerPixel
+          (t) => t.Address.toLowerCase() === args.id.toLowerCase()
+        )[0];
+        transcoder["price"] = transcoderWithPrice?.PricePerPixel
           ? transcoderWithPrice?.PricePerPixel
-          : 0
-        return transcoder
+          : 0;
+        return transcoder;
       },
       transcoders: async (resolve, parent, args, ctx, info) => {
-        const selectionSet = Object.keys(graphqlFields(info))
-        const transcoders = await resolve(parent, args, ctx, info)
-        let arr = []
-        let performanceMetrics = []
+        const selectionSet = Object.keys(graphqlFields(info));
+        const transcoders = await resolve(parent, args, ctx, info);
+        let arr = [];
+        let performanceMetrics = [];
 
         // if selection set includes 'price', return transcoders merge prices and performance metrics
-        if (selectionSet.includes('price')) {
+        if (selectionSet.includes("price")) {
           // get price data
           let response = await fetch(
-            `https://livepeer-pricing-tool.com/orchestratorStats`,
-          )
-          let transcodersWithPrice = await response.json()
+            `https://livepeer-pricing-tool.com/orchestratorStats`
+          );
+          let transcodersWithPrice = await response.json();
 
           transcodersWithPrice.map((t) => {
             if (transcoders.filter((a) => a.id === t.Address).length > 0) {
               arr.push({
                 id: t.Address,
                 price: t.PricePerPixel,
-              })
+              });
             }
-          })
+          });
         }
 
         function avg(obj, key) {
-          let arr = Object.values(obj)
-          let sum = (prev, cur) => ({ [key]: prev[key] + cur[key] })
-          return arr.reduce(sum)[key] / arr.length
+          let arr = Object.values(obj);
+          let sum = (prev, cur) => ({ [key]: prev[key] + cur[key] });
+          return arr.reduce(sum)[key] / arr.length;
         }
 
-        if (selectionSet.includes('scores')) {
+        if (selectionSet.includes("scores")) {
           let metricsResponse = await fetch(
-            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`,
-          )
-          let metrics = await metricsResponse.json()
+            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`
+          );
+          let metrics = await metricsResponse.json();
 
           for (const key in metrics) {
             if (transcoders.filter((a) => a.id === key).length > 0) {
               performanceMetrics.push({
                 id: key,
                 scores: {
-                  global: avg(metrics[key], 'score') * 10000,
+                  global: avg(metrics[key], "score") * 10000,
                   fra: metrics[key].FRA?.score * 10000,
                   mdw: metrics[key].MDW?.score * 10000,
                   sin: metrics[key].SIN?.score * 10000,
                 },
                 successRates: {
-                  global: avg(metrics[key], 'success_rate') * 100,
+                  global: avg(metrics[key], "success_rate") * 100,
                   fra: metrics[key].FRA?.success_rate * 100,
                   mdw: metrics[key].MDW?.success_rate * 100,
                   sin: metrics[key].SIN?.success_rate * 100,
                 },
                 roundTripScores: {
-                  global: avg(metrics[key], 'round_trip_score') * 10000,
+                  global: avg(metrics[key], "round_trip_score") * 10000,
                   fra: metrics[key].FRA?.round_trip_score * 10000,
                   mdw: metrics[key].MDW?.round_trip_score * 10000,
                   sin: metrics[key].SIN?.round_trip_score * 10000,
                 },
-              })
+              });
             }
           }
         }
@@ -379,12 +379,12 @@ const createSchema = async () => {
         // merge results
         return mergeObjectsInUnique(
           [...transcoders, ...arr, ...performanceMetrics],
-          'id',
-        )
+          "id"
+        );
       },
     },
-  }
-  return applyMiddleware(merged, queryMiddleware)
-}
+  };
+  return applyMiddleware(merged, queryMiddleware);
+};
 
-export default createSchema
+export default createSchema;

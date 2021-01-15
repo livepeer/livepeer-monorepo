@@ -1,60 +1,60 @@
-import { useState, useEffect } from 'react'
-import { Box, Grid } from '@theme-ui/components'
-import CloseIcon from '../../public/img/close.svg'
-import MetaMaskIcon from '../../public/img/metamask.svg'
-import { Dialog } from '@reach/dialog'
-import { SUPPORTED_WALLETS } from '../../lib/constants'
-import { Injected } from '../../lib/connectors'
-import { isMobile } from 'react-device-detect'
-import { useWeb3React } from '@web3-react/core'
-import Option from './Option'
-import PendingView from './PendingView'
-import AccountDetails from './AccountDetails'
-import gql from 'graphql-tag'
-import { useQuery, useApolloClient } from '@apollo/client'
-import { usePrevious } from '../../hooks'
-import ReactGA from 'react-ga'
+import { useState, useEffect } from "react";
+import { Box, Grid } from "@theme-ui/components";
+import CloseIcon from "../../public/img/close.svg";
+import MetaMaskIcon from "../../public/img/metamask.svg";
+import { Dialog } from "@reach/dialog";
+import { SUPPORTED_WALLETS } from "../../lib/constants";
+import { Injected } from "../../lib/connectors";
+import { isMobile } from "react-device-detect";
+import { useWeb3React } from "@web3-react/core";
+import Option from "./Option";
+import PendingView from "./PendingView";
+import AccountDetails from "./AccountDetails";
+import gql from "graphql-tag";
+import { useQuery, useApolloClient } from "@apollo/client";
+import { usePrevious } from "../../hooks";
+import ReactGA from "react-ga";
 
 const WALLET_VIEWS = {
-  OPTIONS: 'options',
-  ACCOUNT: 'account',
-  PENDING: 'pending',
-}
+  OPTIONS: "options",
+  ACCOUNT: "account",
+  PENDING: "pending",
+};
 
 const Index = () => {
-  const { active, account, connector, activate, error } = useWeb3React()
-  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-  const [pendingWallet, setPendingWallet] = useState()
-  const client = useApolloClient()
+  const { active, account, connector, activate, error } = useWeb3React();
+  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
+  const [pendingWallet, setPendingWallet] = useState();
+  const client = useApolloClient();
 
   const tryActivation = (connector) => {
-    let name = ''
+    let name = "";
     Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
-        return (name = SUPPORTED_WALLETS[key].name)
+        return (name = SUPPORTED_WALLETS[key].name);
       }
-      return true
-    })
+      return true;
+    });
     // log selected wallet
     ReactGA.event({
-      category: 'Wallet',
-      action: 'Change Wallet',
+      category: "Wallet",
+      action: "Change Wallet",
       label: name,
-    })
+    });
 
-    setPendingWallet(connector) // set wallet for pending view
-    setWalletView(WALLET_VIEWS.PENDING)
-    activate(connector, undefined, true)
-  }
+    setPendingWallet(connector); // set wallet for pending view
+    setWalletView(WALLET_VIEWS.PENDING);
+    activate(connector, undefined, true);
+  };
 
   const GET_WALLET_MODAL_STATUS = gql`
     {
       walletModalOpen @client
     }
-  `
-  const { data, loading } = useQuery(GET_WALLET_MODAL_STATUS)
-  const activePrevious = usePrevious(active)
-  const connectorPrevious = usePrevious(connector)
+  `;
+  const { data, loading } = useQuery(GET_WALLET_MODAL_STATUS);
+  const activePrevious = usePrevious(active);
+  const connectorPrevious = usePrevious(connector);
 
   useEffect(() => {
     if (
@@ -62,7 +62,7 @@ const Index = () => {
       ((active && !activePrevious) ||
         (connector && connector !== connectorPrevious && !error))
     ) {
-      setWalletView(WALLET_VIEWS.ACCOUNT)
+      setWalletView(WALLET_VIEWS.ACCOUNT);
     }
   }, [
     setWalletView,
@@ -72,16 +72,16 @@ const Index = () => {
     data,
     activePrevious,
     connectorPrevious,
-  ])
+  ]);
 
   useEffect(() => {
     if (active) {
-      setWalletView(WALLET_VIEWS.ACCOUNT)
+      setWalletView(WALLET_VIEWS.ACCOUNT);
     }
-  }, [setWalletView, active])
+  }, [setWalletView, active]);
 
   if (loading) {
-    return null
+    return null;
   }
 
   const close = () => {
@@ -94,23 +94,23 @@ const Index = () => {
       data: {
         walletModalOpen: false,
       },
-    })
-  }
+    });
+  };
 
   function getOptions() {
-    const isMetamask = window['ethereum'] && window['ethereum'].isMetaMask
+    const isMetamask = window["ethereum"] && window["ethereum"].isMetaMask;
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
-      const option = SUPPORTED_WALLETS[key]
+      const option = SUPPORTED_WALLETS[key];
 
       // check for mobile options
       if (isMobile) {
-        if (!window['web3'] && !window['ethereum'] && option.mobile) {
+        if (!window["web3"] && !window["ethereum"] && option.mobile) {
           return (
             <Option
               onClick={() => {
                 option.connector !== connector &&
                   !option.href &&
-                  tryActivation(option.connector)
+                  tryActivation(option.connector);
               }}
               key={key}
               active={option.connector && option.connector === connector}
@@ -120,37 +120,37 @@ const Index = () => {
               subheader={null}
               Icon={option.icon}
             />
-          )
+          );
         }
-        return null
+        return null;
       }
 
       // overwrite injected when needed
       if (option.connector === Injected) {
         // don't show injected if there's no injected provider
-        if (!(window['web3'] || window['ethereum'])) {
-          if (option.name === 'MetaMask') {
+        if (!(window["web3"] || window["ethereum"])) {
+          if (option.name === "MetaMask") {
             return (
               <Option
                 key={key}
-                color={'#E8831D'}
-                header={'Install Metamask'}
+                color={"#E8831D"}
+                header={"Install Metamask"}
                 subheader={null}
-                link={'https://metamask.io/'}
+                link={"https://metamask.io/"}
                 Icon={MetaMaskIcon}
               />
-            )
+            );
           } else {
-            return null // dont want to return install twice
+            return null; // dont want to return install twice
           }
         }
         // don't return metamask if injected provider isn't metamask
-        else if (option.name === 'MetaMask' && !isMetamask) {
-          return null
+        else if (option.name === "MetaMask" && !isMetamask) {
+          return null;
         }
         // likewise for generic
-        else if (option.name === 'Injected' && isMetamask) {
-          return null
+        else if (option.name === "Injected" && isMetamask) {
+          return null;
         }
       }
 
@@ -162,7 +162,7 @@ const Index = () => {
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
-                : !option.href && tryActivation(option.connector)
+                : !option.href && tryActivation(option.connector);
             }}
             key={key}
             active={option.connector === connector}
@@ -173,8 +173,8 @@ const Index = () => {
             Icon={option.icon}
           />
         )
-      )
-    })
+      );
+    });
   }
 
   function getModalContent() {
@@ -184,44 +184,42 @@ const Index = () => {
           onClose={close}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
         />
-      )
+      );
     }
     return (
-      <Box sx={{ borderRadius: 'inherit' }}>
-        <Box sx={{ position: 'relative', p: [2, 2, 2, 3] }}>
+      <Box sx={{ borderRadius: "inherit" }}>
+        <Box sx={{ position: "relative", p: [2, 2, 2, 3] }}>
           <Box sx={{ fontWeight: 500 }}>
             {walletView !== WALLET_VIEWS.ACCOUNT ? (
               <Box
                 onClick={() => {
-                  setWalletView(WALLET_VIEWS.ACCOUNT)
+                  setWalletView(WALLET_VIEWS.ACCOUNT);
                 }}
-                sx={{ color: 'primary', cursor: 'pointer' }}
-              >
+                sx={{ color: "primary", cursor: "pointer" }}>
                 Back
               </Box>
             ) : (
-              'Connect To A Wallet'
+              "Connect To A Wallet"
             )}
           </Box>
           <CloseIcon
             onClick={close}
             sx={{
-              cursor: 'pointer',
-              position: 'absolute',
+              cursor: "pointer",
+              position: "absolute",
               right: 20,
               top: 20,
-              color: 'white',
+              color: "white",
             }}
           />
         </Box>
         <Box
           sx={{
-            borderBottomLeftRadius: 'inherit',
-            borderBottomRightRadius: 'inherit',
-            bg: 'rgba(255, 255, 255, .04)',
+            borderBottomLeftRadius: "inherit",
+            borderBottomRightRadius: "inherit",
+            bg: "rgba(255, 255, 255, .04)",
             p: 3,
-          }}
-        >
+          }}>
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView connector={pendingWallet} />
           ) : (
@@ -231,7 +229,7 @@ const Index = () => {
           )}
         </Box>
       </Box>
-    )
+    );
   }
 
   return (
@@ -240,8 +238,8 @@ const Index = () => {
         <Box className="tour-step-2">{getModalContent()}</Box>
       </Dialog>
     )
-  )
-}
+  );
+};
 
 // Borrowed from uniswap's WalletModal component implementation
-export default Index
+export default Index;

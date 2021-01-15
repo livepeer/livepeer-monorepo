@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
-import styled from 'styled-components'
+import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
+import styled from "styled-components";
 import {
   Code as CodeIcon,
   // Facebook as FacebookIcon,
@@ -10,48 +10,48 @@ import {
   // ThumbsUp as ThumbsUpIcon,
   Twitter as TwitterIcon,
   Video as VideoIcon,
-} from 'react-feather'
-import { VideoPlayer, Snapshot } from '@livepeer/chroma'
-import BasicNavbar from '../../components/BasicNavbar'
-import Footer from '../../components/Footer'
-import Modal from 'react-responsive-modal'
-import * as qs from 'query-string'
-import { Switch } from 'rmwc/Switch'
-import LoadingOverlay from '../../components/LoadingOverlay'
+} from "react-feather";
+import { VideoPlayer, Snapshot } from "@livepeer/chroma";
+import BasicNavbar from "../../components/BasicNavbar";
+import Footer from "../../components/Footer";
+import Modal from "react-responsive-modal";
+import * as qs from "query-string";
+import { Switch } from "rmwc/Switch";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 export default class Channel extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       live: null,
-      modal: '', // link | embed
+      modal: "", // link | embed
       didCopy: false,
       bannerOpen: true,
       allowFullscreen: true,
       redirect: null,
-    }
+    };
   }
 
   closeBanner = () => {
-    this.setState({ bannerOpen: false })
-  }
+    this.setState({ bannerOpen: false });
+  };
 
   openModal = (modal) => {
-    this.setState({ modal })
-  }
+    this.setState({ modal });
+  };
 
   closeModal = () => {
-    this.setState({ modal: '', didCopy: false, tipAmount: 0 })
-  }
+    this.setState({ modal: "", didCopy: false, tipAmount: 0 });
+  };
 
   copyToClipboard = (e) => {
-    this.text.select()
-    document.execCommand('copy')
-    this.setState({ didCopy: true })
-  }
+    this.text.select();
+    document.execCommand("copy");
+    this.setState({ didCopy: true });
+  };
 
   render() {
-    const { url } = this.props
+    const { url } = this.props;
     const {
       live,
       modal,
@@ -59,18 +59,18 @@ export default class Channel extends Component {
       bannerOpen,
       allowFullscreen,
       redirect,
-    } = this.state
+    } = this.state;
     if (redirect) {
-      return <Redirect to={`/play?url=${encodeURIComponent(redirect)}`} />
+      return <Redirect to={`/play?url=${encodeURIComponent(redirect)}`} />;
     }
 
     const embedLink = `<iframe width="640" height="360" src="${
       window.location.origin
     }/embed?${qs.stringify({
       url,
-      maxWidth: '100%',
-      aspectRatio: '16:9',
-    })}" ${allowFullscreen ? 'allowfullscreen' : ''}></iframe>`
+      maxWidth: "100%",
+      aspectRatio: "16:9",
+    })}" ${allowFullscreen ? "allowfullscreen" : ""}></iframe>`;
     return (
       <div>
         <BasicNavbar onSearch={(url) => this.setState({ redirect: url })} />
@@ -79,53 +79,51 @@ export default class Channel extends Component {
          */}
         {/* Channel Link Url */}
         <Modal
-          open={modal === 'link'}
-          onClose={() => this.closeModal('link')}
-          center
-        >
+          open={modal === "link"}
+          onClose={() => this.closeModal("link")}
+          center>
           <h2>Copy Channel Link</h2>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: "flex" }}>
             <input
               readOnly
               ref={(text) => (this.text = text)}
               style={{
-                width: '100%',
+                width: "100%",
                 borderRadius: 0,
                 borderWidth: 2,
-                borderColor: 'var(--primary)',
-                borderStyle: 'solid',
+                borderColor: "var(--primary)",
+                borderStyle: "solid",
                 padding: 5,
-                outline: 'none',
+                outline: "none",
                 fontSize: 14,
               }}
               type="text"
               value={window.location.toString()}
               onClick={this.copyToClipboard}
             />
-            {document.queryCommandSupported('copy') && (
+            {document.queryCommandSupported("copy") && (
               <Button style={{ width: 128 }} onClick={this.copyToClipboard}>
-                {didCopy ? 'Copied!' : 'Copy'}
+                {didCopy ? "Copied!" : "Copy"}
               </Button>
             )}
           </div>
         </Modal>
         {/* Channel Embed Code */}
         <Modal
-          open={modal === 'embed'}
-          onClose={() => this.closeModal('embed')}
-          center
-        >
+          open={modal === "embed"}
+          onClose={() => this.closeModal("embed")}
+          center>
           <h2>Copy Embed Link</h2>
           <textarea
             readOnly
             ref={(text) => (this.text = text)}
             style={{
-              display: 'block',
+              display: "block",
               width: 320,
               height: 104,
               padding: 8,
-              outline: 'none',
-              fontSize: '14px',
+              outline: "none",
+              fontSize: "14px",
             }}
             onClick={this.copyToClipboard}
             value={embedLink}
@@ -135,15 +133,14 @@ export default class Channel extends Component {
             checked={this.state.allowFullscreen}
             onChange={(evt) =>
               this.setState({ allowFullscreen: evt.target.checked })
-            }
-          >
+            }>
             Allow Fullscreen
           </Switch>
 
-          {document.queryCommandSupported('copy') && (
-            <p style={{ textAlign: 'right' }}>
+          {document.queryCommandSupported("copy") && (
+            <p style={{ textAlign: "right" }}>
               <Button onClick={this.copyToClipboard}>
-                {didCopy ? 'Copied!' : 'Copy'}
+                {didCopy ? "Copied!" : "Copy"}
               </Button>
             </p>
           )}
@@ -158,31 +155,31 @@ export default class Channel extends Component {
             poster=""
             src={url}
             aspectRatio="16:9"
-            style={{ paddingTop: 'calc(100% - 56.25%)' }}
+            style={{ paddingTop: "calc(100% - 56.25%)" }}
             onLive={() => {
-              this.setState({ live: true })
+              this.setState({ live: true });
             }}
             onDead={() => {
-              this.setState({ live: false })
+              this.setState({ live: false });
             }}
             ref={(ref) => {
               if (!ref) {
-                return
+                return;
               }
               // Mux Data
-              if (typeof window.mux !== 'undefined') {
-                window.mux.monitor('.video-react-video', {
+              if (typeof window.mux !== "undefined") {
+                window.mux.monitor(".video-react-video", {
                   debug: true,
                   data: {
                     env_key: process.env.REACT_APP_MUX_ENV_KEY,
 
                     // Metadata
-                    player_name: 'Media Player Main',
+                    player_name: "Media Player Main",
                     player_init_time: Date.now(),
                     // video_id: this.props
                     // We can add other metadata here
                   },
-                })
+                });
               }
             }}
           />
@@ -192,29 +189,28 @@ export default class Channel extends Component {
             <Snapshot
               at={1}
               defaultSrc="/static/images/snapshot-placeholder.svg"
-              url={live ? url : ''}
+              url={live ? url : ""}
               width={128}
               height={128}
               style={{
-                backgroundColor: '#222',
-                borderRadius: '1px 0 0 1px',
+                backgroundColor: "#222",
+                borderRadius: "1px 0 0 1px",
               }}
             />
-            <div style={{ width: 'calc(100% - 128px)', padding: 8 }}>
+            <div style={{ width: "calc(100% - 128px)", padding: 8 }}>
               <ChannelStatus live={live}>
                 <span>•</span>
-                {live ? 'live' : 'offline'}
+                {live ? "live" : "offline"}
               </ChannelStatus>
               <p
                 style={{
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
-              >
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                }}>
                 Stream URL:
                 <br />
-                <span title={url}>{url || 'N/A'}</span>
+                <span title={url}>{url || "N/A"}</span>
               </p>
             </div>
           </Info>
@@ -224,15 +220,14 @@ export default class Channel extends Component {
           <div>
             <p
               style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
                 paddingRight: 8,
-                width: '100%',
+                width: "100%",
                 fontSize: 12,
-                color: 'var(--text)',
-              }}
-            >
+                color: "var(--text)",
+              }}>
               Share: &nbsp;
               {/*<FacebookIcon
                 color="var(--primary)"
@@ -246,29 +241,29 @@ export default class Channel extends Component {
               <TwitterIcon
                 color="var(--primary)"
                 size={18}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
                 onClick={() => {
-                  const message = `Check out this live stream on the Livepeer Media Player\n${window.location}\n#livepeer #eth #decentralized`
+                  const message = `Check out this live stream on the Livepeer Media Player\n${window.location}\n#livepeer #eth #decentralized`;
                   window.open(
                     `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                      message,
-                    )}`,
-                  )
+                      message
+                    )}`
+                  );
                 }}
               />
               &nbsp;&nbsp;
               <LinkIcon
                 color="var(--primary)"
                 size={18}
-                style={{ cursor: 'pointer' }}
-                onClick={() => this.openModal('link')}
+                style={{ cursor: "pointer" }}
+                onClick={() => this.openModal("link")}
               />
               &nbsp;&nbsp;
               <CodeIcon
                 color="var(--primary)"
                 size={18}
-                style={{ cursor: 'pointer' }}
-                onClick={() => this.openModal('embed')}
+                style={{ cursor: "pointer" }}
+                onClick={() => this.openModal("embed")}
               />
             </p>
           </div>
@@ -278,61 +273,55 @@ export default class Channel extends Component {
         <Footer>
           <div
             style={{
-              position: 'fixed',
+              position: "fixed",
               bottom: 0,
               left: 0,
-              width: '100vw',
-              background: '#00eb87',
-              color: '#000',
-              boxShadow: '0 0 2px 0 rgba(0,0,0,.1)',
-              display: bannerOpen ? 'block' : 'none',
-            }}
-          >
+              width: "100vw",
+              background: "#00eb87",
+              color: "#000",
+              boxShadow: "0 0 2px 0 rgba(0,0,0,.1)",
+              display: bannerOpen ? "block" : "none",
+            }}>
             <div
               style={{
                 // width: 640,
-                maxWidth: '100%',
-                margin: '0 auto',
+                maxWidth: "100%",
+                margin: "0 auto",
                 padding: 16,
-              }}
-            >
+              }}>
               <div
                 style={{
-                  display: 'inline-flex',
-                  flexFlow: 'row-wrap',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  width: '100%',
-                }}
-              >
+                  display: "inline-flex",
+                  flexFlow: "row-wrap",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  width: "100%",
+                }}>
                 <VideoIcon color="#000" size={32} />
                 <p
                   style={{
                     // width: '75%',
                     margin: 0,
-                    padding: '0 16px',
+                    padding: "0 16px",
                     lineHeight: 1.5,
-                    color: '#000',
-                  }}
-                >
+                    color: "#000",
+                  }}>
                   Livepeer is building decentralized video broadcasting
                   infrastructure on the Ethereum mainnet.
                 </p>
-                <p style={{ margin: '0 0 0 auto' }}>
+                <p style={{ margin: "0 0 0 auto" }}>
                   <Button
                     onClick={() => {
-                      window.open('https://livepeer.org/developers/')
-                    }}
-                  >
+                      window.open("https://livepeer.org/developers/");
+                    }}>
                     Learn More
                   </Button>
 
                   <Button
-                    style={{ margin: '0 16px 0 16px' }}
+                    style={{ margin: "0 16px 0 16px" }}
                     onClick={() => {
-                      this.closeBanner()
-                    }}
-                  >
+                      this.closeBanner();
+                    }}>
                     x
                   </Button>
                 </p>
@@ -341,13 +330,13 @@ export default class Channel extends Component {
           </div>
         </Footer>
       </div>
-    )
+    );
   }
 }
 
 const Button = styled.button`
-  background: ${({ inverted }) => (inverted ? 'var(--primary)' : '#000')};
-  color: ${({ inverted }) => (!inverted ? 'var(--primary)' : '#000')};
+  background: ${({ inverted }) => (inverted ? "var(--primary)" : "#000")};
+  color: ${({ inverted }) => (!inverted ? "var(--primary)" : "#000")};
   outline: 0;
   border: none;
   borde-radius: 0;
@@ -357,7 +346,7 @@ const Button = styled.button`
   text-transform: uppercase;
   cursor: pointer;
   letter-spacing: 1;
-`
+`;
 
 const ChannelStatus = styled.span`
   display: inline-block;
@@ -375,9 +364,9 @@ const ChannelStatus = styled.span`
     display: inline-block;
     transform: scale(2);
     margin-right: 4px;
-    color: ${({ live }) => (live ? 'red' : '#aaa')};
+    color: ${({ live }) => (live ? "red" : "#aaa")};
   }
-`
+`;
 
 const Content = styled.div`
   position: relative;
@@ -386,7 +375,7 @@ const Content = styled.div`
   // max-width: 672px;
   margin: 0 auto 120px auto;
   padding: 16px;
-`
+`;
 
 const Media = styled.div`
   position: relative;
@@ -400,7 +389,7 @@ const Media = styled.div`
   .video-react {
     padding-top: calc(100% - 56.25%) !important;
   }
-`
+`;
 
 const Info = styled.div`
   position: relative;
@@ -416,4 +405,4 @@ const Info = styled.div`
       color: #aaa;
     }
   }
-`
+`;

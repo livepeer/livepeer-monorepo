@@ -1,50 +1,50 @@
-import Eth from 'ethjs'
-import SignerProvider from 'ethjs-provider-signer'
-import EthereumTx from 'ethereumjs-tx'
+import Eth from "ethjs";
+import SignerProvider from "ethjs-provider-signer";
+import EthereumTx from "ethereumjs-tx";
 import {
   decodeParams,
   decodeEvent,
   encodeMethod,
   encodeSignature,
-} from 'ethjs-abi'
-import ENS from 'ethjs-ens'
+} from "ethjs-abi";
+import ENS from "ethjs-ens";
 
-import LivepeerTokenArtifact from '../etc/LivepeerToken'
-import LivepeerTokenFaucetArtifact from '../etc/LivepeerTokenFaucet'
-import ControllerArtifact from '../etc/Controller'
-import RoundsManagerArtifact from '../etc/RoundsManager'
-import BondingManagerArtifact from '../etc/BondingManager'
-import MinterArtifact from '../etc/Minter'
-import PollCreatorArtifact from '../etc/PollCreator'
-import PollArtifact from '../etc/Poll'
-import MerkleSnapshotArtifact from '../etc/MerkleSnapshot'
-import { VIDEO_PROFILES } from './video_profiles.js'
+import LivepeerTokenArtifact from "../etc/LivepeerToken";
+import LivepeerTokenFaucetArtifact from "../etc/LivepeerTokenFaucet";
+import ControllerArtifact from "../etc/Controller";
+import RoundsManagerArtifact from "../etc/RoundsManager";
+import BondingManagerArtifact from "../etc/BondingManager";
+import MinterArtifact from "../etc/Minter";
+import PollCreatorArtifact from "../etc/PollCreator";
+import PollArtifact from "../etc/Poll";
+import MerkleSnapshotArtifact from "../etc/MerkleSnapshot";
+import { VIDEO_PROFILES } from "./video_profiles.js";
 
 // Constants
 
-export { VIDEO_PROFILES }
-export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
-export const ADDRESS_PAD = '0x000000000000000000000000'
-export const VIDEO_PROFILE_ID_SIZE = 8
+export { VIDEO_PROFILES };
+export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+export const ADDRESS_PAD = "0x000000000000000000000000";
+export const VIDEO_PROFILE_ID_SIZE = 8;
 
-const DELEGATOR_STATUS = ['Pending', 'Bonded', 'Unbonded', 'Unbonding']
-DELEGATOR_STATUS.Pending = DELEGATOR_STATUS[0]
-DELEGATOR_STATUS.Bonded = DELEGATOR_STATUS[1]
-DELEGATOR_STATUS.Unbonded = DELEGATOR_STATUS[2]
-DELEGATOR_STATUS.Unbonding = DELEGATOR_STATUS[3]
-export { DELEGATOR_STATUS }
-const TRANSCODER_STATUS = ['NotRegistered', 'Registered']
-TRANSCODER_STATUS.NotRegistered = TRANSCODER_STATUS[0]
-TRANSCODER_STATUS.Registered = TRANSCODER_STATUS[1]
-export { TRANSCODER_STATUS }
+const DELEGATOR_STATUS = ["Pending", "Bonded", "Unbonded", "Unbonding"];
+DELEGATOR_STATUS.Pending = DELEGATOR_STATUS[0];
+DELEGATOR_STATUS.Bonded = DELEGATOR_STATUS[1];
+DELEGATOR_STATUS.Unbonded = DELEGATOR_STATUS[2];
+DELEGATOR_STATUS.Unbonding = DELEGATOR_STATUS[3];
+export { DELEGATOR_STATUS };
+const TRANSCODER_STATUS = ["NotRegistered", "Registered"];
+TRANSCODER_STATUS.NotRegistered = TRANSCODER_STATUS[0];
+TRANSCODER_STATUS.Registered = TRANSCODER_STATUS[1];
+export { TRANSCODER_STATUS };
 
 // Defaults
 export const DEFAULTS = {
-  controllerAddress: '0xf96d54e490317c557a967abfa5d6e33006be69b3',
-  pollCreatorAddress: '0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c',
+  controllerAddress: "0xf96d54e490317c557a967abfa5d6e33006be69b3",
+  pollCreatorAddress: "0xbf824edb6b94d9b52d972d5b25bcc19b4e6e3f3c",
   provider: process.env.INFURA_ENDPOINT,
   privateKeys: {}, // { [publicKey: string]: privateKey }
-  account: '',
+  account: "",
   gas: null,
   artifacts: {
     LivepeerToken: LivepeerTokenArtifact,
@@ -59,13 +59,13 @@ export const DEFAULTS = {
   },
   ensRegistries: {
     // Mainnet
-    1: '0x314159265dd8dbb310642f98f50c066173c1259b',
+    1: "0x314159265dd8dbb310642f98f50c066173c1259b",
     // Ropsten
-    3: '0x112234455c3a32fd11230c42e7bccd4a84e02010',
+    3: "0x112234455c3a32fd11230c42e7bccd4a84e02010",
     // Rinkeby
-    4: '0xe7410170f87102df0055eb195163a03b7f2bff4a',
+    4: "0xe7410170f87102df0055eb195163a03b7f2bff4a",
   },
-}
+};
 
 // Utils
 export const utils = {
@@ -76,39 +76,39 @@ export const utils = {
     // const sig = `${item.name}(${item.inputs.map(x => x.type).join(',')})`
     // const hash = Eth.keccak256(sig)
     // return hash
-    return encodeSignature(item)
+    return encodeSignature(item);
   },
   findAbiByName: (abis, name) => {
     const [abi] = abis.filter((item) => {
-      if (item.type !== 'function') return false
-      if (item.name === name) return true
-    })
-    return abi
+      if (item.type !== "function") return false;
+      if (item.name === name) return true;
+    });
+    return abi;
   },
   findAbiByHash: (abis, hash) => {
     const [abi] = abis.filter((item) => {
-      if (item.type !== 'function') return false
-      return encodeSignature(item) === hash
-    })
-    return abi
+      if (item.type !== "function") return false;
+      return encodeSignature(item) === hash;
+    });
+    return abi;
   },
   encodeMethodParams: (abi, params) => {
-    return encodeMethod(abi, params)
+    return encodeMethod(abi, params);
   },
   decodeMethodParams: (abi, bytecode) => {
     return decodeParams(
       abi.inputs.map((x) => x.name),
       abi.inputs.map((x) => x.type),
       `0x${bytecode.substr(10)}`,
-      false,
-    )
+      false
+    );
   },
   decodeContractInput: (contracts, contractAddress, input) => {
     for (const key in contracts) {
-      const contract = contracts[key]
-      if (contract.address !== contractAddress) continue
-      const hash = input.substring(0, 10)
-      const abi = utils.findAbiByHash(contract.abi, hash)
+      const contract = contracts[key];
+      if (contract.address !== contractAddress) continue;
+      const hash = input.substring(0, 10);
+      const abi = utils.findAbiByHash(contract.abi, hash);
       return {
         contract: key,
         method: abi.name,
@@ -121,13 +121,13 @@ export const utils = {
                 : BN.isBN(v)
                 ? toString(v)
                 : v,
-            }
+            };
           },
-          {},
+          {}
         ),
-      }
+      };
     }
-    return { contract: '', method: '', params: {} }
+    return { contract: "", method: "", params: {} };
   },
   /**
    * Polls for a transaction receipt
@@ -140,9 +140,9 @@ export const utils = {
     return await new Promise((resolve, reject) => {
       setTimeout(async function pollForReceipt() {
         try {
-          const receipt = await eth.getTransactionReceipt(txHash)
+          const receipt = await eth.getTransactionReceipt(txHash);
           if (receipt) {
-            return receipt.status === '0x1'
+            return receipt.status === "0x1"
               ? // success
                 resolve(receipt)
               : // fail
@@ -152,21 +152,21 @@ export const utils = {
                       {
                         receipt,
                         transaction: await eth.getTransactionByHash(
-                          receipt.transactionHash,
+                          receipt.transactionHash
                         ),
                       },
                       null,
-                      2,
-                    ),
-                  ),
-                )
+                      2
+                    )
+                  )
+                );
           }
-          setTimeout(pollForReceipt, 300)
+          setTimeout(pollForReceipt, 300);
         } catch (err) {
-          reject(err)
+          reject(err);
         }
-      }, 0)
-    })
+      }, 0);
+    });
   },
   /**
    * Parses an encoded string of transcoding options
@@ -175,15 +175,15 @@ export const utils = {
    * @return {Object[]}
    */
   parseTranscodingOptions: (opts) => {
-    const profiles = Object.values(VIDEO_PROFILES)
-    const validHashes = new Set(profiles.map((x) => x.hash))
-    let hashes = []
+    const profiles = Object.values(VIDEO_PROFILES);
+    const validHashes = new Set(profiles.map((x) => x.hash));
+    let hashes = [];
     for (let i = 0; i < opts.length; i += VIDEO_PROFILE_ID_SIZE) {
-      const hash = opts.slice(i, i + VIDEO_PROFILE_ID_SIZE)
-      if (!validHashes.has(hash)) continue
-      hashes.push(hash)
+      const hash = opts.slice(i, i + VIDEO_PROFILE_ID_SIZE);
+      if (!validHashes.has(hash)) continue;
+      hashes.push(hash);
     }
-    return hashes.map((x) => profiles.find(({ hash }) => x === hash))
+    return hashes.map((x) => profiles.find(({ hash }) => x === hash));
   },
   /**
    * Serializes a list of transcoding profiles name into a hash
@@ -197,10 +197,10 @@ export const utils = {
         names.map((x) =>
           VIDEO_PROFILES[x]
             ? VIDEO_PROFILES[x].hash
-            : VIDEO_PROFILES.P240p30fps4x3.hash,
-        ),
+            : VIDEO_PROFILES.P240p30fps4x3.hash
+        )
       ),
-    ].join('')
+    ].join("");
   },
   /**
    * Pads an address with 0s on the left (for topic encoding)
@@ -219,14 +219,14 @@ export const utils = {
   encodeEventTopics: (event, filters) => {
     return event.abi.inputs.reduce(
       (topics, { indexed, name, type }, i) => {
-        if (!indexed) return topics
-        if (!filters.hasOwnProperty(name)) return [...topics, null]
-        if (type === 'address' && 'string' === typeof filters[name])
-          return [...topics, utils.padAddress(filters[name])]
-        return [...topics, filters[name]]
+        if (!indexed) return topics;
+        if (!filters.hasOwnProperty(name)) return [...topics, null];
+        if (type === "address" && "string" === typeof filters[name])
+          return [...topics, utils.padAddress(filters[name])];
+        return [...topics, filters[name]];
       },
-      [event().options.defaultFilterObject.topics[0]],
-    )
+      [event().options.defaultFilterObject.topics[0]]
+    );
   },
   /**
    * Turns a raw event log into a result object
@@ -237,36 +237,36 @@ export const utils = {
    * @return {Object}
    */
   decodeEvent: (event) => ({ data, topics }) => {
-    return decodeEvent(event.abi, data, topics, false)
+    return decodeEvent(event.abi, data, topics, false);
   },
-}
+};
 
 // Helper functions
 // ethjs returns a Result type from rpc requests
 // these functions help with formatting those values
-const { BN } = Eth
-const toBN = (n) => (BN.isBN(n) ? n : new BN(n.toString(10), 10))
-const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
-const prop = (k: string | number) => (x): any => x[k]
-const toBool = (x: any): boolean => !!x
-const toString = (x: Eth.BN): string => x.toString(10)
-const toNumber = (x: Eth.BN): string => Number(x.toString(10))
-const headToBool = compose(toBool, prop(0))
-const headToString = compose(toString, prop(0))
-const headToNumber = compose(toNumber, prop(0))
+const { BN } = Eth;
+const toBN = (n) => (BN.isBN(n) ? n : new BN(n.toString(10), 10));
+const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
+const prop = (k: string | number) => (x): any => x[k];
+const toBool = (x: any): boolean => !!x;
+const toString = (x: Eth.BN): string => x.toString(10);
+const toNumber = (x: Eth.BN): string => Number(x.toString(10));
+const headToBool = compose(toBool, prop(0));
+const headToString = compose(toString, prop(0));
+const headToNumber = compose(toNumber, prop(0));
 const invariant = (name, pos, type) => {
-  throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`)
-}
+  throw new Error(`Missing argument "${name}" (${type}) at position ${pos}`);
+};
 const formatDuration = (ms) => {
-  const seconds = (ms / 1000).toFixed(1)
-  const minutes = (ms / (1000 * 60)).toFixed(1)
-  const hours = (ms / (1000 * 60 * 60)).toFixed(1)
-  const days = (ms / (1000 * 60 * 60 * 24)).toFixed(1)
-  if (seconds < 60) return seconds + ' sec'
-  else if (minutes < 60) return minutes + ' min'
-  else if (hours < 24) return hours + ' hours'
-  return days + ' days'
-}
+  const seconds = (ms / 1000).toFixed(1);
+  const minutes = (ms / (1000 * 60)).toFixed(1);
+  const hours = (ms / (1000 * 60 * 60)).toFixed(1);
+  const days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
+  if (seconds < 60) return seconds + " sec";
+  else if (minutes < 60) return minutes + " min";
+  else if (hours < 24) return hours + " hours";
+  return days + " days";
+};
 
 /**
  * Deploys contract and return instance at deployed address
@@ -276,12 +276,12 @@ const formatDuration = (ms) => {
  */
 export async function deployContract(
   eth,
-  { abi, bytecode, defaultTx },
+  { abi, bytecode, defaultTx }
 ): Promise<Contract> {
-  const contract = eth.contract(abi, bytecode, defaultTx)
-  const txHash = await contract.new()
-  const receipt = await eth.getTransactionSuccess(txHash)
-  return contract.at(receipt.contractAddress)
+  const contract = eth.contract(abi, bytecode, defaultTx);
+  const txHash = await contract.new();
+  const receipt = await eth.getTransactionSuccess(txHash);
+  return contract.at(receipt.contractAddress);
 }
 
 /**
@@ -293,9 +293,9 @@ export async function deployContract(
  */
 export function getContractAt(
   eth,
-  { abi, bytecode, address, defaultTx },
+  { abi, bytecode, address, defaultTx }
 ): Contract {
-  return eth.contract(abi, bytecode, defaultTx).at(address)
+  return eth.contract(abi, bytecode, defaultTx).at(address);
 }
 
 /**
@@ -312,37 +312,37 @@ export async function initRPC({
   eth: Eth,
   defaultTx: { from: string, gas: number },
 }> {
-  const usePrivateKeys = 0 < Object.keys(privateKeys).length
+  const usePrivateKeys = 0 < Object.keys(privateKeys).length;
   const ethjsProvider =
-    'object' === typeof provider && provider
+    "object" === typeof provider && provider
       ? provider
       : usePrivateKeys
       ? // Use provider-signer to locally sign transactions
         new SignerProvider(provider, {
           signTransaction: (rawTx, cb) => {
-            const tx = new EthereumTx(rawTx)
-            tx.sign(privateKeys[from])
-            cb(null, '0x' + tx.serialize().toString('hex'))
+            const tx = new EthereumTx(rawTx);
+            tx.sign(privateKeys[from]);
+            cb(null, "0x" + tx.serialize().toString("hex"));
           },
           accounts: (cb) => cb(null, accounts),
           timeout: 10 * 1000,
         })
       : // Use default signer
-        new Eth.HttpProvider(provider || DEFAULTS.provider)
-  const eth = new Eth(ethjsProvider)
+        new Eth.HttpProvider(provider || DEFAULTS.provider);
+  const eth = new Eth(ethjsProvider);
   const ens = new ENS({
     provider: eth.currentProvider,
     registryAddress: DEFAULTS.ensRegistries[await eth.net_version()],
-  })
+  });
   const accounts = usePrivateKeys
     ? Object.keys(privateKeys)
-    : await eth.accounts()
+    : await eth.accounts();
   const from =
     // select account by address or index
     // default to EMPTY_ADDRESS (read-only; cannot transact)
     new Set(accounts).has(account)
       ? account
-      : accounts[account] || EMPTY_ADDRESS
+      : accounts[account] || EMPTY_ADDRESS;
   return {
     eth,
     ens,
@@ -352,7 +352,7 @@ export async function initRPC({
       from,
       gas,
     },
-  }
+  };
 }
 
 /**
@@ -362,7 +362,7 @@ export async function initRPC({
  * @param {Object} opts.artifacts - ...
  */
 export async function initContracts(
-  opts = {},
+  opts = {}
 ): Promise<Object<string, Contract>> {
   // Merge pass options with defaults
   const {
@@ -373,14 +373,14 @@ export async function initContracts(
     gas = DEFAULTS.gas,
     privateKeys = DEFAULTS.privateKeys,
     provider = DEFAULTS.provider,
-  } = opts
+  } = opts;
   // Instanstiate new ethjs instance with specified provider
   const { accounts, defaultTx, ens, eth } = await initRPC({
     account,
     gas,
     privateKeys,
     provider,
-  })
+  });
   const contracts = {
     LivepeerToken: null,
     LivepeerTokenFaucet: null,
@@ -388,7 +388,7 @@ export async function initContracts(
     RoundsManager: null,
     Minter: null,
     MerkleSnapshot: null,
-  }
+  };
   const hashes = {
     LivepeerToken: {},
     LivepeerTokenFaucet: {},
@@ -396,70 +396,70 @@ export async function initContracts(
     RoundsManager: {},
     Minter: {},
     MerkleSnapshot: {},
-  }
+  };
   // Create a Controller contract instance
   const Controller = await getContractAt(eth, {
     ...artifacts.Controller,
     defaultTx,
     address: controllerAddress,
-  })
+  });
   // Create a PollCreator contract instance
   const PollCreator = await getContractAt(eth, {
     ...artifacts.PollCreator,
     defaultTx,
     address: pollCreatorAddress,
-  })
+  });
   const Poll = await getContractAt(eth, {
     ...artifacts.Poll,
     defaultTx,
     address: EMPTY_ADDRESS,
-  })
+  });
   for (const name of Object.keys(contracts)) {
     // Get contract address from Controller
-    const hash = Eth.keccak256(name)
-    const address = (await Controller.getContract(hash))[0]
+    const hash = Eth.keccak256(name);
+    const address = (await Controller.getContract(hash))[0];
     // Create contract instance
     contracts[name] = await getContractAt(eth, {
       ...artifacts[name],
       defaultTx,
       address,
-    })
+    });
     for (const item of contracts[name].abi) {
-      hashes[name][utils.getMethodHash(item)] = item.name
+      hashes[name][utils.getMethodHash(item)] = item.name;
     }
   }
   // Add the Controller contract to the contracts object
-  contracts.Controller = Controller
+  contracts.Controller = Controller;
   // Add the PollCreator contract to the contracts object
-  contracts.PollCreator = PollCreator
+  contracts.PollCreator = PollCreator;
   // Add the PollCreator contract to the contracts object
-  contracts.Poll = Poll
+  contracts.Poll = Poll;
 
   // Key ABIs by contract name
   const abis = Object.entries(artifacts)
     .map(([k, v]) => ({ [k]: v.abi }))
-    .reduce((a, b) => ({ ...a, ...b }), {})
+    .reduce((a, b) => ({ ...a, ...b }), {});
   // Create a list of events in each contract
   const events = Object.entries(abis)
     .map(([contract, abi]) => {
       return abi
-        .filter((x) => x.type === 'event')
+        .filter((x) => x.type === "event")
         .map((abi) => ({
           abi,
           contract,
           event: contracts[contract][abi.name],
           name: abi.name,
-        }))
+        }));
     })
     .reduce(
       (a, b) =>
         b.reduce((events, { name, event, abi, contract }) => {
-          event.abi = abi
-          event.contract = contract
-          return { ...events, [name]: event }
+          event.abi = abi;
+          event.contract = contract;
+          return { ...events, [name]: event };
         }, a),
-      {},
-    )
+      {}
+    );
 
   return {
     abis,
@@ -470,7 +470,7 @@ export async function initContracts(
     eth,
     events,
     hashes,
-  }
+  };
 }
 
 /**
@@ -497,9 +497,9 @@ export async function initContracts(
  *
  */
 export async function createLivepeerSDK(
-  opts: LivepeerSDKOptions,
+  opts: LivepeerSDKOptions
 ): Promise<LivepeerSDK> {
-  const { ens, events, ...config } = await initContracts(opts)
+  const { ens, events, ...config } = await initContracts(opts);
   const {
     BondingManager,
     Controller,
@@ -509,13 +509,13 @@ export async function createLivepeerSDK(
     Minter,
     PollCreator,
     MerkleSnapshot,
-  } = config.contracts
-  const { resolveAddress } = utils
+  } = config.contracts;
+  const { resolveAddress } = utils;
 
   // Cache
   const cache = {
     // previous log queries are held here to improve perf
-  }
+  };
   /**
    * "rpc" namespace of a Livepeer SDK instance
    * @namespace livepeer~rpc
@@ -549,17 +549,17 @@ export async function createLivepeerSDK(
      */
     async getENSName(address: string): Promise<string> {
       try {
-        return await ens.reverse(address)
+        return await ens.reverse(address);
       } catch (err) {
         // custom networks or unavailable resolvers can cause failure
-        if (err.message !== 'ENS name not defined.') {
+        if (err.message !== "ENS name not defined.") {
           console.warn(
             `Could not get ENS name for address "${address}":`,
-            err.message,
-          )
+            err.message
+          );
         }
         // if there's no name, we can just resolve an empty string
-        return ''
+        return "";
       }
     },
 
@@ -576,17 +576,17 @@ export async function createLivepeerSDK(
      */
     async getENSAddress(name: string): Promise<string> {
       try {
-        return await ens.lookup(name)
+        return await ens.lookup(name);
       } catch (err) {
         // custom networks or unavailable resolvers can cause failure
-        if (err.message !== 'ENS name not defined.') {
+        if (err.message !== "ENS name not defined.") {
           console.warn(
             `Could not get address for ENS name "${name}":`,
-            err.message,
-          )
+            err.message
+          );
         }
         // if there's no name, we can just resolve an empty string
-        return ''
+        return "";
       }
     },
 
@@ -623,9 +623,9 @@ export async function createLivepeerSDK(
      * }
      */
     async getBlock(id: string): Promise<Block> {
-      const block = id.toString().startsWith('0x')
+      const block = id.toString().startsWith("0x")
         ? await config.eth.getBlockByHash(id, true)
-        : await config.eth.getBlockByNumber(id, true)
+        : await config.eth.getBlockByNumber(id, true);
       return {
         ...block,
         difficulty: toString(block.difficulty),
@@ -635,7 +635,7 @@ export async function createLivepeerSDK(
         size: toString(block.size),
         timestamp: Number(toString(block.timestamp)),
         totalDifficulty: toString(block.totalDifficulty),
-      }
+      };
     },
 
     /**
@@ -653,9 +653,9 @@ export async function createLivepeerSDK(
     async getEthBalance(addr: string): Promise<string> {
       return toString(
         await config.eth.getBalance(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
     },
 
     /**
@@ -669,7 +669,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getUnbondingPeriod(): Promise<string> {
-      return headToString(await BondingManager.unbondingPeriod())
+      return headToString(await BondingManager.unbondingPeriod());
     },
 
     /**
@@ -683,7 +683,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getNumActiveTranscoders(): Promise<string> {
-      return headToString(await BondingManager.numActiveTranscoders())
+      return headToString(await BondingManager.numActiveTranscoders());
     },
 
     /**
@@ -697,7 +697,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getMaxEarningsClaimsRounds(): Promise<string> {
-      return headToString(await BondingManager.maxEarningsClaimsRounds())
+      return headToString(await BondingManager.maxEarningsClaimsRounds());
     },
 
     /**
@@ -711,7 +711,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getTotalBonded(): Promise<string> {
-      return headToString(await BondingManager.getTotalBonded())
+      return headToString(await BondingManager.getTotalBonded());
     },
 
     /**
@@ -725,7 +725,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getTokenTotalSupply(): Promise<string> {
-      return headToString(await LivepeerToken.totalSupply())
+      return headToString(await LivepeerToken.totalSupply());
     },
 
     /**
@@ -742,9 +742,9 @@ export async function createLivepeerSDK(
     async getTokenBalance(addr: string): Promise<string> {
       return headToString(
         await LivepeerToken.balanceOf(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
     },
 
     /**
@@ -762,9 +762,9 @@ export async function createLivepeerSDK(
       return {
         totalSupply: await rpc.getTokenTotalSupply(),
         balance: await rpc.getTokenBalance(
-          await resolveAddress(rpc.getENSAddress, addr),
+          await resolveAddress(rpc.getENSAddress, addr)
         ),
-      }
+      };
     },
 
     /**
@@ -801,27 +801,27 @@ export async function createLivepeerSDK(
     async transferToken(
       to: string,
       amount: string,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
-      const value = toBN(amount)
+      const value = toBN(amount);
       // make sure balance is higher than transfer
-      const balance = (await LivepeerToken.balanceOf(tx.from))[0]
+      const balance = (await LivepeerToken.balanceOf(tx.from))[0];
       if (!balance.gte(value)) {
         throw new Error(
           `Cannot transfer ${toString(
-            value,
-          )} LPT because is it greater than your current balance (${balance} LPT).`,
-        )
+            value
+          )} LPT because is it greater than your current balance (${balance} LPT).`
+        );
       }
 
       return await utils.getTxReceipt(
         await LivepeerToken.transfer(
           await resolveAddress(rpc.getENSAddress, to),
           value,
-          tx,
+          tx
         ),
-        config.eth,
-      )
+        config.eth
+      );
     },
 
     /**
@@ -835,7 +835,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getFaucetAmount(): Promise<string> {
-      return headToString(await LivepeerTokenFaucet.requestAmount())
+      return headToString(await LivepeerTokenFaucet.requestAmount());
     },
 
     /**
@@ -849,7 +849,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getFaucetWait(): Promise<string> {
-      return headToString(await LivepeerTokenFaucet.requestWait())
+      return headToString(await LivepeerTokenFaucet.requestWait());
     },
 
     /**
@@ -866,9 +866,9 @@ export async function createLivepeerSDK(
     async getFaucetNext(addr: string): Promise<string> {
       return headToString(
         await LivepeerTokenFaucet.nextValidRequest(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
     },
 
     /**
@@ -891,9 +891,9 @@ export async function createLivepeerSDK(
         amount: await rpc.getFaucetAmount(),
         wait: await rpc.getFaucetWait(),
         next: await rpc.getFaucetNext(
-          await resolveAddress(rpc.getENSAddress, addr),
+          await resolveAddress(rpc.getENSAddress, addr)
         ),
-      }
+      };
     },
 
     /**
@@ -907,7 +907,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getInflation(): Promise<string> {
-      return headToString(await Minter.inflation())
+      return headToString(await Minter.inflation());
     },
 
     /**
@@ -921,7 +921,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getInflationChange(): Promise<string> {
-      return headToString(await Minter.inflationChange())
+      return headToString(await Minter.inflationChange());
     },
 
     /**
@@ -938,10 +938,10 @@ export async function createLivepeerSDK(
     async getDelegatorStatus(addr: string): Promise<string> {
       const status = headToString(
         await BondingManager.delegatorStatus(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
-      return DELEGATOR_STATUS[status]
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
+      return DELEGATOR_STATUS[status];
     },
 
     /**
@@ -970,45 +970,45 @@ export async function createLivepeerSDK(
      * // }
      */
     async getDelegator(addr: string): Promise<Delegator> {
-      const address = await resolveAddress(rpc.getENSAddress, addr)
+      const address = await resolveAddress(rpc.getENSAddress, addr);
       const allowance = headToString(
-        await LivepeerToken.allowance(address, BondingManager.address),
-      )
+        await LivepeerToken.allowance(address, BondingManager.address)
+      );
       const pollCreatorAllowance = headToString(
-        await LivepeerToken.allowance(address, PollCreator.address),
-      )
-      const currentRound = await rpc.getCurrentRound()
+        await LivepeerToken.allowance(address, PollCreator.address)
+      );
+      const currentRound = await rpc.getCurrentRound();
       const pendingStake = headToString(
-        await BondingManager.pendingStake(address, currentRound),
-      )
+        await BondingManager.pendingStake(address, currentRound)
+      );
       const pendingFees = headToString(
-        await BondingManager.pendingFees(address, currentRound),
-      )
-      const d = await BondingManager.getDelegator(address)
-      const bondedAmount = toString(d.bondedAmount)
-      const fees = toString(d.fees)
+        await BondingManager.pendingFees(address, currentRound)
+      );
+      const d = await BondingManager.getDelegator(address);
+      const bondedAmount = toString(d.bondedAmount);
+      const fees = toString(d.fees);
       const delegateAddress =
-        d.delegateAddress === EMPTY_ADDRESS ? '' : d.delegateAddress
-      const delegatedAmount = toString(d.delegatedAmount)
-      const lastClaimRound = toString(d.lastClaimRound)
-      const startRound = toString(d.startRound)
-      const nextUnbondingLockId = toString(d.nextUnbondingLockId)
+        d.delegateAddress === EMPTY_ADDRESS ? "" : d.delegateAddress;
+      const delegatedAmount = toString(d.delegatedAmount);
+      const lastClaimRound = toString(d.lastClaimRound);
+      const startRound = toString(d.startRound);
+      const nextUnbondingLockId = toString(d.nextUnbondingLockId);
 
-      let unbondingLockId = toBN(nextUnbondingLockId)
+      let unbondingLockId = toBN(nextUnbondingLockId);
       if (unbondingLockId.cmp(new BN(0)) > 0) {
-        unbondingLockId = unbondingLockId.sub(new BN(1))
+        unbondingLockId = unbondingLockId.sub(new BN(1));
       }
       const {
         amount: withdrawAmount,
         withdrawRound,
       } = await rpc.getDelegatorUnbondingLock(
         address,
-        toString(unbondingLockId),
-      )
+        toString(unbondingLockId)
+      );
       const status =
-        withdrawRound !== '0' && toBN(currentRound).cmp(toBN(withdrawRound)) < 0
+        withdrawRound !== "0" && toBN(currentRound).cmp(toBN(withdrawRound)) < 0
           ? DELEGATOR_STATUS.Unbonding
-          : await rpc.getDelegatorStatus(address)
+          : await rpc.getDelegatorStatus(address);
 
       return {
         address,
@@ -1026,7 +1026,7 @@ export async function createLivepeerSDK(
         withdrawRound,
         withdrawAmount,
         nextUnbondingLockId,
-      }
+      };
     },
 
     /**
@@ -1045,27 +1045,27 @@ export async function createLivepeerSDK(
      * // }]
      */
     async getDelegatorUnbondingLocks(
-      addr: string,
+      addr: string
     ): Promise<Array<UnbondingLock>> {
-      let { nextUnbondingLockId } = await rpc.getDelegator(addr)
+      let { nextUnbondingLockId } = await rpc.getDelegator(addr);
 
-      let unbondingLockId = toNumber(nextUnbondingLockId)
+      let unbondingLockId = toNumber(nextUnbondingLockId);
       if (unbondingLockId > 0) {
-        unbondingLockId -= 1
+        unbondingLockId -= 1;
       }
 
-      let result = []
+      let result = [];
 
       while (unbondingLockId >= 0) {
         const unbond = await rpc.getDelegatorUnbondingLock(
           addr,
-          toString(unbondingLockId),
-        )
-        result.push(unbond)
-        unbondingLockId -= 1
+          toString(unbondingLockId)
+        );
+        result.push(unbond);
+        unbondingLockId -= 1;
       }
 
-      return result
+      return result;
     },
 
     /**
@@ -1085,20 +1085,20 @@ export async function createLivepeerSDK(
      */
     async getDelegatorUnbondingLock(
       addr: string,
-      unbondingLockId: string,
+      unbondingLockId: string
     ): Promise<UnbondingLock> {
       const lock = await BondingManager.getDelegatorUnbondingLock(
         addr,
-        unbondingLockId,
-      )
-      const amount = toString(lock.amount)
-      const withdrawRound = toString(lock.withdrawRound)
+        unbondingLockId
+      );
+      const amount = toString(lock.amount);
+      const withdrawRound = toString(lock.withdrawRound);
       return {
         id: unbondingLockId,
         delegator: addr,
         amount,
         withdrawRound,
-      }
+      };
     },
 
     /**
@@ -1133,17 +1133,17 @@ export async function createLivepeerSDK(
      */
     async rebond(
       unbondingLockId: number,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.rebond(unbondingLockId, {
         ...config.defaultTx,
         ...tx,
-      })
+      });
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -1182,7 +1182,7 @@ export async function createLivepeerSDK(
       unbondingLockId: number,
       newPosPrev: string,
       newPosNext: string,
-      tx: TxObject,
+      tx: TxObject
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.rebondWithHint(
         unbondingLockId,
@@ -1191,13 +1191,13 @@ export async function createLivepeerSDK(
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -1234,7 +1234,7 @@ export async function createLivepeerSDK(
     async rebondFromUnbonded(
       to: string,
       unbondingLockId: number,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.rebondFromUnbonded(
         to,
@@ -1242,14 +1242,14 @@ export async function createLivepeerSDK(
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -1290,7 +1290,7 @@ export async function createLivepeerSDK(
       unbondingLockId: number,
       newPosPrev: string,
       newPosNext: string,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.rebondFromUnbondedWithHint(
         to,
@@ -1300,14 +1300,14 @@ export async function createLivepeerSDK(
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -1324,19 +1324,19 @@ export async function createLivepeerSDK(
      */
     async getPendingStake(addr: string, endRound: string): Promise<string> {
       try {
-        const address = await resolveAddress(rpc.getENSAddress, addr)
+        const address = await resolveAddress(rpc.getENSAddress, addr);
         if (!endRound) {
-          const currentRound = await rpc.getCurrentRound()
+          const currentRound = await rpc.getCurrentRound();
           return headToString(
-            await BondingManager.pendingStake(address, currentRound),
-          )
+            await BondingManager.pendingStake(address, currentRound)
+          );
         }
         return headToString(
-          await BondingManager.pendingStake(address, endRound),
-        )
+          await BondingManager.pendingStake(address, endRound)
+        );
       } catch (err) {
-        err.message = 'Error: getPendingStake\n' + err.message
-        throw err
+        err.message = "Error: getPendingStake\n" + err.message;
+        throw err;
       }
     },
 
@@ -1354,17 +1354,19 @@ export async function createLivepeerSDK(
      */
     async getPendingFees(addr: string, endRound: string): Promise<string> {
       try {
-        const address = await resolveAddress(rpc.getENSAddress, addr)
+        const address = await resolveAddress(rpc.getENSAddress, addr);
         if (!endRound) {
-          const currentRound = await rpc.getCurrentRound()
+          const currentRound = await rpc.getCurrentRound();
           return headToString(
-            await BondingManager.pendingFees(address, currentRound),
-          )
+            await BondingManager.pendingFees(address, currentRound)
+          );
         }
-        return headToString(await BondingManager.pendingFees(address, endRound))
+        return headToString(
+          await BondingManager.pendingFees(address, endRound)
+        );
       } catch (err) {
-        err.message = 'Error: getPendingFees\n' + err.message
-        throw err
+        err.message = "Error: getPendingFees\n" + err.message;
+        throw err;
       }
     },
 
@@ -1382,9 +1384,9 @@ export async function createLivepeerSDK(
     async getTranscoderIsActive(addr: string): Promise<boolean> {
       return headToBool(
         await BondingManager.isActiveTranscoder(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
     },
 
     /**
@@ -1401,10 +1403,10 @@ export async function createLivepeerSDK(
     async getTranscoderStatus(addr: string): Promise<string> {
       const status = headToString(
         await BondingManager.transcoderStatus(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
-      return TRANSCODER_STATUS[status]
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
+      return TRANSCODER_STATUS[status];
     },
 
     /**
@@ -1421,9 +1423,9 @@ export async function createLivepeerSDK(
     async getTranscoderTotalStake(addr: string): Promise<string> {
       return headToString(
         await BondingManager.transcoderTotalStake(
-          await resolveAddress(rpc.getENSAddress, addr),
-        ),
-      )
+          await resolveAddress(rpc.getENSAddress, addr)
+        )
+      );
     },
 
     /**
@@ -1437,7 +1439,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getTranscoderPoolMaxSize(): Promise<string> {
-      return headToString(await BondingManager.getTranscoderPoolMaxSize())
+      return headToString(await BondingManager.getTranscoderPoolMaxSize());
     },
 
     /**
@@ -1464,15 +1466,15 @@ export async function createLivepeerSDK(
      * // }
      */
     async getTranscoder(addr: string): Promise<Transcoder> {
-      const address = await resolveAddress(rpc.getENSAddress, addr)
-      const totalStake = await rpc.getTranscoderTotalStake(address)
-      const t = await BondingManager.getTranscoder(address)
-      const feeShare = toString(t.feeShare)
-      const lastRewardRound = toString(t.lastRewardRound)
-      const rewardCut = toString(t.rewardCut)
-      const activationRound = toString(t.activationRound)
-      const deactivationRound = toString(t.deactivationRound)
-      const lastActiveStakeUpdateRound = toString(t.lastActiveStakeUpdateRound)
+      const address = await resolveAddress(rpc.getENSAddress, addr);
+      const totalStake = await rpc.getTranscoderTotalStake(address);
+      const t = await BondingManager.getTranscoder(address);
+      const feeShare = toString(t.feeShare);
+      const lastRewardRound = toString(t.lastRewardRound);
+      const rewardCut = toString(t.rewardCut);
+      const activationRound = toString(t.activationRound);
+      const deactivationRound = toString(t.deactivationRound);
+      const lastActiveStakeUpdateRound = toString(t.lastActiveStakeUpdateRound);
       return {
         address,
         feeShare,
@@ -1482,7 +1484,7 @@ export async function createLivepeerSDK(
         rewardCut,
         totalStake,
         lastActiveStakeUpdateRound,
-      }
+      };
     },
 
     /**
@@ -1496,14 +1498,14 @@ export async function createLivepeerSDK(
      * // => Array<Transcoder>
      */
     async getTranscoders(): Promise<Array<Transcoder>> {
-      const transcoders = []
-      let addr = headToString(await BondingManager.getFirstTranscoderInPool())
+      const transcoders = [];
+      let addr = headToString(await BondingManager.getFirstTranscoderInPool());
       while (addr !== EMPTY_ADDRESS) {
-        const transcoder = await rpc.getTranscoder(addr)
-        transcoders.push(transcoder)
-        addr = headToString(await BondingManager.getNextTranscoderInPool(addr))
+        const transcoder = await rpc.getTranscoder(addr);
+        transcoders.push(transcoder);
+        addr = headToString(await BondingManager.getNextTranscoderInPool(addr));
       }
-      return transcoders
+      return transcoders;
     },
 
     /**
@@ -1517,7 +1519,7 @@ export async function createLivepeerSDK(
      * // => boolean
      */
     async getProtocolPaused(): Promise<Protocol> {
-      return headToBool(await Controller.paused())
+      return headToBool(await Controller.paused());
     },
 
     /**
@@ -1538,12 +1540,12 @@ export async function createLivepeerSDK(
      }
      */
     async getProtocol(): Promise<Protocol> {
-      const paused = await rpc.getProtocolPaused()
-      const totalTokenSupply = await rpc.getTokenTotalSupply()
-      const totalBondedToken = await rpc.getTotalBonded()
-      const targetBondingRate = await rpc.getTargetBondingRate()
-      const transcoderPoolMaxSize = await rpc.getTranscoderPoolMaxSize()
-      const maxEarningsClaimsRounds = await rpc.getMaxEarningsClaimsRounds()
+      const paused = await rpc.getProtocolPaused();
+      const totalTokenSupply = await rpc.getTokenTotalSupply();
+      const totalBondedToken = await rpc.getTotalBonded();
+      const targetBondingRate = await rpc.getTargetBondingRate();
+      const transcoderPoolMaxSize = await rpc.getTranscoderPoolMaxSize();
+      const maxEarningsClaimsRounds = await rpc.getMaxEarningsClaimsRounds();
       return {
         paused,
         totalTokenSupply,
@@ -1551,7 +1553,7 @@ export async function createLivepeerSDK(
         targetBondingRate,
         transcoderPoolMaxSize,
         maxEarningsClaimsRounds,
-      }
+      };
     },
 
     /**
@@ -1565,7 +1567,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getRoundLength(): Promise<string> {
-      return headToString(await RoundsManager.roundLength())
+      return headToString(await RoundsManager.roundLength());
     },
 
     /**
@@ -1579,7 +1581,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getRoundsPerYear(): Promise<string> {
-      return headToString(await RoundsManager.roundsPerYear())
+      return headToString(await RoundsManager.roundsPerYear());
     },
 
     /**
@@ -1593,7 +1595,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getCurrentRound(): Promise<string> {
-      return headToString(await RoundsManager.currentRound())
+      return headToString(await RoundsManager.currentRound());
     },
 
     /**
@@ -1607,7 +1609,7 @@ export async function createLivepeerSDK(
      * // => boolean
      */
     async getCurrentRoundIsInitialized(): Promise<boolean> {
-      return headToBool(await RoundsManager.currentRoundInitialized())
+      return headToBool(await RoundsManager.currentRoundInitialized());
     },
 
     /**
@@ -1621,7 +1623,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getCurrentRoundStartBlock(): Promise<string> {
-      return headToString(await RoundsManager.currentRoundStartBlock())
+      return headToString(await RoundsManager.currentRoundStartBlock());
     },
 
     /**
@@ -1635,7 +1637,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getLastInitializedRound(): Promise<string> {
-      return headToString(await RoundsManager.lastInitializedRound())
+      return headToString(await RoundsManager.lastInitializedRound());
     },
 
     /**
@@ -1655,22 +1657,22 @@ export async function createLivepeerSDK(
      * // }
      */
     async getCurrentRoundInfo(): Promise<RoundInfo> {
-      const length = await rpc.getRoundLength()
-      const id = await rpc.getCurrentRound()
-      const initialized = await rpc.getCurrentRoundIsInitialized()
-      const lastInitializedRound = await rpc.getLastInitializedRound()
-      const startBlock = await rpc.getCurrentRoundStartBlock()
+      const length = await rpc.getRoundLength();
+      const id = await rpc.getCurrentRound();
+      const initialized = await rpc.getCurrentRoundIsInitialized();
+      const lastInitializedRound = await rpc.getLastInitializedRound();
+      const startBlock = await rpc.getCurrentRoundStartBlock();
       return {
         id,
         initialized,
         lastInitializedRound,
         length,
         startBlock,
-      }
+      };
     },
 
     async getLipUpgradeRound(lipNumber) {
-      return (await RoundsManager.lipUpgradeRound(lipNumber))[0]
+      return (await RoundsManager.lipUpgradeRound(lipNumber))[0];
     },
 
     /**
@@ -1713,8 +1715,8 @@ export async function createLivepeerSDK(
       // tap the faucet
       return await utils.getTxReceipt(
         await LivepeerTokenFaucet.request(tx),
-        config.eth,
-      )
+        config.eth
+      );
     },
 
     /**
@@ -1748,31 +1750,31 @@ export async function createLivepeerSDK(
      */
     async initializeRound(tx = config.defaultTx): Promise<TxReceipt> {
       try {
-        const txHash = await RoundsManager.initializeRound(tx)
+        const txHash = await RoundsManager.initializeRound(tx);
         if (tx.returnTxHash) {
-          return txHash
+          return txHash;
         }
-        return await utils.getTxReceipt(txHash, config.eth)
+        return await utils.getTxReceipt(txHash, config.eth);
       } catch (err) {
-        err.message = 'Error: initializeRound\n' + err.message
-        throw err
+        err.message = "Error: initializeRound\n" + err.message;
+        throw err;
       }
     },
 
     async approveTokenPollCreationCost(
       amount: string,
-      tx: TxObject,
+      tx: TxObject
     ): Promise<TxReceipt> {
-      const token = toBN(amount)
+      const token = toBN(amount);
       const txHash = await LivepeerToken.approve(PollCreator.address, token, {
         ...config.defaultTx,
         ...tx,
-      })
+      });
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -1810,14 +1812,14 @@ export async function createLivepeerSDK(
         const txHash = await PollCreator.createPoll(proposal, {
           ...config.defaultTx,
           ...tx,
-        })
+        });
         if (tx.returnTxHash) {
-          return txHash
+          return txHash;
         }
-        return await utils.getTxReceipt(txHash, config.eth)
+        return await utils.getTxReceipt(txHash, config.eth);
       } catch (err) {
-        err.message = 'Error: createPoll\n' + err.message
-        throw err
+        err.message = "Error: createPoll\n" + err.message;
+        throw err;
       }
     },
 
@@ -1853,13 +1855,13 @@ export async function createLivepeerSDK(
      */
     async getPollCreatorAllowance(addr): Promise<TxReceipt> {
       try {
-        const address = await resolveAddress(rpc.getENSAddress, addr)
+        const address = await resolveAddress(rpc.getENSAddress, addr);
         return headToString(
-          await LivepeerToken.allowance(address, PollCreator.address),
-        )
+          await LivepeerToken.allowance(address, PollCreator.address)
+        );
       } catch (err) {
-        err.message = 'Error: getPollCreatorAllowance\n' + err.message
-        throw err
+        err.message = "Error: getPollCreatorAllowance\n" + err.message;
+        throw err;
       }
     },
 
@@ -1895,13 +1897,13 @@ export async function createLivepeerSDK(
      */
     async getBondingManagerAllowance(addr): Promise<TxReceipt> {
       try {
-        const address = await resolveAddress(rpc.getENSAddress, addr)
+        const address = await resolveAddress(rpc.getENSAddress, addr);
         return headToString(
-          await LivepeerToken.allowance(address, BondingManager.address),
-        )
+          await LivepeerToken.allowance(address, BondingManager.address)
+        );
       } catch (err) {
-        err.message = 'Error: getBondingManagerAllowance\n' + err.message
-        throw err
+        err.message = "Error: getBondingManagerAllowance\n" + err.message;
+        throw err;
       }
     },
 
@@ -1939,25 +1941,25 @@ export async function createLivepeerSDK(
     async vote(
       pollAddress,
       choiceId,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
       try {
         const Poll = await getContractAt(config.eth, {
           ...PollArtifact,
           defaultTx: config.defaultTx,
           address: pollAddress,
-        })
+        });
         const txHash = await Poll.vote(choiceId, {
           ...config.defaultTx,
           ...tx,
-        })
+        });
         if (tx.returnTxHash) {
-          return txHash
+          return txHash;
         }
-        return await utils.getTxReceipt(txHash, config.eth)
+        return await utils.getTxReceipt(txHash, config.eth);
       } catch (err) {
-        err.message = 'Error: vote\n' + err.message
-        throw err
+        err.message = "Error: vote\n" + err.message;
+        throw err;
       }
     },
 
@@ -1975,54 +1977,54 @@ export async function createLivepeerSDK(
      */
     async claimEarnings(
       endRound: string,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<string> {
       return await BondingManager.claimEarnings(endRound, {
         ...config.defaultTx,
         ...tx,
-      })
+      });
     },
 
     async approveTokenBondAmount(
       amount: string,
-      tx: TxObject,
+      tx: TxObject
     ): Promise<TxReceipt> {
-      const token = toBN(amount)
+      const token = toBN(amount);
       const txHash = await LivepeerToken.approve(
         BondingManager.address,
         token,
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     async bondApprovedTokenAmount(
       to: string,
       amount: string,
-      tx: TxObject,
+      tx: TxObject
     ): Promise<TxReceipt> {
-      const token = toBN(amount)
+      const token = toBN(amount);
       const txHash = await BondingManager.bond(
         token,
         await resolveAddress(rpc.getENSAddress, to),
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2067,9 +2069,9 @@ export async function createLivepeerSDK(
       oldDelegateNewPosNext: string,
       currDelegateNewPosPrev: string,
       currDelegateNewPosNext: string,
-      tx: TxObject,
+      tx: TxObject
     ): Promise<TxReceipt> {
-      const token = toBN(amount)
+      const token = toBN(amount);
       const txHash = await BondingManager.bondWithHint(
         token,
         await resolveAddress(rpc.getENSAddress, to),
@@ -2080,14 +2082,14 @@ export async function createLivepeerSDK(
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2119,13 +2121,13 @@ export async function createLivepeerSDK(
       contractName: string,
       methodName: string,
       methodArgs: Array,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<number> {
-      tx.value = tx.value ? tx.value : '0'
-      const gasRate = 1.2
-      const contractABI = config.abis[contractName]
-      const methodABI = utils.findAbiByName(contractABI, methodName)
-      const encodedData = utils.encodeMethodParams(methodABI, methodArgs)
+      tx.value = tx.value ? tx.value : "0";
+      const gasRate = 1.2;
+      const contractABI = config.abis[contractName];
+      const methodABI = utils.findAbiByName(contractABI, methodName);
+      const encodedData = utils.encodeMethodParams(methodABI, methodArgs);
       return Math.round(
         toNumber(
           await config.eth.estimateGas({
@@ -2133,43 +2135,43 @@ export async function createLivepeerSDK(
             from: config.defaultTx.from,
             value: tx.value,
             data: encodedData,
-          }),
-        ) * gasRate,
-      )
+          })
+        ) * gasRate
+      );
     },
 
     getCalldata(
       contractName: string,
       methodName: string,
-      methodArgs: Array,
+      methodArgs: Array
     ): string {
-      const contractABI = config.abis[contractName]
-      const methodABI = utils.findAbiByName(contractABI, methodName)
-      return utils.encodeMethodParams(methodABI, methodArgs)
+      const contractABI = config.abis[contractName];
+      const methodABI = utils.findAbiByName(contractABI, methodName);
+      return utils.encodeMethodParams(methodABI, methodArgs);
     },
 
     async estimateGasRaw(tx) {
-      const gasRate = 1.2
+      const gasRate = 1.2;
       return Math.round(
         toNumber(
           await config.eth.estimateGas({
             ...tx,
-          }),
-        ) * gasRate,
-      )
+          })
+        ) * gasRate
+      );
     },
 
     async sendTransaction(tx = config.defaultTx): Promise<TxReceipt> {
       const txHash = await config.eth.sendTransaction({
         ...config.defaultTx,
         ...tx,
-      })
+      });
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2205,13 +2207,13 @@ export async function createLivepeerSDK(
       const txHash = await BondingManager.unbond(amount, {
         ...config.defaultTx,
         ...tx,
-      })
+      });
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2250,7 +2252,7 @@ export async function createLivepeerSDK(
       amount: string,
       newPosPrev: string,
       newPosNext: string,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
       const txHash = await BondingManager.unbondWithHint(
         amount,
@@ -2259,14 +2261,14 @@ export async function createLivepeerSDK(
         {
           ...config.defaultTx,
           ...tx,
-        },
-      )
+        }
+      );
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2305,7 +2307,7 @@ export async function createLivepeerSDK(
       rewardCut: string, // percentage
       feeShare: string, // percentage
       pricePerSegment: string, // lpt
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
       // become a transcoder
       return await utils.getTxReceipt(
@@ -2313,10 +2315,10 @@ export async function createLivepeerSDK(
           toBN(rewardCut),
           toBN(feeShare),
           toBN(pricePerSegment),
-          tx,
+          tx
         ),
-        config.eth,
-      )
+        config.eth
+      );
     },
 
     /**
@@ -2330,7 +2332,7 @@ export async function createLivepeerSDK(
      * // => string
      */
     async getTargetBondingRate(): Promise<string> {
-      return headToString(await Minter.targetBondingRate())
+      return headToString(await Minter.targetBondingRate());
     },
 
     /**
@@ -2365,19 +2367,19 @@ export async function createLivepeerSDK(
      */
     async withdrawStake(
       unbondLockId: string,
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
-      if (typeof unbondLockId === 'undefined') {
-        throw new Error('missing argument unbondingLockId')
+      if (typeof unbondLockId === "undefined") {
+        throw new Error("missing argument unbondingLockId");
       }
-      let id = toBN(unbondLockId)
-      let txHash = await BondingManager.withdrawStake(toString(id), tx)
+      let id = toBN(unbondLockId);
+      let txHash = await BondingManager.withdrawStake(toString(id), tx);
 
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
 
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2413,30 +2415,30 @@ export async function createLivepeerSDK(
 
     async withdrawStakeWithUnbondLock(
       unbondlock: { id: string, amount: string, withdrawRound: string },
-      tx = config.defaultTx,
+      tx = config.defaultTx
     ): Promise<TxReceipt> {
-      const { id, amount, withdrawRound } = unbondlock
+      const { id, amount, withdrawRound } = unbondlock;
 
-      const currentRound = await rpc.getCurrentRound()
+      const currentRound = await rpc.getCurrentRound();
 
       // ensure the unbonding period is over
       if (withdrawRound > currentRound) {
-        throw new Error('Delegator must wait through unbonding period')
-      } else if (amount === '0') {
-        throw new Error('Delegator does not have anything to withdraw')
+        throw new Error("Delegator must wait through unbonding period");
+      } else if (amount === "0") {
+        throw new Error("Delegator does not have anything to withdraw");
       } else if (amount < 0) {
-        throw new Error('Amount cannot be negative')
+        throw new Error("Amount cannot be negative");
       }
 
-      let unbondingLockId = toBN(id)
+      let unbondingLockId = toBN(id);
       const txHash = await BondingManager.withdrawStake(
         toString(unbondingLockId),
-        tx,
-      )
+        tx
+      );
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     /**
@@ -2469,17 +2471,17 @@ export async function createLivepeerSDK(
      * // }
      */
     async withdrawFees(tx = config.defaultTx): Promise<TxReceipt> {
-      let txHash = await BondingManager.withdrawFees(tx)
+      let txHash = await BondingManager.withdrawFees(tx);
       if (tx.returnTxHash) {
-        return txHash
+        return txHash;
       }
-      return await utils.getTxReceipt(txHash, config.eth)
+      return await utils.getTxReceipt(txHash, config.eth);
     },
 
     async verifySnapshot(id, proof, leafHash) {
-      return await MerkleSnapshot.verify(id, proof, leafHash)
+      return await MerkleSnapshot.verify(id, proof, leafHash);
     },
-  }
+  };
 
   return {
     create: createLivepeerSDK,
@@ -2495,7 +2497,7 @@ export async function createLivepeerSDK(
       VIDEO_PROFILE_ID_SIZE,
       VIDEO_PROFILES,
     },
-  }
+  };
 
   // Keeping typedefs down here so they show up last in the generated API table of contents
 
@@ -2688,4 +2690,4 @@ export async function createLivepeerSDK(
    */
 }
 
-export { createLivepeerSDK as LivepeerSDK, createLivepeerSDK as default }
+export { createLivepeerSDK as LivepeerSDK, createLivepeerSDK as default };

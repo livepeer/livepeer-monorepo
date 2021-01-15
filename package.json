@@ -24,19 +24,21 @@
     "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer-2.0 --ignore @livepeer/player --ignore @livepeer/chroma",
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
     "updated": "lerna updated --json",
-    "postinstall": "lerna run --stream postinstall"
+    "postinstall": "lerna run --stream postinstall",
+    "prettier": "prettier --write '**/*.{ts,js,css,html,md,tsx}'"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
+    "@livepeer/prettier-config": "^1.0.1",
     "commitizen": "^3.1.1",
     "cz-conventional-changelog": "^2.1.0",
     "depcheck": "^0.7.1",
     "husky": "^4.2.5",
     "lcov-result-merger": "^3.0.0",
     "lerna": "^3.13.3",
-    "prettier": "^2.0.5",
-    "pretty-quick": "^2.0.1"
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0"
   },
   "config": {
     "commitizen": {
@@ -53,7 +55,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,css,md,tsx}": "prettier --write"
+    "*.{ts,js,css,html,md,tsx}": "prettier --write"
   },
   "resolutions": {
     "orbit-db": "0.22.0"

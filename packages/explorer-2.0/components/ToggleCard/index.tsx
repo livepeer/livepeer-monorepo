@@ -1,6 +1,6 @@
-import { Styled, Flex } from 'theme-ui'
-import Label from '../Label'
-import Checkbox from '../Checkbox'
+import { Styled, Flex } from "theme-ui";
+import Label from "../Label";
+import Checkbox from "../Checkbox";
 
 const Index = ({
   label = null,
@@ -13,15 +13,14 @@ const Index = ({
   <div
     {...props}
     sx={{
-      cursor: 'pointer',
-      border: '1px solid',
-      borderColor: isActive ? 'primary' : 'muted',
+      cursor: "pointer",
+      border: "1px solid",
+      borderColor: isActive ? "primary" : "muted",
       borderRadius: 4,
       p: 3,
-    }}
-  >
-    <Flex sx={{ justifyContent: 'space-between' }}>
-      <Flex sx={{ mb: 2, alignItems: 'center' }}>
+    }}>
+    <Flex sx={{ justifyContent: "space-between" }}>
+      <Flex sx={{ mb: 2, alignItems: "center" }}>
         <Icon sx={{ mr: 2 }} />
         {label && <Label>Recommended</Label>}
       </Flex>
@@ -30,6 +29,6 @@ const Index = ({
     <Styled.h2 sx={{ mb: 2 }}>{providerName}</Styled.h2>
     <Styled.p>{description}</Styled.p>
   </div>
-)
+);
 
-export default Index
+export default Index;

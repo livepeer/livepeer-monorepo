@@ -1,10 +1,10 @@
-import React, { useContext } from 'react'
-import { gql, useApolloClient } from '@apollo/client'
-import Utils from 'web3-utils'
-import Button from '../Button'
-import { useWeb3React } from '@web3-react/core'
-import { MutationsContext } from '../../contexts'
-import { initTransaction } from '../../lib/utils'
+import React, { useContext } from "react";
+import { gql, useApolloClient } from "@apollo/client";
+import Utils from "web3-utils";
+import Button from "../Button";
+import { useWeb3React } from "@web3-react/core";
+import { MutationsContext } from "../../contexts";
+import { initTransaction } from "../../lib/utils";
 
 const Stake = ({
   to,
@@ -16,12 +16,12 @@ const Stake = ({
   delegator,
   disabled,
 }) => {
-  const client = useApolloClient()
-  const context = useWeb3React()
-  const { bond }: any = useContext(MutationsContext)
+  const client = useApolloClient();
+  const context = useWeb3React();
+  const { bond }: any = useContext(MutationsContext);
 
   if (!context.active) {
-    return null
+    return null;
   }
 
   return (
@@ -33,7 +33,7 @@ const Stake = ({
             try {
               await bond({
                 variables: {
-                  amount: Utils.toWei(amount ? amount.toString() : '0'),
+                  amount: Utils.toWei(amount ? amount.toString() : "0"),
                   to,
                   oldDelegateNewPosPrev,
                   oldDelegateNewPosNext,
@@ -42,9 +42,9 @@ const Stake = ({
                   delegator: delegator?.id,
                   lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
                 },
-              })
+              });
             } catch (err) {
-              console.log(err)
+              console.log(err);
             }
             // If user staked inside tour, close tour after staking
             client.writeQuery({
@@ -56,15 +56,14 @@ const Stake = ({
               data: {
                 tourOpen: false,
               },
-            })
-          })
+            });
+          });
         }}
-        sx={{ width: '100%' }}
-      >
+        sx={{ width: "100%" }}>
         Stake
       </Button>
     </>
-  )
-}
+  );
+};
 
-export default Stake
+export default Stake;

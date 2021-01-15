@@ -1,19 +1,19 @@
-import { useContext } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import Button from '../Button'
-import { MutationsContext } from '../../contexts'
-import { useApolloClient } from '@apollo/client'
-import { initTransaction } from '../../lib/utils'
+import { useContext } from "react";
+import { useWeb3React } from "@web3-react/core";
+import Button from "../Button";
+import { MutationsContext } from "../../contexts";
+import { useApolloClient } from "@apollo/client";
+import { initTransaction } from "../../lib/utils";
 
 const Index = ({ delegator, ...props }) => {
-  const context = useWeb3React()
-  const client = useApolloClient()
+  const context = useWeb3React();
+  const client = useApolloClient();
 
   if (!context.active) {
-    return null
+    return null;
   }
 
-  const { withdrawFees }: any = useContext(MutationsContext)
+  const { withdrawFees }: any = useContext(MutationsContext);
 
   return (
     <>
@@ -25,15 +25,14 @@ const Index = ({ delegator, ...props }) => {
                 delegator: delegator?.id,
                 lastClaimRound: parseInt(delegator?.lastClaimRound.id, 10),
               },
-            })
-          })
+            });
+          });
         }}
-        {...props}
-      >
+        {...props}>
         Withdraw
       </Button>
     </>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

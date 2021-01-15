@@ -1,10 +1,10 @@
-import { Styled } from 'theme-ui'
-import { useWeb3React } from '@web3-react/core'
-import { gql, useApolloClient } from '@apollo/client'
+import { Styled } from "theme-ui";
+import { useWeb3React } from "@web3-react/core";
+import { gql, useApolloClient } from "@apollo/client";
 
 const Step2 = ({ goTo, nextStep }) => {
-  const { active } = useWeb3React()
-  const client = useApolloClient()
+  const { active } = useWeb3React();
+  const client = useApolloClient();
 
   if (active) {
     client.writeQuery({
@@ -16,8 +16,8 @@ const Step2 = ({ goTo, nextStep }) => {
       data: {
         walletModalOpen: false,
       },
-    })
-    goTo(nextStep)
+    });
+    goTo(nextStep);
   }
 
   return (
@@ -28,7 +28,7 @@ const Step2 = ({ goTo, nextStep }) => {
         address later.
       </Styled.p>
     </div>
-  )
-}
+  );
+};
 
-export default Step2
+export default Step2;

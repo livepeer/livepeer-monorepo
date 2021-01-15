@@ -1,7 +1,7 @@
 # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 # [1.0.0-alpha.7](https://github.com/livepeer/livepeerjs/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2019-11-11)
 
@@ -11,12 +11,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-- **merkle-miner:** Refactored state, added download progress, and si… ([#130](https://github.com/livepeer/livepeerjs/issues/130)) ([bb0549f](https://github.com/livepeer/livepeerjs/commit/bb0549f)), closes [#33](https://github.com/livepeer/livepeerjs/issues/33) [#121](https://github.com/livepeer/livepeerjs/issues/121) [#131](https://github.com/livepeer/livepeerjs/issues/131)
+- **merkle-miner:** Refactored state, added download progress, and si…
+  ([#130](https://github.com/livepeer/livepeerjs/issues/130))
+  ([bb0549f](https://github.com/livepeer/livepeerjs/commit/bb0549f)), closes
+  [#33](https://github.com/livepeer/livepeerjs/issues/33)
+  [#121](https://github.com/livepeer/livepeerjs/issues/121)
+  [#131](https://github.com/livepeer/livepeerjs/issues/131)
 
 ### BREAKING CHANGES
 
-- **merkle-miner:** *Success and *Error event handler props are deprecated. Errors are now passed as
-  the first param of handlers.
+- **merkle-miner:** *Success and *Error event handler props are deprecated.
+  Errors are now passed as the first param of handlers.
 
 - feat(explorer): Added a merkle mining modal
 

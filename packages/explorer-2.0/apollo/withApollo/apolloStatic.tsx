@@ -1,10 +1,10 @@
-import { ApolloClient } from '@apollo/client'
+import { ApolloClient } from "@apollo/client";
 
-import createApolloClient from './createApolloClient'
+import createApolloClient from "./createApolloClient";
 
 export default function apolloStatic(): ApolloClient<object> {
-  if (typeof window !== 'undefined') {
-    throw new Error('Can only be used on the server')
+  if (typeof window !== "undefined") {
+    throw new Error("Can only be used on the server");
   }
-  return createApolloClient({}, null)
+  return createApolloClient({}, null);
 }

@@ -1,3 +1,3 @@
-import test from 'ava'
+import test from "ava";
 
-test.todo('write some tests!')
+test.todo("write some tests!");

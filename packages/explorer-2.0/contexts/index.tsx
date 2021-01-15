@@ -1,3 +1,3 @@
-import React from 'react'
+import React from "react";
 
-export const MutationsContext = React.createContext({})
+export const MutationsContext = React.createContext({});

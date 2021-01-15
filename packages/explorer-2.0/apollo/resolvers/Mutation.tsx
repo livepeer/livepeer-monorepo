@@ -1,13 +1,13 @@
-import { EarningsTree } from '../../lib/earningsTree'
-import { utils } from 'ethers'
-let earningsSnapshot
+import { EarningsTree } from "../../lib/earningsTree";
+import { utils } from "ethers";
+let earningsSnapshot;
 
-if (process.env.NEXT_PUBLIC_NETWORK == 'mainnet') {
-  earningsSnapshot = require('../../data/earningsTree')
-} else if (process.env.NEXT_PUBLIC_NETWORK == 'rinkeby') {
-  earningsSnapshot = require('../../data/earningsTree_rinkeby')
+if (process.env.NEXT_PUBLIC_NETWORK == "mainnet") {
+  earningsSnapshot = require("../../data/earningsTree");
+} else if (process.env.NEXT_PUBLIC_NETWORK == "rinkeby") {
+  earningsSnapshot = require("../../data/earningsTree_rinkeby");
 } else {
-  earningsSnapshot = ''
+  earningsSnapshot = "";
 }
 
 /**
@@ -18,90 +18,92 @@ if (process.env.NEXT_PUBLIC_NETWORK == 'mainnet') {
  * @return {Promise}
  */
 export async function approve(_obj, _args, _ctx) {
-  const { type, amount } = _args
-  let gas
-  let txHash
+  const { type, amount } = _args;
+  let gas;
+  let txHash;
 
   switch (type) {
-    case 'bond':
-      gas = await _ctx.livepeer.rpc.estimateGas('LivepeerToken', 'approve', [
+    case "bond":
+      gas = await _ctx.livepeer.rpc.estimateGas("LivepeerToken", "approve", [
         _ctx.livepeer.config.contracts.BondingManager.address,
         amount,
-      ])
+      ]);
       txHash = await _ctx.livepeer.rpc.approveTokenBondAmount(amount, {
         gas,
         returnTxHash: true,
-      })
+      });
       return {
         gas,
         txHash,
         inputData: {
           ..._args,
         },
-      }
-    case 'createPoll':
-      gas = await _ctx.livepeer.rpc.estimateGas('LivepeerToken', 'approve', [
+      };
+    case "createPoll":
+      gas = await _ctx.livepeer.rpc.estimateGas("LivepeerToken", "approve", [
         _ctx.livepeer.config.contracts.PollCreator.address,
         amount,
-      ])
+      ]);
 
       txHash = await _ctx.livepeer.rpc.approveTokenPollCreationCost(amount, {
         gas,
         returnTxHash: true,
-      })
+      });
       return {
         gas,
         txHash,
         inputData: {
           ..._args,
         },
-      }
+      };
     default:
-      throw new Error(`Approval type "${type}" is not supported.`)
+      throw new Error(`Approval type "${type}" is not supported.`);
   }
 }
 
 async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
-  const { lastClaimRound, delegator } = _args
+  const { lastClaimRound, delegator } = _args;
   if (!lastClaimRound || lastClaimRound == 0) {
-    return null
+    return null;
   }
 
-  const LIP52Round = (await _ctx.livepeer.rpc.getLipUpgradeRound(52)).toNumber()
+  const LIP52Round = (
+    await _ctx.livepeer.rpc.getLipUpgradeRound(52)
+  ).toNumber();
   if (lastClaimRound > LIP52Round) {
-    return null
+    return null;
   }
 
   // get pendingStake and pendingFees for delegator
   const [pendingStake, pendingFees] = await Promise.all([
     _ctx.livepeer.rpc.getPendingStake(delegator, LIP52Round),
     _ctx.livepeer.rpc.getPendingFees(delegator, LIP52Round),
-  ])
+  ]);
 
   // generate the merkle tree from JSON
-  const tree = EarningsTree.fromJSON(earningsSnapshot)
+  const tree = EarningsTree.fromJSON(earningsSnapshot);
   // generate the proof
   const leaf = utils.defaultAbiCoder.encode(
-    ['address', 'uint256', 'uint256'],
-    [delegator, pendingStake, pendingFees],
-  )
+    ["address", "uint256", "uint256"],
+    [delegator, pendingStake, pendingFees]
+  );
 
-  const proof = tree.getHexProof(leaf)
+  const proof = tree.getHexProof(leaf);
 
   if (
     !(await _ctx.livepeer.rpc.verifySnapshot(
-      utils.keccak256(utils.toUtf8Bytes('LIP-52')),
+      utils.keccak256(utils.toUtf8Bytes("LIP-52")),
       proof,
-      utils.keccak256(leaf),
+      utils.keccak256(leaf)
     ))
   )
-    return null
+    return null;
 
   return _ctx.livepeer.rpc.getCalldata(
-    'BondingManager',
-    'claimSnapshotEarnings',
-    [pendingStake, pendingFees, proof, stakingAction],
-  )
+    "BondingManager",
+    "claimSnapshotEarnings",
+    [pendingStake, pendingFees, proof, stakingAction]
+  );
 }
 
 /**
@@ -119,32 +121,36 @@ export async function bond(_obj, _args, _ctx) {
     oldDelegateNewPosNext,
     currDelegateNewPosPrev,
     currDelegateNewPosNext,
-  } = _args
+  } = _args;
 
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'bondWithHint', [
+  let data = _ctx.livepeer.rpc.getCalldata("BondingManager", "bondWithHint", [
     amount,
     to,
     oldDelegateNewPosPrev,
     oldDelegateNewPosNext,
     currDelegateNewPosPrev,
     currDelegateNewPosNext,
-  ])
+  ]);
 
-  const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
-  data = claimData ? claimData : data
+  const claimData = await encodeClaimSnapshotAndStakingAction(
+    _args,
+    data,
+    _ctx
+  );
+  data = claimData ? claimData : data;
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
-  })
+  });
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -152,7 +158,7 @@ export async function bond(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -161,25 +167,31 @@ export async function bond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function unbond(_obj, _args, _ctx) {
-  const { amount, newPosPrev, newPosNext } = _args
+  const { amount, newPosPrev, newPosNext } = _args;
 
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'unbond', [amount])
+  let data = _ctx.livepeer.rpc.getCalldata("BondingManager", "unbond", [
+    amount,
+  ]);
 
-  const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
-  data = claimData ? claimData : data
+  const claimData = await encodeClaimSnapshotAndStakingAction(
+    _args,
+    data,
+    _ctx
+  );
+  data = claimData ? claimData : data;
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
-  })
+  });
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -187,7 +199,7 @@ export async function unbond(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -196,29 +208,33 @@ export async function unbond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function rebond(_obj, _args, _ctx) {
-  const { unbondingLockId, newPosPrev, newPosNext } = _args
+  const { unbondingLockId, newPosPrev, newPosNext } = _args;
 
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'rebondWithHint', [
+  let data = _ctx.livepeer.rpc.getCalldata("BondingManager", "rebondWithHint", [
     unbondingLockId,
     newPosPrev,
     newPosNext,
-  ])
+  ]);
 
-  const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
-  data = claimData ? claimData : data
+  const claimData = await encodeClaimSnapshotAndStakingAction(
+    _args,
+    data,
+    _ctx
+  );
+  data = claimData ? claimData : data;
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
-  })
+  });
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -226,7 +242,7 @@ export async function rebond(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -235,19 +251,19 @@ export async function rebond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function withdrawStake(_obj, _args, _ctx) {
-  const { unbondingLockId } = _args
+  const { unbondingLockId } = _args;
 
   const gas = await _ctx.livepeer.rpc.estimateGas(
-    'BondingManager',
-    'withdrawStake',
-    [unbondingLockId],
-  )
+    "BondingManager",
+    "withdrawStake",
+    [unbondingLockId]
+  );
 
   const txHash = await _ctx.livepeer.rpc.withdrawStake(unbondingLockId, {
     ..._ctx.livepeer.config.defaultTx,
     gas: gas,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -255,7 +271,7 @@ export async function withdrawStake(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -264,23 +280,31 @@ export async function withdrawStake(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function withdrawFees(_obj, _args, _ctx) {
-  let data = _ctx.livepeer.rpc.getCalldata('BondingManager', 'withdrawFees', [])
+  let data = _ctx.livepeer.rpc.getCalldata(
+    "BondingManager",
+    "withdrawFees",
+    []
+  );
 
-  const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
-  data = claimData ? claimData : data
+  const claimData = await encodeClaimSnapshotAndStakingAction(
+    _args,
+    data,
+    _ctx
+  );
+  data = claimData ? claimData : data;
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
-  })
+  });
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -288,7 +312,7 @@ export async function withdrawFees(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -297,29 +321,33 @@ export async function withdrawFees(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function rebondFromUnbonded(_obj, _args, _ctx) {
-  const { delegate, unbondingLockId, newPosPrev, newPosNext } = _args
+  const { delegate, unbondingLockId, newPosPrev, newPosNext } = _args;
 
   let data = _ctx.livepeer.rpc.getCalldata(
-    'BondingManager',
-    'rebondFromUnbondedWithHint',
-    [delegate, unbondingLockId, newPosPrev, newPosNext],
-  )
+    "BondingManager",
+    "rebondFromUnbondedWithHint",
+    [delegate, unbondingLockId, newPosPrev, newPosNext]
+  );
 
-  const claimData = await encodeClaimSnapshotAndStakingAction(_args, data, _ctx)
-  data = claimData ? claimData : data
+  const claimData = await encodeClaimSnapshotAndStakingAction(
+    _args,
+    data,
+    _ctx
+  );
+  data = claimData ? claimData : data;
 
   const gas = await _ctx.livepeer.rpc.estimateGasRaw({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
-  })
+  });
 
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
-    to: _ctx.livepeer.config.contracts['BondingManager'].address,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -327,7 +355,7 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -337,14 +365,14 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
  */
 export async function initializeRound(_obj, _args, _ctx) {
   const gas = await _ctx.livepeer.rpc.estimateGas(
-    'RoundsManager',
-    'initializeRound',
-    [],
-  )
+    "RoundsManager",
+    "initializeRound",
+    []
+  );
   const txHash = await _ctx.livepeer.rpc.initializeRound({
     gas,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -352,7 +380,7 @@ export async function initializeRound(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -361,17 +389,17 @@ export async function initializeRound(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function createPoll(_obj, _args, _ctx) {
-  const Utils = require('web3-utils')
-  const { proposal } = _args
-  const gas = await _ctx.livepeer.rpc.estimateGas('PollCreator', 'createPoll', [
+  const Utils = require("web3-utils");
+  const { proposal } = _args;
+  const gas = await _ctx.livepeer.rpc.estimateGas("PollCreator", "createPoll", [
     Utils.fromAscii(proposal),
-  ])
+  ]);
 
   const txHash = await _ctx.livepeer.rpc.createPoll(Utils.fromAscii(proposal), {
     ..._ctx.livepeer.config.defaultTx,
     gas,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -379,7 +407,7 @@ export async function createPoll(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -388,13 +416,13 @@ export async function createPoll(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function vote(_obj, _args, _ctx) {
-  const { pollAddress, choiceId } = _args
-  const gas = await _ctx.livepeer.rpc.estimateGas('Poll', 'vote', [choiceId])
+  const { pollAddress, choiceId } = _args;
+  const gas = await _ctx.livepeer.rpc.estimateGas("Poll", "vote", [choiceId]);
   const txHash = await _ctx.livepeer.rpc.vote(pollAddress, choiceId, {
     ..._ctx.livepeer.config.defaultTx,
     gas,
     returnTxHash: true,
-  })
+  });
 
   return {
     gas,
@@ -402,7 +430,7 @@ export async function vote(_obj, _args, _ctx) {
     inputData: {
       ..._args,
     },
-  }
+  };
 }
 
 /**
@@ -411,30 +439,33 @@ export async function vote(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function updateProfile(_obj, _args, _ctx) {
-  const address = _ctx.address.toLowerCase()
-  const box = _ctx.box
-  const space = await box.openSpace('livepeer')
+  const address = _ctx.address.toLowerCase();
+  const box = _ctx.box;
+  const space = await box.openSpace("livepeer");
 
   if (_args.proof) {
     await box.linkAddress({
       proof: _args.proof,
-    })
+    });
   }
 
-  const allowed = ['name', 'website', 'description', 'image', 'defaultProfile']
+  const allowed = ["name", "website", "description", "image", "defaultProfile"];
   const filtered = Object.keys(_args)
     .filter((key) => allowed.includes(key))
     .reduce((obj, key) => {
-      obj[key] = _args[key]
-      return obj
-    }, {})
+      obj[key] = _args[key];
+      return obj;
+    }, {});
 
-  await space.public.setMultiple(Object.keys(filtered), Object.values(filtered))
+  await space.public.setMultiple(
+    Object.keys(filtered),
+    Object.values(filtered)
+  );
 
   return {
     id: address,
     ...filtered,
-  }
+  };
 }
 
 /**
@@ -443,7 +474,7 @@ export async function updateProfile(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function removeAddressLink(_obj, _args, _ctx) {
-  const address = _args.address.toLowerCase()
-  const box = _ctx.box
-  await box.removeAddressLink(address)
+  const address = _args.address.toLowerCase();
+  const box = _ctx.box;
+  await box.removeAddressLink(address);
 }

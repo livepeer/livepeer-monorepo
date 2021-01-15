@@ -1,71 +1,67 @@
-import { Flex } from 'theme-ui'
-import Card from '../Card'
-import { abbreviateNumber, expandedPriceLabels } from '../../lib/utils'
-import { Box } from 'theme-ui'
-import { MdCheck, MdClose } from 'react-icons/md'
-import ReactTooltip from 'react-tooltip'
-import Help from '../../public/img/help.svg'
-import { useRef, useState } from 'react'
-import Price from '../Price'
+import { Flex } from "theme-ui";
+import Card from "../Card";
+import { abbreviateNumber, expandedPriceLabels } from "../../lib/utils";
+import { Box } from "theme-ui";
+import { MdCheck, MdClose } from "react-icons/md";
+import ReactTooltip from "react-tooltip";
+import Help from "../../public/img/help.svg";
+import { useRef, useState } from "react";
+import Price from "../Price";
 import {
   Menu,
   MenuItemRadioGroup,
   MenuItemRadio,
-} from '@modulz/radix/dist/index.es'
+} from "@modulz/radix/dist/index.es";
 
 const Index = ({ currentRound, transcoder }) => {
-  const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false)
-  const targetRef = useRef()
-  const [priceSetting, setPriceSetting] = useState('1t pixels')
+  const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false);
+  const targetRef = useRef();
+  const [priceSetting, setPriceSetting] = useState("1t pixels");
   const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
-    .length
+    .length;
 
   const PriceSettingToggle = () => (
     <span
       ref={targetRef}
       onClick={(e) => {
-        e.stopPropagation()
-        setIsPriceSettingOpen(true)
+        e.stopPropagation();
+        setIsPriceSettingOpen(true);
       }}
       sx={{
-        cursor: 'pointer',
+        cursor: "pointer",
         fontSize: 12,
-      }}
-    >
-      <span sx={{ mx: '4px' }}>/</span>
+      }}>
+      <span sx={{ mx: "4px" }}>/</span>
       <span
         title={`Price of transcoding per ${expandedPriceLabels[priceSetting]}`}
         sx={{
-          color: 'text',
-          borderBottom: '1px dashed',
-          borderColor: 'text',
-          transition: '.3s',
-          ':hover': { color: 'primary' },
-          ':active': { color: 'primary' },
-        }}
-      >
+          color: "text",
+          borderBottom: "1px dashed",
+          borderColor: "text",
+          transition: ".3s",
+          ":hover": { color: "primary" },
+          ":active": { color: "primary" },
+        }}>
         {priceSetting}
       </span>
     </span>
-  )
+  );
   return (
     <Box sx={{ pt: 4 }}>
       <Menu
         style={{
-          background: '#1E2026',
+          background: "#1E2026",
           padding: 0,
-          boxShadow: '0px 4px 4px rgba(0,0,0,0.25)',
+          boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
         }}
         isOpen={isPriceSettingOpen}
         onClose={() => setIsPriceSettingOpen(false)}
-        buttonRef={targetRef}
-      >
+        buttonRef={targetRef}>
         <MenuItemRadioGroup
           value={priceSetting}
           onChange={(value) => {
-            setPriceSetting(value)
-          }}
-        >
+            setPriceSetting(value);
+          }}>
           <MenuItemRadio value="pixel" label="1 pixel" />
           <MenuItemRadio value="1m pixels" label="1 million pixels" />
           <MenuItemRadio value="1b pixels" label="1 billion pixels" />
@@ -74,16 +70,15 @@ const Index = ({ currentRound, transcoder }) => {
       </Menu>
       <Box
         sx={{
-          display: 'grid',
+          display: "grid",
           gridGap: [2, 2, 2],
           gridTemplateColumns: [
-            'repeat(auto-fit, minmax(33%, 1fr))',
-            'repeat(auto-fit, minmax(33%, 1fr))',
-            'repeat(auto-fit, minmax(33%, 1fr))',
+            "repeat(auto-fit, minmax(33%, 1fr))",
+            "repeat(auto-fit, minmax(33%, 1fr))",
+            "repeat(auto-fit, minmax(33%, 1fr))",
             `repeat(auto-fit, minmax(30%, 1fr))`,
           ],
-        }}
-      >
+        }}>
         <Card
           sx={{ flex: 1 }}
           title="Total Stake"
@@ -91,12 +86,11 @@ const Index = ({ currentRound, transcoder }) => {
             <Box
               sx={{
                 fontSize: [3, 3, 4, 4],
-                color: 'text',
+                color: "text",
                 fontWeight: 500,
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
+                lineHeight: "heading",
+                fontFamily: "monospace",
+              }}>
               {abbreviateNumber(transcoder.totalStake, 4)}
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </Box>
@@ -109,12 +103,11 @@ const Index = ({ currentRound, transcoder }) => {
             <Box
               sx={{
                 fontSize: [3, 3, 4, 4],
-                color: 'text',
+                color: "text",
                 fontWeight: 500,
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
+                lineHeight: "heading",
+                fontFamily: "monospace",
+              }}>
               {transcoder.totalVolumeETH
                 ? abbreviateNumber(transcoder.totalVolumeETH, 3)
                 : 0}
@@ -127,14 +120,13 @@ const Index = ({ currentRound, transcoder }) => {
           subtitle={
             <Flex
               sx={{
-                alignItems: 'center',
+                alignItems: "center",
                 fontSize: [3, 3, 4, 4],
-                color: 'text',
+                color: "text",
                 fontWeight: 500,
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
+                lineHeight: "heading",
+                fontFamily: "monospace",
+              }}>
               {callsMade}/{transcoder.pools.length}
             </Flex>
           }
@@ -146,12 +138,11 @@ const Index = ({ currentRound, transcoder }) => {
             <Box
               sx={{
                 fontSize: [3, 3, 4, 4],
-                color: 'text',
+                color: "text",
                 fontWeight: 500,
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
+                lineHeight: "heading",
+                fontFamily: "monospace",
+              }}>
               {!transcoder.rewardCut
                 ? 0
                 : parseInt(transcoder.rewardCut, 10) / 10000}
@@ -166,12 +157,11 @@ const Index = ({ currentRound, transcoder }) => {
             <Box
               sx={{
                 fontSize: [3, 3, 4, 4],
-                color: 'text',
+                color: "text",
                 fontWeight: 500,
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
+                lineHeight: "heading",
+                fontFamily: "monospace",
+              }}>
               {!transcoder.feeShare
                 ? 0
                 : 100 - parseInt(transcoder.feeShare, 10) / 10000}
@@ -182,7 +172,7 @@ const Index = ({ currentRound, transcoder }) => {
         <Card
           sx={{ flex: 1 }}
           title={
-            <Flex sx={{ alignItems: 'center' }}>
+            <Flex sx={{ alignItems: "center" }}>
               <Box>
                 Price
                 <PriceSettingToggle />
@@ -195,7 +185,7 @@ const Index = ({ currentRound, transcoder }) => {
                   type="dark"
                   effect="solid"
                   getContent={() => {
-                    return `Price of transcoding per ${expandedPriceLabels[priceSetting]}`
+                    return `Price of transcoding per ${expandedPriceLabels[priceSetting]}`;
                   }}
                 />
                 <Help
@@ -203,8 +193,8 @@ const Index = ({ currentRound, transcoder }) => {
                   data-tip=""
                   data-for="tooltip-price"
                   sx={{
-                    color: 'muted',
-                    cursor: 'pointer',
+                    color: "muted",
+                    cursor: "pointer",
                     ml: 1,
                   }}
                 />
@@ -215,14 +205,13 @@ const Index = ({ currentRound, transcoder }) => {
             <Box
               sx={{
                 fontSize: [3, 3, 4, 4],
-                color: 'text',
+                color: "text",
                 fontWeight: 500,
-                lineHeight: 'heading',
-                fontFamily: 'monospace',
-              }}
-            >
+                lineHeight: "heading",
+                fontFamily: "monospace",
+              }}>
               {transcoder.price <= 0 ? (
-                'N/A'
+                "N/A"
               ) : (
                 <Price value={transcoder.price} per={priceSetting} />
               )}
@@ -233,8 +222,8 @@ const Index = ({ currentRound, transcoder }) => {
           <Card
             sx={{ flex: 1 }}
             title={
-              <Flex sx={{ alignItems: 'center' }}>
-                <Box sx={{ color: 'muted' }}>Last Reward Round</Box>
+              <Flex sx={{ alignItems: "center" }}>
+                <Box sx={{ color: "muted" }}>Last Reward Round</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-last-reward-round"
@@ -247,8 +236,8 @@ const Index = ({ currentRound, transcoder }) => {
                     data-tip="The last round that an orchestrator received rewards while active. A checkmark indicates it called reward for the current round."
                     data-for="tooltip-last-reward-round"
                     sx={{
-                      color: 'muted',
-                      cursor: 'pointer',
+                      color: "muted",
+                      cursor: "pointer",
                       ml: 1,
                     }}
                   />
@@ -259,23 +248,22 @@ const Index = ({ currentRound, transcoder }) => {
               <Box
                 sx={{
                   fontSize: [3, 3, 4, 4, 5],
-                  color: 'text',
-                  position: 'relative',
+                  color: "text",
+                  position: "relative",
                   fontWeight: 500,
-                  lineHeight: 'heading',
-                  fontFamily: 'monospace',
-                }}
-              >
-                <Flex sx={{ alignItems: 'center' }}>
-                  {transcoder.lastRewardRound.id}{' '}
+                  lineHeight: "heading",
+                  fontFamily: "monospace",
+                }}>
+                <Flex sx={{ alignItems: "center" }}>
+                  {transcoder.lastRewardRound.id}{" "}
                   {transcoder.active && (
                     <Flex>
                       {transcoder.lastRewardRound.id === currentRound.id ? (
                         <MdCheck
-                          sx={{ fontSize: 2, color: 'primary', ml: 1 }}
+                          sx={{ fontSize: 2, color: "primary", ml: 1 }}
                         />
                       ) : (
-                        <MdClose sx={{ fontSize: 2, color: 'red', ml: 1 }} />
+                        <MdClose sx={{ fontSize: 2, color: "red", ml: 1 }} />
                       )}
                     </Flex>
                   )}
@@ -286,7 +274,7 @@ const Index = ({ currentRound, transcoder }) => {
         )}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

@@ -1,4 +1,4 @@
-import { Styled } from 'theme-ui'
+import { Styled } from "theme-ui";
 
 const Step7 = () => {
   return (
@@ -9,7 +9,7 @@ const Step7 = () => {
         stake towards this Orchestrator and hit "Stake".
       </Styled.p>
     </div>
-  )
-}
+  );
+};
 
-export default Step7
+export default Step7;

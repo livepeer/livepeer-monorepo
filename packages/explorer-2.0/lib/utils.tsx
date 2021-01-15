@@ -1,125 +1,125 @@
-import { Delegator, Round, UnbondingLock } from '../@types'
-import Utils from 'web3-utils'
-import url from 'url'
-import parseDomain from 'parse-domain'
-import { ethers } from 'ethers'
-import { gql } from '@apollo/client'
-import Numeral from 'numeral'
+import { Delegator, Round, UnbondingLock } from "../@types";
+import Utils from "web3-utils";
+import url from "url";
+import parseDomain from "parse-domain";
+import { ethers } from "ethers";
+import { gql } from "@apollo/client";
+import Numeral from "numeral";
 
-export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export const abbreviateNumber = (value, precision = 3) => {
-  let newValue = value
-  const suffixes = ['', 'K', 'M', 'B', 'T']
-  let suffixNum = 0
+  let newValue = value;
+  const suffixes = ["", "K", "M", "B", "T"];
+  let suffixNum = 0;
   while (newValue >= 1000) {
-    newValue /= 1000
-    suffixNum++
+    newValue /= 1000;
+    suffixNum++;
   }
 
-  newValue = parseFloat(Number.parseFloat(newValue).toPrecision(precision))
+  newValue = parseFloat(Number.parseFloat(newValue).toPrecision(precision));
 
-  newValue += suffixes[suffixNum]
-  return newValue
-}
+  newValue += suffixes[suffixNum];
+  return newValue;
+};
 
 export const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-}
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 export const getDelegationStatusColor = (status) => {
-  if (status == 'Bonded') {
-    return 'primary'
-  } else if (status == 'Unbonding') {
-    return 'yellow'
-  } else if (status == 'Pending') {
-    return 'blue'
+  if (status == "Bonded") {
+    return "primary";
+  } else if (status == "Unbonding") {
+    return "yellow";
+  } else if (status == "Pending") {
+    return "blue";
   } else {
-    return 'muted'
+    return "muted";
   }
-}
+};
 
 export const getDelegatorStatus = (
   delegator: Delegator,
-  currentRound: Round,
+  currentRound: Round
 ): string => {
   if (!+delegator?.bondedAmount) {
-    return 'Unbonded'
+    return "Unbonded";
   } else if (
     delegator.unbondingLocks.filter(
       (lock: UnbondingLock) =>
-        lock.withdrawRound &&
-        lock.withdrawRound > parseInt(currentRound.id, 10),
+        lock.withdrawRound && lock.withdrawRound > parseInt(currentRound.id, 10)
     ).length > 0
   ) {
-    return 'Unbonding'
+    return "Unbonding";
   } else if (delegator.startRound > parseInt(currentRound.id, 10)) {
-    return 'Pending'
+    return "Pending";
   } else if (
     delegator.startRound > 0 &&
     delegator.startRound <= parseInt(currentRound.id, 10)
   ) {
-    return 'Bonded'
+    return "Bonded";
   } else {
-    return 'Unbonded'
+    return "Unbonded";
   }
-}
+};
 
 export const MAXIUMUM_VALUE_UINT256 =
-  '115792089237316195423570985008687907853269984665640564039457584007913129639935'
+  "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
 export function removeURLParameter(url, parameter) {
   //prefer to use l.search if you have a location/link object
-  var urlparts = url.split('?')
+  var urlparts = url.split("?");
   if (urlparts.length >= 2) {
-    var prefix = encodeURIComponent(parameter) + '='
-    var pars = urlparts[1].split(/[&;]/g)
+    var prefix = encodeURIComponent(parameter) + "=";
+    var pars = urlparts[1].split(/[&;]/g);
 
     //reverse iteration as may be destructive
     for (var i = pars.length; i-- > 0; ) {
       //idiom for string.startsWith
       if (pars[i].lastIndexOf(prefix, 0) !== -1) {
-        pars.splice(i, 1)
+        pars.splice(i, 1);
       }
     }
 
-    return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '')
+    return urlparts[0] + (pars.length > 0 ? "?" + pars.join("&") : "");
   }
-  return url
+  return url;
 }
 
 export const nl2br = (str, is_xhtml = true) => {
-  if (typeof str === 'undefined' || str === null) {
-    return ''
+  if (typeof str === "undefined" || str === null) {
+    return "";
   }
-  var breakTag = is_xhtml || typeof is_xhtml === 'undefined' ? '<br />' : '<br>'
-  return (str + '').replace(
+  var breakTag =
+    is_xhtml || typeof is_xhtml === "undefined" ? "<br />" : "<br>";
+  return (str + "").replace(
     /([^>\r\n]?)(\r\n|\n\r|\r|\n)/g,
-    '$1' + breakTag + '$2',
-  )
-}
+    "$1" + breakTag + "$2"
+  );
+};
 
 export const textTruncate = (str, length, ending) => {
   if (length == null) {
-    length = 100
+    length = 100;
   }
   if (ending == null) {
-    ending = '...'
+    ending = "...";
   }
   if (str.length > length) {
-    return str.substring(0, length - ending.length) + ending
+    return str.substring(0, length - ending.length) + ending;
   } else {
-    return str
+    return str;
   }
-}
+};
 
 export const networksTypes = {
-  1: 'mainnet',
-  2: 'morden',
-  3: 'ropsten',
-  42: 'kovan',
-  4: 'rinkeby',
-}
+  1: "mainnet",
+  2: "morden",
+  3: "ropsten",
+  42: "kovan",
+  4: "rinkeby",
+};
 
 const networksIds = {
   main: 1,
@@ -128,10 +128,10 @@ const networksIds = {
   ropsten: 3,
   kovan: 42,
   rinkeby: 4,
-}
+};
 
 export const detectNetwork = async (provider) => {
-  let netId = null
+  let netId = null;
 
   if (provider instanceof Object) {
     // MetamaskInpageProvider
@@ -140,92 +140,94 @@ export const detectNetwork = async (provider) => {
       provider.publicConfigStore._state &&
       provider.publicConfigStore._state.networkVersion
     ) {
-      netId = provider.publicConfigStore._state.networkVersion
+      netId = provider.publicConfigStore._state.networkVersion;
 
       // Web3.providers.HttpProvider
     } else if (provider.host) {
-      const parsed = url.parse(provider.host)
-      const { subdomain, domain, tld } = parseDomain(parsed.host)
+      const parsed = url.parse(provider.host);
+      const { subdomain, domain, tld } = parseDomain(parsed.host);
 
-      if (domain === 'infura' && tld === 'io') {
-        netId = networksIds[subdomain]
+      if (domain === "infura" && tld === "io") {
+        netId = networksIds[subdomain];
       }
     }
-  } else if (typeof window !== 'undefined' && window['web3']) {
-    if (window['web3'].version && window['web3'].version.getNetwork) {
-      netId = await window['web3'].version.getNetwork()
+  } else if (typeof window !== "undefined" && window["web3"]) {
+    if (window["web3"].version && window["web3"].version.getNetwork) {
+      netId = await window["web3"].version.getNetwork();
 
       // web3.js v1.0+
     } else if (
-      window['web3'].eth &&
-      window['web3'].eth.net &&
-      window['web3'].eth.net.getId
+      window["web3"].eth &&
+      window["web3"].eth.net &&
+      window["web3"].eth.net.getId
     ) {
-      netId = await window['web3'].eth.net.getId()
+      netId = await window["web3"].eth.net.getId();
     }
   }
 
   if (netId === undefined) {
-    netId = null
+    netId = null;
   }
 
-  const type = networksTypes[netId] || 'unknown'
+  const type = networksTypes[netId] || "unknown";
 
   return {
     id: netId,
     type: type,
-  }
-}
+  };
+};
 
 export const checkAddressEquality = (address1, address2) => {
   if (!isAddress(address1) || !isAddress(address2)) {
-    return false
+    return false;
   }
-  return Utils.toChecksumAddress(address1) === Utils.toChecksumAddress(address2)
-}
+  return (
+    Utils.toChecksumAddress(address1) === Utils.toChecksumAddress(address2)
+  );
+};
 
 export const txMessages = {
   approve: {
-    pending: 'Unlocking LPT',
-    confirmed: 'LPT Unlocked',
+    pending: "Unlocking LPT",
+    confirmed: "LPT Unlocked",
   },
   bond: {
-    pending: 'Staking LPT',
-    confirmed: 'LPT Staked',
+    pending: "Staking LPT",
+    confirmed: "LPT Staked",
   },
   unbond: {
-    pending: 'Unstaking LPT',
-    confirmed: 'LPT Unstaked',
+    pending: "Unstaking LPT",
+    confirmed: "LPT Unstaked",
   },
   rebond: {
-    pending: 'Restaking LPT',
-    confirmed: 'LPT Restaked',
+    pending: "Restaking LPT",
+    confirmed: "LPT Restaked",
   },
   rebondFromUnbonded: {
-    pending: 'Restaking LPT',
-    confirmed: 'LPT Restaked',
+    pending: "Restaking LPT",
+    confirmed: "LPT Restaked",
   },
   createPoll: {
-    pending: 'Creating Poll',
-    confirmed: 'Poll Created',
+    pending: "Creating Poll",
+    confirmed: "Poll Created",
   },
   vote: {
-    pending: 'Casting Vote',
-    confirmed: 'Vote Casted',
+    pending: "Casting Vote",
+    confirmed: "Vote Casted",
   },
   withdrawFees: {
-    pending: 'Withdrawing Fees',
-    confirmed: 'Fees Withdrawn',
+    pending: "Withdrawing Fees",
+    confirmed: "Fees Withdrawn",
   },
   withdrawStake: {
-    pending: 'Withdrawing Stake',
-    confirmed: 'Stake Withdrawn',
+    pending: "Withdrawing Stake",
+    confirmed: "Stake Withdrawn",
   },
   batchClaimEarnings: {
-    pending: 'Claiming Earnings',
-    confirmed: 'Earnings Claimed',
+    pending: "Claiming Earnings",
+    confirmed: "Earnings Claimed",
   },
-}
+};
 
 export const initTransaction = async (client, mutation) => {
   try {
@@ -240,13 +242,13 @@ export const initTransaction = async (client, mutation) => {
       `,
       data: {
         txSummaryModal: {
-          __typename: 'TxSummaryModal',
+          __typename: "TxSummaryModal",
           open: true,
         },
       },
-    })
+    });
 
-    await mutation()
+    await mutation();
 
     client.writeQuery({
       query: gql`
@@ -259,11 +261,11 @@ export const initTransaction = async (client, mutation) => {
       `,
       data: {
         txSummaryModal: {
-          __typename: 'TxSummaryModal',
+          __typename: "TxSummaryModal",
           open: false,
         },
       },
-    })
+    });
   } catch (e) {
     client.writeQuery({
       query: gql`
@@ -276,103 +278,103 @@ export const initTransaction = async (client, mutation) => {
       `,
       data: {
         txSummaryModal: {
-          __typename: 'TxSummaryModal',
+          __typename: "TxSummaryModal",
           error: true,
         },
       },
-    })
+    });
 
     return {
-      error: e.message.replace('GraphQL error: ', ''),
-    }
+      error: e.message.replace("GraphQL error: ", ""),
+    };
   }
-}
+};
 
 export const getBlock = async () => {
   const blockDataResponse = await fetch(
     `https://${
-      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "api-rinkeby" : "api"
     }.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${
       process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
-    }`,
-  )
-  const { result } = await blockDataResponse.json()
-  return Utils.hexToNumber(result)
-}
+    }`
+  );
+  const { result } = await blockDataResponse.json();
+  return Utils.hexToNumber(result);
+};
 
 export const getBlockByNumber = async (number) => {
   const blockDataResponse = await fetch(
     `https://${
-      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "api-rinkeby" : "api"
     }.etherscan.io/api?module=block&action=getblockreward&blockno=${number}&apikey=${
       process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
-    }`,
-  )
-  const { result } = await blockDataResponse.json()
-  return result
-}
+    }`
+  );
+  const { result } = await blockDataResponse.json();
+  return result;
+};
 
 export const getEstimatedBlockCountdown = async (number) => {
   const countdownRaw = await fetch(
     `https://${
-      process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? 'api-rinkeby' : 'api'
+      process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "api-rinkeby" : "api"
     }.etherscan.io/api?module=block&action=getblockcountdown&blockno=${number}&apikey=${
       process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
-    }`,
-  )
-  const { result } = await countdownRaw.json()
-  return result
-}
+    }`
+  );
+  const { result } = await countdownRaw.json();
+  return result;
+};
 
 export const expandedPriceLabels = {
-  ['pixel']: 'pixel',
-  ['1m pixels']: '1 million pixels',
-  ['1b pixels']: '1 billion pixels',
-  ['1t pixels']: '1 trillion pixels',
-}
+  ["pixel"]: "pixel",
+  ["1m pixels"]: "1 million pixels",
+  ["1b pixels"]: "1 billion pixels",
+  ["1t pixels"]: "1 trillion pixels",
+};
 
 export const mergeObjectsInUnique = (array, property) => {
-  const newArray = new Map()
+  const newArray = new Map();
 
   array.forEach((item) => {
-    const propertyValue = item[property]
+    const propertyValue = item[property];
     newArray.has(propertyValue)
       ? newArray.set(propertyValue, { ...item, ...newArray.get(propertyValue) })
-      : newArray.set(propertyValue, item)
-  })
+      : newArray.set(propertyValue, item);
+  });
 
-  return Array.from(newArray.values())
-}
+  return Array.from(newArray.values());
+};
 
 export const getHint = (id, transcoders) => {
   let hint = {
     newPosPrev: EMPTY_ADDRESS,
     newPosNext: EMPTY_ADDRESS,
-  }
+  };
 
   if (!transcoders.length || !id) {
-    return hint
+    return hint;
   }
 
   const index = transcoders.findIndex(
-    (t) => t.id.toLowerCase() === id.toLowerCase(),
-  )
+    (t) => t.id.toLowerCase() === id.toLowerCase()
+  );
 
   // if transcoder is not in active set return
   if (index < 0) {
-    return hint
+    return hint;
   } else if (index === 0) {
     // if transcoder is the first in the active set, only set posNex
-    hint.newPosNext = transcoders[index + 1].id
+    hint.newPosNext = transcoders[index + 1].id;
   } else if (index === transcoders.length - 1) {
     // if transcoder is the last in the active set, only set posPrev
-    hint.newPosPrev = transcoders[index - 1].id
+    hint.newPosPrev = transcoders[index - 1].id;
   } else {
-    hint.newPosNext = transcoders[index + 1].id
-    hint.newPosPrev = transcoders[index - 1].id
+    hint.newPosNext = transcoders[index + 1].id;
+    hint.newPosPrev = transcoders[index - 1].id;
   }
-  return hint
-}
+  return hint;
+};
 
 export const simulateNewActiveSetOrder = ({
   action,
@@ -382,15 +384,15 @@ export const simulateNewActiveSetOrder = ({
   oldDelegate = EMPTY_ADDRESS,
 }) => {
   const index = transcoders.findIndex(
-    (t) => t.id.toLowerCase() === newDelegate.toLowerCase(),
-  )
+    (t) => t.id.toLowerCase() === newDelegate.toLowerCase()
+  );
 
   if (index < 0) {
-    return transcoders
+    return transcoders;
   }
 
-  if (action === 'stake') {
-    transcoders[index].totalStake = +transcoders[index].totalStake + +amount
+  if (action === "stake") {
+    transcoders[index].totalStake = +transcoders[index].totalStake + +amount;
 
     // if delegator is moving stake, subtract amount from old delegate
     if (
@@ -399,75 +401,75 @@ export const simulateNewActiveSetOrder = ({
       oldDelegate.toLowerCase() != EMPTY_ADDRESS
     ) {
       const oldDelegateIndex = transcoders.findIndex(
-        (t) => t.id.toLowerCase() === oldDelegate.toLowerCase(),
-      )
+        (t) => t.id.toLowerCase() === oldDelegate.toLowerCase()
+      );
       transcoders[oldDelegateIndex].totalStake =
-        +transcoders[oldDelegateIndex].totalStake - +amount
+        +transcoders[oldDelegateIndex].totalStake - +amount;
     }
   } else {
-    transcoders[index].totalStake = +transcoders[index].totalStake - +amount
+    transcoders[index].totalStake = +transcoders[index].totalStake - +amount;
   }
 
   // reorder transcoders array
-  return transcoders.sort((a, b) => +a.totalStake - +b.totalStake)
-}
+  return transcoders.sort((a, b) => +a.totalStake - +b.totalStake);
+};
 
 export function isAddress(address) {
   try {
-    ethers.utils.getAddress(address)
+    ethers.utils.getAddress(address);
   } catch (e) {
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
-export const priceFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
+export const priceFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
   minimumFractionDigits: 2,
-})
+});
 
 export const toK = (num) => {
-  return Numeral(num).format('0.[00]a')
-}
+  return Numeral(num).format("0.[00]a");
+};
 
 export const formattedNum = (number, usd = false, acceptNegatives = false) => {
-  if (isNaN(number) || number === '' || number === undefined) {
-    return usd ? '$0' : 0
+  if (isNaN(number) || number === "" || number === undefined) {
+    return usd ? "$0" : 0;
   }
-  let num = parseFloat(number)
+  let num = parseFloat(number);
 
   if (num > 500000000) {
-    return (usd ? '$' : '') + toK(num.toFixed(0))
+    return (usd ? "$" : "") + toK(num.toFixed(0));
   }
 
   if (num === 0) {
     if (usd) {
-      return '$0'
+      return "$0";
     }
-    return 0
+    return 0;
   }
 
   if (num < 0.0001 && num > 0) {
-    return usd ? '< $0.0001' : '< 0.0001'
+    return usd ? "< $0.0001" : "< 0.0001";
   }
 
   if (num > 1000) {
     return usd
-      ? '$' + Number(num.toFixed(0)).toLocaleString()
-      : '' + Number(num.toFixed(0)).toLocaleString()
+      ? "$" + Number(num.toFixed(0)).toLocaleString()
+      : "" + Number(num.toFixed(0)).toLocaleString();
   }
 
   if (usd) {
     if (num < 0.1) {
-      return '$' + Number(num.toFixed(4))
+      return "$" + Number(num.toFixed(4));
     } else {
-      let usdString = priceFormatter.format(num)
-      return '$' + usdString.slice(1, usdString.length)
+      let usdString = priceFormatter.format(num);
+      return "$" + usdString.slice(1, usdString.length);
     }
   }
-  return Number(num.toFixed(5))
-}
+  return Number(num.toFixed(5));
+};
 
 /**
  * gets the amoutn difference plus the % change in change itself (second order change)
@@ -478,20 +480,21 @@ export const formattedNum = (number, usd = false, acceptNegatives = false) => {
 export const get2DayPercentChange = (
   valueNow,
   value24HoursAgo,
-  value48HoursAgo,
+  value48HoursAgo
 ) => {
   // get volume info for both 24 hour periods
-  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo)
-  let previousChange = parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo)
+  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo);
+  let previousChange =
+    parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo);
 
   const adjustedPercentChange =
-    ((currentChange - previousChange) / previousChange) * 100
+    ((currentChange - previousChange) / previousChange) * 100;
 
   if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
-    return [currentChange, 0]
+    return [currentChange, 0];
   }
-  return [currentChange, adjustedPercentChange]
-}
+  return [currentChange, adjustedPercentChange];
+};
 
 /**
  * @notice Fetches block objects for an array of timestamps.
@@ -502,22 +505,22 @@ export const get2DayPercentChange = (
  */
 export async function getBlocksFromTimestamps(timestamps) {
   if (timestamps?.length === 0) {
-    return []
+    return [];
   }
-  let blocks = []
+  let blocks = [];
   for (const timestamp of timestamps) {
     let blockResponse = await fetch(
       `https://api${
-        process.env.NEXT_PUBLIC_NETWORK === 'rinkeby' ? '-rinkeby' : ''
+        process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "-rinkeby" : ""
       }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
         process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
-      }`,
-    )
-    let json = await blockResponse.json()
-    blocks.push(+json.result)
+      }`
+    );
+    let json = await blockResponse.json();
+    blocks.push(+json.result);
   }
 
-  return blocks
+  return blocks;
 }
 
 /**
@@ -529,9 +532,9 @@ export const getPercentChange = (valueNow, value24HoursAgo) => {
   const adjustedPercentChange =
     ((parseFloat(valueNow) - parseFloat(value24HoursAgo)) /
       parseFloat(value24HoursAgo)) *
-    100
+    100;
   if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
-    return 0
+    return 0;
   }
-  return adjustedPercentChange
-}
+  return adjustedPercentChange;
+};
