@@ -38,11 +38,12 @@ export function newRound(event: NewRound): void {
   let bondingManager = BondingManager.bind(
     Address.fromString(bondingManagerAddress)
   );
+  let round = createOrLoadRound(event.block.number);
+  let day = createOrLoadDay(event.block.timestamp.toI32());
   let currentTranscoder = bondingManager.getFirstTranscoderInPool();
   let transcoder = Transcoder.load(currentTranscoder.toHex());
   let totalActiveStake = convertToDecimal(bondingManager.getTotalBonded());
 
-  let round = createOrLoadRound(event.block.number);
   round.initialized = true;
   round.totalActiveStake = totalActiveStake;
   round.save();
@@ -81,7 +82,6 @@ export function newRound(event: NewRound): void {
   protocol.lastInitializedRound = event.params.round.toString();
   protocol.totalActiveStake = totalActiveStake;
 
-  let day = createOrLoadDay(event.block.timestamp.toI32());
   day.totalActiveStake = totalActiveStake;
   day.totalSupply = protocol.totalSupply;
 

@@ -9,10 +9,10 @@ type Protocol @entity {
   "Change in inflation rate per round until the target bonding rate is achieved"
   inflationChange: BigInt!
   "Max number of rounds that a caller can claim earnings for at once"
-  maxEarningsClaimsRounds: BigInt!
+  maxEarningsClaimsRounds: Int!
     @deprecated(reason: "This constraint of was removed as of LIP-52")
   "Total active transcoders"
-  numActiveTranscoders: BigInt!
+  numActiveTranscoders: Int!
   "True if the protocol is paused"
   paused: Boolean!
   "Target bonding rate (participation) that determines whether inflation should increase or decrease"
@@ -41,12 +41,12 @@ type Protocol @entity {
   roundLength: BigInt!
   "Block when round length was last updated"
   lastRoundLengthUpdateStartBlock: BigInt!
-  "Total rounds"
-  roundCount: BigInt!
-  "Total winning tickets"
-  totalWinningTickets: BigInt!
   "Livepeer Token supply"
   totalSupply: BigDecimal!
+  "Total winning tickets"
+  winningTicketCount: Int!
+  "Total rounds"
+  roundCount: Int!
 }
 
 """

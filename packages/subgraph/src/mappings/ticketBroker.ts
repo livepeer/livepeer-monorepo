@@ -23,6 +23,7 @@ import {
   convertToDecimal,
   createOrLoadDay,
   createOrLoadRound,
+  createOrLoadTranscoder,
   createOrLoadTranscoderDay,
   getUniswapV1DaiEthExchangeAddress,
   getUniswapV2DaiEthPairAddress,
@@ -32,11 +33,12 @@ import {
 } from "../../utils/helpers";
 
 export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
-  let protocol = Protocol.load("0");
   let round = createOrLoadRound(event.block.number);
+  let day = createOrLoadDay(event.block.timestamp.toI32());
   let winningTicketRedeemed = new WinningTicketRedeemedEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
+  let protocol = Protocol.load("0");
   let faceValue = convertToDecimal(event.params.faceValue);
   let ethPrice = ZERO_BD;
 
@@ -88,9 +90,7 @@ export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
   }
 
   // Update transcoder's fee volume
-  let transcoder =
-    Transcoder.load(event.params.recipient.toHex()) ||
-    new Transcoder(event.params.recipient.toHex());
+  let transcoder = createOrLoadTranscoder(event.params.recipient.toHex());
   transcoder.totalVolumeETH = transcoder.totalVolumeETH.plus(faceValue);
   transcoder.totalVolumeUSD = transcoder.totalVolumeUSD.plus(
     faceValue.times(ethPrice)
@@ -103,10 +103,9 @@ export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
     faceValue.times(ethPrice)
   );
 
-  protocol.totalWinningTickets = protocol.totalWinningTickets.plus(ZERO_BI);
+  protocol.winningTicketCount = protocol.winningTicketCount + 1;
   protocol.save();
 
-  let day = createOrLoadDay(event.block.timestamp.toI32());
   day.totalSupply = protocol.totalSupply;
   day.totalActiveStake = protocol.totalActiveStake;
   day.participationRate = protocol.participationRate;
