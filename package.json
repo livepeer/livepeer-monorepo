@@ -25,7 +25,7 @@
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
     "updated": "lerna updated --json",
     "postinstall": "lerna run --stream postinstall",
-    "prettier": "prettier --write '**/*.{ts,js,css,html,md,tsx}'"
+    "prettier": "prettier --write '**/*.{ts,js,css,html,md,tsx,mdx}'"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
@@ -55,7 +55,7 @@
     }
   },
   "lint-staged": {
-    "*.{ts,js,css,html,md,tsx}": "prettier --write"
+    "*.{ts,js,css,html,md,tsx,mdx}": "prettier --write"
   },
   "resolutions": {
     "orbit-db": "0.22.0"
