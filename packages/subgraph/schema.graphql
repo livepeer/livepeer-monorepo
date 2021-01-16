@@ -66,7 +66,7 @@ type Transcoder @entity {
   "Status of the transcoder"
   status: TranscoderStatus!
   "Last round that the transcoder called reward"
-  lastRewardRound: Round!
+  lastRewardRound: Round
   "% of block reward cut paid to transcoder by a delegator"
   rewardCut: BigInt!
   "% of fees paid to delegators by transcoder"
