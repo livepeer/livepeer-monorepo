@@ -56,11 +56,11 @@ export function bond(event: Bond): void {
   let bondingManager = BondingManager.bind(event.address);
   let delegateData = bondingManager.getDelegator(event.params.newDelegate);
   let delegatorData = bondingManager.getDelegator(event.params.delegator);
-  let protocol = Protocol.load("0");
   let round = createOrLoadRound(event.block.number);
   let transcoder = createOrLoadTranscoder(event.params.newDelegate.toHex());
   let delegate = createOrLoadDelegator(event.params.newDelegate.toHex());
   let delegator = createOrLoadDelegator(event.params.delegator.toHex());
+  let protocol = Protocol.load("0");
 
   // If self delegating, set status and assign reference to self
   if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
@@ -155,13 +155,13 @@ export function unbond(event: Unbond): void {
   let amount = convertToDecimal(event.params.amount);
   let delegator = Delegator.load(event.params.delegator.toHex());
   let delegateData = bondingManager.getDelegator(event.params.delegate);
-  let protocol = Protocol.load("0");
   let round = createOrLoadRound(event.block.number);
   let transcoder = createOrLoadTranscoder(event.params.delegate.toHex());
   let delegate = createOrLoadDelegator(event.params.delegate.toHex());
   let unbondingLock =
     UnbondingLock.load(uniqueUnbondingLockId) ||
     new UnbondingLock(uniqueUnbondingLockId);
+  let protocol = Protocol.load("0");
 
   delegate.delegatedAmount = convertToDecimal(delegateData.value3);
   transcoder.totalStake = convertToDecimal(delegateData.value3);
@@ -241,13 +241,13 @@ export function rebond(event: Rebond): void {
   let delegateData = bondingManager.getDelegator(event.params.delegate);
   let protocol = Protocol.load("0");
 
-  // If rebonding from unbonded and is self-bonding then update transcoder status
-  if (
-    !delegator.delegate &&
-    event.params.delegate.toHex() == event.params.delegator.toHex()
-  ) {
-    transcoder.status = "Registered";
-    transcoder.delegator = event.params.delegator.toHex();
+  // If rebonding from unbonded
+  if (!delegator.delegate) {
+    // If self-bonding then update transcoder status
+    if (event.params.delegate.toHex() == event.params.delegator.toHex()) {
+      transcoder.status = "Registered";
+      transcoder.delegator = event.params.delegator.toHex();
+    }
   }
 
   // update delegator
@@ -372,11 +372,15 @@ export function parameterUpdate(event: ParameterUpdate): void {
   }
 
   if (event.params.param == "numActiveTranscoders") {
-    protocol.numActiveTranscoders = bondingManager.getTranscoderPoolMaxSize();
+    protocol.numActiveTranscoders = bondingManager
+      .getTranscoderPoolMaxSize()
+      .toI32();
   }
 
   if (event.params.param == "maxEarningsClaimsRounds") {
-    protocol.maxEarningsClaimsRounds = bondingManager.maxEarningsClaimsRounds();
+    protocol.maxEarningsClaimsRounds = bondingManager
+      .maxEarningsClaimsRounds()
+      .toI32();
   }
 
   protocol.save();
@@ -406,10 +410,10 @@ export function parameterUpdate(event: ParameterUpdate): void {
 export function reward(event: Reward): void {
   let transcoder = Transcoder.load(event.params.transcoder.toHex());
   let delegate = Delegator.load(event.params.transcoder.toHex());
-  let protocol = Protocol.load("0");
   let round = createOrLoadRound(event.block.number);
   let poolId = makePoolId(event.params.transcoder.toHex(), round.id);
   let pool = Pool.load(poolId);
+  let protocol = Protocol.load("0");
 
   delegate.delegatedAmount = delegate.delegatedAmount.plus(
     convertToDecimal(event.params.amount)

@@ -9,13 +9,13 @@ import { Mint, Burn } from "../types/LivepeerToken/LivepeerToken";
 import { Transaction, MintEvent, BurnEvent, Protocol } from "../types/schema";
 
 export function mint(event: Mint): void {
+  let day = createOrLoadDay(event.block.timestamp.toI32());
   let protocol = Protocol.load("0");
   let amount = convertToDecimal(event.params.amount);
   let totalSupply = protocol.totalSupply.plus(amount);
 
   protocol.totalSupply = totalSupply;
 
-  let day = createOrLoadDay(event.block.timestamp.toI32());
   day.totalSupply = totalSupply;
   day.totalActiveStake = protocol.totalActiveStake;
 
@@ -54,13 +54,13 @@ export function mint(event: Mint): void {
 }
 
 export function burn(event: Burn): void {
+  let round = createOrLoadRound(event.block.number);
+  let day = createOrLoadDay(event.block.timestamp.toI32());
   let protocol = Protocol.load("0");
   let value = convertToDecimal(event.params.value);
   let totalSupply = protocol.totalSupply.minus(value);
 
   protocol.totalSupply = totalSupply;
-
-  let day = createOrLoadDay(event.block.timestamp.toI32());
 
   day.totalSupply = totalSupply;
   day.totalActiveStake = protocol.totalActiveStake;
@@ -70,7 +70,6 @@ export function burn(event: Burn): void {
     day.participationRate = protocol.participationRate;
   }
 
-  let round = createOrLoadRound(event.block.number);
   round.totalSupply = totalSupply;
   round.participationRate = protocol.participationRate;
   round.save();

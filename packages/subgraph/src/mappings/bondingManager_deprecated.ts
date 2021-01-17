@@ -42,10 +42,7 @@ import { integer } from "@protofire/subgraph-toolkit";
 export function transcoderUpdate(event: TranscoderUpdate): void {
   let bondingManager = BondingManager.bind(event.address);
   let round = createOrLoadRound(event.block.number);
-  let transcoder =
-    Transcoder.load(event.params.transcoder.toHex()) ||
-    new Transcoder(event.params.transcoder.toHex());
-
+  let transcoder = createOrLoadTranscoder(event.params.transcoder.toHex());
   let active = bondingManager.isActiveTranscoder(
     event.params.transcoder,
     integer.fromString(round.id)
@@ -158,12 +155,11 @@ export function bond(call: BondCall): void {
     let amount = convertToDecimal(call.inputs._amount);
     let delegatorData = bondingManager.getDelegator(delegatorAddress);
     let delegateData = bondingManager.getDelegator(newDelegateAddress);
-    let protocol = Protocol.load("0");
-
     let round = createOrLoadRound(call.block.number);
     let transcoder = createOrLoadTranscoder(newDelegateAddress.toHex());
     let delegate = createOrLoadDelegator(newDelegateAddress.toHex());
     let delegator = createOrLoadDelegator(delegatorAddress.toHex());
+    let protocol = Protocol.load("0");
 
     if (delegator.delegate) {
       oldDelegateAddress = Address.fromString(delegator.delegate);
@@ -260,13 +256,13 @@ export function unbond(event: Unbond): void {
   let bondingManager = BondingManager.bind(event.address);
   let delegator = Delegator.load(event.params.delegator.toHex());
   let transcoderAddress = delegator.delegate;
-  let protocol = Protocol.load("0");
   let round = createOrLoadRound(event.block.number);
   let transcoder = Transcoder.load(transcoderAddress);
   let delegate = Delegator.load(transcoderAddress);
   let delegateData = bondingManager.getDelegator(
     Address.fromString(transcoderAddress)
   );
+  let protocol = Protocol.load("0");
   let delegatorData = bondingManager.getDelegator(event.params.delegator);
 
   transcoder.totalStake = convertToDecimal(delegateData.value3);
@@ -320,7 +316,6 @@ export function claimEarnings(call: ClaimEarningsCall): void {
   if (call.block.number.le(BigInt.fromI32(9274414))) {
     let delegatorAddress = call.from;
     let endRound = call.inputs._endRound;
-    let protocol = Protocol.load("0");
     let round = createOrLoadRound(call.block.number);
     let delegator = createOrLoadDelegator(delegatorAddress.toHex());
     let bondingManager = BondingManager.bind(call.to);

@@ -127,6 +127,7 @@ export function createOrLoadProtocol(): Protocol {
   let protocol = Protocol.load("0");
   if (protocol == null) {
     protocol = new Protocol("0");
+    protocol.paused = false;
     protocol.currentRound = ZERO_BI.toString();
     protocol.lastInitializedRound = ZERO_BI.toString();
     protocol.lastRoundLengthUpdateRound = ZERO_BI.toString();
@@ -134,10 +135,6 @@ export function createOrLoadProtocol(): Protocol {
     protocol.inflationChange = ZERO_BI;
     protocol.lastRoundLengthUpdateStartBlock = ZERO_BI;
     protocol.lockPeriod = ZERO_BI;
-    protocol.maxEarningsClaimsRounds = ZERO_BI;
-    protocol.numActiveTranscoders = ZERO_BI;
-    protocol.paused = false;
-    protocol.roundCount = ZERO_BI;
     protocol.roundLength = ZERO_BI;
     protocol.roundLockAmount = ZERO_BI;
     protocol.targetBondingRate = ZERO_BI;
@@ -146,8 +143,11 @@ export function createOrLoadProtocol(): Protocol {
     protocol.participationRate = ZERO_BD;
     protocol.totalVolumeETH = ZERO_BD;
     protocol.totalVolumeUSD = ZERO_BD;
-    protocol.totalWinningTickets = ZERO_BI;
     protocol.unbondingPeriod = ZERO_BI;
+    protocol.maxEarningsClaimsRounds = 0;
+    protocol.numActiveTranscoders = 0;
+    protocol.winningTicketCount = 0;
+    protocol.roundCount = 0;
     protocol.save();
   }
   return protocol as Protocol;
@@ -258,7 +258,7 @@ export function createOrLoadRound(blockNumber: BigInt): Round {
       roundsSinceLastUpdate.times(protocol.roundLength)
     );
     round = createRound(startBlock, protocol.roundLength, newRound);
-    protocol.roundCount = protocol.roundCount.plus(BigInt.fromI32(1));
+    protocol.roundCount = protocol.roundCount + 1;
     protocol.currentRound = newRound.toString();
     protocol.save();
 
