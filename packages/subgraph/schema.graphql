@@ -169,7 +169,7 @@ type Delegator @entity {
   "Round the delegator becomes bonded and delegated to its delegate"
   startRound: BigInt!
   "Last round that the delegator claimed reward and fee pool shares"
-  lastClaimRound: Round!
+  lastClaimRound: Round
   "Amount of Livepeer Token a delegator currently has bonded"
   bondedAmount: BigDecimal!
   "Amount of Livepeer Token a delegator has bonded over its lifetime separate from rewards"

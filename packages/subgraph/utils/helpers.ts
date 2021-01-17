@@ -181,7 +181,6 @@ export function createOrLoadDelegator(id: string): Delegator {
   if (delegator == null) {
     delegator = new Delegator(id);
     delegator.startRound = ZERO_BI;
-    delegator.lastClaimRound = ZERO_BI.toString();
     delegator.bondedAmount = ZERO_BD;
     delegator.principal = ZERO_BD;
     delegator.unbonded = ZERO_BD;
