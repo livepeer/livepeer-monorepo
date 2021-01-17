@@ -162,7 +162,6 @@ export function createOrLoadTranscoder(id: string): Transcoder {
     transcoder.lastActiveStakeUpdateRound = ZERO_BI;
     transcoder.active = false;
     transcoder.status = "NotRegistered";
-    transcoder.lastRewardRound = ZERO_BI.toString();
     transcoder.rewardCut = ZERO_BI;
     transcoder.feeShare = ZERO_BI;
     transcoder.pricePerSegment = ZERO_BI;
