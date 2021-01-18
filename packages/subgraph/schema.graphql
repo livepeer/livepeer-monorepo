@@ -122,6 +122,8 @@ type Pool @entity {
   rewardCut: BigInt!
   "Transcoder's fee share during the earnings pool's round"
   feeShare: BigInt!
+  "Delegator shares"
+  shares: [Share!] @derivedFrom(field: "pool")
 }
 
 """
@@ -184,6 +186,26 @@ type Delegator @entity {
   delegatedAmount: BigDecimal!
   "Unbonding locks associated with the delegator"
   unbondingLocks: [UnbondingLock!] @derivedFrom(field: "delegator")
+  "Amount of Livepeer Token a delegator currently has bonded including unclaimed"
+  pendingStake: BigDecimal!
+  "Shares associated with the delegator"
+  shares: [Share!] @derivedFrom(field: "delegator")
+}
+
+"""
+Represents a delegator's earnings per round
+"""
+type Share @entity {
+  "Unique identifer for the share (formed using the delegator's address and round number)"
+  id: ID!
+  "Round associated with the share"
+  round: Round!
+  "Pool associated with the share"
+  pool: Pool!
+  "Delegator associated with the share"
+  delegator: Delegator!
+  "Feward share"
+  rewardTokens: BigDecimal!
 }
 
 """

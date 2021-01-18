@@ -1,13 +1,22 @@
-import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import {
+  Address,
+  BigDecimal,
+  BigInt,
+  Bytes,
+  dataSource,
+  DataSourceContext,
+} from "@graphprotocol/graph-ts";
 import { integer } from "@protofire/subgraph-toolkit";
 import {
   Day,
   Delegator,
   Protocol,
   Round,
+  Share,
   Transcoder,
   TranscoderDay,
 } from "../src/types/schema";
+import { ShareTemplate } from "../src/types/templates";
 
 let x = BigInt.fromI32(2);
 let y = <u8>255;
@@ -184,10 +193,18 @@ export function createOrLoadDelegator(id: string): Delegator {
     delegator.bondedAmount = ZERO_BD;
     delegator.principal = ZERO_BD;
     delegator.unbonded = ZERO_BD;
+    delegator.pendingStake = ZERO_BD;
     delegator.fees = ZERO_BD;
     delegator.withdrawnFees = ZERO_BD;
     delegator.delegatedAmount = ZERO_BD;
     delegator.save();
+
+    // Watch for events specified in ShareTemplate, and trigger handlers
+    // with this context
+    let eventAddress = getBondingManagerAddress(dataSource.network());
+    let context = new DataSourceContext();
+    context.setString("delegator", id);
+    ShareTemplate.createWithContext(Address.fromString(eventAddress), context);
   }
   return delegator as Delegator;
 }

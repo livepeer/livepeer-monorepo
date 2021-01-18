@@ -110,6 +110,7 @@ export function bond(event: Bond): void {
   delegator.delegate = event.params.newDelegate.toHex();
   delegator.lastClaimRound = round.id;
   delegator.bondedAmount = convertToDecimal(event.params.bondedAmount);
+  delegator.pendingStake = convertToDecimal(event.params.bondedAmount);
   delegator.fees = convertToDecimal(delegatorData.value1);
   delegator.startRound = delegatorData.value4;
   delegator.principal = delegator.principal.plus(
@@ -169,6 +170,7 @@ export function unbond(event: Unbond): void {
   let delegatorData = bondingManager.getDelegator(event.params.delegator);
   delegator.lastClaimRound = round.id;
   delegator.bondedAmount = convertToDecimal(delegatorData.value0);
+  delegator.pendingStake = convertToDecimal(delegatorData.value0);
   delegator.fees = convertToDecimal(delegatorData.value1);
   delegator.startRound = delegatorData.value4;
   delegator.unbonded = delegator.unbonded.plus(
@@ -256,6 +258,7 @@ export function rebond(event: Rebond): void {
   delegator.startRound = delegatorData.value4;
   delegator.lastClaimRound = round.id;
   delegator.bondedAmount = convertToDecimal(delegatorData.value0);
+  delegator.pendingStake = convertToDecimal(delegatorData.value0);
   delegator.fees = convertToDecimal(delegatorData.value1);
   delegator.unbonded = delegator.unbonded.minus(
     convertToDecimal(event.params.amount)
@@ -585,6 +588,9 @@ export function earningsClaimed(event: EarningsClaimed): void {
   let delegator = createOrLoadDelegator(event.params.delegator.toHex());
   delegator.lastClaimRound = event.params.endRound.toString();
   delegator.bondedAmount = delegator.bondedAmount.plus(
+    convertToDecimal(event.params.rewards)
+  );
+  delegator.pendingStake = delegator.pendingStake.plus(
     convertToDecimal(event.params.rewards)
   );
   delegator.fees = delegator.fees.plus(convertToDecimal(event.params.fees));

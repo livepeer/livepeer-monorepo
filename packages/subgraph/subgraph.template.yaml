@@ -412,6 +412,29 @@ templates:
         - event: EarningsClaimed(indexed address,indexed address,uint256,uint256,uint256,uint256)
           handler: updatePollTallyOnEarningsClaimed
   - kind: ethereum/contract
+    name: ShareTemplate
+    network: {{networkName}}
+    source:
+      abi: BondingManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/shareHandlers.ts
+      abis:
+        - name: BondingManagerV1
+          file: ./abis/BondingManagerV1.json
+        - name: BondingManagerV7
+          file: ./abis/BondingManagerV7.json
+        - name: BondingManager
+          file: ./abis/BondingManager.json
+      entities:
+        - Delegator
+        - Share
+      eventHandlers:
+        - event: Reward(indexed address,uint256)
+          handler: updateShareOnReward
+  - kind: ethereum/contract
     name: Poll
     network: {{networkName}}
     source:
