@@ -1,4 +1,9 @@
-import { Address, BigDecimal, dataSource } from "@graphprotocol/graph-ts";
+import {
+  Address,
+  BigDecimal,
+  BigInt,
+  dataSource,
+} from "@graphprotocol/graph-ts";
 
 import {
   BondingManager,
@@ -121,7 +126,7 @@ export function updatePollTallyOnBond(event: Bond): void {
       // if caller is voter, remove its nonVoteStake from old delegate
       if (voterAddress == event.params.delegator.toHex()) {
         oldDelegateVote.nonVoteStake = oldDelegateVote.nonVoteStake.minus(
-          bondedAmount
+          bondedAmount.minus(convertToDecimal(event.params.additionalAmount))
         );
       }
     }
@@ -195,6 +200,16 @@ export function updatePollTallyOnRebond(event: Rebond): void {
 }
 
 export function updatePollTallyOnEarningsClaimed(event: EarningsClaimed): void {
+  // After LIP-36 the pending stake of other delegators does not change
+  // after earnings are claimed so after the LIP-36 mainnet upgrade block
+  // we stop updating all voters vote weight on each EarningsClaimed event
+  if (
+    dataSource.network() != "mainnet" ||
+    event.block.number.gt(BigInt.fromI32(10972586))
+  ) {
+    return;
+  }
+
   let voterAddress = dataSource.context().getString("voter");
   let delegator = Delegator.load(voterAddress) as Delegator;
 

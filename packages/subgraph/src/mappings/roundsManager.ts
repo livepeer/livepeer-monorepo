@@ -113,7 +113,7 @@ export function newRound(event: NewRound): void {
   newRound.transaction = event.transaction.hash.toHex();
   newRound.timestamp = event.block.timestamp.toI32();
   newRound.round = event.params.round.toString();
-  newRound.blockHash = event.params.blockHash.toString();
+  newRound.blockHash = event.params.blockHash.toHexString();
   newRound.save();
 }
 
@@ -125,13 +125,14 @@ export function parameterUpdate(event: ParameterUpdate): void {
   if (event.params.param == "roundLength") {
     let roundLength = roundsManager.roundLength();
     let lastRoundLengthUpdateStartBlock = roundsManager.lastRoundLengthUpdateStartBlock();
+    let lastRoundLengthUpdateRound = roundsManager.lastRoundLengthUpdateRound();
 
     if (protocol.roundLength.toI32() == 0) {
       createRound(event.block.number, roundLength, currentRound);
     }
     protocol.roundLength = roundLength;
     protocol.lastRoundLengthUpdateStartBlock = lastRoundLengthUpdateStartBlock;
-    protocol.lastRoundLengthUpdateRound = currentRound.toString();
+    protocol.lastRoundLengthUpdateRound = lastRoundLengthUpdateRound.toString();
     protocol.currentRound = currentRound.toString();
   }
 
