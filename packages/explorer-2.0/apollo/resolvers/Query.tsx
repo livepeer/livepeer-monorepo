@@ -128,10 +128,13 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     dayData: [],
     weeklyData: [],
     totalVolumeUSD: 0,
+    totalUsage: 0,
     participationRate: 0,
     oneDayVolumeUSD: 0,
     oneWeekVolume: 0,
+    oneWeekUsage: 0,
     weeklyVolumeChange: 0,
+    weeklyUsageChange: 0,
     volumeChangeUSD: 0,
     participationRateChange: 0,
   };
@@ -146,6 +149,9 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     totalVolumeUSD: 0,
     participationRate: 0,
   };
+
+  const averagePrice = 0.0000000000094;
+  const pixelsPerMinute = 2995488000;
 
   try {
     // get timestamps for the days
@@ -181,6 +187,37 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       return result;
     };
 
+    type LivepeerComUsageParams = {
+      fromTime: number;
+      toTime: number;
+    };
+
+    let getLivepeerComUsageData = async (params?: LivepeerComUsageParams) => {
+      try {
+        let endpoint = `https://livepeer.com/api/usage${
+          params ? `?fromTime=${params.fromTime}&toTime=${params.toTime}` : ""
+        }`;
+
+        const livepeerComUsageDataReponse = await fetch(endpoint, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${process.env.LIVEPEER_COM_API_ADMIN_TOKEN}`,
+          },
+        });
+
+        const livepeerComUsageData = await livepeerComUsageDataReponse.json();
+
+        // convert date format from milliseconds to seconds before merging
+        return livepeerComUsageData.map((day) => ({
+          ...day,
+          date: day.date / 1000,
+        }));
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
     let getProtocolData = async () => {
       let result = await client.query({
         query: protocolDataQuery,
@@ -203,9 +240,63 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let dayDataResult = await getDayData();
     dayData = dayDataResult.data.days;
 
+    let oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setUTCHours(0, 0, 0, 0);
+
+    let twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 7);
+    twoWeeksAgo.setUTCHours(0, 0, 0, 0);
+
+    let livepeerComDayData = await getLivepeerComUsageData();
+    let livepeerComOneWeekData = await getLivepeerComUsageData({
+      fromTime: +new Date(2020, 0),
+      toTime: oneWeekAgo.getTime(),
+    });
+    let livepeerComTwoWeekData = await getLivepeerComUsageData({
+      fromTime: +new Date(2020, 0),
+      toTime: twoWeeksAgo.getTime(),
+    });
+
+    // merge in Livepeer.com usage data
+    dayData = dayData.map((item) => {
+      const found = livepeerComDayData.find(
+        (element) => item.date == element.date
+      );
+      // combine Livepeer.com minutes with minutes calculated via fee volume
+      const minutes =
+        (found?.sourceSegmentsDuration ?? 0) / 60 +
+        +item.volumeUSD / averagePrice / pixelsPerMinute;
+      return { ...item, ...found, minutes };
+    });
+
+    // get total Livepeer.com aggregate usage
+    let totalLivepeerComUsage = livepeerComDayData.reduce((x, y) => {
+      return x + y.sourceSegmentsDuration / 60;
+    }, 0);
+
+    let totalLivepeerComUsageOneWeekAgo = livepeerComOneWeekData.reduce(
+      (x, y) => {
+        return x + y.sourceSegmentsDuration / 60;
+      },
+      0
+    );
+
+    let totalLivepeerComUsageTwoWeeksAgo = livepeerComTwoWeekData.reduce(
+      (x, y) => {
+        return x + y.sourceSegmentsDuration / 60;
+      },
+      0
+    );
+
     // fetch the historical data
     let protocolDataResult = await getProtocolData();
     data.totalVolumeUSD = +protocolDataResult.data.protocol.totalVolumeUSD;
+    data.totalUsage =
+      +protocolDataResult.data.protocol.totalVolumeUSD /
+        averagePrice /
+        pixelsPerMinute +
+      totalLivepeerComUsage;
     data.participationRate = +protocolDataResult.data.protocol
       .participationRate;
 
@@ -216,7 +307,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     twoDayData = twoDayResult.data.protocol;
 
     let oneWeekResult = await getProtocolDataByBlock(oneWeekBlock);
-    const oneWeekData = oneWeekResult.data.protocol;
+    let oneWeekData = oneWeekResult.data.protocol;
 
     let twoWeekResult = await getProtocolDataByBlock(twoWeekBlock);
     const twoWeekData = twoWeekResult.data.protocol;
@@ -233,6 +324,15 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         twoWeekData.totalVolumeUSD
       );
 
+      const [oneWeekUsage, weeklyUsageChange] = get2DayPercentChange(
+        totalLivepeerComUsage +
+          data.totalVolumeUSD / averagePrice / pixelsPerMinute,
+        totalLivepeerComUsageOneWeekAgo +
+          oneWeekData.totalVolumeUSD / averagePrice / pixelsPerMinute,
+        totalLivepeerComUsageTwoWeeksAgo +
+          twoWeekData.totalVolumeUSD / averagePrice / pixelsPerMinute
+      );
+
       // format the total participation change
       const participationRateChange = getPercentChange(
         data.participationRate,
@@ -245,6 +345,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       );
       let startIndexWeekly = -1;
       let currentWeek = -1;
+
       for (const weeklySizedChunk of weeklySizedChunks) {
         const week = dayjs.utc(dayjs.unix(weeklySizedChunk.date)).week();
         if (week !== currentWeek) {
@@ -256,6 +357,9 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         weeklyData[startIndexWeekly].weeklyVolumeUSD =
           (weeklyData[startIndexWeekly].weeklyVolumeUSD ?? 0) +
           +weeklySizedChunk.volumeUSD;
+        weeklyData[startIndexWeekly].weeklyUsageMinutes =
+          (weeklyData[startIndexWeekly].weeklyUsageMinutes ?? 0) +
+          weeklySizedChunk.minutes;
       }
 
       // add relevant fields with the calculated amounts
@@ -263,6 +367,9 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       data.weeklyData = weeklyData;
       data.oneDayVolumeUSD = oneDayVolumeUSD;
       data.oneWeekVolume = oneWeekVolume;
+      data.oneWeekUsage =
+        oneWeekVolume / averagePrice / pixelsPerMinute + oneWeekUsage;
+      data.weeklyUsageChange = weeklyUsageChange;
       data.weeklyVolumeChange = weeklyVolumeChange;
       data.volumeChangeUSD = volumeChangeUSD;
       data.participationRateChange = participationRateChange;

@@ -441,39 +441,63 @@ export const toK = (num) => {
   return Numeral(num).format("0.[00]a");
 };
 
-export const formattedNum = (number, usd = false, acceptNegatives = false) => {
+export const formattedNum = (number, unit = "usd", acceptNegatives = false) => {
   if (isNaN(number) || number === "" || number === undefined) {
-    return usd ? "$0" : 0;
+    return unit === "usd" ? "$0" : 0;
   }
   let num = parseFloat(number);
 
   if (num > 500000000) {
-    return (usd ? "$" : "") + toK(num.toFixed(0));
+    return `${
+      (unit === "usd" ? "$" : "") + toK(num.toFixed(0)) + unit === "minutes"
+        ? unit
+        : ""
+    }`;
   }
 
   if (num === 0) {
-    if (usd) {
+    if (unit === "usd") {
       return "$0";
+    }
+    if (unit === "minutes") {
+      return "0 minutes";
     }
     return 0;
   }
 
   if (num < 0.0001 && num > 0) {
-    return usd ? "< $0.0001" : "< 0.0001";
+    if (unit === "usd") {
+      return "< $0.0001";
+    }
+    if (unit === "minutes") {
+      return "< 0.0001 minutes";
+    }
+    return "< 0.0001";
   }
 
   if (num > 1000) {
-    return usd
-      ? "$" + Number(num.toFixed(0)).toLocaleString()
-      : "" + Number(num.toFixed(0)).toLocaleString();
+    if (unit === "usd") {
+      return "$" + Number(num.toFixed(0)).toLocaleString();
+    }
+    if (unit === "minutes") {
+      return Number(num.toFixed(0)).toLocaleString() + " minutes";
+    }
+    return Number(num.toFixed(0)).toLocaleString();
   }
 
-  if (usd) {
+  if (unit === "usd") {
     if (num < 0.1) {
       return "$" + Number(num.toFixed(4));
     } else {
       let usdString = priceFormatter.format(num);
       return "$" + usdString.slice(1, usdString.length);
+    }
+  }
+  if (unit === "minutes") {
+    if (num < 0.1) {
+      return Number(num.toFixed(4)) + " minutes";
+    } else {
+      return Number(num.toFixed(0)) + " minutes";
     }
   }
   return Number(num.toFixed(5));

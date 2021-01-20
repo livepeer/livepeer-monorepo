@@ -1,4 +1,4 @@
-import { Flex, Grid, Styled } from "theme-ui";
+import { Flex, Styled } from "theme-ui";
 import { useQuery } from "@apollo/client";
 import Orchestrators from "../components/Orchestrators";
 import { useWeb3React } from "@web3-react/core";
@@ -15,6 +15,7 @@ import GlobalChart from "../components/GlobalChart";
 import OrchestratorPayouts from "../components/OrchestratorPayouts";
 import Link from "next/link";
 import { withApollo, getStaticApolloProps } from "../apollo";
+import Flickity from "react-flickity-component";
 
 type Params = {};
 type Props = {};
@@ -27,7 +28,8 @@ const Panel = ({ children }) => (
       position: "relative",
       backgroundColor: "rgba(255,255,255,.01)",
       padding: 3,
-      width: "100%",
+      width: ["100%", "100%", "43%"],
+      marginRight: 16,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -66,6 +68,12 @@ const Home = () => {
     }
   }, [isVisible]);
 
+  const flickityOptions = {
+    wrapAround: true,
+    cellAlign: "left",
+    prevNextButtons: false,
+  };
+
   return (
     <>
       <Flex sx={{ width: "100%" }}>
@@ -89,6 +97,7 @@ const Home = () => {
           )}
           <Styled.h1
             sx={{
+              color: "white",
               fontSize: [3, 3, 26],
               fontWeight: 600,
               mb: 22,
@@ -98,22 +107,43 @@ const Home = () => {
             Protocol Explorer
           </Styled.h1>
           <Search pushSx={{ mb: 5 }} />
-          <Grid
+          <Box
             sx={{
               mb: 5,
-              width: "100%",
-              gridTemplateColumns: ["1fr", "1fr", "1fr 1fr"],
-              columnGap: 10,
-              alignItems: "start",
-              justifyContent: "space-between",
+              boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
             }}>
-            <Panel>
-              <GlobalChart display="volume" />
-            </Panel>
-            <Panel>
-              <GlobalChart display="participation" />
-            </Panel>
-          </Grid>
+            <Flickity
+              className={"carousel"}
+              elementType={"div"}
+              options={flickityOptions}
+              disableImagesLoaded={true} // default false
+              reloadOnUpdate
+              static>
+              <Panel>
+                <GlobalChart
+                  display="volume"
+                  title="Fee Volume (7d)"
+                  field="weeklyVolumeUSD"
+                  unit="usd"
+                />
+              </Panel>
+              <Panel>
+                <GlobalChart
+                  display="volume"
+                  title="Estimated Usage (7d)"
+                  field="weeklyUsageMinutes"
+                  unit="minutes"
+                />
+              </Panel>
+              <Panel>
+                <GlobalChart
+                  display="area"
+                  title="Participation"
+                  field="participationRate"
+                />
+              </Panel>
+            </Flickity>
+          </Box>
           <Box sx={{ mb: 3 }}>
             <Flex
               sx={{
