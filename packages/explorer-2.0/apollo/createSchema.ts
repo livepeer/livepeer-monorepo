@@ -316,7 +316,7 @@ const createSchema = async () => {
       transcoders: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info));
         const transcoders = await resolve(parent, args, ctx, info);
-        let arr = [];
+        let prices = [];
         let performanceMetrics = [];
 
         // if selection set includes 'price', return transcoders merge prices and performance metrics
@@ -329,7 +329,7 @@ const createSchema = async () => {
 
           transcodersWithPrice.map((t) => {
             if (transcoders.filter((a) => a.id === t.Address).length > 0) {
-              arr.push({
+              prices.push({
                 id: t.Address,
                 price: t.PricePerPixel,
               });
@@ -355,21 +355,21 @@ const createSchema = async () => {
                 id: key,
                 scores: {
                   global: avg(metrics[key], "score") * 10000,
-                  fra: metrics[key].FRA?.score * 10000,
-                  mdw: metrics[key].MDW?.score * 10000,
-                  sin: metrics[key].SIN?.score * 10000,
+                  fra: metrics[key].FRA?.score || 0 * 10000,
+                  mdw: metrics[key].MDW?.score || 0 * 10000,
+                  sin: metrics[key].SIN?.score || 0 * 10000,
                 },
                 successRates: {
                   global: avg(metrics[key], "success_rate") * 100,
-                  fra: metrics[key].FRA?.success_rate * 100,
-                  mdw: metrics[key].MDW?.success_rate * 100,
-                  sin: metrics[key].SIN?.success_rate * 100,
+                  fra: metrics[key].FRA?.success_rate || 0 * 100,
+                  mdw: metrics[key].MDW?.success_rate || 0 * 100,
+                  sin: metrics[key].SIN?.success_rate || 0 * 100,
                 },
                 roundTripScores: {
                   global: avg(metrics[key], "round_trip_score") * 10000,
-                  fra: metrics[key].FRA?.round_trip_score * 10000,
-                  mdw: metrics[key].MDW?.round_trip_score * 10000,
-                  sin: metrics[key].SIN?.round_trip_score * 10000,
+                  fra: metrics[key].FRA?.round_trip_score || 0 * 10000,
+                  mdw: metrics[key].MDW?.round_trip_score || 0 * 10000,
+                  sin: metrics[key].SIN?.round_trip_score || 0 * 10000,
                 },
               });
             }
@@ -378,7 +378,7 @@ const createSchema = async () => {
 
         // merge results
         return mergeObjectsInUnique(
-          [...transcoders, ...arr, ...performanceMetrics],
+          [...transcoders, ...prices, ...performanceMetrics],
           "id"
         );
       },
