@@ -398,20 +398,14 @@ function getVotingPower(myAccount, vote) {
   // if account is a delegate its voting power is its total stake minus its delegators' vote stake (nonVoteStake)
   if (myAccount?.account.id === myAccount?.delegator?.delegate.id) {
     if (vote?.voteStake) {
-      return Utils.toBN(vote.voteStake)
-        .sub(Utils.toBN(vote?.nonVoteStake ? vote.nonVoteStake : 0))
-        .toString();
+      return +vote.voteStake - +vote?.nonVoteStake;
     }
-    return Utils.toBN(
-      myAccount?.delegator?.delegate?.totalStake
-        ? myAccount?.delegator?.delegate?.totalStake
-        : 0
-    )
-      .sub(Utils.toBN(vote?.nonVoteStake ? vote.nonVoteStake : 0))
-      .toString();
+    return +myAccount?.delegator?.delegate?.totalStake - +vote?.nonVoteStake;
   }
 
-  return myAccount?.delegator?.pendingStake
-    ? myAccount?.delegator?.pendingStake
-    : "0";
+  return Utils.fromWei(
+    myAccount?.delegator?.pendingStake
+      ? myAccount?.delegator?.pendingStake
+      : "0"
+  );
 }
