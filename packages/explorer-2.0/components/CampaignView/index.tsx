@@ -16,7 +16,7 @@ import {
 const Index = ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false);
   const targetRef = useRef();
-  const [priceSetting, setPriceSetting] = useState("1t pixels");
+  const [priceSetting, setPriceSetting] = useState("pixel");
   const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
     .length;
 
