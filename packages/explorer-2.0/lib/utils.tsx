@@ -403,8 +403,10 @@ export const simulateNewActiveSetOrder = ({
       const oldDelegateIndex = transcoders.findIndex(
         (t) => t.id.toLowerCase() === oldDelegate.toLowerCase()
       );
-      transcoders[oldDelegateIndex].totalStake =
-        +transcoders[oldDelegateIndex].totalStake - +amount;
+      if (oldDelegateIndex !== -1) {
+        transcoders[oldDelegateIndex].totalStake =
+          +transcoders[oldDelegateIndex].totalStake - +amount;
+      }
     }
   } else {
     transcoders[index].totalStake = +transcoders[index].totalStake - +amount;
