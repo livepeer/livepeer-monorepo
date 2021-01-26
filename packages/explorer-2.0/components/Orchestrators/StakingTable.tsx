@@ -24,7 +24,7 @@ const StakingTable = ({
 }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false);
   const targetRef = useRef();
-  const [priceSetting, setPriceSetting] = useState("1t pixels");
+  const [priceSetting, setPriceSetting] = useState("pixel");
 
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
