@@ -58,6 +58,6 @@
     "*.{ts,js,css,html,md,tsx,mdx}": "prettier --write"
   },
   "resolutions": {
-    "orbit-db": "0.22.0"
+    "bcrypto": "5.4.0"
   }
 }
