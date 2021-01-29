@@ -151,7 +151,9 @@ const Index = ({ pageSize = 10, title = "" }) => {
               <Box
                 onClick={() => {
                   setOrchestratorTable("staking");
-                  router.push("/");
+                  router.push("/", "/", {
+                    scroll: false,
+                  });
                 }}
                 sx={{
                   fontSize: 0,
@@ -172,7 +174,13 @@ const Index = ({ pageSize = 10, title = "" }) => {
               <Box
                 onClick={() => {
                   setOrchestratorTable("performance");
-                  router.push("?orchestratorTable=performance");
+                  router.push(
+                    "?orchestratorTable=performance",
+                    "?orchestratorTable=performance",
+                    {
+                      scroll: false,
+                    }
+                  );
                 }}
                 sx={{
                   fontSize: 0,
