@@ -151,7 +151,9 @@ const Index = ({ pageSize = 10, title = "" }) => {
               <Box
                 onClick={() => {
                   setOrchestratorTable("staking");
-                  router.push("/");
+                  router.push("/", "/", {
+                    scroll: false,
+                  });
                 }}
                 sx={{
                   fontSize: 0,
