@@ -237,6 +237,7 @@ export const initTransaction = async (client, mutation) => {
           txSummaryModal {
             __typename
             open
+            error
           }
         }
       `,
@@ -244,6 +245,7 @@ export const initTransaction = async (client, mutation) => {
         txSummaryModal: {
           __typename: "TxSummaryModal",
           open: true,
+          error: false,
         },
       },
     });
@@ -256,6 +258,7 @@ export const initTransaction = async (client, mutation) => {
           txSummaryModal {
             __typename
             open
+            error
           }
         }
       `,
@@ -263,6 +266,7 @@ export const initTransaction = async (client, mutation) => {
         txSummaryModal: {
           __typename: "TxSummaryModal",
           open: false,
+          error: false,
         },
       },
     });
@@ -272,6 +276,7 @@ export const initTransaction = async (client, mutation) => {
         query {
           txSummaryModal {
             __typename
+            open
             error
           }
         }
@@ -279,6 +284,7 @@ export const initTransaction = async (client, mutation) => {
       data: {
         txSummaryModal: {
           __typename: "TxSummaryModal",
+          open: true,
           error: true,
         },
       },

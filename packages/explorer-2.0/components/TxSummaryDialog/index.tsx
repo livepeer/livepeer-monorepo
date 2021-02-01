@@ -1,10 +1,17 @@
 import React from "react";
 import { Box, Spinner } from "@theme-ui/components";
 import { Flex } from "theme-ui";
-import Button from "../Button";
-import Modal from "../Modal";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import { Dialog } from "@reach/dialog";
+import { keyframes } from "@emotion/react";
+import CloseIcon from "../../public/img/close.svg";
+
+const rotate = keyframes`
+  100% {
+    transform: rotate(360deg);
+  }
+`;
 
 const Index = ({ isOpen, onDismiss }) => {
   if (!isOpen) {
@@ -14,6 +21,7 @@ const Index = ({ isOpen, onDismiss }) => {
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
+        __typename
         open
         error
       }
@@ -23,49 +31,71 @@ const Index = ({ isOpen, onDismiss }) => {
   const { data } = useQuery(GET_TX_SUMMARY_MODAL);
 
   return (
-    <Modal
+    <Dialog
+      aria-label="Dialog"
       isOpen={isOpen}
-      clickAnywhereToClose={false}
-      onDismiss={onDismiss}
-      title={
-        data?.txSummaryModal?.error
-          ? "Transaction Error"
-          : "Confirm transaction in your wallet"
-      }>
-      <Box>
-        <Header data={data} />
-        <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
-          {data?.txSummaryModal?.error ? "Close" : "Cancel"}
-        </Button>
+      onDismiss={() => {
+        onDismiss();
+      }}
+      sx={{
+        boxShadow: "rgb(0 0 0 / 5%) 0px 4px 8px 0px",
+        maxWidth: 430,
+        bg: "surface",
+        borderRadius: 16,
+        p: 4,
+      }}>
+      <Flex sx={{ justifyContent: "flex-end" }}>
+        <CloseIcon
+          onClick={() => {
+            onDismiss();
+          }}
+          sx={{
+            cursor: "pointer",
+            zIndex: 1,
+            right: 20,
+            top: 20,
+            color: "white",
+          }}
+        />
+      </Flex>
+      <Flex
+        sx={{
+          py: 5,
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          width: "100%",
+          alignItems: "center",
+          padding: "60px 0px",
+        }}>
+        <img
+          src="/img/green-loader.svg"
+          alt="loader"
+          sx={{
+            animation: `${rotate} 2s linear`,
+            animationIterationCount: "infinite",
+            height: "90px",
+            width: "90px",
+          }}
+        />
+      </Flex>
+      <Box
+        sx={{
+          display: "grid",
+          gridAutoRows: "auto",
+          rowGap: "10px",
+          justifyItems: "center",
+        }}>
+        <Box sx={{ fontSize: 3, fontWeight: 600 }}>
+          Waiting For Confirmation
+        </Box>
+        <Box sx={{ fontSize: 1 }}>
+          {data?.txSummaryModal?.error
+            ? "Transaction Error"
+            : "Confirm this transaction in your wallet"}
+        </Box>
       </Box>
-    </Modal>
+    </Dialog>
   );
 };
 
 export default Index;
-
-function Header({ data }) {
-  return (
-    <Flex
-      sx={{
-        border: "1px solid",
-        borderColor: "border",
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: "space-between",
-        p: 2,
-        mb: 3,
-      }}>
-      <Flex sx={{ fontWeight: 700, alignItems: "center" }}>
-        {data?.txSummaryModal?.error ? (
-          <Box>There was an error.</Box>
-        ) : (
-          <>
-            <Spinner size={26} sx={{ mr: 2 }} />
-            Waiting for confirmation...
-          </>
-        )}
-      </Flex>
-    </Flex>
-  );
-}

@@ -46,6 +46,11 @@ export default function createApolloClient(
           open
           error
         }
+        txConfirmationModal {
+          __typename
+          open
+          error
+        }
         txs
         tourOpen
         roi
@@ -60,6 +65,11 @@ export default function createApolloClient(
       roundStatusModalOpen: false,
       txSummaryModal: {
         __typename: "TxSummaryModal",
+        open: false,
+        error: false,
+      },
+      txConfirmationModal: {
+        __typename: "TxConfirmationModal",
         open: false,
         error: false,
       },
