@@ -4,6 +4,7 @@ import utc from "dayjs/plugin/utc";
 import {
   get2DayPercentChange,
   getBlocksFromTimestamps,
+  getLivepeerComUsageData,
   getPercentChange,
 } from "../../lib/utils";
 import dayDataQuery from "../../queries/days.gql";
@@ -128,14 +129,15 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     dayData: [],
     weeklyData: [],
     totalVolumeUSD: 0,
+    totalVolumeETH: 0,
     totalUsage: 0,
     participationRate: 0,
     oneDayVolumeUSD: 0,
-    oneWeekVolume: 0,
+    oneWeekVolumeUSD: 0,
     oneWeekUsage: 0,
-    weeklyVolumeChange: 0,
+    weeklyVolumeChangeUSD: 0,
     weeklyUsageChange: 0,
-    volumeChangeUSD: 0,
+    volumeChange: 0,
     participationRateChange: 0,
   };
 
@@ -150,7 +152,9 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     participationRate: 0,
   };
 
-  const averagePrice = 0.0000000000094;
+  const averagePricePerPixel = 0.0000000000094; // average price per pixel in usd
+  // the # of pixels in a minute of 240p30fps, 360p30fps, 480p30fps, 720p30fps transcoded renditions.
+  // (width * height * framerate * seconds in a minute)
   const pixelsPerMinute = 2995488000;
 
   try {
@@ -187,37 +191,6 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       return result;
     };
 
-    type LivepeerComUsageParams = {
-      fromTime: number;
-      toTime: number;
-    };
-
-    let getLivepeerComUsageData = async (params?: LivepeerComUsageParams) => {
-      try {
-        let endpoint = `https://livepeer.com/api/usage${
-          params ? `?fromTime=${params.fromTime}&toTime=${params.toTime}` : ""
-        }`;
-
-        const livepeerComUsageDataReponse = await fetch(endpoint, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Authorization: `Bearer ${process.env.LIVEPEER_COM_API_ADMIN_TOKEN}`,
-          },
-        });
-
-        const livepeerComUsageData = await livepeerComUsageDataReponse.json();
-
-        // convert date format from milliseconds to seconds before merging
-        return livepeerComUsageData.map((day) => ({
-          ...day,
-          date: day.date / 1000,
-        }));
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
     let getProtocolData = async () => {
       let result = await client.query({
         query: protocolDataQuery,
@@ -240,22 +213,14 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let dayDataResult = await getDayData();
     dayData = dayDataResult.data.days;
 
-    let oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    oneWeekAgo.setUTCHours(0, 0, 0, 0);
-
-    let twoWeeksAgo = new Date();
-    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 7);
-    twoWeeksAgo.setUTCHours(0, 0, 0, 0);
-
     let livepeerComDayData = await getLivepeerComUsageData();
     let livepeerComOneWeekData = await getLivepeerComUsageData({
       fromTime: +new Date(2020, 0),
-      toTime: oneWeekAgo.getTime(),
+      toTime: utcOneWeekBack * 1000, // Livepeer.com api uses milliseconds
     });
     let livepeerComTwoWeekData = await getLivepeerComUsageData({
       fromTime: +new Date(2020, 0),
-      toTime: twoWeeksAgo.getTime(),
+      toTime: utcTwoWeeksBack * 1000, // Livepeer.com api uses milliseconds
     });
 
     // merge in Livepeer.com usage data
@@ -263,28 +228,31 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       const found = livepeerComDayData.find(
         (element) => item.date == element.date
       );
+
+      const feeDerivedMinutes =
+        +item.volumeUSD / averagePricePerPixel / pixelsPerMinute || 0;
+
       // combine Livepeer.com minutes with minutes calculated via fee volume
       const minutes =
-        (found?.sourceSegmentsDuration ?? 0) / 60 +
-        +item.volumeUSD / averagePrice / pixelsPerMinute;
+        (found?.transcodedSegmentsDuration ?? 0) / 60 + feeDerivedMinutes;
       return { ...item, ...found, minutes };
     });
 
     // get total Livepeer.com aggregate usage
     let totalLivepeerComUsage = livepeerComDayData.reduce((x, y) => {
-      return x + y.sourceSegmentsDuration / 60;
+      return x + y.transcodedSegmentsDuration / 60;
     }, 0);
 
     let totalLivepeerComUsageOneWeekAgo = livepeerComOneWeekData.reduce(
       (x, y) => {
-        return x + y.sourceSegmentsDuration / 60;
+        return x + y.transcodedSegmentsDuration / 60;
       },
       0
     );
 
     let totalLivepeerComUsageTwoWeeksAgo = livepeerComTwoWeekData.reduce(
       (x, y) => {
-        return x + y.sourceSegmentsDuration / 60;
+        return x + y.transcodedSegmentsDuration / 60;
       },
       0
     );
@@ -292,9 +260,10 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     // fetch the historical data
     let protocolDataResult = await getProtocolData();
     data.totalVolumeUSD = +protocolDataResult.data.protocol.totalVolumeUSD;
+    data.totalVolumeETH = +protocolDataResult.data.protocol.totalVolumeETH;
     data.totalUsage =
       +protocolDataResult.data.protocol.totalVolumeUSD /
-        averagePrice /
+        averagePricePerPixel /
         pixelsPerMinute +
       totalLivepeerComUsage;
     data.participationRate = +protocolDataResult.data.protocol
@@ -312,13 +281,13 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let twoWeekResult = await getProtocolDataByBlock(twoWeekBlock);
     const twoWeekData = twoWeekResult.data.protocol;
     if (data && dayData && oneDayData && twoDayData && twoWeekData) {
-      const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
+      const [oneDayVolumeUSD, volumeChange] = get2DayPercentChange(
         data.totalVolumeUSD,
         oneDayData.totalVolumeUSD ? oneDayData.totalVolumeUSD : 0,
         twoDayData.totalVolumeUSD ? twoDayData.totalVolumeUSD : 0
       );
 
-      const [oneWeekVolume, weeklyVolumeChange] = get2DayPercentChange(
+      const [oneWeekVolumeUSD, weeklyVolumeChangeUSD] = get2DayPercentChange(
         data.totalVolumeUSD,
         oneWeekData.totalVolumeUSD,
         twoWeekData.totalVolumeUSD
@@ -326,11 +295,11 @@ export async function getChartData(_obj, _args, _ctx, _info) {
 
       const [oneWeekUsage, weeklyUsageChange] = get2DayPercentChange(
         totalLivepeerComUsage +
-          data.totalVolumeUSD / averagePrice / pixelsPerMinute,
+          data.totalVolumeUSD / averagePricePerPixel / pixelsPerMinute,
         totalLivepeerComUsageOneWeekAgo +
-          oneWeekData.totalVolumeUSD / averagePrice / pixelsPerMinute,
+          oneWeekData.totalVolumeUSD / averagePricePerPixel / pixelsPerMinute,
         totalLivepeerComUsageTwoWeeksAgo +
-          twoWeekData.totalVolumeUSD / averagePrice / pixelsPerMinute
+          twoWeekData.totalVolumeUSD / averagePricePerPixel / pixelsPerMinute
       );
 
       // format the total participation change
@@ -366,12 +335,13 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       data.dayData = [...dayData].reverse();
       data.weeklyData = weeklyData;
       data.oneDayVolumeUSD = oneDayVolumeUSD;
-      data.oneWeekVolume = oneWeekVolume;
+      data.oneWeekVolumeUSD = oneWeekVolumeUSD;
       data.oneWeekUsage =
-        oneWeekVolume / averagePrice / pixelsPerMinute + oneWeekUsage;
+        oneWeekVolumeUSD / averagePricePerPixel / pixelsPerMinute +
+        oneWeekUsage;
       data.weeklyUsageChange = weeklyUsageChange;
-      data.weeklyVolumeChange = weeklyVolumeChange;
-      data.volumeChangeUSD = volumeChangeUSD;
+      data.weeklyVolumeChangeUSD = weeklyVolumeChangeUSD;
+      data.volumeChange = volumeChange;
       data.participationRateChange = participationRateChange;
     }
   } catch (e) {

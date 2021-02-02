@@ -61,12 +61,12 @@ const GlobalChart = ({ display, title, field, unit = "" }) => {
             base={
               unit === "minutes"
                 ? data.chartData.oneWeekUsage
-                : data.chartData.oneWeekVolume
+                : data.chartData.oneWeekVolumeUSD
             }
             baseChange={
               unit === "minutes"
                 ? data.chartData.weeklyUsageChange
-                : data.chartData.weeklyVolumeChange
+                : data.chartData.weeklyVolumeChangeUSD
             }
             title={title}
             unit={unit}
