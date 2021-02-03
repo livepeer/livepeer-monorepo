@@ -111,9 +111,12 @@ const Home = () => {
             sx={{
               mb: 5,
               boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
+              ".flickity": {
+                maxHeight: 350,
+              },
             }}>
             <Flickity
-              className={"carousel"}
+              className={"flickity"}
               elementType={"div"}
               options={flickityOptions}
               disableImagesLoaded={true} // default false
