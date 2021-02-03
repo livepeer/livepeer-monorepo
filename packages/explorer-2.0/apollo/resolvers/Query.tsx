@@ -294,7 +294,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       twoWeekData.totalVolumeUSD
     );
 
-    let [oneWeekVolumeETH, _weeklyVolumeChangeETH] = get2DayPercentChange(
+    let [oneWeekVolumeETH] = get2DayPercentChange(
       data.totalVolumeETH,
       oneWeekData.totalVolumeETH,
       twoWeekData.totalVolumeETH
