@@ -240,25 +240,25 @@ export async function getChartData(_obj, _args, _ctx, _info) {
 
       // combine Livepeer.com minutes with minutes calculated via fee volume
       let minutes =
-        (found?.transcodedSegmentsDuration ?? 0) / 60 + feeDerivedMinutes;
+        (found?.sourceSegmentsDuration ?? 0) / 60 + feeDerivedMinutes;
       return { ...item, ...found, minutes };
     });
 
     // get total Livepeer.com aggregate usage
     let totalLivepeerComUsage = livepeerComDayData.reduce((x, y) => {
-      return x + y.transcodedSegmentsDuration / 60;
+      return x + y.sourceSegmentsDuration / 60;
     }, 0);
 
     let totalLivepeerComUsageOneWeekAgo = livepeerComOneWeekData.reduce(
       (x, y) => {
-        return x + y.transcodedSegmentsDuration / 60;
+        return x + y.sourceSegmentsDuration / 60;
       },
       0
     );
 
     let totalLivepeerComUsageTwoWeeksAgo = livepeerComTwoWeekData.reduce(
       (x, y) => {
-        return x + y.transcodedSegmentsDuration / 60;
+        return x + y.sourceSegmentsDuration / 60;
       },
       0
     );
