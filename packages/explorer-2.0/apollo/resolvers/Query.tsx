@@ -6,6 +6,7 @@ import {
   getBlocksFromTimestamps,
   getLivepeerComUsageData,
   getPercentChange,
+  getTotalFeeDerivedMinutes,
 } from "../../lib/utils";
 import dayDataQuery from "../../queries/days.gql";
 import protocolDataByBlockQuery from "../../queries/protocolDataByBlock.gql";
@@ -297,18 +298,28 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       twoWeekData.totalVolumeETH
     );
 
-    let getTotalFeeDerivedMinutes = (data) => {
-      let ethDaiRate = +data.totalVolumeETH / +data.totalVolumeUSD;
-      let usdAveragePricePerPixel = averagePricePerPixel / ethDaiRate;
-      let feeDerivedMinutes =
-        +data.volumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
-      return feeDerivedMinutes;
-    };
-
     let [oneWeekUsage, weeklyUsageChange] = get2DayPercentChange(
-      totalLivepeerComUsage + getTotalFeeDerivedMinutes(data),
-      totalLivepeerComUsageOneWeekAgo + getTotalFeeDerivedMinutes(oneWeekData),
-      totalLivepeerComUsageTwoWeeksAgo + getTotalFeeDerivedMinutes(twoWeekData)
+      totalLivepeerComUsage +
+        getTotalFeeDerivedMinutes({
+          totalVolumeETH: +data.totalVolumeETH,
+          totalVolumeUSD: +data.totalVolumeUSD,
+          averagePricePerPixel,
+          pixelsPerMinute,
+        }),
+      totalLivepeerComUsageOneWeekAgo +
+        getTotalFeeDerivedMinutes({
+          totalVolumeETH: +oneWeekData.totalVolumeETH,
+          totalVolumeUSD: +oneWeekData.totalVolumeUSD,
+          averagePricePerPixel,
+          pixelsPerMinute,
+        }),
+      totalLivepeerComUsageTwoWeeksAgo +
+        getTotalFeeDerivedMinutes({
+          totalVolumeETH: +twoWeekData.totalVolumeETH,
+          totalVolumeUSD: +twoWeekData.totalVolumeUSD,
+          averagePricePerPixel,
+          pixelsPerMinute,
+        })
     );
 
     // format the total participation change

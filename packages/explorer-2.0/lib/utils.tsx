@@ -602,3 +602,16 @@ export const getLivepeerComUsageData = async (
     console.log(e);
   }
 };
+
+export const getTotalFeeDerivedMinutes = ({
+  totalVolumeETH,
+  totalVolumeUSD,
+  averagePricePerPixel,
+  pixelsPerMinute,
+}) => {
+  let ethDaiRate = totalVolumeETH / totalVolumeUSD;
+  let usdAveragePricePerPixel = averagePricePerPixel / ethDaiRate;
+  let feeDerivedMinutes =
+    totalVolumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
+  return feeDerivedMinutes;
+};
