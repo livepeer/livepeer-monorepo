@@ -154,7 +154,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     participationRate: 0,
   };
 
-  const averagePricePerPixel = 0.000000000000006; // (6000 wei)
+  const pricePerPixel = 0.000000000000006; // (6000 wei)
   // the # of pixels in a minute of 240p30fps, 360p30fps, 480p30fps, 720p30fps transcoded renditions.
   // (width * height * framerate * seconds in a minute)
   const pixelsPerMinute = 2995488000;
@@ -231,10 +231,12 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         (element) => item.date == element.date
       );
 
-      let ethDaiRate = +item.volumeETH / +item.volumeUSD;
-      let usdAveragePricePerPixel = averagePricePerPixel / ethDaiRate;
-      let feeDerivedMinutes =
-        +item.volumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
+      let feeDerivedMinutes = getTotalFeeDerivedMinutes({
+        pricePerPixel,
+        totalVolumeETH: +item.volumeETH,
+        totalVolumeUSD: +item.volumeUSD,
+        pixelsPerMinute,
+      });
 
       // combine Livepeer.com minutes with minutes calculated via fee volume
       let minutes =
@@ -303,21 +305,21 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         getTotalFeeDerivedMinutes({
           totalVolumeETH: +data.totalVolumeETH,
           totalVolumeUSD: +data.totalVolumeUSD,
-          averagePricePerPixel,
+          pricePerPixel,
           pixelsPerMinute,
         }),
       totalLivepeerComUsageOneWeekAgo +
         getTotalFeeDerivedMinutes({
           totalVolumeETH: +oneWeekData.totalVolumeETH,
           totalVolumeUSD: +oneWeekData.totalVolumeUSD,
-          averagePricePerPixel,
+          pricePerPixel,
           pixelsPerMinute,
         }),
       totalLivepeerComUsageTwoWeeksAgo +
         getTotalFeeDerivedMinutes({
           totalVolumeETH: +twoWeekData.totalVolumeETH,
           totalVolumeUSD: +twoWeekData.totalVolumeUSD,
-          averagePricePerPixel,
+          pricePerPixel,
           pixelsPerMinute,
         })
     );

@@ -606,11 +606,11 @@ export const getLivepeerComUsageData = async (
 export const getTotalFeeDerivedMinutes = ({
   totalVolumeETH,
   totalVolumeUSD,
-  averagePricePerPixel,
+  pricePerPixel,
   pixelsPerMinute,
 }) => {
   let ethDaiRate = totalVolumeETH / totalVolumeUSD;
-  let usdAveragePricePerPixel = averagePricePerPixel / ethDaiRate;
+  let usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
   let feeDerivedMinutes =
     totalVolumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
   return feeDerivedMinutes;
