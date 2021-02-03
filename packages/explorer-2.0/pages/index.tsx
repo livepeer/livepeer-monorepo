@@ -111,9 +111,6 @@ const Home = () => {
             sx={{
               mb: 5,
               boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
-              ".flickity": {
-                maxHeight: 350,
-              },
             }}>
             <Flickity
               className={"flickity"}
@@ -125,17 +122,17 @@ const Home = () => {
               <Panel>
                 <GlobalChart
                   display="volume"
-                  title="Fee Volume (7d)"
-                  field="weeklyVolumeUSD"
-                  unit="usd"
+                  title="Estimated Usage (7d)"
+                  field="weeklyUsageMinutes"
+                  unit="minutes"
                 />
               </Panel>
               <Panel>
                 <GlobalChart
                   display="volume"
-                  title="Estimated Usage (7d)"
-                  field="weeklyUsageMinutes"
-                  unit="minutes"
+                  title="Fee Volume (7d)"
+                  field="weeklyVolumeUSD"
+                  unit="usd"
                 />
               </Panel>
               <Panel>
