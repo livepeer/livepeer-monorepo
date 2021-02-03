@@ -2,6 +2,7 @@ query {
   protocol(id: 0) {
     id
     totalVolumeUSD
+    totalVolumeETH
     participationRate
   }
 }

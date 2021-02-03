@@ -305,7 +305,6 @@ const PerformanceTable = ({
                     height: 64,
                   }}>
                   {row.cells.map((cell, i) => {
-                    console.log(row.cells.length);
                     switch (cell.column.Header) {
                       case "#":
                         return (

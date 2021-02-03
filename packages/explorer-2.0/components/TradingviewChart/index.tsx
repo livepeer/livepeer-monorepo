@@ -24,6 +24,7 @@ const TradingViewChart = ({
   width,
   useWeekly = false,
   mode = "Normal",
+  unit,
 }) => {
   // reference for DOM element to create with chart
   const ref: any = useRef();
@@ -54,7 +55,7 @@ const TradingViewChart = ({
       `<div style="font-size: 22px; margin: 4px 0px; color: #fff">` +
       (type === CHART_TYPES.AREA
         ? `${(parseFloat(base) * 100).toFixed(2)}%`
-        : formattedNum(base, true)) +
+        : formattedNum(base, unit)) +
       `<span style="margin-left: 10px; font-size: 16px; color: ${color};">${formattedPercentChange}</span>` +
       "</div>";
   };
@@ -111,9 +112,13 @@ const TradingViewChart = ({
           priceFormatter: (val) => {
             if (type === CHART_TYPES.AREA) {
               return `${val.toFixed(2)}%`;
-            } else {
-              return formattedNum(val, true).toString().replace(/\.00$/, "");
             }
+            if (unit === "minutes") {
+              return Math.round(val)
+                .toLocaleString("en-US")
+                .replace(/\.00$/, "");
+            }
+            return formattedNum(val, unit).toString().replace(/\.00$/, "");
           },
         },
       });
@@ -193,7 +198,7 @@ const TradingViewChart = ({
             `<div style="font-size: 22px; margin: 4px 0px; color: #fff;">` +
             (type === CHART_TYPES.AREA
               ? val.toFixed(2) + "%"
-              : formattedNum(val, true)) +
+              : formattedNum(val, unit)) +
             "</div>" +
             "<div>" +
             dateStr +

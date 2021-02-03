@@ -23,8 +23,9 @@ import Modal from "../components/Modal";
 import TxSummaryDialog from "../components/TxSummaryDialog";
 import gql from "graphql-tag";
 import GET_SUBMITTED_TXS from "../queries/transactions.gql";
-import { FiArrowUpRight, FiX } from "react-icons/fi";
+import { FiArrowRight, FiX } from "react-icons/fi";
 import { MdTrendingUp } from "react-icons/md";
+import Link from "next/link";
 
 if (process.env.NODE_ENV === "production") {
   ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID);
@@ -41,7 +42,7 @@ type DrawerItem = {
 };
 
 // increment this value when updating the banner
-const uniqueBannerID = 1;
+const uniqueBannerID = 2;
 
 const Layout = ({
   children,
@@ -252,22 +253,21 @@ const Layout = ({
                   borderRight: "1px solid",
                   borderColor: "border",
                 }}>
-                <span sx={{ fontWeight: "600" }}>New:</span>{" "}
-                <span>An Orchestrator Performance Leaderboard</span>
+                <span sx={{ fontWeight: "600" }}>What's New:</span>{" "}
+                <span>Showcasing Network Usage</span>
               </span>
-              <a
-                href="https://medium.com/livepeer-blog/showcasing-and-rewarding-orchestrator-performance-286c13d33653"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  minWidth: 94,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  color: "primary",
-                }}>
-                Read more <FiArrowUpRight sx={{ ml: 1 }} />
-              </a>
+              <Link href="/whats-new">
+                <a
+                  sx={{
+                    minWidth: 94,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    color: "primary",
+                  }}>
+                  Read more <FiArrowRight sx={{ ml: 1 }} />
+                </a>
+              </Link>
 
               <FiX
                 onClick={() => {

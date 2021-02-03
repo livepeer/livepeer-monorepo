@@ -1,3 +1,6 @@
+import "../css/flickity.css";
+import "react-circular-progressbar/dist/styles.css";
+import "@reach/dialog/styles.css";
 import Head from "next/head";
 import { ThemeProvider } from "theme-ui";
 import theme from "../lib/theme";
@@ -5,8 +8,6 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { ethers } from "ethers";
 import { CookiesProvider } from "react-cookie";
 import Web3ReactManager from "../components/Web3ReactManager";
-import "react-circular-progressbar/dist/styles.css";
-import "@reach/dialog/styles.css";
 import Layout from "../layouts/main";
 import { withApollo } from "../apollo";
 import { NextPage } from "next";

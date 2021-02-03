@@ -67,7 +67,7 @@ export const getDelegatorStatus = (
 export const MAXIUMUM_VALUE_UINT256 =
   "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
-export function removeURLParameter(url, parameter) {
+export const removeURLParameter = (url, parameter) => {
   //prefer to use l.search if you have a location/link object
   var urlparts = url.split("?");
   if (urlparts.length >= 2) {
@@ -85,7 +85,7 @@ export function removeURLParameter(url, parameter) {
     return urlparts[0] + (pars.length > 0 ? "?" + pars.join("&") : "");
   }
   return url;
-}
+};
 
 export const nl2br = (str, is_xhtml = true) => {
   if (typeof str === "undefined" || str === null) {
@@ -422,14 +422,14 @@ export const simulateNewActiveSetOrder = ({
   return transcoders.sort((a, b) => +a.totalStake - +b.totalStake);
 };
 
-export function isAddress(address) {
+export const isAddress = (address) => {
   try {
     ethers.utils.getAddress(address);
   } catch (e) {
     return false;
   }
   return true;
-}
+};
 
 export const priceFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -441,34 +441,51 @@ export const toK = (num) => {
   return Numeral(num).format("0.[00]a");
 };
 
-export const formattedNum = (number, usd = false, acceptNegatives = false) => {
+export const formattedNum = (number, unit = "usd", acceptNegatives = false) => {
   if (isNaN(number) || number === "" || number === undefined) {
-    return usd ? "$0" : 0;
+    return unit === "usd" ? "$0" : 0;
   }
   let num = parseFloat(number);
 
   if (num > 500000000) {
-    return (usd ? "$" : "") + toK(num.toFixed(0));
+    return `${
+      (unit === "usd" ? "$" : "") + toK(num.toFixed(0)) + unit === "minutes"
+        ? unit
+        : ""
+    }`;
   }
 
   if (num === 0) {
-    if (usd) {
+    if (unit === "usd") {
       return "$0";
+    }
+    if (unit === "minutes") {
+      return "0 minutes";
     }
     return 0;
   }
 
   if (num < 0.0001 && num > 0) {
-    return usd ? "< $0.0001" : "< 0.0001";
+    if (unit === "usd") {
+      return "< $0.0001";
+    }
+    if (unit === "minutes") {
+      return "< 0.0001 minutes";
+    }
+    return "< 0.0001";
   }
 
   if (num > 1000) {
-    return usd
-      ? "$" + Number(num.toFixed(0)).toLocaleString()
-      : "" + Number(num.toFixed(0)).toLocaleString();
+    if (unit === "usd") {
+      return "$" + Number(num.toFixed(0)).toLocaleString();
+    }
+    if (unit === "minutes") {
+      return Number(num.toFixed(0)).toLocaleString() + " minutes";
+    }
+    return Number(num.toFixed(0)).toLocaleString();
   }
 
-  if (usd) {
+  if (unit === "usd") {
     if (num < 0.1) {
       return "$" + Number(num.toFixed(4));
     } else {
@@ -476,24 +493,30 @@ export const formattedNum = (number, usd = false, acceptNegatives = false) => {
       return "$" + usdString.slice(1, usdString.length);
     }
   }
+  if (unit === "minutes") {
+    if (num < 0.1) {
+      return Number(num.toFixed(4)) + " minutes";
+    } else {
+      return Number(num.toFixed(0)) + " minutes";
+    }
+  }
   return Number(num.toFixed(5));
 };
 
 /**
- * gets the amoutn difference plus the % change in change itself (second order change)
+ * gets the amount difference plus the % change in change itself (second order change)
  * @param {*} valueNow
- * @param {*} value24HoursAgo
- * @param {*} value48HoursAgo
+ * @param {*} valueAsOfPeriodOne
+ * @param {*} valueAsOfPeriodTwo
  */
-export const get2DayPercentChange = (
-  valueNow,
-  value24HoursAgo,
-  value48HoursAgo
+export const getTwoPeriodPercentChange = (
+  valueNow: number,
+  valueAsOfPeriodOne: number,
+  valueAsOfPeriodTwo: number
 ) => {
   // get volume info for both 24 hour periods
-  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo);
-  let previousChange =
-    parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo);
+  let currentChange = valueNow - valueAsOfPeriodOne;
+  let previousChange = valueAsOfPeriodOne - valueAsOfPeriodTwo;
 
   const adjustedPercentChange =
     ((currentChange - previousChange) / previousChange) * 100;
@@ -511,7 +534,7 @@ export const get2DayPercentChange = (
  * @dev timestamps are returns as they were provided; not the block time.
  * @param {Array} timestamps
  */
-export async function getBlocksFromTimestamps(timestamps) {
+export const getBlocksFromTimestamps = async (timestamps) => {
   if (timestamps?.length === 0) {
     return [];
   }
@@ -529,7 +552,7 @@ export async function getBlocksFromTimestamps(timestamps) {
   }
 
   return blocks;
-}
+};
 
 /**
  * get standard percent change between two values
@@ -545,4 +568,49 @@ export const getPercentChange = (valueNow, value24HoursAgo) => {
     return 0;
   }
   return adjustedPercentChange;
+};
+
+type LivepeerComUsageParams = {
+  fromTime: number;
+  toTime: number;
+};
+
+export const getLivepeerComUsageData = async (
+  params?: LivepeerComUsageParams
+) => {
+  try {
+    let endpoint = `https://livepeer.com/api/usage${
+      params ? `?fromTime=${params.fromTime}&toTime=${params.toTime}` : ""
+    }`;
+
+    const livepeerComUsageDataReponse = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.LIVEPEER_COM_API_ADMIN_TOKEN}`,
+      },
+    });
+
+    const livepeerComUsageData = await livepeerComUsageDataReponse.json();
+
+    // convert date format from milliseconds to seconds before merging
+    return livepeerComUsageData.map((day) => ({
+      ...day,
+      date: day.date / 1000,
+    }));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getTotalFeeDerivedMinutes = ({
+  totalVolumeETH,
+  totalVolumeUSD,
+  pricePerPixel,
+  pixelsPerMinute,
+}): number => {
+  let ethDaiRate = totalVolumeETH / totalVolumeUSD;
+  let usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
+  let feeDerivedMinutes =
+    totalVolumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
+  return feeDerivedMinutes;
 };

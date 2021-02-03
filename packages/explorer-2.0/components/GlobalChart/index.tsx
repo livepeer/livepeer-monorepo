@@ -4,7 +4,7 @@ import TradingviewChart, { CHART_TYPES } from "../TradingviewChart";
 import { gql, useQuery } from "@apollo/client";
 import Spinner from "../Spinner";
 
-const GlobalChart = ({ display }) => {
+const GlobalChart = ({ display, title, field, unit = "" }) => {
   const { data } = useQuery(
     gql`
       {
@@ -35,14 +35,15 @@ const GlobalChart = ({ display }) => {
 
   return (
     <>
-      {display === "participation" && (
+      {display === "area" && (
         <ResponsiveContainer aspect={60 / 28} ref={ref}>
           <TradingviewChart
             data={data.chartData.dayData}
             base={data.chartData.participationRate}
             baseChange={data.chartData.participationRateChange}
-            title="Participation"
-            field="participationRate"
+            title={title}
+            unit={unit}
+            field={field}
             width={width}
             type={CHART_TYPES.AREA}
           />
@@ -57,10 +58,19 @@ const GlobalChart = ({ display }) => {
             data={data.chartData.weeklyData.filter(
               (obj) => obj.date > 1585699200
             )}
-            base={data.chartData.oneWeekVolume}
-            baseChange={data.chartData.weeklyVolumeChange}
-            title="Fee Volume (7d)"
-            field="weeklyVolumeUSD"
+            base={
+              unit === "minutes"
+                ? data.chartData.oneWeekUsage
+                : data.chartData.oneWeekVolumeUSD
+            }
+            baseChange={
+              unit === "minutes"
+                ? data.chartData.weeklyUsageChange
+                : data.chartData.weeklyVolumeChangeUSD
+            }
+            title={title}
+            unit={unit}
+            field={field}
             width={width}
             type={CHART_TYPES.BAR}
             useWeekly={true}
