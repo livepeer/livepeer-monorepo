@@ -1,8 +1,15 @@
 /*! Flickity v2.1.2
 https://flickity.metafizzy.co
 ---------------------------------------------- */
+.flickity {
+  max-height: 350px;
+  overflow: hidden;
+  visibility: hidden;
+}
+
 .flickity-enabled {
   position: relative;
+  visibility: visible;
 }
 
 .flickity-enabled:focus {
@@ -17,7 +24,6 @@ https://flickity.metafizzy.co
 
 .flickity-slider {
   display: flex;
-  position: absolute;
   width: 100%;
   height: 100%;
 }
