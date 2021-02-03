@@ -259,7 +259,6 @@ export async function withdrawStake(_obj, _args, _ctx) {
 
   const txHash = await _ctx.livepeer.rpc.withdrawStake(unbondingLockId, {
     ..._ctx.livepeer.config.defaultTx,
-    gas,
     returnTxHash: true,
   });
 
