@@ -506,18 +506,17 @@ export const formattedNum = (number, unit = "usd", acceptNegatives = false) => {
 /**
  * gets the amount difference plus the % change in change itself (second order change)
  * @param {*} valueNow
- * @param {*} value24HoursAgo
- * @param {*} value48HoursAgo
+ * @param {*} valueAsOfPeriodOne
+ * @param {*} valueAsOfPeriodTwo
  */
-export const get2DayPercentChange = (
-  valueNow,
-  value24HoursAgo,
-  value48HoursAgo
+export const getTwoPeriodPercentChange = (
+  valueNow: number,
+  valueAsOfPeriodOne: number,
+  valueAsOfPeriodTwo: number
 ) => {
   // get volume info for both 24 hour periods
-  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo);
-  let previousChange =
-    parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo);
+  let currentChange = valueNow - valueAsOfPeriodOne;
+  let previousChange = valueAsOfPeriodOne - valueAsOfPeriodTwo;
 
   const adjustedPercentChange =
     ((currentChange - previousChange) / previousChange) * 100;
@@ -608,7 +607,7 @@ export const getTotalFeeDerivedMinutes = ({
   totalVolumeUSD,
   pricePerPixel,
   pixelsPerMinute,
-}) => {
+}): number => {
   let ethDaiRate = totalVolumeETH / totalVolumeUSD;
   let usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
   let feeDerivedMinutes =

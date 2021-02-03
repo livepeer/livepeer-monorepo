@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import utc from "dayjs/plugin/utc";
 import {
-  get2DayPercentChange,
+  getTwoPeriodPercentChange,
   getBlocksFromTimestamps,
   getLivepeerComUsageData,
   getPercentChange,
@@ -225,6 +225,10 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       toTime: utcTwoWeeksBack * 1000, // Livepeer.com api uses milliseconds
     });
 
+    let totalFeeDerivedMinutes = 0;
+    let totalFeeDerivedMinutesOneWeekAgo = 0;
+    let totalFeeDerivedMinutesTwoWeeksAgo = 0;
+
     // merge in Livepeer.com usage data
     dayData = dayData.map((item) => {
       let found = livepeerComDayData.find(
@@ -237,6 +241,15 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         totalVolumeUSD: +item.volumeUSD,
         pixelsPerMinute,
       });
+
+      totalFeeDerivedMinutes += feeDerivedMinutes;
+
+      if (item.date < utcOneWeekBack) {
+        totalFeeDerivedMinutesOneWeekAgo += feeDerivedMinutes;
+      }
+      if (item.date < utcTwoWeeksBack) {
+        totalFeeDerivedMinutesTwoWeeksAgo += feeDerivedMinutes;
+      }
 
       // combine Livepeer.com minutes with minutes calculated via fee volume
       let minutes =
@@ -282,46 +295,28 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let twoWeekResult = await getProtocolDataByBlock(twoWeekBlock);
     let twoWeekData = twoWeekResult.data.protocol;
 
-    let [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
-      data.totalVolumeUSD,
-      oneDayData.totalVolumeUSD ? oneDayData.totalVolumeUSD : 0,
-      twoDayData.totalVolumeUSD ? twoDayData.totalVolumeUSD : 0
+    let [oneDayVolumeUSD, volumeChangeUSD] = getTwoPeriodPercentChange(
+      +data.totalVolumeUSD,
+      +oneDayData.totalVolumeUSD,
+      +twoDayData.totalVolumeUSD
     );
 
-    let [oneWeekVolumeUSD, weeklyVolumeChangeUSD] = get2DayPercentChange(
-      data.totalVolumeUSD,
-      oneWeekData.totalVolumeUSD,
-      twoWeekData.totalVolumeUSD
+    let [oneWeekVolumeUSD, weeklyVolumeChangeUSD] = getTwoPeriodPercentChange(
+      +data.totalVolumeUSD,
+      +oneWeekData.totalVolumeUSD,
+      +twoWeekData.totalVolumeUSD
     );
 
-    let [oneWeekVolumeETH] = get2DayPercentChange(
-      data.totalVolumeETH,
-      oneWeekData.totalVolumeETH,
-      twoWeekData.totalVolumeETH
+    let [oneWeekVolumeETH] = getTwoPeriodPercentChange(
+      +data.totalVolumeETH,
+      +oneWeekData.totalVolumeETH,
+      +twoWeekData.totalVolumeETH
     );
 
-    let [oneWeekUsage, weeklyUsageChange] = get2DayPercentChange(
-      totalLivepeerComUsage +
-        getTotalFeeDerivedMinutes({
-          totalVolumeETH: +data.totalVolumeETH,
-          totalVolumeUSD: +data.totalVolumeUSD,
-          pricePerPixel,
-          pixelsPerMinute,
-        }),
-      totalLivepeerComUsageOneWeekAgo +
-        getTotalFeeDerivedMinutes({
-          totalVolumeETH: +oneWeekData.totalVolumeETH,
-          totalVolumeUSD: +oneWeekData.totalVolumeUSD,
-          pricePerPixel,
-          pixelsPerMinute,
-        }),
-      totalLivepeerComUsageTwoWeeksAgo +
-        getTotalFeeDerivedMinutes({
-          totalVolumeETH: +twoWeekData.totalVolumeETH,
-          totalVolumeUSD: +twoWeekData.totalVolumeUSD,
-          pricePerPixel,
-          pixelsPerMinute,
-        })
+    let [oneWeekUsage, weeklyUsageChange] = getTwoPeriodPercentChange(
+      totalLivepeerComUsage + totalFeeDerivedMinutes,
+      totalLivepeerComUsageOneWeekAgo + totalFeeDerivedMinutesOneWeekAgo,
+      totalLivepeerComUsageTwoWeeksAgo + totalFeeDerivedMinutesTwoWeeksAgo
     );
 
     // format the total participation change
