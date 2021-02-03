@@ -19,15 +19,6 @@ export default function createApolloClient(
   // The `ctx` (NextPageContext) will only be present on the server.
   // use it to extract auth headers (ctx.req) or similar.
 
-  const dataIdFromObject = (object) => {
-    switch (object.__typename) {
-      case "ThreeBoxSpace":
-        return object.id; // use the `id` field as the identifier
-      default:
-        return defaultDataIdFromObject(object); // fall back to default handling
-    }
-  };
-
   let cache = new InMemoryCache().restore(
     (initialState || {}) as NormalizedCacheObject
   );
