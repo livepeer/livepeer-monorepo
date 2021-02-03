@@ -19,15 +19,6 @@ export default function createApolloClient(
   // The `ctx` (NextPageContext) will only be present on the server.
   // use it to extract auth headers (ctx.req) or similar.
 
-  const dataIdFromObject = (object) => {
-    switch (object.__typename) {
-      case "ThreeBoxSpace":
-        return object.id; // use the `id` field as the identifier
-      default:
-        return defaultDataIdFromObject(object); // fall back to default handling
-    }
-  };
-
   let cache = new InMemoryCache().restore(
     (initialState || {}) as NormalizedCacheObject
   );
@@ -41,6 +32,11 @@ export default function createApolloClient(
         uniswapModalOpen
         roundStatusModalOpen
         txSummaryModal {
+          __typename
+          open
+          error
+        }
+        txConfirmationModal {
           __typename
           open
           error
@@ -62,6 +58,11 @@ export default function createApolloClient(
         open: false,
         error: false,
       },
+      txConfirmationModal: {
+        __typename: "TxConfirmationModal",
+        open: false,
+        error: false,
+      },
       txs: [],
       tourOpen: false,
       roi: 0.0,
@@ -69,22 +70,21 @@ export default function createApolloClient(
     },
   });
 
-  const link: any = new ApolloLink((operation) => {
+  const link = new ApolloLink((operation) => {
     return new Observable((observer) => {
       Promise.resolve(createSchema())
         .then(async (data) => {
-          const context = operation.getContext();
-          const sdk = await LivepeerSDK({
-            provider:
-              process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
-                ? process.env.NEXT_PUBLIC_RPC_URL_4
-                : process.env.NEXT_PUBLIC_RPC_URL_1,
+          let context = operation.getContext();
+          let provider = context?.library?._web3Provider
+            ? context.library._web3Provider
+            : process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
+            ? process.env.NEXT_PUBLIC_RPC_URL_4
+            : process.env.NEXT_PUBLIC_RPC_URL_1;
+          let sdk = await LivepeerSDK({
             controllerAddress: process.env.NEXT_PUBLIC_CONTROLLER_ADDRESS,
             pollCreatorAddress: process.env.NEXT_PUBLIC_POLL_CREATOR_ADDRESS,
-            ...(context.library && {
-              provider: context.library._web3Provider,
-            }),
-            ...(context.account && { account: context.account }),
+            provider,
+            account: context?.account,
           });
 
           return execute(

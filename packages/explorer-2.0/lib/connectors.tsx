@@ -3,6 +3,7 @@ import { PortisConnector } from "@web3-react/portis-connector";
 import { NetworkConnector } from "@web3-react/network-connector";
 import { FortmaticConnector } from "@web3-react/fortmatic-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
+import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
 const RPC_URLS: { [chainId: number]: string } = {
   1: process.env.NEXT_PUBLIC_RPC_URL_1 as string,
@@ -31,8 +32,15 @@ export const Fortmatic = new FortmaticConnector({
 });
 
 // mainnet only
-export const walletlink = new WalletLinkConnector({
+export const walletLink = new WalletLinkConnector({
   url: RPC_URLS[1],
   appName: "Livepeer Explorer",
   appLogoUrl: "https://explorer.livepeer.org/img/logo-icon.svg",
+});
+
+export const walletConnect = new WalletConnectConnector({
+  rpc: { 1: RPC_URLS[1] },
+  bridge: "https://bridge.walletconnect.org",
+  qrcode: true,
+  pollingInterval: 15000,
 });

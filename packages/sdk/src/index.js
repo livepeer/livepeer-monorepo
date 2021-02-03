@@ -45,7 +45,6 @@ export const DEFAULTS = {
   provider: process.env.INFURA_ENDPOINT,
   privateKeys: {}, // { [publicKey: string]: privateKey }
   account: "",
-  gas: null,
   artifacts: {
     LivepeerToken: LivepeerTokenArtifact,
     LivepeerTokenFaucet: LivepeerTokenFaucetArtifact,
@@ -306,11 +305,10 @@ export function getContractAt(
 export async function initRPC({
   account,
   privateKeys,
-  gas,
   provider,
 }): Promise<{
   eth: Eth,
-  defaultTx: { from: string, gas: number },
+  defaultTx: { from: string },
 }> {
   const usePrivateKeys = 0 < Object.keys(privateKeys).length;
   const ethjsProvider =
@@ -340,9 +338,10 @@ export async function initRPC({
   const from =
     // select account by address or index
     // default to EMPTY_ADDRESS (read-only; cannot transact)
-    new Set(accounts).has(account)
+    accounts.some((a) => a.toLowerCase() === account.toLowerCase())
       ? account
       : accounts[account] || EMPTY_ADDRESS;
+
   return {
     eth,
     ens,
@@ -350,7 +349,6 @@ export async function initRPC({
     accounts,
     defaultTx: {
       from,
-      gas,
     },
   };
 }
@@ -370,14 +368,12 @@ export async function initContracts(
     artifacts = DEFAULTS.artifacts,
     controllerAddress = DEFAULTS.controllerAddress,
     pollCreatorAddress = DEFAULTS.pollCreatorAddress,
-    gas = DEFAULTS.gas,
     privateKeys = DEFAULTS.privateKeys,
     provider = DEFAULTS.provider,
   } = opts;
   // Instanstiate new ethjs instance with specified provider
   const { accounts, defaultTx, ens, eth } = await initRPC({
     account,
-    gas,
     privateKeys,
     provider,
   });

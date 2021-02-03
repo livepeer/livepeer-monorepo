@@ -19,12 +19,16 @@ const Index = ({ account, banner = true }) => {
 
   const onClick = () => {
     initTransaction(client, async () => {
-      await approve({
-        variables: {
-          type: "bond",
-          amount: MAXIUMUM_VALUE_UINT256,
-        },
-      });
+      try {
+        await approve({
+          variables: {
+            type: "bond",
+            amount: MAXIUMUM_VALUE_UINT256,
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
     });
   };
 

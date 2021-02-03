@@ -223,7 +223,7 @@ const Index = () => {
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView connector={pendingWallet} />
           ) : (
-            <Grid columns={[1, 1, 1, 2]} gap={2}>
+            <Grid columns={1} gap={2}>
               {process.browser && getOptions()}
             </Grid>
           )}

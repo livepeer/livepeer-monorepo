@@ -29,7 +29,6 @@ export async function approve(_obj, _args, _ctx) {
         amount,
       ]);
       txHash = await _ctx.livepeer.rpc.approveTokenBondAmount(amount, {
-        gas,
         returnTxHash: true,
       });
       return {
@@ -46,7 +45,6 @@ export async function approve(_obj, _args, _ctx) {
       ]);
 
       txHash = await _ctx.livepeer.rpc.approveTokenPollCreationCost(amount, {
-        gas,
         returnTxHash: true,
       });
       return {
@@ -261,7 +259,6 @@ export async function withdrawStake(_obj, _args, _ctx) {
 
   const txHash = await _ctx.livepeer.rpc.withdrawStake(unbondingLockId, {
     ..._ctx.livepeer.config.defaultTx,
-    gas: gas,
     returnTxHash: true,
   });
 
@@ -370,7 +367,6 @@ export async function initializeRound(_obj, _args, _ctx) {
     []
   );
   const txHash = await _ctx.livepeer.rpc.initializeRound({
-    gas,
     returnTxHash: true,
   });
 
@@ -397,7 +393,6 @@ export async function createPoll(_obj, _args, _ctx) {
 
   const txHash = await _ctx.livepeer.rpc.createPoll(Utils.fromAscii(proposal), {
     ..._ctx.livepeer.config.defaultTx,
-    gas,
     returnTxHash: true,
   });
 
@@ -420,7 +415,6 @@ export async function vote(_obj, _args, _ctx) {
   const gas = await _ctx.livepeer.rpc.estimateGas("Poll", "vote", [choiceId]);
   const txHash = await _ctx.livepeer.rpc.vote(pollAddress, choiceId, {
     ..._ctx.livepeer.config.defaultTx,
-    gas,
     returnTxHash: true,
   });
 

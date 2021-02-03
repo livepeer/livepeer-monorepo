@@ -48,7 +48,7 @@ const Layout = ({
   title = "Livepeer Explorer",
   headerTitle = "",
 }) => {
-  const client: any = useApolloClient();
+  const client = useApolloClient();
   const context = useWeb3React();
 
   const { data } = useQuery(
@@ -76,11 +76,13 @@ const Layout = ({
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
+        __typename
         open
         error
       }
     }
   `;
+
   const { data: txSummaryModalData } = useQuery(GET_TX_SUMMARY_MODAL);
 
   useEffect(() => {
@@ -335,7 +337,6 @@ const Layout = ({
               <Flex sx={{ width: "100%" }}>{children}</Flex>
             </Flex>
           </Box>
-
           <TxConfirmedDialog
             isOpen={
               lastTx?.confirmed &&
