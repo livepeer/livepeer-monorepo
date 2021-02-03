@@ -11,7 +11,6 @@ import {
 import createSchema from "../createSchema";
 import LivepeerSDK from "@livepeer/sdk";
 import { execute } from "graphql/execution/execute";
-import Utils from "web3-utils";
 
 export default function createApolloClient(
   initialState: object,
