@@ -347,7 +347,7 @@ export function claimEarnings(call: ClaimEarningsCall): void {
     earningsClaimed.round = round.id;
     earningsClaimed.delegate = delegator.id;
     earningsClaimed.delegator = delegatorAddress.toHex();
-    earningsClaimed.startRound = lastClaimRound.toString();
+    earningsClaimed.startRound = integer.fromString(lastClaimRound);
     earningsClaimed.endRound = endRound.toString();
     earningsClaimed.rewardTokens = convertToDecimal(delegatorData.value0).minus(
       bondedAmount

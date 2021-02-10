@@ -609,7 +609,7 @@ export function earningsClaimed(event: EarningsClaimed): void {
   earningsClaimed.round = round.id;
   earningsClaimed.delegate = event.params.delegate.toHex();
   earningsClaimed.delegator = event.params.delegator.toHex();
-  earningsClaimed.startRound = event.params.startRound.toString();
+  earningsClaimed.startRound = event.params.startRound;
   earningsClaimed.endRound = event.params.endRound.toString();
   earningsClaimed.rewardTokens = convertToDecimal(event.params.rewards);
   earningsClaimed.fees = convertToDecimal(event.params.fees);
