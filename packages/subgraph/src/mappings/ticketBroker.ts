@@ -10,7 +10,6 @@ import { UniswapV1Exchange } from "../types/TicketBroker/UniswapV1Exchange";
 import {
   Transaction,
   Protocol,
-  Transcoder,
   Broadcaster,
   WinningTicketRedeemedEvent,
   ReserveFundedEvent,
