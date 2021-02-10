@@ -1,5 +1,4 @@
 import { Flex } from "theme-ui";
-import Utils from "web3-utils";
 import Card from "../Card";
 import NumberFormat from "react-number-format";
 import { Box } from "theme-ui";
@@ -33,8 +32,7 @@ const Index = ({ delegator, currentRound, isMyAccount }) => {
     }
   }
 
-  const lifetimeEarnings = +delegator.pendingFees + +delegator.withdrawnFees;
-
+  const lifetimeEarnings = delegator.pendingFees + delegator.withdrawnFees;
   const withdrawButtonDisabled = delegator.pendingFees === "0";
 
   return (
