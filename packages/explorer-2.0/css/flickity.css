@@ -140,12 +140,13 @@ https://flickity.metafizzy.co
   width: 10px;
   height: 10px;
   margin: 0 8px;
-  background: #333;
+  background: #6b6b6b;
   border-radius: 50%;
-  opacity: 0.25;
+  opacity: 0.6;
   cursor: pointer;
 }
 
 .flickity-page-dots .dot.is-selected {
   opacity: 1;
+  background: #00eb88;
 }
