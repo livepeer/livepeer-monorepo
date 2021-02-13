@@ -3,6 +3,7 @@ import { Box, Grid } from "@theme-ui/components";
 import CloseIcon from "../../public/img/close.svg";
 import MetaMaskIcon from "../../public/img/metamask.svg";
 import { Dialog } from "@reach/dialog";
+import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { SUPPORTED_WALLETS } from "../../lib/constants";
 import { Injected } from "../../lib/connectors";
 import { isMobile } from "react-device-detect";
@@ -44,6 +45,14 @@ const Index = () => {
 
     setPendingWallet(connector); // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING);
+    // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
+    if (
+      connector instanceof WalletConnectConnector &&
+      connector.walletConnectProvider?.wc?.uri
+    ) {
+      connector.walletConnectProvider = undefined;
+    }
+
     activate(connector, undefined, true);
   };
 

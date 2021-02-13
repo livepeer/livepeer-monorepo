@@ -1,7 +1,7 @@
 import { Box } from "theme-ui";
 import { useWeb3React } from "@web3-react/core";
 import { isMobile } from "react-device-detect";
-import { Injected } from "../../lib/connectors";
+import { Injected, WalletLink } from "../../lib/connectors";
 import CloseIcon from "../../public/img/close.svg";
 import { Flex } from "theme-ui";
 import Button from "../Button";
@@ -59,6 +59,15 @@ const AccountDetails = ({ onClose, openOptions }) => {
           }}>
           <Flex sx={{ mb: 2, justifyContent: "space-between" }}>
             {formatConnectorName()}
+            {connector !== Injected && connector !== WalletLink && (
+              <Button
+                variant="primaryOutlineSmall"
+                onClick={() => {
+                  (connector as any).close();
+                }}>
+                Disconnect
+              </Button>
+            )}
           </Flex>
 
           <a
