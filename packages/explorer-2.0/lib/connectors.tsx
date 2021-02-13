@@ -32,13 +32,13 @@ export const Fortmatic = new FortmaticConnector({
 });
 
 // mainnet only
-export const walletLink = new WalletLinkConnector({
+export const WalletLink = new WalletLinkConnector({
   url: RPC_URLS[1],
   appName: "Livepeer Explorer",
   appLogoUrl: "https://explorer.livepeer.org/img/logo-icon.svg",
 });
 
-export const walletConnect = new WalletConnectConnector({
+export const WalletConnect = new WalletConnectConnector({
   rpc: { 1: RPC_URLS[1] },
   bridge: "https://bridge.walletconnect.org",
   qrcode: true,
