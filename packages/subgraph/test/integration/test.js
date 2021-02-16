@@ -1,4 +1,4 @@
-const { web3, contract, assert, it, before } = require("truffle");
+/* eslint-disable no-undef */
 const { createApolloFetch } = require("apollo-fetch");
 const BN = require("bignumber.js");
 const path = require("path");
