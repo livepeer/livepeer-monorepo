@@ -117,6 +117,7 @@ export function useWeb3Mutation(mutation, options) {
     txPredictionData,
     txPredictionLoading,
   ]);
+
   return {
     mutate,
   };
@@ -215,6 +216,7 @@ export function useMutations() {
   const context = useWeb3React();
   const mutationsObj = {};
   for (const key in mutations) {
+    /* eslint-disable-next-line react-hooks/rules-of-hooks */
     const { mutate } = useWeb3Mutation(mutations[key], {
       context: {
         library: context?.library,
