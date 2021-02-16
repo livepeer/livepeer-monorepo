@@ -1,5 +1,4 @@
 import { gql, useApolloClient } from "@apollo/client";
-import Utils from "web3-utils";
 import useWindowSize from "react-use/lib/useWindowSize";
 
 let hoursPerYear = 8760;

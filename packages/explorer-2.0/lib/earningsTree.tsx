@@ -3,12 +3,12 @@
 const { keccak256, bufferToHex } = require("ethereumjs-util");
 import { utils } from "ethers";
 
-export interface MerkleTree {
+export interface IMerkleTree {
   elements: Array<any>;
   layers: Array<any>;
 }
 
-export class MerkleTree {
+export class MerkleTree implements IMerkleTree {
   constructor(elements) {
     // Filter empty strings and hash elements
     this.elements = elements.filter((el) => el).map((el) => keccak256(el));
@@ -21,6 +21,9 @@ export class MerkleTree {
     // Create layers
     this.layers = this.getLayers(this.elements);
   }
+
+  elements: any[];
+  layers: any[];
 
   getLayers(elements) {
     if (elements.length === 0) {
@@ -142,11 +145,11 @@ export class MerkleTree {
   }
 }
 
-export interface EarningsTree extends MerkleTree {
+export interface IEarningsTree extends MerkleTree {
   leaves: Array<string>;
 }
 
-export class EarningsTree extends MerkleTree {
+export class EarningsTree extends MerkleTree implements IEarningsTree {
   constructor(delegators) {
     let leaves = delegators.map((d) =>
       utils.defaultAbiCoder.encode(
@@ -157,6 +160,8 @@ export class EarningsTree extends MerkleTree {
     super(leaves);
     this.leaves = leaves;
   }
+
+  leaves: string[];
 
   static fromJSON(json: string) {
     let leaves = JSON.parse(json);

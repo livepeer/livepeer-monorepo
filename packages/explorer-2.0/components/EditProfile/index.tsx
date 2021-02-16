@@ -117,7 +117,16 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
         }
       }
     })();
-  }, [debouncedSignature, debouncedEthereumAccount, message]);
+  }, [
+    debouncedSignature,
+    debouncedEthereumAccount,
+    message,
+    context.account,
+    ethereumAccount,
+    signature,
+    threeBoxSpace,
+    timestamp,
+  ]);
 
   reader.onload = function (e) {
     setPreviewImage(e.target.result);

@@ -14,12 +14,11 @@ const Index = ({
 }) => {
   const context = useWeb3React();
   const client = useApolloClient();
+  const { rebondFromUnbonded }: any = useContext(MutationsContext);
 
   if (!context.active) {
     return null;
   }
-
-  const { rebondFromUnbonded }: any = useContext(MutationsContext);
 
   return (
     <>

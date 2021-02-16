@@ -52,7 +52,7 @@ export function newRound(event: NewRound): void {
   let pool: Pool;
 
   // Iterate over all active transcoders
-  while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
+  while (EMPTY_ADDRESS.toHex() !== currentTranscoder.toHex()) {
     // create a unique "pool" for each active transcoder. If a transcoder calls
     // reward() for a given round, we store its reward tokens inside this Pool
     // entry in a field called "rewardTokens". If "rewardTokens" is null for a
@@ -107,14 +107,14 @@ export function newRound(event: NewRound): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let newRound = new NewRoundEvent(
+  let newRoundEvent = new NewRoundEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  newRound.transaction = event.transaction.hash.toHex();
-  newRound.timestamp = event.block.timestamp.toI32();
-  newRound.round = event.params.round.toString();
-  newRound.blockHash = event.params.blockHash.toHexString();
-  newRound.save();
+  newRoundEvent.transaction = event.transaction.hash.toHex();
+  newRoundEvent.timestamp = event.block.timestamp.toI32();
+  newRoundEvent.round = event.params.round.toString();
+  newRoundEvent.blockHash = event.params.blockHash.toHexString();
+  newRoundEvent.save();
 }
 
 export function parameterUpdate(event: ParameterUpdate): void {
@@ -122,12 +122,12 @@ export function parameterUpdate(event: ParameterUpdate): void {
   let protocol = Protocol.load("0");
   let currentRound = roundsManager.currentRound();
 
-  if (event.params.param == "roundLength") {
+  if (event.params.param === "roundLength") {
     let roundLength = roundsManager.roundLength();
     let lastRoundLengthUpdateStartBlock = roundsManager.lastRoundLengthUpdateStartBlock();
     let lastRoundLengthUpdateRound = roundsManager.lastRoundLengthUpdateRound();
 
-    if (protocol.roundLength.toI32() == 0) {
+    if (protocol.roundLength.toI32() === 0) {
       createRound(event.block.number, roundLength, currentRound);
     }
     protocol.roundLength = roundLength;
@@ -136,7 +136,7 @@ export function parameterUpdate(event: ParameterUpdate): void {
     protocol.currentRound = currentRound.toString();
   }
 
-  if (event.params.param == "roundLockAmount") {
+  if (event.params.param === "roundLockAmount") {
     protocol.roundLockAmount = roundsManager.roundLockAmount();
     protocol.lockPeriod = roundsManager
       .roundLength()
@@ -157,12 +157,12 @@ export function parameterUpdate(event: ParameterUpdate): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let parameterUpdate = new ParameterUpdateEvent(
+  let parameterUpdateEvent = new ParameterUpdateEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  parameterUpdate.transaction = event.transaction.hash.toHex();
-  parameterUpdate.timestamp = event.block.timestamp.toI32();
-  parameterUpdate.round = currentRound.toString();
-  parameterUpdate.param = event.params.param;
-  parameterUpdate.save();
+  parameterUpdateEvent.transaction = event.transaction.hash.toHex();
+  parameterUpdateEvent.timestamp = event.block.timestamp.toI32();
+  parameterUpdateEvent.round = currentRound.toString();
+  parameterUpdateEvent.param = event.params.param;
+  parameterUpdateEvent.save();
 }

@@ -7,7 +7,7 @@ export interface TabType {
   isActive?: boolean;
 }
 
-const Index = ({ tabs, variant = "primary", ...props }) => {
+const Index = ({ tabs, ...props }) => {
   return (
     <div
       sx={{

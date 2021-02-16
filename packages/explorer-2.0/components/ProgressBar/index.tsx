@@ -5,11 +5,12 @@ import { useTimeEstimate } from "../../hooks";
 import { txMessages } from "../../lib/utils";
 
 const Index = ({ tx }) => {
+  const { __typename, startTime, estimate, txHash } = tx;
+  const { timeLeft } = useTimeEstimate({ startTime, estimate });
+
   if (!tx) {
     return null;
   }
-  const { __typename, startTime, estimate, txHash } = tx;
-  const { timeLeft } = useTimeEstimate({ startTime, estimate });
 
   return (
     <Box sx={{ position: "relative", px: 3, pb: 2, pt: "18px" }}>

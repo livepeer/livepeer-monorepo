@@ -2,7 +2,6 @@ import { Flex, Box } from "theme-ui";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { abbreviateNumber } from "../../lib/utils";
-import Utils from "web3-utils";
 
 const ProjectionBox = ({ action }) => {
   const GET_ROI = gql`
@@ -32,11 +31,11 @@ const ProjectionBox = ({ action }) => {
               justifyContent: "space-between",
             }}>
             <div sx={{ color: "muted" }}>
-              {action == "stake"
+              {action === "stake"
                 ? "Projected Rewards (1Y)"
                 : "Projected Opportunity Cost (1Y)"}
             </div>
-            {action == "stake" && (
+            {action === "stake" && (
               <div sx={{ fontFamily: "monospace", color: "muted" }}>
                 +
                 {data.principle

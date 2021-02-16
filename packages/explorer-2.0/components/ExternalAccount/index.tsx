@@ -114,7 +114,7 @@ const Index = ({ threeBoxSpace, refetch, children }) => {
                     });
                   }
                 }}>
-                {disconnecting.address == link.address &&
+                {disconnecting.address === link.address &&
                 disconnecting.isDisconnecting
                   ? "Disconnecting..."
                   : "Disconnect"}

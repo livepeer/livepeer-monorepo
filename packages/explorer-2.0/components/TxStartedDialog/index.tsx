@@ -10,13 +10,15 @@ import moment from "moment";
 import { MdOpenInNew } from "react-icons/md";
 
 const Index = ({ tx, isOpen, onDismiss }) => {
-  if (!isOpen) {
-    return null;
-  }
   const { timeLeft } = useTimeEstimate({
     startTime: tx?.startTime,
     estimate: tx?.estimate,
   });
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -143,11 +145,11 @@ function Inputs({ tx }) {
     case "createPoll":
       return null;
     case "withdrawStake":
-      null;
+      return null;
     case "withdrawFees":
-      null;
+      return null;
     case "rebond":
-      null;
+      return null;
     case "approve":
       return null;
     default:

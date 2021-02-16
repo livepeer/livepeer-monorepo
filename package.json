@@ -14,40 +14,46 @@
   "scripts": {
     "build": "lerna run build --stream --concurrency=1",
     "clean": "lerna clean --yes && rm -rf node_modules",
-    "cz": "git-cz",
     "coverage": "lerna run coverage --ignore @livepeer/explorer-2.0 --ignore @livepeer/player && mkdir -p coverage && lcov-result-merger 'packages/*/coverage/lcov.info' ./coverage/lcov.info",
+    "cz": "git-cz",
     "depcheck": "lerna exec --no-sort --concurrency=1 --stream 'depcheck --specials=bin --ignores='babel-*' .'",
-    "prepare": "lerna run prepare --stream --ignore @livepeer/explorer-2.0 --ignore @livepeer/player && lerna run build --stream --ignore @livepeer/explorer-2.0 --ignore @livepeer/player",
-    "lerna-run": "lerna run --stream",
-    "release:dry-run": "lerna publish --exact --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
-    "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
-    "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer-2.0 --ignore @livepeer/player --ignore @livepeer/chroma",
     "dev": "lerna run --stream --no-sort --concurrency=999 dev",
-    "updated": "lerna updated --json",
+    "lerna-run": "lerna run --stream",
+    "lint-eslint": "eslint . --ext js,jsx,ts,tsx --max-warnings=0",
+    "lint-fix": "yarn prettier-fix && eslint . --ext js,jsx,ts,tsx --fix --max-warnings=0",
+    "lint": "run-p lint-eslint",
     "postinstall": "lerna run --stream postinstall",
-    "prettier": "prettier --write '**/*.{ts,js,css,html,md,tsx,mdx}'"
+    "prepare": "lerna run prepare --stream --ignore @livepeer/explorer-2.0 --ignore @livepeer/player && lerna run build --stream --ignore @livepeer/explorer-2.0 --ignore @livepeer/player",
+    "prettier": "prettier --write '**/*.{ts,js,css,html,md,tsx,mdx}'",
+    "release:alpha": "lerna publish --exact --cd-version prerelease --conventional-commits",
+    "release:dry-run": "lerna publish --exact --skip-git --skip-npm --cd-version prerelease --conventional-commits --yes",
+    "test": "lerna run --stream test --no-sort --concurrency=999 --ignore @livepeer/explorer-2.0 --ignore @livepeer/player --ignore @livepeer/chroma",
+    "updated": "lerna updated --json"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
     "@livepeer/prettier-config": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
     "commitizen": "^3.1.1",
+    "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
     "depcheck": "^0.7.1",
+    "eslint-plugin-jest": "^24.1.3",
     "husky": "^4.2.5",
     "lcov-result-merger": "^3.0.0",
     "lerna": "^3.13.3",
+    "lint-staged": "^10.1.7",
+    "npm-run-all": "4.1.5",
     "prettier": "^2.2.1",
-    "pretty-quick": "^3.1.0"
+    "pretty-quick": "^3.1.0",
+    "typescript": "^4.1.5"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "dependencies": {
-    "cross-env": "^5.2.0",
-    "lint-staged": "^10.1.7"
   },
   "husky": {
     "hooks": {

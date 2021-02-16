@@ -12,7 +12,6 @@ import Step5 from "./Step5";
 import Step6 from "./Step6";
 import gql from "graphql-tag";
 import { Box } from "theme-ui";
-import accountQuery from "../../queries/account.gql";
 import { Dialog } from "@reach/dialog";
 
 const Tour: any = dynamic(() => import("reactour"), { ssr: false });
@@ -30,35 +29,28 @@ const Index = ({ children, ...props }) => {
   const [nextStep, setNextStep] = useState(1);
   const inititalSteps = [];
   const [steps, setSteps] = useState([...inititalSteps]);
-  const [tourStyles, setTourStyles] = useState({
+  const [tourStyles] = useState({
     backgroundColor: "#131418",
     maxWidth: "auto",
     borderRadius: 16,
   });
 
-  const { data: dataMyAccount } = useQuery(accountQuery, {
-    variables: {
-      account: context?.account?.toLowerCase(),
-    },
-    skip: !context.active,
-    ssr: false,
-  });
   const { data } = useQuery(GET_TOUR_OPEN);
 
-  const closeTour = () => {
-    client.writeQuery({
-      query: gql`
-        query {
-          tourOpen
-        }
-      `,
-      data: {
-        tourOpen: false,
-      },
-    });
-  };
-
   useEffect(() => {
+    const closeTour = () => {
+      client.writeQuery({
+        query: gql`
+          query {
+            tourOpen
+          }
+        `,
+        data: {
+          tourOpen: false,
+        },
+      });
+    };
+
     setSteps([
       {
         selector: ".tour-step-1",
@@ -90,13 +82,13 @@ const Index = ({ children, ...props }) => {
       {
         selector: ".tour-step-6",
         position: [20, 60],
-        content: ({ goTo }) => {
-          return <Step6 goTo={goTo} nextStep={nextStep} onClose={closeTour} />;
+        content: () => {
+          return <Step6 onClose={closeTour} />;
         },
         style: tourStyles,
       },
     ]);
-  }, [dataMyAccount?.account, context.active, nextStep, tourStyles]);
+  }, [client, context.active, nextStep, tourStyles]);
 
   return (
     <Box {...props}>
@@ -183,11 +175,11 @@ const Index = ({ children, ...props }) => {
                   textAlign: "center",
                   fontWeight: 500,
                   mt: 1,
-                  mb: i == 4 ? 0 : 1,
+                  mb: i === 4 ? 0 : 1,
                 }}>
                 {title}
               </div>
-              {!(i == 4) && (
+              {!(i === 4) && (
                 <div
                   sx={{
                     width: 1,

@@ -45,14 +45,14 @@ const Index = ({ protocol, delegators, ...props }) => {
       {...getTableProps()}
       {...props}>
       <thead>
-        {headerGroups.map((headerGroup, i) => (
-          <tr key={i}>
-            {headerGroup.headers.map((column, i) => (
+        {headerGroups.map((headerGroup, index1) => (
+          <tr key={index1}>
+            {headerGroup.headers.map((column, index2) => (
               <th
                 sx={{ pb: 3, textTransform: "uppercase" }}
                 align="left"
                 {...column.getHeaderProps()}
-                key={i}>
+                key={index2}>
                 <span sx={{ fontSize: 0 }}>{column.render("Header")}</span>
               </th>
             ))}
@@ -60,16 +60,16 @@ const Index = ({ protocol, delegators, ...props }) => {
         ))}
       </thead>
       <tbody>
-        {rows.map((row, i) => {
+        {rows.map((row, index1) => {
           prepareRow(row);
           return (
-            <tr {...row.getRowProps()} key={i}>
-              {row.cells.map((cell, i) => {
+            <tr {...row.getRowProps()} key={index1}>
+              {row.cells.map((cell, index2) => {
                 return (
                   <td
                     sx={{ fontSize: 1, pb: 3 }}
                     {...cell.getCellProps()}
-                    key={i}>
+                    key={index2}>
                     {renderSwitch(cell, protocol)}
                   </td>
                 );

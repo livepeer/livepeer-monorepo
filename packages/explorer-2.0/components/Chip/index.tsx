@@ -1,4 +1,4 @@
-const Index = ({ label, variant = "primary", ...props }) => (
+const Index = ({ label, ...props }) => (
   <div
     sx={{
       borderRadius: 1000,

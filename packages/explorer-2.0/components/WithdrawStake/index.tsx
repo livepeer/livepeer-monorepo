@@ -8,12 +8,11 @@ import { initTransaction } from "../../lib/utils";
 const Index = ({ unbondingLockId }) => {
   const context = useWeb3React();
   const client = useApolloClient();
+  const { withdrawStake }: any = useContext(MutationsContext);
 
   if (!context.active) {
     return null;
   }
-
-  const { withdrawStake }: any = useContext(MutationsContext);
 
   return (
     <>

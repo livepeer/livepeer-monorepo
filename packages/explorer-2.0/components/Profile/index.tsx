@@ -246,7 +246,7 @@ const Index = ({
         threeBoxSpace &&
         threeBoxSpace.addressLinks &&
         threeBoxSpace.addressLinks.length > 0 &&
-        role != "Orchestrator" && (
+        role !== "Orchestrator" && (
           <Box sx={{ mt: 3 }}>
             <Box
               sx={{
@@ -275,7 +275,7 @@ const Index = ({
                     key={i}>
                     <a
                       sx={{
-                        mr: threeBoxSpace.addressLinks.length - 1 == i ? 0 : 1,
+                        mr: threeBoxSpace.addressLinks.length - 1 === i ? 0 : 1,
                         borderRadius: 6,
                         display: "inline-flex",
                         bg: "surface",

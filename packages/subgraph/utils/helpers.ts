@@ -10,7 +10,7 @@ import {
 } from "../src/types/schema";
 
 let x = BigInt.fromI32(2);
-let y = <u8>255;
+let y = 255 as u8;
 let z = BigInt.fromI32(1);
 
 export let MAXIMUM_VALUE_UINT256: BigInt = x.pow(y).minus(z);
@@ -84,9 +84,9 @@ export function percPoints(_fracNum: BigInt, _fracDenom: BigInt): BigInt {
 }
 
 export function getBondingManagerAddress(network: string): string {
-  if (network == "mainnet") {
+  if (network === "mainnet") {
     return "511bc4556d823ae99630ae8de28b9b80df90ea2e";
-  } else if (network == "rinkeby") {
+  } else if (network === "rinkeby") {
     return "e75a5DccfFe8939F7f16CC7f63EB252bB542FE95";
   } else {
     return "A94B7f0465E98609391C623d0560C5720a3f2D33";
@@ -94,9 +94,9 @@ export function getBondingManagerAddress(network: string): string {
 }
 
 export function getLivepeerTokenAddress(network: string): string {
-  if (network == "mainnet") {
+  if (network === "mainnet") {
     return "58b6a8a3302369daec383334672404ee733ab239";
-  } else if (network == "rinkeby") {
+  } else if (network === "rinkeby") {
     return "23b814a57D53b1a7A860194F53401D0D639abED7";
   } else {
     return "D833215cBcc3f914bD1C9ece3EE7BF8B14f841bb";
@@ -125,7 +125,7 @@ export function convertToDecimal(eth: BigInt): BigDecimal {
 
 export function createOrLoadProtocol(): Protocol {
   let protocol = Protocol.load("0");
-  if (protocol == null) {
+  if (protocol === null) {
     protocol = new Protocol("0");
     protocol.paused = false;
     protocol.currentRound = ZERO_BI.toString();
@@ -155,7 +155,7 @@ export function createOrLoadProtocol(): Protocol {
 
 export function createOrLoadTranscoder(id: string): Transcoder {
   let transcoder = Transcoder.load(id);
-  if (transcoder == null) {
+  if (transcoder === null) {
     transcoder = new Transcoder(id);
     transcoder.activationRound = ZERO_BI;
     transcoder.deactivationRound = ZERO_BI;
@@ -178,7 +178,7 @@ export function createOrLoadTranscoder(id: string): Transcoder {
 
 export function createOrLoadDelegator(id: string): Delegator {
   let delegator = Delegator.load(id);
-  if (delegator == null) {
+  if (delegator === null) {
     delegator = new Delegator(id);
     delegator.startRound = ZERO_BI;
     delegator.bondedAmount = ZERO_BD;
@@ -197,7 +197,7 @@ export function createOrLoadDay(timestamp: i32): Day {
   let dayStartTimestamp = dayID * 86400;
   let day = Day.load(dayID.toString());
 
-  if (day == null) {
+  if (day === null) {
     day = new Day(dayID.toString());
     day.date = dayStartTimestamp;
     day.volumeUSD = ZERO_BD;
@@ -221,7 +221,7 @@ export function createOrLoadTranscoderDay(
     .concat(BigInt.fromI32(dayID).toString());
   let transcoderDay = TranscoderDay.load(transcoderDayID);
 
-  if (transcoderDay == null) {
+  if (transcoderDay === null) {
     transcoderDay = new TranscoderDay(transcoderDayID);
     transcoderDay.date = dayStartTimestamp;
     transcoderDay.transcoder = transcoderAddress;

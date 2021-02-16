@@ -294,12 +294,12 @@ const StakingTable = ({
           }}
           {...getTableProps()}>
           <Box sx={{ display: "table-header-group" }}>
-            {headerGroups.map((headerGroup, i) => (
+            {headerGroups.map((headerGroup, index1) => (
               <Box
                 sx={{ display: "table-row" }}
-                key={i}
+                key={index1}
                 {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column: any, i) => (
+                {headerGroup.headers.map((column, index2) => (
                   <Box
                     sx={{
                       borderBottom: "1px solid",
@@ -311,16 +311,18 @@ const StakingTable = ({
                         column.render("Header") === "#"
                           ? 0
                           : 3,
-                      width: i === 0 ? 30 : "auto",
+                      width: index2 === 0 ? 30 : "auto",
                       fontWeight: 700,
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={i}>
+                    key={index2}>
                     <Flex
                       sx={{
                         justifyContent:
-                          i === 0 || i === 1 ? "flex-start" : "flex-end",
+                          index2 === 0 || index2 === 1
+                            ? "flex-start"
+                            : "flex-end",
                       }}>
                       <span
                         sx={{

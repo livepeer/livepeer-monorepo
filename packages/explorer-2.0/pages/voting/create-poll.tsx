@@ -58,7 +58,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     } else {
       startPolling(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, startPolling, stopPolling]);
 
   useEffect(() => {
     if (data) {
@@ -88,7 +88,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     if (lips.length) {
       setSelectedProposal({ gitCommitHash, text: lips[0].text });
     }
-  }, []);
+  }, [gitCommitHash, lips]);
 
   return (
     <>
@@ -145,9 +145,9 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                 await createPoll({
                   variables: { proposal: hash },
                 });
-              } catch (e) {
+              } catch (err) {
                 return {
-                  error: e.message.replace("GraphQL error: ", ""),
+                  error: err.message.replace("GraphQL error: ", ""),
                 };
               }
             }}>
@@ -193,6 +193,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                       color: "primary",
                     }}
                     target="_blank"
+                    rel="noopener noreferrer"
                     href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}>
                     View Proposal
                   </a>
@@ -316,7 +317,6 @@ export async function getStaticProps() {
         // check if proposal is valid format {text, gitCommitHash}
         if (obj?.text && obj?.gitCommitHash) {
           const transformedProposal = fm(obj.text);
-          transformedProposal.attributes.lip;
           createdPolls.push(transformedProposal.attributes.lip);
         }
       })
@@ -324,8 +324,8 @@ export async function getStaticProps() {
   }
 
   let lips = [];
-  data.repository.content.entries.map((lip: any) => {
-    let transformedLip: any = fm(lip.content.text);
+  for (const lip of data.repository.content.entries) {
+    let transformedLip = fm(lip.content.text);
     transformedLip.attributes.created = transformedLip.attributes.created.toString();
     if (
       transformedLip.attributes.status === "Proposed" &&
@@ -333,7 +333,7 @@ export async function getStaticProps() {
       !createdPolls.includes(transformedLip.attributes.lip)
     )
       lips.push({ ...transformedLip, text: lip.content.text });
-  });
+  }
 
   return {
     props: {

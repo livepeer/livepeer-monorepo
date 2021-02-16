@@ -1,7 +1,7 @@
 import { useEffect, useContext } from "react";
 import { Styled } from "theme-ui";
 import Button from "../Button";
-import { usePageVisibility, useWeb3Mutation } from "../../hooks";
+import { usePageVisibility } from "../../hooks";
 import Router from "next/router";
 import { MAXIUMUM_VALUE_UINT256 } from "../../lib/utils";
 import { useWeb3React } from "@web3-react/core";
@@ -32,17 +32,18 @@ const Step5 = ({ goTo, nextStep }) => {
     } else {
       startPolling(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, stopPolling, startPolling]);
 
   useEffect(() => {
     async function goToNextStep() {
-      if (dataMyAccount?.account?.allowance !== "0") {
+      console.log(dataMyAccount.account.allowance);
+      if (dataMyAccount.account.allowance !== "0") {
         await Router.push("/");
         goTo(nextStep);
       }
     }
     goToNextStep();
-  }, [dataMyAccount?.account?.allowance]);
+  }, [dataMyAccount.account.allowance, goTo, nextStep]);
 
   return (
     <div sx={{ py: 1 }}>

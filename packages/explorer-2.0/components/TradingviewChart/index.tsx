@@ -46,26 +46,24 @@ const TradingViewChart = ({
   // adjust the scale based on the type of chart
   const topScale = type === CHART_TYPES.AREA ? 0.3 : 0.2;
 
-  // get the title of the chart
-  const setLastBarText = ({ toolTip, formattedPercentChange, color }) => {
-    toolTip.innerHTML =
-      `<div style="font-size: 16px; margin: 4px 0px; color: #fff;">${title} ${
-        type === CHART_TYPES.BAR && !useWeekly ? "(24hr)" : ""
-      }</div>` +
-      `<div style="font-size: 22px; margin: 4px 0px; color: #fff">` +
-      (type === CHART_TYPES.AREA
-        ? `${(parseFloat(base) * 100).toFixed(2)}%`
-        : formattedNum(base, unit)) +
-      `<span style="margin-left: 10px; font-size: 16px; color: ${color};">${formattedPercentChange}</span>` +
-      "</div>";
-  };
-
-  let lightweightCharts;
-
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
+    // get the title of the chart
+    const setLastBarText = ({ toolTip, formattedPercentChange, color }) => {
+      toolTip.innerHTML =
+        `<div style="font-size: 16px; margin: 4px 0px; color: #fff;">${title} ${
+          type === CHART_TYPES.BAR && !useWeekly ? "(24hr)" : ""
+        }</div>` +
+        `<div style="font-size: 22px; margin: 4px 0px; color: #fff">` +
+        (type === CHART_TYPES.AREA
+          ? `${(parseFloat(base) * 100).toFixed(2)}%`
+          : formattedNum(base, unit)) +
+        `<span style="margin-left: 10px; font-size: 16px; color: ${color};">${formattedPercentChange}</span>` +
+        "</div>";
+    };
+
     if (!chartCreated && formattedData) {
-      lightweightCharts = require("lightweight-charts");
+      let lightweightCharts = require("lightweight-charts");
       const { createChart } = lightweightCharts;
       let chart: any = createChart(ref.current, {
         width: width,
@@ -221,6 +219,8 @@ const TradingViewChart = ({
     type,
     useWeekly,
     width,
+    mode,
+    unit,
   ]);
 
   // responsiveness

@@ -88,7 +88,7 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
       addressLinks = links.filter((link: any) => {
         return (
           link &&
-          Utils.toChecksumAddress(link.address) != Utils.toChecksumAddress(id)
+          Utils.toChecksumAddress(link.address) !== Utils.toChecksumAddress(id)
         );
       });
     } catch (e) {
@@ -201,12 +201,12 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       return result;
     };
 
-    let getProtocolDataByBlock = async (block) => {
+    let getProtocolDataByBlock = async (_block) => {
       let result = await client.query({
         query: protocolDataByBlockQuery,
         fetchPolicy: "network-only",
         variables: {
-          block: { number: block },
+          block: { number: _block },
         },
       });
       return result;
@@ -232,7 +232,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     // merge in Livepeer.com usage data
     dayData = dayData.map((item) => {
       let found = livepeerComDayData.find(
-        (element) => item.date == element.date
+        (element) => item.date === element.date
       );
 
       let feeDerivedMinutes = getTotalFeeDerivedMinutes({

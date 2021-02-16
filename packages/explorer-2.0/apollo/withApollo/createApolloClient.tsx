@@ -2,7 +2,6 @@ import { NextPageContext } from "next";
 import {
   ApolloClient,
   ApolloLink,
-  defaultDataIdFromObject,
   gql,
   InMemoryCache,
   NormalizedCacheObject,
@@ -14,7 +13,7 @@ import { execute } from "graphql/execution/execute";
 
 export default function createApolloClient(
   initialState: object,
-  ctx: NextPageContext | null
+  _ctx: NextPageContext | null
 ) {
   // The `ctx` (NextPageContext) will only be present on the server.
   // use it to extract auth headers (ctx.req) or similar.

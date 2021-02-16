@@ -6,24 +6,20 @@ import CloseIcon from "../../public/img/close.svg";
 interface Props {
   isOpen?: boolean;
   children: React.ReactNode;
-  setOpen?: Function;
   title?: React.ReactNode;
   className?: string;
   showCloseButton?: boolean;
   clickAnywhereToClose?: boolean;
   onDismiss?: Function;
   Icon?: any;
-  ref?: any;
 }
 
 const Index = ({
   isOpen = false,
-  setOpen,
   Icon,
   title,
   className,
   children,
-  ref,
   clickAnywhereToClose = true,
   showCloseButton = true,
   onDismiss,

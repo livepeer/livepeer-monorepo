@@ -6,7 +6,6 @@ import Help from "../../public/img/help.svg";
 import matchSorter from "match-sorter";
 import AccountCell from "../AccountCell";
 import ReactTooltip from "react-tooltip";
-import useWindowSize from "react-use/lib/useWindowSize";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 import Link from "next/link";
@@ -17,7 +16,6 @@ const PerformanceTable = ({
   data: { currentRound, transcoders },
   region,
 }) => {
-  const { width } = useWindowSize();
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
       keys: [(row) => row.values[id]],
@@ -239,29 +237,31 @@ const PerformanceTable = ({
           }}
           {...getTableProps()}>
           <Box sx={{ display: "table-header-group" }}>
-            {headerGroups.map((headerGroup, i) => (
+            {headerGroups.map((headerGroup, index1) => (
               <Box
                 sx={{ display: "table-row" }}
-                key={i}
+                key={index1}
                 {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => (
+                {headerGroup.headers.map((column, index2) => (
                   <Box
                     sx={{
                       borderBottom: "1px solid",
                       borderColor: "rgba(255,255,255,.05)",
                       pb: 1,
                       pl: 3,
-                      pr: i === 0 ? 0 : 3,
-                      width: i === 0 ? 30 : "auto",
+                      pr: index2 === 0 ? 0 : 3,
+                      width: index2 === 0 ? 30 : "auto",
                       fontWeight: 700,
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={i}>
+                    key={index2}>
                     <Flex
                       sx={{
                         justifyContent:
-                          i === 0 || i === 1 ? "flex-start" : "flex-end",
+                          index2 === 0 || index2 === 1
+                            ? "flex-start"
+                            : "flex-end",
                       }}>
                       <span
                         sx={{

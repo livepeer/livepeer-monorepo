@@ -209,12 +209,12 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
           }}
           {...getTableProps()}>
           <Box sx={{ display: "table-header-group" }}>
-            {headerGroups.map((headerGroup, i) => (
+            {headerGroups.map((headerGroup, index1) => (
               <Box
                 sx={{ display: "table-row" }}
-                key={i}
+                key={index1}
                 {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => (
+                {headerGroup.headers.map((column, index2) => (
                   <Box
                     sx={{
                       display: "table-cell",
@@ -225,11 +225,13 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                       px: 3,
                       textTransform: "uppercase",
                     }}
-                    key={i}>
+                    key={index2}>
                     <Flex
                       sx={{
                         justifyContent:
-                          i === 0 || i === 1 ? "flex-start" : "flex-end",
+                          index2 === 0 || index2 === 1
+                            ? "flex-start"
+                            : "flex-end",
                       }}>
                       <span
                         sx={{

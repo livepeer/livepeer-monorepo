@@ -35,10 +35,6 @@ const Poll = () => {
   const [pollData, setPollData] = useState(null);
   const { query } = router;
 
-  if (!query?.poll) {
-    return <FourZeroFour />;
-  }
-
   const pollId = query.poll.toString().toLowerCase();
   const pollInterval = 20000;
 
@@ -101,7 +97,17 @@ const Poll = () => {
       startPollingVote(pollInterval);
       startPollingDelegate(pollInterval);
     }
-  }, [isVisible]);
+  }, [
+    isVisible,
+    stopPollingPoll,
+    stopPollingMyAccount,
+    stopPollingVote,
+    stopPollingDelegate,
+    startPollingPoll,
+    startPollingMyAccount,
+    startPollingVote,
+    startPollingDelegate,
+  ]);
 
   useEffect(() => {
     const init = async () => {
@@ -114,6 +120,10 @@ const Poll = () => {
     };
     init();
   }, [data]);
+
+  if (!query?.poll) {
+    return <FourZeroFour />;
+  }
 
   if (!pollData) {
     return (

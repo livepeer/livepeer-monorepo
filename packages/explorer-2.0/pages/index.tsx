@@ -66,7 +66,7 @@ const Home = () => {
     } else {
       startPollingMyAccount(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, stopPollingMyAccount, startPollingMyAccount]);
 
   const flickityOptions = {
     wrapAround: true,

@@ -3,7 +3,6 @@ import { Flex, Box } from "theme-ui";
 const Option = ({
   link = null,
   clickable = true,
-  size = null,
   onClick = null,
   color,
   header,

@@ -44,13 +44,15 @@ export function mint(event: Mint): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let mint = new MintEvent(makeEventId(event.transaction.hash, event.logIndex));
-  mint.transaction = event.transaction.hash.toHex();
-  mint.timestamp = event.block.timestamp.toI32();
-  mint.round = round.id;
-  mint.to = event.params.to.toHex();
-  mint.amount = amount;
-  mint.save();
+  let mintEvent = new MintEvent(
+    makeEventId(event.transaction.hash, event.logIndex)
+  );
+  mintEvent.transaction = event.transaction.hash.toHex();
+  mintEvent.timestamp = event.block.timestamp.toI32();
+  mintEvent.round = round.id;
+  mintEvent.to = event.params.to.toHex();
+  mintEvent.amount = amount;
+  mintEvent.save();
 }
 
 export function burn(event: Burn): void {
@@ -88,10 +90,12 @@ export function burn(event: Burn): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let burn = new BurnEvent(makeEventId(event.transaction.hash, event.logIndex));
-  burn.transaction = event.transaction.hash.toHex();
-  burn.timestamp = event.block.timestamp.toI32();
-  burn.round = round.id;
-  burn.value = value;
-  burn.save();
+  let burnEvent = new BurnEvent(
+    makeEventId(event.transaction.hash, event.logIndex)
+  );
+  burnEvent.transaction = event.transaction.hash.toHex();
+  burnEvent.timestamp = event.block.timestamp.toI32();
+  burnEvent.round = round.id;
+  burnEvent.value = value;
+  burnEvent.save();
 }

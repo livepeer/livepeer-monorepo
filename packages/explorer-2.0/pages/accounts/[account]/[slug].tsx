@@ -92,7 +92,15 @@ const Account = () => {
       startPollingMyAccount(pollInterval);
       startPollingAccount(pollInterval);
     }
-  }, [isVisible]);
+  }, [
+    isVisible,
+    stopPollingOrchestrators,
+    stopPollingMyAccount,
+    stopPollingAccount,
+    startPollingOrchestrators,
+    startPollingMyAccount,
+    startPollingAccount,
+  ]);
 
   const SELECTED_STAKING_ACTION = gql`
     {
@@ -158,7 +166,7 @@ const Account = () => {
             "100%",
             "100%",
             "100%",
-            role == "Orchestrator" || isMyDelegate ? "72%" : "100%",
+            role === "Orchestrator" || isMyDelegate ? "72%" : "100%",
           ],
         }}>
         {context.active && (
@@ -187,21 +195,21 @@ const Account = () => {
           transcoder={data.transcoder}
         />
         <Tabs tabs={tabs} />
-        {slug == "campaign" && (
+        {slug === "campaign" && (
           <CampaignView
             currentRound={data.protocol.currentRound}
             transcoder={data.transcoder}
           />
         )}
-        {slug == "fees" && (
+        {slug === "fees" && (
           <FeesView
             delegator={data.delegator}
             currentRound={data.protocol.currentRound}
             isMyAccount={isMyAccount}
           />
         )}
-        {slug == "tokenholders" && <TokenholdersView />}
-        {slug == "staking" && (
+        {slug === "tokenholders" && <TokenholdersView />}
+        {slug === "staking" && (
           <StakingView
             transcoders={dataTranscoders.transcoders}
             delegator={data.delegator}
@@ -209,9 +217,9 @@ const Account = () => {
             currentRound={data.protocol.currentRound}
           />
         )}
-        {slug == "history" && <HistoryView />}
+        {slug === "history" && <HistoryView />}
       </Flex>
-      {(role == "Orchestrator" || isMyDelegate) &&
+      {(role === "Orchestrator" || isMyDelegate) &&
         (width > 1020 ? (
           <Flex
             sx={{
@@ -265,27 +273,27 @@ function getTabs(
       name: "Staking",
       href: "/accounts/[account]/[slug]",
       as: `/accounts/${account}/staking`,
-      isActive: asPath == `/accounts/${account}/staking`,
+      isActive: asPath === `/accounts/${account}/staking`,
     },
     {
       name: "Earned Fees",
       href: "/accounts/[account]/[slug]",
       as: `/accounts/${account}/fees`,
-      isActive: asPath == `/accounts/${account}/fees`,
+      isActive: asPath === `/accounts/${account}/fees`,
     },
     {
       name: "History",
       href: "/accounts/[account]/[slug]",
       as: `/accounts/${account}/history`,
-      isActive: asPath == `/accounts/${account}/history`,
+      isActive: asPath === `/accounts/${account}/history`,
     },
   ];
-  if (role == "Orchestrator" || isMyDelegate) {
+  if (role === "Orchestrator" || isMyDelegate) {
     tabs.unshift({
       name: "Campaign",
       href: "/accounts/[account]/[slug]",
       as: `/accounts/${account}/campaign`,
-      isActive: asPath == `/accounts/${account}/campaign`,
+      isActive: asPath === `/accounts/${account}/campaign`,
     });
   }
 

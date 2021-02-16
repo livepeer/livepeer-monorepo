@@ -1,4 +1,3 @@
-// https://github.com/TheRusskiy/next-apollo-ts
 import App, { AppContext } from "next/app";
 import Head from "next/head";
 import { ApolloClient, ApolloProvider } from "@apollo/client";
@@ -61,7 +60,6 @@ export const initOnContext = (
   // Otherwise, the component would have to call initApollo() again but this
   // time without the context. Once that happens, the following code will make sure we send
   // the prop as `null` to the browser.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   apolloClient.toJSON = () => null;
 

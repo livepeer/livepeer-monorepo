@@ -46,7 +46,7 @@ export function newRound(event: NewRound): void {
   let pool: Pool;
 
   // Iterate over all registered transcoders
-  while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
+  while (EMPTY_ADDRESS.toHex() !== currentTranscoder.toHex()) {
     // Update transcoder active state
     active = bondingManager.isActiveTranscoder(
       currentTranscoder,
@@ -114,12 +114,12 @@ export function newRound(event: NewRound): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let newRound = new NewRoundEvent(
+  let newRoundEvent = new NewRoundEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  newRound.transaction = event.transaction.hash.toHex();
-  newRound.timestamp = event.block.timestamp.toI32();
-  newRound.round = event.params.round.toString();
-  newRound.blockHash = event.block.hash.toString();
-  newRound.save();
+  newRoundEvent.transaction = event.transaction.hash.toHex();
+  newRoundEvent.timestamp = event.block.timestamp.toI32();
+  newRoundEvent.round = event.params.round.toString();
+  newRoundEvent.blockHash = event.block.hash.toString();
+  newRoundEvent.save();
 }

@@ -327,14 +327,14 @@ const createSchema = async () => {
           );
           let transcodersWithPrice = await response.json();
 
-          transcodersWithPrice.map((t) => {
+          for (const t of transcodersWithPrice) {
             if (transcoders.filter((a) => a.id === t.Address).length > 0) {
               prices.push({
                 id: t.Address,
                 price: t.PricePerPixel,
               });
             }
-          });
+          }
         }
 
         function avg(obj, key) {

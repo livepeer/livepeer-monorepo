@@ -1,3 +1,4 @@
+const { web3, contract, assert, it, before } = require("truffle");
 const { createApolloFetch } = require("apollo-fetch");
 const BN = require("bignumber.js");
 const path = require("path");
@@ -85,7 +86,7 @@ let waitForSubgraphToBeSynced = async () =>
           result.data.subgraphDeployments[0].ethereumHeadBlockNumber
         );
         if (
-          latestEthereumBlockNumber == ethereumHeadBlockNumber &&
+          latestEthereumBlockNumber === ethereumHeadBlockNumber &&
           !result.data.subgraphDeployments[0].failed
         ) {
           resolve();
@@ -135,8 +136,8 @@ contract("Subgraph Integration Tests", (accounts) => {
   let pollCreationCost;
   let voters = {};
 
-  const mineAndInitializeRound = async (roundLength) => {
-    await rpc.waitUntilNextBlockMultiple(parseInt(roundLength));
+  const mineAndInitializeRound = async (_roundLength) => {
+    await rpc.waitUntilNextBlockMultiple(parseInt(_roundLength));
     await RoundsManager.methods.initializeRound().send({ from: accounts[0] });
   };
 
@@ -149,7 +150,7 @@ contract("Subgraph Integration Tests", (accounts) => {
     let yesTally = new BN(0);
     let noTally = new BN(0);
 
-    for (voter in voters) {
+    for (let voter in voters) {
       let voteStake = await getStake(voter);
       let nonVoteStake = new BN(0);
       if (voters[voter].registeredTranscoder) {
@@ -165,12 +166,12 @@ contract("Subgraph Integration Tests", (accounts) => {
         }
       }
 
-      if (voters[voter].choiceID == 0) {
+      if (voters[voter].choiceID === 0) {
         yesTally = new BN(yesTally)
           .plus(new BN(voteStake).minus(nonVoteStake))
           .toString(10);
       }
-      if (voters[voter].choiceID == 1) {
+      if (voters[voter].choiceID === 1) {
         noTally = new BN(noTally)
           .plus(new BN(voteStake).minus(nonVoteStake))
           .toString(10);
@@ -255,7 +256,6 @@ contract("Subgraph Integration Tests", (accounts) => {
     delegator1StartStake = 3000;
     delegator2StartStake = 3000;
     delegator3StartStake = 3000;
-    delegator4StartStake = 3000;
 
     // Register transcoder 1
     await Token.methods
@@ -378,7 +378,7 @@ contract("Subgraph Integration Tests", (accounts) => {
       },
     };
 
-    for (voter in voters) {
+    for (let voter in voters) {
       await Poll.methods.vote(voters[voter].choiceID).send({ from: voter });
     }
 
@@ -405,7 +405,7 @@ contract("Subgraph Integration Tests", (accounts) => {
       }`,
     });
 
-    for (vote in subgraphPollData.data) {
+    for (let vote in subgraphPollData.data) {
       assert.equal(
         vote[0].choiceID,
         voteMap[voters[vote.voter]],

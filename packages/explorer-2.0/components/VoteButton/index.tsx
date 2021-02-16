@@ -8,12 +8,11 @@ import { initTransaction } from "../../lib/utils";
 const Index = ({ pollAddress, choiceId, children, ...props }) => {
   const context = useWeb3React();
   const client = useApolloClient();
+  const { vote }: any = useContext(MutationsContext);
 
   if (!context.active) {
     return null;
   }
-
-  const { vote }: any = useContext(MutationsContext);
 
   return (
     <Button

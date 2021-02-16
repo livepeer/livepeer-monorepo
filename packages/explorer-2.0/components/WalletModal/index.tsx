@@ -1,3 +1,4 @@
+import { AbstractConnector } from "@web3-react/abstract-connector";
 import { useState, useEffect } from "react";
 import { Box, Grid } from "@theme-ui/components";
 import CloseIcon from "../../public/img/close.svg";
@@ -23,15 +24,17 @@ const WALLET_VIEWS = {
 };
 
 const Index = () => {
-  const { active, account, connector, activate, error } = useWeb3React();
+  const { active, account, connector, error, activate } = useWeb3React();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
-  const [pendingWallet, setPendingWallet] = useState();
+  const [pendingWallet, setPendingWallet] = useState<
+    AbstractConnector | undefined
+  >();
   const client = useApolloClient();
 
-  const tryActivation = (connector) => {
+  const tryActivation = (_connector: AbstractConnector | undefined) => {
     let name = "";
     Object.keys(SUPPORTED_WALLETS).map((key) => {
-      if (connector === SUPPORTED_WALLETS[key].connector) {
+      if (_connector === SUPPORTED_WALLETS[key].connector) {
         return (name = SUPPORTED_WALLETS[key].name);
       }
       return true;
@@ -43,17 +46,17 @@ const Index = () => {
       label: name,
     });
 
-    setPendingWallet(connector); // set wallet for pending view
+    setPendingWallet(_connector); // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING);
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     if (
-      connector instanceof WalletConnectConnector &&
-      connector.walletConnectProvider?.wc?.uri
+      _connector instanceof WalletConnectConnector &&
+      _connector.walletConnectProvider?.wc?.uri
     ) {
-      connector.walletConnectProvider = undefined;
+      _connector.walletConnectProvider = undefined;
     }
 
-    activate(connector, undefined, true);
+    activate(_connector, undefined, true);
   };
 
   const GET_WALLET_MODAL_STATUS = gql`

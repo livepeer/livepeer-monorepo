@@ -40,7 +40,7 @@ const Voting = () => {
     } else {
       startPolling(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, startPolling, stopPolling]);
 
   useEffect(() => {
     if (data) {
@@ -74,7 +74,7 @@ const Voting = () => {
       };
       init();
     }
-  }, [data]);
+  }, [data, ipfs]);
 
   return (
     <>
