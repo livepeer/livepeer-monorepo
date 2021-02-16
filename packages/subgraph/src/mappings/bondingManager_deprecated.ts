@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 
 // Import event types from the registrar contract ABIs

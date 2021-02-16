@@ -47,7 +47,7 @@ function getStepContent(step) {
 }
 
 const Index = ({ hasProfile, activeStep }) => {
-  let steps = getSteps(hasProfile);
+  const steps = getSteps(hasProfile);
 
   return (
     <Stepper activeStep={activeStep} orientation="vertical">

@@ -70,10 +70,10 @@ const PerformanceTable = ({
         Filter: DefaultColumnFilter,
         mobile: true,
         sortType: (rowA, rowB, columnID) => {
-          let rowAIdentity =
+          const rowAIdentity =
             getRowValueByColumnID(rowA, "threeBoxSpace")?.name ||
             getRowValueByColumnID(rowA, columnID);
-          let rowBIdentity =
+          const rowBIdentity =
             getRowValueByColumnID(rowB, "threeBoxSpace")?.name ||
             getRowValueByColumnID(rowB, columnID);
           return compareBasic(rowAIdentity, rowBIdentity);

@@ -65,12 +65,12 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
         filter: "fuzzyText",
         Filter: DefaultColumnFilter,
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID);
-          let b = getRowValueByColumnID(rowB, columnID);
-          let aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
-          let bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
-          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
-          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
+          const a = getRowValueByColumnID(rowA, columnID);
+          const b = getRowValueByColumnID(rowB, columnID);
+          const aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
+          const bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
+          const rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
+          const rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
 
           return compareBasic(rowAIdentity, rowBIdentity);
         },

@@ -46,7 +46,7 @@ class RPC {
   }
 
   async wait(blocks = 1, seconds = 20) {
-    let currentBlock = await this.getBlockNumberAsync();
+    const currentBlock = await this.getBlockNumberAsync();
     const targetBlock = currentBlock + blocks;
     await this.waitUntilBlock(targetBlock, seconds);
   }

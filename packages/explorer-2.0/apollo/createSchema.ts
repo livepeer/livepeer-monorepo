@@ -82,12 +82,12 @@ const createSchema = async () => {
   `;
   async function getTotalStake(_ctx, _blockNumber) {
     const Web3 = require("web3");
-    let web3 = new Web3(
+    const web3 = new Web3(
       process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
         ? process.env.NEXT_PUBLIC_RPC_URL_4
         : process.env.NEXT_PUBLIC_RPC_URL_1
     );
-    let contract = new web3.eth.Contract(
+    const contract = new web3.eth.Contract(
       _ctx.livepeer.config.contracts.LivepeerToken.abi,
       _ctx.livepeer.config.contracts.LivepeerToken.address
     );
@@ -203,13 +203,13 @@ const createSchema = async () => {
               _ctx,
               isActive ? blockNumber : _poll.endBlock
             );
-            let noVoteStake = +_poll?.tally?.no || 0;
-            let yesVoteStake = +_poll?.tally?.yes || 0;
-            let totalVoteStake = noVoteStake + yesVoteStake;
-            let totalSupport = isNaN(yesVoteStake / totalVoteStake)
+            const noVoteStake = +_poll?.tally?.no || 0;
+            const yesVoteStake = +_poll?.tally?.yes || 0;
+            const totalVoteStake = noVoteStake + yesVoteStake;
+            const totalSupport = isNaN(yesVoteStake / totalVoteStake)
               ? 0
               : (yesVoteStake / totalVoteStake) * 100;
-            let totalParticipation =
+            const totalParticipation =
               (totalVoteStake / +Utils.fromWei(totalStake)) * 100;
 
             if (isActive) {
@@ -268,18 +268,18 @@ const createSchema = async () => {
     Query: {
       delegator: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info));
-        let delegator = await resolve(parent, args, ctx, info);
+        const delegator = await resolve(parent, args, ctx, info);
 
         // if selection set does not include 'delegate', return delegator as is, otherwise fetch and merge price
         if (!delegator || !selectionSet.includes("delegate")) {
           return delegator;
         }
 
-        let response = await fetch(
+        const response = await fetch(
           `https://livepeer-pricing-tool.com/orchestratorStats`
         );
-        let transcodersWithPrice = await response.json();
-        let transcoderWithPrice = transcodersWithPrice.filter(
+        const transcodersWithPrice = await response.json();
+        const transcoderWithPrice = transcodersWithPrice.filter(
           (t) =>
             t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase()
         )[0];
@@ -294,18 +294,18 @@ const createSchema = async () => {
       },
       transcoder: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info));
-        let transcoder = await resolve(parent, args, ctx, info);
+        const transcoder = await resolve(parent, args, ctx, info);
 
         // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
         if (!transcoder || !selectionSet.includes("price")) {
           return transcoder;
         }
 
-        let response = await fetch(
+        const response = await fetch(
           `https://livepeer-pricing-tool.com/orchestratorStats`
         );
-        let transcodersWithPrice = await response.json();
-        let transcoderWithPrice = transcodersWithPrice.filter(
+        const transcodersWithPrice = await response.json();
+        const transcoderWithPrice = transcodersWithPrice.filter(
           (t) => t.Address.toLowerCase() === args.id.toLowerCase()
         )[0];
         transcoder["price"] = transcoderWithPrice?.PricePerPixel
@@ -316,16 +316,16 @@ const createSchema = async () => {
       transcoders: async (resolve, parent, args, ctx, info) => {
         const selectionSet = Object.keys(graphqlFields(info));
         const transcoders = await resolve(parent, args, ctx, info);
-        let prices = [];
-        let performanceMetrics = [];
+        const prices = [];
+        const performanceMetrics = [];
 
         // if selection set includes 'price', return transcoders merge prices and performance metrics
         if (selectionSet.includes("price")) {
           // get price data
-          let response = await fetch(
+          const response = await fetch(
             `https://livepeer-pricing-tool.com/orchestratorStats`
           );
-          let transcodersWithPrice = await response.json();
+          const transcodersWithPrice = await response.json();
 
           for (const t of transcodersWithPrice) {
             if (transcoders.filter((a) => a.id === t.Address).length > 0) {
@@ -338,16 +338,16 @@ const createSchema = async () => {
         }
 
         function avg(obj, key) {
-          let arr = Object.values(obj);
-          let sum = (prev, cur) => ({ [key]: prev[key] + cur[key] });
+          const arr = Object.values(obj);
+          const sum = (prev, cur) => ({ [key]: prev[key] + cur[key] });
           return arr.reduce(sum)[key] / arr.length;
         }
 
         if (selectionSet.includes("scores")) {
-          let metricsResponse = await fetch(
+          const metricsResponse = await fetch(
             `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`
           );
-          let metrics = await metricsResponse.json();
+          const metrics = await metricsResponse.json();
 
           for (const key in metrics) {
             if (transcoders.filter((a) => a.id === key).length > 0) {

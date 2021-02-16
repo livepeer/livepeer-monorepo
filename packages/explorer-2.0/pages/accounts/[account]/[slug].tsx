@@ -202,11 +202,7 @@ const Account = () => {
           />
         )}
         {slug === "fees" && (
-          <FeesView
-            delegator={data.delegator}
-            currentRound={data.protocol.currentRound}
-            isMyAccount={isMyAccount}
-          />
+          <FeesView delegator={data.delegator} isMyAccount={isMyAccount} />
         )}
         {slug === "tokenholders" && <TokenholdersView />}
         {slug === "staking" && (
@@ -268,7 +264,7 @@ function getTabs(
   asPath: string,
   isMyDelegate: boolean
 ): Array<TabType> {
-  let tabs: Array<TabType> = [
+  const tabs: Array<TabType> = [
     {
       name: "Staking",
       href: "/accounts/[account]/[slug]",

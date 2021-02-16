@@ -1,4 +1,4 @@
-// Import types and APIs from graph-ts
+/* eslint-disable prefer-const */
 import { Address, dataSource, BigInt } from "@graphprotocol/graph-ts";
 
 // Import event types from the registrar contract ABIs

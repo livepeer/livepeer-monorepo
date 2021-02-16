@@ -28,11 +28,11 @@ const Index = ({ data }) => {
     }
   }, [copied]);
 
-  let noVoteStake = parseFloat(data.poll?.tally?.no || "0");
-  let yesVoteStake = parseFloat(data.poll?.tally?.yes || "0");
-  let totalVoteStake = noVoteStake + yesVoteStake;
-  let totalNonVoteStake = +data?.poll?.totalNonVoteStake;
-  let votingPower = getVotingPower(data?.myAccount, data?.vote);
+  const noVoteStake = parseFloat(data.poll?.tally?.no || "0");
+  const yesVoteStake = parseFloat(data.poll?.tally?.yes || "0");
+  const totalVoteStake = noVoteStake + yesVoteStake;
+  const totalNonVoteStake = +data?.poll?.totalNonVoteStake;
+  const votingPower = getVotingPower(data?.myAccount, data?.vote);
 
   let delegate = null;
   if (data?.myAccount?.delegator?.delegate) {

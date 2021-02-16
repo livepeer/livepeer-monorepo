@@ -353,7 +353,7 @@ export const mergeObjectsInUnique = (array, property) => {
 };
 
 export const getHint = (id, transcoders) => {
-  let hint = {
+  const hint = {
     newPosPrev: EMPTY_ADDRESS,
     newPosNext: EMPTY_ADDRESS,
   };
@@ -445,7 +445,7 @@ export const formattedNum = (number, unit = "usd") => {
   if (isNaN(number) || number === "" || number === undefined) {
     return unit === "usd" ? "$0" : 0;
   }
-  let num = parseFloat(number);
+  const num = parseFloat(number);
 
   if (num > 500000000) {
     return `${
@@ -489,7 +489,7 @@ export const formattedNum = (number, unit = "usd") => {
     if (num < 0.1) {
       return "$" + Number(num.toFixed(4));
     } else {
-      let usdString = priceFormatter.format(num);
+      const usdString = priceFormatter.format(num);
       return "$" + usdString.slice(1, usdString.length);
     }
   }
@@ -515,8 +515,8 @@ export const getTwoPeriodPercentChange = (
   valueAsOfPeriodTwo: number
 ) => {
   // get volume info for both 24 hour periods
-  let currentChange = valueNow - valueAsOfPeriodOne;
-  let previousChange = valueAsOfPeriodOne - valueAsOfPeriodTwo;
+  const currentChange = valueNow - valueAsOfPeriodOne;
+  const previousChange = valueAsOfPeriodOne - valueAsOfPeriodTwo;
 
   const adjustedPercentChange =
     ((currentChange - previousChange) / previousChange) * 100;
@@ -538,16 +538,16 @@ export const getBlocksFromTimestamps = async (timestamps) => {
   if (timestamps?.length === 0) {
     return [];
   }
-  let blocks = [];
+  const blocks = [];
   for (const timestamp of timestamps) {
-    let blockResponse = await fetch(
+    const blockResponse = await fetch(
       `https://api${
         process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "-rinkeby" : ""
       }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
         process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
       }`
     );
-    let json = await blockResponse.json();
+    const json = await blockResponse.json();
     blocks.push(+json.result);
   }
 
@@ -579,7 +579,7 @@ export const getLivepeerComUsageData = async (
   params?: LivepeerComUsageParams
 ) => {
   try {
-    let endpoint = `https://livepeer.com/api/usage${
+    const endpoint = `https://livepeer.com/api/usage${
       params ? `?fromTime=${params.fromTime}&toTime=${params.toTime}` : ""
     }`;
 
@@ -608,9 +608,9 @@ export const getTotalFeeDerivedMinutes = ({
   pricePerPixel,
   pixelsPerMinute,
 }): number => {
-  let ethDaiRate = totalVolumeETH / totalVolumeUSD;
-  let usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
-  let feeDerivedMinutes =
+  const ethDaiRate = totalVolumeETH / totalVolumeUSD;
+  const usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
+  const feeDerivedMinutes =
     totalVolumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
   return feeDerivedMinutes;
 };

@@ -68,11 +68,8 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
   const id = _args.id.toLowerCase();
 
   let useThreeBox = false;
-  let profile;
-  let space;
-
-  profile = await Box.getProfile(_args.id);
-  space = await Box.getSpace(_args.id, "livepeer");
+  const profile = await Box.getProfile(_args.id);
+  const space = await Box.getSpace(_args.id, "livepeer");
 
   if (space.defaultProfile === "3box") {
     useThreeBox = true;
@@ -126,7 +123,7 @@ export async function block(_obj, _args, _ctx, _info) {
 }
 
 export async function getChartData(_obj, _args, _ctx, _info) {
-  let data = {
+  const data = {
     dayData: [],
     weeklyData: [],
     totalVolumeUSD: 0,
@@ -144,7 +141,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
   };
 
   let dayData = [];
-  let weeklyData = [];
+  const weeklyData = [];
   let oneDayData = {
     totalVolumeUSD: 0,
     participationRate: 0,
@@ -161,14 +158,14 @@ export async function getChartData(_obj, _args, _ctx, _info) {
 
   try {
     // get timestamps for the days
-    let utcCurrentTime = dayjs();
-    let utcOneDayBack = utcCurrentTime.subtract(1, "day").unix();
-    let utcTwoDaysBack = utcCurrentTime.subtract(2, "day").unix();
-    let utcOneWeekBack = utcCurrentTime.subtract(1, "week").unix();
-    let utcTwoWeeksBack = utcCurrentTime.subtract(2, "week").unix();
+    const utcCurrentTime = dayjs();
+    const utcOneDayBack = utcCurrentTime.subtract(1, "day").unix();
+    const utcTwoDaysBack = utcCurrentTime.subtract(2, "day").unix();
+    const utcOneWeekBack = utcCurrentTime.subtract(1, "week").unix();
+    const utcTwoWeeksBack = utcCurrentTime.subtract(2, "week").unix();
 
     // get the blocks needed for time travel queries
-    let [
+    const [
       oneDayBlock,
       twoDayBlock,
       oneWeekBlock,
@@ -180,8 +177,8 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       utcTwoWeeksBack,
     ]);
 
-    let getDayData = async () => {
-      let result = await client.query({
+    const getDayData = async () => {
+      const result = await client.query({
         query: dayDataQuery,
         fetchPolicy: "network-only",
         variables: {
@@ -193,16 +190,16 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       return result;
     };
 
-    let getProtocolData = async () => {
-      let result = await client.query({
+    const getProtocolData = async () => {
+      const result = await client.query({
         query: protocolDataQuery,
         fetchPolicy: "network-only",
       });
       return result;
     };
 
-    let getProtocolDataByBlock = async (_block) => {
-      let result = await client.query({
+    const getProtocolDataByBlock = async (_block) => {
+      const result = await client.query({
         query: protocolDataByBlockQuery,
         fetchPolicy: "network-only",
         variables: {
@@ -212,15 +209,15 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       return result;
     };
 
-    let dayDataResult = await getDayData();
+    const dayDataResult = await getDayData();
     dayData = dayDataResult.data.days;
 
-    let livepeerComDayData = await getLivepeerComUsageData();
-    let livepeerComOneWeekData = await getLivepeerComUsageData({
+    const livepeerComDayData = await getLivepeerComUsageData();
+    const livepeerComOneWeekData = await getLivepeerComUsageData({
       fromTime: +new Date(2020, 0),
       toTime: utcOneWeekBack * 1000, // Livepeer.com api uses milliseconds
     });
-    let livepeerComTwoWeekData = await getLivepeerComUsageData({
+    const livepeerComTwoWeekData = await getLivepeerComUsageData({
       fromTime: +new Date(2020, 0),
       toTime: utcTwoWeeksBack * 1000, // Livepeer.com api uses milliseconds
     });
@@ -231,11 +228,11 @@ export async function getChartData(_obj, _args, _ctx, _info) {
 
     // merge in Livepeer.com usage data
     dayData = dayData.map((item) => {
-      let found = livepeerComDayData.find(
+      const found = livepeerComDayData.find(
         (element) => item.date === element.date
       );
 
-      let feeDerivedMinutes = getTotalFeeDerivedMinutes({
+      const feeDerivedMinutes = getTotalFeeDerivedMinutes({
         pricePerPixel,
         totalVolumeETH: +item.volumeETH,
         totalVolumeUSD: +item.volumeUSD,
@@ -252,24 +249,24 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       }
 
       // combine Livepeer.com minutes with minutes calculated via fee volume
-      let minutes =
+      const minutes =
         (found?.sourceSegmentsDuration ?? 0) / 60 + feeDerivedMinutes;
       return { ...item, ...found, minutes };
     });
 
     // get total Livepeer.com aggregate usage
-    let totalLivepeerComUsage = livepeerComDayData.reduce((x, y) => {
+    const totalLivepeerComUsage = livepeerComDayData.reduce((x, y) => {
       return x + y.sourceSegmentsDuration / 60;
     }, 0);
 
-    let totalLivepeerComUsageOneWeekAgo = livepeerComOneWeekData.reduce(
+    const totalLivepeerComUsageOneWeekAgo = livepeerComOneWeekData.reduce(
       (x, y) => {
         return x + y.sourceSegmentsDuration / 60;
       },
       0
     );
 
-    let totalLivepeerComUsageTwoWeeksAgo = livepeerComTwoWeekData.reduce(
+    const totalLivepeerComUsageTwoWeeksAgo = livepeerComTwoWeekData.reduce(
       (x, y) => {
         return x + y.sourceSegmentsDuration / 60;
       },
@@ -277,63 +274,63 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     );
 
     // fetch the historical data
-    let protocolDataResult = await getProtocolData();
+    const protocolDataResult = await getProtocolData();
     data.totalVolumeUSD = +protocolDataResult.data.protocol.totalVolumeUSD;
     data.totalVolumeETH = +protocolDataResult.data.protocol.totalVolumeETH;
     data.participationRate = +protocolDataResult.data.protocol
       .participationRate;
 
-    let oneDayResult = await getProtocolDataByBlock(oneDayBlock);
+    const oneDayResult = await getProtocolDataByBlock(oneDayBlock);
     oneDayData = oneDayResult.data.protocol;
 
-    let twoDayResult = await getProtocolDataByBlock(twoDayBlock);
+    const twoDayResult = await getProtocolDataByBlock(twoDayBlock);
     twoDayData = twoDayResult.data.protocol;
 
-    let oneWeekResult = await getProtocolDataByBlock(oneWeekBlock);
-    let oneWeekData = oneWeekResult.data.protocol;
+    const oneWeekResult = await getProtocolDataByBlock(oneWeekBlock);
+    const oneWeekData = oneWeekResult.data.protocol;
 
-    let twoWeekResult = await getProtocolDataByBlock(twoWeekBlock);
-    let twoWeekData = twoWeekResult.data.protocol;
+    const twoWeekResult = await getProtocolDataByBlock(twoWeekBlock);
+    const twoWeekData = twoWeekResult.data.protocol;
 
-    let [oneDayVolumeUSD, volumeChangeUSD] = getTwoPeriodPercentChange(
+    const [oneDayVolumeUSD, volumeChangeUSD] = getTwoPeriodPercentChange(
       +data.totalVolumeUSD,
       +oneDayData.totalVolumeUSD,
       +twoDayData.totalVolumeUSD
     );
 
-    let [oneWeekVolumeUSD, weeklyVolumeChangeUSD] = getTwoPeriodPercentChange(
+    const [oneWeekVolumeUSD, weeklyVolumeChangeUSD] = getTwoPeriodPercentChange(
       +data.totalVolumeUSD,
       +oneWeekData.totalVolumeUSD,
       +twoWeekData.totalVolumeUSD
     );
 
-    let [oneWeekVolumeETH] = getTwoPeriodPercentChange(
+    const [oneWeekVolumeETH] = getTwoPeriodPercentChange(
       +data.totalVolumeETH,
       +oneWeekData.totalVolumeETH,
       +twoWeekData.totalVolumeETH
     );
 
-    let [oneWeekUsage, weeklyUsageChange] = getTwoPeriodPercentChange(
+    const [oneWeekUsage, weeklyUsageChange] = getTwoPeriodPercentChange(
       totalLivepeerComUsage + totalFeeDerivedMinutes,
       totalLivepeerComUsageOneWeekAgo + totalFeeDerivedMinutesOneWeekAgo,
       totalLivepeerComUsageTwoWeeksAgo + totalFeeDerivedMinutesTwoWeeksAgo
     );
 
     // format the total participation change
-    let participationRateChange = getPercentChange(
+    const participationRateChange = getPercentChange(
       data.participationRate,
       oneDayData.participationRate
     );
 
     // format weekly data for weekly sized chunks
-    let weeklySizedChunks = [...dayData].sort((a, b) =>
+    const weeklySizedChunks = [...dayData].sort((a, b) =>
       parseInt(a.date) > parseInt(b.date) ? 1 : -1
     );
     let startIndexWeekly = -1;
     let currentWeek = -1;
 
     for (const weeklySizedChunk of weeklySizedChunks) {
-      let week = dayjs.utc(dayjs.unix(weeklySizedChunk.date)).week();
+      const week = dayjs.utc(dayjs.unix(weeklySizedChunk.date)).week();
       if (week !== currentWeek) {
         currentWeek = week;
         startIndexWeekly++;

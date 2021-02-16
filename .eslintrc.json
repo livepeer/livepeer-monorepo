@@ -239,6 +239,13 @@
     ],
     "no-with": "warn",
     "no-whitespace-before-property": "warn",
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+      }
+    ],
     "react-hooks/exhaustive-deps": "warn",
     "require-yield": "warn",
     "rest-spread-spacing": ["warn", "never"],

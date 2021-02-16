@@ -80,12 +80,12 @@ const StakingTable = ({
         Filter: DefaultColumnFilter,
         mobile: true,
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID);
-          let b = getRowValueByColumnID(rowB, columnID);
-          let aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
-          let bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
-          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
-          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
+          const a = getRowValueByColumnID(rowA, columnID);
+          const b = getRowValueByColumnID(rowB, columnID);
+          const aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
+          const bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
+          const rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
+          const rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
 
           return compareBasic(rowAIdentity, rowBIdentity);
         },
@@ -135,11 +135,11 @@ const StakingTable = ({
         Header: "Calls",
         accessor: "pools",
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID);
-          let b = getRowValueByColumnID(rowB, columnID);
+          const a = getRowValueByColumnID(rowA, columnID);
+          const b = getRowValueByColumnID(rowB, columnID);
 
-          let rowACallsMade = a.filter((r) => r.rewardTokens != null).length;
-          let rowBCallsMade = b.filter((r) => r.rewardTokens != null).length;
+          const rowACallsMade = a.filter((r) => r.rewardTokens != null).length;
+          const rowBCallsMade = b.filter((r) => r.rewardTokens != null).length;
 
           return compareBasic(rowACallsMade, rowBCallsMade);
         },
@@ -477,7 +477,7 @@ const StakingTable = ({
                           </TableCell>
                         );
                       case "Calls":
-                        let callsMade = cell.value.filter(
+                        const callsMade = cell.value.filter(
                           (r) => r.rewardTokens != null
                         ).length;
                         return (

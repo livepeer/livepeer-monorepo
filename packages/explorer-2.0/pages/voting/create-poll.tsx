@@ -309,7 +309,7 @@ export async function getStaticProps() {
     query: `{ polls { proposal } }`,
   });
 
-  let createdPolls = [];
+  const createdPolls = [];
   if (pollsData) {
     await Promise.all(
       pollsData.polls.map(async (poll) => {
@@ -323,9 +323,9 @@ export async function getStaticProps() {
     );
   }
 
-  let lips = [];
+  const lips = [];
   for (const lip of data.repository.content.entries) {
-    let transformedLip = fm(lip.content.text);
+    const transformedLip = fm(lip.content.text);
     transformedLip.attributes.created = transformedLip.attributes.created.toString();
     if (
       transformedLip.attributes.status === "Proposed" &&

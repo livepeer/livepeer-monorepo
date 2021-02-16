@@ -44,7 +44,7 @@ const Voting = () => {
 
   useEffect(() => {
     if (data) {
-      let pollArr = [];
+      const pollArr = [];
       const init = async () => {
         if (!data.polls.length) {
           setLoading(false);
