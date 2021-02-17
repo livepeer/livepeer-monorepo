@@ -1,7 +1,7 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "plugins": ["react", "react-hooks", "jest", "import"],
+  "plugins": ["react", "react-hooks", "jest", "import", "graphql"],
   "env": {
     "browser": true,
     "commonjs": true,
@@ -256,13 +256,6 @@
     "react/jsx-no-duplicate-props": "warn",
     "react/jsx-no-target-blank": "warn",
     "react/jsx-no-undef": "error",
-    "react/jsx-pascal-case": [
-      "warn",
-      {
-        "allowAllCaps": true,
-        "ignore": []
-      }
-    ],
     "react/jsx-uses-react": "warn",
     "react/jsx-uses-vars": "warn",
     "react/no-danger-with-children": "warn",

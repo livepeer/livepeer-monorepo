@@ -3,8 +3,12 @@
 **/coverage
 **/dist
 **/sdk/lib
+**/sdk/main
 **/chroma/lib
+**/chroma/main
+**/lpx/bin
 **/public
 **/package.json
 **/explorer-2.0/.next
 **/subgraph/subgraph.template.yaml
+**/packages/subgraph/src/types/**

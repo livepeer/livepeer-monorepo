@@ -1,9 +1,3 @@
-mutation withdrawFees (
-  $delegator: String!
-  $lastClaimRound: Int!
-) {
-  tx: withdrawFees(
-    delegator: $delegator
-    lastClaimRound: $lastClaimRound
-  )
+mutation withdrawFees($delegator: String!, $lastClaimRound: Int!) {
+  tx: withdrawFees(delegator: $delegator, lastClaimRound: $lastClaimRound)
 }

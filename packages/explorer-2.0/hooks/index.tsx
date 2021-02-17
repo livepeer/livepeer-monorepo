@@ -296,7 +296,7 @@ export function usePageVisibility() {
 }
 
 export function useComponentDidMount(func: () => any) {
-  useEffect(func, []);
+  useEffect(func, [func]);
 }
 
 export function useComponentWillMount(func: () => any) {
