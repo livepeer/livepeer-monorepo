@@ -42,13 +42,13 @@ export function vote(event: VoteEventParam): void {
   let voteId = makeVoteId(event.params.voter.toHex(), poll.id);
 
   let v = Vote.load(voteId);
-  if (v === null) {
+  if (v == null) {
     v = new Vote(voteId);
     // bool types must be set to something before they can accessed
     v.registeredTranscoder = false;
   }
 
-  let firstTimeVoter = v.choiceID === null;
+  let firstTimeVoter = v.choiceID == null;
 
   if (event.params.choiceID.equals(ZERO_BI)) {
     v.choiceID = "Yes";
@@ -72,7 +72,7 @@ export function vote(event: VoteEventParam): void {
       let delegate = Transcoder.load(delegator.delegate) as Transcoder;
 
       // If voter is a registered transcoder
-      if (event.params.voter.toHex() === delegator.delegate) {
+      if (event.params.voter.toHex() == delegator.delegate) {
         v.voteStake = delegate.totalStake as BigDecimal;
         v.registeredTranscoder = true;
       } else {
@@ -95,7 +95,7 @@ export function vote(event: VoteEventParam): void {
         let delegateVoteId = makeVoteId(delegate.id, poll.id);
         let delegateVote =
           Vote.load(delegateVoteId) || new Vote(delegateVoteId);
-        if (delegate.status === "Registered") {
+        if (delegate.status == "Registered") {
           delegateVote.registeredTranscoder = true;
         } else {
           delegateVote.registeredTranscoder = false;
@@ -167,10 +167,10 @@ export function tallyVotes(poll: Poll): void {
       ? (v.nonVoteStake as BigDecimal)
       : ZERO_BD;
 
-    if (v.choiceID === "Yes") {
+    if (v.choiceID == "Yes") {
       pollTally.yes = pollTally.yes.plus(v.voteStake.minus(nonVoteStake));
     }
-    if (v.choiceID === "No") {
+    if (v.choiceID == "No") {
       pollTally.no = pollTally.no.plus(v.voteStake.minus(nonVoteStake));
     }
   }

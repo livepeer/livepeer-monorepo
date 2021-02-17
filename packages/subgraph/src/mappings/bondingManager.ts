@@ -63,22 +63,22 @@ export function bond(event: Bond): void {
   let protocol = Protocol.load("0");
 
   // If self delegating, set status and assign reference to self
-  if (event.params.delegator.toHex() === event.params.newDelegate.toHex()) {
+  if (event.params.delegator.toHex() == event.params.newDelegate.toHex()) {
     transcoder.status = "Registered";
     transcoder.delegator = event.params.delegator.toHex();
   }
 
   // Changing delegate
   if (
-    event.params.oldDelegate.toHex() !== EMPTY_ADDRESS.toHex() &&
-    event.params.oldDelegate.toHex() !== event.params.newDelegate.toHex()
+    event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
+    event.params.oldDelegate.toHex() != event.params.newDelegate.toHex()
   ) {
     let oldTranscoder = Transcoder.load(event.params.oldDelegate.toHex());
     let oldDelegate = Delegator.load(event.params.oldDelegate.toHex());
     let oldDelegateData = bondingManager.getDelegator(event.params.oldDelegate);
 
     // if previous delegate was itself, set status and unassign reference to self
-    if (event.params.oldDelegate.toHex() === event.params.delegator.toHex()) {
+    if (event.params.oldDelegate.toHex() == event.params.delegator.toHex()) {
       oldTranscoder.status = "NotRegistered";
       oldTranscoder.delegator = null;
     }
@@ -182,7 +182,7 @@ export function unbond(event: Unbond): void {
   if (delegatorData.value0.isZero()) {
     // If unbonding from self and no longer has a bonded amount
     // update transcoder status and delegator
-    if (event.params.delegator.toHex() === event.params.delegate.toHex()) {
+    if (event.params.delegator.toHex() == event.params.delegate.toHex()) {
       transcoder.status = "NotRegistered";
       transcoder.delegator = null;
     }
@@ -246,7 +246,7 @@ export function rebond(event: Rebond): void {
   // If rebonding from unbonded
   if (!delegator.delegate) {
     // If self-bonding then update transcoder status
-    if (event.params.delegate.toHex() === event.params.delegator.toHex()) {
+    if (event.params.delegate.toHex() == event.params.delegator.toHex()) {
       transcoder.status = "Registered";
       transcoder.delegator = event.params.delegator.toHex();
     }
@@ -369,17 +369,17 @@ export function parameterUpdate(event: ParameterUpdate): void {
   let bondingManager = BondingManager.bind(event.address);
   let protocol = createOrLoadProtocol();
 
-  if (event.params.param === "unbondingPeriod") {
+  if (event.params.param == "unbondingPeriod") {
     protocol.unbondingPeriod = bondingManager.unbondingPeriod();
   }
 
-  if (event.params.param === "numActiveTranscoders") {
+  if (event.params.param == "numActiveTranscoders") {
     protocol.numActiveTranscoders = bondingManager
       .getTranscoderPoolMaxSize()
       .toI32();
   }
 
-  if (event.params.param === "maxEarningsClaimsRounds") {
+  if (event.params.param == "maxEarningsClaimsRounds") {
     protocol.maxEarningsClaimsRounds = bondingManager
       .maxEarningsClaimsRounds()
       .toI32();

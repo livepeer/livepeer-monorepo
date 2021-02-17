@@ -32,8 +32,8 @@ export function updatePollTallyOnReward(event: Reward): void {
 
   // Return if transcoder that called reward isn't voter's delegate
   if (
-    delegator === null ||
-    delegator.delegate !== event.params.transcoder.toHex()
+    delegator == null ||
+    delegator.delegate != event.params.transcoder.toHex()
   ) {
     return;
   }
@@ -52,7 +52,7 @@ export function updatePollTallyOnReward(event: Reward): void {
   let transcoder = Transcoder.load(event.params.transcoder.toHex());
 
   // update vote stakes
-  if (voterAddress === event.params.transcoder.toHex()) {
+  if (voterAddress == event.params.transcoder.toHex()) {
     vote.voteStake = transcoder.totalStake as BigDecimal;
   } else {
     let bondingManager = BondingManager.bind(event.address);
@@ -93,8 +93,8 @@ export function updatePollTallyOnBond(event: Bond): void {
   let voterAddress = dataSource.context().getString("voter");
   let updateTally = false;
   let isSwitchingDelegates =
-    event.params.oldDelegate.toHex() !== EMPTY_ADDRESS.toHex() &&
-    event.params.oldDelegate.toHex() !== event.params.newDelegate.toHex();
+    event.params.oldDelegate.toHex() != EMPTY_ADDRESS.toHex() &&
+    event.params.oldDelegate.toHex() != event.params.newDelegate.toHex();
   let oldDelegateVoteId = makeVoteId(
     event.params.oldDelegate.toHex(),
     pollAddress
@@ -113,19 +113,19 @@ export function updatePollTallyOnBond(event: Bond): void {
 
   if (oldDelegateVote) {
     updateTally = true;
-    if (oldDelegate.status === "Registered") {
+    if (oldDelegate.status == "Registered") {
       oldDelegateVote.registeredTranscoder = true;
     } else {
       oldDelegateVote.registeredTranscoder = false;
     }
     if (isSwitchingDelegates) {
       // if old delegate voted, update its vote stake
-      if (oldDelegateVote.choiceID !== null) {
+      if (oldDelegateVote.choiceID != null) {
         oldDelegateVote.voteStake = oldDelegate.totalStake as BigDecimal;
       }
 
       // if caller is voter, remove its nonVoteStake from old delegate
-      if (voterAddress === event.params.delegator.toHex()) {
+      if (voterAddress == event.params.delegator.toHex()) {
         oldDelegateVote.nonVoteStake = oldDelegateVote.nonVoteStake.minus(
           bondedAmount.minus(convertToDecimal(event.params.additionalAmount))
         );
@@ -136,9 +136,9 @@ export function updatePollTallyOnBond(event: Bond): void {
 
   if (newDelegateVote) {
     updateTally = true;
-    if (newDelegate.status === "Registered") {
+    if (newDelegate.status == "Registered") {
       newDelegateVote.registeredTranscoder = true;
-      if (newDelegateVote.choiceID !== null) {
+      if (newDelegateVote.choiceID != null) {
         newDelegateVote.voteStake = newDelegate.totalStake as BigDecimal;
       }
     } else {
@@ -149,16 +149,16 @@ export function updatePollTallyOnBond(event: Bond): void {
 
   // if caller is voter and *not* a registered transcoder update its vote
   if (
-    voterAddress === event.params.delegator.toHex() &&
-    voterAddress !== event.params.newDelegate.toHex()
+    voterAddress == event.params.delegator.toHex() &&
+    voterAddress != event.params.newDelegate.toHex()
   ) {
     updateTally = true;
 
     // if delegate has not voted, create a "placeholder" vote for tracking
     // nonVoteStake in case it happens to register during the poll period
-    if (newDelegateVote === null) {
+    if (newDelegateVote == null) {
       newDelegateVote = new Vote(newDelegateVoteId);
-      if (newDelegate.status === "Registered") {
+      if (newDelegate.status == "Registered") {
         newDelegateVote.registeredTranscoder = true;
       } else {
         newDelegateVote.registeredTranscoder = false;
@@ -205,7 +205,7 @@ export function updatePollTallyOnEarningsClaimed(event: EarningsClaimed): void {
   // after earnings are claimed so after the LIP-36 mainnet upgrade block
   // we stop updating all voters vote weight on each EarningsClaimed event
   if (
-    dataSource.network() !== "mainnet" ||
+    dataSource.network() != "mainnet" ||
     event.block.number.gt(BigInt.fromI32(10972586))
   ) {
     return;
@@ -216,8 +216,8 @@ export function updatePollTallyOnEarningsClaimed(event: EarningsClaimed): void {
 
   // Return if the voter doesn't share the same delegate as the delegator that claimed earnings
   if (
-    delegator === null ||
-    delegator.delegate !== event.params.delegate.toHex()
+    delegator == null ||
+    delegator.delegate != event.params.delegate.toHex()
   ) {
     return;
   }
@@ -235,7 +235,7 @@ export function updatePollTallyOnEarningsClaimed(event: EarningsClaimed): void {
   let vote = Vote.load(voteId);
   let transcoder = Transcoder.load(voterAddress);
 
-  if (transcoder.status === "Registered") {
+  if (transcoder.status == "Registered") {
     vote.voteStake = transcoder.totalStake as BigDecimal;
   } else {
     let bondingManager = BondingManager.bind(event.address);
@@ -283,14 +283,14 @@ function updatePollTally<T extends Rebond>(event: T): void {
 
   if (delegateVote) {
     updateTally = true;
-    if (delegate.status === "Registered") {
+    if (delegate.status == "Registered") {
       delegateVote.registeredTranscoder = true;
-      if (delegateVote.choiceID !== null) {
+      if (delegateVote.choiceID != null) {
         delegateVote.voteStake = delegate.totalStake as BigDecimal;
       }
     } else {
       delegateVote.registeredTranscoder = false;
-      if (delegateVote.choiceID !== null) {
+      if (delegateVote.choiceID != null) {
         delegateVote.voteStake = convertToDecimal(
           bondingManager.pendingStake(
             event.params.delegate,
@@ -303,8 +303,8 @@ function updatePollTally<T extends Rebond>(event: T): void {
   }
 
   if (
-    voterAddress === event.params.delegator.toHex() &&
-    voterAddress !== event.params.delegate.toHex()
+    voterAddress == event.params.delegator.toHex() &&
+    voterAddress != event.params.delegate.toHex()
   ) {
     updateTally = true;
 
@@ -315,14 +315,14 @@ function updatePollTally<T extends Rebond>(event: T): void {
       )
     );
 
-    if (delegateVote === null) {
+    if (delegateVote == null) {
       delegateVote = new Vote(delegateVoteId);
     }
     delegateVote.voter = event.params.delegate.toHex();
     delegateVote.nonVoteStake = delegateVote.nonVoteStake
       .minus(vote.voteStake as BigDecimal)
       .plus(pendingStake);
-    if (delegate.status === "Registered") {
+    if (delegate.status == "Registered") {
       delegateVote.registeredTranscoder = true;
     } else {
       delegateVote.registeredTranscoder = false;

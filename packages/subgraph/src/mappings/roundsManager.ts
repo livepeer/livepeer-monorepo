@@ -52,7 +52,7 @@ export function newRound(event: NewRound): void {
   let pool: Pool;
 
   // Iterate over all active transcoders
-  while (EMPTY_ADDRESS.toHex() !== currentTranscoder.toHex()) {
+  while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
     // create a unique "pool" for each active transcoder. If a transcoder calls
     // reward() for a given round, we store its reward tokens inside this Pool
     // entry in a field called "rewardTokens". If "rewardTokens" is null for a
@@ -122,12 +122,12 @@ export function parameterUpdate(event: ParameterUpdate): void {
   let protocol = Protocol.load("0");
   let currentRound = roundsManager.currentRound();
 
-  if (event.params.param === "roundLength") {
+  if (event.params.param == "roundLength") {
     let roundLength = roundsManager.roundLength();
     let lastRoundLengthUpdateStartBlock = roundsManager.lastRoundLengthUpdateStartBlock();
     let lastRoundLengthUpdateRound = roundsManager.lastRoundLengthUpdateRound();
 
-    if (protocol.roundLength.toI32() === 0) {
+    if (protocol.roundLength.toI32() == 0) {
       createRound(event.block.number, roundLength, currentRound);
     }
     protocol.roundLength = roundLength;
@@ -136,7 +136,7 @@ export function parameterUpdate(event: ParameterUpdate): void {
     protocol.currentRound = currentRound.toString();
   }
 
-  if (event.params.param === "roundLockAmount") {
+  if (event.params.param == "roundLockAmount") {
     protocol.roundLockAmount = roundsManager.roundLockAmount();
     protocol.lockPeriod = roundsManager
       .roundLength()

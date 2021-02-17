@@ -46,7 +46,7 @@ export function newRound(event: NewRound): void {
   let pool: Pool;
 
   // Iterate over all registered transcoders
-  while (EMPTY_ADDRESS.toHex() !== currentTranscoder.toHex()) {
+  while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
     // Update transcoder active state
     active = bondingManager.isActiveTranscoder(
       currentTranscoder,

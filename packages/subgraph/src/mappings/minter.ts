@@ -61,11 +61,11 @@ export function parameterUpdate(event: ParameterUpdate): void {
   let round = createOrLoadRound(event.block.number);
   let protocol = Protocol.load("0");
 
-  if (event.params.param === "targetBondingRate") {
+  if (event.params.param == "targetBondingRate") {
     protocol.targetBondingRate = minter.targetBondingRate();
   }
 
-  if (event.params.param === "inflationChange") {
+  if (event.params.param == "inflationChange") {
     protocol.inflationChange = minter.inflationChange();
   }
 

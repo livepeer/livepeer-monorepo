@@ -167,15 +167,15 @@ export function bond(call: BondCall): void {
     }
 
     // If self delegating, set status and assign reference to self
-    if (delegatorAddress.toHex() === newDelegateAddress.toHex()) {
+    if (delegatorAddress.toHex() == newDelegateAddress.toHex()) {
       transcoder.status = "Registered";
       transcoder.delegator = delegatorAddress.toHex();
     }
 
     // Changing delegate
     if (
-      delegator.delegate !== null &&
-      delegator.delegate !== newDelegateAddress.toHex()
+      delegator.delegate != null &&
+      delegator.delegate != newDelegateAddress.toHex()
     ) {
       let oldTranscoder = Transcoder.load(
         oldDelegateAddress.toHex()
@@ -183,7 +183,7 @@ export function bond(call: BondCall): void {
       let oldDelegate = Delegator.load(oldDelegateAddress.toHex()) as Delegator;
 
       // if previous delegate was itself, set status and unassign reference to self
-      if (oldDelegateAddress.toHex() === delegatorAddress.toHex()) {
+      if (oldDelegateAddress.toHex() == delegatorAddress.toHex()) {
         oldTranscoder.status = "NotRegistered";
         oldTranscoder.delegator = null;
       }
