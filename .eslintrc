@@ -23,15 +23,6 @@
   },
   "overrides": [
     {
-      "files": ["test/**/*.test.js"],
-      "extends": ["plugin:jest/recommended"],
-      "rules": {
-        "jest/expect-expect": "off",
-        "jest/no-disabled-tests": "off"
-      }
-    },
-    { "files": ["**/__tests__/**"], "env": { "jest": true } },
-    {
       "files": ["**/*.ts", "**/*.tsx"],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
@@ -86,11 +77,8 @@
     },
     {
       "files": ["packages/explorer-2.0/**/*"],
-      "rules": { "react/react-in-jsx-scope": "off" }
-    },
-    {
-      "files": ["packages/explorer-2.0/**/*"],
       "rules": {
+        "react/react-in-jsx-scope": "off",
         "import/no-anonymous-default-export": [
           "error",
           {
@@ -116,6 +104,15 @@
           "error",
           { "devDependencies": false }
         ]
+      }
+    },
+    {
+      "files": ["packages/subgraph/**/*"],
+      "rules": {
+        "eqeqeq": [0],
+        "prefer-const": "off",
+        "@typescript-eslint/no-inferrable-types": "warn",
+        "@typescript-eslint/no-empty-function": "warn"
       }
     },
     {
