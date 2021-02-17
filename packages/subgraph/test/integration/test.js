@@ -1,15 +1,14 @@
 /* eslint-disable no-undef */
-const { createApolloFetch } = require("apollo-fetch");
-const BN = require("bignumber.js");
-const path = require("path");
-const RPC = require("../../utils/rpc");
-const execSync = require("child_process").execSync;
-
-const RoundsManagerABI = require("../../abis/RoundsManager.json");
-const BondingManagerABI = require("../../abis/BondingManager.json");
-const LivepeerTokenABI = require("../../abis/LivepeerToken.json");
-const PollCreatorABI = require("../../abis/PollCreator.json");
-const PollABI = require("../../abis/Poll.json");
+import { createApolloFetch } from "apollo-fetch";
+import BN from "bignumber.js";
+import path from "path";
+import RPC from "../../utils/rpc";
+import { execSync } from "child_process";
+import RoundsManagerABI from "../../abis/RoundsManager.json";
+import BondingManagerABI from "../../abis/BondingManager.json";
+import LivepeerTokenABI from "../../abis/LivepeerToken.json";
+import PollCreatorABI from "../../abis/PollCreator.json";
+import PollABI from "../../abis/Poll.json";
 
 const roundsManagerAddress = "0x5f8e26fAcC23FA4cbd87b8d9Dbbd33D5047abDE1";
 const bondingManagerAddress = "0xA94B7f0465E98609391C623d0560C5720a3f2D33";

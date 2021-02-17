@@ -61,7 +61,7 @@ class RPC {
     }
   }
 
-  async waitUntilNextBlockMultiple(blockMultiple, multiples = 1, seconds = 20) {
+  async waitUntilNextBlockMultiple(blockMultiple, multiples = 1) {
     const currentBlock = await this.getBlockNumberAsync();
     const additionalBlocks = (multiples - 1) * blockMultiple;
     await this.waitUntilBlock(

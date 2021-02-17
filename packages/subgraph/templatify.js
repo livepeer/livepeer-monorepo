@@ -1,9 +1,10 @@
-const Handlebars = require("handlebars");
-const fs = require("fs-extra");
-const path = require("path");
-const yaml = require("js-yaml");
+import Handlebars from "handlebars";
+import fs from "fs-extra";
+import path from "path";
+import yaml from "js-yaml";
+import { t } from "typy";
 
-const { t } = require("typy");
+const __dirname = path.resolve();
 
 Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
   return arg1 === arg2 ? options.fn(this) : options.inverse(this);

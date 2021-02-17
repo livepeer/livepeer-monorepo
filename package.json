@@ -60,7 +60,10 @@
     }
   },
   "lint-staged": {
-    "*.{ts,js,css,html,md,tsx,mdx}": "prettier --write"
+    "*.{ts,js,css,html,md,tsx,mdx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "resolutions": {
     "bcrypto": "5.4.0"
