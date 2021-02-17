@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { ServiceURIUpdate } from "../types/ServiceRegistry/ServiceRegistry";
 
 // Import entity types generated from the GraphQL schema

@@ -113,7 +113,16 @@ const Index = ({ children, ...props }) => {
         closeWithMask={false}
         onBeforeClose={() => (document.body.style.overflowY = "auto")}
         onRequestClose={() => {
-          closeTour();
+          client.writeQuery({
+            query: gql`
+              query {
+                tourOpen
+              }
+            `,
+            data: {
+              tourOpen: false,
+            },
+          });
           setTourKey(tourKey + 1);
         }}
         getCurrentStep={(curr) => {

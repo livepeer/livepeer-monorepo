@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { integer } from "@protofire/subgraph-toolkit";
 import {

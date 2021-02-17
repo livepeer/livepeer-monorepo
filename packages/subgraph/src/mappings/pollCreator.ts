@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { PollCreated } from "../types/PollCreator/PollCreator";
 import { Transaction, Poll, PollCreatedEvent } from "../types/schema";
 import { createOrLoadRound, makeEventId } from "../../utils/helpers";

@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { BigDecimal } from "@graphprotocol/graph-ts";
 import { Vote as VoteEventParam } from "../types/templates/Poll/Poll";
 import {

@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { store } from "@graphprotocol/graph-ts";
 
 // Import event types from the registrar contract ABIs
