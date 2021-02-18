@@ -54,7 +54,7 @@ const Index = () => {
   }
 
   const events = data.transactions.reduce(
-    (res, { _events }) => res.concat(_events),
+    (res, { events: e }) => res.concat(e),
     []
   );
 
@@ -115,6 +115,7 @@ const Index = () => {
 export default Index;
 
 function renderSwitch(event: any, i: number) {
+  console.log(event);
   switch (event.__typename) {
     case "BondEvent":
       return (
