@@ -24,13 +24,13 @@ export function pause(event: Pause): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let pause = new PauseEvent(
+  let pauseEvent = new PauseEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  pause.transaction = event.transaction.hash.toHex();
-  pause.timestamp = event.block.timestamp.toI32();
-  pause.round = round.id;
-  pause.save();
+  pauseEvent.transaction = event.transaction.hash.toHex();
+  pauseEvent.timestamp = event.block.timestamp.toI32();
+  pauseEvent.round = round.id;
+  pauseEvent.save();
 }
 
 export function unpause(event: Unpause): void {
@@ -50,11 +50,11 @@ export function unpause(event: Unpause): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let unpause = new UnpauseEvent(
+  let unpauseEvent = new UnpauseEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  unpause.transaction = event.transaction.hash.toHex();
-  unpause.timestamp = event.block.timestamp.toI32();
-  unpause.round = round.id;
-  unpause.save();
+  unpauseEvent.transaction = event.transaction.hash.toHex();
+  unpauseEvent.timestamp = event.block.timestamp.toI32();
+  unpauseEvent.round = round.id;
+  unpauseEvent.save();
 }

@@ -8,13 +8,11 @@ import { initTransaction } from "../../lib/utils";
 const Index = ({ delegator, ...props }) => {
   const context = useWeb3React();
   const client = useApolloClient();
+  const { withdrawFees }: any = useContext(MutationsContext);
 
   if (!context.active) {
     return null;
   }
-
-  const { withdrawFees }: any = useContext(MutationsContext);
-
   return (
     <>
       <Button

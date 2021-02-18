@@ -39,7 +39,7 @@ const OrchestratorsPage = () => {
     } else {
       startPollingMyAccount(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, stopPollingMyAccount, startPollingMyAccount]);
 
   return (
     <>

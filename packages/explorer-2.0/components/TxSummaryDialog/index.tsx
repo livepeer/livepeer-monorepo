@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Spinner } from "@theme-ui/components";
+import { Box } from "@theme-ui/components";
 import { Flex } from "theme-ui";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
@@ -14,10 +14,6 @@ const rotate = keyframes`
 `;
 
 const Index = ({ isOpen, onDismiss }) => {
-  if (!isOpen) {
-    return null;
-  }
-
   const GET_TX_SUMMARY_MODAL = gql`
     {
       txSummaryModal @client {
@@ -29,6 +25,10 @@ const Index = ({ isOpen, onDismiss }) => {
   `;
 
   const { data } = useQuery(GET_TX_SUMMARY_MODAL);
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <Dialog

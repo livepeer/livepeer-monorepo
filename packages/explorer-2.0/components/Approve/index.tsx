@@ -32,7 +32,7 @@ const Index = ({ account, banner = true }) => {
     });
   };
 
-  if (account && account.id.toLowerCase() == context.account.toLowerCase()) {
+  if (account && account.id.toLowerCase() === context.account.toLowerCase()) {
     if (banner) {
       element = (
         <Box sx={{ mb: [3, 3, 3, 4] }}>

@@ -23,11 +23,6 @@ type Props = {};
 const Voting = () => {
   const isVisible = usePageVisibility();
   const pollInterval = 20000;
-  const ipfs = new IPFS({
-    host: "ipfs.infura.io",
-    port: 5001,
-    protocol: "https",
-  });
   const [polls, setPolls] = useState([]);
   const [loading, setLoading] = useState(true);
   const { data, startPolling, stopPolling } = useQuery(allPollsQuery, {
@@ -40,11 +35,16 @@ const Voting = () => {
     } else {
       startPolling(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, startPolling, stopPolling]);
 
   useEffect(() => {
     if (data) {
-      let pollArr = [];
+      const ipfs = new IPFS({
+        host: "ipfs.infura.io",
+        port: 5001,
+        protocol: "https",
+      });
+      const pollArr = [];
       const init = async () => {
         if (!data.polls.length) {
           setLoading(false);

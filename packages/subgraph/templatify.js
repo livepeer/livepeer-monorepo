@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const Handlebars = require("handlebars");
 const fs = require("fs-extra");
 const path = require("path");
 const yaml = require("js-yaml");
-
 const { t } = require("typy");
 
 Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
-  return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+  return arg1 === arg2 ? options.fn(this) : options.inverse(this);
 });
 
 function getNetworkNameForSubgraph() {

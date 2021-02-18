@@ -4,7 +4,6 @@ import { Styled } from "theme-ui";
 const Index = ({
   disabled = false,
   onFocus = null,
-  onBlur = null,
   type = "text",
   error = false,
   autoFocus = false,
@@ -16,7 +15,6 @@ const Index = ({
   inputRef = undefined,
   onChange = null,
   message = null,
-  as = "input",
   rows = 2,
   name = "",
   htmlFor = "",

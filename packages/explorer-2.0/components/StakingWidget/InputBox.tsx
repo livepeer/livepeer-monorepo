@@ -33,7 +33,7 @@ const InputBox = ({
             <div sx={{ color: "muted" }}>Input</div>
 
             {account &&
-              (action == "stake" ? (
+              (action === "stake" ? (
                 <div
                   data-tip="Enter max"
                   data-for="balance"

@@ -28,11 +28,11 @@ export const numberWithCommas = (x) => {
 };
 
 export const getDelegationStatusColor = (status) => {
-  if (status == "Bonded") {
+  if (status === "Bonded") {
     return "primary";
-  } else if (status == "Unbonding") {
+  } else if (status === "Unbonding") {
     return "yellow";
-  } else if (status == "Pending") {
+  } else if (status === "Pending") {
     return "blue";
   } else {
     return "muted";
@@ -67,11 +67,11 @@ export const getDelegatorStatus = (
 export const MAXIUMUM_VALUE_UINT256 =
   "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
-export const removeURLParameter = (url, parameter) => {
+export const removeURLParameter = (_url, _parameter) => {
   //prefer to use l.search if you have a location/link object
-  var urlparts = url.split("?");
+  var urlparts = _url.split("?");
   if (urlparts.length >= 2) {
-    var prefix = encodeURIComponent(parameter) + "=";
+    var prefix = encodeURIComponent(_parameter) + "=";
     var pars = urlparts[1].split(/[&;]/g);
 
     //reverse iteration as may be destructive
@@ -84,7 +84,7 @@ export const removeURLParameter = (url, parameter) => {
 
     return urlparts[0] + (pars.length > 0 ? "?" + pars.join("&") : "");
   }
-  return url;
+  return _url;
 };
 
 export const nl2br = (str, is_xhtml = true) => {
@@ -100,10 +100,10 @@ export const nl2br = (str, is_xhtml = true) => {
 };
 
 export const textTruncate = (str, length, ending) => {
-  if (length == null) {
+  if (length === null) {
     length = 100;
   }
-  if (ending == null) {
+  if (ending === null) {
     ending = "...";
   }
   if (str.length > length) {
@@ -333,10 +333,10 @@ export const getEstimatedBlockCountdown = async (number) => {
 };
 
 export const expandedPriceLabels = {
-  ["pixel"]: "pixel",
-  ["1m pixels"]: "1 million pixels",
-  ["1b pixels"]: "1 billion pixels",
-  ["1t pixels"]: "1 trillion pixels",
+  pixel: "pixel",
+  "1m pixels": "1 million pixels",
+  "1b pixels": "1 billion pixels",
+  "1t pixels": "1 trillion pixels",
 };
 
 export const mergeObjectsInUnique = (array, property) => {
@@ -353,7 +353,7 @@ export const mergeObjectsInUnique = (array, property) => {
 };
 
 export const getHint = (id, transcoders) => {
-  let hint = {
+  const hint = {
     newPosPrev: EMPTY_ADDRESS,
     newPosNext: EMPTY_ADDRESS,
   };
@@ -403,8 +403,8 @@ export const simulateNewActiveSetOrder = ({
     // if delegator is moving stake, subtract amount from old delegate
     if (
       oldDelegate &&
-      oldDelegate.toLowerCase() != newDelegate.toLowerCase() &&
-      oldDelegate.toLowerCase() != EMPTY_ADDRESS
+      oldDelegate.toLowerCase() !== newDelegate.toLowerCase() &&
+      oldDelegate.toLowerCase() !== EMPTY_ADDRESS
     ) {
       const oldDelegateIndex = transcoders.findIndex(
         (t) => t.id.toLowerCase() === oldDelegate.toLowerCase()
@@ -441,11 +441,11 @@ export const toK = (num) => {
   return Numeral(num).format("0.[00]a");
 };
 
-export const formattedNum = (number, unit = "usd", acceptNegatives = false) => {
+export const formattedNum = (number, unit = "usd") => {
   if (isNaN(number) || number === "" || number === undefined) {
     return unit === "usd" ? "$0" : 0;
   }
-  let num = parseFloat(number);
+  const num = parseFloat(number);
 
   if (num > 500000000) {
     return `${
@@ -489,7 +489,7 @@ export const formattedNum = (number, unit = "usd", acceptNegatives = false) => {
     if (num < 0.1) {
       return "$" + Number(num.toFixed(4));
     } else {
-      let usdString = priceFormatter.format(num);
+      const usdString = priceFormatter.format(num);
       return "$" + usdString.slice(1, usdString.length);
     }
   }
@@ -515,8 +515,8 @@ export const getTwoPeriodPercentChange = (
   valueAsOfPeriodTwo: number
 ) => {
   // get volume info for both 24 hour periods
-  let currentChange = valueNow - valueAsOfPeriodOne;
-  let previousChange = valueAsOfPeriodOne - valueAsOfPeriodTwo;
+  const currentChange = valueNow - valueAsOfPeriodOne;
+  const previousChange = valueAsOfPeriodOne - valueAsOfPeriodTwo;
 
   const adjustedPercentChange =
     ((currentChange - previousChange) / previousChange) * 100;
@@ -538,16 +538,16 @@ export const getBlocksFromTimestamps = async (timestamps) => {
   if (timestamps?.length === 0) {
     return [];
   }
-  let blocks = [];
+  const blocks = [];
   for (const timestamp of timestamps) {
-    let blockResponse = await fetch(
+    const blockResponse = await fetch(
       `https://api${
         process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "-rinkeby" : ""
       }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
         process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
       }`
     );
-    let json = await blockResponse.json();
+    const json = await blockResponse.json();
     blocks.push(+json.result);
   }
 
@@ -579,7 +579,7 @@ export const getLivepeerComUsageData = async (
   params?: LivepeerComUsageParams
 ) => {
   try {
-    let endpoint = `https://livepeer.com/api/usage${
+    const endpoint = `https://livepeer.com/api/usage${
       params ? `?fromTime=${params.fromTime}&toTime=${params.toTime}` : ""
     }`;
 
@@ -608,9 +608,9 @@ export const getTotalFeeDerivedMinutes = ({
   pricePerPixel,
   pixelsPerMinute,
 }): number => {
-  let ethDaiRate = totalVolumeETH / totalVolumeUSD;
-  let usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
-  let feeDerivedMinutes =
+  const ethDaiRate = totalVolumeETH / totalVolumeUSD;
+  const usdAveragePricePerPixel = pricePerPixel / ethDaiRate;
+  const feeDerivedMinutes =
     totalVolumeUSD / usdAveragePricePerPixel / pixelsPerMinute || 0;
   return feeDerivedMinutes;
 };

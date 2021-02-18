@@ -38,7 +38,7 @@ const LivepeerLogo = ({
         node.removeEventListener("mouseout", handleMouseOut);
       };
     }
-  }, [svgRef]);
+  }, [svgRef, handleMouseOut, handleMouseOver]);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -75,7 +75,7 @@ const LivepeerLogo = ({
         ease: "sine.inOut",
       },
     });
-  }, [hover, svgRef]);
+  }, [hover, svgRef, disableHover, isDark]);
 
   const markup = useMemo(
     () => (
@@ -162,7 +162,7 @@ const LivepeerLogo = ({
         </defs>
       </svg>
     ),
-    [pushSx, isDark]
+    [pushSx, isDark, disableHover, id]
   );
 
   if (!isLink) return markup;

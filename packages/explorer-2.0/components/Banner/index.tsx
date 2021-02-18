@@ -1,4 +1,4 @@
-import { Box, Flex } from "theme-ui";
+import { Box } from "theme-ui";
 import React from "react";
 
 interface Props {

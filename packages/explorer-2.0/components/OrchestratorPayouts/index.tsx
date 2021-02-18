@@ -30,7 +30,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
     } else {
       stopPolling();
     }
-  }, [isVisible]);
+  }, [isVisible, startPolling, stopPolling]);
 
   return (
     <Box className="tour-step-6">

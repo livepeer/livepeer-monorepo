@@ -106,7 +106,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
       }
 
       if (signature && ethereumAccount) {
-        let verifiedAccount = ethers.utils.verifyMessage(
+        const verifiedAccount = ethers.utils.verifyMessage(
           message.replace(/<br ?\/?>/g, "\n"),
           signature
         );
@@ -117,7 +117,16 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
         }
       }
     })();
-  }, [debouncedSignature, debouncedEthereumAccount, message]);
+  }, [
+    debouncedSignature,
+    debouncedEthereumAccount,
+    message,
+    context.account,
+    ethereumAccount,
+    signature,
+    threeBoxSpace,
+    timestamp,
+  ]);
 
   reader.onload = function (e) {
     setPreviewImage(e.target.result);
@@ -134,7 +143,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
       setEditProfileOpen(true);
     } else {
       setCreateProfileModalOpen(true);
-      let box = await Box.openBox(account, context.library._web3Provider);
+      const box = await Box.openBox(account, context.library._web3Provider);
       setActiveStep(1);
       await box.syncDone;
 
@@ -145,7 +154,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
         setActiveStep(2);
       }
 
-      let space = await box.openSpace("livepeer");
+      const space = await box.openSpace("livepeer");
       await space.syncDone;
 
       if (hasProfile) {

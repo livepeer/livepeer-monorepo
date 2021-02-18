@@ -2,9 +2,9 @@ import { EarningsTree } from "../../lib/earningsTree";
 import { utils } from "ethers";
 let earningsSnapshot;
 
-if (process.env.NEXT_PUBLIC_NETWORK == "mainnet") {
+if (process.env.NEXT_PUBLIC_NETWORK === "mainnet") {
   earningsSnapshot = require("../../data/earningsTree");
-} else if (process.env.NEXT_PUBLIC_NETWORK == "rinkeby") {
+} else if (process.env.NEXT_PUBLIC_NETWORK === "rinkeby") {
   earningsSnapshot = require("../../data/earningsTree_rinkeby");
 } else {
   earningsSnapshot = "";
@@ -61,7 +61,7 @@ export async function approve(_obj, _args, _ctx) {
 
 async function encodeClaimSnapshotAndStakingAction(_args, stakingAction, _ctx) {
   const { lastClaimRound, delegator } = _args;
-  if (!lastClaimRound || lastClaimRound == 0) {
+  if (!lastClaimRound || lastClaimRound === 0) {
     return null;
   }
 
@@ -165,7 +165,7 @@ export async function bond(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function unbond(_obj, _args, _ctx) {
-  const { amount, newPosPrev, newPosNext } = _args;
+  const { amount } = _args;
 
   let data = _ctx.livepeer.rpc.getCalldata("BondingManager", "unbond", [
     amount,

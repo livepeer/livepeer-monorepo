@@ -35,10 +35,6 @@ const Poll = () => {
   const [pollData, setPollData] = useState(null);
   const { query } = router;
 
-  if (!query?.poll) {
-    return <FourZeroFour />;
-  }
-
   const pollId = query.poll.toString().toLowerCase();
   const pollInterval = 20000;
 
@@ -101,7 +97,17 @@ const Poll = () => {
       startPollingVote(pollInterval);
       startPollingDelegate(pollInterval);
     }
-  }, [isVisible]);
+  }, [
+    isVisible,
+    stopPollingPoll,
+    stopPollingMyAccount,
+    stopPollingVote,
+    stopPollingDelegate,
+    startPollingPoll,
+    startPollingMyAccount,
+    startPollingVote,
+    startPollingDelegate,
+  ]);
 
   useEffect(() => {
     const init = async () => {
@@ -114,6 +120,10 @@ const Poll = () => {
     };
     init();
   }, [data]);
+
+  if (!query?.poll) {
+    return <FourZeroFour />;
+  }
 
   if (!pollData) {
     return (
@@ -134,9 +144,9 @@ const Poll = () => {
     );
   }
 
-  let noVoteStake = +pollData?.tally?.no || 0;
-  let yesVoteStake = +pollData?.tally?.yes || 0;
-  let totalVoteStake = noVoteStake + yesVoteStake;
+  const noVoteStake = +pollData?.tally?.no || 0;
+  const yesVoteStake = +pollData?.tally?.yes || 0;
+  const totalVoteStake = noVoteStake + yesVoteStake;
 
   return (
     <>
@@ -385,17 +395,17 @@ const Poll = () => {
 };
 
 async function transformData({ poll }) {
-  let noVoteStake = +poll?.tally?.no || 0;
-  let yesVoteStake = +poll?.tally?.yes || 0;
-  let totalVoteStake = +poll?.totalVoteStake;
-  let totalNonVoteStake = +poll?.totalNonVoteStake;
-  let totalSupport = isNaN(yesVoteStake / totalVoteStake)
+  const noVoteStake = +poll?.tally?.no || 0;
+  const yesVoteStake = +poll?.tally?.yes || 0;
+  const totalVoteStake = +poll?.totalVoteStake;
+  const totalNonVoteStake = +poll?.totalNonVoteStake;
+  const totalSupport = isNaN(yesVoteStake / totalVoteStake)
     ? 0
     : (yesVoteStake / totalVoteStake) * 100;
-  let totalStake = totalNonVoteStake + totalVoteStake;
-  let totalParticipation = (totalVoteStake / totalStake) * 100;
-  let nonVotersStake = totalStake - totalVoteStake;
-  let nonVoters = ((totalStake - totalVoteStake) / totalStake) * 100;
+  const totalStake = totalNonVoteStake + totalVoteStake;
+  const totalParticipation = (totalVoteStake / totalStake) * 100;
+  const nonVotersStake = totalStake - totalVoteStake;
+  const nonVoters = ((totalStake - totalVoteStake) / totalStake) * 100;
 
   const ipfs = new IPFS({
     host: "ipfs.infura.io",

@@ -9,12 +9,11 @@ import { initTransaction } from "../../lib/utils";
 const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
   const context = useWeb3React();
   const client = useApolloClient();
+  const { unbond }: any = useContext(MutationsContext);
 
   if (!context.active) {
     return null;
   }
-
-  const { unbond }: any = useContext(MutationsContext);
 
   return (
     <>

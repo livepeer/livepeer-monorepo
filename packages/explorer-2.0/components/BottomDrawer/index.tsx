@@ -2,7 +2,7 @@ import { Dialog } from "@reach/dialog";
 import { useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import useWindowSize from "react-use/lib/useWindowSize";
-import { css, keyframes } from "@emotion/core";
+import { css, keyframes } from "@emotion/react";
 
 const slideUp = keyframes`
   0% {

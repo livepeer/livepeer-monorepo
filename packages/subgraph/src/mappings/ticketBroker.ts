@@ -28,13 +28,12 @@ import {
   getUniswapV2DaiEthPairAddress,
   makeEventId,
   ZERO_BD,
-  ZERO_BI,
 } from "../../utils/helpers";
 
 export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
   let round = createOrLoadRound(event.block.number);
   let day = createOrLoadDay(event.block.timestamp.toI32());
-  let winningTicketRedeemed = new WinningTicketRedeemedEvent(
+  let winningTicketRedeemedEvent = new WinningTicketRedeemedEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
   let protocol = Protocol.load("0");
@@ -68,18 +67,18 @@ export function winningTicketRedeemed(event: WinningTicketRedeemed): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  winningTicketRedeemed.transaction = event.transaction.hash.toHex();
-  winningTicketRedeemed.timestamp = event.block.timestamp.toI32();
-  winningTicketRedeemed.round = round.id;
-  winningTicketRedeemed.sender = event.params.sender.toHex();
-  winningTicketRedeemed.recipient = event.params.recipient.toHex();
-  winningTicketRedeemed.faceValue = faceValue;
-  winningTicketRedeemed.faceValueUSD = faceValue.times(ethPrice);
-  winningTicketRedeemed.winProb = event.params.winProb;
-  winningTicketRedeemed.senderNonce = event.params.senderNonce;
-  winningTicketRedeemed.recipientRand = event.params.recipientRand;
-  winningTicketRedeemed.auxData = event.params.auxData;
-  winningTicketRedeemed.save();
+  winningTicketRedeemedEvent.transaction = event.transaction.hash.toHex();
+  winningTicketRedeemedEvent.timestamp = event.block.timestamp.toI32();
+  winningTicketRedeemedEvent.round = round.id;
+  winningTicketRedeemedEvent.sender = event.params.sender.toHex();
+  winningTicketRedeemedEvent.recipient = event.params.recipient.toHex();
+  winningTicketRedeemedEvent.faceValue = faceValue;
+  winningTicketRedeemedEvent.faceValueUSD = faceValue.times(ethPrice);
+  winningTicketRedeemedEvent.winProb = event.params.winProb;
+  winningTicketRedeemedEvent.senderNonce = event.params.senderNonce;
+  winningTicketRedeemedEvent.recipientRand = event.params.recipientRand;
+  winningTicketRedeemedEvent.auxData = event.params.auxData;
+  winningTicketRedeemedEvent.save();
 
   let broadcaster = Broadcaster.load(event.params.sender.toHex());
   if (faceValue.gt(broadcaster.deposit)) {
@@ -154,15 +153,15 @@ export function depositFunded(event: DepositFunded): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let depositFunded = new DepositFundedEvent(
+  let depositFundedEvent = new DepositFundedEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  depositFunded.transaction = event.transaction.hash.toHex();
-  depositFunded.timestamp = event.block.timestamp.toI32();
-  depositFunded.round = round.id;
-  depositFunded.sender = event.params.sender.toHex();
-  depositFunded.amount = convertToDecimal(event.params.amount);
-  depositFunded.save();
+  depositFundedEvent.transaction = event.transaction.hash.toHex();
+  depositFundedEvent.timestamp = event.block.timestamp.toI32();
+  depositFundedEvent.round = round.id;
+  depositFundedEvent.sender = event.params.sender.toHex();
+  depositFundedEvent.amount = convertToDecimal(event.params.amount);
+  depositFundedEvent.save();
 }
 
 export function reserveFunded(event: ReserveFunded): void {
@@ -191,15 +190,15 @@ export function reserveFunded(event: ReserveFunded): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let reserveFunded = new ReserveFundedEvent(
+  let reserveFundedEvent = new ReserveFundedEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  reserveFunded.transaction = event.transaction.hash.toHex();
-  reserveFunded.timestamp = event.block.timestamp.toI32();
-  reserveFunded.round = round.id;
-  reserveFunded.reserveHolder = event.params.reserveHolder.toHex();
-  reserveFunded.amount = convertToDecimal(event.params.amount);
-  reserveFunded.save();
+  reserveFundedEvent.transaction = event.transaction.hash.toHex();
+  reserveFundedEvent.timestamp = event.block.timestamp.toI32();
+  reserveFundedEvent.round = round.id;
+  reserveFundedEvent.reserveHolder = event.params.reserveHolder.toHex();
+  reserveFundedEvent.amount = convertToDecimal(event.params.amount);
+  reserveFundedEvent.save();
 }
 
 export function reserveClaimed(event: ReserveClaimed): void {
@@ -221,16 +220,16 @@ export function reserveClaimed(event: ReserveClaimed): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let reserveClaimed = new ReserveClaimedEvent(
+  let reserveClaimedEvent = new ReserveClaimedEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  reserveClaimed.transaction = event.transaction.hash.toHex();
-  reserveClaimed.timestamp = event.block.timestamp.toI32();
-  reserveClaimed.round = round.id;
-  reserveClaimed.reserveHolder = event.params.reserveHolder.toHex();
-  reserveClaimed.claimant = event.params.claimant.toHex();
-  reserveClaimed.amount = convertToDecimal(event.params.amount);
-  reserveClaimed.save();
+  reserveClaimedEvent.transaction = event.transaction.hash.toHex();
+  reserveClaimedEvent.timestamp = event.block.timestamp.toI32();
+  reserveClaimedEvent.round = round.id;
+  reserveClaimedEvent.reserveHolder = event.params.reserveHolder.toHex();
+  reserveClaimedEvent.claimant = event.params.claimant.toHex();
+  reserveClaimedEvent.amount = convertToDecimal(event.params.amount);
+  reserveClaimedEvent.save();
 }
 
 export function withdrawal(event: Withdrawal): void {
@@ -251,14 +250,14 @@ export function withdrawal(event: Withdrawal): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let withdrawal = new WithdrawalEvent(
+  let withdrawalEvent = new WithdrawalEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  withdrawal.transaction = event.transaction.hash.toHex();
-  withdrawal.timestamp = event.block.timestamp.toI32();
-  withdrawal.round = round.id;
-  withdrawal.sender = event.params.sender.toHex();
-  withdrawal.deposit = convertToDecimal(event.params.deposit);
-  withdrawal.reserve = convertToDecimal(event.params.reserve);
-  withdrawal.save();
+  withdrawalEvent.transaction = event.transaction.hash.toHex();
+  withdrawalEvent.timestamp = event.block.timestamp.toI32();
+  withdrawalEvent.round = round.id;
+  withdrawalEvent.sender = event.params.sender.toHex();
+  withdrawalEvent.deposit = convertToDecimal(event.params.deposit);
+  withdrawalEvent.reserve = convertToDecimal(event.params.reserve);
+  withdrawalEvent.save();
 }

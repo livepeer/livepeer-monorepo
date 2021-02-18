@@ -9,10 +9,11 @@ import { MdReceipt } from "react-icons/md";
 import Utils from "web3-utils";
 import { useWindowSize } from "react-use";
 import Confetti from "react-confetti";
-import Link from "next/link";
 import Router from "next/router";
 
 const Index = ({ tx, isOpen, onDismiss }) => {
+  const { width, height } = useWindowSize();
+
   if (!isOpen) {
     return null;
   }
@@ -35,15 +36,14 @@ const Index = ({ tx, isOpen, onDismiss }) => {
             "linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)",
         }}
       />
-      {renderSwitch({ tx, onDismiss })}
+      {renderSwitch({ tx, onDismiss, width, height })}
     </Modal>
   );
 };
 
 export default Index;
 
-function renderSwitch({ tx, onDismiss }) {
-  const { width, height } = useWindowSize();
+function renderSwitch({ tx, onDismiss, width, height }) {
   const inputData = JSON.parse(tx.inputData);
 
   switch (tx.__typename) {

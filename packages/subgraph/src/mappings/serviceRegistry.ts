@@ -1,4 +1,3 @@
-// Import event types from the registrar contract ABIs
 import { ServiceURIUpdate } from "../types/ServiceRegistry/ServiceRegistry";
 
 // Import entity types generated from the GraphQL schema
@@ -26,13 +25,13 @@ export function serviceURIUpdate(event: ServiceURIUpdate): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let serviceURIUpdate = new ServiceURIUpdateEvent(
+  let serviceURIUpdateEvent = new ServiceURIUpdateEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  serviceURIUpdate.transaction = event.transaction.hash.toHex();
-  serviceURIUpdate.timestamp = event.block.timestamp.toI32();
-  serviceURIUpdate.round = round.id;
-  serviceURIUpdate.addr = event.params.addr.toHex();
-  serviceURIUpdate.serviceURI = event.params.serviceURI;
-  serviceURIUpdate.save();
+  serviceURIUpdateEvent.transaction = event.transaction.hash.toHex();
+  serviceURIUpdateEvent.timestamp = event.block.timestamp.toI32();
+  serviceURIUpdateEvent.round = round.id;
+  serviceURIUpdateEvent.addr = event.params.addr.toHex();
+  serviceURIUpdateEvent.serviceURI = event.params.serviceURI;
+  serviceURIUpdateEvent.save();
 }

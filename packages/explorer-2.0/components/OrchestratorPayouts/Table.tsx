@@ -65,12 +65,12 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
         filter: "fuzzyText",
         Filter: DefaultColumnFilter,
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID);
-          let b = getRowValueByColumnID(rowB, columnID);
-          let aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
-          let bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
-          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
-          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
+          const a = getRowValueByColumnID(rowA, columnID);
+          const b = getRowValueByColumnID(rowB, columnID);
+          const aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
+          const bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
+          const rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
+          const rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
 
           return compareBasic(rowAIdentity, rowBIdentity);
         },
@@ -209,12 +209,12 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
           }}
           {...getTableProps()}>
           <Box sx={{ display: "table-header-group" }}>
-            {headerGroups.map((headerGroup, i) => (
+            {headerGroups.map((headerGroup, index1) => (
               <Box
                 sx={{ display: "table-row" }}
-                key={i}
+                key={index1}
                 {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => (
+                {headerGroup.headers.map((column, index2) => (
                   <Box
                     sx={{
                       display: "table-cell",
@@ -225,11 +225,13 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                       px: 3,
                       textTransform: "uppercase",
                     }}
-                    key={i}>
+                    key={index2}>
                     <Flex
                       sx={{
                         justifyContent:
-                          i === 0 || i === 1 ? "flex-start" : "flex-end",
+                          index2 === 0 || index2 === 1
+                            ? "flex-start"
+                            : "flex-end",
                       }}>
                       <span
                         sx={{

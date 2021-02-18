@@ -1,5 +1,4 @@
 import { Flex } from "theme-ui";
-import Play from "../../public/img/play.svg";
 import gql from "graphql-tag";
 import { useQuery, useApolloClient } from "@apollo/client";
 import Modal from "../Modal";
@@ -74,7 +73,13 @@ const Index = () => {
       startPollingProtocol(pollInterval);
       startPollingBlock(pollInterval);
     }
-  }, [isVisible]);
+  }, [
+    isVisible,
+    stopPollingProtocol,
+    stopPollingBlock,
+    startPollingProtocol,
+    startPollingBlock,
+  ]);
 
   const close = () => {
     client.writeQuery({

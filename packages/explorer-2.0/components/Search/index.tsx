@@ -3,7 +3,7 @@ import { MdSearch } from "react-icons/md";
 
 function handleSubmit(e) {
   e.preventDefault();
-  const [_, input] = e.target.children;
+  const [, input] = e.target.children;
   Router.push(`/accounts/[account]/[slug]`, `/accounts/${input.value}/staking`);
 }
 

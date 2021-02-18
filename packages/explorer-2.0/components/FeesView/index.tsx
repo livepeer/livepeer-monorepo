@@ -8,7 +8,7 @@ import Help from "../../public/img/help.svg";
 import Link from "next/link";
 import WithdrawFees from "../WithdrawFees";
 
-const Index = ({ delegator, currentRound, isMyAccount }) => {
+const Index = ({ delegator, isMyAccount }) => {
   if (!delegator?.bondedAmount) {
     if (isMyAccount) {
       return (

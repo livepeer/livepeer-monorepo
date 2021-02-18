@@ -64,7 +64,7 @@ const Index = () => {
     } else {
       startPolling(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, stopPolling, startPolling]);
 
   if (loading && !data) {
     return (

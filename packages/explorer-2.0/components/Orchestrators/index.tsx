@@ -111,7 +111,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
     } else {
       startPollingOrchestrators(pollInterval);
     }
-  }, [isVisible]);
+  }, [isVisible, stopPollingOrchestrators, startPollingOrchestrators]);
 
   const performanceViewActive =
     query?.orchestratorTable === "performance" ||

@@ -1,10 +1,9 @@
 import { gql, useApolloClient } from "@apollo/client";
-import Utils from "web3-utils";
 import useWindowSize from "react-use/lib/useWindowSize";
 
-let hoursPerYear = 8760;
-let averageHoursPerRound = 21;
-let roundsPerYear = hoursPerYear / averageHoursPerRound;
+const hoursPerYear = 8760;
+const averageHoursPerRound = 21;
+const roundsPerYear = hoursPerYear / averageHoursPerRound;
 
 const Input = ({ transcoder, value = "", onChange, protocol, ...props }) => {
   const client = useApolloClient();
@@ -96,9 +95,10 @@ function calculateAnnualROI({
   totalStaked,
   participationRate,
 }) {
+  const percentOfTotalStaked = principle / totalStaked;
+
   let totalRewardTokens = 0;
   let roi = 0;
-  let percentOfTotalStaked = principle / totalStaked;
   let totalRewardTokensMinusFee;
   let currentMintableTokens;
 

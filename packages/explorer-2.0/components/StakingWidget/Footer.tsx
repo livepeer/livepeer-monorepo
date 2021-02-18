@@ -65,7 +65,7 @@ const Footer = ({
   const approved = account && parseFloat(Utils.fromWei(account.allowance)) > 0;
   const delegatorStatus = getDelegatorStatus(delegator, currentRound);
   const isStaked =
-    delegatorStatus == "Bonded" || delegatorStatus == "Unbonding"
+    delegatorStatus === "Bonded" || delegatorStatus === "Unbonding"
       ? true
       : false;
   const sufficientBalance =
@@ -100,7 +100,7 @@ const Footer = ({
     newPosNext: currDelegateNewPosNext,
   } = getHint(transcoder.id, newActiveSetOrder);
 
-  if (action == "stake") {
+  if (action === "stake") {
     if (!isStaked) {
       delegator = {
         id: account?.id,
@@ -213,7 +213,7 @@ function renderUnstakeWarnings(
   sufficientStake,
   isMyTranscoder
 ) {
-  if (delegatorStatus == "Pending") {
+  if (delegatorStatus === "Pending") {
     return (
       <Warning>
         Your account is in a pending state. You can unstake during the next

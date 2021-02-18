@@ -55,7 +55,7 @@ const groupBy = (key) => (array) =>
 const groupByType = groupBy("type");
 
 const WhatsNew = () => {
-  const [data, setData] = useState(null);
+  const [changeFeedData, setChangeFeedData] = useState(null);
 
   useEffect(() => {
     const apolloFetch = createApolloFetch({
@@ -63,7 +63,7 @@ const WhatsNew = () => {
     });
     async function getChangefeed() {
       const { data } = await apolloFetch({ query });
-      setData(data);
+      setChangeFeedData(data);
     }
     getChangefeed();
   }, []);
@@ -73,7 +73,7 @@ const WhatsNew = () => {
       <Head>
         <title>Livepeer Explorer - What's New</title>
       </Head>
-      {!data ? (
+      {!changeFeedData ? (
         <Flex
           sx={{
             width: "100%",
@@ -101,10 +101,10 @@ const WhatsNew = () => {
               <span sx={{ mr: 2 }}>🌟</span> What's New
             </Styled.h1>
             <Box sx={{ img: { maxWidth: "100%" } }}>
-              {data.projectBySlugs.releases.edges.map(
-                ({ node }, i) =>
+              {changeFeedData.projectBySlugs.releases.edges.map(
+                ({ node }, index1) =>
                   node.isPublished && (
-                    <Card key={i} sx={{ flex: 1, mb: 4 }}>
+                    <Card key={index1} sx={{ flex: 1, mb: 4 }}>
                       <Styled.h3>{node.title}</Styled.h3>
                       <Box
                         sx={{
@@ -125,34 +125,40 @@ const WhatsNew = () => {
                         }}>
                         <Markdown>{node.description}</Markdown>
                       </Box>
-                      {Object.keys(groupByType(node.changes)).map((key, i) => {
-                        return (
-                          <Box key={i} sx={{ mb: 2 }}>
-                            <Box
-                              sx={{
-                                fontSize: "14px",
-                                display: "inline-flex",
-                                textTransform: "uppercase",
-                                lineHeight: "1",
-                                fontWeight: "bold",
-                                margin: "0px",
-                                padding: "4px 16px",
-                                alignSelf: "flex-start",
-                                borderRadius: "4px",
-                                color: "background",
-                                bg: getBadgeColor(key),
-                                mb: 2,
-                              }}>
-                              {key}
-                            </Box>
-                            {groupByType(node.changes)[key].map((change, i) => (
-                              <Box key={i} sx={{ alignSelf: "flexStart" }}>
-                                <Box sx={{ mb: 2 }}>{change.content}</Box>
+                      {Object.keys(groupByType(node.changes)).map(
+                        (key, index2) => {
+                          return (
+                            <Box key={index2} sx={{ mb: 2 }}>
+                              <Box
+                                sx={{
+                                  fontSize: "14px",
+                                  display: "inline-flex",
+                                  textTransform: "uppercase",
+                                  lineHeight: "1",
+                                  fontWeight: "bold",
+                                  margin: "0px",
+                                  padding: "4px 16px",
+                                  alignSelf: "flex-start",
+                                  borderRadius: "4px",
+                                  color: "background",
+                                  bg: getBadgeColor(key),
+                                  mb: 2,
+                                }}>
+                                {key}
                               </Box>
-                            ))}
-                          </Box>
-                        );
-                      })}
+                              {groupByType(node.changes)[key].map(
+                                (change, index3) => (
+                                  <Box
+                                    key={index3}
+                                    sx={{ alignSelf: "flexStart" }}>
+                                    <Box sx={{ mb: 2 }}>{change.content}</Box>
+                                  </Box>
+                                )
+                              )}
+                            </Box>
+                          );
+                        }
+                      )}
                     </Card>
                   )
               )}

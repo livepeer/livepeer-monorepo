@@ -23,15 +23,7 @@
     "test": "yarn docker:build && docker-compose -f test/integration/docker-compose.yaml up --abort-on-container-exit"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.19.0",
-    "@graphprotocol/graph-ts": "^0.19.0",
-    "apollo-fetch": "^0.7.0",
-    "bignumber.js": "^9.0.0",
-    "fs-extra": "^8.1.0",
-    "handlebars": "^4.5.2",
-    "js-yaml": "^3.13.1",
-    "truffle": "^5.1.24",
-    "typy": "^3.3.0"
+    "@graphprotocol/graph-cli": "^0.19.0"
   },
   "workspaces": {
     "packages": [
@@ -43,7 +35,15 @@
     ]
   },
   "dependencies": {
+    "@graphprotocol/graph-ts": "^0.19.0",
     "@protofire/subgraph-toolkit": "0.1.1",
-    "assemblyscript": "^0.17.11"
+    "apollo-fetch": "^0.7.0",
+    "bignumber.js": "^9.0.0",
+    "assemblyscript": "^0.17.11",
+    "js-yaml": "^3.13.1",
+    "truffle": "^5.1.24",
+    "typy": "^3.3.0",
+    "fs-extra": "^8.1.0",
+    "handlebars": "^4.5.2"
   }
 }

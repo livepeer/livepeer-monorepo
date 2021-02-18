@@ -2,7 +2,6 @@ import { NextPageContext } from "next";
 import {
   ApolloClient,
   ApolloLink,
-  defaultDataIdFromObject,
   gql,
   InMemoryCache,
   NormalizedCacheObject,
@@ -14,12 +13,12 @@ import { execute } from "graphql/execution/execute";
 
 export default function createApolloClient(
   initialState: object,
-  ctx: NextPageContext | null
+  _ctx: NextPageContext | null
 ) {
   // The `ctx` (NextPageContext) will only be present on the server.
   // use it to extract auth headers (ctx.req) or similar.
 
-  let cache = new InMemoryCache().restore(
+  const cache = new InMemoryCache().restore(
     (initialState || {}) as NormalizedCacheObject
   );
 
@@ -74,13 +73,13 @@ export default function createApolloClient(
     return new Observable((observer) => {
       Promise.resolve(createSchema())
         .then(async (data) => {
-          let context = operation.getContext();
-          let provider = context?.library?._web3Provider
+          const context = operation.getContext();
+          const provider = context?.library?._web3Provider
             ? context.library._web3Provider
             : process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
             ? process.env.NEXT_PUBLIC_RPC_URL_4
             : process.env.NEXT_PUBLIC_RPC_URL_1;
-          let sdk = await LivepeerSDK({
+          const sdk = await LivepeerSDK({
             controllerAddress: process.env.NEXT_PUBLIC_CONTROLLER_ADDRESS,
             pollCreatorAddress: process.env.NEXT_PUBLIC_POLL_CREATOR_ADDRESS,
             provider,

@@ -28,7 +28,7 @@ export const Tab = (props) => (
       cursor: "pointer",
       textAlign: "center",
       color: props.isSelected
-        ? props.children == "Unstake"
+        ? props.children === "Unstake"
           ? "red"
           : "primary"
         : "muted",
@@ -38,7 +38,7 @@ export const Tab = (props) => (
       borderRadius: 32,
       fontWeight: 500,
       bg: props.isSelected
-        ? props.children == "Unstake"
+        ? props.children === "Unstake"
           ? "rgba(255,0,34,.08)"
           : "rgba(0,235,136,.08)"
         : "transparent",

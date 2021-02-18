@@ -1,3 +1,4 @@
+/* eslint-disable no-undef, @typescript-eslint/no-var-requires */
 const { createApolloFetch } = require("apollo-fetch");
 const BN = require("bignumber.js");
 const path = require("path");
@@ -60,14 +61,14 @@ const exec = (cmd) => {
   }
 };
 
-let waitForSubgraphToBeSynced = async () =>
+const waitForSubgraphToBeSynced = async () =>
   new Promise((resolve, reject) => {
     // Wait for up to four minutes
-    let deadline = Date.now() + 240 * 1000;
+    const deadline = Date.now() + 240 * 1000;
     // Function to check if the subgraph is synced
-    let checkSubgraphSynced = async () => {
+    const checkSubgraphSynced = async () => {
       try {
-        let result = await fetchSubgraphs({
+        const result = await fetchSubgraphs({
           query: `{
             subgraphDeployments {
               synced
@@ -78,14 +79,14 @@ let waitForSubgraphToBeSynced = async () =>
           }
         `,
         });
-        let latestEthereumBlockNumber = parseInt(
+        const latestEthereumBlockNumber = parseInt(
           result.data.subgraphDeployments[0].latestEthereumBlockNumber
         );
-        let ethereumHeadBlockNumber = parseInt(
+        const ethereumHeadBlockNumber = parseInt(
           result.data.subgraphDeployments[0].ethereumHeadBlockNumber
         );
         if (
-          latestEthereumBlockNumber == ethereumHeadBlockNumber &&
+          latestEthereumBlockNumber === ethereumHeadBlockNumber &&
           !result.data.subgraphDeployments[0].failed
         ) {
           resolve();
@@ -135,8 +136,8 @@ contract("Subgraph Integration Tests", (accounts) => {
   let pollCreationCost;
   let voters = {};
 
-  const mineAndInitializeRound = async (roundLength) => {
-    await rpc.waitUntilNextBlockMultiple(parseInt(roundLength));
+  const mineAndInitializeRound = async (_roundLength) => {
+    await rpc.waitUntilNextBlockMultiple(parseInt(_roundLength));
     await RoundsManager.methods.initializeRound().send({ from: accounts[0] });
   };
 
@@ -149,35 +150,35 @@ contract("Subgraph Integration Tests", (accounts) => {
     let yesTally = new BN(0);
     let noTally = new BN(0);
 
-    for (voter in voters) {
+    for (const voter in voters) {
       let voteStake = await getStake(voter);
       let nonVoteStake = new BN(0);
       if (voters[voter].registeredTranscoder) {
-        let delegatorData = await BondingManager.methods
+        const delegatorData = await BondingManager.methods
           .getDelegator(voter)
           .call();
         voteStake = delegatorData.delegatedAmount;
         if (voters[voter].overrides.length) {
           for (const override of voters[voter].overrides) {
-            let overrideVoteStake = await getStake(override);
+            const overrideVoteStake = await getStake(override);
             nonVoteStake = nonVoteStake.plus(new BN(overrideVoteStake));
           }
         }
       }
 
-      if (voters[voter].choiceID == 0) {
+      if (voters[voter].choiceID === 0) {
         yesTally = new BN(yesTally)
           .plus(new BN(voteStake).minus(nonVoteStake))
           .toString(10);
       }
-      if (voters[voter].choiceID == 1) {
+      if (voters[voter].choiceID === 1) {
         noTally = new BN(noTally)
           .plus(new BN(voteStake).minus(nonVoteStake))
           .toString(10);
       }
     }
 
-    let subgraphPollData = await fetchSubgraph({
+    const subgraphPollData = await fetchSubgraph({
       query: `{
         polls {
           tally {
@@ -255,7 +256,6 @@ contract("Subgraph Integration Tests", (accounts) => {
     delegator1StartStake = 3000;
     delegator2StartStake = 3000;
     delegator3StartStake = 3000;
-    delegator4StartStake = 3000;
 
     // Register transcoder 1
     await Token.methods
@@ -340,7 +340,7 @@ contract("Subgraph Integration Tests", (accounts) => {
       await PollCreator.methods.createPoll(hash).send({ from: transcoder1 });
       await waitForSubgraphToBeSynced();
 
-      let pollData = await fetchSubgraph({
+      const pollData = await fetchSubgraph({
         query: `{ polls { id } }`,
       });
       assert.equal(pollData.data.polls.length, 1, "no poll created");
@@ -378,7 +378,7 @@ contract("Subgraph Integration Tests", (accounts) => {
       },
     };
 
-    for (voter in voters) {
+    for (const voter in voters) {
       await Poll.methods.vote(voters[voter].choiceID).send({ from: voter });
     }
 
@@ -405,7 +405,7 @@ contract("Subgraph Integration Tests", (accounts) => {
       }`,
     });
 
-    for (vote in subgraphPollData.data) {
+    for (const vote in subgraphPollData.data) {
       assert.equal(
         vote[0].choiceID,
         voteMap[voters[vote.voter]],
@@ -428,7 +428,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after transcoder bonds", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: transcoder1,
     });
@@ -440,7 +440,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after transcoder unbonds", async () => {
-    let unbondAmount = 1000;
+    const unbondAmount = 1000;
     await BondingManager.methods
       .unbond(unbondAmount)
       .send({ from: transcoder1 });
@@ -455,7 +455,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator bonds", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator1,
     });
@@ -467,7 +467,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator unbonds", async () => {
-    let unbondAmount = 1000;
+    const unbondAmount = 1000;
     await BondingManager.methods
       .unbond(unbondAmount)
       .send({ from: delegator1 });
@@ -495,7 +495,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator that has not voted bonds to a transcoder that has", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator4,
     });
@@ -508,7 +508,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator that has not voted unbonds from a transcoder that has", async () => {
-    let unbondAmount = 500;
+    const unbondAmount = 500;
     await BondingManager.methods
       .unbond(unbondAmount)
       .send({ from: delegator4 });
@@ -523,7 +523,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator 1 switches from transcoder 1 to transcoder 2", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator1,
     });
@@ -540,7 +540,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator 5 bonds with unregistered transcoder (delegate 2)", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator5,
     });
@@ -553,7 +553,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator 2 registers as transcoder and inherits the voting power of delegator 5", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator2,
     });
@@ -569,7 +569,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator 5 votes and overrides its delegate vote", async () => {
-    let subgraphPollData = await fetchSubgraph({
+    const subgraphPollData = await fetchSubgraph({
       query: `{ polls { id } }`,
     });
     const pollAddress = subgraphPollData.data.polls[0].id;
@@ -601,7 +601,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator moves stake to a transcoder that voted", async () => {
-    let bondAmount = 1000;
+    const bondAmount = 1000;
     await Token.methods.approve(bondingManagerAddress, bondAmount).send({
       from: delegator1,
     });
@@ -616,7 +616,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after transcoder 1 resigns", async () => {
-    let unbondAmount = await getStake(transcoder1);
+    const unbondAmount = await getStake(transcoder1);
     await BondingManager.methods
       .unbond(unbondAmount)
       .send({ from: transcoder1 });
@@ -627,7 +627,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after delegator with zero voting power votes", async () => {
-    let subgraphPollData = await fetchSubgraph({
+    const subgraphPollData = await fetchSubgraph({
       query: `{ polls { id } }`,
     });
     const pollAddress = subgraphPollData.data.polls[0].id;
@@ -639,7 +639,7 @@ contract("Subgraph Integration Tests", (accounts) => {
   });
 
   it("correctly tallies poll after polling period is over", async () => {
-    let subgraphPollData = await fetchSubgraph({
+    const subgraphPollData = await fetchSubgraph({
       query: `{ polls { id, endBlock } }`,
     });
 

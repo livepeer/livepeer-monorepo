@@ -80,12 +80,12 @@ const StakingTable = ({
         Filter: DefaultColumnFilter,
         mobile: true,
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID);
-          let b = getRowValueByColumnID(rowB, columnID);
-          let aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
-          let bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
-          let rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
-          let rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
+          const a = getRowValueByColumnID(rowA, columnID);
+          const b = getRowValueByColumnID(rowB, columnID);
+          const aThreeBoxSpace = getRowValueByColumnID(rowA, "threeBoxSpace");
+          const bThreeBoxSpace = getRowValueByColumnID(rowB, "threeBoxSpace");
+          const rowAIdentity = aThreeBoxSpace?.name ? aThreeBoxSpace?.name : a;
+          const rowBIdentity = bThreeBoxSpace?.name ? bThreeBoxSpace?.name : b;
 
           return compareBasic(rowAIdentity, rowBIdentity);
         },
@@ -135,11 +135,11 @@ const StakingTable = ({
         Header: "Calls",
         accessor: "pools",
         sortType: (rowA, rowB, columnID) => {
-          let a = getRowValueByColumnID(rowA, columnID);
-          let b = getRowValueByColumnID(rowB, columnID);
+          const a = getRowValueByColumnID(rowA, columnID);
+          const b = getRowValueByColumnID(rowB, columnID);
 
-          let rowACallsMade = a.filter((r) => r.rewardTokens != null).length;
-          let rowBCallsMade = b.filter((r) => r.rewardTokens != null).length;
+          const rowACallsMade = a.filter((r) => r.rewardTokens != null).length;
+          const rowBCallsMade = b.filter((r) => r.rewardTokens != null).length;
 
           return compareBasic(rowACallsMade, rowBCallsMade);
         },
@@ -294,12 +294,12 @@ const StakingTable = ({
           }}
           {...getTableProps()}>
           <Box sx={{ display: "table-header-group" }}>
-            {headerGroups.map((headerGroup, i) => (
+            {headerGroups.map((headerGroup, index1) => (
               <Box
                 sx={{ display: "table-row" }}
-                key={i}
+                key={index1}
                 {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column: any, i) => (
+                {headerGroup.headers.map((column, index2) => (
                   <Box
                     sx={{
                       borderBottom: "1px solid",
@@ -311,16 +311,18 @@ const StakingTable = ({
                         column.render("Header") === "#"
                           ? 0
                           : 3,
-                      width: i === 0 ? 30 : "auto",
+                      width: index2 === 0 ? 30 : "auto",
                       fontWeight: 700,
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={i}>
+                    key={index2}>
                     <Flex
                       sx={{
                         justifyContent:
-                          i === 0 || i === 1 ? "flex-start" : "flex-end",
+                          index2 === 0 || index2 === 1
+                            ? "flex-start"
+                            : "flex-end",
                       }}>
                       <span
                         sx={{
@@ -475,7 +477,7 @@ const StakingTable = ({
                           </TableCell>
                         );
                       case "Calls":
-                        let callsMade = cell.value.filter(
+                        const callsMade = cell.value.filter(
                           (r) => r.rewardTokens != null
                         ).length;
                         return (

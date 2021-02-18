@@ -1,0 +1,9 @@
+node_modules
+**/.next/**
+**/dist/**
+**/packages/subgraph/src/types/**
+**/packages/chroma/**
+**/packages/lpx/**
+**/packages/player/**
+**/packages/sdk/**
+**/packages/monitor/**

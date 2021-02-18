@@ -28,16 +28,16 @@ export function pollCreated(event: PollCreated): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let pollCreated = new PollCreatedEvent(
+  let pollCreatedEvent = new PollCreatedEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  pollCreated.transaction = event.transaction.hash.toHex();
-  pollCreated.timestamp = event.block.timestamp.toI32();
-  pollCreated.round = round.id;
-  pollCreated.poll = event.params.poll.toHex();
-  pollCreated.proposal = event.params.proposal;
-  pollCreated.endBlock = event.params.endBlock;
-  pollCreated.quorum = event.params.quorum;
-  pollCreated.quota = event.params.quota;
-  pollCreated.save();
+  pollCreatedEvent.transaction = event.transaction.hash.toHex();
+  pollCreatedEvent.timestamp = event.block.timestamp.toI32();
+  pollCreatedEvent.round = round.id;
+  pollCreatedEvent.poll = event.params.poll.toHex();
+  pollCreatedEvent.proposal = event.params.proposal;
+  pollCreatedEvent.endBlock = event.params.endBlock;
+  pollCreatedEvent.quorum = event.params.quorum;
+  pollCreatedEvent.quota = event.params.quota;
+  pollCreatedEvent.save();
 }

@@ -103,7 +103,7 @@ const Layout = ({
     if (width < 1020 && drawerOpen) {
       document.body.style.overflow = "hidden";
     }
-  }, []);
+  }, [drawerOpen, width]);
 
   useEffect(() => {
     ReactGA.set({
@@ -116,7 +116,7 @@ const Layout = ({
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
 
-  let items: DrawerItem[] = [
+  const items: DrawerItem[] = [
     {
       name: "Overview",
       href: "/",

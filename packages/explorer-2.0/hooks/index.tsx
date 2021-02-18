@@ -20,7 +20,7 @@ export function useWeb3Mutation(mutation, options) {
     }
   `;
 
-  let {
+  const {
     data: transactionStatusData,
     loading: transactionStatusLoading,
   } = useQuery(GET_TRANSACTION_STATUS, {
@@ -39,7 +39,7 @@ export function useWeb3Mutation(mutation, options) {
     }
   `;
 
-  let { data: transactionData, loading: transactionLoading } = useQuery(
+  const { data: transactionData, loading: transactionLoading } = useQuery(
     GET_TRANSACTION,
     {
       ...options,
@@ -58,7 +58,7 @@ export function useWeb3Mutation(mutation, options) {
     }
   `;
 
-  let { data: txPredictionData, loading: txPredictionLoading } = useQuery(
+  const { data: txPredictionData, loading: txPredictionLoading } = useQuery(
     GET_TX_PREDICTION,
     {
       ...options,
@@ -104,11 +104,20 @@ export function useWeb3Mutation(mutation, options) {
       });
     }
   }, [
+    client,
+    context.account,
+    data,
     dataLoading,
+    mutation,
+    transactionData,
     transactionLoading,
-    txPredictionLoading,
+    transactionsData,
+    transactionStatusData,
     transactionStatusLoading,
+    txPredictionData,
+    txPredictionLoading,
   ]);
+
   return {
     mutate,
   };
@@ -149,7 +158,7 @@ export function useEagerConnect() {
         }
       }
     });
-  }, []); // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate]); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -205,8 +214,9 @@ export function useInactiveListener(suppress = false) {
 export function useMutations() {
   const mutations = require("../mutations").default;
   const context = useWeb3React();
-  let mutationsObj: any = {};
-  Object.keys(mutations).map((key) => {
+  const mutationsObj = {};
+  for (const key in mutations) {
+    /* eslint-disable-next-line react-hooks/rules-of-hooks */
     const { mutate } = useWeb3Mutation(mutations[key], {
       context: {
         library: context?.library,
@@ -215,7 +225,7 @@ export function useMutations() {
       },
     });
     mutationsObj[key] = mutate;
-  });
+  }
   return mutationsObj;
 }
 
@@ -227,7 +237,7 @@ export function useTimeEstimate({ startTime, estimate }) {
     if (estimate) {
       setTimeLeft(estimate - timeElapsed);
     }
-  }, [estimate]);
+  }, [estimate, timeElapsed]);
 
   useEffect(() => {
     // exit early when we reach 0
@@ -286,7 +296,7 @@ export function usePageVisibility() {
 }
 
 export function useComponentDidMount(func: () => any) {
-  useEffect(func, []);
+  useEffect(func, [func]);
 }
 
 export function useComponentWillMount(func: () => any) {

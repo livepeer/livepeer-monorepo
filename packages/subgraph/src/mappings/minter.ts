@@ -42,17 +42,17 @@ export function setCurrentRewardTokens(event: SetCurrentRewardTokens): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let setCurrentRewardTokens = new SetCurrentRewardTokensEvent(
+  let setCurrentRewardTokensEvent = new SetCurrentRewardTokensEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  setCurrentRewardTokens.transaction = event.transaction.hash.toHex();
-  setCurrentRewardTokens.timestamp = event.block.timestamp.toI32();
-  setCurrentRewardTokens.round = round.id;
-  setCurrentRewardTokens.currentMintableTokens = convertToDecimal(
+  setCurrentRewardTokensEvent.transaction = event.transaction.hash.toHex();
+  setCurrentRewardTokensEvent.timestamp = event.block.timestamp.toI32();
+  setCurrentRewardTokensEvent.round = round.id;
+  setCurrentRewardTokensEvent.currentMintableTokens = convertToDecimal(
     event.params.currentMintableTokens
   );
-  setCurrentRewardTokens.currentInflation = event.params.currentInflation;
-  setCurrentRewardTokens.save();
+  setCurrentRewardTokensEvent.currentInflation = event.params.currentInflation;
+  setCurrentRewardTokensEvent.save();
 }
 
 export function parameterUpdate(event: ParameterUpdate): void {
@@ -81,12 +81,12 @@ export function parameterUpdate(event: ParameterUpdate): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let parameterUpdate = new ParameterUpdateEvent(
+  let parameterUpdateEvent = new ParameterUpdateEvent(
     makeEventId(event.transaction.hash, event.logIndex)
   );
-  parameterUpdate.transaction = event.transaction.hash.toHex();
-  parameterUpdate.timestamp = event.block.timestamp.toI32();
-  parameterUpdate.round = round.id;
-  parameterUpdate.param = event.params.param;
-  parameterUpdate.save();
+  parameterUpdateEvent.transaction = event.transaction.hash.toHex();
+  parameterUpdateEvent.timestamp = event.block.timestamp.toI32();
+  parameterUpdateEvent.round = round.id;
+  parameterUpdateEvent.param = event.params.param;
+  parameterUpdateEvent.save();
 }

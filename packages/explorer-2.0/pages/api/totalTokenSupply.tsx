@@ -1,4 +1,4 @@
-export default async (req, res) => {
+const totalTokenSupply = async (_req, res) => {
   const response = await fetch(
     `https://${
       process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "api-rinkeby" : "api"
@@ -6,6 +6,8 @@ export default async (req, res) => {
       process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     }`
   );
-  const { result: totalTokenSupply } = await response.json();
-  res.end(totalTokenSupply);
+  const { result } = await response.json();
+  res.end(result);
 };
+
+export default totalTokenSupply;
