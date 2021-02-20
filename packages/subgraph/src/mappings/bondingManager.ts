@@ -525,7 +525,6 @@ export function transcoderUpdate(event: TranscoderUpdate): void {
 export function transcoderActivated(event: TranscoderActivated): void {
   let round = createOrLoadRound(event.block.number);
   let transcoder = createOrLoadTranscoder(event.params.transcoder.toHex());
-  transcoder.active = true;
   transcoder.lastActiveStakeUpdateRound = event.params.activationRound;
   transcoder.activationRound = event.params.activationRound;
   transcoder.deactivationRound = MAXIMUM_VALUE_UINT256;
@@ -557,7 +556,6 @@ export function transcoderDeactivated(event: TranscoderDeactivated): void {
   let transcoder = Transcoder.load(event.params.transcoder.toHex());
   let round = createOrLoadRound(event.block.number);
 
-  transcoder.active = false;
   transcoder.deactivationRound = event.params.deactivationRound;
   transcoder.save();
 

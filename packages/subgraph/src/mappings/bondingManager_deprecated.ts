@@ -40,20 +40,14 @@ import { integer } from "@protofire/subgraph-toolkit";
 
 // Handler for TranscoderUpdate events
 export function transcoderUpdate(event: TranscoderUpdate): void {
-  let bondingManager = BondingManager.bind(event.address);
   let round = createOrLoadRound(event.block.number);
   let transcoder = createOrLoadTranscoder(event.params.transcoder.toHex());
-  let active = bondingManager.isActiveTranscoder(
-    event.params.transcoder,
-    integer.fromString(round.id)
-  );
 
   // Update transcoder
   transcoder.delegator = event.params.transcoder.toHex();
   transcoder.pendingRewardCut = event.params.pendingRewardCut as BigInt;
   transcoder.pendingFeeShare = event.params.pendingFeeShare as BigInt;
   transcoder.pendingPricePerSegment = event.params.pendingPricePerSegment;
-  transcoder.active = active;
   transcoder.save();
 
   let tx =

@@ -66,9 +66,19 @@ export function newRound(event: NewRound): void {
     pool.totalStake = transcoder.totalStake;
     pool.rewardCut = transcoder.rewardCut as BigInt;
     pool.feeShare = transcoder.feeShare as BigInt;
-
-    // Apply store updates
     pool.save();
+
+    // Update transcoder active state
+    if (
+      event.params.round.ge(transcoder.activationRound) &&
+      event.params.round.lt(transcoder.deactivationRound)
+    ) {
+      transcoder.active = true;
+    } else {
+      transcoder.active = false;
+    }
+
+    transcoder.save();
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
       currentTranscoder
