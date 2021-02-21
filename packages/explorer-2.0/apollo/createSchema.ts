@@ -318,23 +318,23 @@ const createSchema = async () => {
         const prices = [];
         const performanceMetrics = [];
 
-        // if selection set includes 'price', return transcoders merge prices and performance metrics
-        // if (selectionSet.includes("price")) {
-        //   // get price data
-        //   const response = await fetch(
-        //     `https://livepeer-pricing-tool.com/orchestratorStats`
-        //   );
-        //   const transcodersWithPrice = await response.json();
+        //if selection set includes 'price', return transcoders merge prices and performance metrics
+        if (selectionSet.includes("price")) {
+          // get price data
+          const response = await fetch(
+            `https://livepeer-pricing-tool.com/orchestratorStats`
+          );
+          const transcodersWithPrice = await response.json();
 
-        //   for (const t of transcodersWithPrice) {
-        //     if (transcoders.filter((a) => a.id === t.Address).length > 0) {
-        //       prices.push({
-        //         id: t.Address,
-        //         price: t.PricePerPixel,
-        //       });
-        //     }
-        //   }
-        // }
+          for (const t of transcodersWithPrice) {
+            if (transcoders.filter((a) => a.id === t.Address).length > 0) {
+              prices.push({
+                id: t.Address,
+                price: t.PricePerPixel,
+              });
+            }
+          }
+        }
 
         function avg(obj, key) {
           const arr = Object.values(obj);
