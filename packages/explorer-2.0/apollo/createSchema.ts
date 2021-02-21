@@ -268,48 +268,48 @@ const createSchema = async () => {
     Query: {
       delegator: async (resolve, parent, args, ctx, info) => {
         const delegator = await resolve(parent, args, ctx, info);
-        // const selectionSet = Object.keys(graphqlFields(info));
-        // // if selection set does not include 'delegate', return delegator as is, otherwise fetch and merge price
-        // if (!delegator || !selectionSet.includes("delegate")) {
-        //   return delegator;
-        // }
+        const selectionSet = Object.keys(graphqlFields(info));
+        // if selection set does not include 'delegate', return delegator as is, otherwise fetch and merge price
+        if (!delegator || !selectionSet.includes("delegate")) {
+          return delegator;
+        }
 
-        // const response = await fetch(
-        //   `https://livepeer-pricing-tool.com/orchestratorStats`
-        // );
-        // const transcodersWithPrice = await response.json();
-        // const transcoderWithPrice = transcodersWithPrice.filter(
-        //   (t) =>
-        //     t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase()
-        // )[0];
+        const response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`
+        );
+        const transcodersWithPrice = await response.json();
+        const transcoderWithPrice = transcodersWithPrice.filter(
+          (t) =>
+            t.Address.toLowerCase() === delegator?.delegate?.id.toLowerCase()
+        )[0];
 
-        // if (delegator?.delegate) {
-        //   delegator.delegate.price = transcoderWithPrice?.PricePerPixel
-        //     ? transcoderWithPrice?.PricePerPixel
-        //     : 0;
-        // }
+        if (delegator?.delegate) {
+          delegator.delegate.price = transcoderWithPrice?.PricePerPixel
+            ? transcoderWithPrice?.PricePerPixel
+            : 0;
+        }
 
         return delegator;
       },
       transcoder: async (resolve, parent, args, ctx, info) => {
         const transcoder = await resolve(parent, args, ctx, info);
-        // const selectionSet = Object.keys(graphqlFields(info));
+        const selectionSet = Object.keys(graphqlFields(info));
 
-        // // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
-        // if (!transcoder || !selectionSet.includes("price")) {
-        //   return transcoder;
-        // }
+        // if selection set does not include 'price', return transcoder as is, otherwise fetch and merge price
+        if (!transcoder || !selectionSet.includes("price")) {
+          return transcoder;
+        }
 
-        // const response = await fetch(
-        //   `https://livepeer-pricing-tool.com/orchestratorStats`
-        // );
-        // const transcodersWithPrice = await response.json();
-        // const transcoderWithPrice = transcodersWithPrice.filter(
-        //   (t) => t.Address.toLowerCase() === args.id.toLowerCase()
-        // )[0];
-        // transcoder["price"] = transcoderWithPrice?.PricePerPixel
-        //   ? transcoderWithPrice?.PricePerPixel
-        //   : 0;
+        const response = await fetch(
+          `https://livepeer-pricing-tool.com/orchestratorStats`
+        );
+        const transcodersWithPrice = await response.json();
+        const transcoderWithPrice = transcodersWithPrice.filter(
+          (t) => t.Address.toLowerCase() === args.id.toLowerCase()
+        )[0];
+        transcoder["price"] = transcoderWithPrice?.PricePerPixel
+          ? transcoderWithPrice?.PricePerPixel
+          : 0;
         return transcoder;
       },
       transcoders: async (resolve, parent, args, ctx, info) => {
