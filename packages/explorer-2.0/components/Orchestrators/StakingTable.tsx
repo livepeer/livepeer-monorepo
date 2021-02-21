@@ -127,10 +127,10 @@ const StakingTable = ({
         accessor: "feeShare",
         sortInverted: true,
       },
-      {
-        Header: "Price",
-        accessor: "price",
-      },
+      // {
+      //   Header: "Price",
+      //   accessor: "price",
+      // },
       {
         Header: "Calls",
         accessor: "pools",
