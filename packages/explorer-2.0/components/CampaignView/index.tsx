@@ -169,7 +169,7 @@ const Index = ({ currentRound, transcoder }) => {
             </Box>
           }
         />
-        <Card
+        {/* <Card
           sx={{ flex: 1 }}
           title={
             <Flex sx={{ alignItems: "center" }}>
@@ -217,7 +217,7 @@ const Index = ({ currentRound, transcoder }) => {
               )}
             </Box>
           }
-        />
+        /> */}
         {transcoder?.lastRewardRound?.id && (
           <Card
             sx={{ flex: 1 }}
