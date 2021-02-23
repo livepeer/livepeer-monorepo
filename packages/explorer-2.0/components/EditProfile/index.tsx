@@ -500,6 +500,8 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                       bg: "background",
                       borderRadius: 4,
                       fontFamily: "monospace",
+                      whiteSpace: "pre-wrap",
+                      overflowWrap: "break-word",
                     }}>
                     <div
                       dangerouslySetInnerHTML={{
