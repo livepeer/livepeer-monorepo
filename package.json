@@ -73,6 +73,6 @@
     ]
   },
   "resolutions": {
-    "bcrypto": "5.4.0"
+    "muport-did-resolver": "1.0.1"
   }
 }
