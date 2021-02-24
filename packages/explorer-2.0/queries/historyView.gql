@@ -47,9 +47,7 @@ query($account: String!, $first: Int!, $skip: Int!) {
         rewardTokens
       }
       ... on EarningsClaimedEvent {
-        startRound {
-          id
-        }
+        startRound
         endRound {
           id
         }
