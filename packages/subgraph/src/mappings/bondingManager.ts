@@ -359,7 +359,9 @@ export function withdrawFees(event: WithdrawFees): void {
 
   delegator.bondedAmount = convertToDecimal(delegatorData.value0);
   delegator.fees = convertToDecimal(delegatorData.value1);
-  delegator.withdrawnFees = delegator.withdrawnFees.plus(delegator.fees);
+  delegator.withdrawnFees = delegator.withdrawnFees.plus(
+    withdrawFeesEvent.amount
+  );
   delegator.lastClaimRound = round.id;
   delegator.save();
 }
