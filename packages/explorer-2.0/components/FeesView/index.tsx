@@ -32,7 +32,7 @@ const Index = ({ delegator, isMyAccount }) => {
     }
   }
 
-  const lifetimeEarnings = delegator.pendingFees + delegator.withdrawnFees;
+  const lifetimeEarnings = +delegator.pendingFees + +delegator.withdrawnFees;
   const withdrawButtonDisabled = delegator.pendingFees === "0";
 
   return (
