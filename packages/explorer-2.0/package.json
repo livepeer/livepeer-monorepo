@@ -109,6 +109,7 @@
   },
   "main": "package.json",
   "resolutions": {
-    "muport-did-resolver": "1.0.1"
+    "muport-did-resolver": "1.0.1",
+    "ipfs": "adamsoffer/ipfs-0.40.0"
   }
 }
