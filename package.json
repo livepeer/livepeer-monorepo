@@ -74,6 +74,6 @@
   },
   "resolutions": {
     "muport-did-resolver": "1.0.1",
-    "ipfs": "adamsoffer/ipfs-0.40.0"
+    "pull-ws": "3.3.2"
   }
 }
