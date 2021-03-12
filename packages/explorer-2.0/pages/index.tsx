@@ -11,37 +11,37 @@ import Utils from "web3-utils";
 import { useEffect } from "react";
 import { usePageVisibility } from "../hooks";
 import accountQuery from "../queries/account.gql";
-import GlobalChart from "../components/GlobalChart";
 import OrchestratorPayouts from "../components/OrchestratorPayouts";
 import Link from "next/link";
 import { withApollo, getStaticApolloProps } from "../apollo";
-import Flickity from "react-flickity-component";
+// import GlobalChart from "../components/GlobalChart";
+// import Flickity from "react-flickity-component";
 
 type Params = {};
 type Props = {};
 
-const Panel = ({ children }) => (
-  <Box
-    sx={{
-      minHeight: 350,
-      height: 350,
-      position: "relative",
-      backgroundColor: "rgba(255,255,255,.01)",
-      padding: 3,
-      width: ["100%", "100%", "43%"],
-      marginRight: 16,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 8,
-      border: "1px solid",
-      borderColor: "border",
-      boxShadow: "0px 6px 10px rgba(0, 0, 0, 0.05)",
-    }}>
-    {children}
-  </Box>
-);
+// const Panel = ({ children }) => (
+//   <Box
+//     sx={{
+//       minHeight: 350,
+//       height: 350,
+//       position: "relative",
+//       backgroundColor: "rgba(255,255,255,.01)",
+//       padding: 3,
+//       width: ["100%", "100%", "43%"],
+//       marginRight: 16,
+//       display: "flex",
+//       flexDirection: "column",
+//       alignItems: "center",
+//       justifyContent: "center",
+//       borderRadius: 8,
+//       border: "1px solid",
+//       borderColor: "border",
+//       boxShadow: "0px 6px 10px rgba(0, 0, 0, 0.05)",
+//     }}>
+//     {children}
+//   </Box>
+// );
 
 const Home = () => {
   const context = useWeb3React();
@@ -107,7 +107,7 @@ const Home = () => {
             Protocol Explorer
           </Styled.h1>
           <Search pushSx={{ mb: 5 }} />
-          <Box
+          {/* <Box
             sx={{
               mb: 5,
               boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
@@ -143,7 +143,7 @@ const Home = () => {
                 />
               </Panel>
             </Flickity>
-          </Box>
+          </Box> */}
           <Box sx={{ mb: 3 }}>
             <Flex
               sx={{
