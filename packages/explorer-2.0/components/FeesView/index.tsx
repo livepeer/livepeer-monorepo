@@ -7,7 +7,6 @@ import ReactTooltip from "react-tooltip";
 import Help from "../../public/img/help.svg";
 import Link from "next/link";
 import WithdrawFees from "../WithdrawFees";
-import Utils from "web3-utils";
 import { scientificToDecimal } from "../../lib/utils";
 
 const Index = ({ delegator, isMyAccount }) => {
