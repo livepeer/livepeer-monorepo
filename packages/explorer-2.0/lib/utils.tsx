@@ -615,39 +615,20 @@ export const getTotalFeeDerivedMinutes = ({
   return feeDerivedMinutes;
 };
 
-export const scientificToDecimal = function (num) {
-  var nsign = Math.sign(num);
-  //remove the sign
-  num = Math.abs(num);
-  //if the number is in scientific notation remove it
-  if (/\d+\.?\d*e[\+\-]*\d+/i.test(num)) {
-    var zero = "0",
-      parts = String(num).toLowerCase().split("e"), //split into coeff and exponent
-      e = parts.pop(), //store the exponential part
-      l = Math.abs(e), //get the number of zeros
-      sign = e / l,
-      coeff_array = parts[0].split(".");
-    if (sign === -1) {
-      l = l - coeff_array[0].length;
-      if (l < 0) {
-        num =
-          coeff_array[0].slice(0, l) +
-          "." +
-          coeff_array[0].slice(l) +
-          (coeff_array.length === 2 ? coeff_array[1] : "");
-      } else {
-        num = zero + "." + new Array(l + 1).join(zero) + coeff_array.join("");
-      }
-    } else {
-      var dec = coeff_array[1];
-      if (dec) l = l - dec.length;
-      if (l < 0) {
-        num = coeff_array[0] + dec.slice(0, l) + "." + dec.slice(l);
-      } else {
-        num = coeff_array.join("") + new Array(l + 1).join(zero);
-      }
+export const scientificToDecimal = (x) => {
+  if (Math.abs(x) < 1.0) {
+    let e = parseInt(x.toString().split("e-")[1]);
+    if (e) {
+      x *= Math.pow(10, e - 1);
+      x = "0." + new Array(e).join("0") + x.toString().substring(2);
+    }
+  } else {
+    let e = parseInt(x.toString().split("+")[1]);
+    if (e > 20) {
+      e -= 20;
+      x /= Math.pow(10, e);
+      x += new Array(e + 1).join("0");
     }
   }
-
-  return nsign < 0 ? "-" + num : num;
+  return x;
 };
