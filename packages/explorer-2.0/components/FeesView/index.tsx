@@ -7,6 +7,8 @@ import ReactTooltip from "react-tooltip";
 import Help from "../../public/img/help.svg";
 import Link from "next/link";
 import WithdrawFees from "../WithdrawFees";
+import Utils from "web3-utils";
+import { scientificToDecimal } from "../../lib/utils";
 
 const Index = ({ delegator, isMyAccount }) => {
   if (!delegator?.bondedAmount) {
@@ -34,7 +36,6 @@ const Index = ({ delegator, isMyAccount }) => {
 
   const lifetimeEarnings = +delegator.pendingFees + +delegator.withdrawnFees;
   const withdrawButtonDisabled = delegator.pendingFees === "0";
-
   return (
     <Box sx={{ pt: 4 }}>
       <>
@@ -59,11 +60,7 @@ const Index = ({ delegator, isMyAccount }) => {
                   lineHeight: "heading",
                   fontFamily: "monospace",
                 }}>
-                <NumberFormat
-                  value={lifetimeEarnings}
-                  displayType="text"
-                  decimalScale={13}
-                />
+                {scientificToDecimal(lifetimeEarnings)}
                 <span sx={{ ml: 1, fontSize: 1 }}>ETH</span>
               </Box>
             }>
