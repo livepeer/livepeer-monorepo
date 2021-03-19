@@ -617,7 +617,7 @@ export const getTotalFeeDerivedMinutes = ({
 
 export const scientificToDecimal = (x) => {
   if (Math.abs(x) < 1.0) {
-    let e = parseInt(x.toString().split("e-")[1]);
+    const e = parseInt(x.toString().split("e-")[1]);
     if (e) {
       x *= Math.pow(10, e - 1);
       x = "0." + new Array(e).join("0") + x.toString().substring(2);
