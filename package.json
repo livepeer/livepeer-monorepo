@@ -74,6 +74,7 @@
   },
   "resolutions": {
     "muport-did-resolver": "1.0.1",
-    "pull-ws": "3.3.2"
+    "pull-ws": "3.3.2",
+    "recharts-scale": "0.4.3"
   }
 }
