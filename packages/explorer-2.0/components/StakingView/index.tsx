@@ -44,8 +44,9 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
 
   const pendingStake = parseFloat(Utils.fromWei(delegator.pendingStake));
   const unbonded = delegator.unbonded ? +delegator.unbonded : 0;
-  const principal = +delegator.principal;
-  const rewards = pendingStake + (unbonded ? unbonded : 0) - principal;
+
+  const rewards =
+    pendingStake + (unbonded ? unbonded : 0) - +delegator.principal;
   const totalActiveStake = +protocol.totalActiveStake;
 
   return (
@@ -123,6 +124,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
           subtitle={
             <Box
               sx={{
+                mb: 4,
                 fontSize: 5,
                 color: "text",
                 lineHeight: "heading",
@@ -132,33 +134,15 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
               <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
             </Box>
           }>
-          <Box sx={{ mt: 3 }}>
-            <Flex sx={{ fontSize: 1, mb: 1, justifyContent: "space-between" }}>
-              <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Principal</Box>
-                <Flex>
-                  <ReactTooltip
-                    id="tooltip-principal"
-                    className="tooltip"
-                    place="top"
-                    type="dark"
-                    effect="solid"
-                  />
-                  <Help
-                    data-tip="This is the amount initially staked."
-                    data-for="tooltip-principal"
-                    sx={{
-                      color: "muted",
-                      cursor: "pointer",
-                      ml: 1,
-                    }}
-                  />
-                </Flex>
-              </Flex>
-              <span sx={{ fontFamily: "monospace" }}>
-                {abbreviateNumber(principal, 3)}
-              </span>
-            </Flex>
+          <Box sx={{ mt: "auto" }}>
+            <Box
+              sx={{
+                display: "block",
+                top: "-20px",
+                position: "relative",
+              }}>
+              <img src="/img/squiggle.svg" />
+            </Box>
             <Flex
               sx={{
                 fontSize: 1,
@@ -166,7 +150,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                 justifyContent: "space-between",
               }}>
               <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Unstaked</Box>
+                <Box sx={{ color: "muted" }}>Lifetime Unstaked</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-unstaked"
@@ -189,7 +173,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
               <span sx={{ fontFamily: "monospace" }}>
                 {unbonded > 0 ? (
                   <span sx={{ color: "red" }}>
-                    -{abbreviateNumber(unbonded, 3)}
+                    -{abbreviateNumber(unbonded, 3)} LPT
                   </span>
                 ) : (
                   0
@@ -198,7 +182,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
             </Flex>
             <Flex sx={{ fontSize: 1, justifyContent: "space-between" }}>
               <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Rewards</Box>
+                <Box sx={{ color: "muted" }}>Lifetime Rewards</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-rewards"
@@ -220,7 +204,7 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
               </Flex>
               <span>
                 <span sx={{ color: "primary", fontFamily: "monospace" }}>
-                  +{abbreviateNumber(rewards, 6)}
+                  +{abbreviateNumber(rewards, 6)} LPT
                 </span>
               </span>
             </Flex>
