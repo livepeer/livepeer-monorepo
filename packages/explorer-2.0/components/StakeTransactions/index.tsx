@@ -84,7 +84,6 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
                       ))}
                     <div sx={{ ml: 3 }}>
                       {" "}
-                      -
                       <span sx={{ fontFamily: "monospace" }}>
                         {abbreviateNumber(lock.amount, 4)}
                       </span>{" "}
@@ -152,7 +151,6 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
                     )}
                     <div sx={{ ml: 3 }}>
                       {" "}
-                      -
                       <span sx={{ fontFamily: "monospace" }}>
                         {abbreviateNumber(lock.amount, 3)}
                       </span>{" "}
