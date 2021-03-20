@@ -77,8 +77,8 @@ export async function threeBoxSpace(_obj, _args, _ctx, _info) {
 
   let addressLinks = [];
   if (Object.entries(space).length) {
-    const conf = await Box.getConfig(id);
     try {
+      const conf = await Box.getConfig(id);
       const links = await Promise.all(
         conf.links.map((link) => validateLink(link))
       );
