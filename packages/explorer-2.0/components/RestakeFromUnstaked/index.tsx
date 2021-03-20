@@ -38,7 +38,7 @@ const Index = ({
           });
         }}
         sx={{ py: 1, mr: 2, variant: "buttons.secondary" }}>
-        Rebond
+        Restake
       </Button>
     </>
   );
