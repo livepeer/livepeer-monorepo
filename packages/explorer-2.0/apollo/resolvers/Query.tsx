@@ -151,7 +151,17 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     participationRate: 0,
   };
 
-  const pricePerPixel = 0.000000000000006; // (6000 wei)
+  // Date to price mapping used to calculate estimated usage
+  // based on the Livepeer.com broadcaster's max price
+  const pricePerPixel = [
+    {
+      startDate: "1577836800",
+      endDate: "1616457600",
+      price: 0.000000000000006, // (6000 wei)
+    },
+    { startDate: "1616457600", endDate: Infinity, price: 0.000000000000003 }, // (3000 wei)
+  ];
+
   // the # of pixels in a minute of 240p30fps, 360p30fps, 480p30fps, 720p30fps transcoded renditions.
   // (width * height * framerate * seconds in a minute)
   const pixelsPerMinute = 2995488000;
@@ -225,6 +235,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let totalFeeDerivedMinutes = 0;
     let totalFeeDerivedMinutesOneWeekAgo = 0;
     let totalFeeDerivedMinutesTwoWeeksAgo = 0;
+    let pricePerPixelIndex = 0;
 
     // merge in Livepeer.com usage data
     dayData = dayData.map((item) => {
@@ -232,8 +243,13 @@ export async function getChartData(_obj, _args, _ctx, _info) {
         (element) => item.date === element.date
       );
 
+      // if Livepeer.com's broadcaster changed max price, use updated price
+      if (item.date >= pricePerPixel[pricePerPixelIndex].endDate) {
+        pricePerPixelIndex++;
+      }
+
       const feeDerivedMinutes = getTotalFeeDerivedMinutes({
-        pricePerPixel,
+        pricePerPixel: pricePerPixel[pricePerPixelIndex].price,
         totalVolumeETH: +item.volumeETH,
         totalVolumeUSD: +item.volumeUSD,
         pixelsPerMinute,
