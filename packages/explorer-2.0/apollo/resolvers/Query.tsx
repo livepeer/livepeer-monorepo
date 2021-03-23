@@ -246,7 +246,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       // if Livepeer.com's broadcaster changed max price, use updated price
       if (
         pricePerPixelIndex &&
-        item.date <= pricePerPixel[pricePerPixelIndex].startDate
+        item.date < pricePerPixel[pricePerPixelIndex].startDate
       ) {
         pricePerPixelIndex--;
       }
