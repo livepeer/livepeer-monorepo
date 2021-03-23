@@ -235,7 +235,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     let totalFeeDerivedMinutes = 0;
     let totalFeeDerivedMinutesOneWeekAgo = 0;
     let totalFeeDerivedMinutesTwoWeeksAgo = 0;
-    let pricePerPixelIndex = 0;
+    let pricePerPixelIndex = pricePerPixel.length - 1;
 
     // merge in Livepeer.com usage data
     dayData = dayData.map((item) => {
@@ -244,8 +244,11 @@ export async function getChartData(_obj, _args, _ctx, _info) {
       );
 
       // if Livepeer.com's broadcaster changed max price, use updated price
-      if (item.date >= pricePerPixel[pricePerPixelIndex].endDate) {
-        pricePerPixelIndex++;
+      if (
+        pricePerPixelIndex &&
+        item.date <= pricePerPixel[pricePerPixelIndex].startDate
+      ) {
+        pricePerPixelIndex--;
       }
 
       const feeDerivedMinutes = getTotalFeeDerivedMinutes({
