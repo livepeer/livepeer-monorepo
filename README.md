@@ -104,6 +104,6 @@ other resources:
 - 🌐 [The Livepeer Website](https://livepeer.org)
 - 🔭 [The 10-Minute Primer](https://livepeer.org/primer/)
 - ✍ [The Livepeer Blog](https://medium.com/livepeer-blog)
-- 📖 [The Livepeer Docs](https://livepeer.readthedocs.io/)
+- 📖 [The Livepeer Docs](https://livepeer.org/docs)
 - 💬 [The Livepeer Chat](https://discord.gg/uaPhtyrWsF)
 - ❓ [The Livepeer Forum](https://forum.livepeer.org/)

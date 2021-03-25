@@ -129,7 +129,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
               </Box>
               <Box sx={{ mb: 10 }}>
                 <a
-                  href="https://livepeer.readthedocs.io/"
+                  href="https://livepeer.org/docs"
                   target="_blank"
                   rel="noopener noreferrer"
                   sx={{
