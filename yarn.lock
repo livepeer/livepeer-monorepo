@@ -8124,9 +8124,9 @@ assemblyscript@^0.17.11:
     binaryen "98.0.0-nightly.20201109"
     long "^4.0.0"
 
-"assemblyscript@git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3":
+"assemblyscript@github:assemblyscript/assemblyscript#v0.6":
   version "0.6.0"
-  resolved "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
+  resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/3ed76a97f05335504166fce1653da75f4face28f"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
     binaryen "77.0.0-nightly.20190407"
@@ -8135,9 +8135,9 @@ assemblyscript@^0.17.11:
     opencollective-postinstall "^2.0.0"
     source-map-support "^0.5.11"
 
-"assemblyscript@github:assemblyscript/assemblyscript#v0.6":
+"assemblyscript@https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3":
   version "0.6.0"
-  resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/3ed76a97f05335504166fce1653da75f4face28f"
+  resolved "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
     binaryen "77.0.0-nightly.20190407"
@@ -28669,7 +28669,7 @@ pull-utf8-decoder@^1.0.2:
   resolved "https://registry.yarnpkg.com/pull-utf8-decoder/-/pull-utf8-decoder-1.0.2.tgz#a7afa2384d1e6415a5d602054126cc8de3bcbce7"
   integrity sha1-p6+iOE0eZBWl1gIFQSbMjeO8vOc=
 
-pull-ws@3.3.2, "pull-ws@github:hugomrdias/pull-ws#fix/bundle-size":
+pull-ws@3.3.2, pull-ws@hugomrdias/pull-ws#fix/bundle-size:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/pull-ws/-/pull-ws-3.3.2.tgz#abac497a4800e74ab9a6d749c81a44d12d4e77b3"
   integrity sha512-Bn4bcJsSzJGOQl4RBulDhG1FkcbDHSCXteI8Jg5k4X6X5TxVzZzKilWJ1WV2v4OnRXl2eYbtHFGsPl8Cr1xJzw==

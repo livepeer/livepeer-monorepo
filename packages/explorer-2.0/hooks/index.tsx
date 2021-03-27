@@ -104,20 +104,11 @@ export function useWeb3Mutation(mutation, options) {
       });
     }
   }, [
-    client,
-    context.account,
-    data,
     dataLoading,
-    mutation,
-    transactionData,
     transactionLoading,
-    transactionsData,
-    transactionStatusData,
-    transactionStatusLoading,
-    txPredictionData,
     txPredictionLoading,
+    transactionStatusLoading,
   ]);
-
   return {
     mutate,
   };
@@ -158,7 +149,7 @@ export function useEagerConnect() {
         }
       }
     });
-  }, [activate]); // intentionally only running on mount (make sure it's only mounted once :))
+  }, []); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -237,7 +228,7 @@ export function useTimeEstimate({ startTime, estimate }) {
     if (estimate) {
       setTimeLeft(estimate - timeElapsed);
     }
-  }, [estimate, timeElapsed]);
+  }, [estimate]);
 
   useEffect(() => {
     // exit early when we reach 0
@@ -296,7 +287,7 @@ export function usePageVisibility() {
 }
 
 export function useComponentDidMount(func: () => any) {
-  useEffect(func, [func]);
+  useEffect(func, []);
 }
 
 export function useComponentWillMount(func: () => any) {

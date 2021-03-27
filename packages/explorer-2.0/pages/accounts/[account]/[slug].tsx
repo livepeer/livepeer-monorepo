@@ -78,7 +78,7 @@ const Account = () => {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval,
+    pollInterval: 10000,
     skip: !context.active, // skip this query if wallet not connected
   });
 
