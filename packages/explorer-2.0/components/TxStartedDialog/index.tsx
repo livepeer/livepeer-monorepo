@@ -1,4 +1,3 @@
-import React from "react";
 import { Spinner, Box } from "@theme-ui/components";
 import { Flex } from "theme-ui";
 import Button from "../Button";
@@ -14,10 +13,6 @@ const Index = ({ tx, isOpen, onDismiss }) => {
     startTime: tx?.startTime,
     estimate: tx?.estimate,
   });
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <Modal

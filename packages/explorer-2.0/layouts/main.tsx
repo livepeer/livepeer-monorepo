@@ -169,17 +169,23 @@ const Layout = ({
     document.body.style.overflow = "hidden";
     setDrawerOpen(true);
   };
-
   const onDrawerClose = () => {
     document.body.removeAttribute("style");
     setDrawerOpen(false);
   };
+  const lastTx = transactionsData?.txs[transactionsData?.txs?.length - 1];
+  const txStartedDialogOpen =
+    lastTx?.confirmed === false &&
+    !txDialogState.find((t) => t.txHash === lastTx.txHash)?.pendingDialog
+      ?.dismissed;
+  const txConfirmedDialogOpen =
+    lastTx?.confirmed &&
+    !txDialogState.find((t) => t.txHash === lastTx.txHash)?.confirmedDialog
+      ?.dismissed;
 
   useOnClickOutside(ref, () => {
     onDrawerClose();
   });
-
-  const lastTx = transactionsData?.txs[transactionsData?.txs?.length - 1];
 
   return (
     <>
@@ -338,11 +344,7 @@ const Layout = ({
             </Flex>
           </Box>
           <TxConfirmedDialog
-            isOpen={
-              lastTx?.confirmed &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
-                ?.confirmedDialog?.dismissed
-            }
+            isOpen={txConfirmedDialogOpen}
             onDismiss={() => {
               setTxDialogState([
                 ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
@@ -380,26 +382,24 @@ const Layout = ({
               });
             }}
           />
-          <TxStartedDialog
-            isOpen={
-              lastTx?.confirmed === false &&
-              !txDialogState.find((t) => t.txHash === lastTx.txHash)
-                ?.pendingDialog?.dismissed
-            }
-            onDismiss={() => {
-              setTxDialogState([
-                ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
-                {
-                  ...txDialogState.find((t) => t.txHash === lastTx.txHash),
-                  txHash: lastTx.txHash,
-                  pendingDialog: {
-                    dismissed: true,
+          {txStartedDialogOpen && (
+            <TxStartedDialog
+              isOpen={txStartedDialogOpen}
+              onDismiss={() => {
+                setTxDialogState([
+                  ...txDialogState.filter((t) => t.txHash !== lastTx.txHash),
+                  {
+                    ...txDialogState.find((t) => t.txHash === lastTx.txHash),
+                    txHash: lastTx.txHash,
+                    pendingDialog: {
+                      dismissed: true,
+                    },
                   },
-                },
-              ]);
-            }}
-            tx={lastTx}
-          />
+                ]);
+              }}
+              tx={lastTx}
+            />
+          )}
           {lastTx?.confirmed === false && (
             <Box
               sx={{
