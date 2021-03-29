@@ -106,9 +106,25 @@ export function bond(event: Bond): void {
   transcoder.totalStake = convertToDecimal(delegateData.value3);
   delegate.delegatedAmount = convertToDecimal(delegateData.value3);
 
+  let eventId = makeEventId(event.transaction.hash, event.logIndex);
+  let bondEvent = new BondEvent(eventId);
+
+  // This conditional accounts for the bug (addressed by LIP-77) which
+  // caused this specific event to emit corrupted state data.
+  if (
+    eventId ==
+    "0xf5221628102f866a2cc1aa356a92ec6d2c9fd58d378e36328f398cccebc4645a-251"
+  ) {
+    // TODO: set correct values
+    // delegator.bondedAmount = [...]
+    // bondEvent.bondedAmount = [...]
+  } else {
+    delegator.bondedAmount = convertToDecimal(event.params.bondedAmount);
+    bondEvent.bondedAmount = convertToDecimal(event.params.bondedAmount);
+  }
+
   delegator.delegate = event.params.newDelegate.toHex();
   delegator.lastClaimRound = round.id;
-  delegator.bondedAmount = convertToDecimal(event.params.bondedAmount);
   delegator.fees = convertToDecimal(delegatorData.value1);
   delegator.startRound = delegatorData.value4;
   delegator.principal = delegator.principal.plus(
@@ -131,16 +147,12 @@ export function bond(event: Bond): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let bondEvent = new BondEvent(
-    makeEventId(event.transaction.hash, event.logIndex)
-  );
   bondEvent.transaction = event.transaction.hash.toHex();
   bondEvent.timestamp = event.block.timestamp.toI32();
   bondEvent.round = round.id;
   bondEvent.newDelegate = event.params.newDelegate.toHex();
   bondEvent.oldDelegate = event.params.oldDelegate.toHex();
   bondEvent.delegator = event.params.delegator.toHex();
-  bondEvent.bondedAmount = convertToDecimal(event.params.bondedAmount);
   bondEvent.additionalAmount = convertToDecimal(event.params.additionalAmount);
   bondEvent.save();
 }
@@ -586,10 +598,26 @@ export function transcoderDeactivated(event: TranscoderDeactivated): void {
 export function earningsClaimed(event: EarningsClaimed): void {
   let round = createOrLoadRound(event.block.number);
   let delegator = createOrLoadDelegator(event.params.delegator.toHex());
+  let eventId = makeEventId(event.transaction.hash, event.logIndex);
+  let earningsClaimedEvent = new EarningsClaimedEvent(eventId);
+
+  // This conditional accounts for the bug (addressed by LIP-77) which
+  // caused this specific event to emit corrupted state data.
+  if (
+    eventId ==
+    "0xf5221628102f866a2cc1aa356a92ec6d2c9fd58d378e36328f398cccebc4645a-249"
+  ) {
+    // TODO: set correct values
+    // delegator.bondedAmount = [...]
+    // earningsClaimedEvent.rewardTokens = [...]
+  } else {
+    delegator.bondedAmount = delegator.bondedAmount.plus(
+      convertToDecimal(event.params.rewards)
+    );
+    earningsClaimedEvent.rewardTokens = convertToDecimal(event.params.rewards);
+  }
+
   delegator.lastClaimRound = event.params.endRound.toString();
-  delegator.bondedAmount = delegator.bondedAmount.plus(
-    convertToDecimal(event.params.rewards)
-  );
   delegator.fees = delegator.fees.plus(convertToDecimal(event.params.fees));
   delegator.save();
 
@@ -604,9 +632,6 @@ export function earningsClaimed(event: EarningsClaimed): void {
   tx.to = event.transaction.to.toHex();
   tx.save();
 
-  let earningsClaimedEvent = new EarningsClaimedEvent(
-    makeEventId(event.transaction.hash, event.logIndex)
-  );
   earningsClaimedEvent.transaction = event.transaction.hash.toHex();
   earningsClaimedEvent.timestamp = event.block.timestamp.toI32();
   earningsClaimedEvent.round = round.id;
@@ -614,7 +639,6 @@ export function earningsClaimed(event: EarningsClaimed): void {
   earningsClaimedEvent.delegator = event.params.delegator.toHex();
   earningsClaimedEvent.startRound = event.params.startRound;
   earningsClaimedEvent.endRound = event.params.endRound.toString();
-  earningsClaimedEvent.rewardTokens = convertToDecimal(event.params.rewards);
   earningsClaimedEvent.fees = convertToDecimal(event.params.fees);
   earningsClaimedEvent.save();
 }
