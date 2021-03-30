@@ -122,7 +122,7 @@ export async function block(_obj, _args, _ctx, _info) {
   };
 }
 
-export async function getChartData(_obj, _args, _ctx, _info) {
+export async function getChartData(_obj?, _args?, _ctx?, _info?) {
   const data = {
     dayData: [],
     weeklyData: [],
@@ -370,6 +370,7 @@ export async function getChartData(_obj, _args, _ctx, _info) {
     data.oneDayVolumeUSD = oneDayVolumeUSD;
     data.oneWeekVolumeUSD = oneWeekVolumeUSD;
     data.oneWeekVolumeETH = oneWeekVolumeETH;
+    data.totalUsage = totalFeeDerivedMinutes + totalLivepeerComUsage;
     data.oneWeekUsage = oneWeekUsage;
     data.weeklyUsageChange = weeklyUsageChange;
     data.weeklyVolumeChangeUSD = weeklyVolumeChangeUSD;
