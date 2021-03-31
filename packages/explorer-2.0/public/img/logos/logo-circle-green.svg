@@ -1,4 +1,15 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="512" cy="512" r="512" fill="#00EB88"/>
+<g clip-path="url(#clip0)">
+<circle cx="512" cy="512" r="512" transform="rotate(-180 512 512)" fill="url(#paint0_linear)"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M299 656L299 752L395 752L395 656L299 656ZM299 368L299 272L395 272L395 368L299 368ZM299 464L299 560L395 560L395 464L299 464ZM683 464L683 560L779 560L779 464L683 464ZM491 464L491 368L587 368L587 464L491 464ZM491 560L491 656L587 656L587 560L491 560Z" fill="black"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear" x1="0.0153052" y1="511.441" x2="1024" y2="511.446" gradientUnits="userSpaceOnUse">
+<stop stop-color="#00A55F"/>
+<stop offset="1" stop-color="#4CF1AC"/>
+</linearGradient>
+<clipPath id="clip0">
+<rect width="1024" height="1024" fill="white"/>
+</clipPath>
+</defs>
 </svg>
