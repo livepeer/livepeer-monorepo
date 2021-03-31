@@ -6,7 +6,6 @@ import Spinner from "../../components/Spinner";
 import ListItem from "../ListItem";
 import Unlink from "../../public/img/unlink.svg";
 import Link from "../../public/img/link.svg";
-import Claim from "../../public/img/claim.svg";
 import LPT from "../../public/img/lpt.svg";
 import ETH from "../../public/img/eth.svg";
 import Play from "../../public/img/play.svg";
@@ -160,56 +159,6 @@ function renderSwitch(event: any, i: number) {
                 +{abbreviateNumber(event.additionalAmount, 3)}
               </span>{" "}
               LPT
-            </div>
-          </Flex>
-        </ListItem>
-      );
-    case "EarningsClaimedEvent":
-      return (
-        <ListItem
-          sx={{
-            cursor: "pointer",
-            px: 2,
-            "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
-          }}
-          onClick={() =>
-            window.open(
-              `https://etherscan.io/tx/${event.transaction.id}`,
-              "_blank"
-            )
-          }
-          key={i}
-          avatar={
-            <Claim sx={{ width: 16, height: 16, color: "primary", mr: 2 }} />
-          }>
-          <Flex
-            sx={{
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-            <Box>
-              <Box>Claimed earnings</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
-                {moment
-                  .unix(event.transaction.timestamp)
-                  .format("MM/DD/YYYY h:mm:ss a")}{" "}
-                -- Round #{event.round.id}
-              </Box>
-            </Box>
-            <div sx={{ textAlign: "right", fontSize: 1, ml: 3 }}>
-              <Box>
-                <span sx={{ fontFamily: "monospace" }}>
-                  {abbreviateNumber(event.rewardTokens, 3)}
-                </span>{" "}
-                LPT
-              </Box>
-              <Box>
-                <span sx={{ fontFamily: "monospace" }}>
-                  {abbreviateNumber(event.fees, 3)}
-                </span>{" "}
-                ETH
-              </Box>
             </div>
           </Flex>
         </ListItem>

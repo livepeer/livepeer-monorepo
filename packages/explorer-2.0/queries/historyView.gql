@@ -46,14 +46,6 @@ query($account: String!, $first: Int!, $skip: Int!) {
       ... on RewardEvent {
         rewardTokens
       }
-      ... on EarningsClaimedEvent {
-        startRound
-        endRound {
-          id
-        }
-        rewardTokens
-        fees
-      }
       ... on WithdrawStakeEvent {
         amount
       }
