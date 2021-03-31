@@ -1,8 +1,8 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="512" cy="512" r="512" fill="black"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M282 649.999L282 742L374 742L374 649.999L282 649.999ZM282 466L282 558L374 558L374 466L282 466ZM650 466L650 558L742 558L742 466L650 466ZM282 374L282 282L374 282L374 374L282 374ZM466 465.999L466 373.999L558 373.999L558 465.999L466 465.999ZM466 557.999L466 649.999L558 649.999L558 557.999L466 557.999Z" fill="url(#paint0_linear)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M299 656L299 752L395 752L395 656L299 656ZM299 464L299 560L395 560L395 464L299 464ZM683 464L683 560L779 560L779 464L683 464ZM299 368L299 272L395 272L395 368L299 368ZM491 463.999L491 367.999L587 367.999L587 463.999L491 463.999ZM491 559.999L491 655.999L587 655.999L587 559.999L491 559.999Z" fill="url(#paint0_linear)"/>
 <defs>
-<linearGradient id="paint0_linear" x1="511.749" y1="741.993" x2="511.751" y2="282" gradientUnits="userSpaceOnUse">
+<linearGradient id="paint0_linear" x1="538.738" y1="751.993" x2="538.741" y2="272" gradientUnits="userSpaceOnUse">
 <stop stop-color="#00A55F"/>
 <stop offset="1" stop-color="#4CF1AC"/>
 </linearGradient>
