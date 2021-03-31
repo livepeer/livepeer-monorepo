@@ -148,6 +148,8 @@ export function createOrLoadProtocol(): Protocol {
     protocol.numActiveTranscoders = 0;
     protocol.winningTicketCount = 0;
     protocol.roundCount = 0;
+    protocol.pendingActivation = [];
+    protocol.pendingDeactivation = [];
     protocol.save();
   }
   return protocol as Protocol;

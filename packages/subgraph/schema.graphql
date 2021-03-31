@@ -47,6 +47,10 @@ type Protocol @entity {
   winningTicketCount: Int!
   "Total rounds"
   roundCount: Int!
+  "Transcoders pending activation"
+  pendingActivation: [Transcoder!]!
+  "Transcoders pending deactivation"
+  pendingDeactivation: [Transcoder!]!
 }
 
 """

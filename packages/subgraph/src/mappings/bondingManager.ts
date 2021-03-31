@@ -525,10 +525,18 @@ export function transcoderUpdate(event: TranscoderUpdate): void {
 export function transcoderActivated(event: TranscoderActivated): void {
   let round = createOrLoadRound(event.block.number);
   let transcoder = createOrLoadTranscoder(event.params.transcoder.toHex());
+  let protocol = Protocol.load("0");
+
   transcoder.lastActiveStakeUpdateRound = event.params.activationRound;
   transcoder.activationRound = event.params.activationRound;
   transcoder.deactivationRound = MAXIMUM_VALUE_UINT256;
   transcoder.save();
+
+  // Add transcoder to list of transcoders pending activation
+  let pendingActivation = protocol.pendingActivation;
+  pendingActivation.push(event.params.transcoder.toHex());
+  protocol.pendingActivation = pendingActivation;
+  protocol.save();
 
   let tx =
     Transaction.load(event.transaction.hash.toHex()) ||
@@ -555,9 +563,16 @@ export function transcoderActivated(event: TranscoderActivated): void {
 export function transcoderDeactivated(event: TranscoderDeactivated): void {
   let transcoder = Transcoder.load(event.params.transcoder.toHex());
   let round = createOrLoadRound(event.block.number);
+  let protocol = Protocol.load("0");
 
   transcoder.deactivationRound = event.params.deactivationRound;
   transcoder.save();
+
+  // Add transcoder to list of transcoders pending deactivation
+  let pendingDeactivation = protocol.pendingDeactivation;
+  pendingDeactivation.push(event.params.transcoder.toHex());
+  protocol.pendingDeactivation = pendingDeactivation;
+  protocol.save();
 
   let tx =
     Transaction.load(event.transaction.hash.toHex()) ||
