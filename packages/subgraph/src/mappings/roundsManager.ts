@@ -49,6 +49,29 @@ export function newRound(event: NewRound): void {
 
   let poolId: string;
   let pool: Pool;
+  let protocol = Protocol.load("0");
+
+  // Activate all transcoders pending activation
+  let pendingActivation = protocol.pendingActivation;
+  if (pendingActivation.length) {
+    for (let index = 0; index < pendingActivation.length; index++) {
+      let t = Transcoder.load(pendingActivation[index]);
+      t.active = true;
+      t.save();
+    }
+    protocol.pendingActivation = [];
+  }
+
+  // Deactivate all transcoders pending deactivation
+  let pendingDeactivation = protocol.pendingDeactivation;
+  if (pendingDeactivation.length) {
+    for (let index = 0; index < pendingDeactivation.length; index++) {
+      let t = Transcoder.load(pendingDeactivation[index]);
+      t.active = false;
+      t.save();
+    }
+    protocol.pendingDeactivation = [];
+  }
 
   // Iterate over all active transcoders
   while (EMPTY_ADDRESS.toHex() != currentTranscoder.toHex()) {
@@ -66,8 +89,6 @@ export function newRound(event: NewRound): void {
     pool.totalStake = transcoder.totalStake;
     pool.rewardCut = transcoder.rewardCut as BigInt;
     pool.feeShare = transcoder.feeShare as BigInt;
-
-    // Apply store updates
     pool.save();
 
     currentTranscoder = bondingManager.getNextTranscoderInPool(
@@ -77,7 +98,6 @@ export function newRound(event: NewRound): void {
     transcoder = Transcoder.load(currentTranscoder.toHex());
   }
 
-  let protocol = Protocol.load("0");
   protocol.lastInitializedRound = event.params.round.toString();
   protocol.totalActiveStake = totalActiveStake;
 
