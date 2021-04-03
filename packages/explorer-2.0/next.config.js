@@ -16,6 +16,15 @@ const nextConfig = {
     config.plugins.push(new webpack.IgnorePlugin(/^(?:electron)$/));
     return config;
   },
+  async redirects() {
+    return [
+      {
+        source: "/accounts/:slug",
+        destination: "/accounts/:slug/staking",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 module.exports = withTM(withMDX(nextConfig));
