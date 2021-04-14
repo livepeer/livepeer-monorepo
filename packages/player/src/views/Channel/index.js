@@ -26,7 +26,7 @@ export default class Channel extends Component {
       live: null,
       modal: "", // link | embed
       didCopy: false,
-      bannerOpen: true,
+      bannerOpen: false,
       allowFullscreen: true,
       redirect: null,
     };
@@ -373,7 +373,7 @@ const Content = styled.div`
   display: flex;
   flex-flow: column;
   // max-width: 672px;
-  margin: 0 auto 120px auto;
+  margin: 0 auto 0 auto;
   padding: 16px;
 `;
 
