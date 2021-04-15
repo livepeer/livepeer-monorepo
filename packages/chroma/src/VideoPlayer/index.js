@@ -275,7 +275,7 @@ export default class VideoPlayer extends Component {
 
   onLive(...args) {
     this.setState({
-      levels: args[0].levels,
+      levels: args.length ? args[0].levels : [],
       currentLevel: this.getCurrentLevel(),
     });
     // pass it along to onLive (check @livepeer/player/src/Channel/index.js)
