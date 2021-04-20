@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../../../components/Box";
+import Flex from "../../../components/Flex";
 import { useRouter } from "next/router";
 import { getLayout } from "../../../layouts/main";
 import { useQuery } from "@apollo/client";
@@ -112,17 +113,16 @@ const Account = () => {
   if (loading || loadingTranscoders) {
     return (
       <Flex
-        sx={{
-          height: [
-            "calc(100vh - 100px)",
-            "calc(100vh - 100px)",
-            "calc(100vh - 100px)",
-            "100vh",
-          ],
+        css={{
+          height: "calc(100vh - 100px)",
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
-        }}>
+          "@bp3": {
+            height: "100vh",
+          },
+        }}
+      >
         <Spinner />
       </Flex>
     );
@@ -132,14 +132,11 @@ const Account = () => {
     context?.account,
     query?.account?.toString()
   );
-  const hasLivepeerToken =
-    data.account && parseFloat(Utils.fromWei(data.account.tokenBalance)) > 0;
-  let role: string;
-
   const isOrchestrator = data?.transcoder;
-
   const isMyDelegate =
     query?.account?.toString() === dataMyAccount?.transcoder?.id;
+
+  let role: string;
 
   if (isOrchestrator || isMyDelegate) {
     role = "Orchestrator";
@@ -157,18 +154,19 @@ const Account = () => {
   return (
     <>
       <Flex
-        sx={{
+        css={{
           flexDirection: "column",
-          mb: 8,
-          pr: [0, 0, 0, 6],
-          pt: [1, 1, 1, 5],
-          width: [
-            "100%",
-            "100%",
-            "100%",
-            role === "Orchestrator" || isMyDelegate ? "72%" : "100%",
-          ],
-        }}>
+          mb: "$6",
+          pr: 0,
+          pt: "$2",
+          width: "100%",
+          "@bp3": {
+            width: role === "Orchestrator" || isMyDelegate ? "72%" : "100%",
+            pt: "$4",
+            pr: "$5",
+          },
+        }}
+      >
         {context.active && (
           <Box>
             {dataMyAccount?.account &&
@@ -182,16 +180,10 @@ const Account = () => {
           account={query?.account.toString()}
           delegator={data.delegator}
           threeBoxSpace={data.threeBoxSpace}
-          hasLivepeerToken={hasLivepeerToken}
           isMyDelegate={isMyDelegate}
           isMyAccount={isMyAccount}
           refetch={refetch}
           role={role}
-          sx={{ mb: 4 }}
-          status={getDelegatorStatus(
-            data.delegator,
-            data.protocol.currentRound
-          )}
           transcoder={data.transcoder}
         />
         <Tabs tabs={tabs} />
@@ -218,14 +210,19 @@ const Account = () => {
       {(role === "Orchestrator" || isMyDelegate) &&
         (width > 1020 ? (
           <Flex
-            sx={{
-              display: ["none", "none", "none", "flex"],
+            css={{
+              display: "none",
               position: "sticky",
               alignSelf: "flex-start",
-              top: 5,
-              mt: 3,
-              width: ["40%", "40%", "40%", "28%"],
-            }}>
+              top: "$4",
+              mt: "$4",
+              width: "40%",
+              "@bp3": {
+                width: "28%",
+                display: "flex",
+              },
+            }}
+          >
             <StakingWidget
               currentRound={data.protocol.currentRound}
               transcoders={dataTranscoders.transcoders}

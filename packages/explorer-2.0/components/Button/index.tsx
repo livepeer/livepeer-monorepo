@@ -1,35 +1,96 @@
-import { Styled } from "theme-ui";
+import { styled } from "../../stitches.config";
 
-interface Props {
-  as?: any;
-  variant?: string;
-  [x: string]: any;
-}
+export const Button = styled("button", {
+  // Reset
+  boxSizing: "border-box",
+  border: 0,
+  appearance: "none",
+  display: "inline-block",
+  textAlign: "center",
+  textDecoration: "none",
+  fontSize: "14px",
+  fontWeight: "700",
+  textTransform: "uppercase",
+  m: 0,
+  px: "$3",
+  py: 12,
+  borderRadius: "$4",
+  position: "relative",
+  cursor: "pointer",
+  "&:disabled": {
+    cursor: "not-allowed",
+    opacity: 0.1,
+  },
+  variants: {
+    color: {
+      primary: {
+        color: "$loContrast",
+        bg: "$green500",
+        transition: "background-color .3s",
+        "@hover": {
+          "&:hover": {
+            bg: "$green400",
+            transition: "background-color .3s",
+          },
+        },
+        "&:focus": {
+          backgroundColor: "$green400",
+          boxShadow:
+            "0 0 0 1px $colors$green400, inset 0 0 0 1px $colors$green400",
+        },
+      },
+      secondary: {
+        color: "$hiContrast",
+        bg: "$gray100",
+        transition: "background-color .3s",
+        "@hover": {
+          "&:hover": {
+            bg: "$gray200",
+            transition: "background-color .3s",
+          },
+        },
+        "&:focus": {
+          backgroundColor: "$gray200",
+          boxShadow:
+            "0 0 0 1px $colors$gray200, inset 0 0 0 1px $colors$gray200",
+        },
+      },
+      danger: {
+        backgroundColor: "$red500",
+        color: "$loContrast",
+        "@hover": {
+          "&:hover": {
+            bg: "$red400",
+            transition: "background-color .3s",
+          },
+        },
+        "&:focus": {
+          backgroundColor: "$red400",
+          boxShadow: "0 0 0 1px $colors$red400, inset 0 0 0 1px $colors$red400",
+        },
+      },
+    },
+    outline: {
+      true: {
+        color: "$primary",
+        bg: "transparent",
+        border: "1px solid",
+        borderColor: "$primary",
+      },
+    },
+    size: {
+      small: {
+        py: "$2",
+        px: "$3",
+        fontSize: "$1",
+      },
+      large: {
+        fontSize: "15px",
+        paddingLeft: "15px",
+        paddingRight: "15px",
+      },
+    },
+  },
+});
 
-const Index = ({ as = "button", variant = "primary", ...props }: Props) => (
-  <Styled.div
-    as={as}
-    {...props}
-    sx={{
-      appearance: "none",
-      display: "inline-block",
-      textAlign: "center",
-      cursor: props.disabled ? "not-allowed" : "pointer",
-      lineHeight: "22px",
-      textDecoration: "none",
-      fontSize: "14px",
-      fontWeight: "700",
-      textTransform: "uppercase",
-      m: 0,
-      px: 3,
-      py: 1,
-      border: 0,
-      borderRadius: 6,
-      opacity: props.disabled ? 0.15 : 1,
-      variant: `buttons.${variant}`,
-      position: "relative",
-    }}
-  />
-);
-
-export default Index;
+export default Button;

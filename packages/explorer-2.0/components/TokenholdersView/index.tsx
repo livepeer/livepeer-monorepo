@@ -1,4 +1,5 @@
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
@@ -69,12 +70,13 @@ const Index = () => {
   if (loading && !data) {
     return (
       <Flex
-        sx={{
-          pt: 4,
+        css={{
+          pt: "$5",
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
-        }}>
+        }}
+      >
         <Spinner />
       </Flex>
     );
@@ -82,7 +84,7 @@ const Index = () => {
 
   return (
     <InfiniteScroll
-      sx={{ overflow: "hidden !important" }}
+      css={{ overflow: "hidden !important" }}
       scrollThreshold={0.8}
       dataLength={data && data.transcoder.delegators.length}
       next={() => {
@@ -111,8 +113,9 @@ const Index = () => {
           });
         }
       }}
-      hasMore={true}>
-      <div sx={{ pt: 4, position: "relative", pb: 6 }}>
+      hasMore={true}
+    >
+      <Box css={{ pt: "$5", position: "relative", pb: 6 }}>
         <Tokenholders
           protocol={data.protocol}
           delegators={data.transcoder.delegators}
@@ -120,18 +123,19 @@ const Index = () => {
 
         {loading && (
           <Flex
-            sx={{
+            css={{
               position: "absolute",
               transform: "translateX(-50%)",
               left: "50%",
               width: "100%",
               justifyContent: "center",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Spinner />
           </Flex>
         )}
-      </div>
+      </Box>
     </InfiniteScroll>
   );
 };

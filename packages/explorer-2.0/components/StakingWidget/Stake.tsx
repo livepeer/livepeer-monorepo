@@ -59,7 +59,8 @@ const Stake = ({
             });
           });
         }}
-        sx={{ width: "100%" }}>
+        color="primary"
+        css={{ width: "100%" }}>
         Stake
       </Button>
     </>

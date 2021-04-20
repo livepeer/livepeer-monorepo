@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Hamburger from "../Hamburger";
 import React from "react";
 import AccountMenu from "../AccountMenu";
@@ -11,20 +12,25 @@ interface Props {
 const Index = ({ onDrawerOpen, title }: Props) => {
   return (
     <Flex
-      sx={{
-        bg: "background",
+      css={{
+        bg: "$background",
         position: "sticky",
         top: 0,
         zIndex: 100,
         width: "100%",
-        display: ["flex", "flex", "flex", "none"],
+        display: "flex",
         justifyContent: "space-between",
-        py: [2, 2, 3],
-        px: 20,
-      }}>
-      <Flex sx={{ alignItems: "center" }}>
-        <Hamburger onClick={onDrawerOpen} sx={{ mr: 2 }} />
-        <Box sx={{ fontWeight: 600 }}>{title}</Box>
+        py: "$2",
+        px: "$3",
+        "@bp3": {
+          py: "$3",
+          display: "none",
+        },
+      }}
+    >
+      <Flex css={{ alignItems: "center" }}>
+        <Hamburger onClick={onDrawerOpen} />
+        {title && <Box css={{ fontWeight: 600 }}>{title}</Box>}
       </Flex>
       <AccountMenu isInHeader={true} />
     </Flex>

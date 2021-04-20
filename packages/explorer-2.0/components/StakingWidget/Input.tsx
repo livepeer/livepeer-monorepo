@@ -1,5 +1,6 @@
 import { gql, useApolloClient } from "@apollo/client";
 import useWindowSize from "react-use/lib/useWindowSize";
+import Box from "../Box";
 
 const hoursPerYear = 8760;
 const averageHoursPerRound = 21;
@@ -42,35 +43,37 @@ const Input = ({ transcoder, value = "", onChange, protocol, ...props }) => {
   });
 
   return (
-    <div
-      sx={{
+    <Box
+      css={{
         display: "flex",
         alignItems: "center",
         width: "100%",
         position: "relative",
       }}
       {...props}>
-      <input
+      <Box
+        as="input"
         placeholder="0.0"
         type="number"
+        min="0"
         autoFocus={width > 1020}
         value={value}
         onChange={onChange}
-        sx={{
+        css={{
           backgroundColor: "transparent",
           borderTop: 0,
           borderLeft: 0,
           borderRight: 0,
           borderBottom: 0,
-          color: "text",
+          color: "$text",
           py: 0,
           pl: 0,
           pr: 6,
           boxShadow: "none",
           width: "100%",
           outline: "none",
-          fontSize: 4,
-          fontFamily: "monospace",
+          fontSize: "$5",
+          fontFamily: "$monospace",
           "&::-webkit-inner-spin-button": {
             WebkitAppearance: "none",
           },
@@ -79,8 +82,8 @@ const Input = ({ transcoder, value = "", onChange, protocol, ...props }) => {
           },
         }}
       />
-      <div sx={{ fontSize: 1, right: 0, position: "absolute" }}>LPT</div>
-    </div>
+      <Box css={{ fontSize: "$2", right: 0, position: "absolute" }}>LPT</Box>
+    </Box>
   );
 };
 

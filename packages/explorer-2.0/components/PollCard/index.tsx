@@ -1,13 +1,13 @@
-import { Flex } from "theme-ui";
-import { Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const Index = ({ ...props }) => {
   return (
     <Flex
-      sx={{
+      css={{
         borderTop: "1px solid",
-        borderColor: "border",
-        py: 2,
+        borderColor: "$border",
+        py: "$3",
         width: "100%",
         alignItems: "center",
         justifyContent: "space-between",
@@ -15,11 +15,12 @@ const Index = ({ ...props }) => {
           borderTop: 0,
         },
       }}
-      {...props}>
-      <Flex sx={{ width: "100%", justifyContent: "space-between" }}>
+      {...props}
+    >
+      <Flex css={{ width: "100%", justifyContent: "space-between" }}>
         <Box>
           <Box>
-            Title <span>(LIP-16)</span>
+            Title <Box as="span">(LIP-16)</Box>
           </Box>
           <Box>Voting ends on April 10th, 2020</Box>
         </Box>

@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
-import { Styled, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import QRCode from "qrcode.react";
-import Copy from "../../public/img/copy.svg";
-import Check from "../../public/img/check.svg";
-import LinkIcon from "../../public/img/link.svg";
 import { Transcoder, Delegator, ThreeBoxSpace } from "../../@types";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Flex } from "theme-ui";
 import ReactTooltip from "react-tooltip";
 import EditProfile from "../EditProfile";
 import ShowMoreText from "react-show-more-text";
@@ -14,32 +11,28 @@ import Link from "next/link";
 import { nl2br } from "../../lib/utils";
 import Button from "../Button";
 import { gql, useApolloClient } from "@apollo/client";
+import { Link1Icon, CheckIcon, CopyIcon } from "@modulz/radix-icons";
 
 interface Props {
   account: string;
   role?: string;
   refetch?: any;
-  hasLivepeerToken: boolean;
   isMyDelegate: boolean;
   threeBoxSpace: ThreeBoxSpace;
   delegator: Delegator;
   transcoder: Transcoder;
   isMyAccount: boolean;
-  status: string;
+  css?: object;
 }
 
 const Index = ({
   account,
   role,
-  hasLivepeerToken,
   isMyDelegate,
-  delegator,
-  status,
   refetch,
   transcoder,
   threeBoxSpace,
   isMyAccount = false,
-  ...props
 }: Props) => {
   const client = useApolloClient();
   const [copied, setCopied] = useState(false);
@@ -53,37 +46,47 @@ const Index = ({
   }, [copied]);
 
   return (
-    <Box {...props}>
+    <Box css={{ mb: "$3" }}>
       <Box
-        sx={{
-          mb: [1, 1, 1, 2],
-          width: [60, 60, 60, 70],
-          height: [60, 60, 60, 70],
-          maxWidth: [60, 60, 60, 70],
-          maxHeight: [60, 60, 60, 70],
+        css={{
+          width: 60,
+          height: 60,
+          maxWidth: 60,
+          maxHeight: 60,
           position: "relative",
-        }}>
+          mb: "$2",
+          "@bp3": {
+            mb: "$3",
+            width: 70,
+            height: 70,
+            maxWidth: 70,
+            maxHeight: 70,
+          },
+        }}
+      >
         {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
         threeBoxSpace &&
         threeBoxSpace.image ? (
-          <img
-            sx={{
+          <Box
+            as="img"
+            css={{
               objectFit: "cover",
               border: "1px solid",
-              borderColor: "muted",
+              borderColor: "$muted",
               padding: "4px",
-              borderRadius: 1000,
+              borderRadius: "$round",
               width: "100%",
               height: "100%",
             }}
             src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
           />
         ) : (
-          <QRCode
+          <Box
+            as={QRCode}
             style={{
               border: "1px solid",
               padding: "4px",
-              borderRadius: 1000,
+              borderRadius: "1000px",
               width: "inherit",
               height: "inherit",
             }}
@@ -94,28 +97,33 @@ const Index = ({
 
         {role === "Orchestrator" && (
           <Box
-            sx={{
+            css={{
               position: "absolute",
               right: 0,
               bottom: "-2px",
-              bg: transcoder.active ? "primary" : "muted",
+              bg: transcoder.active ? "$primary" : "$muted",
               border: "5px solid #131418",
               boxSizing: "border-box",
               width: 24,
               height: 24,
-              borderRadius: 1000,
+              borderRadius: "$round",
             }}
           />
         )}
       </Box>
-      <Flex sx={{ alignItems: "center", mb: "10px" }}>
+      <Flex css={{ alignItems: "center", mb: "10px" }}>
         <CopyToClipboard text={account} onCopy={() => setCopied(true)}>
-          <Styled.h1
-            sx={{
-              fontSize: [3, 3, 3, 4],
+          <Box
+            as="h1"
+            css={{
+              fontSize: "$3",
               display: "flex",
               alignItems: "center",
-            }}>
+              "@bp3": {
+                fontSize: "$5",
+              },
+            }}
+          >
             {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
             threeBoxSpace &&
             threeBoxSpace.name
@@ -124,17 +132,18 @@ const Index = ({
             <Flex
               data-for="copy"
               data-tip={`${copied ? "Copied" : "Copy address to clipboard"}`}
-              sx={{
-                ml: 1,
+              css={{
+                ml: "$2",
                 mt: "3px",
                 cursor: "pointer",
                 borderRadius: 1000,
-                bg: "surface",
+                bg: "$surface",
                 width: 26,
                 height: 26,
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <ReactTooltip
                 id="copy"
                 className="tooltip"
@@ -143,24 +152,26 @@ const Index = ({
                 effect="solid"
               />
               {copied ? (
-                <Check
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    color: "muted",
+                <Box
+                  as={CheckIcon}
+                  css={{
+                    width: 14,
+                    height: 14,
+                    color: "$muted",
                   }}
                 />
               ) : (
-                <Copy
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    color: "muted",
+                <Box
+                  as={CopyIcon}
+                  css={{
+                    width: 14,
+                    height: 14,
+                    color: "$muted",
                   }}
                 />
               )}
             </Flex>
-          </Styled.h1>
+          </Box>
         </CopyToClipboard>
         {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
           isMyAccount &&
@@ -173,21 +184,31 @@ const Index = ({
           )}
       </Flex>
       {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.website && (
-        <Flex sx={{ mb: 2, alignItems: "center" }}>
-          <LinkIcon sx={{ color: "muted", mr: 1 }} />
-          <a
-            sx={{ fontSize: 1, color: "primary" }}
+        <Flex css={{ mb: "$4", alignItems: "center" }}>
+          <Box as={Link1Icon} css={{ color: "$muted", mr: "$2" }} />
+          <Box
+            as="a"
+            css={{ fontSize: "$2", color: "$primary" }}
             href={threeBoxSpace.website}
             target="__blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             {threeBoxSpace.website.replace(/(^\w+:|^)\/\//, "")}
-          </a>
+          </Box>
         </Flex>
       )}
-      <Flex sx={{ display: ["flex", "flex", "flex", "none"], mt: 2 }}>
+      <Flex
+        css={{
+          display: "flex",
+          mt: "$3",
+          "@bp3": {
+            display: "none",
+          },
+        }}
+      >
         {(role === "Orchestrator" || isMyDelegate) && (
           <Button
-            sx={{ mr: 2 }}
+            css={{ mr: "$3" }}
             onClick={() =>
               client.writeQuery({
                 query: gql`
@@ -201,7 +222,8 @@ const Index = ({
                   selectedStakingAction: "stake",
                 },
               })
-            }>
+            }
+          >
             Stake
           </Button>
         )}
@@ -221,20 +243,30 @@ const Index = ({
                 },
               })
             }
-            sx={{ color: "red", borderColor: "red" }}
-            variant="outline">
+            css={{ color: "$red", borderColor: "$red" }}
+            outline
+          >
             Unstake
           </Button>
         )}
       </Flex>
       {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.description && (
-        <Box sx={{ mt: 3, a: { color: "primary" } }}>
+        <Box css={{ my: "$3", a: { color: "$primary" } }}>
           <ShowMoreText
             lines={3}
-            more={<span sx={{ color: "primary" }}>Show more</span>}
-            less={<span sx={{ color: "primary" }}>Show Less</span>}>
+            more={
+              <Box as="span" css={{ color: "$primary" }}>
+                Show more
+              </Box>
+            }
+            less={
+              <Box as="span" css={{ color: "$primary" }}>
+                Show Less
+              </Box>
+            }
+          >
             <Box
-              sx={{ mt: 3, a: { color: "primary" } }}
+              css={{ a: { color: "$primary" } }}
               dangerouslySetInnerHTML={{
                 __html: nl2br(threeBoxSpace.description),
               }}
@@ -247,23 +279,25 @@ const Index = ({
         threeBoxSpace.addressLinks &&
         threeBoxSpace.addressLinks.length > 0 &&
         role !== "Orchestrator" && (
-          <Box sx={{ mt: 3 }}>
+          <Box css={{ my: "$4" }}>
             <Box
-              sx={{
+              css={{
                 display: "inline-flex",
                 flexDirection: "column",
                 p: "14px",
                 borderRadius: 10,
                 border: "1px dashed",
-                borderColor: "border",
-              }}>
+                borderColor: "$border",
+              }}
+            >
               <Box
-                sx={{
+                css={{
                   mb: "6px",
                   fontWeight: 600,
-                  fontSize: 0,
-                  color: "muted",
-                }}>
+                  fontSize: "$1",
+                  color: "$muted",
+                }}
+              >
                 External Account
               </Box>
               <Flex>
@@ -272,26 +306,32 @@ const Index = ({
                     href={`/accounts/[account]/[slug]`}
                     as={`/accounts/${link.address}/campaign`}
                     passHref
-                    key={i}>
-                    <a
-                      sx={{
-                        mr: threeBoxSpace.addressLinks.length - 1 === i ? 0 : 1,
+                    key={i}
+                  >
+                    <Box
+                      as="a"
+                      css={{
+                        mr:
+                          threeBoxSpace.addressLinks.length - 1 === i
+                            ? 0
+                            : "$2",
                         borderRadius: 6,
                         display: "inline-flex",
-                        bg: "surface",
+                        bg: "$surface",
                         py: "4px",
                         px: "12px",
-                        fontSize: 0,
+                        fontSize: "$1",
                         fontWeight: 600,
-                        color: "primary",
+                        color: "$primary",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                      }}>
+                      }}
+                    >
                       {link.address
                         .replace(link.address.slice(10, 34), "…")
                         .toLowerCase()}
-                    </a>
+                    </Box>
                   </Link>
                 ))}
               </Flex>

@@ -1,5 +1,7 @@
 import Router from "next/router";
-import { MdSearch } from "react-icons/md";
+import Box from "../Box";
+import { MagnifyingGlassIcon } from "@modulz/radix-icons";
+import Button from "../Button";
 
 function handleSubmit(e) {
   e.preventDefault();
@@ -7,11 +9,12 @@ function handleSubmit(e) {
   Router.push(`/accounts/[account]/[slug]`, `/accounts/${input.value}/staking`);
 }
 
-const Index = ({ pushSx }) => {
+const Index = ({ ...props }) => {
   return (
-    <form
+    <Box
+      as="form"
       onSubmit={handleSubmit}
-      sx={{
+      css={{
         bg: "black",
         borderRadius: 10,
         display: "flex",
@@ -20,37 +23,46 @@ const Index = ({ pushSx }) => {
         position: "relative",
         boxShadow:
           "rgba(0, 0, 0, 0.04) 0px 24px 32px, rgba(0, 0, 0, 0.04) 0px 16px 24px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 0px 1px",
-        ...pushSx,
-      }}>
-      <button
-        sx={{
+        mb: "$4",
+      }}
+      {...props}
+    >
+      <Button
+        css={{
           cursor: "pointer",
           position: "absolute",
-          right: 2,
-          mr: 1,
+          right: "$3",
+          mr: "$1",
           display: "flex",
           alignItems: "center",
+          bg: "transparent",
+          p: 0,
         }}
-        type="submit">
-        <MdSearch
-          sx={{
-            fontSize: 4,
-            color: "muted",
+        type="submit"
+      >
+        <Box
+          as={MagnifyingGlassIcon}
+          css={{
+            width: 20,
+            height: 20,
+            color: "$muted",
+            bg: "transparent",
           }}
         />
-      </button>
-      <input
+      </Button>
+      <Box
+        as="input"
         name="search"
-        sx={{
+        css={{
           outlineColor: "#00EB88",
-          py: 12,
-          pl: 2,
-          pr: 8,
+          py: "$3",
+          px: "$3",
           border: 0,
           boxShadow: "none",
           width: "100%",
-          color: "text",
-          fontSize: 2,
+          color: "$text",
+          fontSize: "$3",
+          outline: "none",
           bg: "transparent",
           "&:-internal-autofill-selected": {
             bg: "transparent !important",
@@ -59,7 +71,7 @@ const Index = ({ pushSx }) => {
         placeholder="Search Orchestrators & Delegators"
         type="search"
       />
-    </form>
+    </Box>
   );
 };
 export default Index;

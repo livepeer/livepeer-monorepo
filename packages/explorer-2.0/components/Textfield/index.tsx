@@ -1,153 +1,111 @@
-import { useState } from "react";
-import { Styled } from "theme-ui";
+import { styled } from "../../stitches.config";
 
-const Index = ({
-  disabled = false,
-  onFocus = null,
-  type = "text",
-  error = false,
-  autoFocus = false,
-  required = false,
-  messageFixed = false,
-  messageColor = "text",
-  defaultValue = undefined,
-  value = undefined,
-  inputRef = undefined,
-  onChange = null,
-  message = null,
-  rows = 2,
-  name = "",
-  htmlFor = "",
-  id = "",
-  label,
-  ...props
-}) => {
-  const [focused, setFocused] = useState(false);
-  const [scopedValue, setScopedValue] = useState("");
+const Textfield = styled("input", {
+  // Reset
+  appearance: "none",
+  borderWidth: "0",
+  boxSizing: "border-box",
+  fontFamily: "inherit",
+  lineHeight: "1",
+  margin: "0",
+  outline: "none",
+  padding: "$3",
+  width: "100%",
+  fontSize: "$3",
+  WebkitTapHighlightColor: "rgba(0,0,0,0)",
+  "::before": {
+    boxSizing: "border-box",
+  },
+  "::after": {
+    boxSizing: "border-box",
+  },
 
-  return (
-    <div
-      sx={{
-        border: "0",
-        margin: "0",
-        display: "inline-flex",
-        padding: "0",
-        position: "relative",
-        minWidth: "0",
-        flexDirection: "column",
-        verticalAlign: "top",
-      }}
-      {...props}>
-      <label
-        sx={{
-          zIndex: "1",
-          transform:
-            defaultValue || value || scopedValue || focused
-              ? "translate(12px, 10px) scale(0.75)"
-              : "translate(12px, 20px) scale(1)",
-          pointerEvents: "none",
-          top: "0",
-          left: "0",
-          position: "absolute",
-          transition:
-            "color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms",
-          display: "block",
-          transformOrigin: "top left",
-          color: "muted",
-          padding: "0",
-          fontSize: "1rem",
-          fontWeight: "400",
-          lineHeight: "1",
-          letterSpacing: "0.00938em",
-        }}
-        htmlFor={htmlFor}
-        id={id}>
-        {label}
-      </label>
-      <div
-        sx={{
-          transition: "background-color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms",
-          backgroundColor: "rgba(255, 255, 255, 0.09)",
-          borderTopLeftRadius: "4px",
-          borderTopRightRadius: "4px",
-          color: "#fff",
+  // Custom
+  backgroundColor: "rgba(255, 255, 255, 0.09)",
+  boxShadow: "inset 0 0 0 1px $gray600",
+  borderRadius: "$4",
+  color: "$hiContrast",
+  fontVariantNumeric: "tabular-nums",
+
+  ":focus": {
+    boxShadow: "inset 0px 0px 0px 1px $blue700, 0px 0px 0px 1px $blue700",
+  },
+  "::placeholder": {
+    color: "$gray800",
+  },
+  ":disabled": {
+    pointerEvents: "none",
+    backgroundColor: "$gray100",
+    color: "$gray700",
+    cursor: "not-allowed",
+    "::placeholder": {
+      color: "$gray600",
+    },
+  },
+  ":read-only": {
+    backgroundColor: "$gray100",
+    // color: '$gray900',
+    ":focus": {
+      boxShadow: "inset 0px 0px 0px 1px $gray600",
+    },
+  },
+
+  variants: {
+    size: {
+      "1": {
+        height: "$5",
+        fontSize: "$1",
+        px: "$1",
+      },
+      "2": {
+        height: "$5",
+        fontSize: "$2",
+        px: "$1",
+      },
+      "3": {
+        height: "$6",
+        fontSize: "$3",
+        px: "$2",
+      },
+    },
+    variant: {
+      ghost: {
+        boxShadow: "none",
+        ":hover": {
+          boxShadow: "inset 0 0 0 1px $gray600",
+        },
+        ":focus": {
+          boxShadow: "inset 0px 0px 0px 1px $blue700, 0px 0px 0px 1px $blue700",
+        },
+      },
+    },
+    state: {
+      invalid: {
+        boxShadow: "inset 0 0 0 1px $red600",
+        ":focus": {
+          boxShadow: "inset 0px 0px 0px 1px $red700, 0px 0px 0px 1px $red700",
+        },
+      },
+      valid: {
+        boxShadow: "inset 0 0 0 1px $green600",
+        ":focus": {
+          boxShadow:
+            "inset 0px 0px 0px 1px $green700, 0px 0px 0px 1px $green700",
+        },
+      },
+    },
+    cursor: {
+      default: {
+        cursor: "default",
+        ":focus": {
           cursor: "text",
-          display: "inline-flex",
-          position: "relative",
-          fontSize: "1rem",
-          boxSizing: "border-box",
-          alignItems: "center",
-          lineHeight: "1.1875em",
-          "&:before": {
-            left: "0",
-            right: "0",
-            bottom: "0",
-            content: '"\\00a0"',
-            position: "absolute",
-            transition:
-              "border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-            borderBottom: "1px solid",
-            borderColor: error ? "red" : "text",
-            pointerEvents: "none",
-          },
-          "&:after": {
-            left: "0",
-            right: "0",
-            bottom: "0",
-            content: '""',
-            position: "absolute",
-            transform: "scaleX(0)",
-            transition: "transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms",
-            borderBottom: "2px solid",
-            borderColor: error ? "red" : "text",
-            pointerEvents: "none",
-          },
-        }}>
-        <Styled.div
-          as="input"
-          rows={rows}
-          onFocus={onFocus ? onFocus : () => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          disabled={disabled}
-          autoFocus={autoFocus}
-          required={required}
-          defaultValue={defaultValue}
-          value={value}
-          onChange={onChange ? onChange : (e) => setScopedValue(e.target.value)}
-          ref={inputRef}
-          name={name}
-          sx={{
-            padding: "27px 12px 10px",
-            font: "inherit",
-            color: "currentColor",
-            width: "100%",
-            border: "0",
-            margin: "0",
-            display: "block",
-            minWidth: "0",
-            background: "none",
-            boxSizing: "content-box",
-            animationName: "MuiInputBase-keyframes-auto-fill-cancel",
-            WebkitTapHighlightColor: "transparent",
-          }}
-          id={id}
-          type={type}
-        />
-      </div>
-      {(messageFixed || message) && (
-        <div
-          sx={{
-            height: 16,
-            color: error ? "red" : messageColor,
-            pt: "6px",
-            pl: "12px",
-            fontSize: 0,
-          }}>
-          {message}
-        </div>
-      )}
-    </div>
-  );
-};
+        },
+      },
+      text: {
+        cursor: "text",
+      },
+    },
+  },
+});
 
-export default Index;
+export default Textfield;

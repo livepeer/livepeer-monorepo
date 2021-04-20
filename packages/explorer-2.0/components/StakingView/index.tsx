@@ -1,4 +1,5 @@
-import { Box, Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Utils from "web3-utils";
 import { abbreviateNumber, checkAddressEquality } from "../../lib/utils";
 import { useWeb3React } from "@web3-react/core";
@@ -7,8 +8,8 @@ import Card from "../../components/Card";
 import Link from "next/link";
 import StakeTransactions from "../StakeTransactions";
 import ReactTooltip from "react-tooltip";
-import Help from "../../public/img/help.svg";
 import Button from "../Button";
+import HelpIcon from "../HelpIcon";
 
 const Index = ({ delegator, transcoders, protocol, currentRound }) => {
   const router = useRouter();
@@ -22,23 +23,21 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
   if (!delegator?.bondedAmount) {
     if (isMyAccount) {
       return (
-        <Box sx={{ pt: 4 }}>
-          <Box sx={{ mr: 2, mb: 2 }}>
+        <Box css={{ pt: "$4" }}>
+          <Box css={{ mr: "$3", mb: "$3" }}>
             You haven't staked LPT. Stake with an Orchestrator to begin earning
             rewards and a share of the fees being paid into the Livepeer
             network.
           </Box>
           <Link href="/" passHref>
-            <a>
-              <Button variant="outline" as="div">
-                View Orchestrators
-              </Button>
-            </a>
+            <Button as="a" size="small" outline>
+              View Orchestrators
+            </Button>
           </Link>
         </Box>
       );
     } else {
-      return <Box sx={{ pt: 4 }}>Nothing here.</Box>;
+      return <Box css={{ pt: "$4" }}>Nothing here.</Box>;
     }
   }
 
@@ -50,57 +49,53 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
   const totalActiveStake = +protocol.totalActiveStake;
 
   return (
-    <Box sx={{ pt: 4 }}>
+    <Box css={{ pt: "$4" }}>
       {delegator.delegate && (
         <Link
           href={`/accounts/[account]/[slug]`}
           as={`/accounts/${delegator.delegate.id}/campaign`}
           passHref>
-          <a>
-            <Card
-              sx={{
-                mb: 2,
-                cursor: "pointer",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
-              }}
-              title="Staked with"
-              subtitle={
-                <Box
-                  sx={{
-                    fontSize: 5,
-                    fontWeight: "text",
-                    color: "text",
-                    lineHeight: "heading",
-                  }}>
-                  {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-                  delegator.delegate.threeBoxSpace.name
-                    ? delegator.delegate.threeBoxSpace.name
-                    : delegator.delegate.id.replace(
-                        delegator.delegate.id.slice(7, 37),
-                        "…"
-                      )}
-                </Box>
-              }
-            />
-          </a>
+          <Card
+            as="a"
+            css={{
+              mb: "$3",
+              cursor: "pointer",
+              "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
+            }}
+            title="Staked with"
+            subtitle={
+              <Box
+                css={{
+                  fontSize: "$6",
+                  color: "$text",
+                }}>
+                {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
+                delegator.delegate.threeBoxSpace.name
+                  ? delegator.delegate.threeBoxSpace.name
+                  : delegator.delegate.id.replace(
+                      delegator.delegate.id.slice(7, 37),
+                      "…"
+                    )}
+              </Box>
+            }
+          />
         </Link>
       )}
       <Box
-        sx={{
+        css={{
           display: "grid",
-          gridGap: 2,
-          gridTemplateColumns: [
-            "100%",
-            "100%",
-            `repeat(auto-fit, minmax(128px, 1fr))`,
-          ],
-          mb: 5,
+          gridGap: "$3",
+          gridTemplateColumns: "100%",
+          mb: "$5",
+          "@bp2": {
+            gridTemplateColumns: "repeat(auto-fit, minmax(128px, 1fr))",
+          },
         }}>
         <Card
-          sx={{ flex: 1, mb: 0 }}
+          css={{ flex: 1, mb: 0 }}
           title={
-            <Flex sx={{ alignItems: "center" }}>
-              <Box sx={{ color: "muted" }}>Staked balance</Box>
+            <Flex css={{ alignItems: "center" }}>
+              <Box css={{ color: "$muted" }}>Staked balance</Box>
               <Flex>
                 <ReactTooltip
                   id="tooltip-total-staked"
@@ -109,48 +104,44 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                   type="dark"
                   effect="solid"
                 />
-                <Help
+                <HelpIcon
                   data-tip="This is the amount currently delegated to an Orchestrator."
                   data-for="tooltip-total-staked"
-                  sx={{
-                    color: "muted",
-                    cursor: "pointer",
-                    ml: 1,
-                  }}
                 />
               </Flex>
             </Flex>
           }
           subtitle={
             <Box
-              sx={{
-                mb: 4,
-                fontSize: 5,
-                color: "text",
-                lineHeight: "heading",
-                fontFamily: "monospace",
+              css={{
+                mb: "$4",
+                fontSize: "$6",
+                color: "$text",
+                fontFamily: "$monospace",
               }}>
               {abbreviateNumber(pendingStake, 5)}
-              <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
+              <Box as="span" css={{ ml: "$2", fontSize: "$2" }}>
+                LPT
+              </Box>
             </Box>
           }>
-          <Box sx={{ mt: "auto" }}>
+          <Box css={{ mt: "auto" }}>
             <Box
-              sx={{
+              css={{
                 display: "block",
-                top: "-20px",
+                top: "-22px",
                 position: "relative",
               }}>
-              <img src="/img/squiggle.svg" />
+              <Box as="img" src="/img/squiggle.svg" />
             </Box>
             <Flex
-              sx={{
-                fontSize: 1,
-                mb: 1,
+              css={{
+                fontSize: "$2",
+                mb: "$2",
                 justifyContent: "space-between",
               }}>
-              <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Lifetime Unstaked</Box>
+              <Flex css={{ alignItems: "center" }}>
+                <Box css={{ color: "$muted" }}>Lifetime Unstaked</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-unstaked"
@@ -159,30 +150,25 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     type="dark"
                     effect="solid"
                   />
-                  <Help
+                  <HelpIcon
                     data-tip="This is the amount unstaked over the lifetime of this account."
                     data-for="tooltip-unstaked"
-                    sx={{
-                      color: "muted",
-                      cursor: "pointer",
-                      ml: 1,
-                    }}
                   />
                 </Flex>
               </Flex>
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 {unbonded > 0 ? (
-                  <span sx={{ color: "red" }}>
+                  <Box as="span" css={{ color: "$red" }}>
                     -{abbreviateNumber(unbonded, 3)} LPT
-                  </span>
+                  </Box>
                 ) : (
                   0
                 )}
-              </span>
+              </Box>
             </Flex>
-            <Flex sx={{ fontSize: 1, justifyContent: "space-between" }}>
-              <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Lifetime Rewards</Box>
+            <Flex css={{ fontSize: "$2", justifyContent: "space-between" }}>
+              <Flex css={{ alignItems: "center" }}>
+                <Box css={{ color: "$muted" }}>Lifetime Rewards</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-rewards"
@@ -191,31 +177,28 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     type="dark"
                     effect="solid"
                   />
-                  <Help
+                  <HelpIcon
                     data-tip="Account's total rewards earned all-time."
                     data-for="tooltip-rewards"
-                    sx={{
-                      color: "muted",
-                      cursor: "pointer",
-                      ml: 1,
-                    }}
                   />
                 </Flex>
               </Flex>
-              <span>
-                <span sx={{ color: "primary", fontFamily: "monospace" }}>
+              <Box as="span">
+                <Box
+                  as="span"
+                  css={{ color: "$primary", fontFamily: "$monospace" }}>
                   +{abbreviateNumber(rewards, 6)} LPT
-                </span>
-              </span>
+                </Box>
+              </Box>
             </Flex>
           </Box>
         </Card>
         {delegator.delegate && (
           <Card
-            sx={{ flex: 1, mb: 0 }}
+            css={{ flex: 1, mb: 0 }}
             title={
-              <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Stake Equity</Box>
+              <Flex css={{ alignItems: "center" }}>
+                <Box css={{ color: "$muted" }}>Stake Equity</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-equity"
@@ -224,25 +207,20 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                     type="dark"
                     effect="solid"
                   />
-                  <Help
+                  <HelpIcon
                     data-tip="Account's equity relative to the entire network."
                     data-for="tooltip-equity"
-                    sx={{
-                      color: "muted",
-                      cursor: "pointer",
-                      ml: 1,
-                    }}
                   />
                 </Flex>
               </Flex>
             }
             subtitle={
               <Box
-                sx={{
-                  fontSize: 5,
-                  color: "text",
-                  lineHeight: "heading",
-                  fontFamily: "monospace",
+                css={{
+                  mb: "auto",
+                  fontSize: "$6",
+                  color: "$text",
+                  fontFamily: "$monospace",
                 }}>
                 {totalActiveStake === 0
                   ? 0
@@ -250,16 +228,16 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                 %
               </Box>
             }>
-            <Box sx={{ mt: 3 }}>
+            <Box css={{ mt: "$4" }}>
               <Flex
-                sx={{
-                  fontSize: 1,
-                  mb: 1,
+                css={{
+                  fontSize: "$2",
+                  mb: "$2",
                   justifyContent: "space-between",
                 }}>
-                <span sx={{ color: "muted" }}>
+                <Box as="span" css={{ color: "$muted" }}>
                   Account{" "}
-                  <span sx={{ color: "text" }}>
+                  <Box as="span" css={{ color: "$text" }}>
                     (
                     {totalActiveStake === 0
                       ? 0
@@ -267,19 +245,23 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                           4
                         )}
                     %)
-                  </span>
-                </span>
-                <span>
-                  <span sx={{ fontFamily: "monospace" }}>
+                  </Box>
+                </Box>
+                <Box as="span">
+                  <Box as="span" css={{ fontFamily: "$monospace" }}>
                     {abbreviateNumber(pendingStake, 5)}
-                  </span>
-                </span>
+                  </Box>
+                </Box>
               </Flex>
               <Flex
-                sx={{ fontSize: 1, mb: 1, justifyContent: "space-between" }}>
-                <span sx={{ color: "muted" }}>
+                css={{
+                  fontSize: "$2",
+                  mb: "$2",
+                  justifyContent: "space-between",
+                }}>
+                <Box as="span" css={{ color: "$muted" }}>
                   Orchestrator{" "}
-                  <span sx={{ color: "text" }}>
+                  <Box as="span" css={{ color: "$text" }}>
                     (
                     {totalActiveStake === 0
                       ? 0
@@ -288,23 +270,23 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                           100
                         ).toPrecision(4)}
                     %)
-                  </span>
-                </span>
-                <span>
-                  <span sx={{ fontFamily: "monospace" }}>
+                  </Box>
+                </Box>
+                <Box as="span">
+                  <Box as="span" css={{ fontFamily: "$monospace" }}>
                     {abbreviateNumber(+delegator.delegate.totalStake, 3)}
-                  </span>
-                </span>
+                  </Box>
+                </Box>
               </Flex>
 
               <Flex
-                sx={{
-                  fontSize: 1,
+                css={{
+                  fontSize: "$2",
                   justifyContent: "space-between",
                 }}>
-                <span sx={{ color: "muted" }}>
+                <Box as="span" css={{ color: "$muted" }}>
                   Rest of Network{" "}
-                  <span sx={{ color: "text" }}>
+                  <Box as="span" css={{ color: "$text" }}>
                     (
                     {(totalActiveStake === 0
                       ? 0
@@ -315,10 +297,10 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                         100
                     ).toPrecision(4)}
                     %)
-                  </span>
-                </span>
-                <span>
-                  <span sx={{ fontFamily: "monospace" }}>
+                  </Box>
+                </Box>
+                <Box as="span">
+                  <Box as="span" css={{ fontFamily: "$monospace" }}>
                     {abbreviateNumber(
                       totalActiveStake === 0
                         ? 0
@@ -327,8 +309,8 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                             pendingStake,
                       3
                     )}
-                  </span>
-                </span>
+                  </Box>
+                </Box>
               </Flex>
             </Box>
           </Card>

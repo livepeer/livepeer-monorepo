@@ -1,4 +1,5 @@
-import { Styled, Box, Flex } from "theme-ui";
+import Box from "../components/Box";
+import Flex from "../components/Flex";
 import Spinner from "../components/Spinner";
 import Card from "../components/Card";
 import moment from "moment";
@@ -33,7 +34,7 @@ const query = `
 
 function getBadgeColor(changeType) {
   if (changeType === "NEW") {
-    return "primary";
+    return "$primary";
   } else if (changeType === "IMPROVED") {
     return "teal";
   } else if (changeType === "FIXED") {
@@ -75,62 +76,82 @@ const WhatsNew = () => {
       </Head>
       {!changeFeedData ? (
         <Flex
-          sx={{
+          css={{
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
-          }}>
+          }}
+        >
           <Spinner />
         </Flex>
       ) : (
         <>
           <Flex
-            sx={{
-              mt: [3, 3, 3, 5],
-              mb: 5,
+            css={{
+              mt: "$3",
+              mb: "$4",
               width: "100%",
               flexDirection: "column",
-            }}>
-            <Styled.h1
-              sx={{
-                fontSize: [3, 3, 4, 26],
-                mb: [3, 3, 3, 5],
+              "@bp3": {
+                mt: "$4",
+              },
+            }}
+          >
+            <Box
+              as="h1"
+              css={{
+                fontSize: "$3",
+                mb: "$4",
                 display: "flex",
                 alignItems: "center",
-              }}>
-              <span sx={{ mr: 2 }}>🌟</span> What's New
-            </Styled.h1>
-            <Box sx={{ img: { maxWidth: "100%" } }}>
+                "@bp2": {
+                  fontSize: "$5",
+                },
+                "@bp3": {
+                  mb: "$4",
+                  fontSize: 26,
+                },
+              }}
+            >
+              <Box as="span" css={{ mr: "$3" }}>
+                🌟
+              </Box>{" "}
+              What's New
+            </Box>
+            <Box css={{ img: { maxWidth: "100%" } }}>
               {changeFeedData.projectBySlugs.releases.edges.map(
                 ({ node }, index1) =>
                   node.isPublished && (
-                    <Card key={index1} sx={{ flex: 1, mb: 4 }}>
-                      <Styled.h3>{node.title}</Styled.h3>
+                    <Card key={index1} css={{ flex: 1, mb: "$4" }}>
+                      <Box as="h3">{node.title}</Box>
                       <Box
-                        sx={{
+                        css={{
                           lineHeight: 2,
-                          mb: 3,
-                          fontSize: 1,
-                          color: "muted",
-                        }}>
+                          mb: "$3",
+                          fontSize: "$2",
+                          color: "$muted",
+                        }}
+                      >
                         {moment(node.publishedAt).format("MMM Do, YYYY")}
                       </Box>
                       <Box
-                        sx={{
+                        css={{
                           borderBottom: "1px solid",
-                          borderColor: "border",
-                          pb: 3,
-                          mb: 3,
-                          a: { color: "primary" },
-                        }}>
+                          borderColor: "$border",
+                          pb: "$4",
+                          mb: "$4",
+                          a: { color: "$primary" },
+                          lineHeight: 1.5,
+                        }}
+                      >
                         <Markdown>{node.description}</Markdown>
                       </Box>
                       {Object.keys(groupByType(node.changes)).map(
                         (key, index2) => {
                           return (
-                            <Box key={index2} sx={{ mb: 2 }}>
+                            <Box key={index2} css={{ mb: "$3" }}>
                               <Box
-                                sx={{
+                                css={{
                                   fontSize: "14px",
                                   display: "inline-flex",
                                   textTransform: "uppercase",
@@ -140,18 +161,23 @@ const WhatsNew = () => {
                                   padding: "4px 16px",
                                   alignSelf: "flex-start",
                                   borderRadius: "4px",
-                                  color: "background",
+                                  color: "$background",
                                   bg: getBadgeColor(key),
-                                  mb: 2,
-                                }}>
+                                  mb: "$3",
+                                }}
+                              >
                                 {key}
                               </Box>
                               {groupByType(node.changes)[key].map(
                                 (change, index3) => (
                                   <Box
+                                    as="ul"
                                     key={index3}
-                                    sx={{ alignSelf: "flexStart" }}>
-                                    <Box sx={{ mb: 2 }}>{change.content}</Box>
+                                    css={{ pl: 20, alignSelf: "flexStart" }}
+                                  >
+                                    <Box as="li" css={{ mb: "$3" }}>
+                                      {change.content}
+                                    </Box>
                                   </Box>
                                 )
                               )}

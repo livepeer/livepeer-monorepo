@@ -1,5 +1,6 @@
 import React from "react";
-import { Styled, Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { Dialog } from "@reach/dialog";
 import CloseIcon from "../../public/img/close.svg";
 
@@ -26,7 +27,8 @@ const Index = ({
 }: Props) => {
   return (
     <>
-      <Dialog
+      <Box
+        as={Dialog}
         aria-label="Dialog"
         isOpen={isOpen}
         onDismiss={
@@ -38,44 +40,49 @@ const Index = ({
             : () => (document.body.style.overflow = "")
         }
         className={className}
-        sx={
+        css={
           title
-            ? { maxWidth: 700, bg: "surface", borderRadius: 16 }
+            ? { maxWidth: 700, bg: "$surface", borderRadius: 16 }
             : {
                 borderRadius: 16,
                 margin: "40px auto",
                 height: "calc(100vh - 80px)",
               }
-        }>
-        <Box sx={{ position: "relative", px: 4, py: 3 }}>
+        }
+      >
+        <Box css={{ position: "relative", p: "$4" }}>
           {title && (
-            <Box sx={{ position: "relative" }}>
+            <Box css={{ position: "relative" }}>
               <Flex
-                sx={{
+                css={{
                   justifyContent: "space-between",
                   alignItems: "center",
-                  mb: 4,
-                }}>
-                {Icon && <Flex sx={{ mr: 2 }}>{Icon}</Flex>}
-                <Styled.h3 sx={{ width: "100%" }}>{title}</Styled.h3>
+                  mb: "$4",
+                }}
+              >
+                {Icon && <Flex css={{ mr: "$3" }}>{Icon}</Flex>}
+                <Box as="h3" css={{ width: "100%" }}>
+                  {title}
+                </Box>
                 {showCloseButton && (
-                  <CloseIcon
-                    onClick={onDismiss}
-                    sx={{
+                  <Box
+                    css={{
                       cursor: "pointer",
                       zIndex: 1,
                       right: 20,
                       top: 20,
                       color: "white",
                     }}
-                  />
+                  >
+                    <CloseIcon onClick={onDismiss} />
+                  </Box>
                 )}
               </Flex>
             </Box>
           )}
           {children}
         </Box>
-      </Dialog>
+      </Box>
     </>
   );
 };

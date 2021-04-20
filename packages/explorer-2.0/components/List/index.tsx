@@ -1,18 +1,29 @@
+import Box from "../Box";
+
 interface Props {
+  css?: object;
   onScroll?: React.UIEventHandler;
   header?: JSX.Element;
   children: JSX.Element[] | JSX.Element;
 }
 
-const Index = ({ header = null, onScroll, children, ...props }: Props) => (
-  <div onScroll={onScroll} sx={{ width: "100%" }} {...props}>
+const Index = ({
+  css = {},
+  header = null,
+  onScroll,
+  children,
+  ...props
+}: Props) => (
+  <Box onScroll={onScroll} css={{ width: "100%", ...css }} {...props}>
     {header && (
-      <div sx={{ pb: 2, borderBottom: "1px solid", borderColor: "border" }}>
+      <Box
+        css={{ pb: "$3", borderBottom: "1px solid", borderColor: "$border" }}
+      >
         {header}
-      </div>
+      </Box>
     )}
-    <div>{children}</div>
-  </div>
+    <Box>{children}</Box>
+  </Box>
 );
 
 export default Index;

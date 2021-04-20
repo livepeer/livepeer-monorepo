@@ -1,9 +1,10 @@
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Close from "../../public/img/close.svg";
 
 const Index = ({ children, onClose }) => (
-  <div
-    sx={{
+  <Box
+    css={{
       borderRadius: "3px",
       backgroundColor: "text",
       position: "fixed",
@@ -18,12 +19,13 @@ const Index = ({ children, onClose }) => (
       color: "#282828",
       bottom: "24px",
       zIndex: "100",
-    }}>
-    <Flex sx={{ alignItems: "center" }}>
-      <div>{children}</div>
-      <Close onClick={onClose} sx={{ cursor: "pointer", ml: 3 }} />
+    }}
+  >
+    <Flex css={{ alignItems: "center" }}>
+      <Box>{children}</Box>
+      <Close onClick={onClose} css={{ cursor: "pointer", ml: "$4" }} />
     </Flex>
-  </div>
+  </Box>
 );
 
 export default Index;

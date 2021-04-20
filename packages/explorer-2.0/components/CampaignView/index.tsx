@@ -1,10 +1,8 @@
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Card from "../Card";
 import { abbreviateNumber, expandedPriceLabels } from "../../lib/utils";
-import { Box } from "theme-ui";
-import { MdCheck, MdClose } from "react-icons/md";
 import ReactTooltip from "react-tooltip";
-import Help from "../../public/img/help.svg";
 import { useRef, useState } from "react";
 import Price from "../Price";
 import {
@@ -12,6 +10,26 @@ import {
   MenuItemRadioGroup,
   MenuItemRadio,
 } from "@modulz/radix/dist/index.es";
+import { CheckIcon, Cross1Icon } from "@modulz/radix-icons";
+import HelpIcon from "../HelpIcon";
+
+const Subtitle = ({ css = {}, children }) => {
+  return (
+    <Box
+      css={{
+        fontSize: "$4",
+        color: "$text",
+        fontWeight: 500,
+        fontFamily: "$monospace",
+        "@bp2": {
+          fontSize: "$5",
+        },
+        ...css,
+      }}>
+      {children}
+    </Box>
+  );
+};
 
 const Index = ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false);
@@ -21,37 +39,37 @@ const Index = ({ currentRound, transcoder }) => {
     .length;
 
   const PriceSettingToggle = () => (
-    <span
+    <Box
+      as="span"
       ref={targetRef}
       onClick={(e) => {
         e.stopPropagation();
         setIsPriceSettingOpen(true);
       }}
-      sx={{
+      css={{
         cursor: "pointer",
         fontSize: 12,
       }}>
-      <span sx={{ mx: "4px" }}>/</span>
-      <span
+      <Box as="span" css={{ mx: "4px" }}>
+        /
+      </Box>
+      <Box
+        as="span"
         title={`Price of transcoding per ${expandedPriceLabels[priceSetting]}`}
-        sx={{
-          color: "text",
-          borderBottom: "1px dashed",
-          borderColor: "text",
-          transition: ".3s",
-          ":hover": { color: "primary" },
-          ":active": { color: "primary" },
+        css={{
+          color: "$text",
         }}>
         {priceSetting}
-      </span>
-    </span>
+      </Box>
+    </Box>
   );
   return (
-    <Box sx={{ pt: 4 }}>
-      <Menu
-        style={{
-          background: "#1E2026",
-          padding: 0,
+    <Box css={{ pt: "$4" }}>
+      <Box
+        as={Menu}
+        css={{
+          background: "$surface",
+          p: 0,
           boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
         }}
         isOpen={isPriceSettingOpen}
@@ -67,112 +85,78 @@ const Index = ({ currentRound, transcoder }) => {
           <MenuItemRadio value="1b pixels" label="1 billion pixels" />
           <MenuItemRadio value="1t pixels" label="1 trillion pixels" />
         </MenuItemRadioGroup>
-      </Menu>
+      </Box>
       <Box
-        sx={{
+        css={{
           display: "grid",
-          gridGap: [2, 2, 2],
-          gridTemplateColumns: [
-            "repeat(auto-fit, minmax(33%, 1fr))",
-            "repeat(auto-fit, minmax(33%, 1fr))",
-            "repeat(auto-fit, minmax(33%, 1fr))",
-            `repeat(auto-fit, minmax(30%, 1fr))`,
-          ],
+          gridGap: "$3",
+          gridTemplateColumns: "repeat(auto-fit, minmax(33%, 1fr))",
+          "@bp3": {
+            gridTemplateColumns: "repeat(auto-fit, minmax(30%, 1fr))",
+          },
         }}>
         <Card
-          sx={{ flex: 1 }}
+          css={{ flex: 1 }}
           title="Total Stake"
           subtitle={
-            <Box
-              sx={{
-                fontSize: [3, 3, 4, 4],
-                color: "text",
-                fontWeight: 500,
-                lineHeight: "heading",
-                fontFamily: "monospace",
-              }}>
+            <Subtitle>
               {abbreviateNumber(transcoder.totalStake, 4)}
-              <span sx={{ ml: 1, fontSize: 1 }}>LPT</span>
-            </Box>
+              <Box as="span" css={{ ml: "$2", fontSize: "$2" }}>
+                LPT
+              </Box>
+            </Subtitle>
           }
         />
         <Card
-          sx={{ flex: 1 }}
+          css={{ flex: 1 }}
           title="Earned Fees"
           subtitle={
-            <Box
-              sx={{
-                fontSize: [3, 3, 4, 4],
-                color: "text",
-                fontWeight: 500,
-                lineHeight: "heading",
-                fontFamily: "monospace",
-              }}>
+            <Subtitle>
               {transcoder.totalVolumeETH
                 ? abbreviateNumber(transcoder.totalVolumeETH, 3)
                 : 0}
-              <span sx={{ ml: 1, fontSize: 12 }}>ETH</span>
-            </Box>
+              <Box as="span" css={{ ml: "$2", fontSize: 12 }}>
+                ETH
+              </Box>
+            </Subtitle>
           }
         />
         <Card
           title="Reward Calls"
           subtitle={
-            <Flex
-              sx={{
-                alignItems: "center",
-                fontSize: [3, 3, 4, 4],
-                color: "text",
-                fontWeight: 500,
-                lineHeight: "heading",
-                fontFamily: "monospace",
-              }}>
+            <Subtitle css={{ display: "flex", alignItems: "center" }}>
               {callsMade}/{transcoder.pools.length}
-            </Flex>
+            </Subtitle>
           }
         />
         <Card
-          sx={{ flex: 1 }}
+          css={{ flex: 1 }}
           title="Reward Cut"
           subtitle={
-            <Box
-              sx={{
-                fontSize: [3, 3, 4, 4],
-                color: "text",
-                fontWeight: 500,
-                lineHeight: "heading",
-                fontFamily: "monospace",
-              }}>
+            <Subtitle>
               {!transcoder.rewardCut
                 ? 0
                 : parseInt(transcoder.rewardCut, 10) / 10000}
               %
-            </Box>
+            </Subtitle>
           }
         />
         <Card
-          sx={{ flex: 1 }}
+          css={{ flex: 1 }}
           title="Fee Cut"
           subtitle={
-            <Box
-              sx={{
-                fontSize: [3, 3, 4, 4],
-                color: "text",
-                fontWeight: 500,
-                lineHeight: "heading",
-                fontFamily: "monospace",
-              }}>
+            <Subtitle>
               {!transcoder.feeShare
                 ? 0
                 : 100 - parseInt(transcoder.feeShare, 10) / 10000}
               %
-            </Box>
+            </Subtitle>
           }
         />
         <Card
-          sx={{ flex: 1 }}
+          css={{ flex: 1 }}
           title={
-            <Flex sx={{ alignItems: "center" }}>
+            <Flex css={{ alignItems: "center" }}>
               <Box>
                 Price
                 <PriceSettingToggle />
@@ -188,42 +172,26 @@ const Index = ({ currentRound, transcoder }) => {
                     return `Price of transcoding per ${expandedPriceLabels[priceSetting]}`;
                   }}
                 />
-                <Help
-                  key="tooltip-price"
-                  data-tip=""
-                  data-for="tooltip-price"
-                  sx={{
-                    color: "muted",
-                    cursor: "pointer",
-                    ml: 1,
-                  }}
-                />
+                <HelpIcon data-tip="" data-for="tooltip-price" />
               </Flex>
             </Flex>
           }
           subtitle={
-            <Box
-              sx={{
-                fontSize: [3, 3, 4, 4],
-                color: "text",
-                fontWeight: 500,
-                lineHeight: "heading",
-                fontFamily: "monospace",
-              }}>
+            <Subtitle>
               {transcoder.price <= 0 ? (
                 "N/A"
               ) : (
                 <Price value={transcoder.price} per={priceSetting} />
               )}
-            </Box>
+            </Subtitle>
           }
         />
         {transcoder?.lastRewardRound?.id && (
           <Card
-            sx={{ flex: 1 }}
+            css={{ flex: 1 }}
             title={
-              <Flex sx={{ alignItems: "center" }}>
-                <Box sx={{ color: "muted" }}>Last Reward Round</Box>
+              <Flex css={{ alignItems: "center" }}>
+                <Box css={{ color: "$muted" }}>Last Reward Round</Box>
                 <Flex>
                   <ReactTooltip
                     id="tooltip-last-reward-round"
@@ -232,43 +200,34 @@ const Index = ({ currentRound, transcoder }) => {
                     type="dark"
                     effect="solid"
                   />
-                  <Help
+                  <HelpIcon
                     data-tip="The last round that an orchestrator received rewards while active. A checkmark indicates it called reward for the current round."
                     data-for="tooltip-last-reward-round"
-                    sx={{
-                      color: "muted",
-                      cursor: "pointer",
-                      ml: 1,
-                    }}
                   />
                 </Flex>
               </Flex>
             }
             subtitle={
-              <Box
-                sx={{
-                  fontSize: [3, 3, 4, 4, 5],
-                  color: "text",
-                  position: "relative",
-                  fontWeight: 500,
-                  lineHeight: "heading",
-                  fontFamily: "monospace",
-                }}>
-                <Flex sx={{ alignItems: "center" }}>
+              <Subtitle>
+                <Flex css={{ alignItems: "center" }}>
                   {transcoder.lastRewardRound.id}{" "}
                   {transcoder.active && (
                     <Flex>
                       {transcoder.lastRewardRound.id === currentRound.id ? (
-                        <MdCheck
-                          sx={{ fontSize: 2, color: "primary", ml: 1 }}
+                        <Box
+                          as={CheckIcon}
+                          css={{ fontSize: "$3", color: "$primary", ml: "$2" }}
                         />
                       ) : (
-                        <MdClose sx={{ fontSize: 2, color: "red", ml: 1 }} />
+                        <Box
+                          as={Cross1Icon}
+                          css={{ fontSize: "$2", color: "$red", ml: "$2" }}
+                        />
                       )}
                     </Flex>
                   )}
                 </Flex>
-              </Box>
+              </Subtitle>
             }
           />
         )}

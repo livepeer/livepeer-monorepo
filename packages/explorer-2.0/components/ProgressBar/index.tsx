@@ -1,5 +1,5 @@
-import { Flex } from "theme-ui";
-import { Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import moment from "moment";
 import { useTimeEstimate } from "../../hooks";
 import { txMessages } from "../../lib/utils";
@@ -13,9 +13,9 @@ const Index = ({ tx }) => {
   }
 
   return (
-    <Box sx={{ position: "relative", px: 3, pb: 2, pt: "18px" }}>
+    <Box css={{ position: "relative", px: "$4", pb: "$3", pt: "18px" }}>
       <Box
-        sx={{
+        css={{
           position: "absolute",
           top: 0,
           left: 0,
@@ -27,10 +27,10 @@ const Index = ({ tx }) => {
             "linear-gradient(260.35deg, #F1BC00 0.25%, #E926BE 47.02%, #9326E9 97.86%)",
         }}
       />
-      <Flex sx={{ alignItems: "center" }}>
+      <Flex css={{ alignItems: "center" }}>
         <Flex
-          sx={{
-            mr: 2,
+          css={{
+            mr: "$3",
             borderRadius: "100%",
             bg: "background",
             color: "white",
@@ -38,7 +38,7 @@ const Index = ({ tx }) => {
             minHeight: 42,
             justifyContent: "center",
             alignItems: "center",
-            fontSize: 0,
+            fontSize: "$1",
             fontWeight: "bold",
           }}>
           {timeLeft
@@ -49,17 +49,17 @@ const Index = ({ tx }) => {
               }%`
             : "0%"}
         </Flex>
-        <Box sx={{ width: "100%" }}>
+        <Box css={{ width: "100%" }}>
           <Box
-            sx={{
+            css={{
               mb: "4px",
               color: "white",
-              fontSize: 1,
+              fontSize: "$2",
               fontWeight: "bold",
             }}>
             {txMessages[__typename]?.pending}
           </Box>
-          <Box sx={{ fontSize: 0, color: "muted" }}>
+          <Box css={{ fontSize: "$1", color: "$muted" }}>
             {timeLeft
               ? `⏳~${moment
                   .duration(timeLeft, "seconds")
@@ -67,15 +67,16 @@ const Index = ({ tx }) => {
               : "⏳Calculating estimated confirmation duration..."}
           </Box>
         </Box>
-        <a
-          sx={{ fontSize: 0, justifySelf: "flex-end" }}
+        <Box
+          as="a"
+          css={{ fontSize: "$1", justifySelf: "flex-end" }}
           target="_blank"
           rel="noopener noreferrer"
           href={`https://${
             process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "rinkeby." : ""
           }etherscan.io/tx/${txHash}`}>
           Details
-        </a>
+        </Box>
       </Flex>
     </Box>
   );

@@ -1,15 +1,20 @@
-import { Flex, Box, Styled } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { useMemo } from "react";
 import { useTable, useFilters, useSortBy, usePagination } from "react-table";
-import Search from "../../public/img/search.svg";
 import matchSorter from "match-sorter";
 import AccountCell from "../AccountCell";
-import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
-import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 import moment from "moment";
 import Link from "next/link";
 import { forwardRef } from "react";
 import { TableCellProps } from "../../@types";
+import {
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  MagnifyingGlassIcon,
+} from "@modulz/radix-icons";
 
 const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
   function fuzzyTextFilterFn(rows, id, filterValue) {
@@ -29,24 +34,29 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
       <Flex
-        sx={{
+        css={{
           alignItems: "center",
-          pl: 3,
-        }}>
-        <Search sx={{ width: 16, height: 16, mr: 1, color: "muted" }} />
-        <input
+          pl: "$4",
+        }}
+      >
+        <Box
+          as={MagnifyingGlassIcon}
+          css={{ width: 16, height: 16, mr: "$2", color: "$muted" }}
+        />
+        <Box
+          as="input"
           value={filterValue || ""}
           onChange={(e) => {
             setFilter(e.target.value || undefined);
           }}
           placeholder={`Filter`}
           type="text"
-          sx={{
+          css={{
             display: "block",
             outline: "none",
             width: "100%",
             appearance: "none",
-            fontSize: 2,
+            fontSize: "$3",
             lineHeight: "inherit",
             border: 0,
             color: "inherit",
@@ -181,7 +191,7 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
   return (
     <>
       <Flex
-        sx={{
+        css={{
           position: "relative",
           width: "100%",
           top: 0,
@@ -189,16 +199,17 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
           flexDirection: "column",
           alignItems: "flex-start",
           pt: 0,
-          pb: 3,
+          pb: "$3",
           ml: 0,
           mr: 0,
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         <Box>{accountColumn.render("Filter")}</Box>
       </Flex>
-      <Box sx={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
+      <Box css={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
         <Box
-          sx={{
+          css={{
             display: "table",
             tableLayout: "fixed",
             width: "100%",
@@ -207,59 +218,65 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
             position: "relative",
             minWidth: 800,
           }}
-          {...getTableProps()}>
-          <Box sx={{ display: "table-header-group" }}>
+          {...getTableProps()}
+        >
+          <Box css={{ display: "table-header-group" }}>
             {headerGroups.map((headerGroup, index1) => (
               <Box
-                sx={{ display: "table-row" }}
+                css={{ display: "table-row" }}
                 key={index1}
-                {...headerGroup.getHeaderGroupProps()}>
+                {...headerGroup.getHeaderGroupProps()}
+              >
                 {headerGroup.headers.map((column, index2) => (
                   <Box
-                    sx={{
+                    css={{
                       display: "table-cell",
                       borderBottom: "1px solid",
                       fontWeight: 700,
                       borderColor: "rgba(255,255,255,.05)",
-                      pb: 1,
-                      px: 3,
+                      pb: "$2",
+                      px: "$4",
                       textTransform: "uppercase",
                     }}
-                    key={index2}>
+                    key={index2}
+                  >
                     <Flex
-                      sx={{
+                      css={{
                         justifyContent:
                           index2 === 0 || index2 === 1
                             ? "flex-start"
                             : "flex-end",
-                      }}>
-                      <span
-                        sx={{
+                      }}
+                    >
+                      <Box
+                        as="span"
+                        css={{
                           fontSize: 10,
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
-                        )}>
-                        <span>
+                        )}
+                      >
+                        <Box as="span">
                           {column.isSorted ? (
                             column.isSortedDesc ? (
-                              <MdKeyboardArrowDown sx={{ ml: "-12px" }} />
+                              <Box as={ArrowDownIcon} css={{ ml: "-12px" }} />
                             ) : (
-                              <MdKeyboardArrowUp sx={{ ml: "-12px" }} />
+                              <Box as={ArrowUpIcon} css={{ ml: "-12px" }} />
                             )
                           ) : (
                             ""
                           )}
-                        </span>
+                        </Box>
                         {column.render("Header")}
-                      </span>
+                      </Box>
                     </Flex>
                   </Box>
                 ))}
               </Box>
             ))}
           </Box>
-          <Box sx={{ display: "table-row-group" }} {...getTableBodyProps()}>
+          <Box css={{ display: "table-row-group" }} {...getTableBodyProps()}>
             {page.map((row, rowIndex) => {
               const orchestratorIndex = rowIndex + pageIndex * pageSize;
               prepareRow(row);
@@ -268,10 +285,11 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                 <Box
                   {...row.getRowProps()}
                   key={orchestratorIndex}
-                  sx={{
+                  css={{
                     display: "table-row",
                     height: 64,
-                  }}>
+                  }}
+                >
                   {row.cells.map((cell, i) => {
                     switch (cell.column.Header) {
                       case "Orchestrator":
@@ -285,15 +303,18 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                           <TableCell cell={cell} key={i}>
                             <Link
                               href={`/accounts/${cell.value.id}/campaign`}
-                              passHref>
-                              <a
-                                sx={{
+                              passHref
+                            >
+                              <Box
+                                as="a"
+                                css={{
                                   display: "inherit",
                                   color: "inherit",
                                   ":hover": {
                                     textDecoration: "underline",
                                   },
-                                }}>
+                                }}
+                              >
                                 <AccountCell
                                   active={active}
                                   threeBoxSpace={
@@ -301,7 +322,7 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                                   }
                                   address={cell.value.id}
                                 />
-                              </a>
+                              </Box>
                             </Link>
                           </TableCell>
                         );
@@ -310,28 +331,35 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{ fontSize: "12px" }}>
-                            <Box
-                              sx={{
-                                display: "inline-block",
-                                background: "rgba(255,255,255,.06)",
-                                padding: "2px 8px",
-                                borderRadius: "6px",
-                                mr: 1,
-                              }}>
-                              <span sx={{ fontFamily: "monospace" }}>
-                                {parseFloat((+cell.value).toFixed(3))}
-                              </span>{" "}
-                              <span>ETH</span>
-                            </Box>
-                            (
-                            <span sx={{ fontFamily: "monospace" }}>
-                              $
-                              {parseFloat(
-                                (+cell.row.values.faceValueUSD).toFixed(2)
-                              )}
-                            </span>
-                            )
+                            css={{ fontSize: "12px" }}
+                          >
+                            <Flex css={{ alignItems: "center" }}>
+                              <Box
+                                css={{
+                                  display: "inline-block",
+                                  background: "rgba(255,255,255,.06)",
+                                  padding: "2px 8px",
+                                  borderRadius: "6px",
+                                  mr: "$2",
+                                }}
+                              >
+                                <Box
+                                  as="span"
+                                  css={{ fontFamily: "$monospace" }}
+                                >
+                                  {parseFloat((+cell.value).toFixed(3))}
+                                </Box>{" "}
+                                <Box as="span">ETH</Box>
+                              </Box>
+                              (
+                              <Box css={{ fontFamily: "$monospace" }}>
+                                $
+                                {parseFloat(
+                                  (+cell.row.values.faceValueUSD).toFixed(2)
+                                )}
+                              </Box>
+                              )
+                            </Flex>
                           </TableCell>
                         );
                       case "Broadcaster":
@@ -339,22 +367,26 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{ textAlign: "right" }}>
+                            css={{ textAlign: "right" }}
+                          >
                             <Link
                               href={`/accounts/${cell.value.id}/history`}
-                              passHref>
-                              <a
-                                sx={{
+                              passHref
+                            >
+                              <Box
+                                as="a"
+                                css={{
                                   color: "inherit",
                                   ":hover": {
                                     textDecoration: "underline",
                                   },
-                                }}>
+                                }}
+                              >
                                 {cell.value.id.replace(
                                   cell.value.id.slice(5, 39),
                                   "…"
                                 )}
-                              </a>
+                              </Box>
                             </Link>
                           </TableCell>
                         );
@@ -363,9 +395,11 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{ textAlign: "right" }}>
-                            <a
-                              sx={{
+                            css={{ textAlign: "right" }}
+                          >
+                            <Box
+                              as="a"
+                              css={{
                                 color: "inherit",
                                 ":hover": {
                                   textDecoration: "underline",
@@ -373,9 +407,10 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                               }}
                               rel="noopener noreferrer"
                               target="_blank"
-                              href={`https://etherscan.io/tx/${cell.row.values.transaction.id}`}>
+                              href={`https://etherscan.io/tx/${cell.row.values.transaction.id}`}
+                            >
                               {moment(cell.value * 1000).fromNow()}
-                            </a>
+                            </Box>
                           </TableCell>
                         );
                       default:
@@ -389,15 +424,17 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
         </Box>
       </Box>
       <Flex
-        sx={{
-          py: 4,
+        css={{
+          py: "$5",
           alignItems: "center",
           justifyContent: "center",
-        }}>
-        <RiArrowLeftLine
-          sx={{
+        }}
+      >
+        <Box
+          as={ArrowLeftIcon}
+          css={{
             cursor: "pointer",
-            color: canPreviousPage ? "primary" : "text",
+            color: canPreviousPage ? "$primary" : "text",
             opacity: canPreviousPage ? 1 : 0.5,
           }}
           onClick={() => {
@@ -406,14 +443,21 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
             }
           }}
         />
-        <Box sx={{ fontSize: 1, mx: 2 }}>
-          Page <span sx={{ fontFamily: "monospace" }}>{pageIndex + 1}</span> of{" "}
-          <span sx={{ fontFamily: "monospace" }}>{pageCount}</span>
+        <Box css={{ fontSize: "$2", mx: "$3" }}>
+          Page{" "}
+          <Box as="span" css={{ fontFamily: "$monospace" }}>
+            {pageIndex + 1}
+          </Box>{" "}
+          of{" "}
+          <Box as="span" css={{ fontFamily: "$monospace" }}>
+            {pageCount}
+          </Box>
         </Box>
-        <RiArrowRightLine
-          sx={{
+        <Box
+          as={ArrowRightIcon}
+          css={{
             cursor: "pointer",
-            color: canNextPage ? "primary" : "text",
+            color: canNextPage ? "$primary" : "$text",
             opacity: canNextPage ? 1 : 0.5,
           }}
           onClick={() => {
@@ -428,31 +472,29 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
 };
 
 const TableCell = forwardRef(
-  (
-    { children, href, target, cell, as, onClick, pushSx }: TableCellProps,
-    ref
-  ) => {
+  ({ children, href, target, cell, as, onClick, css }: TableCellProps, ref) => {
     return (
-      <Styled.div
+      <Box
         as={as}
         target={target}
         href={href}
         ref={ref}
         onClick={onClick}
-        sx={{
+        css={{
           color: "inherit",
           display: "table-cell",
           width: "auto",
-          fontSize: 1,
-          px: 3,
+          fontSize: "$2",
+          px: "$4",
           verticalAlign: "middle",
           borderBottom: "1px solid",
           borderColor: "rgba(255,255,255,.05)",
-          ...pushSx,
+          ...css,
         }}
-        {...cell.getCellProps()}>
+        {...cell.getCellProps()}
+      >
         {children}
-      </Styled.div>
+      </Box>
     );
   }
 );

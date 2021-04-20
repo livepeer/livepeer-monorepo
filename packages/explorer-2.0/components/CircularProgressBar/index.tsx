@@ -1,33 +1,36 @@
 import { CircularProgressbar } from "react-circular-progressbar";
-import { Box } from "theme-ui";
-import { Flex } from "@theme-ui/components";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const Index = (props) => {
   const { children, ...otherProps } = props;
 
   return (
     <Box
-      sx={{
+      css={{
         position: "relative",
         width: "100%",
         height: "100%",
         ".CircularProgressbar": { verticalAlign: "initial" },
-      }}>
+      }}
+    >
       <Box
         style={{
           position: "absolute",
-        }}>
+        }}
+      >
         <CircularProgressbar {...otherProps} />
       </Box>
       <Flex
-        style={{
+        css={{
           position: "absolute",
           height: "100%",
           width: "100%",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-        }}>
+        }}
+      >
         {props.children}
       </Flex>
     </Box>

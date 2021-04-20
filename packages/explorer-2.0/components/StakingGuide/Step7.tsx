@@ -1,14 +1,16 @@
-import { Styled } from "theme-ui";
+import Box from "../Box";
 
 const Step7 = () => {
   return (
-    <div sx={{ py: 1 }}>
-      <Styled.h2 sx={{ mb: 2 }}>Stake</Styled.h2>
-      <Styled.p>
+    <Box css={{ py: "$2" }}>
+      <Box as="h3" css={{ mb: "$3" }}>
+        Stake
+      </Box>
+      <Box>
         You've made it to the final step! Enter the amount of LPT you'd like to
         stake towards this Orchestrator and hit "Stake".
-      </Styled.p>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

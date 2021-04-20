@@ -1,24 +1,29 @@
-import { Styled, Flex } from "theme-ui";
 import QRCode from "qrcode.react";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const Header = ({ transcoder }) => {
   return (
-    <Styled.h4
+    <Box
       as="h3"
-      sx={{
-        pt: 2,
-        pb: 1,
-        px: 2,
+      css={{
+        pt: "$3",
+        pb: "$2",
+        px: "$3",
         display: "flex",
         alignItems: "center",
         fontWeight: "bold",
-      }}>
-      <Flex sx={{ minWidth: 40, minHeight: 40, position: "relative", mr: 2 }}>
+      }}
+    >
+      <Flex
+        css={{ minWidth: 40, minHeight: 40, position: "relative", mr: "$3" }}
+      >
         {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
         transcoder?.threeBoxSpace &&
         transcoder?.threeBoxSpace.image ? (
-          <img
-            sx={{
+          <Box
+            as="img"
+            css={{
               objectFit: "cover",
               borderRadius: 1000,
               width: 40,
@@ -38,23 +43,24 @@ const Header = ({ transcoder }) => {
           />
         )}
       </Flex>
-      <Flex sx={{ flexDirection: "column" }}>
-        <Styled.h4 sx={{ fontSize: 20 }}>
+      <Flex css={{ flexDirection: "column" }}>
+        <Box as="h4" css={{ fontSize: 20 }}>
           {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
           transcoder?.threeBoxSpace.name
             ? transcoder?.threeBoxSpace.name
             : transcoder?.id.replace(transcoder?.id.slice(7, 37), "…")}
-        </Styled.h4>
-        <div
-          sx={{
+        </Box>
+        <Box
+          css={{
             fontWeight: "normal",
-            color: "muted",
-            fontSize: 1,
+            color: "$muted",
+            fontSize: "$2",
             lineHeight: 1.5,
             textTransform: "initial",
-          }}></div>
+          }}
+        />
       </Flex>
-    </Styled.h4>
+    </Box>
   );
 };
 

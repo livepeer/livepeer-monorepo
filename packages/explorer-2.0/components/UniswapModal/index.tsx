@@ -1,7 +1,8 @@
 import { Dialog } from "@reach/dialog";
 import { useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import CloseIcon from "../../public/img/close.svg";
+import { Cross1Icon } from "@modulz/radix-icons";
+import Box from "../Box";
 
 const Index = ({ children }) => {
   const client = useApolloClient();
@@ -36,10 +37,12 @@ const Index = ({ children }) => {
         maxWidth: 600,
         justifyContent: "center",
         height: "80vh",
-      }}>
-      <CloseIcon
+      }}
+    >
+      <Box
+        as={Cross1Icon}
         onClick={close}
-        sx={{
+        css={{
           cursor: "pointer",
           position: "fixed",
           right: 20,

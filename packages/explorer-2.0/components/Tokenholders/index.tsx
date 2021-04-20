@@ -1,4 +1,5 @@
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { useMemo } from "react";
 import { useTable } from "react-table";
 import QRCode from "qrcode.react";
@@ -35,8 +36,9 @@ const Index = ({ protocol, delegators, ...props }) => {
   });
 
   return (
-    <table
-      sx={{
+    <Box
+      as="table"
+      css={{
         display: "table",
         width: "100%",
         borderSpacing: "0",
@@ -48,13 +50,16 @@ const Index = ({ protocol, delegators, ...props }) => {
         {headerGroups.map((headerGroup, index1) => (
           <tr key={index1}>
             {headerGroup.headers.map((column, index2) => (
-              <th
-                sx={{ pb: 3, textTransform: "uppercase" }}
+              <Box
+                as="th"
+                css={{ pb: "$4", textTransform: "uppercase" }}
                 align="left"
                 {...column.getHeaderProps()}
                 key={index2}>
-                <span sx={{ fontSize: 0 }}>{column.render("Header")}</span>
-              </th>
+                <Box as="span" css={{ fontSize: "$1" }}>
+                  {column.render("Header")}
+                </Box>
+              </Box>
             ))}
           </tr>
         ))}
@@ -66,19 +71,20 @@ const Index = ({ protocol, delegators, ...props }) => {
             <tr {...row.getRowProps()} key={index1}>
               {row.cells.map((cell, index2) => {
                 return (
-                  <td
-                    sx={{ fontSize: 1, pb: 3 }}
+                  <Box
+                    as="td"
+                    css={{ fontSize: "$2", pb: "$4" }}
                     {...cell.getCellProps()}
                     key={index2}>
                     {renderSwitch(cell, protocol)}
-                  </td>
+                  </Box>
                 );
               })}
             </tr>
           );
         })}
       </tbody>
-    </table>
+    </Box>
   );
 };
 
@@ -88,13 +94,13 @@ function renderSwitch(cell, protocol) {
   switch (cell.column.Header) {
     case "#":
       return (
-        <Flex sx={{ alignItems: "center", fontFamily: "monospace" }}>
+        <Flex css={{ alignItems: "center", fontFamily: "$monospace" }}>
           {cell.row.index + 1}{" "}
         </Flex>
       );
     case "Account":
       return (
-        <Flex sx={{ alignItems: "center" }}>
+        <Flex css={{ alignItems: "center" }}>
           <QRCode
             style={{
               borderRadius: 1000,
@@ -109,37 +115,38 @@ function renderSwitch(cell, protocol) {
             href="/accounts/[account]/[slug]"
             as={`/accounts/${cell.value}/staking`}
             passHref>
-            <a
-              sx={{
-                color: "text",
+            <Box
+              as="a"
+              css={{
+                color: "$text",
                 cursor: "pointer",
                 transition: "all .3s",
                 borderBottom: "1px solid",
                 borderColor: "transparent",
                 "&:hover": {
-                  color: "primary",
+                  color: "$primary",
                   borderBottom: "1px solid",
-                  borderColor: "primary",
+                  borderColor: "$primary",
                   transition: "all .3s",
                 },
               }}>
               {cell.value.replace(cell.value.slice(7, 37), "…")}
-            </a>
+            </Box>
           </Link>
         </Flex>
       );
     case "Stake":
       return (
-        <span sx={{ fontFamily: "monospace" }}>
+        <Box as="span" css={{ fontFamily: "$monospace" }}>
           {abbreviateNumber(parseFloat(Utils.fromWei(cell.value)), 4)}
-        </span>
+        </Box>
       );
     case "Equity":
       return (
-        <span sx={{ fontFamily: "monospace" }}>{`${(
+        <Box as="span" css={{ fontFamily: "$monospace" }}>{`${(
           (+cell?.value / +protocol?.totalActiveStake) *
           100
-        ).toFixed(3)}%`}</span>
+        ).toFixed(3)}%`}</Box>
       );
     default:
       return null;
