@@ -81,3 +81,5 @@ export const timeframeOptions = {
   MONTH: "1 month",
   ALL_TIME: "All time",
 };
+
+export const PRICING_TOOL_API = "http://nyc.livepeer.com/orchestratorStats";
