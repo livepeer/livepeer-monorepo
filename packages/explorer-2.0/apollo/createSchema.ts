@@ -18,6 +18,7 @@ import { makeExecutableSchema } from "graphql-tools";
 import GraphQLJSON, { GraphQLJSONObject } from "graphql-type-json";
 import typeDefs from "./types";
 import resolvers from "./resolvers";
+import { PRICING_TOOL_API } from "../lib/constants";
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -274,9 +275,7 @@ const createSchema = async () => {
           return delegator;
         }
 
-        const response = await fetch(
-          `https://livepeer-pricing-tool.com/orchestratorStats`
-        );
+        const response = await fetch(PRICING_TOOL_API);
         const transcodersWithPrice = await response.json();
         const transcoderWithPrice = transcodersWithPrice.filter(
           (t) =>
@@ -300,9 +299,7 @@ const createSchema = async () => {
           return transcoder;
         }
 
-        const response = await fetch(
-          `https://livepeer-pricing-tool.com/orchestratorStats`
-        );
+        const response = await fetch(PRICING_TOOL_API);
         const transcodersWithPrice = await response.json();
         const transcoderWithPrice = transcodersWithPrice.filter(
           (t) => t.Address.toLowerCase() === args.id.toLowerCase()
@@ -321,9 +318,7 @@ const createSchema = async () => {
         //if selection set includes 'price', return transcoders merge prices and performance metrics
         if (selectionSet.includes("price")) {
           // get price data
-          const response = await fetch(
-            `https://livepeer-pricing-tool.com/orchestratorStats`
-          );
+          const response = await fetch(PRICING_TOOL_API);
           const transcodersWithPrice = await response.json();
 
           for (const t of transcodersWithPrice) {
