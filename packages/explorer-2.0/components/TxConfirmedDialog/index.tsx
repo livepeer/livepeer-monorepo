@@ -1,6 +1,6 @@
 import React from "react";
-import { Box } from "@theme-ui/components";
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Button from "../Button";
 import Modal from "../Modal";
 import { txMessages } from "../../lib/utils";
@@ -24,9 +24,10 @@ const Index = ({ tx, isOpen, onDismiss }) => {
       clickAnywhereToClose={false}
       onDismiss={onDismiss}
       title="Confirmed"
-      Icon={<Verified sx={{ color: "primary" }} />}>
+      Icon={<Verified css={{ color: "$primary" }} />}
+    >
       <Box
-        sx={{
+        css={{
           position: "absolute",
           top: 0,
           left: 0,
@@ -55,16 +56,20 @@ function renderSwitch({ tx, onDismiss, width, height }) {
             width={width}
             height={height}
           />
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$3" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               <Box>
                 Congrats! You've successfully staked{" "}
                 {Utils.fromWei(inputData.amount)} LPT.
               </Box>
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button
+            color="primary"
+            onClick={() => onDismiss()}
+            css={{ width: "100%" }}
+          >
             Close
           </Button>
         </Box>
@@ -72,9 +77,9 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "unbond":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               <Box>
                 You've successfully unstaked {Utils.fromWei(inputData.amount)}{" "}
                 LPT. The unstaking period is ~7 days after which you may
@@ -82,7 +87,11 @@ function renderSwitch({ tx, onDismiss, width, height }) {
               </Box>
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button
+            color="primary"
+            onClick={() => onDismiss()}
+            css={{ width: "100%" }}
+          >
             Close
           </Button>
         </Box>
@@ -90,9 +99,9 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "approve":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               {inputData.type === "createPoll" ? (
                 <Box>Nice one! You may now proceed with creating a poll.</Box>
               ) : (
@@ -100,7 +109,7 @@ function renderSwitch({ tx, onDismiss, width, height }) {
               )}
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -108,11 +117,11 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "rebond":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>Successfully restaked.</Box>
+            <Box css={{ px: "$3", py: "$4" }}>Successfully restaked.</Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -120,9 +129,9 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "rebondFromUnbonded":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               You've successfully restaked to delegate{" "}
               {tx.inputData &&
                 inputData.delegate.replace(
@@ -131,7 +140,7 @@ function renderSwitch({ tx, onDismiss, width, height }) {
                 )}
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -139,14 +148,14 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "vote":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               You've successfully casted a vote{" "}
               {tx.inputData && inputData.choiceId === 0 ? '"Yes"' : '"No"'}
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -154,14 +163,14 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "batchClaimEarnings":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               Successfully claimed {tx.inputData && inputData.totalRounds}{" "}
               rounds
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -174,22 +183,24 @@ function renderSwitch({ tx, onDismiss, width, height }) {
             width={width}
             height={height}
           />
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>
+            <Box css={{ px: "$3", py: "$4" }}>
               Nice one! You've successfully created a poll. Head on over to the{" "}
-              <a
-                sx={{ cursor: "pointer" }}
+              <Box
+                as="a"
+                css={{ cursor: "pointer" }}
                 onClick={() => {
                   onDismiss();
                   Router.push("/voting");
-                }}>
+                }}
+              >
                 voting dashboard
-              </a>{" "}
+              </Box>{" "}
               to view your newly created poll.
             </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -197,11 +208,13 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "withdrawStake":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>Successfully withdrawn stake.</Box>
+            <Box css={{ px: "$3", py: "$4" }}>
+              Successfully withdrawn stake.
+            </Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -209,11 +222,11 @@ function renderSwitch({ tx, onDismiss, width, height }) {
     case "withdrawFees":
       return (
         <Box>
-          <Table sx={{ mb: 3 }}>
+          <Table css={{ mb: "$4" }}>
             <Header tx={tx} />
-            <Box sx={{ px: 2, py: 3 }}>Successfully withdrawn fees.</Box>
+            <Box css={{ px: "$3", py: "$4" }}>Successfully withdrawn fees.</Box>
           </Table>
-          <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+          <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
             Close
           </Button>
         </Box>
@@ -223,15 +236,17 @@ function renderSwitch({ tx, onDismiss, width, height }) {
   }
 }
 
-function Table({ children, ...props }) {
+function Table({ css = {}, children, ...props }) {
   return (
     <Box
-      sx={{
+      css={{
         border: "1px solid",
-        borderColor: "border",
+        borderColor: "$border",
         borderRadius: 10,
+        ...css,
       }}
-      {...props}>
+      {...props}
+    >
       {children}
     </Box>
   );
@@ -240,26 +255,32 @@ function Table({ children, ...props }) {
 function Header({ tx }) {
   return (
     <Flex
-      sx={{
+      css={{
         borderBottom: "1px solid",
-        borderColor: "border",
+        borderColor: "$border",
         alignItems: "center",
         justifyContent: "space-between",
-        p: 2,
-      }}>
-      <Flex sx={{ fontWeight: 700, alignItems: "center" }}>
-        <Box sx={{ mr: "10px" }}>🎉</Box>
+        p: "$3",
+      }}
+    >
+      <Flex css={{ fontWeight: 700, alignItems: "center" }}>
+        <Box css={{ mr: "10px" }}>🎉</Box>
         {txMessages[tx?.__typename]?.confirmed}
       </Flex>
-      <a
-        sx={{ display: "flex", alignItems: "center" }}
+      <Flex
+        as="a"
+        css={{ alignItems: "center" }}
         target="_blank"
         rel="noopener noreferrer"
         href={`https://${
           process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "rinkeby." : ""
-        }etherscan.io/tx/${tx?.txHash}`}>
-        Transfer Receipt <MdReceipt sx={{ ml: "6px", color: "primary" }} />
-      </a>
+        }etherscan.io/tx/${tx?.txHash}`}
+      >
+        Transfer Receipt{" "}
+        <Box css={{ ml: "6px", color: "$primary" }}>
+          <MdReceipt />
+        </Box>
+      </Flex>
     </Flex>
   );
 }

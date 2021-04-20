@@ -1,30 +1,28 @@
-import { Flex, Box, Styled } from "theme-ui";
-import { useMemo, useState, useRef, forwardRef } from "react";
+import Box from "../Box";
+import Flex from "../Flex";
+import { useMemo, useState, forwardRef } from "react";
 import { useTable, useFilters, useSortBy, usePagination } from "react-table";
 import { abbreviateNumber, expandedPriceLabels } from "../../lib/utils";
-import Search from "../../public/img/search.svg";
 import Help from "../../public/img/help.svg";
 import matchSorter from "match-sorter";
 import AccountCell from "../AccountCell";
 import ReactTooltip from "react-tooltip";
 import Link from "next/link";
-import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
-import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
-import {
-  Menu,
-  MenuItemRadioGroup,
-  MenuItemRadio,
-} from "@modulz/radix/dist/index.es";
 import Price from "../Price";
 import { TableCellProps } from "../../@types";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+} from "@modulz/radix-icons";
 
 const StakingTable = ({
   pageSize = 10,
   data: { currentRound, transcoders },
 }) => {
-  const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false);
-  const targetRef = useRef();
-  const [priceSetting, setPriceSetting] = useState("pixel");
+  const [priceSetting] = useState("pixel");
 
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, {
@@ -38,24 +36,29 @@ const StakingTable = ({
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
       <Flex
-        sx={{
+        css={{
           alignItems: "center",
-          pl: 3,
-        }}>
-        <Search sx={{ width: 16, height: 16, mr: 1, color: "muted" }} />
-        <input
+          pl: "$4",
+        }}
+      >
+        <Box
+          as={MagnifyingGlassIcon}
+          css={{ width: 16, height: 16, mr: "$2", color: "$muted" }}
+        />
+        <Box
+          as="input"
           value={filterValue || ""}
           onChange={(e) => {
             setFilter(e.target.value || undefined);
           }}
           placeholder={`Filter`}
           type="text"
-          sx={{
+          css={{
             display: "block",
             outline: "none",
             width: "100%",
             appearance: "none",
-            fontSize: 2,
+            fontSize: "$3",
             lineHeight: "inherit",
             border: 0,
             color: "inherit",
@@ -128,7 +131,7 @@ const StakingTable = ({
         sortInverted: true,
       },
       {
-        Header: "Price",
+        Header: "Price / Pixel",
         accessor: "price",
       },
       {
@@ -219,56 +222,10 @@ const StakingTable = ({
 
   const accountColumn: any = headerGroups[0].headers[1];
 
-  const PriceSettingToggle = () => (
-    <span
-      ref={targetRef}
-      onClick={(e) => {
-        e.stopPropagation();
-        setIsPriceSettingOpen(true);
-      }}
-      sx={{
-        fontSize: 10,
-      }}>
-      <span sx={{ mx: "4px" }}>/</span>
-      <span
-        title={`Price of transcoding per ${expandedPriceLabels[priceSetting]}`}
-        sx={{
-          color: "text",
-          borderBottom: "1px dashed",
-          borderColor: "text",
-          transition: ".3s",
-          ":hover": { color: "primary" },
-          ":active": { color: "primary" },
-        }}>
-        {priceSetting}
-      </span>
-    </span>
-  );
   return (
     <>
-      <Menu
-        style={{
-          background: "#1E2026",
-          padding: 0,
-          borderRadius: 10,
-          boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
-        }}
-        isOpen={isPriceSettingOpen}
-        onClose={() => setIsPriceSettingOpen(false)}
-        buttonRef={targetRef}>
-        <MenuItemRadioGroup
-          value={priceSetting}
-          onChange={(value) => {
-            setPriceSetting(value);
-          }}>
-          <MenuItemRadio value="pixel" label="1 pixel" />
-          <MenuItemRadio value="1m pixels" label="1 million pixels" />
-          <MenuItemRadio value="1b pixels" label="1 billion pixels" />
-          <MenuItemRadio value="1t pixels" label="1 trillion pixels" />
-        </MenuItemRadioGroup>
-      </Menu>
       <Flex
-        sx={{
+        css={{
           position: "relative",
           width: "100%",
           top: 0,
@@ -276,15 +233,16 @@ const StakingTable = ({
           flexDirection: "column",
           alignItems: "flex-start",
           pt: 0,
-          pb: 3,
+          pb: "$4",
           mx: 0,
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         <Box>{accountColumn.render("Filter")}</Box>
       </Flex>
-      <Box sx={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
+      <Box css={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
         <Box
-          sx={{
+          css={{
             display: "table",
             tableLayout: "fixed",
             width: "100%",
@@ -292,61 +250,69 @@ const StakingTable = ({
             borderSpacing: "0",
             borderCollapse: "collapse",
           }}
-          {...getTableProps()}>
-          <Box sx={{ display: "table-header-group" }}>
+          {...getTableProps()}
+        >
+          <Box css={{ display: "table-header-group" }}>
             {headerGroups.map((headerGroup, index1) => (
               <Box
-                sx={{ display: "table-row" }}
+                css={{ display: "table-row" }}
                 key={index1}
-                {...headerGroup.getHeaderGroupProps()}>
+                {...headerGroup.getHeaderGroupProps()}
+              >
                 {headerGroup.headers.map((column, index2) => (
                   <Box
-                    sx={{
+                    css={{
                       borderBottom: "1px solid",
                       borderColor: "rgba(255,255,255,.05)",
-                      pb: 1,
-                      pl: 3,
+                      pb: "$2",
+                      pl: "$4",
                       pr:
-                        column.render("Header") === "Price" ||
+                        column.render("Header") === "Price / Pixel" ||
                         column.render("Header") === "#"
                           ? 0
-                          : 3,
+                          : "$4",
                       width: index2 === 0 ? 30 : "auto",
                       fontWeight: 700,
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={index2}>
+                    key={index2}
+                  >
                     <Flex
-                      sx={{
+                      css={{
                         justifyContent:
                           index2 === 0 || index2 === 1
                             ? "flex-start"
                             : "flex-end",
-                      }}>
-                      <span
-                        sx={{
+                      }}
+                    >
+                      <Flex
+                        css={{
+                          alignItems: "center",
                           fontSize: 10,
+                          position: "relative",
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
-                        )}>
-                        <span>
-                          {column.isSorted ? (
-                            column.isSortedDesc ? (
-                              <MdKeyboardArrowDown sx={{ ml: "-12px" }} />
-                            ) : (
-                              <MdKeyboardArrowUp sx={{ ml: "-12px" }} />
-                            )
+                        )}
+                      >
+                        {column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <Box
+                              as={ChevronDownIcon}
+                              css={{ height: 15, mr: "$2" }}
+                            />
                           ) : (
-                            ""
-                          )}
-                        </span>
+                            <Box
+                              as={ChevronUpIcon}
+                              css={{ height: 15, mr: "$2" }}
+                            />
+                          )
+                        ) : (
+                          <Box css={{ height: 15 }} />
+                        )}
                         {column.render("Header")}
-                      </span>
-                      {column.render("Header") === "Price" && (
-                        <PriceSettingToggle />
-                      )}
+                      </Flex>
                       {renderTooltip(column.render("Header"))}
                     </Flex>
                   </Box>
@@ -355,7 +321,7 @@ const StakingTable = ({
             ))}
           </Box>
 
-          <Box sx={{ display: "table-row-group" }} {...getTableBodyProps()}>
+          <Box css={{ display: "table-row-group" }} {...getTableBodyProps()}>
             {page.map((row, rowIndex) => {
               const orchestratorIndex = rowIndex + pageIndex * pageSize;
               prepareRow(row);
@@ -364,15 +330,16 @@ const StakingTable = ({
                 <Box
                   {...row.getRowProps()}
                   key={orchestratorIndex}
-                  sx={{
+                  css={{
                     display: "table-row",
                     height: 64,
-                  }}>
+                  }}
+                >
                   {row.cells.map((cell, i) => {
                     switch (cell.column.Header) {
                       case "#":
                         return (
-                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                          <TableCell cell={cell} key={i} css={{ pr: 0 }}>
                             {parseInt(rowIndex) + 1 + pageIndex * pageSize}
                           </TableCell>
                         );
@@ -381,24 +348,27 @@ const StakingTable = ({
                           cell.row.values.activationRound <= currentRound.id &&
                           cell.row.values.deactivationRound > currentRound.id;
                         return (
-                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                          <TableCell cell={cell} key={i} css={{ pr: 0 }}>
                             <Link
                               href={`/accounts/${cell.value}/campaign`}
-                              passHref>
-                              <a
-                                sx={{
+                              passHref
+                            >
+                              <Box
+                                as="a"
+                                css={{
                                   display: "inherit",
                                   color: "inherit",
                                   ":hover": {
                                     textDecoration: "underline",
                                   },
-                                }}>
+                                }}
+                              >
                                 <AccountCell
                                   active={active}
                                   threeBoxSpace={cell.row.values.threeBoxSpace}
                                   address={cell.value}
                                 />
-                              </a>
+                              </Box>
                             </Link>
                           </TableCell>
                         );
@@ -407,10 +377,11 @@ const StakingTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
+                            css={{
                               textAlign: "right",
-                              fontFamily: "monospace",
-                            }}>
+                              fontFamily: "$monospace",
+                            }}
+                          >
                             {abbreviateNumber(cell.value ? cell.value : 0, 4)}
                           </TableCell>
                         );
@@ -419,14 +390,17 @@ const StakingTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
+                            css={{
                               textAlign: "right",
-                              fontFamily: "monospace",
-                            }}>
+                              fontFamily: "$monospace",
+                            }}
+                          >
                             {cell.value
                               ? +parseFloat(cell.value).toFixed(2)
                               : 0}{" "}
-                            <span sx={{ fontSize: 12 }}>ETH</span>
+                            <Box as="span" css={{ fontSize: 12 }}>
+                              ETH
+                            </Box>
                           </TableCell>
                         );
                       case "Reward Cut":
@@ -434,10 +408,11 @@ const StakingTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
+                            css={{
                               textAlign: "right",
-                              fontFamily: "monospace",
-                            }}>
+                              fontFamily: "$monospace",
+                            }}
+                          >
                             {cell.value / 10000}%
                           </TableCell>
                         );
@@ -446,10 +421,11 @@ const StakingTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
+                            css={{
                               textAlign: "right",
-                              fontFamily: "monospace",
-                            }}>
+                              fontFamily: "$monospace",
+                            }}
+                          >
                             {cell.value === "0" || !cell.value
                               ? "100%"
                               : `${(100 - cell.value / 10000)
@@ -457,23 +433,24 @@ const StakingTable = ({
                                   .replace(/[.,]00$/, "")}%`}
                           </TableCell>
                         );
-                      case "Price":
+                      case "Price / Pixel":
                         return (
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
+                            css={{
                               textAlign: "right",
-                              fontFamily: "monospace",
+                              fontFamily: "$monospace",
                               pr: 0,
-                            }}>
-                            <span data-html={true}>
+                            }}
+                          >
+                            <Box as="span" data-html={true}>
                               {cell.value <= 0 ? (
                                 "N/A"
                               ) : (
                                 <Price value={cell.value} per={priceSetting} />
                               )}
-                            </span>
+                            </Box>
                           </TableCell>
                         );
                       case "Calls":
@@ -484,10 +461,11 @@ const StakingTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
+                            css={{
                               textAlign: "right",
-                              fontFamily: "monospace",
-                            }}>
+                              fontFamily: "$monospace",
+                            }}
+                          >
                             {`${callsMade}/${cell.value.length}`}
                           </TableCell>
                         );
@@ -502,15 +480,17 @@ const StakingTable = ({
         </Box>
       </Box>
       <Flex
-        sx={{
-          py: 4,
+        css={{
+          py: "$4",
           alignItems: "center",
           justifyContent: "center",
-        }}>
-        <RiArrowLeftLine
-          sx={{
+        }}
+      >
+        <Box
+          as={ArrowLeftIcon}
+          css={{
             cursor: "pointer",
-            color: canPreviousPage ? "primary" : "text",
+            color: canPreviousPage ? "$primary" : "$text",
             opacity: canPreviousPage ? 1 : 0.5,
           }}
           onClick={() => {
@@ -519,14 +499,19 @@ const StakingTable = ({
             }
           }}
         />
-        <Box sx={{ fontSize: 1, mx: 2 }}>
-          Page <span sx={{ fontFamily: "monospace" }}>{pageIndex + 1}</span> of{" "}
-          <span sx={{ fontFamily: "monospace" }}>{pageCount}</span>
-        </Box>
-        <RiArrowRightLine
-          sx={{
+        <Flex css={{ alignItems: "center", fontSize: "$2", mx: "$3" }}>
+          <Box css={{ mr: "$1" }}>Page</Box>
+          <Box as="span" css={{ fontFamily: "$monospace" }}>
+            {pageIndex + 1}
+          </Box>
+          <Box css={{ mx: "$1" }}>of</Box>
+          <Box css={{ fontFamily: "$monospace" }}>{pageCount}</Box>
+        </Flex>
+        <Box
+          as={ArrowRightIcon}
+          css={{
             cursor: "pointer",
-            color: canNextPage ? "primary" : "text",
+            color: canNextPage ? "$primary" : "$text",
             opacity: canNextPage ? 1 : 0.5,
           }}
           onClick={() => {
@@ -552,13 +537,14 @@ const StakingTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip="Total LPT staked with an orchestrator, including its own stake."
               data-for="tooltip-stake"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -578,13 +564,14 @@ const StakingTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip="Total ETH earned from transcoding."
               data-for="tooltip-fees"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -592,7 +579,7 @@ const StakingTable = ({
             />
           </>
         );
-      case "Price":
+      case "Price / Pixel":
         return (
           <>
             <ReactTooltip
@@ -604,13 +591,14 @@ const StakingTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip={`Price of transcoding per ${expandedPriceLabels[priceSetting]}.`}
               data-for="tooltip-price"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -630,13 +618,14 @@ const StakingTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip="The percent of the newly minted Livepeer token that the orchestrator will keep from the round’s inflation distribution. The remainder gets distributed amongst delegators."
               data-for="tooltip-reward-cut"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -656,13 +645,14 @@ const StakingTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip="The percent of the earned fees (ETH) that the orchestrator will keep. The remainder gets distributed across all delegators by how much they have staked relative to others."
               data-for="tooltip-fee-cut"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -682,13 +672,14 @@ const StakingTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip="The number of times an orchestrator claimed its newly minted rewards on behalf of its delegators over the last 30 rounds."
               data-for="tooltip-calls"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -704,32 +695,30 @@ const StakingTable = ({
 };
 
 const TableCell = forwardRef(
-  (
-    { children, href, target, cell, onClick, as, pushSx }: TableCellProps,
-    ref
-  ) => {
+  ({ children, href, target, cell, onClick, as, css }: TableCellProps, ref) => {
     return (
-      <Styled.div
+      <Box
         as={as}
         target={target}
         href={href}
         ref={ref}
         onClick={onClick}
-        sx={{
+        css={{
           justifyContent: "flex-end",
           color: "inherit",
           display: "table-cell",
           width: "auto",
-          fontSize: 1,
-          px: 3,
+          fontSize: "$2",
+          px: "$4",
           verticalAlign: "middle",
           borderBottom: "1px solid",
           borderColor: "rgba(255,255,255,.05)",
-          ...pushSx,
+          ...css,
         }}
-        {...cell.getCellProps()}>
+        {...cell.getCellProps()}
+      >
         {children}
-      </Styled.div>
+      </Box>
     );
   }
 );

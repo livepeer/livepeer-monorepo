@@ -1,5 +1,5 @@
-import { Box, Flex } from "theme-ui";
-import { Grid } from "@theme-ui/components";
+import Box from "../Box";
+import Flex from "../Flex";
 import Utils from "web3-utils";
 import { abbreviateNumber } from "../../lib/utils";
 import VoteButton from "../VoteButton";
@@ -40,40 +40,43 @@ const Index = ({ data }) => {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box css={{ width: "100%" }}>
       <Box>
         <Box
-          sx={{
+          css={{
             width: "100%",
             boxShadow:
               "rgba(0, 0, 0, 0.03) 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 8px, rgba(0, 0, 0, 0.06) 0px 16px 24px, rgba(0, 0, 0, 0.03) 0px 24px 32px",
-            borderRadius: 10,
-            backgroundColor: "surface",
-            px: 3,
-            py: 2,
-          }}>
-          <Box sx={{ fontWeight: "bold", fontSize: 3, mb: 2 }}>
+            borderRadius: "$6",
+            backgroundColor: "$surface",
+            px: "$4",
+            py: "$3",
+          }}
+        >
+          <Box css={{ fontWeight: "bold", fontSize: "$4", mb: "$3" }}>
             Do you support LIP-{data.poll.lip}?
           </Box>
           <Box
-            sx={{
-              mb: 2,
-              pb: 2,
+            css={{
+              mb: "$3",
+              pb: "$3",
               borderBottom: "1px solid",
-              borderColor: "border",
-            }}>
-            <Box sx={{ mb: 2 }}>
+              borderColor: "$border",
+            }}
+          >
+            <Box css={{ mb: "$3" }}>
               <Flex
-                sx={{
+                css={{
                   alignItems: "center",
                   justifyContent: "space-between",
                   position: "relative",
                   width: "100%",
                   height: 24,
                   mb: "8px",
-                }}>
+                }}
+              >
                 <Box
-                  sx={{
+                  css={{
                     borderTopLeftRadius: 6,
                     borderBottomLeftRadius: 6,
                     borderTopRightRadius:
@@ -87,16 +90,24 @@ const Index = ({ data }) => {
                   }}
                 />
                 <Box
-                  sx={{
+                  css={{
                     lineHeight: 1,
                     fontWeight: 500,
-                    pl: 1,
-                    color: "text",
-                    fontSize: 1,
-                  }}>
+                    pl: "$2",
+                    color: "$text",
+                    fontSize: "$2",
+                  }}
+                >
                   Yes
                 </Box>
-                <Box sx={{ lineHeight: 1, pr: 1, color: "text", fontSize: 1 }}>
+                <Box
+                  css={{
+                    lineHeight: 1,
+                    pr: "$2",
+                    color: "$text",
+                    fontSize: "$2",
+                  }}
+                >
                   {isNaN(yesVoteStake / totalVoteStake)
                     ? 0
                     : ((yesVoteStake / totalVoteStake) * 100).toPrecision(5)}
@@ -104,15 +115,16 @@ const Index = ({ data }) => {
                 </Box>
               </Flex>
               <Flex
-                sx={{
+                css={{
                   alignItems: "center",
                   justifyContent: "space-between",
                   position: "relative",
                   height: 24,
                   width: "100%",
-                }}>
+                }}
+              >
                 <Box
-                  sx={{
+                  css={{
                     borderTopLeftRadius: 6,
                     borderBottomLeftRadius: 6,
                     borderTopRightRadius:
@@ -126,16 +138,24 @@ const Index = ({ data }) => {
                   }}
                 />
                 <Box
-                  sx={{
+                  css={{
                     lineHeight: 1,
-                    pl: 1,
+                    pl: "$2",
                     fontWeight: 500,
-                    color: "text",
-                    fontSize: 1,
-                  }}>
+                    color: "$text",
+                    fontSize: "$2",
+                  }}
+                >
                   No
                 </Box>
-                <Box sx={{ lineHeight: 1, pr: 1, color: "text", fontSize: 1 }}>
+                <Box
+                  css={{
+                    lineHeight: 1,
+                    pr: "$2",
+                    color: "$text",
+                    fontSize: "$2",
+                  }}
+                >
                   {isNaN(noVoteStake / totalVoteStake)
                     ? 0
                     : ((noVoteStake / totalVoteStake) * 100).toPrecision(5)}
@@ -143,7 +163,7 @@ const Index = ({ data }) => {
                 </Box>
               </Flex>
             </Box>
-            <Box sx={{ fontSize: 1, color: "muted" }}>
+            <Box css={{ fontSize: "$2", color: "$muted" }}>
               {data.poll.votes.length}{" "}
               {`${
                 data.poll.votes.length > 1 || data.poll.votes.length === 0
@@ -163,39 +183,49 @@ const Index = ({ data }) => {
             <>
               <Box>
                 <Flex
-                  sx={{
-                    fontSize: 1,
-                    mb: 1,
+                  css={{
+                    fontSize: "$2",
+                    mb: "$2",
                     justifyContent: "space-between",
-                  }}>
-                  <span sx={{ color: "muted" }}>
+                  }}
+                >
+                  <Box as="span" css={{ color: "$muted" }}>
                     My Delegate Vote{" "}
                     {delegate &&
                       `(${delegate.id.replace(delegate.id.slice(5, 39), "…")})`}
-                  </span>
-                  <span sx={{ fontWeight: 500, color: "white" }}>
+                  </Box>
+                  <Box as="span" css={{ fontWeight: 500, color: "white" }}>
                     {data?.delegateVote?.choiceID
                       ? data?.delegateVote?.choiceID
                       : "N/A"}
-                  </span>
+                  </Box>
                 </Flex>
                 <Flex
-                  sx={{ mb: 1, fontSize: 1, justifyContent: "space-between" }}>
-                  <span sx={{ color: "muted" }}>
+                  css={{
+                    mb: "$2",
+                    fontSize: "$2",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box as="span" css={{ color: "$muted" }}>
                     My Vote (
                     {context.account.replace(context.account.slice(5, 39), "…")}
                     )
-                  </span>
-                  <span sx={{ fontWeight: 500, color: "white" }}>
+                  </Box>
+                  <Box as="span" css={{ fontWeight: 500, color: "$white" }}>
                     {data?.vote?.choiceID ? data?.vote?.choiceID : "N/A"}
-                  </span>
+                  </Box>
                 </Flex>
                 {((!data?.vote?.choiceID && data.poll.isActive) ||
                   data?.vote?.choiceID) && (
-                  <Flex sx={{ fontSize: 1, justifyContent: "space-between" }}>
-                    <span sx={{ color: "muted" }}>My Voting Power</span>
-                    <span sx={{ fontWeight: 500, color: "white" }}>
-                      <span>
+                  <Flex
+                    css={{ fontSize: "$2", justifyContent: "space-between" }}
+                  >
+                    <Box as="span" css={{ color: "$muted" }}>
+                      My Voting Power
+                    </Box>
+                    <Box as="span" css={{ fontWeight: 500, color: "$white" }}>
+                      <Box as="span">
                         {abbreviateNumber(votingPower, 4)} LPT (
                         {(
                           (+votingPower /
@@ -203,8 +233,8 @@ const Index = ({ data }) => {
                           100
                         ).toPrecision(2)}
                         %)
-                      </span>
-                    </span>
+                      </Box>
+                    </Box>
                   </Flex>
                 )}
               </Box>
@@ -212,6 +242,7 @@ const Index = ({ data }) => {
             </>
           ) : (
             <Button
+              color="primary"
               onClick={() => {
                 client.writeQuery({
                   query: gql`
@@ -224,9 +255,10 @@ const Index = ({ data }) => {
                   },
                 });
               }}
-              sx={{
+              css={{
                 width: "100%",
-              }}>
+              }}
+            >
               Connect Wallet
             </Button>
           )}
@@ -234,22 +266,28 @@ const Index = ({ data }) => {
       </Box>
       {data.poll.isActive && (
         <Box
-          sx={{
-            display: ["none", "none", "none", "block"],
-            mt: 2,
-            fontSize: 0,
+          css={{
+            display: "none",
+            mt: "$3",
+            fontSize: "$1",
             borderRadius: 6,
             border: "1px solid",
-            borderColor: "border",
-            p: 2,
-          }}>
-          <Box sx={{ lineHeight: 1.8 }}>
+            borderColor: "$border",
+            p: "$3",
+            "@bp3": {
+              display: "block",
+            },
+          }}
+        >
+          <Box css={{ lineHeight: 1.8 }}>
             Are you an orchestrator?{" "}
-            <span
+            <Box
+              as="span"
               onClick={() => setModalOpen(true)}
-              sx={{ color: "primary", cursor: "pointer" }}>
+              css={{ color: "$primary", cursor: "pointer" }}
+            >
               Follow these instructions
-            </span>{" "}
+            </Box>{" "}
             if you prefer to vote with the Livepeer CLI.
           </Box>
         </Box>
@@ -257,47 +295,51 @@ const Index = ({ data }) => {
       <Modal
         title="Livepeer CLI Voting Instructions"
         isOpen={modalOpen}
-        onDismiss={() => setModalOpen(false)}>
-        <ol sx={{ pl: 15 }}>
-          <li sx={{ mb: 4 }}>
-            <div sx={{ mb: 2 }}>
+        onDismiss={() => setModalOpen(false)}
+      >
+        <Box as="ol" css={{ pl: 15 }}>
+          <Box as="li" css={{ mb: "$4" }}>
+            <Box css={{ mb: "$3" }}>
               Run the Livepeer CLI and select the option to "Vote on a poll".
               When prompted for a contract address, copy and paste this poll's
               contract address:
-            </div>
-            <div
-              sx={{
-                p: 2,
-                mb: 1,
+            </Box>
+            <Box
+              css={{
+                p: "$3",
+                mb: "$2",
                 position: "relative",
-                color: "primary",
-                bg: "background",
+                color: "$primary",
+                bg: "$background",
                 borderRadius: 4,
-                fontFamily: "monospace",
-              }}>
+                fontFamily: "$monospace",
+              }}
+            >
               {data.poll.id}
               <CopyToClipboard
                 text={data.poll.id}
-                onCopy={() => setCopied(true)}>
+                onCopy={() => setCopied(true)}
+              >
                 <Flex
                   data-for="copyAddress"
                   data-tip={`${
                     copied ? "Copied" : "Copy poll address to clipboard"
                   }`}
-                  sx={{
-                    ml: 1,
+                  css={{
+                    ml: "$2",
                     mt: "3px",
                     position: "absolute",
                     right: 12,
                     top: 10,
                     cursor: "pointer",
                     borderRadius: 1000,
-                    bg: "surface",
+                    bg: "$surface",
                     width: 26,
                     height: 26,
                     alignItems: "center",
                     justifyContent: "center",
-                  }}>
+                  }}
+                >
                   <ReactTooltip
                     id="copyAddress"
                     className="tooltip"
@@ -307,38 +349,38 @@ const Index = ({ data }) => {
                   />
                   {copied ? (
                     <Check
-                      sx={{
+                      css={{
                         width: 12,
                         height: 12,
-                        color: "muted",
+                        color: "$muted",
                       }}
                     />
                   ) : (
                     <Copy
-                      sx={{
+                      css={{
                         width: 12,
                         height: 12,
-                        color: "muted",
+                        color: "$muted",
                       }}
                     />
                   )}
                 </Flex>
               </CopyToClipboard>
-            </div>
-          </li>
-          <li sx={{ mb: 3 }}>
-            <div sx={{ mb: 2 }}>
+            </Box>
+          </Box>
+          <Box as="li" css={{ mb: "$4" }}>
+            <Box css={{ mb: "$3" }}>
               The Livepeer CLI will prompt you for your vote. Enter 0 to vote
               "Yes" or 1 to vote "No".
-            </div>
-          </li>
-          <li sx={{ mb: 0 }}>
-            <div sx={{ mb: 2 }}>
+            </Box>
+          </Box>
+          <Box as="li" css={{ mb: 0 }}>
+            <Box css={{ mb: "$3" }}>
               Once your vote is confirmed, check back here to see it reflected
               in the UI.
-            </div>
-          </li>
-        </ol>
+            </Box>
+          </Box>
+        </Box>
       </Modal>
     </Box>
   );
@@ -352,10 +394,11 @@ function renderVoteButton(data) {
       return (
         <VoteButton
           disabled={!(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)}
-          sx={{ mt: 3, width: "100%" }}
+          css={{ mt: "$4", width: "100%" }}
           variant="red"
           choiceId={1}
-          pollAddress={data.poll.id}>
+          pollAddress={data.poll.id}
+        >
           Change Vote To No
         </VoteButton>
       );
@@ -363,21 +406,23 @@ function renderVoteButton(data) {
       return (
         <VoteButton
           disabled={!(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)}
-          sx={{ mt: 3, width: "100%" }}
+          css={{ mt: "$4", width: "100%" }}
           choiceId={0}
-          pollAddress={data.poll.id}>
+          pollAddress={data.poll.id}
+        >
           Change Vote To Yes
         </VoteButton>
       );
     default:
       return (
-        <Grid sx={{ mt: 3 }} gap={2} columns={[2]}>
+        <Box css={{ mt: "$4", display: "grid", gap: "$3", columns: 2 }}>
           <VoteButton
             disabled={
               !(parseFloat(data?.myAccount?.delegator?.pendingStake) > 0)
             }
             choiceId={0}
-            pollAddress={data.poll.id}>
+            pollAddress={data.poll.id}
+          >
             Yes
           </VoteButton>
           <VoteButton
@@ -386,10 +431,11 @@ function renderVoteButton(data) {
             }
             variant="red"
             choiceId={1}
-            pollAddress={data.poll.id}>
+            pollAddress={data.poll.id}
+          >
             No
           </VoteButton>
-        </Grid>
+        </Box>
       );
   }
 }

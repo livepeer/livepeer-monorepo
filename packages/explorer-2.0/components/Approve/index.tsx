@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { useState, useContext } from "react";
 import Button from "../Button";
 import Modal from "../Modal";
@@ -35,26 +36,38 @@ const Index = ({ account, banner = true }) => {
   if (account && account.id.toLowerCase() === context.account.toLowerCase()) {
     if (banner) {
       element = (
-        <Box sx={{ mb: [3, 3, 3, 4] }}>
+        <Box
+          css={{
+            mb: "$4",
+            "@bp3": {
+              mb: "$5",
+            },
+          }}
+        >
           <Banner
             label={
-              <Box sx={{ mb: 1 }}>Unlock your Livepeer tokens for staking.</Box>
+              <Box css={{ mb: "$3" }}>
+                Unlock your Livepeer tokens for staking.
+              </Box>
             }
             button={
-              <Flex sx={{ alignSelf: "flex-end" }}>
+              <Flex css={{ alignSelf: "flex-end" }}>
                 <Button
+                  size="small"
+                  outline
                   onClick={() => setLearnMoreModalOpen(true)}
-                  variant="text"
-                  sx={{ mr: 2 }}>
+                  css={{ mr: "$3" }}
+                >
                   Learn More
                 </Button>
-                <Button variant="text" onClick={onClick}>
+                <Button color="primary" size="small" onClick={onClick}>
                   Unlock LPT
                   <Modal
                     title="Unlocking Tokens"
                     showCloseButton
                     isOpen={learnMoreModalOpen}
-                    onDismiss={() => setLearnMoreModalOpen(false)}>
+                    onDismiss={() => setLearnMoreModalOpen(false)}
+                  >
                     <MDXDocument />
                   </Modal>
                 </Button>
@@ -65,7 +78,7 @@ const Index = ({ account, banner = true }) => {
       );
     } else {
       element = (
-        <Box sx={{ cursor: "pointer", color: "primary" }} onClick={onClick}>
+        <Box css={{ cursor: "pointer", color: "$primary" }} onClick={onClick}>
           Unlock Livepeer tokens for staking.
         </Box>
       );

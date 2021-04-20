@@ -1,6 +1,7 @@
-import { Styled, Flex } from "theme-ui";
 import Label from "../Label";
 import Checkbox from "../Checkbox";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const Index = ({
   label = null,
@@ -10,25 +11,28 @@ const Index = ({
   providerName,
   ...props
 }) => (
-  <div
+  <Box
     {...props}
-    sx={{
+    css={{
       cursor: "pointer",
       border: "1px solid",
-      borderColor: isActive ? "primary" : "muted",
-      borderRadius: 4,
-      p: 3,
-    }}>
-    <Flex sx={{ justifyContent: "space-between" }}>
-      <Flex sx={{ mb: 2, alignItems: "center" }}>
-        <Icon sx={{ mr: 2 }} />
+      borderColor: isActive ? "$primary" : "$muted",
+      borderRadius: "$4",
+      p: "$4",
+    }}
+  >
+    <Flex css={{ justifyContent: "space-between" }}>
+      <Flex css={{ mb: "$3", alignItems: "center" }}>
+        <Icon css={{ mr: "$3" }} />
         {label && <Label>Recommended</Label>}
       </Flex>
       <Checkbox isActive={isActive} />
     </Flex>
-    <Styled.h2 sx={{ mb: 2 }}>{providerName}</Styled.h2>
-    <Styled.p>{description}</Styled.p>
-  </div>
+    <Box as="h2" css={{ mb: "$3" }}>
+      {providerName}
+    </Box>
+    <Box>{description}</Box>
+  </Box>
 );
 
 export default Index;

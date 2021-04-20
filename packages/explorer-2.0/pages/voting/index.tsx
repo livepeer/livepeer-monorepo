@@ -1,7 +1,6 @@
-import { Flex, Styled } from "theme-ui";
-import { Text } from "@theme-ui/components";
+import Box from "../../components/Box";
+import Flex from "../../components/Flex";
 import { getLayout } from "../../layouts/main";
-import { Box } from "theme-ui";
 import Button from "../../components/Button";
 import { getStaticApolloProps, withApollo } from "../../apollo";
 import { useQuery } from "@apollo/client";
@@ -16,9 +15,26 @@ import Head from "next/head";
 import { usePageVisibility } from "../../hooks";
 import allPollsQuery from "../../queries/allPolls.gql";
 import { NextPage } from "next";
+import { styled } from "../../stitches.config";
 
 type Params = {};
 type Props = {};
+
+export const Status = styled("div", {
+  variants: {
+    color: {
+      passed: {
+        color: "$primary",
+      },
+      rejected: {
+        color: "$red",
+      },
+      active: {
+        color: "$white",
+      },
+    },
+  },
+});
 
 const Voting = () => {
   const isVisible = usePageVisibility();
@@ -83,44 +99,53 @@ const Voting = () => {
       </Head>
       {loading ? (
         <Flex
-          sx={{
-            height: [
-              "calc(100vh - 100px)",
-              "calc(100vh - 100px)",
-              "calc(100vh - 100px)",
-              "100vh",
-            ],
+          css={{
+            height: "calc(100vh - 100px)",
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
-          }}>
+            "@bp3": {
+              height: "100vh",
+            },
+          }}
+        >
           <Spinner />
         </Flex>
       ) : (
         <Flex
-          sx={{
-            mt: [3, 3, 3, 5],
+          css={{
+            mt: "$3",
             width: "100%",
             flexDirection: "column",
-          }}>
+            "@bp3": {
+              mt: "$4",
+            },
+          }}
+        >
           <Flex
-            sx={{
-              mb: 4,
+            css={{
+              mb: "$4",
               alignItems: "center",
               justifyContent: "space-between",
-            }}>
-            <Styled.h1
-              sx={{
-                fontSize: [3, 3, 26],
+            }}
+          >
+            <Box
+              as="h1"
+              css={{
+                fontSize: "$4",
                 display: "flex",
                 alignItems: "center",
-              }}>
+                "@bp2": {
+                  fontSize: 26,
+                },
+              }}
+            >
               Voting
-            </Styled.h1>
-            <Link href="/voting/create-poll" as="/voting/create-poll">
-              <a>
-                <Button>Create Poll</Button>
-              </a>
+            </Box>
+            <Link href="/voting/create-poll" as="/voting/create-poll" passHref>
+              <Button as="a" outline>
+                Create Poll
+              </Button>
             </Link>
           </Flex>
           <Box>
@@ -130,24 +155,32 @@ const Voting = () => {
                 <Link
                   key={poll.id}
                   href="/voting/[poll]"
-                  as={`/voting/${poll.id}`}>
-                  <a sx={{ cursor: "pointer", display: "block", mb: 2 }}>
-                    <Card sx={{ color: "text", display: "block" }}>
+                  as={`/voting/${poll.id}`}
+                >
+                  <Box
+                    as="a"
+                    css={{ cursor: "pointer", display: "block", mb: "$3" }}
+                  >
+                    <Card css={{ color: "$text", display: "block" }}>
                       <Flex
-                        sx={{
-                          flexDirection: [
-                            "column-reverse",
-                            "column-reverse",
-                            "row",
-                          ],
+                        css={{
+                          flexDirection: "column-reverse",
                           justifyContent: "space-between",
-                          alignItems: ["flex-start", "flex-start", "center"],
-                        }}>
+                          alignItems: "flex-start",
+                          "@bp2": {
+                            flexDirection: "row",
+                            alignItems: "center",
+                          },
+                        }}
+                      >
                         <Box>
-                          <Box sx={{ mb: 1 }}>
+                          <Box
+                            as="h3"
+                            css={{ fontWeight: 500, fontSize: "$3", mb: "$2" }}
+                          >
                             {poll.attributes.title} (LIP {poll.attributes.lip})
                           </Box>
-                          <Box sx={{ fontSize: 0, color: "muted" }}>
+                          <Box css={{ fontSize: "$1", color: "$muted" }}>
                             {!poll.isActive ? (
                               <Box>
                                 Voting ended on{" "}
@@ -165,18 +198,22 @@ const Voting = () => {
                             )}
                           </Box>
                         </Box>
-                        <Text
-                          variant={poll.status}
-                          sx={{
-                            mb: ["4px", "4px", 0],
+                        <Status
+                          color={poll.status}
+                          css={{
+                            mb: "4px",
                             fontWeight: 700,
                             textTransform: "capitalize",
-                          }}>
+                            "@bp2": {
+                              mb: 0,
+                            },
+                          }}
+                        >
                           {poll.status}
-                        </Text>
+                        </Status>
                       </Flex>
                     </Card>
-                  </a>
+                  </Box>
                 </Link>
               ))}
           </Box>

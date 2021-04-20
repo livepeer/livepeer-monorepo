@@ -1,6 +1,5 @@
 import { AbstractConnector } from "@web3-react/abstract-connector";
 import { useState, useEffect } from "react";
-import { Box, Grid } from "@theme-ui/components";
 import CloseIcon from "../../public/img/close.svg";
 import MetaMaskIcon from "../../public/img/metamask.svg";
 import { Dialog } from "@reach/dialog";
@@ -16,6 +15,8 @@ import gql from "graphql-tag";
 import { useQuery, useApolloClient } from "@apollo/client";
 import { usePrevious } from "../../hooks";
 import ReactGA from "react-ga";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const WALLET_VIEWS = {
   OPTIONS: "options",
@@ -199,45 +200,54 @@ const Index = () => {
       );
     }
     return (
-      <Box sx={{ borderRadius: "inherit" }}>
-        <Box sx={{ position: "relative", p: [2, 2, 2, 3] }}>
-          <Box sx={{ fontWeight: 500 }}>
+      <Box css={{ borderRadius: "inherit" }}>
+        <Flex
+          css={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            px: "$4",
+            py: 24,
+          }}
+        >
+          <Box css={{ fontWeight: 500 }}>
             {walletView !== WALLET_VIEWS.ACCOUNT ? (
               <Box
                 onClick={() => {
                   setWalletView(WALLET_VIEWS.ACCOUNT);
                 }}
-                sx={{ color: "primary", cursor: "pointer" }}>
+                css={{ color: "$primary", cursor: "pointer" }}
+              >
                 Back
               </Box>
             ) : (
               "Connect To A Wallet"
             )}
           </Box>
-          <CloseIcon
+          <Box
+            as={CloseIcon}
             onClick={close}
-            sx={{
+            css={{
               cursor: "pointer",
-              position: "absolute",
-              right: 20,
-              top: 20,
+              width: 12,
+              height: 12,
               color: "white",
             }}
           />
-        </Box>
+        </Flex>
         <Box
-          sx={{
+          css={{
             borderBottomLeftRadius: "inherit",
             borderBottomRightRadius: "inherit",
             bg: "rgba(255, 255, 255, .04)",
-            p: 3,
-          }}>
+            p: "$4",
+          }}
+        >
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView connector={pendingWallet} />
           ) : (
-            <Grid columns={1} gap={2}>
+            <Box css={{ display: "grid", gap: "$3", gridColumn: 1 }}>
               {process.browser && getOptions()}
-            </Grid>
+            </Box>
           )}
         </Box>
       </Box>

@@ -1,77 +1,79 @@
-import { Flex } from "theme-ui";
 import Card from "../Card";
 import NumberFormat from "react-number-format";
-import { Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Button from "../Button";
 import ReactTooltip from "react-tooltip";
-import Help from "../../public/img/help.svg";
 import Link from "next/link";
 import WithdrawFees from "../WithdrawFees";
 import { scientificToDecimal } from "../../lib/utils";
+import HelpIcon from "../HelpIcon";
 
 const Index = ({ delegator, isMyAccount }) => {
   if (!delegator?.bondedAmount) {
     if (isMyAccount) {
       return (
-        <Box sx={{ pt: 4 }}>
-          <Box sx={{ mr: 2, mb: 2 }}>
+        <Box css={{ pt: "$4" }}>
+          <Box css={{ mr: "$3", mb: "$3" }}>
             You haven't staked LPT. Stake with an Orchestrator to begin earning
             rewards and a share of the fees being paid into the Livepeer
             network.
           </Box>
           <Link href="/" passHref>
-            <a>
-              <Button variant="outline" as="div">
-                View Orchestrators
-              </Button>
-            </a>
+            <Button outline size="small" as="a">
+              View Orchestrators
+            </Button>
           </Link>
         </Box>
       );
     } else {
-      return <Box sx={{ pt: 4 }}>Nothing here.</Box>;
+      return <Box css={{ pt: "$4" }}>Nothing here.</Box>;
     }
   }
 
   const lifetimeEarnings = +delegator.pendingFees + +delegator.withdrawnFees;
   const withdrawButtonDisabled = delegator.pendingFees === "0";
+
   return (
-    <Box sx={{ pt: 4 }}>
+    <Box css={{ pt: "$4" }}>
       <>
         <Box
-          sx={{
+          css={{
             display: "grid",
-            gridGap: 2,
-            gridTemplateColumns: [
-              "repeat(auto-fit, minmax(100%, 1fr))",
-              "repeat(auto-fit, minmax(100%, 1fr))",
-              "repeat(auto-fit, minmax(40%, 1fr))",
-            ],
+            gridGap: "$3",
+            gridTemplateColumns: "repeat(auto-fit, minmax(100%, 1fr))",
+            "@bp2": {
+              gridTemplateColumns: "repeat(auto-fit, minmax(40%, 1fr))",
+            },
           }}>
           <Card
             title="Lifetime Earnings"
             subtitle={
               <Box
-                sx={{
-                  fontSize: [3, 3, 4, 4],
-                  color: "text",
+                css={{
+                  fontSize: "$4",
+                  color: "$text",
                   fontWeight: 500,
-                  lineHeight: "heading",
-                  fontFamily: "monospace",
+                  fontFamily: "$monospace",
+                  "@bp3": {
+                    fontSize: "$5",
+                  },
                 }}>
                 {scientificToDecimal(lifetimeEarnings)}
-                <span sx={{ ml: 1, fontSize: 1 }}>ETH</span>
+                <Box as="span" css={{ ml: "$2", fontSize: "$2" }}>
+                  ETH
+                </Box>
               </Box>
             }>
-            <Box sx={{ mt: 3 }}>
+            <Box css={{ mt: "$4" }}>
               <Flex
-                sx={{
-                  mb: 1,
-                  fontSize: 1,
+                css={{
+                  mb: "$2",
+                  fontSize: "$2",
                   justifyContent: "space-between",
                 }}>
-                <Flex sx={{ alignItems: "center" }}>
-                  <Box sx={{ color: "muted" }}>Pending</Box>
+                <Flex css={{ alignItems: "center" }}>
+                  <Box css={{ color: "$muted" }}>Pending</Box>
                   <Flex>
                     <ReactTooltip
                       id="tooltip-pending-withdrawal"
@@ -80,33 +82,28 @@ const Index = ({ delegator, isMyAccount }) => {
                       type="dark"
                       effect="solid"
                     />
-                    <Help
+                    <HelpIcon
                       data-tip="Total fees pending withdrawal"
                       data-for="tooltip-pending-withdrawal"
-                      sx={{
-                        color: "muted",
-                        cursor: "pointer",
-                        ml: 1,
-                      }}
                     />
                   </Flex>
                 </Flex>
-                <span sx={{ fontFamily: "monospace" }}>
+                <Box as="span" css={{ fontFamily: "$monospace" }}>
                   <NumberFormat
                     value={delegator.pendingFees}
                     displayType="text"
                     decimalScale={13}
                   />{" "}
                   ETH
-                </span>
+                </Box>
               </Flex>
               <Flex
-                sx={{
-                  fontSize: 1,
+                css={{
+                  fontSize: "$2",
                   justifyContent: "space-between",
                 }}>
-                <Flex sx={{ alignItems: "center" }}>
-                  <Box sx={{ color: "muted" }}>Withdrawn</Box>
+                <Flex css={{ alignItems: "center" }}>
+                  <Box css={{ color: "$muted" }}>Withdrawn</Box>
                   <Flex>
                     <ReactTooltip
                       id="tooltip-withdrawn"
@@ -115,18 +112,13 @@ const Index = ({ delegator, isMyAccount }) => {
                       type="dark"
                       effect="solid"
                     />
-                    <Help
+                    <HelpIcon
                       data-tip="Total fees withdrawn over the lifetime of this account."
                       data-for="tooltip-withdrawn"
-                      sx={{
-                        color: "muted",
-                        cursor: "pointer",
-                        ml: 1,
-                      }}
                     />
                   </Flex>
                 </Flex>
-                <span sx={{ fontFamily: "monospace" }}>
+                <Box as="span" css={{ fontFamily: "$monospace" }}>
                   <NumberFormat
                     value={
                       delegator.withdrawnFees ? delegator.withdrawnFees : "0"
@@ -135,7 +127,7 @@ const Index = ({ delegator, isMyAccount }) => {
                     decimalScale={13}
                   />{" "}
                   ETH
-                </span>
+                </Box>
               </Flex>
             </Box>
           </Card>
@@ -144,26 +136,35 @@ const Index = ({ delegator, isMyAccount }) => {
               title="Pending Withdrawal"
               subtitle={
                 <Box
-                  sx={{
-                    fontSize: [3, 3, 4, 4],
-                    mb: 2,
-                    color: "text",
+                  css={{
+                    fontSize: "$4",
+                    mb: "$3",
+                    color: "$text",
                     fontWeight: 500,
-                    lineHeight: "heading",
-                    fontFamily: "monospace",
+                    fontFamily: "$monospace",
+                    "@bp2": {
+                      fontSize: "$5",
+                    },
                   }}>
                   <NumberFormat
                     value={delegator.pendingFees}
                     displayType="text"
                     decimalScale={13}
                   />
-                  <span sx={{ ml: 1, fontSize: 1 }}>ETH</span>
+                  <Box as="span" css={{ ml: "$2", fontSize: "$2" }}>
+                    ETH
+                  </Box>
                 </Box>
               }>
               <WithdrawFees
                 delegator={delegator}
                 disabled={withdrawButtonDisabled}
-                sx={{ mt: [2, 2, "auto"] }}>
+                css={{
+                  mt: "$2",
+                  "@bp2": {
+                    mt: "auto",
+                  },
+                }}>
                 Withdraw
               </WithdrawFees>
             </Card>

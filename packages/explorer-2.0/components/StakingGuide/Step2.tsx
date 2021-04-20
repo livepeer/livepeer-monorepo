@@ -1,6 +1,6 @@
-import { Styled } from "theme-ui";
 import { useWeb3React } from "@web3-react/core";
 import { gql, useApolloClient } from "@apollo/client";
+import Box from "../Box";
 
 const Step2 = ({ goTo, nextStep }) => {
   const { active } = useWeb3React();
@@ -21,13 +21,15 @@ const Step2 = ({ goTo, nextStep }) => {
   }
 
   return (
-    <div>
-      <Styled.h2 sx={{ mb: 2 }}>Choose Wallet Provider</Styled.h2>
-      <Styled.p>
+    <Box>
+      <Box as="h3" css={{ mb: "$3" }}>
+        Choose Wallet Provider
+      </Box>
+      <Box>
         Select your preferred wallet. You can change your selected wallet or
         address later.
-      </Styled.p>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

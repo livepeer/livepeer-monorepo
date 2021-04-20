@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { abbreviateNumber } from "../../lib/utils";
@@ -14,45 +15,47 @@ const ProjectionBox = ({ action }) => {
   const { data } = useQuery(GET_ROI);
 
   return (
-    <div
-      sx={{
+    <Box
+      css={{
         borderRadius: 16,
         width: "100%",
         border: "1px solid",
-        borderColor: "border",
-        mb: 2,
-      }}>
-      <Box sx={{ px: 2, py: 2 }}>
+        borderColor: "$border",
+        mb: "$3",
+      }}
+    >
+      <Box css={{ px: "$3", py: "$3" }}>
         <Box>
           <Flex
-            sx={{
-              fontSize: 0,
-              mb: 2,
+            css={{
+              fontSize: "$1",
+              mb: "$3",
               justifyContent: "space-between",
-            }}>
-            <div sx={{ color: "muted" }}>
+            }}
+          >
+            <Box css={{ color: "$muted" }}>
               {action === "stake"
                 ? "Projected Rewards (1Y)"
                 : "Projected Opportunity Cost (1Y)"}
-            </div>
+            </Box>
             {action === "stake" && (
-              <div sx={{ fontFamily: "monospace", color: "muted" }}>
+              <Box css={{ fontFamily: "$monospace", color: "$muted" }}>
                 +
                 {data.principle
                   ? ((data.roi / +data.principle) * 100).toFixed(2) + "%"
                   : 0 + "%"}
-              </div>
+              </Box>
             )}
           </Flex>
-          <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
-            <div sx={{ fontSize: 4, fontFamily: "monospace" }}>
+          <Flex css={{ justifyContent: "space-between", alignItems: "center" }}>
+            <Box css={{ fontSize: "$5", fontFamily: "$monospace" }}>
               +{abbreviateNumber(data.roi)}
-            </div>
-            <div sx={{ fontSize: 1 }}>LPT</div>
+            </Box>
+            <Box css={{ fontSize: "$2" }}>LPT</Box>
           </Flex>
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 };
 

@@ -1,4 +1,5 @@
-import { Flex, Styled } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Utils from "web3-utils";
 import Unlink from "../../public/img/unlink.svg";
 import {
@@ -28,8 +29,9 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
     <>
       {!!pendingStakeTransactions.length && (
         <List
-          sx={{ mb: 6 }}
-          header={<Styled.h4>Pending Transactions</Styled.h4>}>
+          css={{ mb: "$6" }}
+          header={<Box as="h4">Pending Transactions</Box>}
+        >
           {pendingStakeTransactions.map((lock) => {
             const newActiveSetOrder = simulateNewActiveSetOrder({
               action: "stake",
@@ -44,27 +46,29 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
             return (
               <ListItem
                 key={lock.id}
-                avatar={<Unlink sx={{ color: "primary", mr: 2 }} />}>
+                avatar={<Unlink css={{ color: "$primary", mr: "$3" }} />}
+              >
                 <Flex
-                  sx={{
+                  css={{
                     width: "100%",
                     alignItems: "center",
                     justifyContent: "space-between",
-                  }}>
-                  <div>
-                    <div sx={{ mb: "2px" }}>
+                  }}
+                >
+                  <Box>
+                    <Box css={{ mb: "2px" }}>
                       Unstaking from{" "}
                       {lock.delegate.id.replace(
                         lock.delegate.id.slice(7, 37),
                         "…"
                       )}
-                    </div>
-                    <div sx={{ color: "muted", fontSize: 0 }}>
+                    </Box>
+                    <Box css={{ color: "$muted", fontSize: "$1" }}>
                       Tokens will be available for withdrawal in approximately{" "}
                       {lock.withdrawRound - parseInt(currentRound.id, 10)} days.
-                    </div>
-                  </div>
-                  <Flex sx={{ alignItems: "center" }}>
+                    </Box>
+                  </Box>
+                  <Flex css={{ alignItems: "center" }}>
                     {isMyAccount &&
                       (isBonded ? (
                         <Restake
@@ -82,13 +86,13 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
                           delegator={delegator}
                         />
                       ))}
-                    <div sx={{ ml: 3 }}>
+                    <Box css={{ ml: "$4" }}>
                       {" "}
-                      <span sx={{ fontFamily: "monospace" }}>
+                      <Box as="span" css={{ fontFamily: "$monospace" }}>
                         {abbreviateNumber(lock.amount, 4)}
-                      </span>{" "}
+                      </Box>{" "}
                       LPT
-                    </div>
+                    </Box>
                   </Flex>
                 </Flex>
               </ListItem>
@@ -97,7 +101,7 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
         </List>
       )}
       {!!completedStakeTransactions.length && (
-        <List header={<Styled.h4>Available for Withdrawal</Styled.h4>}>
+        <List header={<Box as="h4">Available for Withdrawal</Box>}>
           {completedStakeTransactions.map((lock) => {
             const newActiveSetOrder = simulateNewActiveSetOrder({
               action: "stake",
@@ -112,22 +116,24 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
             return (
               <ListItem
                 key={lock.id}
-                avatar={<Unlink sx={{ color: "primary", mr: 2 }} />}>
+                avatar={<Unlink css={{ color: "$primary", mr: "$3" }} />}
+              >
                 <Flex
-                  sx={{
+                  css={{
                     width: "100%",
                     alignItems: "center",
                     justifyContent: "space-between",
-                  }}>
-                  <div>
+                  }}
+                >
+                  <Box>
                     Unstaked from{" "}
                     {lock.delegate.id.replace(
                       lock.delegate.id.slice(7, 37),
                       "…"
                     )}
-                  </div>
+                  </Box>
 
-                  <Flex sx={{ alignItems: "center" }}>
+                  <Flex css={{ alignItems: "center" }}>
                     {isMyAccount && (
                       <>
                         {isBonded ? (
@@ -149,13 +155,13 @@ const Index = ({ delegator, transcoders, currentRound, isMyAccount }) => {
                         <WithdrawStake unbondingLockId={lock.unbondingLockId} />
                       </>
                     )}
-                    <div sx={{ ml: 3 }}>
+                    <Box css={{ ml: "$4" }}>
                       {" "}
-                      <span sx={{ fontFamily: "monospace" }}>
+                      <Box as="span" css={{ fontFamily: "$monospace" }}>
                         {abbreviateNumber(lock.amount, 3)}
-                      </span>{" "}
+                      </Box>{" "}
                       LPT
-                    </div>
+                    </Box>
                   </Flex>
                 </Flex>
               </ListItem>

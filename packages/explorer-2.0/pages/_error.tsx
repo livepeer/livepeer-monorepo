@@ -1,4 +1,5 @@
-import { Flex, Box } from "@theme-ui/components";
+import Box from "../components/Box";
+import Flex from "../components/Flex";
 
 const statusCodes: { [code: number]: string } = {
   400: "Bad Request",
@@ -9,20 +10,22 @@ const statusCodes: { [code: number]: string } = {
 function Error({ statusCode }) {
   return (
     <Flex
-      sx={{
+      css={{
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        bg: "background",
-      }}>
+        bg: "$background",
+      }}
+    >
       <Box
-        sx={{
-          fontSize: 5,
-          pr: 3,
-          mr: 3,
+        css={{
+          fontSize: "$5",
+          pr: "$4",
+          mr: "$4",
           borderRight: "1px solid",
           borderColor: "white",
-        }}>
+        }}
+      >
         {statusCode}
       </Box>
       <p>{statusCodes[statusCode]}</p>

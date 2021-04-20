@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { abbreviateNumber } from "../../lib/utils";
 import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
@@ -37,8 +38,8 @@ const Index = () => {
   if (loading && !data) {
     return (
       <Flex
-        sx={{
-          pt: 4,
+        css={{
+          pt: "$5",
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
@@ -49,7 +50,7 @@ const Index = () => {
   }
 
   if (!data?.transactions?.length) {
-    return <div sx={{ pt: 5 }}>No history</div>;
+    return <Box css={{ pt: "$3" }}>No history</Box>;
   }
 
   const events = data.transactions.reduce(
@@ -59,7 +60,7 @@ const Index = () => {
 
   return (
     <InfiniteScroll
-      sx={{ overflow: "hidden !important" }}
+      css={{ overflow: "hidden !important" }}
       scrollThreshold={0.5}
       dataLength={data && data.transactions.length}
       next={async () => {
@@ -89,13 +90,13 @@ const Index = () => {
         }
       }}
       hasMore={true}>
-      <div sx={{ mt: 3, mb: 4, pb: 6, position: "relative" }}>
-        <div sx={{ pb: 2 }}>
+      <Box css={{ mt: "$3", mb: "$5", pb: "$4", position: "relative" }}>
+        <Box css={{ pb: "$3" }}>
           {events.map((event: any, i: number) => renderSwitch(event, i))}
-        </div>
+        </Box>
         {loading && data.transactions.length >= 10 && (
           <Flex
-            sx={{
+            css={{
               position: "absolute",
               transform: "translateX(-50%)",
               left: "50%",
@@ -106,7 +107,7 @@ const Index = () => {
             <Spinner />
           </Flex>
         )}
-      </div>
+      </Box>
     </InfiniteScroll>
   );
 };
@@ -114,7 +115,6 @@ const Index = () => {
 export default Index;
 
 function renderSwitch(event: any, i: number) {
-  console.log(event);
   switch (event.__typename) {
     case "BondEvent":
       return (
@@ -125,15 +125,15 @@ function renderSwitch(event: any, i: number) {
               "_blank"
             )
           }
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           key={i}
-          avatar={<Link sx={{ color: "primary", mr: 2 }} />}>
+          avatar={<Link css={{ color: "$primary", mr: "$3" }} />}>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
@@ -146,29 +146,29 @@ function renderSwitch(event: any, i: number) {
                   "…"
                 )}
               </Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 +{abbreviateNumber(event.additionalAmount, 3)}
-              </span>{" "}
+              </Box>{" "}
               LPT
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "NewRoundEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -179,36 +179,40 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <Play sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <Play
+              css={{ width: 20, height: 20, color: "$primary", mr: "$3" }}
+            />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Initialized round</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               Round #
-              <span sx={{ fontFamily: "monospace" }}>{event.round.id}</span>
-            </div>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
+                {event.round.id}
+              </Box>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "RebondEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -218,9 +222,9 @@ function renderSwitch(event: any, i: number) {
             )
           }
           key={i}
-          avatar={<Link sx={{ color: "primary", mr: 2 }} />}>
+          avatar={<Link css={{ color: "$primary", mr: "$3" }} />}>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
@@ -230,29 +234,29 @@ function renderSwitch(event: any, i: number) {
                 Restaked with{" "}
                 {event.delegate.id.replace(event.delegate.id.slice(7, 37), "…")}
               </Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 +{abbreviateNumber(event.amount, 3)}
-              </span>{" "}
+              </Box>{" "}
               LPT
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "UnbondEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -262,9 +266,9 @@ function renderSwitch(event: any, i: number) {
             )
           }
           key={i}
-          avatar={<Unlink sx={{ color: "primary", mr: 2 }} />}>
+          avatar={<Unlink css={{ color: "$primary", mr: "$3" }} />}>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
@@ -274,29 +278,29 @@ function renderSwitch(event: any, i: number) {
                 Unstaked from{" "}
                 {event.delegate.id.replace(event.delegate.id.slice(7, 37), "…")}
               </Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 -{abbreviateNumber(event.amount, 3)}
-              </span>{" "}
+              </Box>{" "}
               LPT
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "RewardEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -307,39 +311,39 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <LPT sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <LPT css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Claimed inflationary token reward</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 +{abbreviateNumber(event.rewardTokens, 3)}
-              </span>{" "}
+              </Box>{" "}
               LPT
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "TranscoderUpdateEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -350,47 +354,47 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <LPT sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <LPT css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Updated orchestrator cut</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ textAlign: "right", fontSize: 1, ml: 3 }}>
+            <Box css={{ textAlign: "right", fontSize: "$2", ml: "$4" }}>
               <Box>
-                <span sx={{ fontFamily: "monospace" }}>
+                <Box as="span" css={{ fontFamily: "$monospace" }}>
                   {event.rewardCut / 10000}% R
-                </span>{" "}
+                </Box>{" "}
               </Box>
               <Box>
-                <span sx={{ fontFamily: "monospace" }}>
+                <Box as="span" css={{ fontFamily: "$monospace" }}>
                   {(100 - event.feeShare / 10000)
                     .toFixed(2)
                     .replace(/[.,]00$/, "")}
                   % F
-                </span>{" "}
+                </Box>{" "}
               </Box>
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "WithdrawStakeEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -401,39 +405,39 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <LPT sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <LPT css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Withdrew unstaked tokens</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
-                +{abbreviateNumber(event.amount, 3)}
-              </span>{" "}
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
+                {abbreviateNumber(event.amount, 3)}
+              </Box>{" "}
               LPT
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "WithdrawFeesEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -444,39 +448,39 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <ETH sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <ETH css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Withdrew earned fees</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 {abbreviateNumber(event.amount, 3)}
-              </span>{" "}
+              </Box>{" "}
               ETH
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "WinningTicketRedeemedEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -487,39 +491,39 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <ETH sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <ETH css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Redeemed winning ticket</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 +{abbreviateNumber(event.faceValue, 3)}
-              </span>{" "}
+              </Box>{" "}
               ETH
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
     case "DepositFundedEvent":
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -530,30 +534,30 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <ETH sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <ETH css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Deposit funded</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 +{abbreviateNumber(event.amount, 3)}
-              </span>{" "}
+              </Box>{" "}
               ETH
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );
@@ -565,9 +569,9 @@ function renderSwitch(event: any, i: number) {
       }
       return (
         <ListItem
-          sx={{
+          css={{
             cursor: "pointer",
-            px: 2,
+            px: "$3",
             "&:hover": { backgroundColor: "rgba(255, 255, 255, .04)" },
           }}
           onClick={() =>
@@ -578,30 +582,30 @@ function renderSwitch(event: any, i: number) {
           }
           key={i}
           avatar={
-            <ETH sx={{ width: 20, height: 20, color: "primary", mr: 2 }} />
+            <ETH css={{ width: 20, height: 20, color: "$primary", mr: "$3" }} />
           }>
           <Flex
-            sx={{
+            css={{
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
             }}>
             <Box>
               <Box>Reserve funded</Box>
-              <Box sx={{ fontSize: 12, color: "muted" }}>
+              <Box css={{ fontSize: 12, color: "$muted" }}>
                 {moment
                   .unix(event.transaction.timestamp)
                   .format("MM/DD/YYYY h:mm:ss a")}{" "}
                 -- Round #{event.round.id}
               </Box>
             </Box>
-            <div sx={{ fontSize: 1, ml: 3 }}>
+            <Box css={{ fontSize: "$2", ml: "$4" }}>
               {" "}
-              <span sx={{ fontFamily: "monospace" }}>
+              <Box as="span" css={{ fontFamily: "$monospace" }}>
                 +{abbreviateNumber(event.amount, 3)}
-              </span>{" "}
+              </Box>{" "}
               ETH
-            </div>
+            </Box>
           </Flex>
         </ListItem>
       );

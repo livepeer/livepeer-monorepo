@@ -29,13 +29,13 @@ export const numberWithCommas = (x) => {
 
 export const getDelegationStatusColor = (status) => {
   if (status === "Bonded") {
-    return "primary";
+    return "$primary";
   } else if (status === "Unbonding") {
     return "yellow";
   } else if (status === "Pending") {
     return "blue";
   } else {
-    return "muted";
+    return "$muted";
   }
 };
 

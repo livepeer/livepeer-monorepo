@@ -107,5 +107,5 @@ type TableCellProps = {
   cell?: Cell;
   as?: ElementType<any>;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  pushSx?: SxStyleProp;
+  css?: SxStyleProp;
 };

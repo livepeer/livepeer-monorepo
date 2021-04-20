@@ -1,23 +1,24 @@
-import { Flex } from "theme-ui";
 import QRCode from "qrcode.react";
 import { textTruncate } from "../../lib/utils";
+import Box from "../Box";
+import Flex from "../Flex";
 
-const ActiveCircle = ({ active }, props) => {
+const ActiveCircle = ({ css = {}, active }) => {
   return (
-    <div
+    <Box
       className="status"
-      sx={{
+      css={{
         position: "absolute",
         right: "-2px",
         bottom: "-2px",
-        bg: active ? "primary" : "muted",
+        bg: active ? "$primary" : "$muted",
         border: "3px solid",
-        borderColor: "background",
+        borderColor: "$background",
         boxSizing: "border-box",
         width: 14,
         height: 14,
         borderRadius: 1000,
-        ...props.sx,
+        ...css,
       }}
     />
   );
@@ -25,18 +26,20 @@ const ActiveCircle = ({ active }, props) => {
 
 const Index = ({ threeBoxSpace, active, address }) => {
   return (
-    <Flex sx={{ alignItems: "center" }}>
-      <Flex sx={{ minWidth: 30, minHeight: 30, position: "relative", mr: 2 }}>
+    <Flex css={{ alignItems: "center" }}>
+      <Flex
+        css={{ minWidth: 30, minHeight: 30, position: "relative", mr: "$3" }}>
         {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.image ? (
-          <img
-            sx={{
+          <Box
+            as="img"
+            css={{
               objectFit: "cover",
               borderRadius: 1000,
               width: 30,
               height: 30,
               padding: "2px",
               border: "1px solid",
-              borderColor: "muted",
+              borderColor: "$muted",
             }}
             src={`https://ipfs.infura.io/ipfs/${threeBoxSpace.image}`}
           />
@@ -48,7 +51,7 @@ const Index = ({ threeBoxSpace, active, address }) => {
               height: 30,
               padding: "2px",
               border: "1px solid",
-              borderColor: "muted",
+              borderColor: "rgba(255,255,255,.6)",
             }}
             fgColor={`#${address.substr(2, 6)}`}
             value={address}
@@ -58,8 +61,8 @@ const Index = ({ threeBoxSpace, active, address }) => {
       </Flex>
 
       <Flex
-        sx={{
-          color: "text",
+        css={{
+          color: "$text",
           transition: "all .3s",
           borderBottom: "1px solid",
           borderColor: "transparent",
@@ -69,15 +72,15 @@ const Index = ({ threeBoxSpace, active, address }) => {
         }}>
         <Flex
           className="orchestratorLink"
-          sx={{
+          css={{
             justifyContent: "space-between",
             alignItems: "center",
           }}>
-          <div sx={{ fontWeight: 600 }}>
+          <Box css={{ fontWeight: 600 }}>
             {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.name
               ? textTruncate(threeBoxSpace.name, 15, "…")
               : address.replace(address.slice(5, 39), "…")}
-          </div>
+          </Box>
         </Flex>
       </Flex>
     </Flex>

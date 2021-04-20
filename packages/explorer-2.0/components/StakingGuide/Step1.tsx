@@ -1,6 +1,6 @@
-import { Styled } from "theme-ui";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import Box from "../Box";
 
 const Step1 = ({ goTo, nextStep }) => {
   const GET_WALLET_MODAL_STATUS = gql`
@@ -15,10 +15,12 @@ const Step1 = ({ goTo, nextStep }) => {
   }
 
   return (
-    <div>
-      <Styled.h2 sx={{ mb: 2 }}>Connect Wallet</Styled.h2>
-      <Styled.p>First things first. Let's connect your wallet.</Styled.p>
-    </div>
+    <Box>
+      <Box as="h3" css={{ mb: "$3" }}>
+        Connect Wallet
+      </Box>
+      <Box>First things first. Let's connect your wallet.</Box>
+    </Box>
   );
 };
 

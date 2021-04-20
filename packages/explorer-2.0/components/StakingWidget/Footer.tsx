@@ -12,8 +12,9 @@ import { useWeb3React } from "@web3-react/core";
 import Warning from "./Warning";
 import Approve from "../Approve";
 import ReactTooltip from "react-tooltip";
-import Help from "../../public/img/help.svg";
 import { gql, useApolloClient } from "@apollo/client";
+import Box from "../Box";
+import HelpIcon from "../HelpIcon";
 
 interface Props {
   transcoders: [Transcoder];
@@ -52,7 +53,8 @@ const Footer = ({
             },
           })
         }
-        sx={{ width: "100%" }}>
+        css={{ width: "100%" }}
+      >
         Connect Wallet
       </Button>
     );
@@ -178,12 +180,12 @@ function renderStakeWarnings(
   if (parseFloat(amount) >= 0 && isStaked && !isMyTranscoder) {
     return (
       <Warning>
-        <div>
-          <span>
+        <Box>
+          <Box as="span">
             Staking to this orchestrator will switch over your existing stake of{" "}
             <b>{stake.toFixed(2)}</b>
-          </span>
-          <div sx={{ display: "inline-flex" }}>
+          </Box>
+          <Box css={{ display: "inline-flex" }}>
             <ReactTooltip
               id="tooltip-switch-stake"
               className="tooltip"
@@ -191,16 +193,12 @@ function renderStakeWarnings(
               type="dark"
               effect="solid"
             />
-            <Help
+            <HelpIcon
               data-tip="You may only stake towards a single orchestrator per account. If you'd like to switch over your existing stake from one orchestrator to another and nothing more, enter 0."
               data-for="tooltip-switch-stake"
-              sx={{
-                cursor: "pointer",
-                ml: 1,
-              }}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </Warning>
     );
   }

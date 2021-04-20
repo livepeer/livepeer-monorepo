@@ -17,6 +17,7 @@ const Index = ({ unbondingLockId }) => {
   return (
     <>
       <Button
+        color="primary"
         onClick={() => {
           initTransaction(client, async () => {
             await withdrawStake({
@@ -26,7 +27,8 @@ const Index = ({ unbondingLockId }) => {
             });
           });
         }}
-        sx={{ py: 1, mr: 2, variant: "buttons.secondary" }}>
+        css={{ py: "$2", mr: "$3" }}
+      >
         Withdraw
       </Button>
     </>

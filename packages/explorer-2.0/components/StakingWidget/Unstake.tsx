@@ -19,7 +19,6 @@ const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
     <>
       <Button
         disabled={disabled}
-        variant="red"
         onClick={() => {
           initTransaction(client, async () => {
             try {
@@ -37,7 +36,8 @@ const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
             }
           });
         }}
-        sx={{ width: "100%" }}>
+        color="danger"
+        css={{ width: "100%" }}>
         Unstake
       </Button>
     </>

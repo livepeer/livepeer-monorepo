@@ -1,8 +1,8 @@
-import { Styled, Box, Flex } from "theme-ui";
+import Box from "../components/Box";
+import Flex from "../components/Flex";
 import React, { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Drawer from "../components/Drawer";
-import Reset from "../lib/reset";
 import { networksTypes } from "../lib/utils";
 import Ballot from "../public/img/ballot.svg";
 import DNS from "../public/img/dns.svg";
@@ -24,8 +24,9 @@ import TxSummaryDialog from "../components/TxSummaryDialog";
 import gql from "graphql-tag";
 import GET_SUBMITTED_TXS from "../queries/transactions.gql";
 import { FiArrowRight, FiX } from "react-icons/fi";
-import { MdTrendingUp } from "react-icons/md";
 import Link from "next/link";
+import globalStyles from "../lib/globalStyles";
+import { EyeOpenIcon } from "@modulz/radix-icons";
 
 if (process.env.NODE_ENV === "production") {
   ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID);
@@ -121,7 +122,7 @@ const Layout = ({
       name: "Overview",
       href: "/",
       as: "/",
-      icon: MdTrendingUp,
+      icon: EyeOpenIcon,
       className: "overview",
     },
     {
@@ -133,11 +134,11 @@ const Layout = ({
     },
     {
       name: (
-        <Flex sx={{ alignItems: "center" }}>
+        <Flex css={{ alignItems: "center" }}>
           Voting{" "}
           {totalActivePolls > 0 && (
             <Flex
-              sx={{
+              css={{
                 fontSize: "10px",
                 color: "white",
                 ml: "6px",
@@ -147,7 +148,8 @@ const Layout = ({
                 height: 16,
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               {totalActivePolls}
             </Flex>
           )}
@@ -186,7 +188,7 @@ const Layout = ({
   useOnClickOutside(ref, () => {
     onDrawerClose();
   });
-
+  globalStyles();
   return (
     <>
       <Head>
@@ -198,84 +200,101 @@ const Layout = ({
           rel="stylesheet"
         />
       </Head>
-      <Reset />
+
       <Modal
         title="Oops, you’re on the wrong network"
         isOpen={
           context.chainId &&
           networksTypes[context.chainId] !== process.env.NEXT_PUBLIC_NETWORK
         }
-        showCloseButton={false}>
+        showCloseButton={false}
+      >
         <Box
-          sx={{
+          css={{
             border: "1px solid",
-            borderColor: "border",
+            borderColor: "$border",
             borderRadius: 10,
-            p: 3,
-            mb: 2,
-          }}>
+            p: "$3",
+            mb: "$2",
+          }}
+        >
           Simply open MetaMask and switch over to the{" "}
-          <span sx={{ textTransform: "capitalize" }}>
+          <Box as="span" css={{ textTransform: "capitalize" }}>
             {process.env.NEXT_PUBLIC_NETWORK}
-          </span>{" "}
+          </Box>{" "}
           network.
         </Box>
       </Modal>
       <MutationsContext.Provider value={mutations}>
-        <Styled.root sx={{ height: "calc(100vh - 82px)" }}>
+        <Box css={{ height: "calc(100vh - 82px)" }}>
           {data?.protocol.paused && (
             <Flex
-              sx={{
-                py: 10,
-                px: 2,
+              css={{
+                py: "$2",
+                px: "$2",
                 width: "100%",
                 alignItems: "center",
                 color: "black",
                 justifyContent: "center",
                 background: "orange",
                 fontWeight: 500,
-                fontSize: 2,
-              }}>
-              The protocol is paused.
+                fontSize: "$3",
+              }}
+            >
+              The protocol is currently paused.
             </Flex>
           )}
           {bannerActive && (
             <Flex
-              sx={{
+              css={{
                 py: 10,
-                display: ["none", "none", "flex"],
-                px: 2,
+                display: "none",
+                px: "$2",
                 width: "100%",
                 alignItems: "center",
                 bg: "black",
                 justifyContent: "center",
-                fontSize: [0, 1, 1, 2],
+                fontSize: "$2",
                 position: "relative",
-              }}>
-              <span
-                sx={{
-                  mr: 2,
-                  pr: 2,
+                "@bp2": {
+                  display: "flex",
+                },
+                "@bp3": {
+                  fontSize: "$3",
+                },
+              }}
+            >
+              <Box
+                as="span"
+                css={{
+                  mr: "$3",
+                  pr: "$3",
                   borderRight: "1px solid",
-                  borderColor: "border",
-                }}>
-                <span sx={{ fontWeight: "600" }}>What's New:</span>{" "}
-                <span>Showcasing Network Usage</span>
-              </span>
+                  borderColor: "$border",
+                }}
+              >
+                <Box as="span" css={{ fontWeight: 600 }}>
+                  What's New:
+                </Box>{" "}
+                <Box as="span">Showcasing Network Usage</Box>
+              </Box>
               <Link href="/whats-new">
-                <a
-                  sx={{
+                <Box
+                  as="a"
+                  css={{
                     minWidth: 94,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
-                    color: "primary",
-                  }}>
-                  Read more <FiArrowRight sx={{ ml: 1 }} />
-                </a>
+                    color: "$primary",
+                  }}
+                >
+                  Read more <Box as={FiArrowRight} css={{ ml: "$1" }} />
+                </Box>
               </Link>
 
-              <FiX
+              <Box
+                as={FiX}
                 onClick={() => {
                   setBannerActive(false);
                   const storage = JSON.parse(
@@ -294,7 +313,7 @@ const Layout = ({
                     );
                   }
                 }}
-                sx={{
+                css={{
                   cursor: "pointer",
                   position: "absolute",
                   right: 20,
@@ -307,20 +326,27 @@ const Layout = ({
           <Header title={headerTitle} onDrawerOpen={onDrawerOpen} />
           <WalletModal />
           <Box
-            sx={{
+            css={{
               display: "grid",
-              gridTemplateColumns: ["100%", "100%", "100%", "240px 1fr"],
-            }}>
+              gridTemplateColumns: "100%",
+              "@bp3": {
+                gridTemplateColumns: "240px 1fr",
+              },
+            }}
+          >
             <Box
-              sx={{
+              css={{
                 left: 0,
                 top: 0,
                 position: "fixed",
                 width: "100vw",
                 height: "calc(100vh)",
                 bg: "rgba(0,0,0,.5)",
-                visibility: [visibility, visibility, visibility, "hidden"],
+                visibility,
                 zIndex: 100,
+                "@bp3": {
+                  visibility: "hidden",
+                },
               }}
             />
             <Box ref={ref}>
@@ -332,15 +358,19 @@ const Layout = ({
               />
             </Box>
             <Flex
-              sx={{
-                bg: "background",
+              css={{
                 position: "relative",
-                px: [2, 2, 2, 4],
                 maxWidth: 1500,
                 margin: "0 auto",
                 width: "100%",
-              }}>
-              <Flex sx={{ width: "100%" }}>{children}</Flex>
+                px: "$3",
+                backgroundColor: "$background",
+                "@bp3": {
+                  px: "$4",
+                },
+              }}
+            >
+              <Flex css={{ width: "100%" }}>{children}</Flex>
             </Flex>
           </Box>
           <TxConfirmedDialog
@@ -402,31 +432,26 @@ const Layout = ({
           )}
           {lastTx?.confirmed === false && (
             <Box
-              sx={{
+              css={{
                 position: "fixed",
-                bg: "surface",
+                bg: "$surface",
                 bottom: 0,
-                width: [
-                  "100%",
-                  "100%",
-                  "calc(100% - 240px)",
-                  "calc(100% - 240px)",
-                  "calc(100% - 240px)",
-                  "calc(100vw - ((100vw - 1500px) / 2 + 240px))",
-                ],
-                left: [
-                  0,
-                  0,
-                  240,
-                  240,
-                  240,
-                  "calc((100% - 1500px) / 2 + 240px)",
-                ],
-              }}>
+                width: "100%",
+                left: 0,
+                "@bp1": {
+                  width: "calc(100% - 240px)",
+                  left: 240,
+                },
+                "@bp4": {
+                  width: "calc(100vw - ((100vw - 1500px) / 2 + 240px))",
+                  left: "calc((100% - 1500px) / 2 + 240px)",
+                },
+              }}
+            >
               <ProgressBar tx={lastTx} />
             </Box>
           )}
-        </Styled.root>
+        </Box>
       </MutationsContext.Provider>
     </>
   );

@@ -1,15 +1,18 @@
+import Box from "../Box";
+
 const Warning = ({ children }) => {
   return (
-    <div
-      sx={{
-        pt: 2,
-        color: "muted",
+    <Box
+      css={{
+        pt: "$3",
+        color: "$muted",
         textAlign: "center",
-        fontSize: 0,
+        fontSize: "$1",
         lineHeight: 1.7,
-      }}>
+      }}
+    >
       {children}
-    </div>
+    </Box>
   );
 };
 

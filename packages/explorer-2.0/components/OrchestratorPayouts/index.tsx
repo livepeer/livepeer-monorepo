@@ -1,5 +1,5 @@
 import { NetworkStatus, useQuery } from "@apollo/client";
-import { Box, Styled } from "theme-ui";
+import Box from "../Box";
 import Table from "./Table";
 import { useEffect } from "react";
 import Spinner from "../Spinner";
@@ -35,28 +35,29 @@ const Index = ({ pageSize = 10, title = "" }) => {
   return (
     <Box className="tour-step-6">
       {title && (
-        <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
+        <Box as="h2" css={{ fontWeight: 500, fontSize: 18, mb: "$3" }}>
           {title}
-        </Styled.h2>
+        </Box>
       )}
       <Box
-        sx={{
+        css={{
           boxShadow: "rgba(0, 0, 0, 0.05) 0px 6px 10px",
           position: "relative",
-          pt: 2,
-          mb: 3,
+          pt: "$3",
+          mb: "$4",
           minHeight: 500,
           width: "100%",
           background: "rgba(255, 255, 255, 0.01)",
           border: "1px solid",
           borderColor: "rgba(194,201,209,.15)",
           borderRadius: 10,
-        }}>
+        }}
+      >
         {/* Show loading indicator if this is the first time time fetching or we're refetching
         https://github.com/apollographql/apollo-client/blob/main/src/core/networkStatus.ts */}
         {!data || networkStatus === NetworkStatus.refetch ? (
           <Box
-            sx={{
+            css={{
               position: "absolute",
               transform: "translate(-50%, -50%)",
               top: "calc(50%)",
@@ -64,7 +65,8 @@ const Index = ({ pageSize = 10, title = "" }) => {
               height: "500px",
               display: "flex",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Spinner />
           </Box>
         ) : (

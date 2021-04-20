@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const Option = ({
   link = null,
@@ -14,33 +15,34 @@ const Option = ({
   const content = (
     <Flex
       onClick={onClick}
-      sx={{
-        bg: active ? "surface" : "transparent",
+      css={{
+        bg: active ? "$surface" : "transparent",
         cursor: clickable ? "pointer" : "default",
         alignItems: "center",
         justifyContent: "space-between",
         border: "1px solid",
-        borderColor: active ? "transparent" : "border",
+        borderColor: active ? "transparent" : "$border",
         borderRadius: 10,
-        p: 2,
+        p: "$3",
         ":hover": {
-          borderColor: "primary",
+          borderColor: "$primary",
         },
       }}
-      {...props}>
+      {...props}
+    >
       <Box>
         <Box>{header}</Box>
-        {subheader && <Box sx={{ mt: 1, fontSize: 0 }}>{subheader}</Box>}
+        {subheader && <Box css={{ mt: "$2", fontSize: "$1" }}>{subheader}</Box>}
       </Box>
-      {Icon && <Icon sx={{ width: 22, height: 22 }} />}
+      {Icon && <Icon style={{ width: 22, height: 22 }} />}
     </Flex>
   );
 
   if (link) {
     return (
-      <a target="__blank" href={link} sx={{ color: "white" }}>
+      <Box as="a" target="__blank" href={link} css={{ color: "white" }}>
         {content}
-      </a>
+      </Box>
     );
   }
   return content;

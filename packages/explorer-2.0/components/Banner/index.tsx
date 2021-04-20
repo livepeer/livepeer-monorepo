@@ -1,25 +1,26 @@
-import { Box } from "theme-ui";
+import Box from "../Box";
 import React from "react";
 
 interface Props {
   open?: boolean;
   label: React.ReactNode;
   button?: React.ReactNode;
-  sx?: object;
+  css?: object;
 }
 
-const Index = ({ open = true, label, button, ...props }: Props) =>
+const Index = ({ css = {}, open = true, label, button }: Props) =>
   !open ? null : (
     <Box
-      sx={{
-        borderRadius: 10,
+      css={{
+        borderRadius: "$6",
         border: "1px solid",
-        borderColor: "border",
+        borderColor: "$border",
         width: "100%",
-        p: 2,
-        fontSize: 0,
-        ...props.sx,
-      }}>
+        p: "$3",
+        fontSize: "$2",
+        ...css,
+      }}
+    >
       <Box>
         {label}
         {button && button}

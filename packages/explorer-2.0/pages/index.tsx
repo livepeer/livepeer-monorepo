@@ -1,10 +1,8 @@
-import { Flex, Styled } from "theme-ui";
 import { useQuery } from "@apollo/client";
 import Orchestrators from "../components/Orchestrators";
 import { useWeb3React } from "@web3-react/core";
 import { getLayout } from "../layouts/main";
 import { NextPage } from "next";
-import { Box } from "theme-ui";
 import Approve from "../components/Approve";
 import Search from "../components/Search";
 import Utils from "web3-utils";
@@ -16,31 +14,42 @@ import Link from "next/link";
 import { withApollo, getStaticApolloProps } from "../apollo";
 import GlobalChart from "../components/GlobalChart";
 import Flickity from "react-flickity-component";
+import Box from "../components/Box";
+import Flex from "../components/Flex";
 
 type Params = {};
 type Props = {};
 
 const Panel = ({ children }) => (
-  <Box
-    sx={{
+  <Flex
+    css={{
       minHeight: 350,
       height: 350,
       position: "relative",
-      backgroundColor: "rgba(255,255,255,.01)",
-      padding: 3,
-      width: ["100%", "100%", "43%"],
+      backgroundColor: "$background",
+      p: "24px",
       marginRight: 16,
-      display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 8,
       border: "1px solid",
-      borderColor: "border",
+      borderColor: "$border",
       boxShadow: "0px 6px 10px rgba(0, 0, 0, 0.05)",
-    }}>
+      "@bp1": {
+        width: "100%",
+      },
+      "@bp2": {
+        width: "100%",
+      },
+      "@bp3": {
+        width: "43%",
+      },
+    }}
+  >
+    <Box css={{ borderColor: "$border" }} />
     {children}
-  </Box>
+  </Flex>
 );
 
 const Home = () => {
@@ -76,13 +85,17 @@ const Home = () => {
 
   return (
     <>
-      <Flex sx={{ width: "100%" }}>
+      <Flex css={{ width: "100%" }}>
         <Flex
-          sx={{
+          css={{
             flexDirection: "column",
-            mt: [3, 3, 3, 5],
+            mt: "$3",
             width: "100%",
-          }}>
+            "@bp3": {
+              mt: "$4",
+            },
+          }}
+        >
           {context.active && (
             <Box>
               {dataMyAccount &&
@@ -95,30 +108,40 @@ const Home = () => {
                 )}
             </Box>
           )}
-          <Styled.h1
-            sx={{
+          <Box
+            as="h1"
+            css={{
               color: "white",
-              fontSize: [3, 3, 26],
+              fontSize: "$3",
               fontWeight: 600,
               mb: 22,
-              display: ["none", "none", "none", "flex"],
+              display: "none",
               alignItems: "center",
-            }}>
+              "@bp2": {
+                fontSize: 26,
+              },
+              "@bp3": {
+                display: "flex",
+              },
+            }}
+          >
             Protocol Explorer
-          </Styled.h1>
-          <Search pushSx={{ mb: 5 }} />
+          </Box>
+          <Search />
           <Box
-            sx={{
-              mb: 5,
+            css={{
+              mb: "$5",
               boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
-            }}>
+            }}
+          >
             <Flickity
               className={"flickity"}
               elementType={"div"}
               options={flickityOptions}
               disableImagesLoaded={true} // default false
               reloadOnUpdate
-              static>
+              static
+            >
               <Panel>
                 <GlobalChart
                   display="volume"
@@ -144,32 +167,36 @@ const Home = () => {
               </Panel>
             </Flickity>
           </Box>
-          <Box sx={{ mb: 3 }}>
+          <Box css={{ mb: "$3" }}>
             <Flex
-              sx={{
+              css={{
                 justifyContent: "space-between",
-                mb: 2,
+                mb: "$2",
                 alignItems: "center",
-              }}>
-              <Styled.h2 sx={{ fontWeight: 500, fontSize: 18 }}>
+              }}
+            >
+              <Box as="h2" css={{ fontWeight: 500, fontSize: 18 }}>
                 Top Orchestrators
-              </Styled.h2>
+              </Box>
               <Link href="/orchestrators" passHref>
-                <a sx={{ fontSize: 1, pr: 3 }}>See All</a>
+                <Box as="a" css={{ color: "$white", fontSize: "$2", pr: "$3" }}>
+                  See All
+                </Box>
               </Link>
             </Flex>
             <Orchestrators />
           </Box>
           <Box>
             <Flex
-              sx={{
+              css={{
                 justifyContent: "space-between",
-                mb: 2,
+                mb: "$2",
                 alignItems: "center",
-              }}>
-              <Styled.h2 sx={{ fontWeight: 500, fontSize: 18 }}>
+              }}
+            >
+              <Box as="h2" css={{ fontWeight: 500, fontSize: 18 }}>
                 Orchestrator Payouts
-              </Styled.h2>
+              </Box>
             </Flex>
             <OrchestratorPayouts />
           </Box>

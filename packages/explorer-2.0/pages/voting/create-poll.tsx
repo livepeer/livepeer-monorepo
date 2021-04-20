@@ -1,11 +1,10 @@
-import { Flex, Styled } from "theme-ui";
+import Box from "../../components/Box";
+import Flex from "../../components/Flex";
 import { getLayout } from "../../layouts/main";
 import IPFS from "ipfs-mini";
 import fm from "front-matter";
-import { Box } from "theme-ui";
 import Button from "../../components/Button";
 import { createApolloFetch } from "apollo-fetch";
-import { Radio, Label, Spinner } from "@theme-ui/components";
 import { useState, useEffect, useContext } from "react";
 import gql from "graphql-tag";
 import { useWeb3React } from "@web3-react/core";
@@ -18,6 +17,45 @@ import Utils from "web3-utils";
 import Head from "next/head";
 import { usePageVisibility } from "../../hooks";
 import { NextPage } from "next";
+import Spinner from "../../components/Spinner";
+import * as RadioGroup from "@radix-ui/react-radio-group";
+import * as Label from "@radix-ui/react-label";
+import { styled, theme } from "../../stitches.config";
+
+const StyledRadio = styled(RadioGroup.Item, {
+  appearance: "none",
+  backgroundColor: "transparent",
+  border: "none",
+  padding: 0,
+  borderRadius: "50%",
+  boxShadow: "inset 0 0 0 1px gainsboro",
+  width: 15,
+  height: 15,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  verticalAlign: "middle",
+  "& ~ &": { marginLeft: 5 },
+  "&:focus": {
+    outline: "none",
+    boxShadow: `inset 0 0 0 1px ${theme.colors.primary}, 0 0 0 1px ${theme.colors.primary}`,
+  },
+});
+const StyledIndicator = styled(RadioGroup.Indicator, {
+  width: 7,
+  height: 7,
+  borderRadius: "50%",
+  backgroundColor: "$primary",
+});
+
+const StyledLabel = styled(Label.Root, {
+  display: "flex",
+  cursor: "pointer",
+  p: "$4",
+  mb: "$3",
+  borderRadius: 10,
+  border: "1px solid",
+});
 
 const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
   const context = useWeb3React();
@@ -30,7 +68,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
     port: 5001,
     protocol: "https",
   });
-  const pollInterval = 20000;
+  const pollInterval = 10000;
 
   const accountQuery = gql`
     query($account: ID!) {
@@ -96,29 +134,44 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
         <title>Livepeer Explorer - Voting</title>
       </Head>
       <Flex
-        sx={{
-          mt: [3, 3, 3, 5],
+        css={{
+          mt: "$3",
           width: "100%",
           flexDirection: "column",
-        }}>
+          "@bp3": {
+            mt: "$4",
+          },
+        }}
+      >
         <Box>
           <Flex
-            sx={{
-              mb: 4,
+            css={{
+              mb: "$4",
               alignItems: "center",
               justifyContent: "space-between",
-            }}>
-            <Styled.h1
-              sx={{
-                fontSize: [3, 3, 26],
+            }}
+          >
+            <Box
+              as="h1"
+              css={{
+                fontSize: "$4",
                 display: "flex",
                 alignItems: "center",
-              }}>
+                "@bp2": {
+                  fontSize: 26,
+                },
+              }}
+            >
               Create Poll
-            </Styled.h1>
+            </Box>
             {!context.account && (
               <Button
-                sx={{ display: ["none", "none", "none", "block"] }}
+                css={{
+                  display: "none",
+                  "@bp3": {
+                    display: "block",
+                  },
+                }}
                 onClick={() => {
                   client.writeQuery({
                     query: gql`
@@ -130,12 +183,14 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                       walletModalOpen: true,
                     },
                   });
-                }}>
+                }}
+              >
                 Connect Wallet
               </Button>
             )}
           </Flex>
-          <form
+          <Box
+            as="form"
             onSubmit={async (e) => {
               e.preventDefault();
               try {
@@ -150,78 +205,78 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   error: err.message.replace("GraphQL error: ", ""),
                 };
               }
-            }}>
+            }}
+          >
             {!lips.length && (
               <Box>
                 There are currently no LIPs in a proposed state for which there
                 hasn't been a poll created yet.
               </Box>
             )}
-            {lips.map((lip, i) => (
-              <Label
-                key={i}
-                sx={{
-                  cursor: "pointer",
-                  p: 3,
-                  mb: 2,
-                  borderRadius: 10,
-                  border: "1px solid",
-                }}>
-                <Flex
-                  sx={{
-                    width: "100%",
+            <RadioGroup.Root defaultValue={selectedProposal}>
+              {lips.map((lip, i) => (
+                <StyledLabel
+                  key={i}
+                  css={{
                     justifyContent: "space-between",
                     alignItems: "center",
-                  }}>
-                  <Flex sx={{ alignItems: "center" }}>
-                    <Radio
-                      defaultChecked={i === 0}
-                      onChange={() => {
+                  }}
+                >
+                  <Flex css={{ alignItems: "center", width: "100%" }}>
+                    <StyledRadio
+                      onCheckedChange={() => {
                         setSelectedProposal({ gitCommitHash, text: lip.text });
                       }}
+                      value={i.toString()}
                       name="lip"
-                    />
-                    <Box sx={{ width: "100%" }}>
+                    >
+                      <StyledIndicator />
+                    </StyledRadio>
+                    <Box css={{ ml: "$3", width: "100%" }}>
                       LIP-{lip.attributes.lip} - {lip.attributes.title}
                     </Box>
                   </Flex>
-                  <a
-                    sx={{
-                      ml: 1,
+                  <Box
+                    as="a"
+                    css={{
+                      ml: "$2",
                       minWidth: 108,
                       display: "block",
-                      color: "primary",
+                      color: "$primary",
                     }}
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}>
+                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
+                  >
                     View Proposal
-                  </a>
-                </Flex>
-              </Label>
-            ))}
+                  </Box>
+                </StyledLabel>
+              ))}
+            </RadioGroup.Root>
             {context.account &&
               !!lips.length &&
               (!data ? (
                 <Flex
-                  sx={{
+                  css={{
                     alignItems: "center",
-                    mt: 4,
+                    mt: "$5",
                     justifyContent: "center",
-                  }}>
-                  <Box sx={{ mr: 2 }}>Loading LPT Balance</Box>
-                  <Spinner variant="styles.spinner" />
+                  }}
+                >
+                  <Box css={{ mr: "$3" }}>Loading LPT Balance</Box>
+                  <Spinner />
                 </Flex>
               ) : (
                 <Flex
-                  sx={{
-                    mt: 4,
+                  css={{
+                    mt: "$5",
                     alignItems: "center",
                     justifyContent: "flex-end",
-                  }}>
+                  }}
+                >
                   {!sufficientAllowance && <PollTokenApproval />}
                   {sufficientAllowance && !sufficientBalance && (
-                    <Box sx={{ color: "muted", fontSize: 0 }}>
+                    <Box css={{ color: "$muted", fontSize: "$1" }}>
                       Insufficient balance. You need at least{" "}
                       {process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? 10 : 100}{" "}
                       LPT to create a poll.
@@ -230,7 +285,8 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   <Button
                     disabled={!sufficientAllowance || !sufficientBalance}
                     type="submit"
-                    sx={{ ml: 2, alignSelf: "flex-end" }}>
+                    css={{ ml: "$3", alignSelf: "flex-end" }}
+                  >
                     Create Poll (
                     {process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
                       ? "10"
@@ -239,7 +295,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   </Button>
                 </Flex>
               ))}
-          </form>
+          </Box>
         </Box>
       </Flex>
     </>

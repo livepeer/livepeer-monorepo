@@ -1,5 +1,6 @@
 import React from "react";
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Input from "./Input";
 import Utils from "web3-utils";
 import ReactTooltip from "react-tooltip";
@@ -20,25 +21,29 @@ const InputBox = ({
     : "0";
 
   return (
-    <div
-      sx={{
+    <Box
+      css={{
         borderRadius: 16,
         width: "100%",
         border: "1px solid",
-        borderColor: "border",
-      }}>
-      <Box sx={{ px: 2, py: 2 }}>
+        borderColor: "$border",
+      }}
+    >
+      <Box css={{ px: "$3", py: "$3" }}>
         <Box>
-          <Flex sx={{ fontSize: 0, mb: 2, justifyContent: "space-between" }}>
-            <div sx={{ color: "muted" }}>Input</div>
+          <Flex
+            css={{ fontSize: "$1", mb: "$3", justifyContent: "space-between" }}
+          >
+            <Box css={{ color: "$muted" }}>Input</Box>
 
             {account &&
               (action === "stake" ? (
-                <div
+                <Box
                   data-tip="Enter max"
                   data-for="balance"
                   onClick={() => setAmount(tokenBalance)}
-                  sx={{ cursor: "pointer", color: "muted" }}>
+                  css={{ cursor: "pointer", color: "$muted" }}
+                >
                   <ReactTooltip
                     id="balance"
                     className="tooltip"
@@ -47,18 +52,19 @@ const InputBox = ({
                     effect="solid"
                   />
                   Balance:{" "}
-                  <span sx={{ fontFamily: "monospace" }}>
+                  <Box as="span" css={{ fontFamily: "$monospace" }}>
                     {parseFloat(tokenBalance)}
-                  </span>
-                </div>
+                  </Box>
+                </Box>
               ) : (
                 <>
                   {+stake > 0 && (
-                    <div
+                    <Box
                       data-tip="Enter max"
                       data-for="stake"
                       onClick={() => setAmount(stake)}
-                      sx={{ cursor: "pointer", color: "muted" }}>
+                      css={{ cursor: "pointer", color: "$muted" }}
+                    >
                       <ReactTooltip
                         id="stake"
                         className="tooltip"
@@ -67,25 +73,27 @@ const InputBox = ({
                         effect="solid"
                       />
                       Stake:{" "}
-                      <span sx={{ fontFamily: "monospace" }}>{+stake}</span>
-                    </div>
+                      <Box as="span" css={{ fontFamily: "$monospace" }}>
+                        {+stake}
+                      </Box>
+                    </Box>
                   )}
                 </>
               ))}
           </Flex>
-          <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+          <Flex css={{ justifyContent: "space-between", alignItems: "center" }}>
             <Input
               transcoder={transcoder}
               value={amount}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setAmount(e.target.value ? e.target.value : "")
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setAmount(e.target.value ? e.target.value : "");
+              }}
               protocol={protocol}
             />
           </Flex>
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 };
 

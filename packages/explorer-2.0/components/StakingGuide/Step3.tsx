@@ -1,4 +1,4 @@
-import { Styled } from "theme-ui";
+import Box from "../Box";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
@@ -15,12 +15,14 @@ const Step3 = ({ goTo, nextStep }) => {
   }
 
   return (
-    <div>
-      <Styled.h2 sx={{ mb: 2 }}>Get LPT</Styled.h2>
-      <Styled.p>
+    <Box>
+      <Box as="h3" css={{ mb: "$3" }}>
+        Get LPT
+      </Box>
+      <Box>
         You'll need LPT to stake. Let's swap some ETH for LPT on Uniswap.
-      </Styled.p>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

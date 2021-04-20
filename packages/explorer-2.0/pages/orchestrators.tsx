@@ -1,9 +1,9 @@
-import { Flex, Styled } from "theme-ui";
+import Box from "../components/Box";
+import Flex from "../components/Flex";
 import { useQuery } from "@apollo/client";
 import Orchestrators from "../components/Orchestrators";
 import { useWeb3React } from "@web3-react/core";
 import { getLayout } from "../layouts/main";
-import { Box } from "theme-ui";
 import Approve from "../components/Approve";
 import Utils from "web3-utils";
 import { useEffect } from "react";
@@ -46,13 +46,14 @@ const OrchestratorsPage = () => {
       <Head>
         <title>Livepeer Explorer - Orchestrators</title>
       </Head>
-      <Flex sx={{ width: "100%" }}>
+      <Flex css={{ width: "100%" }}>
         <Flex
-          sx={{
+          css={{
             flexDirection: "column",
-            mt: [3, 3, 3, 5],
+            mt: "$4",
             width: "100%",
-          }}>
+          }}
+        >
           {context.active && (
             <Box>
               {dataMyAccount &&
@@ -65,13 +66,19 @@ const OrchestratorsPage = () => {
                 )}
             </Box>
           )}
-          <Styled.h1
-            sx={{
-              fontSize: [3, 3, 26],
-              mb: 4,
-            }}>
+          <Box
+            as="h1"
+            css={{
+              fontSize: "$4",
+              mb: "$4",
+              fontWeight: 600,
+              "@bp2": {
+                fontSize: 26,
+              },
+            }}
+          >
             Top Orchestrators
-          </Styled.h1>
+          </Box>
           <Orchestrators pageSize={30} />
         </Flex>
       </Flex>

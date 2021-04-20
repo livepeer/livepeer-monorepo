@@ -1,16 +1,19 @@
+import Box from "../Box";
+
 const Index = ({ children, ...props }) => (
-  <div
+  <Box
     {...props}
-    sx={{
+    css={{
       border: "1px solid",
       borderRadius: 2,
-      borderColor: "muted",
-      px: 1,
+      borderColor: "$muted",
+      px: "$2",
       py: "4px",
       fontSize: 12,
-    }}>
+    }}
+  >
     {children}
-  </div>
+  </Box>
 );
 
 export default Index;

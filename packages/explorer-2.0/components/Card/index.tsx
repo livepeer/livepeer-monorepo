@@ -1,27 +1,32 @@
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 
 const Index = ({
   title = null,
   subtitle = null,
   children = null,
+  css = {},
   ...props
 }) => {
   return (
     <Flex
-      sx={{
+      css={{
         flexDirection: "column",
         justifyContent: "flex-start",
         border: "1px solid",
-        borderColor: "border",
-        py: 3,
-        px: 3,
+        borderColor: "$border",
+        p: "24px",
         borderRadius: 10,
+        ...css,
       }}
-      {...props}>
+      {...props}
+    >
       {title && (
-        <div sx={{ mb: "8px", fontWeight: 500, fontSize: 0, color: "muted" }}>
+        <Box
+          css={{ mb: "8px", fontWeight: 500, fontSize: "$1", color: "$muted" }}
+        >
           {title}
-        </div>
+        </Box>
       )}
       {subtitle}
       {children}
