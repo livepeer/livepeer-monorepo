@@ -82,4 +82,4 @@ export const timeframeOptions = {
   ALL_TIME: "All time",
 };
 
-export const PRICING_TOOL_API = "http://nyc.livepeer.com/orchestratorStats";
+export const PRICING_TOOL_API = "https://nyc.livepeer.com/orchestratorStats";
