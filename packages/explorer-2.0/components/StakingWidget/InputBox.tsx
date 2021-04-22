@@ -27,13 +27,11 @@ const InputBox = ({
         width: "100%",
         border: "1px solid",
         borderColor: "$border",
-      }}
-    >
+      }}>
       <Box css={{ px: "$3", py: "$3" }}>
         <Box>
           <Flex
-            css={{ fontSize: "$1", mb: "$3", justifyContent: "space-between" }}
-          >
+            css={{ fontSize: "$1", mb: "$3", justifyContent: "space-between" }}>
             <Box css={{ color: "$muted" }}>Input</Box>
 
             {account &&
@@ -42,8 +40,7 @@ const InputBox = ({
                   data-tip="Enter max"
                   data-for="balance"
                   onClick={() => setAmount(tokenBalance)}
-                  css={{ cursor: "pointer", color: "$muted" }}
-                >
+                  css={{ cursor: "pointer", color: "$muted" }}>
                   <ReactTooltip
                     id="balance"
                     className="tooltip"
@@ -63,8 +60,7 @@ const InputBox = ({
                       data-tip="Enter max"
                       data-for="stake"
                       onClick={() => setAmount(stake)}
-                      css={{ cursor: "pointer", color: "$muted" }}
-                    >
+                      css={{ cursor: "pointer", color: "$muted" }}>
                       <ReactTooltip
                         id="stake"
                         className="tooltip"
@@ -81,7 +77,9 @@ const InputBox = ({
                 </>
               ))}
           </Flex>
-          <Flex css={{ justifyContent: "space-between", alignItems: "center" }}>
+          <Flex
+            as="form"
+            css={{ justifyContent: "space-between", alignItems: "center" }}>
             <Input
               transcoder={transcoder}
               value={amount}

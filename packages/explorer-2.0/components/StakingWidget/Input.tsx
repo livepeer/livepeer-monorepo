@@ -56,6 +56,7 @@ const Input = ({ transcoder, value = "", onChange, protocol, ...props }) => {
         placeholder="0.0"
         type="number"
         min="0"
+        step="any"
         autoFocus={width > 1020}
         value={value}
         onChange={onChange}
