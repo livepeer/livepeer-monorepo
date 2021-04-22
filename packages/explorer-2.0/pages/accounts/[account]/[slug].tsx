@@ -178,7 +178,7 @@ const Account = () => {
     asPath,
     isMyDelegate
   );
-  console.log("hi", delegateProfile?.threeBoxSpace);
+
   return (
     <>
       <Flex
