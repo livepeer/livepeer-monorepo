@@ -181,7 +181,7 @@ const Index = ({ currentRound, transcoder }) => {
               {transcoder.price <= 0 ? (
                 "N/A"
               ) : (
-                <Price value={transcoder.price} per={priceSetting} />
+                <Price value={transcoder.price} />
               )}
             </Subtitle>
           }

@@ -39,8 +39,7 @@ const StakingTable = ({
         css={{
           alignItems: "center",
           pl: "$4",
-        }}
-      >
+        }}>
         <Box
           as={MagnifyingGlassIcon}
           css={{ width: 16, height: 16, mr: "$2", color: "$muted" }}
@@ -236,8 +235,7 @@ const StakingTable = ({
           pb: "$4",
           mx: 0,
           justifyContent: "space-between",
-        }}
-      >
+        }}>
         <Box>{accountColumn.render("Filter")}</Box>
       </Flex>
       <Box css={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
@@ -250,15 +248,13 @@ const StakingTable = ({
             borderSpacing: "0",
             borderCollapse: "collapse",
           }}
-          {...getTableProps()}
-        >
+          {...getTableProps()}>
           <Box css={{ display: "table-header-group" }}>
             {headerGroups.map((headerGroup, index1) => (
               <Box
                 css={{ display: "table-row" }}
                 key={index1}
-                {...headerGroup.getHeaderGroupProps()}
-              >
+                {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column, index2) => (
                   <Box
                     css={{
@@ -276,16 +272,14 @@ const StakingTable = ({
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={index2}
-                  >
+                    key={index2}>
                     <Flex
                       css={{
                         justifyContent:
                           index2 === 0 || index2 === 1
                             ? "flex-start"
                             : "flex-end",
-                      }}
-                    >
+                      }}>
                       <Flex
                         css={{
                           alignItems: "center",
@@ -294,8 +288,7 @@ const StakingTable = ({
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
-                        )}
-                      >
+                        )}>
                         {column.isSorted ? (
                           column.isSortedDesc ? (
                             <Box
@@ -333,8 +326,7 @@ const StakingTable = ({
                   css={{
                     display: "table-row",
                     height: 64,
-                  }}
-                >
+                  }}>
                   {row.cells.map((cell, i) => {
                     switch (cell.column.Header) {
                       case "#":
@@ -351,8 +343,7 @@ const StakingTable = ({
                           <TableCell cell={cell} key={i} css={{ pr: 0 }}>
                             <Link
                               href={`/accounts/${cell.value}/campaign`}
-                              passHref
-                            >
+                              passHref>
                               <Box
                                 as="a"
                                 css={{
@@ -361,8 +352,7 @@ const StakingTable = ({
                                   ":hover": {
                                     textDecoration: "underline",
                                   },
-                                }}
-                              >
+                                }}>
                                 <AccountCell
                                   active={active}
                                   threeBoxSpace={cell.row.values.threeBoxSpace}
@@ -380,8 +370,7 @@ const StakingTable = ({
                             css={{
                               textAlign: "right",
                               fontFamily: "$monospace",
-                            }}
-                          >
+                            }}>
                             {abbreviateNumber(cell.value ? cell.value : 0, 4)}
                           </TableCell>
                         );
@@ -393,8 +382,7 @@ const StakingTable = ({
                             css={{
                               textAlign: "right",
                               fontFamily: "$monospace",
-                            }}
-                          >
+                            }}>
                             {cell.value
                               ? +parseFloat(cell.value).toFixed(2)
                               : 0}{" "}
@@ -411,8 +399,7 @@ const StakingTable = ({
                             css={{
                               textAlign: "right",
                               fontFamily: "$monospace",
-                            }}
-                          >
+                            }}>
                             {cell.value / 10000}%
                           </TableCell>
                         );
@@ -424,8 +411,7 @@ const StakingTable = ({
                             css={{
                               textAlign: "right",
                               fontFamily: "$monospace",
-                            }}
-                          >
+                            }}>
                             {cell.value === "0" || !cell.value
                               ? "100%"
                               : `${(100 - cell.value / 10000)
@@ -442,13 +428,15 @@ const StakingTable = ({
                               textAlign: "right",
                               fontFamily: "$monospace",
                               pr: 0,
-                            }}
-                          >
+                            }}>
                             <Box as="span" data-html={true}>
                               {cell.value <= 0 ? (
                                 "N/A"
                               ) : (
-                                <Price value={cell.value} per={priceSetting} />
+                                <Price
+                                  value={cell.value}
+                                  css={{ justifyContent: "flex-end" }}
+                                />
                               )}
                             </Box>
                           </TableCell>
@@ -464,8 +452,7 @@ const StakingTable = ({
                             css={{
                               textAlign: "right",
                               fontFamily: "$monospace",
-                            }}
-                          >
+                            }}>
                             {`${callsMade}/${cell.value.length}`}
                           </TableCell>
                         );
@@ -484,8 +471,7 @@ const StakingTable = ({
           py: "$4",
           alignItems: "center",
           justifyContent: "center",
-        }}
-      >
+        }}>
         <Box
           as={ArrowLeftIcon}
           css={{
@@ -715,8 +701,7 @@ const TableCell = forwardRef(
           borderColor: "rgba(255,255,255,.05)",
           ...css,
         }}
-        {...cell.getCellProps()}
-      >
+        {...cell.getCellProps()}>
         {children}
       </Box>
     );
