@@ -28,7 +28,6 @@
     "3box": "1.19.1",
     "3id-blockchain-utils": "0.3.4",
     "@apollo/client": "^3.3.6",
-    "@emotion/react": "^11.1.4",
     "@livepeer/sdk": "^1.0.1-alpha.1",
     "@material-ui/core": "^4.8.0",
     "@mdx-js/loader": "^1.5.5",
