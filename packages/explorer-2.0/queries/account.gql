@@ -23,14 +23,6 @@ query($account: ID!) {
       id
       rewardCut
       totalStake
-      threeBoxSpace {
-        __typename
-        id
-        name
-        website
-        image
-        description
-      }
     }
   }
   account(id: $account) {

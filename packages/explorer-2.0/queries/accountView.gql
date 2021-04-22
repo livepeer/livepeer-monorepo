@@ -26,12 +26,6 @@ query($account: ID!) {
       status
       active
       totalStake
-      threeBoxSpace {
-        __typename
-        id
-        name
-        image
-      }
     }
   }
   transcoder(id: $account) {
@@ -50,25 +44,6 @@ query($account: ID!) {
     pools(first: 30, orderBy: id, orderDirection: desc) {
       rewardTokens
     }
-    threeBoxSpace {
-      __typename
-      id
-      name
-      website
-      image
-      description
-    }
-  }
-  threeBoxSpace(id: $account) {
-    __typename
-    id
-    did
-    name
-    website
-    description
-    image
-    addressLinks
-    defaultProfile
   }
   account(id: $account) {
     id

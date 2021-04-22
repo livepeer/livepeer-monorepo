@@ -2,7 +2,7 @@ import QRCode from "qrcode.react";
 import Box from "../Box";
 import Flex from "../Flex";
 
-const Header = ({ transcoder }) => {
+const Header = ({ transcoder, delegateProfile }) => {
   return (
     <Box
       as="h3"
@@ -13,14 +13,10 @@ const Header = ({ transcoder }) => {
         display: "flex",
         alignItems: "center",
         fontWeight: "bold",
-      }}
-    >
+      }}>
       <Flex
-        css={{ minWidth: 40, minHeight: 40, position: "relative", mr: "$3" }}
-      >
-        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-        transcoder?.threeBoxSpace &&
-        transcoder?.threeBoxSpace.image ? (
+        css={{ minWidth: 40, minHeight: 40, position: "relative", mr: "$3" }}>
+        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && delegateProfile?.image ? (
           <Box
             as="img"
             css={{
@@ -29,7 +25,7 @@ const Header = ({ transcoder }) => {
               width: 40,
               height: 40,
             }}
-            src={`https://ipfs.infura.io/ipfs/${transcoder?.threeBoxSpace.image}`}
+            src={`https://ipfs.infura.io/ipfs/${delegateProfile.image}`}
           />
         ) : (
           <QRCode
@@ -45,10 +41,9 @@ const Header = ({ transcoder }) => {
       </Flex>
       <Flex css={{ flexDirection: "column" }}>
         <Box as="h4" css={{ fontSize: 20 }}>
-          {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-          transcoder?.threeBoxSpace.name
-            ? transcoder?.threeBoxSpace.name
-            : transcoder?.id.replace(transcoder?.id.slice(7, 37), "…")}
+          {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && delegateProfile?.name
+            ? delegateProfile.name
+            : transcoder.id.replace(transcoder.id.slice(7, 37), "…")}
         </Box>
         <Box
           css={{

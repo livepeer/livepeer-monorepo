@@ -4,7 +4,14 @@ import ProjectionBox from "./ProjectionBox";
 import ArrowDown from "../../public/img/arrow-down.svg";
 import Footer from "./Footer";
 import { Tabs, TabList, Tab } from "./Tabs";
-import { Account, Delegator, Transcoder, Protocol, Round } from "../../@types";
+import {
+  Account,
+  Delegator,
+  Transcoder,
+  Protocol,
+  Round,
+  ThreeBoxSpace,
+} from "../../@types";
 import InputBox from "./InputBox";
 import Box from "../Box";
 import Flex from "../Flex";
@@ -17,6 +24,7 @@ interface Props {
   account: Account;
   currentRound: Round;
   selectedAction?: string;
+  delegateProfile?: ThreeBoxSpace;
 }
 
 const Index = ({
@@ -27,6 +35,7 @@ const Index = ({
   protocol,
   currentRound,
   selectedAction = "stake",
+  delegateProfile,
 }: Props) => {
   const [amount, setAmount] = useState("");
   const [action, setAction] = useState(selectedAction);
@@ -43,14 +52,14 @@ const Index = ({
           "@bp3": {
             borderBottomRightRadius: "16px",
           },
-        }}
-      >
-        <Header transcoder={transcoder} />
+        }}>
+        <Header transcoder={transcoder} delegateProfile={delegateProfile} />
         <Box css={{ pt: "$2", pb: "$3", px: "$3" }}>
           <Tabs
             defaultIndex={selectedAction === "stake" ? 0 : 1}
-            onChange={(index: number) => setAction(index ? "unstake" : "stake")}
-          >
+            onChange={(index: number) =>
+              setAction(index ? "unstake" : "stake")
+            }>
             <TabList>
               <Tab>Stake</Tab>
               <Tab>Unstake</Tab>
@@ -73,8 +82,7 @@ const Index = ({
               width: "95%",
               height: 32,
               margin: "0 auto",
-            }}
-          >
+            }}>
             <ArrowDown css={{ width: 16, color: "rgba(255, 255, 255, .8)" }} />
           </Flex>
           <ProjectionBox action={action} />

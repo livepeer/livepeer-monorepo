@@ -29,7 +29,7 @@ const Index = ({ threeBoxSpace, active, address }) => {
     <Flex css={{ alignItems: "center" }}>
       <Flex
         css={{ minWidth: 30, minHeight: 30, position: "relative", mr: "$3" }}>
-        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.image ? (
+        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.image ? (
           <Box
             as="img"
             css={{
@@ -77,7 +77,7 @@ const Index = ({ threeBoxSpace, active, address }) => {
             alignItems: "center",
           }}>
           <Box css={{ fontWeight: 600 }}>
-            {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace.name
+            {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.name
               ? textTruncate(threeBoxSpace.name, 15, "…")
               : address.replace(address.slice(5, 39), "…")}
           </Box>
