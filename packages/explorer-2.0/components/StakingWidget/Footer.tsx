@@ -41,6 +41,7 @@ const Footer = ({
   if (!context.account) {
     return (
       <Button
+        color="primary"
         onClick={() =>
           client.writeQuery({
             query: gql`
@@ -53,8 +54,7 @@ const Footer = ({
             },
           })
         }
-        css={{ width: "100%" }}
-      >
+        css={{ width: "100%" }}>
         Connect Wallet
       </Button>
     );

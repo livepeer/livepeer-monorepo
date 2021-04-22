@@ -110,6 +110,35 @@ const Account = () => {
   `;
   const { data: selectedStakingAction } = useQuery(SELECTED_STAKING_ACTION);
 
+  const { data: threeBoxData } = useQuery(
+    gql`
+      {
+        threeBoxSpace(id: "${query?.account}") {
+          __typename
+          id
+          did
+          name
+          website
+          description
+          image
+          addressLinks
+          defaultProfile
+        }
+      }
+    `
+  );
+
+  const { data: delegateProfile } = useQuery(
+    gql`
+      {
+        threeBoxSpace(id: "${data?.delegator?.delegate?.id}") {
+          __typename
+          name
+        }
+      }
+    `
+  );
+
   if (loading || loadingTranscoders) {
     return (
       <Flex
@@ -121,8 +150,7 @@ const Account = () => {
           "@bp3": {
             height: "100vh",
           },
-        }}
-      >
+        }}>
         <Spinner />
       </Flex>
     );
@@ -150,7 +178,7 @@ const Account = () => {
     asPath,
     isMyDelegate
   );
-
+  console.log("hi", delegateProfile?.threeBoxSpace);
   return (
     <>
       <Flex
@@ -165,8 +193,7 @@ const Account = () => {
             pt: "$4",
             pr: "$5",
           },
-        }}
-      >
+        }}>
         {context.active && (
           <Box>
             {dataMyAccount?.account &&
@@ -179,12 +206,12 @@ const Account = () => {
         <Profile
           account={query?.account.toString()}
           delegator={data.delegator}
-          threeBoxSpace={data.threeBoxSpace}
           isMyDelegate={isMyDelegate}
           isMyAccount={isMyAccount}
           refetch={refetch}
           role={role}
           transcoder={data.transcoder}
+          threeBoxSpace={threeBoxData?.threeBoxSpace}
         />
         <Tabs tabs={tabs} />
         {slug === "campaign" && (
@@ -202,6 +229,7 @@ const Account = () => {
             transcoders={dataTranscoders.transcoders}
             delegator={data.delegator}
             protocol={data.protocol}
+            delegateProfile={delegateProfile?.threeBoxSpace}
             currentRound={data.protocol.currentRound}
           />
         )}
@@ -221,8 +249,7 @@ const Account = () => {
                 width: "28%",
                 display: "flex",
               },
-            }}
-          >
+            }}>
             <StakingWidget
               currentRound={data.protocol.currentRound}
               transcoders={dataTranscoders.transcoders}
@@ -230,6 +257,7 @@ const Account = () => {
               account={dataMyAccount?.account}
               transcoder={data.transcoder}
               protocol={data.protocol}
+              delegateProfile={delegateProfile?.threeBoxSpace}
             />
           </Flex>
         ) : (
@@ -242,6 +270,7 @@ const Account = () => {
               account={dataMyAccount?.account}
               transcoder={data.transcoder}
               protocol={data.protocol}
+              delegateProfile={delegateProfile?.threeBoxSpace}
             />
           </BottomDrawer>
         ))}

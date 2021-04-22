@@ -18,10 +18,10 @@ interface Props {
   role?: string;
   refetch?: any;
   isMyDelegate: boolean;
-  threeBoxSpace: ThreeBoxSpace;
   delegator: Delegator;
   transcoder: Transcoder;
   isMyAccount: boolean;
+  threeBoxSpace?: ThreeBoxSpace;
   css?: object;
 }
 
@@ -31,8 +31,8 @@ const Index = ({
   isMyDelegate,
   refetch,
   transcoder,
-  threeBoxSpace,
   isMyAccount = false,
+  threeBoxSpace,
 }: Props) => {
   const client = useApolloClient();
   const [copied, setCopied] = useState(false);
@@ -62,11 +62,8 @@ const Index = ({
             maxWidth: 70,
             maxHeight: 70,
           },
-        }}
-      >
-        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-        threeBoxSpace &&
-        threeBoxSpace.image ? (
+        }}>
+        {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.image ? (
           <Box
             as="img"
             css={{
@@ -122,11 +119,8 @@ const Index = ({
               "@bp3": {
                 fontSize: "$5",
               },
-            }}
-          >
-            {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-            threeBoxSpace &&
-            threeBoxSpace.name
+            }}>
+            {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.name
               ? threeBoxSpace.name
               : account.replace(account.slice(5, 39), "…")}
             <Flex
@@ -142,8 +136,7 @@ const Index = ({
                 height: 26,
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <ReactTooltip
                 id="copy"
                 className="tooltip"
@@ -191,8 +184,7 @@ const Index = ({
             css={{ fontSize: "$2", color: "$primary" }}
             href={threeBoxSpace.website}
             target="__blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             {threeBoxSpace.website.replace(/(^\w+:|^)\/\//, "")}
           </Box>
         </Flex>
@@ -204,8 +196,7 @@ const Index = ({
           "@bp3": {
             display: "none",
           },
-        }}
-      >
+        }}>
         {(role === "Orchestrator" || isMyDelegate) && (
           <Button
             css={{ mr: "$3" }}
@@ -222,8 +213,7 @@ const Index = ({
                   selectedStakingAction: "stake",
                 },
               })
-            }
-          >
+            }>
             Stake
           </Button>
         )}
@@ -244,8 +234,7 @@ const Index = ({
               })
             }
             css={{ color: "$red", borderColor: "$red" }}
-            outline
-          >
+            outline>
             Unstake
           </Button>
         )}
@@ -263,8 +252,7 @@ const Index = ({
               <Box as="span" css={{ color: "$primary" }}>
                 Show Less
               </Box>
-            }
-          >
+            }>
             <Box
               css={{ a: { color: "$primary" } }}
               dangerouslySetInnerHTML={{
@@ -275,9 +263,8 @@ const Index = ({
         </Box>
       )}
       {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-        threeBoxSpace &&
-        threeBoxSpace.addressLinks &&
-        threeBoxSpace.addressLinks.length > 0 &&
+        threeBoxSpace?.addressLinks &&
+        threeBoxSpace?.addressLinks.length > 0 &&
         role !== "Orchestrator" && (
           <Box css={{ my: "$4" }}>
             <Box
@@ -288,16 +275,14 @@ const Index = ({
                 borderRadius: 10,
                 border: "1px dashed",
                 borderColor: "$border",
-              }}
-            >
+              }}>
               <Box
                 css={{
                   mb: "6px",
                   fontWeight: 600,
                   fontSize: "$1",
                   color: "$muted",
-                }}
-              >
+                }}>
                 External Account
               </Box>
               <Flex>
@@ -306,8 +291,7 @@ const Index = ({
                     href={`/accounts/[account]/[slug]`}
                     as={`/accounts/${link.address}/campaign`}
                     passHref
-                    key={i}
-                  >
+                    key={i}>
                     <Box
                       as="a"
                       css={{
@@ -326,8 +310,7 @@ const Index = ({
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                      }}
-                    >
+                      }}>
                       {link.address
                         .replace(link.address.slice(10, 34), "…")
                         .toLowerCase()}

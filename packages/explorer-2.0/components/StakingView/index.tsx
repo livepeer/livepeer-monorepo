@@ -11,10 +11,17 @@ import ReactTooltip from "react-tooltip";
 import Button from "../Button";
 import HelpIcon from "../HelpIcon";
 
-const Index = ({ delegator, transcoders, protocol, currentRound }) => {
+const Index = ({
+  delegator,
+  transcoders,
+  protocol,
+  currentRound,
+  delegateProfile,
+}) => {
   const router = useRouter();
   const query = router.query;
   const context = useWeb3React();
+
   const isMyAccount = checkAddressEquality(
     context?.account,
     query.account.toString()
@@ -70,8 +77,8 @@ const Index = ({ delegator, transcoders, protocol, currentRound }) => {
                   color: "$text",
                 }}>
                 {process.env.NEXT_PUBLIC_THREEBOX_ENABLED &&
-                delegator.delegate.threeBoxSpace.name
-                  ? delegator.delegate.threeBoxSpace.name
+                delegateProfile?.name
+                  ? delegateProfile.name
                   : delegator.delegate.id.replace(
                       delegator.delegate.id.slice(7, 37),
                       "…"
