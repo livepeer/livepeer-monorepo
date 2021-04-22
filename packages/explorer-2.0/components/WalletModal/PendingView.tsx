@@ -1,4 +1,5 @@
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Spinner from "../Spinner";
 import { SUPPORTED_WALLETS } from "../../lib/constants";
 import Option from "./Option";
@@ -7,18 +8,18 @@ import { Injected } from "../../lib/connectors";
 const PendingView = ({ connector }) => {
   const isMetamask = window["ethereum"] && window["ethereum"].isMetaMask;
   return (
-    <>
+    <Box>
       <Flex
-        sx={{
+        css={{
           alignItems: "center",
           border: "1px solid",
-          borderColor: "border",
+          borderColor: "$border",
           borderRadius: 10,
-
-          p: 2,
-          mb: 2,
-        }}>
-        <Spinner speed="1.5s" sx={{ width: 20, height: 20, mr: 2 }} />
+          p: "$3",
+          mb: "$3",
+        }}
+      >
+        <Spinner speed="1.5s" css={{ width: 20, height: 20, mr: "$3" }} />
         Initializing
       </Flex>
       {Object.keys(SUPPORTED_WALLETS).map((key) => {
@@ -45,7 +46,7 @@ const PendingView = ({ connector }) => {
         }
         return null;
       })}
-    </>
+    </Box>
   );
 };
 

@@ -11,6 +11,7 @@ const Index = ({ unbondingLockId, newPosPrev, newPosNext, delegator }) => {
   return (
     <>
       <Button
+        color="primary"
         onClick={() => {
           initTransaction(client, async () => {
             await rebond({
@@ -24,7 +25,8 @@ const Index = ({ unbondingLockId, newPosPrev, newPosNext, delegator }) => {
             });
           });
         }}
-        sx={{ py: 1, mr: 2, variant: "buttons.secondary" }}>
+        css={{ py: "$2", mr: "$3" }}
+      >
         Restake
       </Button>
     </>

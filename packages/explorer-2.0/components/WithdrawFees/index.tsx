@@ -16,6 +16,7 @@ const Index = ({ delegator, ...props }) => {
   return (
     <>
       <Button
+        color="primary"
         onClick={() => {
           initTransaction(client, async () => {
             await withdrawFees({
@@ -26,7 +27,8 @@ const Index = ({ delegator, ...props }) => {
             });
           });
         }}
-        {...props}>
+        {...props}
+      >
         Withdraw
       </Button>
     </>

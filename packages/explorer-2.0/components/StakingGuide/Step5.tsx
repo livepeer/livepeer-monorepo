@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react";
-import { Styled } from "theme-ui";
+import Box from "../Box";
 import Button from "../Button";
 import { usePageVisibility } from "../../hooks";
 import Router from "next/router";
@@ -46,12 +46,14 @@ const Step5 = ({ goTo, nextStep }) => {
   }, [dataMyAccount.account.allowance, goTo, nextStep]);
 
   return (
-    <div sx={{ py: 1 }}>
-      <Styled.h2 sx={{ mb: 2 }}>Unlock Livepeer Tokens</Styled.h2>
-      <Styled.p>
+    <Box css={{ py: "$2" }}>
+      <Box as="h3" css={{ mb: "$3" }}>
+        Unlock Livepeer Tokens
+      </Box>
+      <Box>
         Allow Livepeer smart contracts to transfer Livepeer tokens on your
         behalf?
-      </Styled.p>
+      </Box>
 
       <Button
         onClick={async () => {
@@ -68,10 +70,11 @@ const Step5 = ({ goTo, nextStep }) => {
             };
           }
         }}
-        sx={{ position: "absolute", right: 30, bottom: 16 }}>
+        css={{ position: "absolute", right: 30, bottom: 16 }}
+      >
         Unlock LPT
       </Button>
-    </div>
+    </Box>
   );
 };
 

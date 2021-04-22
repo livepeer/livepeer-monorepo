@@ -1,15 +1,20 @@
-import { Flex, Box, Styled } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { forwardRef, useMemo } from "react";
 import { useTable, useFilters, useSortBy, usePagination } from "react-table";
-import Search from "../../public/img/search.svg";
 import Help from "../../public/img/help.svg";
 import matchSorter from "match-sorter";
 import AccountCell from "../AccountCell";
 import ReactTooltip from "react-tooltip";
-import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
-import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 import Link from "next/link";
 import { TableCellProps } from "../../@types";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+} from "@modulz/radix-icons";
 
 const PerformanceTable = ({
   pageSize = 10,
@@ -28,24 +33,29 @@ const PerformanceTable = ({
   function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
       <Flex
-        sx={{
+        css={{
           alignItems: "center",
-          pl: 3,
-        }}>
-        <Search sx={{ width: 16, height: 16, mr: 1, color: "muted" }} />
-        <input
+          pl: "$4",
+        }}
+      >
+        <Box
+          as={MagnifyingGlassIcon}
+          css={{ width: 16, height: 16, mr: "$2", color: "$muted" }}
+        />
+        <Box
+          as="input"
           value={filterValue || ""}
           onChange={(e) => {
             setFilter(e.target.value || undefined);
           }}
           placeholder={`Filter`}
           type="text"
-          sx={{
+          css={{
             display: "block",
             outline: "none",
             width: "100%",
             appearance: "none",
-            fontSize: 2,
+            fontSize: "$3",
             lineHeight: "inherit",
             border: 0,
             color: "inherit",
@@ -210,7 +220,7 @@ const PerformanceTable = ({
   return (
     <>
       <Flex
-        sx={{
+        css={{
           position: "relative",
           width: "100%",
           top: 0,
@@ -218,16 +228,17 @@ const PerformanceTable = ({
           flexDirection: "column",
           alignItems: "flex-start",
           pt: 0,
-          pb: 3,
+          pb: "$4",
           ml: 0,
           mr: 0,
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         <Box>{accountColumn.render("Filter")}</Box>
       </Flex>
-      <Box sx={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
+      <Box css={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
         <Box
-          sx={{
+          css={{
             display: "table",
             tableLayout: "fixed",
             width: "100%",
@@ -235,54 +246,65 @@ const PerformanceTable = ({
             borderSpacing: "0",
             borderCollapse: "collapse",
           }}
-          {...getTableProps()}>
-          <Box sx={{ display: "table-header-group" }}>
+          {...getTableProps()}
+        >
+          <Box css={{ display: "table-header-group" }}>
             {headerGroups.map((headerGroup, index1) => (
               <Box
-                sx={{ display: "table-row" }}
+                css={{ display: "table-row" }}
                 key={index1}
-                {...headerGroup.getHeaderGroupProps()}>
+                {...headerGroup.getHeaderGroupProps()}
+              >
                 {headerGroup.headers.map((column, index2) => (
                   <Box
-                    sx={{
+                    css={{
                       borderBottom: "1px solid",
                       borderColor: "rgba(255,255,255,.05)",
-                      pb: 1,
-                      pl: 3,
-                      pr: index2 === 0 ? 0 : 3,
+                      pb: "$2",
+                      pl: "$4",
+                      pr: index2 === 0 ? 0 : "$3",
                       width: index2 === 0 ? 30 : "auto",
                       fontWeight: 700,
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={index2}>
+                    key={index2}
+                  >
                     <Flex
-                      sx={{
+                      css={{
                         justifyContent:
                           index2 === 0 || index2 === 1
                             ? "flex-start"
                             : "flex-end",
-                      }}>
-                      <span
-                        sx={{
+                      }}
+                    >
+                      <Flex
+                        css={{
+                          alignItems: "center",
                           fontSize: 10,
+                          position: "relative",
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
-                        )}>
-                        <span>
-                          {column.isSorted ? (
-                            column.isSortedDesc ? (
-                              <MdKeyboardArrowDown sx={{ ml: "-12px" }} />
-                            ) : (
-                              <MdKeyboardArrowUp sx={{ ml: "-12px" }} />
-                            )
+                        )}
+                      >
+                        {column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <Box
+                              as={ChevronDownIcon}
+                              css={{ height: 15, mr: "$2" }}
+                            />
                           ) : (
-                            ""
-                          )}
-                        </span>
+                            <Box
+                              as={ChevronUpIcon}
+                              css={{ height: 15, mr: "$2" }}
+                            />
+                          )
+                        ) : (
+                          <Box css={{ height: 15 }} />
+                        )}
                         {column.render("Header")}
-                      </span>
+                      </Flex>
                       {renderTooltip(column.render("Header"))}
                     </Flex>
                   </Box>
@@ -291,7 +313,7 @@ const PerformanceTable = ({
             ))}
           </Box>
 
-          <Box sx={{ display: "table-row-group" }} {...getTableBodyProps()}>
+          <Box css={{ display: "table-row-group" }} {...getTableBodyProps()}>
             {page.map((row, rowIndex) => {
               const orchestratorIndex = rowIndex + pageIndex * pageSize;
               prepareRow(row);
@@ -300,15 +322,16 @@ const PerformanceTable = ({
                 <Box
                   {...row.getRowProps()}
                   key={orchestratorIndex}
-                  sx={{
+                  css={{
                     display: "table-row",
                     height: 64,
-                  }}>
+                  }}
+                >
                   {row.cells.map((cell, i) => {
                     switch (cell.column.Header) {
                       case "#":
                         return (
-                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                          <TableCell cell={cell} key={i} css={{ pr: 0 }}>
                             {parseInt(rowIndex) + 1 + pageIndex * pageSize}
                           </TableCell>
                         );
@@ -317,24 +340,27 @@ const PerformanceTable = ({
                           cell.row.values.activationRound <= currentRound.id &&
                           cell.row.values.deactivationRound > currentRound.id;
                         return (
-                          <TableCell cell={cell} key={i} pushSx={{ pr: 0 }}>
+                          <TableCell cell={cell} key={i} css={{ pr: 0 }}>
                             <Link
                               href={`/accounts/${cell.value}/campaign`}
-                              passHref>
-                              <a
-                                sx={{
+                              passHref
+                            >
+                              <Box
+                                as="a"
+                                css={{
                                   display: "inherit",
                                   color: "inherit",
                                   ":hover": {
                                     textDecoration: "underline",
                                   },
-                                }}>
+                                }}
+                              >
                                 <AccountCell
                                   active={active}
                                   threeBoxSpace={cell.row.values.threeBoxSpace}
                                   address={cell.value}
                                 />
-                              </a>
+                              </Box>
                             </Link>
                           </TableCell>
                         );
@@ -349,10 +375,11 @@ const PerformanceTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
-                              fontFamily: "monospace",
+                            css={{
+                              fontFamily: "$monospace",
                               textAlign: "right",
-                            }}>
+                            }}
+                          >
                             {cell.value.toFixed(2)}%
                           </TableCell>
                         );
@@ -368,10 +395,11 @@ const PerformanceTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
-                              fontFamily: "monospace",
+                            css={{
+                              fontFamily: "$monospace",
                               textAlign: "right",
-                            }}>
+                            }}
+                          >
                             {(cell.value / 1000).toFixed(2)}
                           </TableCell>
                         );
@@ -387,10 +415,11 @@ const PerformanceTable = ({
                           <TableCell
                             cell={cell}
                             key={i}
-                            pushSx={{
-                              fontFamily: "monospace",
+                            css={{
+                              fontFamily: "$monospace",
                               textAlign: "right",
-                            }}>
+                            }}
+                          >
                             {(cell.value / 1000).toFixed(2)}
                           </TableCell>
                         );
@@ -405,15 +434,17 @@ const PerformanceTable = ({
         </Box>
       </Box>
       <Flex
-        sx={{
-          py: 4,
+        css={{
+          py: "$4",
           alignItems: "center",
           justifyContent: "center",
-        }}>
-        <RiArrowLeftLine
-          sx={{
+        }}
+      >
+        <Box
+          as={ArrowLeftIcon}
+          css={{
             cursor: "pointer",
-            color: canPreviousPage ? "primary" : "text",
+            color: canPreviousPage ? "$primary" : "$text",
             opacity: canPreviousPage ? 1 : 0.5,
           }}
           onClick={() => {
@@ -422,14 +453,19 @@ const PerformanceTable = ({
             }
           }}
         />
-        <Box sx={{ fontSize: 1, mx: 2 }}>
-          Page <span sx={{ fontFamily: "monospace" }}>{pageIndex + 1}</span> of{" "}
-          <span sx={{ fontFamily: "monospace" }}>{pageCount}</span>
-        </Box>
-        <RiArrowRightLine
-          sx={{
+        <Flex css={{ alignItems: "center", fontSize: "$2", mx: "$3" }}>
+          <Box css={{ mr: "$1" }}>Page</Box>
+          <Box as="span" css={{ fontFamily: "$monospace" }}>
+            {pageIndex + 1}
+          </Box>
+          <Box css={{ mx: "$1" }}>of</Box>
+          <Box css={{ fontFamily: "$monospace" }}>{pageCount}</Box>
+        </Flex>
+        <Box
+          as={ArrowRightIcon}
+          css={{
             cursor: "pointer",
-            color: canNextPage ? "primary" : "text",
+            color: canNextPage ? "$primary" : "$text",
             opacity: canNextPage ? 1 : 0.5,
           }}
           onClick={() => {
@@ -456,13 +492,14 @@ const PerformanceTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip='<span>The average percentage of video segments sent by a broadcaster that are successfully transcoded. See <a href="https://livepeer.org/docs/video-miners/reference/leaderboard" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-success-rate"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -483,13 +520,14 @@ const PerformanceTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip='<span>The average utility of the overall transcoding latency for an orchestrator. See <a href="https://livepeer.org/docs/video-miners/reference/leaderboard" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-latency-score"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -510,13 +548,14 @@ const PerformanceTable = ({
               delayHide={200}
               delayUpdate={500}
             />
-            <Help
+            <Box
+              as={Help}
               data-tip='<span>The average utility of the overall quality and reliability of an orchestrator based on success rate and latency scores. See <a href="https://livepeer.org/docs/video-miners/reference/leaderboard" rel="noopener noreferrer" target="_blank">the FAQ</a> for more details on how this metric is calculated.</span>'
               data-for="tooltip-score"
-              sx={{
+              css={{
                 cursor: "pointer",
                 position: "relative",
-                ml: 1,
+                ml: "$2",
                 top: "1px",
                 width: 12,
                 height: 12,
@@ -533,39 +572,32 @@ const PerformanceTable = ({
 
 const TableCell = forwardRef(
   (
-    {
-      children,
-      href,
-      target,
-      cell,
-      onClick,
-      as = "div",
-      pushSx,
-    }: TableCellProps,
+    { children, href, target, cell, onClick, as = "div", css }: TableCellProps,
     ref
   ) => {
     return (
-      <Styled.div
+      <Box
         as={as}
         target={target}
         href={href}
         ref={ref}
         onClick={onClick}
-        sx={{
+        css={{
           justifyContent: "flex-end",
           color: "inherit",
           display: "table-cell",
           width: "auto",
-          fontSize: 1,
-          px: 3,
+          fontSize: "$2",
+          px: "$4",
           verticalAlign: "middle",
           borderBottom: "1px solid",
           borderColor: "rgba(255,255,255,.05)",
-          ...pushSx,
+          ...css,
         }}
-        {...cell.getCellProps()}>
+        {...cell.getCellProps()}
+      >
         {children}
-      </Styled.div>
+      </Box>
     );
   }
 );

@@ -1,12 +1,13 @@
-import { Spinner, Box } from "@theme-ui/components";
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Button from "../Button";
 import Modal from "../Modal";
 import { useTimeEstimate } from "../../hooks";
 import { txMessages } from "../../lib/utils";
 import Utils from "web3-utils";
 import moment from "moment";
-import { MdOpenInNew } from "react-icons/md";
+import Spinner from "../Spinner";
+import { ExternalLinkIcon } from "@modulz/radix-icons";
 
 const Index = ({ tx, isOpen, onDismiss }) => {
   const { timeLeft } = useTimeEstimate({
@@ -20,9 +21,10 @@ const Index = ({ tx, isOpen, onDismiss }) => {
       clickAnywhereToClose={false}
       onDismiss={onDismiss}
       title="Sending"
-      Icon={<Spinner variant="styles.spinner" />}>
+      Icon={<Spinner />}
+    >
       <Box
-        sx={{
+        css={{
           position: "absolute",
           top: 0,
           left: 0,
@@ -36,23 +38,25 @@ const Index = ({ tx, isOpen, onDismiss }) => {
       />
 
       <Box
-        sx={{
+        css={{
           borderRadius: 10,
           border: "1px solid",
-          borderColor: "border",
-          mb: 3,
-        }}>
+          borderColor: "$border",
+          mb: "$4",
+        }}
+      >
         <Header tx={tx} timeLeft={timeLeft} />
         <Box
-          sx={{
-            px: 2,
-            py: 3,
-          }}>
+          css={{
+            px: "$3",
+            py: "$4",
+          }}
+        >
           {Table({ tx, timeLeft })}
         </Box>
       </Box>
 
-      <Button onClick={() => onDismiss()} sx={{ width: "100%" }}>
+      <Button onClick={() => onDismiss()} css={{ width: "100%" }}>
         Close
       </Button>
     </Modal>
@@ -74,11 +78,13 @@ function Table({ tx, timeLeft }) {
           ? `${parseFloat(Utils.fromWei(tx.gasPrice)) * tx.gas} ETH`
           : "Estimating..."}
       </Row>
-      <Row sx={{ mb: 0 }}>
-        <Box>Estimated wait</Box>{" "}
-        {timeLeft
-          ? `~${moment.duration(timeLeft, "seconds").humanize()} remaining`
-          : "Estimating..."}
+      <Row css={{ mb: 0 }}>
+        <Box>Estimated wait</Box>
+        <Box>
+          {timeLeft
+            ? `~${moment.duration(timeLeft, "seconds").humanize()} remaining`
+            : "Estimating..."}
+        </Box>
       </Row>
     </Box>
   );
@@ -152,38 +158,43 @@ function Inputs({ tx }) {
   }
 }
 
-function Row({ children, ...props }) {
+function Row({ css = {}, children, ...props }) {
   return (
     <Flex
-      sx={{
-        mb: 2,
+      css={{
+        mb: "$3",
         alignItems: "center",
         justifyContent: "space-between",
-        fontSize: 1,
+        fontSize: "$2",
+        ...css,
       }}
-      {...props}>
+      {...props}
+    >
       {children}
     </Flex>
   );
 }
 
-function Header({ tx, timeLeft }) {
+function Header({ css = {}, tx, timeLeft }) {
   return (
     <Flex
-      sx={{
+      css={{
         borderBottom: "1px solid",
-        borderColor: "border",
-        p: 2,
+        borderColor: "$border",
+        p: "$3",
         alignItems: "center",
         justifyContent: "space-between",
-      }}>
+        ...css,
+      }}
+    >
       <Flex
-        sx={{
-          mr: 2,
+        css={{
+          mr: "$3",
           color: "white",
-          fontSize: 0,
+          fontSize: "$1",
           fontWeight: "bold",
-        }}>
+        }}
+      >
         {timeLeft
           ? `${
               Math.floor(((tx?.estimate - timeLeft) / tx?.estimate) * 100) < 100
@@ -192,16 +203,19 @@ function Header({ tx, timeLeft }) {
             }%`
           : "0%"}
       </Flex>
-      <Box sx={{ fontWeight: 700 }}>{txMessages[tx?.__typename]?.pending}</Box>
-      <a
-        sx={{ display: "flex", alignItems: "center" }}
+      <Box css={{ fontWeight: 700 }}>{txMessages[tx?.__typename]?.pending}</Box>
+      <Box
+        as="a"
+        css={{ display: "flex", alignItems: "center" }}
         target="_blank"
         rel="noopener noreferrer"
         href={`https://${
           process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "rinkeby." : ""
-        }etherscan.io/tx/${tx?.txHash}`}>
-        Details <MdOpenInNew sx={{ ml: "6px", color: "primary" }} />
-      </a>
+        }etherscan.io/tx/${tx?.txHash}`}
+      >
+        Details{" "}
+        <Box as={ExternalLinkIcon} css={{ ml: "6px", color: "$primary" }} />
+      </Box>
     </Flex>
   );
 }

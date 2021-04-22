@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Flex, Styled } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Router from "next/router";
 import Copy from "../../public/img/copy.svg";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -31,74 +32,87 @@ const Step4 = ({ goTo, nextStep }) => {
   }, [copied]);
 
   return (
-    <div sx={{ pb: 1 }}>
-      <Styled.h2 sx={{ mb: 2 }}>Swap ETH for LPT</Styled.h2>
-      <div sx={{ lineHeight: 1.5 }}>
-        <div sx={{ mb: 2 }}>
+    <Box css={{ pb: "$2" }}>
+      <Box as="h3" css={{ mb: "$3" }}>
+        Swap ETH for LPT
+      </Box>
+      <Box>
+        <Box css={{ mb: "$3" }}>
           Don't have ETH? Get some on{" "}
-          <a
+          <Box
+            as="a"
             href="https://coinbase.com"
             target="__blank"
-            sx={{
+            css={{
               color: "rgba(22, 82, 240)",
               textDecoration: "underline",
-            }}>
+            }}
+          >
             Coinbase
-          </a>{" "}
+          </Box>{" "}
           and send to your address.
-        </div>
-        <div>My Address:</div>
-        <div
-          sx={{
+        </Box>
+        <Box>My Address:</Box>
+        <Box
+          css={{
             display: "inline-flex",
             alignItems: "center",
-            fontFamily: "monospace",
-            mb: 3,
-          }}>
+            fontFamily: "$monospace",
+            mb: "$4",
+          }}
+        >
           <CopyToClipboard
             text={context.account}
-            onCopy={() => setCopied(true)}>
-            <Flex sx={{ alignItems: "center" }}>
-              <span sx={{ fontSize: 2, fontFamily: "monospace", mr: 1 }}>
+            onCopy={() => setCopied(true)}
+          >
+            <Flex css={{ alignItems: "center" }}>
+              <Box
+                as="span"
+                css={{ fontSize: "$2", fontFamily: "$monospace", mr: "$2" }}
+              >
                 {context.account.replace(context.account.slice(7, 37), "…")}
-              </span>
+              </Box>
               <Copy
-                sx={{
-                  mr: 1,
+                css={{
+                  mr: "$2",
                   cursor: "pointer",
                   width: 14,
                   height: 14,
-                  color: "text",
+                  color: "$text",
                 }}
               />
             </Flex>
           </CopyToClipboard>
-          {copied && <span sx={{ fontSize: 12, color: "text" }}>Copied</span>}
-        </div>
-      </div>
+          {copied && (
+            <Box as="span" css={{ fontSize: 12, color: "$text" }}>
+              Copied
+            </Box>
+          )}
+        </Box>
+      </Box>
 
-      <div sx={{ fontFamily: "monospace", mb: 1 }}>
+      <Box css={{ fontFamily: "$monospace", mb: "$2" }}>
         ETH Balance:{" "}
-        <span sx={{ fontWeight: "bold" }}>
+        <Box as="span" css={{ fontWeight: "bold" }}>
           {abbreviateNumber(
             +Utils.fromWei(dataMyAccount?.account?.ethBalance),
             2
           )}
-        </span>
-      </div>
-      <div sx={{ fontFamily: "monospace" }}>
+        </Box>
+      </Box>
+      <Box css={{ fontFamily: "$monospace" }}>
         LPT Balance:{" "}
-        <span sx={{ fontWeight: "bold" }}>
+        <Box as="span" css={{ fontWeight: "bold" }}>
           {dataMyAccount?.account &&
             abbreviateNumber(
               +Utils.fromWei(dataMyAccount?.account?.tokenBalance),
               2
             )}
-        </span>
-      </div>
+        </Box>
+      </Box>
       <Button
         disabled={dataMyAccount?.account.tokenBalance === "0"}
-        sx={{ position: "absolute", right: 30, bottom: 16 }}
+        css={{ position: "absolute", right: 30, bottom: 16 }}
         onClick={async () => {
           client.writeQuery({
             query: gql`
@@ -116,10 +130,11 @@ const Step4 = ({ goTo, nextStep }) => {
             await Router.push("/");
             goTo(nextStep + 1);
           }
-        }}>
+        }}
+      >
         Next
       </Button>
-    </div>
+    </Box>
   );
 };
 

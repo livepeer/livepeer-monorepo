@@ -1,5 +1,6 @@
 import { NetworkStatus, useQuery } from "@apollo/client";
-import { Box, Flex, Styled } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import PerformanceTable from "./PerformanceTable";
 import StakingTable from "./StakingTable";
 import { useRouter } from "next/router";
@@ -22,14 +23,14 @@ const regions = {
 
 const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
   return (
-    <Flex sx={{ alignItems: "center" }}>
+    <Flex css={{ alignItems: "center" }}>
       <Box
         onClick={async () => {
           await setTimeframe("1D");
           await refetch();
         }}
-        sx={{
-          fontSize: 0,
+        css={{
+          fontSize: "$1",
           borderRadius: 8,
           fontWeight: 600,
           cursor: "pointer",
@@ -37,9 +38,10 @@ const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
           borderColor: "rgba(255,255,255,.1)",
           bg: timeframe === "1D" ? "rgba(255,255,255,.1)" : "transparent",
           py: "6px",
-          px: 1,
-          mr: 1,
-        }}>
+          px: "$2",
+          mr: "$2",
+        }}
+      >
         1D
       </Box>
       <Box
@@ -47,8 +49,8 @@ const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
           await setTimeframe("1W");
           await refetch();
         }}
-        sx={{
-          fontSize: 0,
+        css={{
+          fontSize: "$1",
           borderRadius: 8,
           fontWeight: 600,
           cursor: "pointer",
@@ -56,8 +58,9 @@ const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
           borderColor: "rgba(255,255,255,.1)",
           bg: timeframe === "1W" ? "rgba(255,255,255,.1)" : "transparent",
           py: "6px",
-          px: 1,
-        }}>
+          px: "$2",
+        }}
+      >
         1W
       </Box>
     </Flex>
@@ -120,34 +123,47 @@ const Index = ({ pageSize = 10, title = "" }) => {
   return (
     <Box className="tour-step-6">
       {title && (
-        <Styled.h2 sx={{ fontWeight: 500, fontSize: 18, mb: 2 }}>
+        <Box as="h2" css={{ fontWeight: 500, fontSize: 18, mb: "$2" }}>
           {title}
-        </Styled.h2>
+        </Box>
       )}
       <Box
-        sx={{
+        css={{
           boxShadow: "rgba(0, 0, 0, 0.05) 0px 6px 10px",
           position: "relative",
-          pt: 2,
-          mb: 3,
+          pt: "$3",
+          mb: "$4",
           minHeight: 500,
           width: "100%",
           background: "rgba(255, 255, 255, 0.01)",
           border: "1px solid",
           borderColor: "rgba(194,201,209,.15)",
           borderRadius: 10,
-        }}>
+        }}
+      >
         <Flex
-          sx={{
-            alignItems: ["flex-start", "flex-start", "center-start"],
-            flexDirection: ["column", "column", "row"],
+          css={{
+            alignItems: "flex-start",
+            flexDirection: "column",
             justifyContent: "space-between",
             pt: "6px",
             px: 22,
-            pb: 3,
-          }}>
-          <Box sx={{ mb: [2, 2, 0] }}>
-            <Flex sx={{ alignItems: "center" }}>
+            pb: "$4",
+            "@bp2": {
+              alignItems: "center-start",
+              flexDirection: "row",
+            },
+          }}
+        >
+          <Box
+            css={{
+              mb: "$3",
+              "@bp2": {
+                mb: 0,
+              },
+            }}
+          >
+            <Flex css={{ alignItems: "center" }}>
               <Box
                 onClick={() => {
                   setOrchestratorTable("staking");
@@ -155,8 +171,8 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     scroll: false,
                   });
                 }}
-                sx={{
-                  fontSize: 0,
+                css={{
+                  fontSize: "$1",
                   borderRadius: 8,
                   fontWeight: 600,
                   cursor: "pointer",
@@ -166,9 +182,10 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     ? "transparent"
                     : "rgba(255,255,255,.1)",
                   py: "6px",
-                  px: 1,
-                  mr: 1,
-                }}>
+                  px: "$2",
+                  mr: "$2",
+                }}
+              >
                 Staking
               </Box>
               <Box
@@ -182,8 +199,8 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     }
                   );
                 }}
-                sx={{
-                  fontSize: 0,
+                css={{
+                  fontSize: "$1",
                   borderRadius: 8,
                   fontWeight: 600,
                   cursor: "pointer",
@@ -193,22 +210,24 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     ? "rgba(255,255,255,.1)"
                     : "transparent",
                   py: "6px",
-                  px: 1,
-                }}>
+                  px: "$2",
+                }}
+              >
                 Performance
               </Box>
             </Flex>
           </Box>
 
           {performanceViewActive && (
-            <Flex sx={{ alignItems: "center" }}>
-              <Flex sx={{ alignItems: "center" }}>
+            <Flex css={{ alignItems: "center" }}>
+              <Flex css={{ alignItems: "center" }}>
                 <Box
-                  sx={{
+                  css={{
                     color: "rgba(255,255,255,.5)",
-                    fontSize: 1,
-                    mr: 1,
-                  }}>
+                    fontSize: "$2",
+                    mr: "$2",
+                  }}
+                >
                   Select Region:
                 </Box>
                 <Flex
@@ -217,16 +236,20 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     e.stopPropagation();
                     setIsRegionSelectorOpen(true);
                   }}
-                  sx={{
+                  css={{
                     alignItems: "center",
                     fontWeight: 600,
-                    fontSize: 1,
+                    fontSize: "$2",
                     cursor: "pointer",
                     borderBottom: "1px dashed rgba(255,255,255,.5)",
-                  }}>
-                  <span sx={{ mr: "8px" }}>{regions[region]}</span>
-                  <span
-                    sx={{
+                  }}
+                >
+                  <Box as="span" css={{ mr: "8px" }}>
+                    {regions[region]}
+                  </Box>
+                  <Box
+                    as="span"
+                    css={{
                       width: "0",
                       height: "0",
                       borderStyle: "solid",
@@ -246,12 +269,14 @@ const Index = ({ pageSize = 10, title = "" }) => {
                   }}
                   isOpen={isRegionSelectorOpen}
                   onClose={() => setIsRegionSelectorOpen(false)}
-                  buttonRef={targetRef}>
+                  buttonRef={targetRef}
+                >
                   <MenuItemRadioGroup
                     value={region}
                     onChange={(value) => {
                       setRegion(value);
-                    }}>
+                    }}
+                  >
                     <MenuItemRadio value="global" label="Global" />
                     <MenuItemRadio value="sin" label="Asia (Singapore)" />
                     <MenuItemRadio value="fra" label="Europe (Frankfurt)" />
@@ -262,7 +287,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
                   </MenuItemRadioGroup>
                 </Menu>
               </Flex>
-              <Box sx={{ ml: 3 }}>
+              <Box css={{ ml: "$4" }}>
                 <TimeframeToggle
                   refetch={refetch}
                   timeframe={timeframe}
@@ -277,7 +302,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
         https://github.com/apollographql/apollo-client/blob/main/src/core/networkStatus.ts */}
         {!data || networkStatus === NetworkStatus.refetch ? (
           <Box
-            sx={{
+            css={{
               position: "absolute",
               transform: "translate(-50%, -50%)",
               top: "calc(50%)",
@@ -285,7 +310,8 @@ const Index = ({ pageSize = 10, title = "" }) => {
               height: "500px",
               display: "flex",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Spinner />
           </Box>
         ) : (

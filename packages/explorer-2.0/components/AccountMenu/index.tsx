@@ -1,14 +1,20 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
+import Button from "../Button";
 import Link from "next/link";
 import { gql, useApolloClient } from "@apollo/client";
-import Account from "../../public/img/account.svg";
-import { FiChevronDown, FiLogOut, FiUser } from "react-icons/fi";
-import { MdSwapHoriz } from "react-icons/md";
+import AccountIcon from "../../public/img/account.svg";
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "../../hooks";
 import { useWeb3React } from "@web3-react/core";
 import Router, { useRouter } from "next/router";
 import WalletIcon from "../../public/img/wallet.svg";
+import {
+  ChevronDownIcon,
+  ExitIcon,
+  ResetIcon,
+  PersonIcon,
+} from "@modulz/radix-icons";
 
 const AccountMenu = ({ isInHeader = false }) => {
   const router = useRouter();
@@ -25,21 +31,22 @@ const AccountMenu = ({ isInHeader = false }) => {
   });
 
   return context?.active ? (
-    <Box ref={ref} sx={{ position: "relative" }}>
-      <Flex sx={{ alignItems: "center" }}>
+    <Box ref={ref} css={{ position: "relative" }}>
+      <Flex css={{ alignItems: "center" }}>
         <Link
           href="/accounts/[account]/[slug]"
           as={`/accounts/${context.account}/staking`}
           passHref>
-          <a
-            sx={{
+          <Box
+            as="a"
+            css={{
               color:
                 asPath.split("?")[0] === `/accounts/${context.account}/staking`
-                  ? "white"
-                  : "muted",
+                  ? "$text"
+                  : "$muted",
               lineHeight: "initial",
               display: "flex",
-              fontSize: 14,
+              fontSize: "$2",
               fontWeight: 500,
               cursor: "pointer",
               alignItems: "center",
@@ -52,14 +59,23 @@ const AccountMenu = ({ isInHeader = false }) => {
                 transition: "color .3s",
               },
             }}>
-            <Account sx={{ width: 20, height: 20, mr: "10px" }} />
+            <Flex
+              css={{
+                width: 18,
+                height: 18,
+                mr: "$3",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+              <AccountIcon />
+            </Flex>
             <Box>
               {context.account.replace(context.account.slice(5, 39), "…")}
             </Box>
-          </a>
+          </Box>
         </Link>
         <Flex
-          sx={{
+          css={{
             alignItems: "center",
             justifyContent: "center",
             width: 24,
@@ -79,8 +95,9 @@ const AccountMenu = ({ isInHeader = false }) => {
               ? setAccountMenuOpen(false)
               : setAccountMenuOpen(true);
           }}>
-          <FiChevronDown
-            sx={{
+          <Box
+            as={ChevronDownIcon}
+            css={{
               transition: ".1s",
               transform: isAccountMenuOpen ? "rotate(180deg)" : "rotate(0)",
             }}
@@ -89,28 +106,29 @@ const AccountMenu = ({ isInHeader = false }) => {
       </Flex>
       {isAccountMenuOpen && (
         <Box
-          sx={{
+          css={{
             top: 50,
             position: "absolute",
-            bg: "background",
+            bg: "$background",
             boxShadow:
               "0 12px 28px 0 rgba(0, 0, 0, 0.2),0 2px 4px 0 rgba(0, 0, 0, 0.1),inset 0 0 0 1px rgba(255, 255, 255, 0.05)",
             borderRadius: 10,
             width: "100%",
             left: 0,
-            p: 2,
+            p: "$3",
             zIndex: 1,
-            fontSize: 1,
+            fontSize: "$2",
           }}>
           <Link
             href="/accounts/[account]/[slug]"
             as={`/accounts/${context.account}/staking`}
             passHref>
-            <a
-              sx={{
-                color: "white",
+            <Box
+              as="a"
+              css={{
+                color: "$text",
                 display: "flex",
-                mb: 2,
+                mb: "$3",
                 alignItems: "center",
                 cursor: "pointer",
                 transition: ".2s",
@@ -120,13 +138,13 @@ const AccountMenu = ({ isInHeader = false }) => {
                   opacity: 1,
                 },
               }}>
-              <FiUser sx={{ mr: 1 }} />
+              <Box as={PersonIcon} css={{ mr: "$3" }} />
               View Profile
-            </a>
+            </Box>
           </Link>
           <Flex
-            sx={{
-              mb: 2,
+            css={{
+              mb: "$3",
               alignItems: "center",
               cursor: "pointer",
               transition: ".2s",
@@ -148,11 +166,11 @@ const AccountMenu = ({ isInHeader = false }) => {
                 },
               });
             }}>
-            <MdSwapHoriz sx={{ mr: 1 }} />
+            <Box as={ResetIcon} css={{ mr: "$3" }} />
             Switch wallet
           </Flex>
           <Flex
-            sx={{
+            css={{
               alignItems: "center",
               cursor: "pointer",
               transition: ".2s",
@@ -166,7 +184,7 @@ const AccountMenu = ({ isInHeader = false }) => {
               setAccountMenuOpen(false);
               context.deactivate();
             }}>
-            <FiLogOut sx={{ mr: 1 }} />
+            <Box as={ExitIcon} css={{ mr: "$3" }} />
             Disconnect
           </Flex>
         </Box>
@@ -187,39 +205,50 @@ const AccountMenu = ({ isInHeader = false }) => {
         });
       }}>
       {isInHeader ? (
-        <Box
-          sx={{
+        <Button
+          css={{
             mt: "3px",
             fontSize: 14,
             textTransform: "initial",
             borderRadius: 8,
-            ml: 2,
+            ml: "$3",
             fontWeight: 600,
             cursor: "pointer",
           }}
-          variant="buttons.primaryOutlineSmall">
+          color="primary"
+          outline
+          size="small">
           Connect Wallet
-        </Box>
+        </Button>
       ) : (
         <Box
-          sx={{
-            color: "muted",
+          css={{
+            color: "$muted",
             lineHeight: "initial",
             display: "flex",
-            fontSize: 14,
+            fontSize: "$2",
             fontWeight: 500,
             cursor: "pointer",
             alignItems: "center",
-            py: 1,
+            py: "$2",
             backgroundColor: "transparent",
             borderRadius: 5,
             transition: "color .3s",
             "&:hover": {
-              color: "primary",
+              color: "$primary",
               transition: "color .3s",
             },
           }}>
-          <WalletIcon sx={{ width: 20, height: 20, mr: 1 }} />
+          <Flex
+            css={{
+              width: 18,
+              height: 18,
+              mr: "$3",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <WalletIcon />
+          </Flex>
           Connect Wallet
         </Box>
       )}

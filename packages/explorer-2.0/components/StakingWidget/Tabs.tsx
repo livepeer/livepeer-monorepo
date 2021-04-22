@@ -3,38 +3,42 @@ import {
   TabList as ReachTabList,
   Tab as ReachTab,
 } from "@reach/tabs";
+import Box from "../Box";
 
 export const Tabs = (props) => <ReachTabs {...props} />;
 
 export const TabList = (props) => (
-  <ReachTabList
-    sx={{
+  <Box
+    as={ReachTabList}
+    css={{
       display: "flex",
       alignItems: "center",
       width: "100%",
       position: "relative",
       borderRadius: 32,
-      mb: 2,
+      mb: "$3",
     }}
     {...props}
   />
 );
 
 export const Tab = (props) => (
-  <ReachTab
-    sx={{
+  <Box
+    as={ReachTab}
+    css={{
       flex: 1,
       outline: "none",
       cursor: "pointer",
       textAlign: "center",
+      border: 0,
       color: props.isSelected
         ? props.children === "Unstake"
-          ? "red"
-          : "primary"
-        : "muted",
-      py: 1,
+          ? "$red"
+          : "$primary"
+        : "$muted",
+      py: "10px",
       width: "50%",
-      fontSize: 1,
+      fontSize: "$2",
       borderRadius: 32,
       fontWeight: 500,
       bg: props.isSelected

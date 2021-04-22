@@ -1,9 +1,8 @@
-import { Flex, Styled } from "theme-ui";
-import { Text } from "@theme-ui/components";
+import Box from "../../components/Box";
+import Flex from "../../components/Flex";
 import { getLayout } from "../../layouts/main";
 import fm from "front-matter";
 import IPFS from "ipfs-mini";
-import { Box } from "theme-ui";
 import Card from "../../components/Card";
 import VotingWidget from "../../components/VotingWidget";
 import ReactMarkdown from "react-markdown";
@@ -25,6 +24,7 @@ import accountQuery from "../../queries/account.gql";
 import voteQuery from "../../queries/vote.gql";
 import FourZeroFour from "../404";
 import { NextPage } from "next";
+import { Status } from "./";
 
 const Poll = () => {
   const router = useRouter();
@@ -128,17 +128,16 @@ const Poll = () => {
   if (!pollData) {
     return (
       <Flex
-        sx={{
-          height: [
-            "calc(100vh - 100px)",
-            "calc(100vh - 100px)",
-            "calc(100vh - 100px)",
-            "100vh",
-          ],
+        css={{
+          height: "calc(100vh - 100px)",
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
-        }}>
+          "@bp3": {
+            height: "100vh",
+          },
+        }}
+      >
         <Spinner />
       </Flex>
     );
@@ -153,37 +152,49 @@ const Poll = () => {
       <Head>
         <title>Livepeer Explorer - Voting</title>
       </Head>
-      <Flex sx={{ width: "100%" }}>
+      <Flex css={{ justifyContent: "space-between", width: "100%" }}>
         <Flex
-          sx={{
-            mt: [0, 0, 0, 5],
-            pr: [0, 0, 0, 6],
+          css={{
+            mt: "$3",
+            pr: 0,
             width: "100%",
             flexDirection: "column",
-          }}>
-          <Box sx={{ mb: 4, width: "100%" }}>
+            "@bp3": {
+              width: "65%",
+              mt: "$4",
+            },
+          }}
+        >
+          <Box css={{ mb: "$4", width: "100%" }}>
             <Flex
-              sx={{
-                mb: 1,
+              css={{
+                mb: "$2",
                 alignItems: "center",
-              }}>
-              <Box sx={{ mr: 1 }}>Status:</Box>
-              <Text
-                variant={pollData.status}
-                sx={{ textTransform: "capitalize", fontWeight: 700 }}>
+              }}
+            >
+              <Box css={{ mr: "$2" }}>Status:</Box>
+              <Status
+                color={pollData.status}
+                css={{ textTransform: "capitalize", fontWeight: 700 }}
+              >
                 {pollData.status}
-              </Text>
+              </Status>
             </Flex>
-            <Styled.h1
-              sx={{
-                fontSize: [3, 3, 26],
+            <Box
+              as="h1"
+              css={{
+                fontSize: "$4",
                 display: "flex",
                 mb: "10px",
                 alignItems: "center",
-              }}>
+                "@bp2": {
+                  fontSize: 26,
+                },
+              }}
+            >
               {pollData.title} (LIP-{pollData.lip})
-            </Styled.h1>
-            <Box sx={{ fontSize: 0, color: "muted" }}>
+            </Box>
+            <Box css={{ fontSize: "$1", color: "$muted" }}>
               {!pollData.isActive ? (
                 <Box>
                   Voting ended on{" "}
@@ -201,7 +212,14 @@ const Poll = () => {
             </Box>
             {pollData.isActive && (
               <Button
-                sx={{ display: ["flex", "flex", "flex", "none"], mt: 2, mr: 2 }}
+                css={{
+                  display: "flex",
+                  mt: "$3",
+                  mr: "$3",
+                  "@bp3": {
+                    display: "none",
+                  },
+                }}
                 onClick={() =>
                   client.writeQuery({
                     query: gql`
@@ -213,7 +231,8 @@ const Poll = () => {
                       bottomDrawerOpen: true,
                     },
                   })
-                }>
+                }
+              >
                 Vote
               </Button>
             )}
@@ -221,44 +240,46 @@ const Poll = () => {
 
           <Box>
             <Box
-              sx={{
+              css={{
                 display: "grid",
-                gridGap: 2,
-                gridTemplateColumns: [
-                  "100%",
-                  "100%",
-                  `repeat(auto-fit, minmax(128px, 1fr))`,
-                ],
-                mb: 2,
-              }}>
+                gridGap: "$3",
+                gridTemplateColumns: "100%",
+                mb: "$3",
+                "@bp2": {
+                  gridTemplateColumns: "repeat(auto-fit, minmax(128px, 1fr))",
+                },
+              }}
+            >
               <Card
-                sx={{ flex: 1, mb: 0 }}
+                css={{ flex: 1, mb: 0 }}
                 title={
-                  <Flex sx={{ alignItems: "center" }}>
-                    <Box sx={{ color: "muted" }}>
+                  <Flex css={{ alignItems: "center" }}>
+                    <Box css={{ color: "$muted" }}>
                       Total Support ({pollData.quota / 10000}% needed)
                     </Box>
                   </Flex>
                 }
                 subtitle={
                   <Box
-                    sx={{
-                      fontSize: 5,
-                      color: "text",
-                      lineHeight: "heading",
-                    }}>
+                    css={{
+                      fontSize: "$6",
+                      color: "$text",
+                    }}
+                  >
                     {pollData.totalSupport.toPrecision(5)}%
                   </Box>
-                }>
-                <Box sx={{ mt: 3 }}>
+                }
+              >
+                <Box css={{ mt: "$4" }}>
                   <Flex
-                    sx={{
-                      fontSize: 1,
-                      mb: 1,
+                    css={{
+                      fontSize: "$2",
+                      mb: "$2",
                       justifyContent: "space-between",
-                    }}>
-                    <Flex sx={{ alignItems: "center" }}>
-                      <Box sx={{ color: "muted" }}>
+                    }}
+                  >
+                    <Flex css={{ alignItems: "center" }}>
+                      <Box css={{ color: "$muted" }}>
                         Yes (
                         {isNaN(yesVoteStake / totalVoteStake)
                           ? 0
@@ -268,17 +289,18 @@ const Poll = () => {
                         %)
                       </Box>
                     </Flex>
-                    <span sx={{ fontFamily: "monospace" }}>
+                    <Box as="span" css={{ fontFamily: "$monospace" }}>
                       {abbreviateNumber(yesVoteStake, 4)} LPT
-                    </span>
+                    </Box>
                   </Flex>
                   <Flex
-                    sx={{
-                      fontSize: 1,
+                    css={{
+                      fontSize: "$2",
                       justifyContent: "space-between",
-                    }}>
-                    <Flex sx={{ alignItems: "center" }}>
-                      <Box sx={{ color: "muted" }}>
+                    }}
+                  >
+                    <Flex css={{ alignItems: "center" }}>
+                      <Box css={{ color: "$muted" }}>
                         No (
                         {isNaN(noVoteStake / totalVoteStake)
                           ? 0
@@ -288,86 +310,99 @@ const Poll = () => {
                         %)
                       </Box>
                     </Flex>
-                    <span sx={{ fontFamily: "monospace" }}>
+                    <Box as="span" css={{ fontFamily: "$monospace" }}>
                       {abbreviateNumber(noVoteStake, 4)} LPT
-                    </span>
+                    </Box>
                   </Flex>
                 </Box>
               </Card>
 
               <Card
-                sx={{ flex: 1, mb: 0 }}
+                css={{ flex: 1, mb: 0 }}
                 title={
-                  <Flex sx={{ alignItems: "center" }}>
-                    <Box sx={{ color: "muted" }}>
+                  <Flex css={{ alignItems: "center" }}>
+                    <Box css={{ color: "$muted" }}>
                       Total Participation ({pollData.quorum / 10000}% needed)
                     </Box>
                   </Flex>
                 }
                 subtitle={
                   <Box
-                    sx={{
-                      fontSize: 5,
-                      color: "text",
-                      lineHeight: "heading",
-                    }}>
+                    css={{
+                      fontSize: "$6",
+                      color: "$text",
+                    }}
+                  >
                     {pollData.totalParticipation.toPrecision(5)}%
                   </Box>
-                }>
-                <Box sx={{ mt: 3 }}>
+                }
+              >
+                <Box css={{ mt: "$4" }}>
                   <Flex
-                    sx={{
-                      fontSize: 1,
-                      mb: 1,
+                    css={{
+                      fontSize: "$2",
+                      mb: "$2",
                       justifyContent: "space-between",
-                    }}>
-                    <span sx={{ color: "muted" }}>
+                    }}
+                  >
+                    <Box as="span" css={{ color: "$muted" }}>
                       Voters ({pollData.totalParticipation.toPrecision(5)}
                       %)
-                    </span>
-                    <span>
-                      <span sx={{ fontFamily: "monospace" }}>
+                    </Box>
+                    <Box as="span">
+                      <Box as="span" css={{ fontFamily: "$monospace" }}>
                         {abbreviateNumber(totalVoteStake, 4)} LPT
-                      </span>
-                    </span>
+                      </Box>
+                    </Box>
                   </Flex>
-                  <Flex sx={{ fontSize: 1, justifyContent: "space-between" }}>
-                    <span sx={{ color: "muted" }}>
+                  <Flex
+                    css={{ fontSize: "$2", justifyContent: "space-between" }}
+                  >
+                    <Box as="span" css={{ color: "$muted" }}>
                       Nonvoters ({pollData.nonVoters.toPrecision(5)}
                       %)
-                    </span>
-                    <span>
-                      <span sx={{ fontFamily: "monospace" }}>
+                    </Box>
+                    <Box as="span">
+                      <Box as="span" css={{ fontFamily: "$monospace" }}>
                         {abbreviateNumber(pollData.nonVotersStake, 4)} LPT
-                      </span>
-                    </span>
+                      </Box>
+                    </Box>
                   </Flex>
                 </Box>
               </Card>
             </Box>
             <Card
-              sx={{
-                mb: 2,
-                h2: { ":first-of-type": { mt: 0 }, mt: 2 },
-                h3: { mt: 2 },
-                h4: { mt: 2 },
-                h5: { mt: 2 },
-              }}>
+              css={{
+                mb: "$3",
+                h2: { "&:first-of-type": { mt: 0 }, mt: "$3" },
+                h3: { mt: "$3" },
+                h4: { mt: "$3" },
+                h5: { mt: "$3" },
+                lineHeight: 1.5,
+                a: {
+                  color: "$primary",
+                },
+              }}
+            >
               <ReactMarkdown source={pollData.text} />
             </Card>
           </Box>
         </Flex>
 
-        {width > 1020 ? (
+        {width > 1200 ? (
           <Flex
-            sx={{
-              display: ["none", "none", "none", "flex"],
+            css={{
+              display: "none",
               position: "sticky",
               alignSelf: "flex-start",
-              top: 5,
-              mt: 3,
-              minWidth: "31%",
-            }}>
+              top: "$5",
+              mt: "$4",
+              minWidth: "30%",
+              "@bp3": {
+                display: "flex",
+              },
+            }}
+          >
             <VotingWidget
               data={{
                 poll: pollData,

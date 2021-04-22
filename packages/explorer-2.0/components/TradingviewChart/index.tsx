@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { formattedNum } from "../../lib/utils";
-import { Box } from "theme-ui";
+import Box from "../Box";
 
 dayjs.extend(utc);
 
@@ -233,7 +233,7 @@ const TradingViewChart = ({
 
   return (
     <Box
-      sx={{
+      css={{
         ".three-line-legend": {
           width: "100%",
           height: 70,
@@ -247,10 +247,11 @@ const TradingViewChart = ({
           pointerEvents: "none",
         },
         position: "relative",
-      }}>
-      <div ref={ref} id={"test-id" + type} />
+      }}
+    >
+      <Box ref={ref} id={"test-id" + type} />
       <Box
-        sx={{
+        css={{
           position: "absolute",
           right: "0",
           borderRadius: "3px",
@@ -261,12 +262,13 @@ const TradingViewChart = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "primary",
+          color: "$primary",
           ":hover": {
             cursor: "pointer",
             opacity: "0.7",
           },
-        }}>
+        }}
+      >
         <Box
           onClick={() => {
             chartCreated && chartCreated.timeScale().fitContent();

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { Collapse } from "react-collapse";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
@@ -22,67 +23,74 @@ const Index = ({ threeBoxSpace, refetch, children }) => {
   });
 
   return (
-    <div
-      sx={{
+    <Box
+      css={{
         border: "1px dashed",
-        borderColor: "border",
-        borderRadius: "4px",
-        p: 2,
+        borderColor: "$border",
+        borderRadius: "$5",
+        p: "$3",
       }}>
       <Flex
-        sx={{
+        css={{
           alignItems: "center",
           fontWeight: 500,
-          fontSize: 2,
-          mb: 2,
+          fontSize: "$3",
+          mb: "$3",
         }}>
-        <div sx={{ color: "muted" }}>External Accounts</div>
-        <div
-          sx={{ borderRadius: 1000, width: 2, height: 2, bg: "muted", mx: 1 }}
+        <Box css={{ color: "$muted" }}>External Accounts</Box>
+        <Box
+          css={{
+            borderRadius: 1000,
+            width: 2,
+            height: 2,
+            bg: "$muted",
+            mx: "$2",
+          }}
         />
-        <div
+        <Box
           onClick={() => {
             setOpen(open ? false : true);
           }}
-          sx={{ color: "primary", cursor: "pointer" }}>
+          css={{ color: "$primary", cursor: "pointer" }}>
           {open ? "Cancel" : "Add Account"}
-        </div>
+        </Box>
       </Flex>
-      <div sx={{ lineHeight: "24px" }}>
+      <Box css={{ lineHeight: "24px" }}>
         If you operate an orchestrator, adding an external account allows you to
         enjoy the benefits of a profile web UI, while keeping your keys in a
         more secure environment.
-      </div>
+      </Box>
       <Collapse isOpened={open}>{children}</Collapse>
       <Collapse isOpened={threeBoxSpace.addressLinks.length && !open}>
-        <div sx={{ pt: 2, color: "text" }}>
+        <Box css={{ pt: "$3", color: "$text" }}>
           {threeBoxSpace.addressLinks.map((link, i) => (
             <Flex
               key={i}
-              sx={{
+              css={{
                 alignItems: "center",
-                p: 2,
+                p: "$3",
                 borderRadius: 6,
-                mb: 2,
+                mb: "$3",
                 bg: "rgba(255, 255, 255, .05)",
                 justifyContent: "space-between",
                 "&:last-child": {
                   mb: 0,
                 },
               }}>
-              <div
-                sx={{
+              <Box
+                css={{
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  fontFamily: "monospace",
-                  fontSize: 1,
+                  fontFamily: "$monospace",
+                  fontSize: "$2",
                 }}>
                 {link.address}
-              </div>
+              </Box>
               <Button
                 as="div"
-                variant="dangerSmall"
+                size="small"
+                color="danger"
                 onClick={async () => {
                   const r = confirm(
                     "Are you sure you want to disconnect this account?"
@@ -121,9 +129,9 @@ const Index = ({ threeBoxSpace, refetch, children }) => {
               </Button>
             </Flex>
           ))}
-        </div>
+        </Box>
       </Collapse>
-    </div>
+    </Box>
   );
 };
 

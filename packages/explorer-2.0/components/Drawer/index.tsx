@@ -1,4 +1,5 @@
-import { Flex, Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Logo from "../Logo";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
@@ -7,6 +8,19 @@ import RoundStatus from "../RoundStatus";
 import { gql, useApolloClient } from "@apollo/client";
 import UniswapModal from "../UniswapModal";
 import AccountMenu from "../AccountMenu";
+import { styled } from "../../stitches.config";
+
+const BottomLink = styled("a", {
+  display: "flex",
+  alignItems: "center",
+  fontSize: "$2",
+  color: "$muted",
+  transition: "color .3s",
+  "&:hover": {
+    color: "$primary",
+    transition: "color .3s",
+  },
+});
 
 const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
   const router = useRouter();
@@ -21,132 +35,134 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
     <>
       <Flex
         onClick={onDrawerOpen}
-        sx={{
+        css={{
           left: 0,
           top: 0,
-          bg: "black",
+          bg: "$black",
           zIndex: 100,
           width: 240,
           transition: ".3s",
-          transform: [
-            `translateX(${open ? 0 : "-100%"})`,
-            `translateX(${open ? 0 : "-100%"})`,
-            `translateX(${open ? 0 : "-100%"})`,
-            "none",
-          ],
-          position: ["fixed", "fixed", "fixed", "sticky"],
+          transform: `translateX(${open ? 0 : "-100%"})`,
+          position: "fixed",
           flexDirection: "column",
           height: "100vh",
-          pt: [3, 3, 5],
-          px: 3,
-          boxShadow: [
+          pt: "$4",
+          px: 24,
+          boxShadow:
             "0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)",
-            "0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)",
-            "0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 6px 30px 5px rgba(0,0,0,0.12)",
-            "none",
-          ],
           alignItems: "center",
           justifyContent: "space-between",
-          ":after": {
+          "&:after": {
             pointerEvents: "none",
             content: '""',
             position: "absolute",
-            height: 550,
-            top: 0,
-            left: 0,
+            height: "550px",
+            top: "0",
+            left: "0",
             width: "100%",
             background:
               "linear-gradient(127.48deg,rgba(38,233,138,0.18) -29.81%,rgba(196,196,196,0) 58.42%)",
           },
-        }}>
+          "@bp2": {
+            pt: "$4",
+          },
+          "@bp3": {
+            boxShadow: "none",
+            transform: "none",
+            position: "sticky",
+          },
+        }}
+      >
         <Flex
-          sx={{
+          css={{
             alignSelf: "flex-start",
             flexDirection: "column",
             width: "100%",
             height: "100%",
-          }}>
-          <Logo isDark pushSx={{ width: 110, mb: 3 }} />
-          <Box sx={{ marginBottom: "auto" }}>
+          }}
+        >
+          <Logo isDark />
+          <Box css={{ mb: "auto" }}>
             {items.map((item, i) => (
               <Link key={i} href={item.href} as={item.as} passHref>
-                <a
-                  sx={{
-                    color: asPath.split("?")[0] === item.as ? "white" : "muted",
+                <Box
+                  as="a"
+                  css={{
+                    color:
+                      asPath.split("?")[0] === item.as ? "$text" : "$muted",
                     lineHeight: "initial",
                     display: "flex",
-                    fontSize: 14,
+                    fontSize: "$2",
                     fontWeight: 500,
                     cursor: "pointer",
                     alignItems: "center",
                     py: "10px",
-                    backgroundColor: "transparent",
                     borderRadius: 5,
                     transition: "color .3s",
                     "&:hover": {
                       color: "white",
                       transition: "color .3s",
                     },
-                  }}>
-                  <item.icon sx={{ width: 20, height: 20, mr: "10px" }} />
+                  }}
+                >
+                  <Flex
+                    css={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 18,
+                      height: 18,
+                      mr: "$3",
+                    }}
+                  >
+                    <item.icon />
+                  </Flex>
                   {item.name}
-                </a>
+                </Box>
               </Link>
             ))}
             <Box className="tour-step-1">
               <AccountMenu />
             </Box>
-            <StakingGuide sx={{ display: ["none", "none", "none", "block"] }}>
+            <StakingGuide
+              css={{
+                display: "none",
+                "@bp3": {
+                  display: "block",
+                },
+              }}
+            >
               Staking Guide
             </StakingGuide>
           </Box>
-          <Box sx={{ mb: 4 }}>
+          <Box css={{ mb: "$4" }}>
             <Box
-              sx={{
-                mb: 3,
+              css={{
+                mb: "$4",
                 pb: 18,
                 borderBottom: "1px solid",
-                borderColor: "border",
-              }}>
-              <Box sx={{ mb: 10 }}>
-                <a
-                  href="https://livepeer.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: 1,
-                    color: "muted",
-                    transition: "color .3s",
-                    "&:hover": {
-                      color: "primary",
-                      transition: "color .3s",
-                    },
-                  }}>
-                  Livepeer.org
-                </a>
-              </Box>
-              <Box sx={{ mb: 10 }}>
-                <a
-                  href="https://livepeer.org/docs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: 1,
-                    color: "muted",
-                    transition: "color .3s",
-                    "&:hover": {
-                      color: "primary",
-                      transition: "color .3s",
-                    },
-                  }}>
-                  Docs
-                </a>
-              </Box>
-              <Flex
+                borderColor: "$border",
+              }}
+            >
+              <BottomLink
+                css={{ mb: 10 }}
+                as="a"
+                href="https://livepeer.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Livepeer.org
+              </BottomLink>
+              <BottomLink
+                css={{ mb: 10 }}
+                as="a"
+                href="https://livepeer.org/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Docs
+              </BottomLink>
+              <BottomLink
+                css={{ cursor: "pointer", mb: 10 }}
                 onClick={() =>
                   client.writeQuery({
                     query: gql`
@@ -159,19 +175,8 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                     },
                   })
                 }
-                sx={{
-                  alignItems: "center",
-                  cursor: "pointer",
-                  transition: "color .3s",
-                  fontSize: 1,
-                  mb: 10,
-                  color: "muted",
-                  "&:hover": {
-                    color: "primary",
-                    transition: "color .3s",
-                  },
-                }}
-                className="tour-step-3">
+                className="tour-step-3"
+              >
                 Get LPT
                 <UniswapModal>
                   <iframe
@@ -185,43 +190,19 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                     src={`https://uniswap.exchange/swap/0x58b6a8a3302369daec383334672404ee733ab239`}
                   />
                 </UniswapModal>
-              </Flex>
+              </BottomLink>
+              <BottomLink
+                css={{ mb: 10 }}
+                as="a"
+                href="https://discord.gg/uaPhtyrWsF"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Discord
+              </BottomLink>
               <Box>
-                <a
-                  href="https://discord.gg/uaPhtyrWsF"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: 1,
-                    mb: 10,
-                    color: "muted",
-                    transition: "color .3s",
-                    "&:hover": {
-                      color: "primary",
-                      transition: "color .3s",
-                    },
-                  }}>
-                  Discord
-                </a>
-              </Box>
-              <Box>
-                <Link href="/whats-new" as="/whats-new" passHref>
-                  <a
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontSize: 1,
-                      color: "muted",
-                      transition: "color .3s",
-                      "&:hover": {
-                        color: "primary",
-                        transition: "color .3s",
-                      },
-                    }}>
-                    What's New
-                  </a>
+                <Link href="/whats-new" passHref>
+                  <BottomLink as="a">What's New</BottomLink>
                 </Link>
               </Box>
             </Box>
@@ -234,35 +215,3 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
 };
 
 export default Index;
-
-/* {context.active && (
-                <Flex
-                  onClick={() => {
-                    client.writeQuery({
-                      query: gql`
-                        query {
-                          walletModalOpen
-                        }
-                      `,
-                      data: {
-                        walletModalOpen: true,
-                      },
-                    })
-                  }}
-                  sx={{
-                    mt: 2,
-                    cursor: 'pointer',
-                    alignItems: 'center',
-                    fontSize: 1,
-                    color: 'muted',
-                    transition: 'color .3s',
-                    '&:hover': {
-                      color: 'primary',
-                      transition: 'color .3s',
-                    },
-                  }}
-                >
-                  
-                  {context.account.replace(context.account.slice(5, 39), '…')}
-                </Flex>
-              )} */

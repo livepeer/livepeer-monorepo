@@ -1,22 +1,23 @@
-import { Flex } from "theme-ui";
+import Flex from "../Flex";
 
-const Index = ({ avatar = null, children, ...props }) => {
+const Index = ({ css = {}, avatar = null, children, ...props }) => {
   return (
     <Flex
-      sx={{
+      css={{
         borderTop: "1px solid",
-        borderColor: "border",
-        py: 2,
+        borderColor: "$border",
+        py: "$3",
         width: "100%",
         alignItems: "center",
         justifyContent: "space-between",
         "&:first-of-type": {
           borderTop: 0,
         },
+        ...css,
       }}
       {...props}>
-      <Flex sx={{ width: "100%", alignItems: "center" }}>
-        {avatar}
+      <Flex css={{ width: "100%", alignItems: "center" }}>
+        {/* {avatar} */}
         {children}
       </Flex>
     </Flex>

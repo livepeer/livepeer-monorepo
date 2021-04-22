@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ThreeBoxSpace } from "../../@types";
-import { Flex } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import Camera from "../../public/img/camera.svg";
 import Button from "../Button";
 import ReactTooltip from "react-tooltip";
@@ -19,7 +20,7 @@ import ThreeBoxSteps from "../ThreeBoxSteps";
 import Spinner from "../Spinner";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
-
+import Textarea from "../Textarea";
 interface Props {
   account: string;
   threeBoxSpace?: ThreeBoxSpace;
@@ -98,21 +99,25 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
       `Create a new 3Box profile<br /><br />-<br />Your unique profile ID is ${threeBoxSpace.did}<br />Timestamp: ${timestamp}`
     );
     (async () => {
-      const Box = require("3box");
-      const profile = await Box.getProfile(context.account);
+      const ThreeBox = require("3box");
+      const profile = await ThreeBox.getProfile(context.account);
 
       if (hasExistingProfile(profile)) {
         setHasProfile(true);
       }
 
       if (signature && ethereumAccount) {
-        const verifiedAccount = ethers.utils.verifyMessage(
-          message.replace(/<br ?\/?>/g, "\n"),
-          signature
-        );
-        if (verifiedAccount.toLowerCase() === ethereumAccount.toLowerCase()) {
-          setVerified(true);
-        } else {
+        try {
+          const verifiedAccount = ethers.utils.verifyMessage(
+            message.replace(/<br ?\/?>/g, "\n"),
+            signature
+          );
+          if (verifiedAccount.toLowerCase() === ethereumAccount.toLowerCase()) {
+            setVerified(true);
+          } else {
+            setVerified(false);
+          }
+        } catch (e) {
           setVerified(false);
         }
       }
@@ -137,13 +142,16 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
   }
 
   const onClick = async () => {
-    const Box = require("3box");
+    const ThreeBox = require("3box");
 
     if (threeBoxSpace.defaultProfile) {
       setEditProfileOpen(true);
     } else {
       setCreateProfileModalOpen(true);
-      const box = await Box.openBox(account, context.library._web3Provider);
+      const box = await ThreeBox.openBox(
+        account,
+        context.library._web3Provider
+      );
       setActiveStep(1);
       await box.syncDone;
 
@@ -186,10 +194,10 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
     : null;
 
   const onSubmit = async () => {
-    const Box = require("3box");
+    const ThreeBox = require("3box");
 
     setSaving(true);
-    const box = await Box.openBox(
+    const box = await ThreeBox.openBox(
       context.account,
       context.library._web3Provider
     );
@@ -258,35 +266,37 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
     <>
       <Button
         onClick={() => onClick()}
-        sx={{ mt: "3px", ml: 2, fontWeight: 600 }}
-        variant="primaryOutlineSmall">
+        css={{ mt: "3px", ml: "$3", fontWeight: 600 }}
+        outline
+        size="small"
+      >
         {threeBoxSpace.defaultProfile ? "Edit Profile" : "Set up my profile"}
       </Button>
       <Modal isOpen={createProfileModalOpen} title="Profile Setup">
         <>
-          <div sx={{ mb: 2 }}>
+          <Box css={{ mb: "$3" }}>
             Approve the signing prompts in your web3 wallet to continue setting
             up your profile.
-          </div>
-          <div
-            sx={{
+          </Box>
+          <Box
+            css={{
               border: "1px solid",
-              borderColor: "border",
-              borderRadius: 6,
-              p: 3,
+              borderColor: "$border",
+              borderRadius: "$4",
+              p: "$4",
               alignItems: "center",
               justifyContent: "center",
-              mb: 3,
-            }}>
+              mb: "$4",
+            }}
+          >
             <Flex
-              sx={{ justifyContent: "space-between", alignItems: "center" }}>
+              css={{ justifyContent: "space-between", alignItems: "center" }}
+            >
               <ThreeBoxSteps hasProfile={hasProfile} activeStep={activeStep} />
             </Flex>
-          </div>
-          <Flex sx={{ justifyContent: "flex-end" }}>
-            <Button
-              variant="outline"
-              onClick={() => setCreateProfileModalOpen(false)}>
+          </Box>
+          <Flex css={{ justifyContent: "flex-end" }}>
+            <Button outline onClick={() => setCreateProfileModalOpen(false)}>
               Close
             </Button>
           </Flex>
@@ -295,25 +305,28 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
 
       <Modal isOpen={existingProfileOpen} title="Use Existing Profile?">
         <>
-          <div
-            sx={{
+          <Box
+            css={{
               lineHeight: 1.5,
               border: "1px solid",
-              borderColor: "border",
+              borderColor: "$border",
               borderRadius: 6,
-              p: 3,
+              p: "$4",
               alignItems: "center",
               justifyContent: "center",
-              mb: 3,
-            }}>
+              mb: "$4",
+            }}
+          >
             We recognized that you already have a 3box profile. Would you like
             to use it in Livepeer?
-          </div>
-          <Flex sx={{ justifyContent: "flex-end" }}>
+          </Box>
+          <Flex css={{ justifyContent: "flex-end" }}>
             <Button
+              css={{ mr: "$3" }}
+              outline
               onClick={async () => {
-                const Box = require("3box");
-                const box = await Box.openBox(
+                const ThreeBox = require("3box");
+                const box = await ThreeBox.openBox(
                   context.account,
                   context.library._web3Provider
                 );
@@ -334,14 +347,13 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                 setExistingProfileOpen(false);
                 setEditProfileOpen(true);
               }}
-              sx={{ mr: 2 }}
-              variant="outline">
+            >
               Create New
             </Button>
             <Button
               onClick={async () => {
-                const Box = require("3box");
-                const box = await Box.openBox(
+                const ThreeBox = require("3box");
+                const box = await ThreeBox.openBox(
                   context.account,
                   context.library._web3Provider
                 );
@@ -356,7 +368,8 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                 });
                 setExistingProfileOpen(false);
                 setEditProfileOpen(true);
-              }}>
+              }}
+            >
               Use Existing
             </Button>
           </Flex>
@@ -365,49 +378,56 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
       <Modal
         isOpen={editProfileOpen}
         onDismiss={() => setEditProfileOpen(false)}
-        title="Edit Profile">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div sx={{ mb: 3 }}>
+        title="Edit Profile"
+      >
+        <Box as="form" onSubmit={handleSubmit(onSubmit)}>
+          <Box css={{ mb: "$3" }}>
             {threeBoxSpace.defaultProfile === "3box" ? (
-              <div
-                sx={{
-                  lineHeight: 1.5,
+              <Box
+                css={{
                   alignItems: "center",
                   justifyContent: "center",
-                  mb: 3,
-                }}>
-                <a
-                  sx={{ color: "primary" }}
+                  mb: "$4",
+                }}
+              >
+                <Box
+                  as="a"
+                  css={{ color: "$primary" }}
                   href={`https://3box.io/${context.account}`}
-                  target="__blank">
+                  target="__blank"
+                >
                   Edit profile on 3box.io
-                </a>
-              </div>
+                </Box>
+              </Box>
             ) : (
               <>
-                <label
+                <Box
+                  as="label"
                   htmlFor="threeBoxImage"
-                  sx={{
+                  css={{
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
                     position: "relative",
                     cursor: "pointer",
                     marginBottom: 24,
-                  }}>
-                  <div
-                    sx={{
-                      width: "100%",
-                      height: "100%",
+                  }}
+                >
+                  <Box
+                    css={{
+                      width: "100px",
+                      height: "100px",
                       borderRadius: "100%",
                       position: "absolute",
                       zIndex: 0,
+                      left: 0,
                       bg: "rgba(0,0,0, .5)",
                     }}
                   />
                   {previewImage && (
-                    <img
-                      sx={{
+                    <Box
+                      as="img"
+                      css={{
                         objectFit: "cover",
                         borderRadius: 1000,
                         width: 100,
@@ -417,8 +437,9 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     />
                   )}
                   {!previewImage && threeBoxSpace?.image && (
-                    <img
-                      sx={{
+                    <Box
+                      as="img"
+                      css={{
                         objectFit: "cover",
                         borderRadius: 1000,
                         width: 100,
@@ -439,12 +460,15 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                       value={account}
                     />
                   )}
-                  <Camera sx={{ position: "absolute" }} />
-                  <input
+                  <Box css={{ position: "absolute" }}>
+                    <Camera />
+                  </Box>
+                  <Box
+                    as="input"
                     ref={register}
                     id="threeBoxImage"
                     name="image"
-                    sx={{
+                    css={{
                       width: 0.1,
                       height: 0.1,
                       opacity: 0,
@@ -455,69 +479,72 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     accept="image/jpeg,image/png,image/webp"
                     type="file"
                   />
-                </label>
+                </Box>
                 <Textfield
-                  inputRef={register}
+                  ref={register}
                   defaultValue={threeBoxSpace ? threeBoxSpace.name : ""}
                   name="name"
-                  label="Name"
-                  sx={{ mb: 2, width: "100%" }}
+                  placeholder="Name"
+                  css={{ mb: "$3", width: "100%" }}
                 />
                 <Textfield
-                  inputRef={register}
+                  ref={register}
                   defaultValue={threeBoxSpace ? threeBoxSpace.website : ""}
-                  label="Website"
+                  placeholder="Website"
                   type="url"
                   name="website"
-                  sx={{ mb: 2, width: "100%" }}
+                  css={{ mb: "$3", width: "100%" }}
                 />
-                <Textfield
-                  inputRef={register}
+                <Textarea
+                  ref={register}
                   defaultValue={threeBoxSpace ? threeBoxSpace.description : ""}
                   name="description"
-                  label="Description"
-                  as="textarea"
-                  rows={4}
-                  sx={{ mb: 2, width: "100%" }}
+                  placeholder="Description"
+                  size={3}
+                  css={{ mb: "$3", width: "100%" }}
                 />
               </>
             )}
             <ExternalAccount refetch={refetch} threeBoxSpace={threeBoxSpace}>
-              <div sx={{ pt: 2, mb: 1, fontSize: 4 }}>Instructions</div>
-              <ol sx={{ pl: 15 }}>
-                <li sx={{ mb: 4 }}>
-                  <div sx={{ mb: 2 }}>
+              <Box css={{ pt: "$3", mb: "$2", fontSize: "$5" }}>
+                Instructions
+              </Box>
+              <Box as="ol" css={{ pl: 15 }}>
+                <Box as="li" css={{ mb: "$5" }}>
+                  <Box css={{ mb: "$3" }}>
                     Run the Livepeer CLI and select the option to "Sign a
                     message". When prompted for a message to sign, copy and
                     paste the following message:
-                  </div>
-                  <div
-                    sx={{
-                      p: 2,
-                      mb: 1,
+                  </Box>
+                  <Box
+                    css={{
+                      p: "$3",
+                      mb: "$2",
                       position: "relative",
-                      color: "primary",
+                      color: "$primary",
                       bg: "background",
                       borderRadius: 4,
-                      fontFamily: "monospace",
+                      fontFamily: "$monospace",
                       whiteSpace: "pre-wrap",
                       overflowWrap: "break-word",
-                    }}>
-                    <div
+                    }}
+                  >
+                    <Box
                       dangerouslySetInnerHTML={{
                         __html: message,
                       }}
                     />
                     <CopyToClipboard
                       text={message.replace(/<br ?\/?>/g, "\n")}
-                      onCopy={() => setCopied(true)}>
+                      onCopy={() => setCopied(true)}
+                    >
                       <Flex
                         data-for="copyMessage"
                         data-tip={`${
                           copied ? "Copied" : "Copy message to clipboard"
                         }`}
-                        sx={{
-                          ml: 1,
+                        css={{
+                          ml: "$2",
                           mt: "3px",
                           position: "absolute",
                           right: 12,
@@ -529,7 +556,8 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                           height: 26,
                           alignItems: "center",
                           justifyContent: "center",
-                        }}>
+                        }}
+                      >
                         <ReactTooltip
                           id="copyMessage"
                           className="tooltip"
@@ -539,79 +567,81 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                         />
                         {copied ? (
                           <Check
-                            sx={{
+                            css={{
                               width: 12,
                               height: 12,
-                              color: "muted",
+                              color: "$muted",
                             }}
                           />
                         ) : (
                           <Copy
-                            sx={{
+                            css={{
                               width: 12,
                               height: 12,
-                              color: "muted",
+                              color: "$muted",
                             }}
                           />
                         )}
                       </Flex>
                     </CopyToClipboard>
-                  </div>
-                </li>
-                <li sx={{ mb: 3 }}>
-                  <div sx={{ mb: 2 }}>
+                  </Box>
+                </Box>
+                <Box as="li" css={{ mb: "$4" }}>
+                  <Box css={{ mb: "$3" }}>
                     The Livepeer CLI will copy the Ethereum signed message
                     signature to your clipboard. It should begin with "0x".
                     Paste it here.
-                  </div>
+                  </Box>
                   <Textfield
-                    inputRef={register}
+                    ref={register}
                     name="signature"
-                    label="Signature"
-                    rows={4}
-                    sx={{ width: "100%" }}
+                    placeholder="Signature"
+                    css={{ width: "100%" }}
                   />
-                </li>
-                <li sx={{ mb: 0 }}>
-                  <div sx={{ mb: 2 }}>
+                </Box>
+                <Box as="li" css={{ mb: 0 }}>
+                  <Box css={{ mb: "$3" }}>
                     Verify the message was signed correctly by pasting your
                     Livepeer Node Ethereum account used to sign the message in
                     the Livpeeer CLI.
-                  </div>
+                  </Box>
                   <Textfield
-                    inputRef={register}
+                    ref={register}
                     name="ethereumAccount"
-                    label="Ethereum Account"
-                    error={signature && ethereumAccount && !verified}
-                    messageFixed
-                    message={
-                      signature &&
-                      ethereumAccount &&
-                      (verified ? (
-                        <span sx={{ color: "primary" }}>
-                          Signature message verification successful.
-                        </span>
-                      ) : (
-                        <span sx={{ color: "red" }}>
-                          Sorry! The signature message verification failed.
-                        </span>
-                      ))
-                    }
-                    messageColor={"text"}
-                    rows={4}
-                    sx={{ width: "100%" }}
+                    placeholder="Ethereum Account"
+                    css={{
+                      width: "100%",
+                      "&:invalid": {
+                        borderColor: "$red",
+                      },
+                    }}
                   />
-                </li>
-              </ol>
+                  {signature &&
+                    ethereumAccount &&
+                    (verified ? (
+                      <Box
+                        as="span"
+                        css={{ fontSize: "$1", color: "$primary" }}
+                      >
+                        Signature message verification successful.
+                      </Box>
+                    ) : (
+                      <Box as="span" css={{ fontSize: "$1", color: "red" }}>
+                        Signature message verification failed.
+                      </Box>
+                    ))}
+                </Box>
+              </Box>
             </ExternalAccount>
-          </div>
+          </Box>
 
-          <footer>
-            <Flex sx={{ justifyContent: "flex-end" }}>
+          <Box>
+            <Flex css={{ justifyContent: "flex-end" }}>
               <Button
+                outline
                 onClick={() => setEditProfileOpen(false)}
-                sx={{ mr: 2 }}
-                variant="outline">
+                css={{ mr: "$3" }}
+              >
                 Cancel
               </Button>
               <Button
@@ -623,15 +653,18 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     (signature || ethereumAccount) &&
                     !verified)
                 }
-                type="submit">
-                <Flex sx={{ alignItems: "center" }}>
-                  {saving && <Spinner sx={{ width: 16, height: 16, mr: 1 }} />}
+                type="submit"
+              >
+                <Flex css={{ alignItems: "center" }}>
+                  {saving && (
+                    <Spinner css={{ width: 16, height: 16, mr: "$2" }} />
+                  )}
                   Save
                 </Flex>
               </Button>
             </Flex>
-          </footer>
-        </form>
+          </Box>
+        </Box>
       </Modal>
     </>
   );

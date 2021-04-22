@@ -1,9 +1,9 @@
-import { Box } from "theme-ui";
+import Box from "../Box";
+import Flex from "../Flex";
 import { useWeb3React } from "@web3-react/core";
 import { isMobile } from "react-device-detect";
 import { Injected, WalletLink } from "../../lib/connectors";
 import CloseIcon from "../../public/img/close.svg";
-import { Flex } from "theme-ui";
 import Button from "../Button";
 import { SUPPORTED_WALLETS } from "../../lib/constants";
 
@@ -24,72 +24,87 @@ const AccountDetails = ({ onClose, openOptions }) => {
   }
 
   return (
-    <Box sx={{ borderRadius: "inherit" }}>
-      <Box
-        sx={{
-          position: "relative",
-          pt: [2, 2, 2, 3],
-          px: [2, 2, 2, 3],
+    <Box>
+      <Flex
+        css={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          pt: "$3",
+          px: "$2",
           pb: 0,
-        }}>
-        <Box sx={{ fontWeight: 500 }}>Account</Box>
-        <CloseIcon
-          onClick={onClose}
-          sx={{
+          "@bp3": {
+            pt: "$4",
+            px: "$4",
+          },
+        }}
+      >
+        <Box css={{ fontWeight: 500 }}>Account</Box>
+        <Box
+          css={{
             cursor: "pointer",
-            position: "absolute",
             right: 20,
             top: 20,
             color: "white",
           }}
-        />
-      </Box>
+        >
+          <CloseIcon onClick={onClose} />
+        </Box>
+      </Flex>
       <Box
-        sx={{
+        css={{
           borderBottomLeftRadius: "inherit",
           borderBottomRightRadius: "inherit",
-          p: 3,
-        }}>
+          p: "$4",
+        }}
+      >
         <Box
-          sx={{
+          css={{
             border: "1px solid",
-            borderColor: "border",
+            borderColor: "$border",
             borderRadius: 10,
-            p: 2,
-          }}>
-          <Flex sx={{ mb: 2, justifyContent: "space-between" }}>
+            p: "$3",
+          }}
+        >
+          <Flex css={{ mb: "$3", justifyContent: "space-between" }}>
             {formatConnectorName()}
             {connector !== Injected && connector !== WalletLink && (
               <Button
-                variant="primaryOutlineSmall"
+                color="primary"
+                outline
+                size="small"
                 onClick={() => {
                   (connector as any).close();
-                }}>
+                }}
+              >
                 Disconnect
               </Button>
             )}
           </Flex>
 
-          <a
-            sx={{
+          <Box
+            as="a"
+            css={{
               display: "block",
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
-              color: "primary",
+              color: "$primary",
             }}
             href={`https://etherscan.io/address/${account}`}
-            target="__blank">
+            target="__blank"
+          >
             {account} ↗
-          </a>
+          </Box>
         </Box>
         {!(isMobile && (window["web3"] || window["ethereum"])) && (
-          <Box sx={{ textAlign: "center", mt: 3 }}>
+          <Box css={{ textAlign: "center", mt: "$3" }}>
             <Button
-              variant="primaryOutline"
+              color="primary"
+              outline
               onClick={() => {
                 openOptions();
-              }}>
+              }}
+            >
               Connect to a different wallet
             </Button>
           </Box>
