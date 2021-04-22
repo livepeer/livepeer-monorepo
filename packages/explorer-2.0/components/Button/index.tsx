@@ -59,17 +59,18 @@ export const Button = styled("button", {
         },
       },
       danger: {
-        backgroundColor: "$red500",
-        color: "$loContrast",
+        bg: "rgb(255, 0, 34, .1)",
+        color: "$red500",
         "@hover": {
           "&:hover": {
-            bg: "$red400",
+            bg: "rgb(255, 0, 34, .05)",
             transition: "background-color .3s",
           },
         },
         "&:focus": {
-          backgroundColor: "$red400",
-          boxShadow: "0 0 0 1px $colors$red400, inset 0 0 0 1px $colors$red400",
+          bg: "rgb(255, 0, 34, .05)",
+          boxShadow:
+            "0 0 0 1px rgb(255, 0, 34, .05), inset 0 0 0 1px rgb(255, 0, 34, .05)",
         },
       },
     },
