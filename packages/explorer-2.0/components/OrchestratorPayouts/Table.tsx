@@ -9,10 +9,10 @@ import Link from "next/link";
 import { forwardRef } from "react";
 import { TableCellProps } from "../../@types";
 import {
-  ArrowDownIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
-  ArrowUpIcon,
   MagnifyingGlassIcon,
 } from "@modulz/radix-icons";
 
@@ -235,35 +235,41 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
                       textTransform: "uppercase",
                     }}
                     key={index2}>
-                    <Flex
+                    <Box
                       css={{
+                        display: "grid",
                         justifyContent:
                           index2 === 0 || index2 === 1
                             ? "flex-start"
                             : "flex-end",
                       }}>
-                      <Box
-                        as="span"
+                      <Flex
                         css={{
+                          alignItems: "center",
                           fontSize: 10,
+                          position: "relative",
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
                         )}>
-                        <Box as="span">
-                          {column.isSorted ? (
-                            column.isSortedDesc ? (
-                              <Box as={ArrowDownIcon} css={{ ml: "-12px" }} />
-                            ) : (
-                              <Box as={ArrowUpIcon} css={{ ml: "-12px" }} />
-                            )
+                        {column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <Box
+                              as={ChevronDownIcon}
+                              css={{ height: 15, mr: "$2" }}
+                            />
                           ) : (
-                            ""
-                          )}
-                        </Box>
+                            <Box
+                              as={ChevronUpIcon}
+                              css={{ height: 15, mr: "$2" }}
+                            />
+                          )
+                        ) : (
+                          ""
+                        )}
                         {column.render("Header")}
-                      </Box>
-                    </Flex>
+                      </Flex>
+                    </Box>
                   </Box>
                 ))}
               </Box>
