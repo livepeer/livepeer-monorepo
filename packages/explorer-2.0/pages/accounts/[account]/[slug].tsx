@@ -1,4 +1,3 @@
-import Box from "../../../components/Box";
 import Flex from "../../../components/Flex";
 import { useRouter } from "next/router";
 import { getLayout } from "../../../layouts/main";
@@ -10,14 +9,12 @@ import TokenholdersView from "../../../components/TokenholdersView";
 import CampaignView from "../../../components/CampaignView";
 import StakingView from "../../../components/StakingView";
 import Spinner from "../../../components/Spinner";
-import Utils from "web3-utils";
 import { useWeb3React } from "@web3-react/core";
-import { getDelegatorStatus, checkAddressEquality } from "../../../lib/utils";
+import { checkAddressEquality } from "../../../lib/utils";
 import HistoryView from "../../../components/HistoryView";
 import { withApollo } from "../../../apollo";
 import BottomDrawer from "../../../components/BottomDrawer";
 import useWindowSize from "react-use/lib/useWindowSize";
-import Approve from "../../../components/Approve";
 import FeesView from "../../../components/FeesView";
 import { usePageVisibility } from "../../../hooks";
 import { useEffect } from "react";
@@ -121,8 +118,7 @@ const Account = () => {
           "@bp3": {
             height: "100vh",
           },
-        }}
-      >
+        }}>
         <Spinner />
       </Flex>
     );
@@ -165,17 +161,7 @@ const Account = () => {
             pt: "$4",
             pr: "$5",
           },
-        }}
-      >
-        {context.active && (
-          <Box>
-            {dataMyAccount?.account &&
-              parseFloat(Utils.fromWei(dataMyAccount.account.allowance)) ===
-                0 &&
-              parseFloat(Utils.fromWei(dataMyAccount.account.tokenBalance)) !==
-                0 && <Approve account={dataMyAccount.account} banner={true} />}
-          </Box>
-        )}
+        }}>
         <Profile
           account={query?.account.toString()}
           delegator={data.delegator}
@@ -221,8 +207,7 @@ const Account = () => {
                 width: "28%",
                 display: "flex",
               },
-            }}
-          >
+            }}>
             <StakingWidget
               currentRound={data.protocol.currentRound}
               transcoders={dataTranscoders.transcoders}

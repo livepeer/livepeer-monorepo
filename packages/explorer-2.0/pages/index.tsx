@@ -1,14 +1,7 @@
-import { useQuery } from "@apollo/client";
 import Orchestrators from "../components/Orchestrators";
-import { useWeb3React } from "@web3-react/core";
 import { getLayout } from "../layouts/main";
 import { NextPage } from "next";
-import Approve from "../components/Approve";
 import Search from "../components/Search";
-import Utils from "web3-utils";
-import { useEffect } from "react";
-import { usePageVisibility } from "../hooks";
-import accountQuery from "../queries/account.gql";
 import OrchestratorPayouts from "../components/OrchestratorPayouts";
 import Link from "next/link";
 import { withApollo, getStaticApolloProps } from "../apollo";
@@ -45,38 +38,13 @@ const Panel = ({ children }) => (
       "@bp3": {
         width: "43%",
       },
-    }}
-  >
+    }}>
     <Box css={{ borderColor: "$border" }} />
     {children}
   </Flex>
 );
 
 const Home = () => {
-  const context = useWeb3React();
-  const isVisible = usePageVisibility();
-  const pollInterval = 20000;
-
-  const {
-    data: dataMyAccount,
-    startPolling: startPollingMyAccount,
-    stopPolling: stopPollingMyAccount,
-  } = useQuery(accountQuery, {
-    variables: {
-      account: context?.account?.toLowerCase(),
-    },
-    pollInterval,
-    skip: !context.active,
-  });
-
-  useEffect(() => {
-    if (!isVisible) {
-      stopPollingMyAccount();
-    } else {
-      startPollingMyAccount(pollInterval);
-    }
-  }, [isVisible, stopPollingMyAccount, startPollingMyAccount]);
-
   const flickityOptions = {
     wrapAround: true,
     cellAlign: "left",
@@ -94,20 +62,7 @@ const Home = () => {
             "@bp3": {
               mt: "$4",
             },
-          }}
-        >
-          {context.active && (
-            <Box>
-              {dataMyAccount &&
-                parseFloat(Utils.fromWei(dataMyAccount.account.allowance)) ===
-                  0 &&
-                parseFloat(
-                  Utils.fromWei(dataMyAccount.account.tokenBalance)
-                ) !== 0 && (
-                  <Approve account={dataMyAccount.account} banner={true} />
-                )}
-            </Box>
-          )}
+          }}>
           <Box
             as="h1"
             css={{
@@ -123,8 +78,7 @@ const Home = () => {
               "@bp3": {
                 display: "flex",
               },
-            }}
-          >
+            }}>
             Protocol Explorer
           </Box>
           <Search />
@@ -132,16 +86,14 @@ const Home = () => {
             css={{
               mb: "$5",
               boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
-            }}
-          >
+            }}>
             <Flickity
               className={"flickity"}
               elementType={"div"}
               options={flickityOptions}
               disableImagesLoaded={true} // default false
               reloadOnUpdate
-              static
-            >
+              static>
               <Panel>
                 <GlobalChart
                   display="volume"
@@ -173,8 +125,7 @@ const Home = () => {
                 justifyContent: "space-between",
                 mb: "$2",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Box as="h2" css={{ fontWeight: 500, fontSize: 18 }}>
                 Top Orchestrators
               </Box>
@@ -192,8 +143,7 @@ const Home = () => {
                 justifyContent: "space-between",
                 mb: "$2",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Box as="h2" css={{ fontWeight: 500, fontSize: 18 }}>
                 Orchestrator Payouts
               </Box>
