@@ -36,7 +36,6 @@ const Step5 = ({ goTo, nextStep }) => {
 
   useEffect(() => {
     async function goToNextStep() {
-      console.log(dataMyAccount.account.allowance);
       if (dataMyAccount.account.allowance !== "0") {
         await Router.push("/");
         goTo(nextStep);
@@ -70,8 +69,7 @@ const Step5 = ({ goTo, nextStep }) => {
             };
           }
         }}
-        css={{ position: "absolute", right: 30, bottom: 16 }}
-      >
+        css={{ position: "absolute", right: 30, bottom: 16 }}>
         Unlock LPT
       </Button>
     </Box>

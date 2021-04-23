@@ -199,6 +199,7 @@ const Index = ({
         }}>
         {(role === "Orchestrator" || isMyDelegate) && (
           <Button
+            color="primary"
             css={{ mr: "$3" }}
             onClick={() =>
               client.writeQuery({
@@ -219,6 +220,7 @@ const Index = ({
         )}
         {isMyDelegate && (
           <Button
+            color="danger"
             onClick={() =>
               client.writeQuery({
                 query: gql`
@@ -232,9 +234,7 @@ const Index = ({
                   selectedStakingAction: "unstake",
                 },
               })
-            }
-            css={{ color: "$red", borderColor: "$red" }}
-            outline>
+            }>
             Unstake
           </Button>
         )}

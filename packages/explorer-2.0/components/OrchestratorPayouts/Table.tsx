@@ -21,7 +21,6 @@ const Table = ({ pageSize = 10, data: { currentRound, tickets } }) => {
     return matchSorter(rows, filterValue, {
       keys: [
         (row) => {
-          console.log(row);
           return row.values[id];
         },
       ],

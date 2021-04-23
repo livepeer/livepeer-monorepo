@@ -162,7 +162,7 @@ const Account = () => {
   );
   const isOrchestrator = data?.transcoder;
   const isMyDelegate =
-    query?.account?.toString() === dataMyAccount?.transcoder?.id;
+    query?.account?.toString() === dataMyAccount?.delegator?.delegate?.id;
 
   let role: string;
 
