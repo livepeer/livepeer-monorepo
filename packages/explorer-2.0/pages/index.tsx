@@ -36,17 +36,11 @@ const Panel = ({ children }) => (
       border: "1px solid",
       borderColor: "$border",
       boxShadow: "0px 6px 10px rgba(0, 0, 0, 0.05)",
-      "@bp1": {
-        width: "100%",
-      },
+      width: "100%",
       "@bp2": {
-        width: "100%",
-      },
-      "@bp3": {
         width: "43%",
       },
-    }}
-  >
+    }}>
     <Box css={{ borderColor: "$border" }} />
     {children}
   </Flex>
@@ -94,8 +88,7 @@ const Home = () => {
             "@bp3": {
               mt: "$4",
             },
-          }}
-        >
+          }}>
           {context.active && (
             <Box>
               {dataMyAccount &&
@@ -123,8 +116,7 @@ const Home = () => {
               "@bp3": {
                 display: "flex",
               },
-            }}
-          >
+            }}>
             Protocol Explorer
           </Box>
           <Search />
@@ -132,16 +124,14 @@ const Home = () => {
             css={{
               mb: "$5",
               boxShadow: "inset -20px 0px 20px -20px rgb(0 0 0 / 70%)",
-            }}
-          >
+            }}>
             <Flickity
               className={"flickity"}
               elementType={"div"}
               options={flickityOptions}
               disableImagesLoaded={true} // default false
               reloadOnUpdate
-              static
-            >
+              static>
               <Panel>
                 <GlobalChart
                   display="volume"
@@ -173,8 +163,7 @@ const Home = () => {
                 justifyContent: "space-between",
                 mb: "$2",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Box as="h2" css={{ fontWeight: 500, fontSize: 18 }}>
                 Top Orchestrators
               </Box>
@@ -192,8 +181,7 @@ const Home = () => {
                 justifyContent: "space-between",
                 mb: "$2",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Box as="h2" css={{ fontWeight: 500, fontSize: 18 }}>
                 Orchestrator Payouts
               </Box>
