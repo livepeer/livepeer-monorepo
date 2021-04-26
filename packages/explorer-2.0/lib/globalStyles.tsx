@@ -7,6 +7,7 @@ const globalStyles = global({
     fontFamily: "$body",
     color: "$text",
     lineHeight: 1.5,
+    bg: "$background",
   },
 
   svg: { display: "block" },
