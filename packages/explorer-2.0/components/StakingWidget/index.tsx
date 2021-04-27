@@ -47,10 +47,12 @@ const Index = ({
           width: "100%",
           boxShadow:
             "rgba(0, 0, 0, 0.03) 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 8px, rgba(0, 0, 0, 0.06) 0px 16px 24px, rgba(0, 0, 0, 0.03) 0px 24px 32px",
-          borderRadius: 16,
+          borderTopRightRadius: "$6",
+          borderTopLeftRadius: "$6",
           backgroundColor: "$surface",
           "@bp3": {
-            borderBottomRightRadius: "16px",
+            borderBottomRightRadius: "$6",
+            borderBottomLeftRadius: "$6",
           },
         }}>
         <Header transcoder={transcoder} delegateProfile={delegateProfile} />
@@ -87,13 +89,16 @@ const Index = ({
           </Flex>
           <ProjectionBox action={action} />
           <Footer
-            transcoders={transcoders}
-            currentRound={currentRound}
-            account={account}
-            delegator={delegator}
-            transcoder={transcoder}
-            action={action}
-            amount={amount}
+            reset={() => setAmount("")}
+            data={{
+              transcoders,
+              currentRound,
+              account,
+              delegator,
+              transcoder,
+              action,
+              amount,
+            }}
           />
         </Box>
       </Box>

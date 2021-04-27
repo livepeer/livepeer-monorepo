@@ -188,8 +188,8 @@ export const checkAddressEquality = (address1, address2) => {
 
 export const txMessages = {
   approve: {
-    pending: "Unlocking LPT",
-    confirmed: "LPT Unlocked",
+    pending: "Approving LPT",
+    confirmed: "LPT Approved",
   },
   bond: {
     pending: "Staking LPT",

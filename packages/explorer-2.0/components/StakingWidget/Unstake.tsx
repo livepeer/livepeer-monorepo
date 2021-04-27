@@ -38,7 +38,7 @@ const Unstake = ({ amount, newPosPrev, newPosNext, delegator, disabled }) => {
         }}
         color="danger"
         css={{ width: "100%" }}>
-        Unstake
+        {!amount ? "Enter an amount" : "Unstake"}
       </Button>
     </>
   );

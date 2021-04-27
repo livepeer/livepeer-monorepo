@@ -47,7 +47,7 @@ const Step5 = ({ goTo, nextStep }) => {
   return (
     <Box css={{ py: "$2" }}>
       <Box as="h3" css={{ mb: "$3" }}>
-        Unlock Livepeer Tokens
+        Approve Livepeer Tokens
       </Box>
       <Box>
         Allow Livepeer smart contracts to transfer Livepeer tokens on your
@@ -70,7 +70,7 @@ const Step5 = ({ goTo, nextStep }) => {
           }
         }}
         css={{ position: "absolute", right: 30, bottom: 16 }}>
-        Unlock LPT
+        Approve LPT
       </Button>
     </Box>
   );
