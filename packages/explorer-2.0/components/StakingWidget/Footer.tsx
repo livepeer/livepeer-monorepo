@@ -51,10 +51,7 @@ const Footer = ({
   const transferAllowance =
     account && parseFloat(Utils.fromWei(account.allowance));
   const delegatorStatus = getDelegatorStatus(delegator, currentRound);
-  const isStaked =
-    delegatorStatus === "Bonded" || delegatorStatus === "Unbonding"
-      ? true
-      : false;
+  const isStaked = delegator?.bondedAmount && delegator?.bondedAmount !== "0";
   const stake = delegator?.pendingStake
     ? parseFloat(Utils.fromWei(delegator.pendingStake))
     : 0;
@@ -84,13 +81,14 @@ const Footer = ({
         lastClaimRound: { id: "0" },
       };
     }
+
     return (
       <Box css={{ ...css }}>
         <Stake
           delegator={delegator}
           to={transcoder.id}
           amount={amount}
-          switching={!isMyTranscoder}
+          switching={!isMyTranscoder && isStaked}
           tokenBalance={tokenBalance}
           transferAllowance={transferAllowance}
           reset={reset}
