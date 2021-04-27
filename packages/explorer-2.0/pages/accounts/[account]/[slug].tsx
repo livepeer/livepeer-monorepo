@@ -23,7 +23,7 @@ import accountQuery from "../../../queries/account.gql";
 import { gql } from "@apollo/client";
 import { NextPage } from "next";
 
-const pollInterval = 20000;
+const pollInterval = 5000;
 
 const Account = () => {
   const context = useWeb3React();
@@ -42,15 +42,11 @@ const Account = () => {
   } = useQuery(accountViewQuery, {
     variables: {
       account: query?.account?.toString().toLowerCase(),
-      pollInterval,
     },
+    pollInterval,
   });
-  const {
-    data: dataTranscoders,
-    loading: loadingTranscoders,
-    startPolling: startPollingOrchestrators,
-    stopPolling: stopPollingOrchestrators,
-  } = useQuery(
+
+  const { data: dataTranscoders, loading: loadingTranscoders } = useQuery(
     gql`
       {
         transcoders(
@@ -62,10 +58,7 @@ const Account = () => {
           totalStake
         }
       }
-    `,
-    {
-      pollInterval,
-    }
+    `
   );
 
   const {
@@ -76,26 +69,22 @@ const Account = () => {
     variables: {
       account: context?.account?.toLowerCase(),
     },
-    pollInterval: 5000,
-    skip: !context.active, // skip this query if wallet not connected
+    skip: !context?.active,
+    pollInterval,
   });
 
   useEffect(() => {
     if (!isVisible) {
-      stopPollingOrchestrators();
       stopPollingMyAccount();
       stopPollingAccount();
     } else {
-      startPollingOrchestrators(pollInterval);
       startPollingMyAccount(pollInterval);
       startPollingAccount(pollInterval);
     }
   }, [
     isVisible,
-    stopPollingOrchestrators,
     stopPollingMyAccount,
     stopPollingAccount,
-    startPollingOrchestrators,
     startPollingMyAccount,
     startPollingAccount,
   ]);
