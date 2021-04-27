@@ -157,7 +157,7 @@ const Index = ({ children, ...props }) => {
           {[
             "Connect Wallet",
             "Get LPT",
-            "Unlock LPT",
+            "Approve LPT",
             "Choose Orchestrator",
             "Stake",
           ].map((title, i) => (

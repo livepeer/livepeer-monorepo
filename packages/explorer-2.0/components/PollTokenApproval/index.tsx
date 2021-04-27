@@ -18,7 +18,7 @@ const Index = () => {
             });
           });
         }}>
-        Unlock LPT for poll creation
+        Approve LPT for poll creation
       </Button>
     </>
   );
