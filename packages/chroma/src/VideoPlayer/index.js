@@ -596,7 +596,7 @@ export class Source extends Component {
     try {
       if (autoPlay) await video.play();
     } catch (e) {
-      console.info("Error when trying to autoplay", e);
+      this.debug("Error when trying to autoplay", e);
     }
     onLive(data);
   };
