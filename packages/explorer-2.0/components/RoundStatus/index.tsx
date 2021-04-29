@@ -17,6 +17,8 @@ const GET_ROUND_MODAL_STATUS = gql`
   }
 `;
 
+const BLOCK_TIME = 13; // ethereum blocks are confirmed on average 13 seconds
+
 const Index = () => {
   const isVisible = usePageVisibility();
   const { data: modalData } = useQuery(GET_ROUND_MODAL_STATUS);
@@ -106,7 +108,7 @@ const Index = () => {
     ? +protocolData.protocol.roundLength -
       (blockData.block.number - +protocolData.protocol.currentRound.startBlock)
     : 0;
-  const timeRemaining = blockData.block.time * blocksRemaining;
+  const timeRemaining = BLOCK_TIME * blocksRemaining;
   const blocksSinceCurrentRoundStart = initialized
     ? blockData.block.number - +protocolData.protocol.currentRound.startBlock
     : 0;
@@ -137,16 +139,14 @@ const Index = () => {
             roundStatusModalOpen: true,
           },
         })
-      }
-    >
+      }>
       <Box>
         <Flex
           css={{
             alignItems: "center",
             justifyContent: "space-between",
             fontFamily: "$monospace",
-          }}
-        >
+          }}>
           <Box
             css={{
               width: 16,
@@ -154,8 +154,7 @@ const Index = () => {
               height: 16,
               minHeight: 16,
               mr: 12,
-            }}
-          >
+            }}>
             <CircularProgressbar
               strokeWidth={10}
               styles={buildStyles({
@@ -180,12 +179,10 @@ const Index = () => {
               alignItems: "center",
               justifyContent: "space-between",
               width: "100%",
-            }}
-          >
+            }}>
             <Box>Round #{currentRoundNumber}</Box>
             <Flex
-              css={{ alignItems: "center", fontSize: "$2", fontWeight: 600 }}
-            >
+              css={{ alignItems: "center", fontSize: "$2", fontWeight: 600 }}>
               Initialized{" "}
               {initialized ? (
                 <Box
@@ -200,15 +197,13 @@ const Index = () => {
               )}
             </Flex>
           </Flex>
-        }
-      >
+        }>
         <Flex
           css={{
             pb: "$4",
             justifyContent: "space-between",
             alignItems: "center",
-          }}
-        >
+          }}>
           <Box
             css={{
               width: 160,
@@ -220,8 +215,7 @@ const Index = () => {
               "@bp3": {
                 display: "block",
               },
-            }}
-          >
+            }}>
             <Box
               as={CircularProgressbar}
               strokeWidth={10}
@@ -231,8 +225,7 @@ const Index = () => {
                 textColor: theme.colors.text,
                 trailColor: theme.colors.lightBlack,
               })}
-              value={Math.round(percentage)}
-            >
+              value={Math.round(percentage)}>
               <Box css={{ textAlign: "center" }}>
                 <Box css={{ fontWeight: "bold", fontSize: "$5" }}>
                   {blocksSinceCurrentRoundStart}
@@ -251,8 +244,7 @@ const Index = () => {
                 fontWeight: "bold",
                 borderBottom: "1px dashed",
                 borderColor: "$text",
-              }}
-            >
+              }}>
               {blocksRemaining} blocks
             </Box>{" "}
             and approximately{" "}
@@ -262,8 +254,7 @@ const Index = () => {
                 fontWeight: "bold",
                 borderBottom: "1px dashed",
                 borderColor: "$text",
-              }}
-            >
+              }}>
               {moment().add(timeRemaining, "seconds").fromNow(true)}
             </Box>{" "}
             remaining until the current round ends and round{" "}
@@ -273,8 +264,7 @@ const Index = () => {
                 fontWeight: "bold",
                 borderBottom: "1px dashed",
                 borderColor: "$text",
-              }}
-            >
+              }}>
               #{currentRoundNumber + 1}
             </Box>{" "}
             begins.
