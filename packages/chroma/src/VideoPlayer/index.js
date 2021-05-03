@@ -593,7 +593,11 @@ export class Source extends Component {
     // this.getLevels()
     this.debug("will load level", this.hls.loadLevel);
     this.hls.startLoad();
-    if (autoPlay) await video.play();
+    try {
+      if (autoPlay) await video.play();
+    } catch (e) {
+      this.debug("Error when trying to autoplay", e);
+    }
     onLive(data);
   };
   /**
