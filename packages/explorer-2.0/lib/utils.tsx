@@ -5,6 +5,7 @@ import parseDomain from "parse-domain";
 import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import Numeral from "numeral";
+import { blockClient } from "../apollo";
 
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -535,20 +536,30 @@ export const getTwoPeriodPercentChange = (
  * @param {Array} timestamps
  */
 export const getBlocksFromTimestamps = async (timestamps) => {
-  if (timestamps?.length === 0) {
+  if (!timestamps?.length) {
     return [];
   }
   const blocks = [];
   for (const timestamp of timestamps) {
-    const blockResponse = await fetch(
-      `https://api${
-        process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "-rinkeby" : ""
-      }.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${
-        process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
-      }`
-    );
-    const json = await blockResponse.json();
-    blocks.push(+json.result);
+    const { data } = await blockClient.query({
+      query: gql`
+        query blocks($timestampFrom: Int!, $timestampTo: Int!) {
+          blocks(
+            first: 1
+            orderBy: timestamp
+            orderDirection: asc
+            where: { timestamp_gt: $timestampFrom, timestamp_lt: $timestampTo }
+          ) {
+            id
+            number
+            timestamp
+          }
+        }
+      `,
+      fetchPolicy: "network-only",
+      variables: { timestampFrom: timestamp, timestampTo: timestamp + 600 },
+    });
+    blocks.push(+data.blocks[0].number);
   }
 
   return blocks;
