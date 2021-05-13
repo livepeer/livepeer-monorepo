@@ -154,7 +154,12 @@ export async function getChartData(_obj?, _args?, _ctx?, _info?) {
       endDate: "1616457600",
       price: 0.000000000000006, // (6000 wei)
     },
-    { startDate: "1616457600", endDate: Infinity, price: 0.000000000000003 }, // (3000 wei)
+    {
+      startDate: "1616457600",
+      endDate: "1620201600",
+      price: 0.000000000000003, // (3000 wei)
+    },
+    { startDate: "1620201600", endDate: Infinity, price: 0.0000000000000006 }, // (600 wei)
   ];
 
   // the # of pixels in a minute of 240p30fps, 360p30fps, 480p30fps, 720p30fps transcoded renditions.
