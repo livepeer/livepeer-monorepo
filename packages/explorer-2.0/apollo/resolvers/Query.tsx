@@ -150,16 +150,21 @@ export async function getChartData(_obj?, _args?, _ctx?, _info?) {
   // based on the Livepeer.com broadcaster's max price
   const pricePerPixel = [
     {
-      startDate: "1577836800",
-      endDate: "1616457600",
+      startDate: 1577836800,
+      endDate: 1616457600,
       price: 0.000000000000006, // (6000 wei)
     },
     {
-      startDate: "1616457600",
-      endDate: "1620201600",
+      startDate: 1616457600,
+      endDate: 1620201600,
       price: 0.000000000000003, // (3000 wei)
     },
-    { startDate: "1620201600", endDate: Infinity, price: 0.0000000000000006 }, // (600 wei)
+    {
+      startDate: 1620201600,
+      endDate: 1621465200,
+      price: 0.0000000000000006,
+    }, // (600 wei),
+    { startDate: 1621465200, endDate: Infinity, price: 0.0000000000000012 }, // (1200 wei)
   ];
 
   // the # of pixels in a minute of 240p30fps, 360p30fps, 480p30fps, 720p30fps transcoded renditions.
