@@ -10,8 +10,7 @@ import Copy from "../../public/img/copy.svg";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Textfield from "../Textfield";
 import useForm from "react-hook-form";
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
+import { useMutation, gql } from "@apollo/client";
 import QRCode from "qrcode.react";
 import Modal from "../Modal";
 import ExternalAccount from "../ExternalAccount";
@@ -268,8 +267,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
         onClick={() => onClick()}
         css={{ mt: "3px", ml: "$3", fontWeight: 600 }}
         outline
-        size="small"
-      >
+        size="small">
         {threeBoxSpace.defaultProfile ? "Edit Profile" : "Set up my profile"}
       </Button>
       <Modal isOpen={createProfileModalOpen} title="Profile Setup">
@@ -287,11 +285,9 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
               alignItems: "center",
               justifyContent: "center",
               mb: "$4",
-            }}
-          >
+            }}>
             <Flex
-              css={{ justifyContent: "space-between", alignItems: "center" }}
-            >
+              css={{ justifyContent: "space-between", alignItems: "center" }}>
               <ThreeBoxSteps hasProfile={hasProfile} activeStep={activeStep} />
             </Flex>
           </Box>
@@ -315,8 +311,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
               alignItems: "center",
               justifyContent: "center",
               mb: "$4",
-            }}
-          >
+            }}>
             We recognized that you already have a 3box profile. Would you like
             to use it in Livepeer?
           </Box>
@@ -346,8 +341,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                 });
                 setExistingProfileOpen(false);
                 setEditProfileOpen(true);
-              }}
-            >
+              }}>
               Create New
             </Button>
             <Button
@@ -368,8 +362,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                 });
                 setExistingProfileOpen(false);
                 setEditProfileOpen(true);
-              }}
-            >
+              }}>
               Use Existing
             </Button>
           </Flex>
@@ -378,8 +371,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
       <Modal
         isOpen={editProfileOpen}
         onDismiss={() => setEditProfileOpen(false)}
-        title="Edit Profile"
-      >
+        title="Edit Profile">
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           <Box css={{ mb: "$3" }}>
             {threeBoxSpace.defaultProfile === "3box" ? (
@@ -388,14 +380,12 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                   alignItems: "center",
                   justifyContent: "center",
                   mb: "$4",
-                }}
-              >
+                }}>
                 <Box
                   as="a"
                   css={{ color: "$primary" }}
                   href={`https://3box.io/${context.account}`}
-                  target="__blank"
-                >
+                  target="__blank">
                   Edit profile on 3box.io
                 </Box>
               </Box>
@@ -411,8 +401,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     position: "relative",
                     cursor: "pointer",
                     marginBottom: 24,
-                  }}
-                >
+                  }}>
                   <Box
                     css={{
                       width: "100px",
@@ -527,8 +516,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                       fontFamily: "$monospace",
                       whiteSpace: "pre-wrap",
                       overflowWrap: "break-word",
-                    }}
-                  >
+                    }}>
                     <Box
                       dangerouslySetInnerHTML={{
                         __html: message,
@@ -536,8 +524,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     />
                     <CopyToClipboard
                       text={message.replace(/<br ?\/?>/g, "\n")}
-                      onCopy={() => setCopied(true)}
-                    >
+                      onCopy={() => setCopied(true)}>
                       <Flex
                         data-for="copyMessage"
                         data-tip={`${
@@ -556,8 +543,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                           height: 26,
                           alignItems: "center",
                           justifyContent: "center",
-                        }}
-                      >
+                        }}>
                         <ReactTooltip
                           id="copyMessage"
                           className="tooltip"
@@ -621,8 +607,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     (verified ? (
                       <Box
                         as="span"
-                        css={{ fontSize: "$1", color: "$primary" }}
-                      >
+                        css={{ fontSize: "$1", color: "$primary" }}>
                         Signature message verification successful.
                       </Box>
                     ) : (
@@ -640,8 +625,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
               <Button
                 outline
                 onClick={() => setEditProfileOpen(false)}
-                css={{ mr: "$3" }}
-              >
+                css={{ mr: "$3" }}>
                 Cancel
               </Button>
               <Button
@@ -653,8 +637,7 @@ const Index = ({ threeBoxSpace, refetch, account }: Props) => {
                     (signature || ethereumAccount) &&
                     !verified)
                 }
-                type="submit"
-              >
+                type="submit">
                 <Flex css={{ alignItems: "center" }}>
                   {saving && (
                     <Spinner css={{ width: 16, height: 16, mr: "$2" }} />

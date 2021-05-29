@@ -1,7 +1,6 @@
 import Box from "../Box";
 import Flex from "../Flex";
-import gql from "graphql-tag";
-import { useQuery, useApolloClient } from "@apollo/client";
+import { useQuery, useApolloClient, gql } from "@apollo/client";
 import Modal from "../Modal";
 import CircularProgressbar from "../CircularProgressBar";
 import { buildStyles } from "react-circular-progressbar";

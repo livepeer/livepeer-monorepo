@@ -1,8 +1,7 @@
 import React from "react";
 import Box from "../Box";
 import Flex from "../Flex";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 import { Dialog } from "@reach/dialog";
 import { keyframes } from "../../stitches.config";
 import CloseIcon from "../../public/img/close.svg";
@@ -42,8 +41,7 @@ const Index = ({ isOpen, onDismiss }) => {
         bg: "$surface",
         borderRadius: 16,
         p: "$4",
-      }}
-    >
+      }}>
       <Flex
         css={{
           justifyContent: "flex-end",
@@ -52,8 +50,7 @@ const Index = ({ isOpen, onDismiss }) => {
           right: 20,
           top: 20,
           color: "$white",
-        }}
-      >
+        }}>
         <CloseIcon
           onClick={() => {
             onDismiss();
@@ -68,8 +65,7 @@ const Index = ({ isOpen, onDismiss }) => {
           width: "100%",
           alignItems: "center",
           padding: "60px 0px",
-        }}
-      >
+        }}>
         <Box
           as="img"
           src="/img/green-loader.svg"
@@ -88,8 +84,7 @@ const Index = ({ isOpen, onDismiss }) => {
           gridAutoRows: "auto",
           rowGap: "10px",
           justifyItems: "center",
-        }}
-      >
+        }}>
         <Box css={{ fontSize: "$4", fontWeight: 600 }}>
           Waiting For Confirmation
         </Box>

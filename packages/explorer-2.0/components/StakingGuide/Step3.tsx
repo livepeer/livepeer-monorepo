@@ -1,6 +1,5 @@
 import Box from "../Box";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 
 const Step3 = ({ goTo, nextStep }) => {
   const GET_UNISWAP_MODAL_STATUS = gql`

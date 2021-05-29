@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, useMutation, useApolloClient, gql } from "@apollo/client";
 import { useWeb3React } from "@web3-react/core";
 import { Injected } from "../lib/connectors";
 import { isMobile } from "react-device-detect";

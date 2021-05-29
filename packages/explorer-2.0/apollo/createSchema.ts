@@ -1,20 +1,18 @@
-import { HttpLink } from "apollo-link-http";
 import fetch from "isomorphic-unfetch";
 import Utils from "web3-utils";
 import { createApolloFetch } from "apollo-fetch";
 import { applyMiddleware } from "graphql-middleware";
 import graphqlFields from "graphql-fields";
-import {
-  mergeSchemas,
-  introspectSchema,
-  makeRemoteExecutableSchema,
-} from "graphql-tools";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { stitchSchemas, ValidationLevel } from "@graphql-tools/stitch";
+import { delegateToSchema } from "@graphql-tools/delegate";
+import { introspectSchema, wrapSchema } from "@graphql-tools/wrap";
 import {
   getBlockByNumber,
   getEstimatedBlockCountdown,
   mergeObjectsInUnique,
 } from "../lib/utils";
-import { makeExecutableSchema } from "graphql-tools";
+import { print } from "graphql";
 import GraphQLJSON, { GraphQLJSONObject } from "graphql-type-json";
 import typeDefs from "./types";
 import resolvers from "./resolvers";
@@ -30,20 +28,22 @@ const schema = makeExecutableSchema({
 });
 
 const createSchema = async () => {
-  const subgraphServiceLink = new HttpLink({
-    uri: process.env.NEXT_PUBLIC_SUBGRAPH,
-    fetch,
-  });
-
-  const createSubgraphServiceSchema = async () => {
-    const executableSchema = makeRemoteExecutableSchema({
-      schema: await introspectSchema(subgraphServiceLink),
-      link: subgraphServiceLink,
+  const executor = async ({ document, variables }) => {
+    const query = print(document);
+    const fetchResult = await fetch(process.env.NEXT_PUBLIC_SUBGRAPH, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, variables }),
     });
-    return executableSchema;
+    return fetchResult.json();
   };
 
-  const subgraphSchema = await createSubgraphServiceSchema();
+  const subgraphSchema = wrapSchema({
+    schema: await introspectSchema(executor),
+    executor,
+  });
 
   const linkTypeDefs = `
     extend type Transcoder {
@@ -102,13 +102,25 @@ const createSchema = async () => {
       .call({}, _blockNumber ? _blockNumber : null);
   }
 
-  const merged = mergeSchemas({
-    schemas: [subgraphSchema, schema, linkTypeDefs],
+  const gatewaySchema = stitchSchemas({
+    subschemas: [
+      { schema: subgraphSchema, batch: true },
+      { schema: schema, batch: true },
+    ],
+    typeDefs: linkTypeDefs,
+    typeMergingOptions: {
+      validationScopes: {
+        // TOD: rename transaction query type to avoid naming conflict with subgraph
+        "Query.transaction": {
+          validationLevel: ValidationLevel.Off,
+        },
+      },
+    },
     resolvers: {
       Transcoder: {
         threeBoxSpace: {
           async resolve(_transcoder, _args, _ctx, _info) {
-            const threeBoxSpace = await _info.mergeInfo.delegateToSchema({
+            const threeBoxSpace = await delegateToSchema({
               schema: schema,
               operation: "query",
               fieldName: "threeBoxSpace",
@@ -378,7 +390,8 @@ const createSchema = async () => {
       },
     },
   };
-  return applyMiddleware(merged, queryMiddleware);
+
+  return applyMiddleware(gatewaySchema, queryMiddleware);
 };
 
 export default createSchema;

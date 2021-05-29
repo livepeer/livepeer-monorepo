@@ -11,8 +11,7 @@ import { useWeb3React } from "@web3-react/core";
 import Option from "./Option";
 import PendingView from "./PendingView";
 import AccountDetails from "./AccountDetails";
-import gql from "graphql-tag";
-import { useQuery, useApolloClient } from "@apollo/client";
+import { useQuery, useApolloClient, gql } from "@apollo/client";
 import { usePrevious } from "../../hooks";
 import ReactGA from "react-ga";
 import Box from "../Box";
@@ -207,16 +206,14 @@ const Index = () => {
             justifyContent: "space-between",
             px: "$4",
             py: 24,
-          }}
-        >
+          }}>
           <Box css={{ fontWeight: 500 }}>
             {walletView !== WALLET_VIEWS.ACCOUNT ? (
               <Box
                 onClick={() => {
                   setWalletView(WALLET_VIEWS.ACCOUNT);
                 }}
-                css={{ color: "$primary", cursor: "pointer" }}
-              >
+                css={{ color: "$primary", cursor: "pointer" }}>
                 Back
               </Box>
             ) : (
@@ -240,8 +237,7 @@ const Index = () => {
             borderBottomRightRadius: "inherit",
             bg: "rgba(255, 255, 255, .04)",
             p: "$4",
-          }}
-        >
+          }}>
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView connector={pendingWallet} />
           ) : (
