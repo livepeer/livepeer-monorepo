@@ -1,4 +1,4 @@
-query(
+query transcoders(
   $where: Transcoder_filter
   $first: Int
   $skip: Int

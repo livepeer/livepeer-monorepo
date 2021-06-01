@@ -1,4 +1,4 @@
-query($account: ID!) {
+query threeBoxSpace($account: ID!) {
   threeBoxSpace(id: $account) {
     __typename
     id

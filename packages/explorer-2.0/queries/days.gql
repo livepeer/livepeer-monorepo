@@ -1,4 +1,8 @@
-query($first: Int, $orderBy: Day_orderBy, $orderDirection: OrderDirection) {
+query days(
+  $first: Int
+  $orderBy: Day_orderBy
+  $orderDirection: OrderDirection
+) {
   days(first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
     date
     volumeUSD
