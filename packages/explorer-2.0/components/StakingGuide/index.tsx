@@ -4,14 +4,13 @@ import Flex from "../Flex";
 import Button from "../Button";
 import dynamic from "next/dynamic";
 import { useWeb3React } from "@web3-react/core";
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 import Step6 from "./Step6";
-import gql from "graphql-tag";
 import { Dialog } from "@reach/dialog";
 
 const Tour: any = dynamic(() => import("reactour"), { ssr: false });

@@ -99,11 +99,7 @@
     {
       "files": ["packages/**"],
       "rules": {
-        "no-shadow": ["warn", { "builtinGlobals": false }],
-        "import/no-extraneous-dependencies": [
-          "error",
-          { "devDependencies": false }
-        ]
+        "no-shadow": ["warn", { "builtinGlobals": false }]
       }
     },
     {

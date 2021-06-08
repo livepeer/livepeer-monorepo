@@ -1,5 +1,4 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 import Box from "../Box";
 
 const Step1 = ({ goTo, nextStep }) => {

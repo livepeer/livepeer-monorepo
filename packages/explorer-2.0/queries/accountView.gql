@@ -1,4 +1,4 @@
-query($account: ID!) {
+query delegator($account: ID!) {
   delegator(id: $account) {
     id
     pendingStake

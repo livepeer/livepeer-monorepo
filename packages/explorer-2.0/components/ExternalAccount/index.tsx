@@ -2,8 +2,7 @@ import { useState } from "react";
 import Box from "../Box";
 import Flex from "../Flex";
 import { Collapse } from "react-collapse";
-import gql from "graphql-tag";
-import { useMutation } from "@apollo/client";
+import { useMutation, gql } from "@apollo/client";
 import { useWeb3React } from "@web3-react/core";
 import Button from "../Button";
 

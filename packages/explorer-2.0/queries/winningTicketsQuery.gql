@@ -1,4 +1,4 @@
-query(
+query tickets(
   $where: WinningTicketRedeemedEvent_filter
   $first: Int
   $skip: Int

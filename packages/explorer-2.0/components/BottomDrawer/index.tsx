@@ -1,6 +1,5 @@
 import { Dialog } from "@reach/dialog";
-import { useApolloClient, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
 import useWindowSize from "react-use/lib/useWindowSize";
 import { keyframes } from "../../stitches.config";
 import Box from "../Box";

@@ -1,7 +1,6 @@
 import Box from "../Box";
 import Flex from "../Flex";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 import { abbreviateNumber } from "../../lib/utils";
 
 const ProjectionBox = ({ action }) => {
@@ -22,8 +21,7 @@ const ProjectionBox = ({ action }) => {
         border: "1px solid",
         borderColor: "$border",
         mb: "$3",
-      }}
-    >
+      }}>
       <Box css={{ px: "$3", py: "$3" }}>
         <Box>
           <Flex
@@ -31,8 +29,7 @@ const ProjectionBox = ({ action }) => {
               fontSize: "$1",
               mb: "$3",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <Box css={{ color: "$muted" }}>
               {action === "stake"
                 ? "Projected Rewards (1Y)"

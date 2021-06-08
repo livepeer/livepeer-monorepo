@@ -6,10 +6,9 @@ import fm from "front-matter";
 import Button from "../../components/Button";
 import { createApolloFetch } from "apollo-fetch";
 import { useState, useEffect, useContext } from "react";
-import gql from "graphql-tag";
 import { useWeb3React } from "@web3-react/core";
 import PollTokenApproval from "../../components/PollTokenApproval";
-import { useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import { withApollo } from "../../apollo";
 import { useApolloClient } from "@apollo/client";
 import { MutationsContext } from "../../contexts";
@@ -141,16 +140,14 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
           "@bp3": {
             mt: "$4",
           },
-        }}
-      >
+        }}>
         <Box>
           <Flex
             css={{
               mb: "$4",
               alignItems: "center",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <Box
               as="h1"
               css={{
@@ -160,8 +157,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                 "@bp2": {
                   fontSize: 26,
                 },
-              }}
-            >
+              }}>
               Create Poll
             </Box>
             {!context.account && (
@@ -183,8 +179,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                       walletModalOpen: true,
                     },
                   });
-                }}
-              >
+                }}>
                 Connect Wallet
               </Button>
             )}
@@ -205,8 +200,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   error: err.message.replace("GraphQL error: ", ""),
                 };
               }
-            }}
-          >
+            }}>
             {!lips.length && (
               <Box>
                 There are currently no LIPs in a proposed state for which there
@@ -220,16 +214,14 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   css={{
                     justifyContent: "space-between",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Flex css={{ alignItems: "center", width: "100%" }}>
                     <StyledRadio
                       onCheckedChange={() => {
                         setSelectedProposal({ gitCommitHash, text: lip.text });
                       }}
                       value={i.toString()}
-                      name="lip"
-                    >
+                      name="lip">
                       <StyledIndicator />
                     </StyledRadio>
                     <Box css={{ ml: "$3", width: "100%" }}>
@@ -246,8 +238,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                     }}
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}
-                  >
+                    href={`https://github.com/${projectOwner}/${projectName}/blob/master/LIPs/LIP-${lip.attributes.lip}.md`}>
                     View Proposal
                   </Box>
                 </StyledLabel>
@@ -261,8 +252,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                     alignItems: "center",
                     mt: "$5",
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
                   <Box css={{ mr: "$3" }}>Loading LPT Balance</Box>
                   <Spinner />
                 </Flex>
@@ -272,8 +262,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                     mt: "$5",
                     alignItems: "center",
                     justifyContent: "flex-end",
-                  }}
-                >
+                  }}>
                   {!sufficientAllowance && <PollTokenApproval />}
                   {sufficientAllowance && !sufficientBalance && (
                     <Box css={{ color: "$muted", fontSize: "$1" }}>
@@ -285,8 +274,7 @@ const CreatePoll = ({ projectOwner, projectName, gitCommitHash, lips }) => {
                   <Button
                     disabled={!sufficientAllowance || !sufficientBalance}
                     type="submit"
-                    css={{ ml: "$3", alignSelf: "flex-end" }}
-                  >
+                    css={{ ml: "$3", alignSelf: "flex-end" }}>
                     Create Poll (
                     {process.env.NEXT_PUBLIC_NETWORK === "rinkeby"
                       ? "10"

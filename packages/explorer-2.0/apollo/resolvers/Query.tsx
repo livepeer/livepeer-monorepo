@@ -180,17 +180,13 @@ export async function getChartData(_obj?, _args?, _ctx?, _info?) {
     const utcTwoWeeksBack = utcCurrentTime.subtract(2, "week").unix();
 
     // get the blocks needed for time travel queries
-    const [
-      oneDayBlock,
-      twoDayBlock,
-      oneWeekBlock,
-      twoWeekBlock,
-    ] = await getBlocksFromTimestamps([
-      utcOneDayBack,
-      utcTwoDaysBack,
-      utcOneWeekBack,
-      utcTwoWeeksBack,
-    ]);
+    const [oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock] =
+      await getBlocksFromTimestamps([
+        utcOneDayBack,
+        utcTwoDaysBack,
+        utcOneWeekBack,
+        utcTwoWeeksBack,
+      ]);
 
     const getDayData = async () => {
       const result = await client.query({
@@ -301,8 +297,8 @@ export async function getChartData(_obj?, _args?, _ctx?, _info?) {
     const protocolDataResult = await getProtocolData();
     data.totalVolumeUSD = +protocolDataResult.data.protocol.totalVolumeUSD;
     data.totalVolumeETH = +protocolDataResult.data.protocol.totalVolumeETH;
-    data.participationRate = +protocolDataResult.data.protocol
-      .participationRate;
+    data.participationRate =
+      +protocolDataResult.data.protocol.participationRate;
 
     const oneDayResult = await getProtocolDataByBlock(oneDayBlock);
     oneDayData = oneDayResult.data.protocol;

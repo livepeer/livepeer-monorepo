@@ -108,158 +108,162 @@ type NextPageProps = {
   generatedAt?: string;
 };
 
-export const withApollo = ({ ssr = false } = {}) => (
-  PageComponent: NextPage<NextPageProps>
-) => {
-  const WithApollo = ({
-    apolloClient,
-    apolloState,
-    ...pageProps
-  }: {
-    apolloClient?: ApolloClient<object>;
-    apolloState: object;
-    revalidate?: number;
-    generatedAt?: string;
-  }) => {
-    let client: ApolloClient<object>;
-    if (apolloClient) {
-      // Happens on: getDataFromTree & next.js ssr
-      client = apolloClient;
-    } else {
-      // Happens on: next.js csr
-      client = initApolloClient(apolloState, null);
-      if (
-        apolloState &&
-        pageProps.generatedAt &&
-        typeof window !== "undefined"
-      ) {
-        // source:
-        // https://github.com/apollographql/apollo-client/blob/a975320528d314a1b7eba131b97d045d940596d7/src/cache/inmemory/writeToStore.ts#L100
-        // a normal "deep merge" seemed to work as well, but it's safer to use
-        // Apollo's implementation
-        const merger = new DeepMerger();
-        client.cache.restore(merger.merge(apolloState, client.cache.extract()));
+export const withApollo =
+  ({ ssr = false } = {}) =>
+  (PageComponent: NextPage<NextPageProps>) => {
+    const WithApollo = ({
+      apolloClient,
+      apolloState,
+      ...pageProps
+    }: {
+      apolloClient?: ApolloClient<object>;
+      apolloState: object;
+      revalidate?: number;
+      generatedAt?: string;
+    }) => {
+      let client: ApolloClient<object>;
+      if (apolloClient) {
+        // Happens on: getDataFromTree & next.js ssr
+        client = apolloClient;
+      } else {
+        // Happens on: next.js csr
+        client = initApolloClient(apolloState, null);
+        if (
+          apolloState &&
+          pageProps.generatedAt &&
+          typeof window !== "undefined"
+        ) {
+          // source:
+          // https://github.com/apollographql/apollo-client/blob/a975320528d314a1b7eba131b97d045d940596d7/src/cache/inmemory/writeToStore.ts#L100
+          // a normal "deep merge" seemed to work as well, but it's safer to use
+          // Apollo's implementation
+          const merger = new DeepMerger();
+          client.cache.restore(
+            merger.merge(apolloState, client.cache.extract())
+          );
+        }
       }
+
+      // https://github.com/apollographql/apollo-client/issues/4814#issuecomment-604764404
+      useComponentWillMount(() => {
+        if (typeof window !== "undefined") {
+          let disableNetworkFetches = true;
+          const { revalidate, generatedAt } = pageProps;
+          if (revalidate && generatedAt) {
+            const isOld: boolean =
+              new Date().getTime() - new Date(generatedAt).getTime() >
+              revalidate * 1000;
+            if (isOld) {
+              disableNetworkFetches = false;
+            }
+          }
+          client.disableNetworkFetches = disableNetworkFetches;
+        }
+      });
+
+      useComponentDidMount(() => {
+        if (typeof window !== "undefined") {
+          client.disableNetworkFetches = false;
+        }
+      });
+
+      return (
+        <ApolloProvider client={client}>
+          <PageComponent {...pageProps} />
+        </ApolloProvider>
+      );
+    };
+
+    // Set the correct displayName in development
+    if (process.env.NODE_ENV !== "production") {
+      const displayName =
+        PageComponent.displayName || PageComponent.name || "Component";
+      WithApollo.displayName = `withApollo(${displayName})`;
     }
 
-    // https://github.com/apollographql/apollo-client/issues/4814#issuecomment-604764404
-    useComponentWillMount(() => {
-      if (typeof window !== "undefined") {
-        let disableNetworkFetches = true;
-        const { revalidate, generatedAt } = pageProps;
-        if (revalidate && generatedAt) {
-          const isOld: boolean =
-            new Date().getTime() - new Date(generatedAt).getTime() >
-            revalidate * 1000;
-          if (isOld) {
-            disableNetworkFetches = false;
+    if (ssr || PageComponent.getInitialProps) {
+      WithApollo.getInitialProps = async (
+        ctx: WithApolloPageContext | AppContext
+      ) => {
+        let appContext: AppContext | null = null;
+        let pageContext: WithApolloPageContext | null = null;
+        if (isAppContext(ctx)) {
+          appContext = ctx as AppContext;
+          pageContext = appContext.ctx as WithApolloPageContext;
+        } else {
+          pageContext = ctx as WithApolloPageContext;
+        }
+        const { apolloClient } = initOnContext(ctx);
+
+        // Run wrapped getInitialProps methods
+        let pageProps = {};
+        if (PageComponent.getInitialProps) {
+          pageProps = await PageComponent.getInitialProps(pageContext!);
+        } else if (appContext) {
+          pageProps = await App.getInitialProps(appContext);
+        }
+
+        // Only on the server:
+        if (typeof window === "undefined") {
+          const { AppTree } = ctx;
+          // When redirecting, the response is finished.
+          // No point in continuing to render
+          if (pageContext?.res && pageContext?.res.finished) {
+            return pageProps;
           }
-        }
-        client.disableNetworkFetches = disableNetworkFetches;
-      }
-    });
 
-    useComponentDidMount(() => {
-      if (typeof window !== "undefined") {
-        client.disableNetworkFetches = false;
-      }
-    });
+          // TODO: replace with react-ssr-prepass
+          // https://codesandbox.io/s/knk2e?file=/lib/with-urql-client.js
+          // Only if dataFromTree is enabled
+          if (ssr && AppTree) {
+            try {
+              // Import `@apollo/react-ssr` dynamically.
+              // We don't want to have this in our client bundle.
+              const { getDataFromTree } = await import(
+                "@apollo/client/react/ssr"
+              );
 
-    return (
-      <ApolloProvider client={client}>
-        <PageComponent {...pageProps} />
-      </ApolloProvider>
-    );
-  };
+              // Since AppComponents and PageComponents have different context types
+              // we need to modify their props a little.
+              let props;
+              if (appContext) {
+                props = { ...pageProps, apolloClient };
+              } else {
+                props = { pageProps: { ...pageProps, apolloClient } };
+              }
 
-  // Set the correct displayName in development
-  if (process.env.NODE_ENV !== "production") {
-    const displayName =
-      PageComponent.displayName || PageComponent.name || "Component";
-    WithApollo.displayName = `withApollo(${displayName})`;
-  }
-
-  if (ssr || PageComponent.getInitialProps) {
-    WithApollo.getInitialProps = async (
-      ctx: WithApolloPageContext | AppContext
-    ) => {
-      let appContext: AppContext | null = null;
-      let pageContext: WithApolloPageContext | null = null;
-      if (isAppContext(ctx)) {
-        appContext = ctx as AppContext;
-        pageContext = appContext.ctx as WithApolloPageContext;
-      } else {
-        pageContext = ctx as WithApolloPageContext;
-      }
-      const { apolloClient } = initOnContext(ctx);
-
-      // Run wrapped getInitialProps methods
-      let pageProps = {};
-      if (PageComponent.getInitialProps) {
-        pageProps = await PageComponent.getInitialProps(pageContext!);
-      } else if (appContext) {
-        pageProps = await App.getInitialProps(appContext);
-      }
-
-      // Only on the server:
-      if (typeof window === "undefined") {
-        const { AppTree } = ctx;
-        // When redirecting, the response is finished.
-        // No point in continuing to render
-        if (pageContext?.res && pageContext?.res.finished) {
-          return pageProps;
-        }
-
-        // TODO: replace with react-ssr-prepass
-        // https://codesandbox.io/s/knk2e?file=/lib/with-urql-client.js
-        // Only if dataFromTree is enabled
-        if (ssr && AppTree) {
-          try {
-            // Import `@apollo/react-ssr` dynamically.
-            // We don't want to have this in our client bundle.
-            const { getDataFromTree } = await import(
-              "@apollo/client/react/ssr"
-            );
-
-            // Since AppComponents and PageComponents have different context types
-            // we need to modify their props a little.
-            let props;
-            if (appContext) {
-              props = { ...pageProps, apolloClient };
-            } else {
-              props = { pageProps: { ...pageProps, apolloClient } };
+              // Take the Next.js AppTree, determine which queries are needed to render,
+              // and fetch them. This method can be pretty slow since it renders
+              // your entire AppTree once for every query. Check out apollo fragments
+              // if you want to reduce the number of rerenders.
+              // https://www.apollographql.com/docs/react/data/fragments/
+              await getDataFromTree(
+                <AppTree pageProps={pageProps} {...props} />
+              );
+            } catch (error) {
+              // Prevent Apollo Client GraphQL errors from crashing SSR.
+              // Handle them in components via the data.error prop:
+              // https://www.apollographql.com/docs/react/api/react-apollo.html#graphql-query-data-error
+              // eslint-disable-next-line no-console
+              console.error("Error while running `getDataFromTree`", error);
             }
 
-            // Take the Next.js AppTree, determine which queries are needed to render,
-            // and fetch them. This method can be pretty slow since it renders
-            // your entire AppTree once for every query. Check out apollo fragments
-            // if you want to reduce the number of rerenders.
-            // https://www.apollographql.com/docs/react/data/fragments/
-            await getDataFromTree(<AppTree pageProps={pageProps} {...props} />);
-          } catch (error) {
-            // Prevent Apollo Client GraphQL errors from crashing SSR.
-            // Handle them in components via the data.error prop:
-            // https://www.apollographql.com/docs/react/api/react-apollo.html#graphql-query-data-error
-            // eslint-disable-next-line no-console
-            console.error("Error while running `getDataFromTree`", error);
+            // getDataFromTree does not call componentWillUnmount
+            // head side effect therefore need to be cleared manually
+            Head.rewind();
           }
-
-          // getDataFromTree does not call componentWillUnmount
-          // head side effect therefore need to be cleared manually
-          Head.rewind();
         }
-      }
 
-      return {
-        ...pageProps,
-        // Extract query data from the Apollo store
-        apolloState: apolloClient.cache.extract(),
-        // Provide the client for ssr. As soon as this payload
-        // gets JSON.stringified it will remove itself.
-        apolloClient,
+        return {
+          ...pageProps,
+          // Extract query data from the Apollo store
+          apolloState: apolloClient.cache.extract(),
+          // Provide the client for ssr. As soon as this payload
+          // gets JSON.stringified it will remove itself.
+          apolloClient,
+        };
       };
-    };
-  }
+    }
 
-  return WithApollo;
-};
+    return WithApollo;
+  };

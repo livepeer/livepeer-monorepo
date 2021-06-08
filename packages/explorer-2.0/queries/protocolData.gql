@@ -1,4 +1,4 @@
-query {
+query protocol {
   protocol(id: 0) {
     id
     totalVolumeUSD

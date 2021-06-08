@@ -1,4 +1,4 @@
-query($id: ID!) {
+query poll($id: ID!) {
   poll(id: $id) {
     id
     proposal

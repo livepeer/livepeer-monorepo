@@ -1,4 +1,4 @@
-query($account: String!, $first: Int!, $skip: Int!) {
+query transactions($account: String!, $first: Int!, $skip: Int!) {
   transactions(
     orderBy: timestamp
     orderDirection: desc

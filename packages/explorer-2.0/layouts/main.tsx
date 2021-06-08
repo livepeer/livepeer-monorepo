@@ -11,7 +11,7 @@ import Header from "../components/Header";
 import Router from "next/router";
 import useWindowSize from "react-use/lib/useWindowSize";
 import WalletModal from "../components/WalletModal";
-import { useQuery, useApolloClient } from "@apollo/client";
+import { useQuery, useApolloClient, gql } from "@apollo/client";
 import ReactGA from "react-ga";
 import { isMobile } from "react-device-detect";
 import ProgressBar from "../components/ProgressBar";
@@ -21,7 +21,6 @@ import TxStartedDialog from "../components/TxStartedDialog";
 import TxConfirmedDialog from "../components/TxConfirmedDialog";
 import Modal from "../components/Modal";
 import TxSummaryDialog from "../components/TxSummaryDialog";
-import gql from "graphql-tag";
 import GET_SUBMITTED_TXS from "../queries/transactions.gql";
 import { FiArrowRight, FiX } from "react-icons/fi";
 import Link from "next/link";
@@ -148,8 +147,7 @@ const Layout = ({
                 height: 16,
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               {totalActivePolls}
             </Flex>
           )}
@@ -207,8 +205,7 @@ const Layout = ({
           context.chainId &&
           networksTypes[context.chainId] !== process.env.NEXT_PUBLIC_NETWORK
         }
-        showCloseButton={false}
-      >
+        showCloseButton={false}>
         <Box
           css={{
             border: "1px solid",
@@ -216,8 +213,7 @@ const Layout = ({
             borderRadius: 10,
             p: "$3",
             mb: "$2",
-          }}
-        >
+          }}>
           Simply open MetaMask and switch over to the{" "}
           <Box as="span" css={{ textTransform: "capitalize" }}>
             {process.env.NEXT_PUBLIC_NETWORK}
@@ -239,8 +235,7 @@ const Layout = ({
                 background: "orange",
                 fontWeight: 500,
                 fontSize: "$3",
-              }}
-            >
+              }}>
               The protocol is currently paused.
             </Flex>
           )}
@@ -262,8 +257,7 @@ const Layout = ({
                 "@bp3": {
                   fontSize: "$3",
                 },
-              }}
-            >
+              }}>
               <Box
                 as="span"
                 css={{
@@ -271,8 +265,7 @@ const Layout = ({
                   pr: "$3",
                   borderRight: "1px solid",
                   borderColor: "$border",
-                }}
-              >
+                }}>
                 <Box as="span" css={{ fontWeight: 600 }}>
                   What's New:
                 </Box>{" "}
@@ -287,8 +280,7 @@ const Layout = ({
                     display: "flex",
                     alignItems: "center",
                     color: "$primary",
-                  }}
-                >
+                  }}>
                   Read more <Box as={FiArrowRight} css={{ ml: "$1" }} />
                 </Box>
               </Link>
@@ -332,8 +324,7 @@ const Layout = ({
               "@bp3": {
                 gridTemplateColumns: "240px 1fr",
               },
-            }}
-          >
+            }}>
             <Box
               css={{
                 left: 0,
@@ -368,8 +359,7 @@ const Layout = ({
                 "@bp3": {
                   px: "$4",
                 },
-              }}
-            >
+              }}>
               <Flex css={{ width: "100%" }}>{children}</Flex>
             </Flex>
           </Box>
@@ -446,8 +436,7 @@ const Layout = ({
                   width: "calc(100vw - ((100vw - 1500px) / 2 + 240px))",
                   left: "calc((100% - 1500px) / 2 + 240px)",
                 },
-              }}
-            >
+              }}>
               <ProgressBar tx={lastTx} />
             </Box>
           )}
