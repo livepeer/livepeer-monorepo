@@ -38,6 +38,8 @@ query delegator($account: ID!) {
     active
     totalStake
     totalVolumeETH
+    activationRound
+    deactivationRound
     lastRewardRound {
       id
     }

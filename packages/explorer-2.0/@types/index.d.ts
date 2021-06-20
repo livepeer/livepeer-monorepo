@@ -12,12 +12,9 @@ export interface Transcoder {
   lastRewardRound?: Round;
   rewardCut?: string;
   feeShare?: string;
-  pricePerSegment?: string;
-  pendingRewardCut?: string;
-  pendingFeeShare?: string;
-  pendingPricePerSegment?: string;
+  activationRound?: string;
+  deactivationRound?: string;
   totalStake?: string;
-  accruedFees?: string;
   pools?: [Pool];
   delegators?: [Delegator];
   delegator?: Delegator;

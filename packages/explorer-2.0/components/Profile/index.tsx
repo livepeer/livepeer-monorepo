@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Box from "../Box";
 import Flex from "../Flex";
 import QRCode from "qrcode.react";
-import { Transcoder, Delegator, ThreeBoxSpace } from "../../@types";
+import { Transcoder, Delegator, ThreeBoxSpace, Round } from "../../@types";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactTooltip from "react-tooltip";
 import EditProfile from "../EditProfile";
@@ -23,6 +23,7 @@ interface Props {
   isMyAccount: boolean;
   threeBoxSpace?: ThreeBoxSpace;
   css?: object;
+  currentRound?: Round;
 }
 
 const Index = ({
@@ -33,6 +34,7 @@ const Index = ({
   transcoder,
   isMyAccount = false,
   threeBoxSpace,
+  currentRound,
 }: Props) => {
   const client = useApolloClient();
   const [copied, setCopied] = useState(false);
@@ -44,6 +46,10 @@ const Index = ({
       }, 2000);
     }
   }, [copied]);
+
+  const active =
+    transcoder?.activationRound <= currentRound.id &&
+    transcoder?.deactivationRound > currentRound.id;
 
   return (
     <Box css={{ mb: "$3" }}>
@@ -98,7 +104,7 @@ const Index = ({
               position: "absolute",
               right: 0,
               bottom: "-2px",
-              bg: transcoder.active ? "$primary" : "$muted",
+              bg: active ? "$primary" : "$muted",
               border: "5px solid #131418",
               boxSizing: "border-box",
               width: 24,

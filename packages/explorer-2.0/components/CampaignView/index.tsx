@@ -35,8 +35,12 @@ const Index = ({ currentRound, transcoder }) => {
   const [isPriceSettingOpen, setIsPriceSettingOpen] = useState(false);
   const targetRef = useRef();
   const [priceSetting, setPriceSetting] = useState("pixel");
-  const callsMade = transcoder.pools.filter((r) => r.rewardTokens != null)
-    .length;
+  const callsMade = transcoder.pools.filter(
+    (r) => r.rewardTokens != null
+  ).length;
+  const active =
+    transcoder?.activationRound <= currentRound.id &&
+    transcoder?.deactivationRound > currentRound.id;
 
   const PriceSettingToggle = () => (
     <Box
@@ -211,7 +215,7 @@ const Index = ({ currentRound, transcoder }) => {
               <Subtitle>
                 <Flex css={{ alignItems: "center" }}>
                   {transcoder.lastRewardRound.id}{" "}
-                  {transcoder.active && (
+                  {active && (
                     <Flex>
                       {transcoder.lastRewardRound.id === currentRound.id ? (
                         <Box
