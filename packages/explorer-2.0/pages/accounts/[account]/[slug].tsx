@@ -189,6 +189,7 @@ const Account = () => {
           role={role}
           transcoder={data.transcoder}
           threeBoxSpace={threeBoxData?.threeBoxSpace}
+          currentRound={data.protocol.currentRound}
         />
         <Tabs tabs={tabs} />
         {slug === "campaign" && (
