@@ -7,7 +7,6 @@
     startTime
     inputData
     estimate
-    gas
     gasPrice
     inputData
   }
