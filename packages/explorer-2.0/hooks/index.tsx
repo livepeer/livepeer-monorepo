@@ -19,16 +19,18 @@ export function useWeb3Mutation(mutation, options) {
     }
   `;
 
-  const { data: transactionStatusData, loading: transactionStatusLoading } =
-    useQuery(GET_TRANSACTION_STATUS, {
-      ...options,
-      variables: {
-        txHash: data?.tx?.txHash,
-      },
-      fetchPolicy: "no-cache",
-      notifyOnNetworkStatusChange: true,
-      context: options?.context,
-    });
+  const {
+    data: transactionStatusData,
+    loading: transactionStatusLoading,
+  } = useQuery(GET_TRANSACTION_STATUS, {
+    ...options,
+    variables: {
+      txHash: data?.tx?.txHash,
+    },
+    fetchPolicy: "no-cache",
+    notifyOnNetworkStatusChange: true,
+    context: options?.context,
+  });
 
   const GET_TRANSACTION = gql`
     query transaction($txHash: String) {
@@ -91,6 +93,7 @@ export function useWeb3Mutation(mutation, options) {
               estimate: txPredictionData?.txPrediction?.result
                 ? txPredictionData?.txPrediction?.result
                 : null,
+              gas: data.tx.gas,
               gasPrice: transactionData?.transaction?.gasPrice?.toString()
                 ? transactionData?.transaction?.gasPrice?.toString()
                 : null,

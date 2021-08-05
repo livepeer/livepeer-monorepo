@@ -24,20 +24,33 @@ export async function approve(_obj, _args, _ctx) {
 
   switch (type) {
     case "bond":
+      gas = await _ctx.livepeer.rpc.estimateGas("LivepeerToken", "approve", [
+        _ctx.livepeer.config.contracts.BondingManager.address,
+        amount,
+      ]);
       txHash = await _ctx.livepeer.rpc.approveTokenBondAmount(amount, {
+        gas,
         returnTxHash: true,
       });
       return {
+        gas,
         txHash,
         inputData: {
           ..._args,
         },
       };
     case "createPoll":
+      gas = await _ctx.livepeer.rpc.estimateGas("LivepeerToken", "approve", [
+        _ctx.livepeer.config.contracts.PollCreator.address,
+        amount,
+      ]);
+
       txHash = await _ctx.livepeer.rpc.approveTokenPollCreationCost(amount, {
+        gas,
         returnTxHash: true,
       });
       return {
+        gas,
         txHash,
         inputData: {
           ..._args,
@@ -126,14 +139,22 @@ export async function bond(_obj, _args, _ctx) {
   );
   data = claimData ? claimData : data;
 
+  const gas = await _ctx.livepeer.rpc.estimateGasRaw({
+    ..._ctx.livepeer.config.defaultTx,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    data,
+  });
+
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
     to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -160,14 +181,22 @@ export async function unbond(_obj, _args, _ctx) {
   );
   data = claimData ? claimData : data;
 
+  const gas = await _ctx.livepeer.rpc.estimateGasRaw({
+    ..._ctx.livepeer.config.defaultTx,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    data,
+  });
+
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
     to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -196,14 +225,22 @@ export async function rebond(_obj, _args, _ctx) {
   );
   data = claimData ? claimData : data;
 
+  const gas = await _ctx.livepeer.rpc.estimateGasRaw({
+    ..._ctx.livepeer.config.defaultTx,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    data,
+  });
+
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
     to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -219,12 +256,20 @@ export async function rebond(_obj, _args, _ctx) {
 export async function withdrawStake(_obj, _args, _ctx) {
   const { unbondingLockId } = _args;
 
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    "BondingManager",
+    "withdrawStake",
+    [unbondingLockId]
+  );
+
   const txHash = await _ctx.livepeer.rpc.withdrawStake(unbondingLockId, {
     ..._ctx.livepeer.config.defaultTx,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -251,14 +296,22 @@ export async function withdrawFees(_obj, _args, _ctx) {
   );
   data = claimData ? claimData : data;
 
+  const gas = await _ctx.livepeer.rpc.estimateGasRaw({
+    ..._ctx.livepeer.config.defaultTx,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    data,
+  });
+
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
     to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -287,14 +340,22 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
   );
   data = claimData ? claimData : data;
 
+  const gas = await _ctx.livepeer.rpc.estimateGasRaw({
+    ..._ctx.livepeer.config.defaultTx,
+    to: _ctx.livepeer.config.contracts["BondingManager"].address,
+    data,
+  });
+
   const txHash = await _ctx.livepeer.rpc.sendTransaction({
     ..._ctx.livepeer.config.defaultTx,
     to: _ctx.livepeer.config.contracts["BondingManager"].address,
     data,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -308,11 +369,18 @@ export async function rebondFromUnbonded(_obj, _args, _ctx) {
  * @return {Promise}
  */
 export async function initializeRound(_obj, _args, _ctx) {
+  const gas = await _ctx.livepeer.rpc.estimateGas(
+    "RoundsManager",
+    "initializeRound",
+    []
+  );
   const txHash = await _ctx.livepeer.rpc.initializeRound({
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -328,13 +396,18 @@ export async function initializeRound(_obj, _args, _ctx) {
 export async function createPoll(_obj, _args, _ctx) {
   const Utils = require("web3-utils");
   const { proposal } = _args;
+  const gas = await _ctx.livepeer.rpc.estimateGas("PollCreator", "createPoll", [
+    Utils.fromAscii(proposal),
+  ]);
 
   const txHash = await _ctx.livepeer.rpc.createPoll(Utils.fromAscii(proposal), {
     ..._ctx.livepeer.config.defaultTx,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,
@@ -349,12 +422,15 @@ export async function createPoll(_obj, _args, _ctx) {
  */
 export async function vote(_obj, _args, _ctx) {
   const { pollAddress, choiceId } = _args;
+  const gas = await _ctx.livepeer.rpc.estimateGas("Poll", "vote", [choiceId]);
   const txHash = await _ctx.livepeer.rpc.vote(pollAddress, choiceId, {
     ..._ctx.livepeer.config.defaultTx,
+    gas,
     returnTxHash: true,
   });
 
   return {
+    gas,
     txHash,
     inputData: {
       ..._args,

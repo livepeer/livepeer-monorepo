@@ -21,7 +21,8 @@ const Index = ({ tx, isOpen, onDismiss }) => {
       clickAnywhereToClose={false}
       onDismiss={onDismiss}
       title="Sending"
-      Icon={<Spinner />}>
+      Icon={<Spinner />}
+    >
       <Box
         css={{
           position: "absolute",
@@ -42,12 +43,15 @@ const Index = ({ tx, isOpen, onDismiss }) => {
           border: "1px solid",
           borderColor: "$border",
           mb: "$4",
-        }}>
+        }}
+      >
         <Header tx={tx} timeLeft={timeLeft} />
         <Box
           css={{
-            p: "$3",
-          }}>
+            px: "$3",
+            py: "$4",
+          }}
+        >
           {Table({ tx, timeLeft })}
         </Box>
       </Box>
@@ -68,6 +72,12 @@ function Table({ tx, timeLeft }) {
         <Box>Your account</Box> {tx.from.replace(tx.from.slice(7, 37), "…")}
       </Row>
       <Inputs tx={tx} />
+      <Row>
+        <Box>Max Transaction fee</Box>{" "}
+        {tx.gasPrice && tx.gas
+          ? `${parseFloat(Utils.fromWei(tx.gasPrice)) * tx.gas} ETH`
+          : "Estimating..."}
+      </Row>
       <Row css={{ mb: 0 }}>
         <Box>Estimated wait</Box>
         <Box>
@@ -156,12 +166,10 @@ function Row({ css = {}, children, ...props }) {
         alignItems: "center",
         justifyContent: "space-between",
         fontSize: "$2",
-        "&:last-of-type": {
-          mb: 0,
-        },
         ...css,
       }}
-      {...props}>
+      {...props}
+    >
       {children}
     </Flex>
   );
@@ -177,14 +185,16 @@ function Header({ css = {}, tx, timeLeft }) {
         alignItems: "center",
         justifyContent: "space-between",
         ...css,
-      }}>
+      }}
+    >
       <Flex
         css={{
           mr: "$3",
           color: "white",
           fontSize: "$1",
           fontWeight: "bold",
-        }}>
+        }}
+      >
         {timeLeft
           ? `${
               Math.floor(((tx?.estimate - timeLeft) / tx?.estimate) * 100) < 100
@@ -201,7 +211,8 @@ function Header({ css = {}, tx, timeLeft }) {
         rel="noopener noreferrer"
         href={`https://${
           process.env.NEXT_PUBLIC_NETWORK === "rinkeby" ? "rinkeby." : ""
-        }etherscan.io/tx/${tx?.txHash}`}>
+        }etherscan.io/tx/${tx?.txHash}`}
+      >
         Details{" "}
         <Box as={ExternalLinkIcon} css={{ ml: "6px", color: "$primary" }} />
       </Box>
