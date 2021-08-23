@@ -157,8 +157,7 @@ function renderUnstakeWarnings(
   return (
     <Footnote>
       *Looking to move your delegated stake? No need to unstake. Simply navigate
-      to the orchestrator you wish to switch to, enter a value of "0" and hit
-      stake.
+      to the orchestrator you wish to switch to, enter "0" and hit stake.
     </Footnote>
   );
 }
