@@ -1,19 +1,18 @@
 import Box from "../Box";
 
-const Warning = ({ children }) => {
+const Footnote = ({ children }) => {
   return (
     <Box
       css={{
         pt: "$3",
-        color: "$muted",
+        color: "gray",
         textAlign: "center",
         fontSize: "$1",
         lineHeight: 1.7,
-      }}
-    >
+      }}>
       {children}
     </Box>
   );
 };
 
-export default Warning;
+export default Footnote;
