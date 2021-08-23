@@ -118,7 +118,6 @@ const StakingTable = ({
       {
         Header: "Fees",
         accessor: "totalVolumeETH",
-        sortType: "basic",
       },
       {
         Header: "Reward Cut",
