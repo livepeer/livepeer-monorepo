@@ -101,7 +101,8 @@ const Footer = ({
         />
         {+amount >= 0 && !isMyTranscoder && isStaked && (
           <Footnote>
-            *Enter "0" to move your current delegated stake ({stake} LPT).
+            *Enter "0" to move your current delegated stake ({stake} LPT) to
+            this orchestrator.
           </Footnote>
         )}
       </Box>
