@@ -8,7 +8,7 @@ import {
   simulateNewActiveSetOrder,
 } from "../../lib/utils";
 import { useWeb3React } from "@web3-react/core";
-import Warning from "./Warning";
+import Footnote from "./Footnote";
 import Box from "../Box";
 import ConnectWallet from "./connect-wallet";
 
@@ -99,6 +99,11 @@ const Footer = ({
             currDelegateNewPosNext: currDelegateNewPosNext,
           }}
         />
+        {+amount >= 0 && !isMyTranscoder && isStaked && (
+          <Footnote>
+            Enter "0" to move your delegated stake to this orchestrator.
+          </Footnote>
+        )}
       </Box>
     );
   }
@@ -133,19 +138,25 @@ function renderUnstakeWarnings(
 ) {
   if (delegatorStatus === "Pending") {
     return (
-      <Warning>
+      <Footnote>
         Your account is in a pending state. You can unstake during the next
         round.
-      </Warning>
+      </Footnote>
     );
   }
   if (!isStaked) {
-    return <Warning>One must stake before one can unstake.</Warning>;
+    return <Footnote>One must stake before one can unstake.</Footnote>;
   }
   if (!isMyTranscoder) {
-    return <Warning>You're not staked to this orchestrator.</Warning>;
+    return <Footnote>You're not staked to this orchestrator.</Footnote>;
   }
   if (parseFloat(amount) && !sufficientStake) {
-    return <Warning>Insufficient stake</Warning>;
+    return <Footnote>Insufficient stake</Footnote>;
   }
+  return (
+    <Footnote>
+      Looking to move your delegated stake? No need to unstake. Simply navigate
+      to the orchestrator you wish to switch to, enter "0" and hit stake.
+    </Footnote>
+  );
 }
