@@ -101,8 +101,7 @@ const Footer = ({
         />
         {+amount >= 0 && !isMyTranscoder && isStaked && (
           <Footnote>
-            *Enter "0" to move your current delegated stake ({stake} LPT) to
-            this orchestrator.
+            Enter "0" to move your delegated stake to this orchestrator.
           </Footnote>
         )}
       </Box>
@@ -156,7 +155,7 @@ function renderUnstakeWarnings(
   }
   return (
     <Footnote>
-      *Looking to move your delegated stake? No need to unstake. Simply navigate
+      Looking to move your delegated stake? No need to unstake. Simply navigate
       to the orchestrator you wish to switch to, enter "0" and hit stake.
     </Footnote>
   );

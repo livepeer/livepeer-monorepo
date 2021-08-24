@@ -78,7 +78,7 @@ const Stake = ({
   if (!amountEntered) {
     return (
       <Button fullWidth disabled>
-        Enter an Amount*
+        Enter an Amount
       </Button>
     );
   }
@@ -108,7 +108,7 @@ const Stake = ({
             color="primary"
             onClick={onStake}
             fullWidth>
-            {+amount >= 0 && switching ? "Move Stake*" : "Stake"}
+            {+amount >= 0 && switching ? "Move Stake" : "Stake"}
           </Button>
         </Box>
         <ProgressSteps
@@ -121,7 +121,7 @@ const Stake = ({
 
   return (
     <Button onClick={onStake} fullWidth color="primary">
-      {+amount >= 0 && switching ? "Move Stake*" : "Stake"}
+      {+amount >= 0 && switching ? "Move Stake" : "Stake"}
     </Button>
   );
 };
