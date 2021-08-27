@@ -167,7 +167,7 @@ const PerformanceTable = ({
     columns,
     data: transcoders,
     disableSortRemove: true,
-    autoResetPage: false,
+    autoResetPage: true,
     initialState: {
       pageSize,
       sortBy: [
@@ -176,15 +176,7 @@ const PerformanceTable = ({
           desc: true,
         },
         {
-          id: "scores.mdw",
-          desc: true,
-        },
-        {
           id: "scores.fra",
-          desc: true,
-        },
-        {
-          id: "scores.nyc",
           desc: true,
         },
         {
@@ -196,7 +188,19 @@ const PerformanceTable = ({
           desc: true,
         },
         {
+          id: "scores.mdw",
+          desc: true,
+        },
+        {
+          id: "scores.nyc",
+          desc: true,
+        },
+        {
           id: "scores.prg",
+          desc: true,
+        },
+        {
+          id: "scores.sin",
           desc: true,
         },
       ],

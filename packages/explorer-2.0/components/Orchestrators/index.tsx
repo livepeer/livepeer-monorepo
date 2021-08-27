@@ -16,13 +16,13 @@ import orchestratorsViewQuery from "../../queries/orchestratorsView.gql";
 
 const regions = {
   global: "Global",
-  sin: "Singapore",
   fra: "Frankfurt",
-  mdw: "Chicago",
-  nyc: "New York City",
   lax: "Los Angelos",
   lon: "London",
+  mdw: "Chicago",
+  nyc: "New York City",
   prg: "Prague",
+  sin: "Singapore",
 };
 
 const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
@@ -271,13 +271,13 @@ const Index = ({ pageSize = 10, title = "" }) => {
                       setRegion(value);
                     }}>
                     <MenuItemRadio value="global" label="Global" />
-                    <MenuItemRadio value="sin" label="Singapore" />
-                    <MenuItemRadio value="fra" label="Frankfurt" />
                     <MenuItemRadio value="mdw" label="Chicago" />
-                    <MenuItemRadio value="nyc" label="New York City" />
-                    <MenuItemRadio value="lax" label="Los Angelos" />
+                    <MenuItemRadio value="fra" label="Frankfurt" />
                     <MenuItemRadio value="lon" label="London" />
+                    <MenuItemRadio value="lax" label="Los Angelos" />
+                    <MenuItemRadio value="nyc" label="New York City" />
                     <MenuItemRadio value="prg" label="Prague" />
+                    <MenuItemRadio value="sin" label="Singapore" />
                   </MenuItemRadioGroup>
                 </Menu>
               </Flex>
