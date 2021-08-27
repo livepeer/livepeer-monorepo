@@ -16,9 +16,13 @@ import orchestratorsViewQuery from "../../queries/orchestratorsView.gql";
 
 const regions = {
   global: "Global",
-  sin: "Asia (Singapore)",
-  fra: "Europe (Frankfurt)",
-  mdw: "North America (Chicago)",
+  sin: "Singapore",
+  fra: "Frankfurt",
+  mdw: "Chicago",
+  nyc: "New York City",
+  lax: "Los Angelos",
+  lon: "London",
+  prg: "Prague",
 };
 
 const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
@@ -40,8 +44,7 @@ const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
           py: "6px",
           px: "$2",
           mr: "$2",
-        }}
-      >
+        }}>
         1D
       </Box>
       <Box
@@ -59,8 +62,7 @@ const TimeframeToggle = ({ refetch, timeframe, setTimeframe }) => {
           bg: timeframe === "1W" ? "rgba(255,255,255,.1)" : "transparent",
           py: "6px",
           px: "$2",
-        }}
-      >
+        }}>
         1W
       </Box>
     </Flex>
@@ -139,8 +141,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
           border: "1px solid",
           borderColor: "rgba(194,201,209,.15)",
           borderRadius: 10,
-        }}
-      >
+        }}>
         <Flex
           css={{
             alignItems: "flex-start",
@@ -153,16 +154,14 @@ const Index = ({ pageSize = 10, title = "" }) => {
               alignItems: "center-start",
               flexDirection: "row",
             },
-          }}
-        >
+          }}>
           <Box
             css={{
               mb: "$3",
               "@bp2": {
                 mb: 0,
               },
-            }}
-          >
+            }}>
             <Flex css={{ alignItems: "center" }}>
               <Box
                 onClick={() => {
@@ -184,8 +183,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
                   py: "6px",
                   px: "$2",
                   mr: "$2",
-                }}
-              >
+                }}>
                 Staking
               </Box>
               <Box
@@ -211,8 +209,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     : "transparent",
                   py: "6px",
                   px: "$2",
-                }}
-              >
+                }}>
                 Performance
               </Box>
             </Flex>
@@ -226,8 +223,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     color: "rgba(255,255,255,.5)",
                     fontSize: "$2",
                     mr: "$2",
-                  }}
-                >
+                  }}>
                   Select Region:
                 </Box>
                 <Flex
@@ -242,8 +238,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     fontSize: "$2",
                     cursor: "pointer",
                     borderBottom: "1px dashed rgba(255,255,255,.5)",
-                  }}
-                >
+                  }}>
                   <Box as="span" css={{ mr: "8px" }}>
                     {regions[region]}
                   </Box>
@@ -269,21 +264,20 @@ const Index = ({ pageSize = 10, title = "" }) => {
                   }}
                   isOpen={isRegionSelectorOpen}
                   onClose={() => setIsRegionSelectorOpen(false)}
-                  buttonRef={targetRef}
-                >
+                  buttonRef={targetRef}>
                   <MenuItemRadioGroup
                     value={region}
                     onChange={(value) => {
                       setRegion(value);
-                    }}
-                  >
+                    }}>
                     <MenuItemRadio value="global" label="Global" />
-                    <MenuItemRadio value="sin" label="Asia (Singapore)" />
-                    <MenuItemRadio value="fra" label="Europe (Frankfurt)" />
-                    <MenuItemRadio
-                      value="mdw"
-                      label="North America (Chicago)"
-                    />
+                    <MenuItemRadio value="sin" label="Singapore" />
+                    <MenuItemRadio value="fra" label="Frankfurt" />
+                    <MenuItemRadio value="mdw" label="Chicago" />
+                    <MenuItemRadio value="nyc" label="New York City" />
+                    <MenuItemRadio value="lax" label="Los Angelos" />
+                    <MenuItemRadio value="lon" label="London" />
+                    <MenuItemRadio value="prg" label="Prague" />
                   </MenuItemRadioGroup>
                 </Menu>
               </Flex>
@@ -310,8 +304,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
               height: "500px",
               display: "flex",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Spinner />
           </Box>
         ) : (

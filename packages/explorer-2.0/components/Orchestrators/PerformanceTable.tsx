@@ -36,8 +36,7 @@ const PerformanceTable = ({
         css={{
           alignItems: "center",
           pl: "$4",
-        }}
-      >
+        }}>
         <Box
           as={MagnifyingGlassIcon}
           css={{ width: 16, height: 16, mr: "$2", color: "$muted" }}
@@ -185,7 +184,19 @@ const PerformanceTable = ({
           desc: true,
         },
         {
-          id: "scores.sin",
+          id: "scores.nyc",
+          desc: true,
+        },
+        {
+          id: "scores.lax",
+          desc: true,
+        },
+        {
+          id: "scores.lon",
+          desc: true,
+        },
+        {
+          id: "scores.prg",
           desc: true,
         },
       ],
@@ -232,8 +243,7 @@ const PerformanceTable = ({
           ml: 0,
           mr: 0,
           justifyContent: "space-between",
-        }}
-      >
+        }}>
         <Box>{accountColumn.render("Filter")}</Box>
       </Flex>
       <Box css={{ overflow: "scroll", WebkitOverflowScrolling: "touch" }}>
@@ -246,15 +256,13 @@ const PerformanceTable = ({
             borderSpacing: "0",
             borderCollapse: "collapse",
           }}
-          {...getTableProps()}
-        >
+          {...getTableProps()}>
           <Box css={{ display: "table-header-group" }}>
             {headerGroups.map((headerGroup, index1) => (
               <Box
                 css={{ display: "table-row" }}
                 key={index1}
-                {...headerGroup.getHeaderGroupProps()}
-              >
+                {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column, index2) => (
                   <Box
                     css={{
@@ -268,16 +276,14 @@ const PerformanceTable = ({
                       display: "table-cell",
                       textTransform: "uppercase",
                     }}
-                    key={index2}
-                  >
+                    key={index2}>
                     <Flex
                       css={{
                         justifyContent:
                           index2 === 0 || index2 === 1
                             ? "flex-start"
                             : "flex-end",
-                      }}
-                    >
+                      }}>
                       <Flex
                         css={{
                           alignItems: "center",
@@ -286,8 +292,7 @@ const PerformanceTable = ({
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
-                        )}
-                      >
+                        )}>
                         {column.isSorted ? (
                           column.isSortedDesc ? (
                             <Box
@@ -325,8 +330,7 @@ const PerformanceTable = ({
                   css={{
                     display: "table-row",
                     height: 64,
-                  }}
-                >
+                  }}>
                   {row.cells.map((cell, i) => {
                     switch (cell.column.Header) {
                       case "#":
@@ -343,8 +347,7 @@ const PerformanceTable = ({
                           <TableCell cell={cell} key={i} css={{ pr: 0 }}>
                             <Link
                               href={`/accounts/${cell.value}/campaign`}
-                              passHref
-                            >
+                              passHref>
                               <Box
                                 as="a"
                                 css={{
@@ -353,8 +356,7 @@ const PerformanceTable = ({
                                   ":hover": {
                                     textDecoration: "underline",
                                   },
-                                }}
-                              >
+                                }}>
                                 <AccountCell
                                   active={active}
                                   threeBoxSpace={cell.row.values.threeBoxSpace}
@@ -378,8 +380,7 @@ const PerformanceTable = ({
                             css={{
                               fontFamily: "$monospace",
                               textAlign: "right",
-                            }}
-                          >
+                            }}>
                             {cell.value.toFixed(2)}%
                           </TableCell>
                         );
@@ -398,8 +399,7 @@ const PerformanceTable = ({
                             css={{
                               fontFamily: "$monospace",
                               textAlign: "right",
-                            }}
-                          >
+                            }}>
                             {(cell.value / 1000).toFixed(2)}
                           </TableCell>
                         );
@@ -418,8 +418,7 @@ const PerformanceTable = ({
                             css={{
                               fontFamily: "$monospace",
                               textAlign: "right",
-                            }}
-                          >
+                            }}>
                             {(cell.value / 1000).toFixed(2)}
                           </TableCell>
                         );
@@ -438,8 +437,7 @@ const PerformanceTable = ({
           py: "$4",
           alignItems: "center",
           justifyContent: "center",
-        }}
-      >
+        }}>
         <Box
           as={ArrowLeftIcon}
           css={{
@@ -594,8 +592,7 @@ const TableCell = forwardRef(
           borderColor: "rgba(255,255,255,.05)",
           ...css,
         }}
-        {...cell.getCellProps()}
-      >
+        {...cell.getCellProps()}>
         {children}
       </Box>
     );
