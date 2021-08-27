@@ -355,7 +355,7 @@ const createSchema = async () => {
 
         if (selectionSet.includes("scores")) {
           const metricsResponse = await fetch(
-            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`
+            `https://leaderboard-serverless.vercel.app/api/api/aggregated_stats?since=${ctx.since}`
           );
           const metrics = await metricsResponse.json();
 
