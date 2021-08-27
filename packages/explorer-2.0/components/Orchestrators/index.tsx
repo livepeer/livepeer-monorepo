@@ -17,7 +17,7 @@ import orchestratorsViewQuery from "../../queries/orchestratorsView.gql";
 const regions = {
   global: "Global",
   fra: "Frankfurt",
-  lax: "Los Angelos",
+  lax: "Los Angeles",
   lon: "London",
   mdw: "Chicago",
   nyc: "New York City",
@@ -274,7 +274,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
                     <MenuItemRadio value="mdw" label="Chicago" />
                     <MenuItemRadio value="fra" label="Frankfurt" />
                     <MenuItemRadio value="lon" label="London" />
-                    <MenuItemRadio value="lax" label="Los Angelos" />
+                    <MenuItemRadio value="lax" label="Los Angeles" />
                     <MenuItemRadio value="nyc" label="New York City" />
                     <MenuItemRadio value="prg" label="Prague" />
                     <MenuItemRadio value="sin" label="Singapore" />
