@@ -25,18 +25,30 @@ query transcoders(
       mdw
       fra
       sin
+      nyc
+      lax
+      lon
+      prg
     }
     successRates {
       global
       mdw
       fra
       sin
+      nyc
+      lax
+      lon
+      prg
     }
     roundTripScores {
       global
       mdw
       fra
       sin
+      nyc
+      lax
+      lon
+      prg
     }
     threeBoxSpace {
       __typename

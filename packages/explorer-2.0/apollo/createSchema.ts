@@ -58,6 +58,10 @@ const createSchema = async () => {
       fra: Float
       mdw: Float
       sin: Float
+      nyc: Float
+      lax: Float
+      lon: Float
+      prg: Float
     }
     extend type ThreeBoxSpace {
       transcoder: Transcoder
@@ -351,7 +355,7 @@ const createSchema = async () => {
 
         if (selectionSet.includes("scores")) {
           const metricsResponse = await fetch(
-            `https://leaderboard-serverless.livepeerorg.vercel.app/api/aggregated_stats?since=${ctx.since}`
+            `https://leaderboard-serverless.vercel.app/api/aggregated_stats?since=${ctx.since}`
           );
           const metrics = await metricsResponse.json();
 
@@ -364,18 +368,30 @@ const createSchema = async () => {
                   fra: (metrics[key].FRA?.score || 0) * 10000,
                   mdw: (metrics[key].MDW?.score || 0) * 10000,
                   sin: (metrics[key].SIN?.score || 0) * 10000,
+                  nyc: (metrics[key].NYC?.score || 0) * 10000,
+                  lax: (metrics[key].LAX?.score || 0) * 10000,
+                  lon: (metrics[key].LON?.score || 0) * 10000,
+                  prg: (metrics[key].PRG?.score || 0) * 10000,
                 },
                 successRates: {
                   global: avg(metrics[key], "success_rate") * 100,
                   fra: (metrics[key].FRA?.success_rate || 0) * 100,
                   mdw: (metrics[key].MDW?.success_rate || 0) * 100,
                   sin: (metrics[key].SIN?.success_rate || 0) * 100,
+                  nyc: (metrics[key].NYC?.success_rate || 0) * 100,
+                  lax: (metrics[key].LAX?.success_rate || 0) * 100,
+                  lon: (metrics[key].LON?.success_rate || 0) * 100,
+                  prg: (metrics[key].PRG?.success_rate || 0) * 100,
                 },
                 roundTripScores: {
                   global: avg(metrics[key], "round_trip_score") * 10000,
                   fra: (metrics[key].FRA?.round_trip_score || 0) * 10000,
                   mdw: (metrics[key].MDW?.round_trip_score || 0) * 10000,
                   sin: (metrics[key].SIN?.round_trip_score || 0) * 10000,
+                  nyc: (metrics[key].NYC?.round_trip_score || 0) * 10000,
+                  lax: (metrics[key].LAX?.round_trip_score || 0) * 10000,
+                  lon: (metrics[key].LON?.round_trip_score || 0) * 10000,
+                  prg: (metrics[key].PRG?.round_trip_score || 0) * 10000,
                 },
               });
             }
