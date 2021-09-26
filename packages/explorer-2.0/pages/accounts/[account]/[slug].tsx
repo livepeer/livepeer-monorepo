@@ -18,7 +18,6 @@ import useWindowSize from "react-use/lib/useWindowSize";
 import FeesView from "../../../components/FeesView";
 import { usePageVisibility } from "../../../hooks";
 import { useEffect } from "react";
-import accountViewQuery from "../../../queries/accountView.gql";
 import accountQuery from "../../../queries/account.gql";
 import { gql } from "@apollo/client";
 import { NextPage } from "next";
@@ -32,6 +31,20 @@ const Account = () => {
   const router = useRouter();
   const { query, asPath } = router;
   const slug = query.slug;
+
+  const { data: currentRoundData } = useQuery(gql`
+    {
+      protocol(id: "0") {
+        currentRound {
+          id
+        }
+      }
+    }
+  `);
+
+  const accountViewQuery = getAccountViewQuery(
+    currentRoundData?.protocol.currentRound.id
+  );
 
   const {
     data,
@@ -298,4 +311,76 @@ function getTabs(
   }
 
   return tabs;
+}
+
+function getAccountViewQuery(currentRound) {
+  return gql`
+    query delegator($account: ID!) {
+      delegator(id: $account) {
+        id
+        pendingStake
+        bondedAmount
+        principal
+        unbonded
+        pendingFees
+        withdrawnFees
+        startRound
+        lastClaimRound {
+          id
+        }
+        unbondingLocks {
+          id
+          amount
+          unbondingLockId
+          withdrawRound
+          delegate {
+            id
+          }
+        }
+        delegate(id: $account) {
+          id
+          active
+          status
+          active
+          totalStake
+        }
+      }
+      transcoder(id: $account) {
+        id
+        active
+        feeShare
+        rewardCut
+        price
+        status
+        active
+        totalStake
+        totalVolumeETH
+        activationRound
+        deactivationRound
+        lastRewardRound {
+          id
+        }
+        pools(first: 30, orderBy: id, orderDirection: desc where: { round_not: "${currentRound}" }) {
+          rewardTokens
+        }
+      }
+      account(id: $account) {
+        id
+        tokenBalance
+        ethBalance
+        allowance
+      }
+      protocol(id: "0") {
+        id
+        totalSupply
+        totalActiveStake
+        participationRate
+        inflation
+        inflationChange
+        currentRound {
+          id
+        }
+      }
+    }
+  `;
 }
