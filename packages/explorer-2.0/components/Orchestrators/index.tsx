@@ -1,4 +1,4 @@
-import { NetworkStatus, useQuery } from "@apollo/client";
+import { NetworkStatus, useQuery, gql } from "@apollo/client";
 import Box from "../Box";
 import Flex from "../Flex";
 import PerformanceTable from "./PerformanceTable";
@@ -12,7 +12,6 @@ import {
 } from "@modulz/radix/dist/index.es";
 import Spinner from "../Spinner";
 import { usePageVisibility } from "../../hooks";
-import orchestratorsViewQuery from "../../queries/orchestratorsView.gql";
 
 const regions = {
   global: "Global",
@@ -87,6 +86,16 @@ const Index = ({ pageSize = 10, title = "" }) => {
   const [timeframe, setTimeframe] = useState("1D");
   const [orchestratorTable, setOrchestratorTable] = useState("staking");
 
+  const { data: currentRoundData } = useQuery(gql`
+    {
+      protocol(id: "0") {
+        currentRound {
+          id
+        }
+      }
+    }
+  `);
+
   const variables = {
     orderBy: "totalStake",
     orderDirection: "desc",
@@ -94,6 +103,10 @@ const Index = ({ pageSize = 10, title = "" }) => {
       status: "Registered",
     },
   };
+
+  const orchestratorsViewQuery = getOrchestratorQuery(
+    currentRoundData?.protocol.currentRound.id
+  );
 
   const {
     data,
@@ -335,3 +348,90 @@ const Index = ({ pageSize = 10, title = "" }) => {
 };
 
 export default Index;
+
+function getOrchestratorQuery(currentRound) {
+  const query = gql`query transcoders(
+    $where: Transcoder_filter
+    $first: Int
+    $skip: Int
+    $orderBy: Transcoder_orderBy
+    $orderDirection: OrderDirection
+  ) {
+    transcoders(
+      where: $where
+      first: $first
+      skip: $skip
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+    ) {
+      id
+      totalVolumeETH
+      feeShare
+      activationRound
+      deactivationRound
+      rewardCut
+      totalStake
+      price
+      scores {
+        global
+        mdw
+        fra
+        sin
+        nyc
+        lax
+        lon
+        prg
+      }
+      successRates {
+        global
+        mdw
+        fra
+        sin
+        nyc
+        lax
+        lon
+        prg
+      }
+      roundTripScores {
+        global
+        mdw
+        fra
+        sin
+        nyc
+        lax
+        lon
+        prg
+      }
+      threeBoxSpace {
+        __typename
+        id
+        did
+        name
+        website
+        description
+        image
+      }
+      delegator {
+        startRound
+        bondedAmount
+        unbondingLocks {
+          withdrawRound
+        }
+      }
+      pools(first: 30, orderBy: id, orderDirection: desc, where: { round_not: "${currentRound}" }) {
+        rewardTokens
+      }
+    }
+    protocol(id: "0") {
+      id
+      totalSupply
+      totalActiveStake
+      inflation
+      inflationChange
+      currentRound {
+        id
+      }
+    }
+  }`;
+  return query;
+}
