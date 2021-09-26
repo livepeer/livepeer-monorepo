@@ -3,7 +3,6 @@ import Flex from "../Flex";
 import Logo from "../Logo";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
-import StakingGuide from "../StakingGuide";
 import RoundStatus from "../RoundStatus";
 import { gql, useApolloClient } from "@apollo/client";
 import UniswapModal from "../UniswapModal";
@@ -71,16 +70,14 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
             transform: "none",
             position: "sticky",
           },
-        }}
-      >
+        }}>
         <Flex
           css={{
             alignSelf: "flex-start",
             flexDirection: "column",
             width: "100%",
             height: "100%",
-          }}
-        >
+          }}>
           <Logo isDark />
           <Box css={{ mb: "auto" }}>
             {items.map((item, i) => (
@@ -103,8 +100,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                       color: "white",
                       transition: "color .3s",
                     },
-                  }}
-                >
+                  }}>
                   <Flex
                     css={{
                       alignItems: "center",
@@ -112,8 +108,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                       width: 18,
                       height: 18,
                       mr: "$3",
-                    }}
-                  >
+                    }}>
                     <item.icon />
                   </Flex>
                   {item.name}
@@ -123,16 +118,6 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
             <Box className="tour-step-1">
               <AccountMenu />
             </Box>
-            <StakingGuide
-              css={{
-                display: "none",
-                "@bp3": {
-                  display: "block",
-                },
-              }}
-            >
-              Staking Guide
-            </StakingGuide>
           </Box>
           <Box css={{ mb: "$4" }}>
             <Box
@@ -141,15 +126,13 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 pb: 18,
                 borderBottom: "1px solid",
                 borderColor: "$border",
-              }}
-            >
+              }}>
               <BottomLink
                 css={{ mb: 10 }}
                 as="a"
                 href="https://livepeer.org"
                 target="_blank"
-                rel="noopener noreferrer"
-              >
+                rel="noopener noreferrer">
                 Livepeer.org
               </BottomLink>
               <BottomLink
@@ -157,8 +140,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 as="a"
                 href="https://livepeer.org/docs"
                 target="_blank"
-                rel="noopener noreferrer"
-              >
+                rel="noopener noreferrer">
                 Docs
               </BottomLink>
               <BottomLink
@@ -175,8 +157,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                     },
                   })
                 }
-                className="tour-step-3"
-              >
+                className="tour-step-3">
                 Get LPT
                 <UniswapModal>
                   <iframe
@@ -196,8 +177,7 @@ const Index = ({ items = [], open, onDrawerOpen, onDrawerClose }) => {
                 as="a"
                 href="https://discord.gg/uaPhtyrWsF"
                 rel="noopener noreferrer"
-                target="_blank"
-              >
+                target="_blank">
                 Discord
               </BottomLink>
               <Box>
