@@ -96,14 +96,6 @@ const Index = ({ pageSize = 10, title = "" }) => {
     }
   `);
 
-  const variables = {
-    orderBy: "totalStake",
-    orderDirection: "desc",
-    where: {
-      status: "Registered",
-    },
-  };
-
   const orchestratorsViewQuery = getOrchestratorQuery(
     currentRoundData?.protocol.currentRound.id
   );
@@ -115,7 +107,6 @@ const Index = ({ pageSize = 10, title = "" }) => {
     startPolling: startPollingOrchestrators,
     stopPolling: stopPollingOrchestrators,
   } = useQuery(orchestratorsViewQuery, {
-    variables,
     notifyOnNetworkStatusChange: true,
     pollInterval,
     context: {
@@ -349,21 +340,15 @@ const Index = ({ pageSize = 10, title = "" }) => {
 
 export default Index;
 
-function getOrchestratorQuery(currentRound) {
-  const query = gql`query transcoders(
-    $where: Transcoder_filter
-    $first: Int
-    $skip: Int
-    $orderBy: Transcoder_orderBy
-    $orderDirection: OrderDirection
-  ) {
+export function getOrchestratorQuery(currentRound) {
+  const query = gql`query transcoders {
     transcoders(
-      where: $where
-      first: $first
-      skip: $skip
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-    ) {
+      orderBy: totalStake,
+      orderDirection: desc,
+      where: {
+        activationRound_lte: ${currentRound},
+        deactivationRound_gt: ${currentRound},
+      }) {
       id
       totalVolumeETH
       feeShare
