@@ -192,7 +192,7 @@ const StakingTable = ({
     autoResetPage: false,
     initialState: {
       pageSize,
-      sortBy: [{ id: "totalStake", desc: true }],
+      sortBy: [{ id: "totalVolumeETH", desc: true }],
       hiddenColumns: [
         "activationRound",
         "deactivationRound",
