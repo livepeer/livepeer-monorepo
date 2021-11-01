@@ -111,13 +111,13 @@ const StakingTable = ({
         accessor: "delegator",
       },
       {
+        Header: "Fees",
+        accessor: "totalVolumeETH",
+      },
+      {
         Header: "Stake",
         accessor: "totalStake",
         mobile: true,
-      },
-      {
-        Header: "Fees",
-        accessor: "totalVolumeETH",
       },
       {
         Header: "Reward Cut",
