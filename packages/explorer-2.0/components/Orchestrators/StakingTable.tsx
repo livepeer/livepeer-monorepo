@@ -370,7 +370,10 @@ const StakingTable = ({
                               textAlign: "right",
                               fontFamily: "$monospace",
                             }}>
-                            {abbreviateNumber(cell.value ? cell.value : 0, 4)}
+                            {abbreviateNumber(cell.value ? cell.value : 0, 4)}{" "}
+                            <Box as="span" css={{ fontSize: 12 }}>
+                              LPT
+                            </Box>
                           </TableCell>
                         );
                       case "Fees":
