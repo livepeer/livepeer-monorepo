@@ -47,8 +47,8 @@ const Index = ({ threeBoxSpace, active, address }) => {
           <QRCode
             style={{
               borderRadius: 1000,
-              width: 30,
-              height: 30,
+              width: 24,
+              height: 24,
               padding: "2px",
               border: "1px solid",
               borderColor: "rgba(255,255,255,.6)",

@@ -111,13 +111,13 @@ const StakingTable = ({
         accessor: "delegator",
       },
       {
+        Header: "Fees",
+        accessor: "totalVolumeETH",
+      },
+      {
         Header: "Stake",
         accessor: "totalStake",
         mobile: true,
-      },
-      {
-        Header: "Fees",
-        accessor: "totalVolumeETH",
       },
       {
         Header: "Reward Cut",
@@ -192,7 +192,7 @@ const StakingTable = ({
     autoResetPage: false,
     initialState: {
       pageSize,
-      sortBy: [{ id: "totalStake", desc: true }],
+      sortBy: [{ id: "totalVolumeETH", desc: true }],
       hiddenColumns: [
         "activationRound",
         "deactivationRound",
@@ -370,7 +370,10 @@ const StakingTable = ({
                               textAlign: "right",
                               fontFamily: "$monospace",
                             }}>
-                            {abbreviateNumber(cell.value ? cell.value : 0, 4)}
+                            {abbreviateNumber(cell.value ? cell.value : 0, 4)}{" "}
+                            <Box as="span" css={{ fontSize: 12 }}>
+                              LPT
+                            </Box>
                           </TableCell>
                         );
                       case "Fees":

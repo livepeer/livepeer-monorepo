@@ -343,7 +343,7 @@ export default Index;
 export function getOrchestratorQuery(currentRound) {
   const query = gql`query transcoders {
     transcoders(
-      orderBy: totalStake,
+      orderBy: totalVolumeETH,
       orderDirection: desc,
       where: {
         activationRound_lte: ${currentRound},
