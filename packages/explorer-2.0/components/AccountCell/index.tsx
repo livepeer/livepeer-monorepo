@@ -78,8 +78,8 @@ const Index = ({ threeBoxSpace, active, address }) => {
           }}>
           <Box css={{ fontWeight: 600 }}>
             {process.env.NEXT_PUBLIC_THREEBOX_ENABLED && threeBoxSpace?.name
-              ? textTruncate(threeBoxSpace.name, 15, "…")
-              : address.replace(address.slice(5, 39), "…")}
+              ? textTruncate(threeBoxSpace.name, 12, "…")
+              : address.replace(address.slice(5, 36), "…")}
           </Box>
         </Flex>
       </Flex>

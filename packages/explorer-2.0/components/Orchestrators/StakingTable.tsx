@@ -113,6 +113,7 @@ const StakingTable = ({
       {
         Header: "Fees",
         accessor: "totalVolumeETH",
+        sortType: "number",
       },
       {
         Header: "Stake",
@@ -284,6 +285,7 @@ const StakingTable = ({
                           alignItems: "center",
                           fontSize: 10,
                           position: "relative",
+                          letterSpacing: "-.3px",
                         }}
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({ title: "" })
