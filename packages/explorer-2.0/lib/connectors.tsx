@@ -40,7 +40,5 @@ export const WalletLink = new WalletLinkConnector({
 
 export const WalletConnect = new WalletConnectConnector({
   rpc: { 1: RPC_URLS[1] },
-  bridge: "https://bridge.walletconnect.org",
   qrcode: true,
-  pollingInterval: 15000,
 });
