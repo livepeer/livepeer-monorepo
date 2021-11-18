@@ -79,7 +79,7 @@ For available commands, type 'help'.
       `${key}(${args.map((x) => JSON.stringify(x))})`;
     const rpcKeyToDashes = (x) =>
       x.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
-    const rpcKeyToCamel = (x) => x.replace(/-(.)/g, (a, b) => b.toUpperCase());
+    const rpcKeyToCamel = (x) => x.replace(/-(.)/g, (_, b) => b.toUpperCase());
     const rpcKeys = Object.keys(rpc).map(rpcKeyToDashes);
     let WATCHERS = [];
     let SPINNERS = [];
