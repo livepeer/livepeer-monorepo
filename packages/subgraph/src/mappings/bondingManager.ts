@@ -532,6 +532,14 @@ export function transcoderActivated(event: TranscoderActivated): void {
   transcoder.deactivationRound = MAXIMUM_VALUE_UINT256;
   transcoder.save();
 
+  // if transcoder was pending deactivation, remove it from deactivation array
+  let pendingDeactivation = protocol.pendingDeactivation;
+  if (pendingDeactivation.includes(event.params.transcoder.toHex())) {
+    let index = pendingDeactivation.indexOf(event.params.transcoder.toHex());
+    pendingDeactivation.splice(index, 1);
+    protocol.pendingDeactivation = pendingDeactivation;
+  }
+
   // Add transcoder to list of transcoders pending activation
   let pendingActivation = protocol.pendingActivation;
   pendingActivation.push(event.params.transcoder.toHex());
@@ -567,6 +575,14 @@ export function transcoderDeactivated(event: TranscoderDeactivated): void {
 
   transcoder.deactivationRound = event.params.deactivationRound;
   transcoder.save();
+
+  // if transcoder was pending activation, remove it from activation array
+  let pendingActivation = protocol.pendingActivation;
+  if (pendingActivation.includes(event.params.transcoder.toHex())) {
+    let index = pendingActivation.indexOf(event.params.transcoder.toHex());
+    pendingActivation.splice(index, 1);
+    protocol.pendingActivation = pendingActivation;
+  }
 
   // Add transcoder to list of transcoders pending deactivation
   let pendingDeactivation = protocol.pendingDeactivation;
