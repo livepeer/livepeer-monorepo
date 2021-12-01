@@ -118,6 +118,7 @@ const StakingTable = ({
       {
         Header: "Stake",
         accessor: "totalStake",
+        sortType: "number",
         mobile: true,
       },
       {
