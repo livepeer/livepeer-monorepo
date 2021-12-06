@@ -10,7 +10,7 @@ import Layout from "../layouts/main";
 import { withApollo } from "../apollo";
 import { NextPage } from "next";
 import { IdProvider } from "@radix-ui/react-id";
-import { darkThemeClass, global } from "../stitches.config";
+import { darkThemeClass } from "../stitches.config";
 import { ThemeProvider } from "next-themes";
 
 function getLibrary(provider) {
@@ -42,8 +42,7 @@ function App({ Component, pageProps }) {
           disableTransitionOnChange
           attribute="class"
           defaultTheme="system"
-          value={{ dark: darkThemeClass.className }}
-        >
+          value={{ dark: darkThemeClass.className }}>
           <Web3ReactProvider getLibrary={getLibrary}>
             <Web3ReactManager>
               <CookiesProvider>

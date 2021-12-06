@@ -97,10 +97,10 @@ export default function getStaticApolloProps<
       props: {
         apolloState: apolloClient.cache.extract(),
         generatedAt: new Date().toISOString(),
-        revalidate: revalidate || null,
+        revalidate: revalidate || 60,
         ...otherProps,
       },
-      revalidate,
+      revalidate: revalidate || 60,
     };
   };
 }
