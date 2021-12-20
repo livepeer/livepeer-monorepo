@@ -1,36 +1,19 @@
 import { NetworkStatus, useQuery } from "@apollo/client";
 import Box from "../Box";
 import Table from "./Table";
-import { useEffect } from "react";
 import Spinner from "../Spinner";
-import { usePageVisibility } from "../../hooks";
 import winningTicketsQuery from "../../queries/winningTicketsQuery.gql";
 
 const Index = ({ pageSize = 10, title = "" }) => {
-  const isVisible = usePageVisibility();
-  const pollInterval = 20000;
-
   const variables = {
     orderBy: "timestamp",
     orderDirection: "desc",
   };
 
-  const { data, networkStatus, startPolling, stopPolling } = useQuery(
-    winningTicketsQuery,
-    {
-      variables,
-      notifyOnNetworkStatusChange: true,
-      pollInterval,
-    }
-  );
-
-  useEffect(() => {
-    if (!isVisible) {
-      startPolling(pollInterval);
-    } else {
-      stopPolling();
-    }
-  }, [isVisible, startPolling, stopPolling]);
+  const { data, networkStatus } = useQuery(winningTicketsQuery, {
+    variables,
+    notifyOnNetworkStatusChange: true,
+  });
 
   return (
     <Box className="tour-step-6">
@@ -51,8 +34,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
           border: "1px solid",
           borderColor: "rgba(194,201,209,.15)",
           borderRadius: 10,
-        }}
-      >
+        }}>
         {/* Show loading indicator if this is the first time time fetching or we're refetching
         https://github.com/apollographql/apollo-client/blob/main/src/core/networkStatus.ts */}
         {!data || networkStatus === NetworkStatus.refetch ? (
@@ -65,8 +47,7 @@ const Index = ({ pageSize = 10, title = "" }) => {
               height: "500px",
               display: "flex",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Spinner />
           </Box>
         ) : (

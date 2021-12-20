@@ -79,7 +79,6 @@ const Index = ({ pageSize = 10, title = "" }) => {
   const router = useRouter();
   const { query } = router;
   const isVisible = usePageVisibility();
-  const pollInterval = 20000;
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState(false);
   const [region, setRegion] = useState("global");
   const targetRef = useRef();
@@ -100,27 +99,12 @@ const Index = ({ pageSize = 10, title = "" }) => {
     currentRoundData?.protocol.currentRound.id
   );
 
-  const {
-    data,
-    refetch,
-    networkStatus,
-    startPolling: startPollingOrchestrators,
-    stopPolling: stopPollingOrchestrators,
-  } = useQuery(orchestratorsViewQuery, {
+  const { data, refetch, networkStatus } = useQuery(orchestratorsViewQuery, {
     notifyOnNetworkStatusChange: true,
-    pollInterval,
     context: {
       since: timeframe === "1W" ? oneWeekAgo : oneDayAgo,
     },
   });
-
-  useEffect(() => {
-    if (!isVisible) {
-      stopPollingOrchestrators();
-    } else {
-      startPollingOrchestrators(pollInterval);
-    }
-  }, [isVisible, stopPollingOrchestrators, startPollingOrchestrators]);
 
   const performanceViewActive =
     query?.orchestratorTable === "performance" ||
