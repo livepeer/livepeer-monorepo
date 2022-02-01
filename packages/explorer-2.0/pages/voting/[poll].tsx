@@ -152,7 +152,7 @@ const Poll = () => {
       <Head>
         <title>Livepeer Explorer - Voting</title>
       </Head>
-      <Flex css={{ justifyContent: "space-between", width: "100%" }}>
+      <Flex css={{ justifyContent: "space-between", width: "100%", gap: 80 }}>
         <Flex
           css={{
             mt: "$3",
