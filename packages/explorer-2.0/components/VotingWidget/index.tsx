@@ -446,7 +446,7 @@ function getVotingPower(myAccount, vote) {
     if (vote?.voteStake) {
       return +vote.voteStake - +vote?.nonVoteStake;
     }
-    return +myAccount?.delegator?.delegate?.totalStake - +vote?.nonVoteStake;
+    return +myAccount?.delegator?.delegate?.totalStake - (vote?.nonVoteStake ? +vote.nonVoteStake : 0);
   }
 
   return Utils.fromWei(
